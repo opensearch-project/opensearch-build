@@ -2,7 +2,6 @@
 
 ###### Information ############################################################################
 # Name:          setup_runners.sh
-# Language:      Shell
 #
 # About:         1. Run instances on EC2 based on parameters defined and wait for completion
 #                2. SSH to these instances and configure / bootstrap on $GIT_URL_REPO as runners
@@ -97,8 +96,6 @@
 #                11. You also need to set the user of the GitHub Token to have ADMIN access of the GitHub Repo
 #                    So that runner can be successfully bootstrapped to action tab in settings.
 #
-# Starting Date: 2020-07-27
-# Modified Date: 2021-01-09
 ###############################################################################################
 
 set -e
@@ -112,8 +109,8 @@ if [ "$#" -lt 3 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign at least 3 parameters when running this script"
   echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN, \$EC2_AMI_ID"
-  echo "Example (run must have 4 parameters): $0 \"run\" \"odfe-rpm-im,odfe-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
-  echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"odfe-rpm-im,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "Example (run must have 4 parameters): $0 \"run\" \"opensearch-rpm-im,opensearch-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
+  echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"opensearch-rpm-im,opensearch-rpm-sql\" \"<GitHub PAT>\""
   echo "You can use \`export GIT_UTL_REPO=\"opendistro-for-elasticsearch/opendistro-build\"\` or similar to set the Git Repo of the runner"
   exit 1
 fi
