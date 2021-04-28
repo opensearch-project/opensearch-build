@@ -34,7 +34,7 @@ OPENSEARCH_JAVA_OPTS=$PA_AGENT_JAVA_OPTS
 if ! grep -q '## OpenSearch Performance Analyzer' $OPENSEARCH_HOME/config/jvm.options; then
    CLK_TCK=`/usr/bin/getconf CLK_TCK`
    echo >> $OPENSEARCH_HOME/config/jvm.options
-   echo '## OpenDistro Performance Analyzer' >> $OPENSEARCH_HOME/config/jvm.options
+   echo '## OpenSearch Performance Analyzer' >> $OPENSEARCH_HOME/config/jvm.options
    echo "-Dclk.tck=$CLK_TCK" >> $OPENSEARCH_HOME/config/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> $OPENSEARCH_HOME/config/jvm.options
    echo "-Djava.security.policy=$OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/es_security.policy" >> $OPENSEARCH_HOME/config/jvm.options
