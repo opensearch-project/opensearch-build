@@ -31,7 +31,7 @@ OPENSEARCH_MAIN_CLASS="com.amazon.opendistro.opensearch.performanceanalyzer.Perf
 OPENSEARCH_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opensearch-performance-analyzer \
 OPENSEARCH_JAVA_OPTS=$PA_AGENT_JAVA_OPTS
 
-if ! grep -q '## OpenSearcho Performance Analyzer' $OPENSEARCH_HOME/config/jvm.options; then
+if ! grep -q '## OpenSearch Performance Analyzer' $OPENSEARCH_HOME/config/jvm.options; then
    CLK_TCK=`/usr/bin/getconf CLK_TCK`
    echo >> $OPENSEARCH_HOME/config/jvm.options
    echo '## OpenDistro Performance Analyzer' >> $OPENSEARCH_HOME/config/jvm.options
