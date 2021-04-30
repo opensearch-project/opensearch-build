@@ -16,8 +16,8 @@
 
 opensearch.hosts: ["http://localhost:9200"]
 opensearch.ssl.verificationMode: full
-opensearch.username: "opensearch_dashboards_system"
-opensearch.password: "pass"
+opensearch.username: "kibanaserver"
+opensearch.password: "kibanaserver"
 opensearch.requestHeadersWhitelist: [ authorization ]
 
 opensearch_security.multitenancy.enabled: true
