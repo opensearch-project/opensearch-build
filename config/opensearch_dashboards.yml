@@ -14,8 +14,8 @@
 # Description:
 # Default configuration for OpenSearch Dashboards
 
-opensearch.hosts: ["http://localhost:9200"]
-opensearch.ssl.verificationMode: full
+opensearch.hosts: ["https://localhost:9200"]
+opensearch.ssl.verificationMode: none
 opensearch.username: "kibanaserver"
 opensearch.password: "kibanaserver"
 opensearch.requestHeadersWhitelist: [ authorization ]
