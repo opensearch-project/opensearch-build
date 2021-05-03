@@ -26,8 +26,8 @@ Please list all plugins currently enabled.
 If applicable, add screenshots to help explain your problem.
 
 **Host/Environment (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 22]
+ - OS: [e.g. Linux/Windows]
+ - Version [e.g. 1.0.0]
 
 **Additional context**
 Add any other context about the problem here.
