@@ -23,6 +23,7 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# This script is to automate the docker image creation process of OpenSearch and OpenSearch-Dashboards
 
 set -e
 
@@ -73,19 +74,24 @@ while getopts ":ho:v:f:p:" arg; do
     esac
 done
 
+# Validate the required parameters to present
 if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ]; then
-    echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT'"
-    usage
-    exit 1
+  echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT'"
+  usage
+  exit 1
+else
+  echo $VERSION $DOCKERFILE $PRODUCT
 fi
 
-echo $DOCKERFILE
-
+# Create temp workdirectory
 DIR=`mktemp -d`
-
 echo "Creating Docker workspace in $DIR"
 trap '{ echo Removing Docker workspace in "$DIR"; rm -rf -- "$DIR"; }' TERM INT EXIT
 
+# Copy configs
+cp -v config/${PRODUCT}/* $DIR/
+
+# Copy TGZ
 if [ -z "$TARBALL" ]; then
     # No tarball file specified so download one
     URL="https://artifacts.opensearch.org/releases/bundle/${PRODUCT}/${VERSION}/${PRODUCT}-${VERSION}-linux-x64.tar.gz"
@@ -96,9 +102,7 @@ else
     cp -v $TARBALL $DIR/$PRODUCT.tgz
 fi
 
-cp -v config/${PRODUCT}/* $DIR/
-
+# Docker build
 docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
 docker tag opensearchproject/$PRODUCT:$VERSION opensearchproject/$PRODUCT:latest
 
-rm -rf $DIR

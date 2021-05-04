@@ -49,7 +49,7 @@ RUN groupadd -g $GID opensearch-dashboards && \
 
 # Prepare working directory
 COPY opensearch-dashboards.tgz /tmp/opensearch-dashboards/opensearch-dashboards.tgz
-RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /temp/opensearch-dashboards
+RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
 COPY opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/
 COPY opensearch_dashboards.yml opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/
 

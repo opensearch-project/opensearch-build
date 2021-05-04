@@ -50,7 +50,7 @@ RUN groupadd -g $GID opensearch && \
 
 # Prepare working directory
 COPY opensearch.tgz /tmp/opensearch/opensearch.tgz
-RUN tar -xzf /tmp/opensearch/opensearch.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /temp/opensearch
+RUN tar -xzf /tmp/opensearch/opensearch.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
