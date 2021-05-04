@@ -18,7 +18,7 @@ See our [contribution guidelines](CONTRIBUTING.md) and the [developer guide](DEV
 
 ## Code of Conduct
 
-This project has adopted an [Open Source Code of Conduct](CODE_OF_CONDUCT.md).
+This project has adopted an [Open Source Code of Conduct](https://opendistro.github.io/for-elasticsearch/codeofconduct.html).
 
 ## Security
 
