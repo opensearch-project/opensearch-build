@@ -1,17 +1,41 @@
-## My Project
+ - [Contributing](#contributing)
+ - [Code of Conduct](#code-of-conduct)
+ - [Security](#security)
+ - [Licensing](#licensing)
+ - [Questions](#Questions)
+ - [Issues](#Issues)
+ - [Copyright](#copyright)
 
-TODO: Fill this README out!
+ # OpenSearch / OpenSearch Dashboards build repository
 
-Be sure to:
+This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
 
-* Change the title in this README
-* Edit your repository description on GitHub
+## Contributing
+
+We welcome you to get involved in development, documentation, and testing of the build scripts.
+
+See our [contribution guidelines](CONTRIBUTING.md) and the [developer guide](DEVELOPER_GUIDE.md) to get started.
+
+## Code of Conduct
+
+This project has adopted an [Open Source Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public GitHub issue.
 
-## License
+## Licensing
 
-This project is licensed under the Apache-2.0 License.
+See the [LICENSE](LICENSE.txt) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
 
+## Questions
+
+If you have any questions, please join our community forum [here](https://discuss.opendistrocommunity.dev/)
+
+## Issues
+
+File any issues [here](https://github.com/opensearch-project/opensearch-build/issues).
+
+## Copyright
+
+Copyright 2021 OpenSearch Contributors
