@@ -9,7 +9,6 @@ OpenSearch and Dashboards 1.0.0-beta1 includes the following OpenSearch Migratio
 ## OpenSearch Migration
 
 ### Opensearch SQL
-
 * OpenSearch migration for JDBC driver ([#3](https://github.com/opensearch-project/sql/pull/3))
 * OpenSearch Migration for SQL/PPL ([#2](https://github.com/opensearch-project/sql/pull/2))
 * OpenSearch migration for ODBC driver ([#7](https://github.com/opensearch-project/sql/pull/7))
