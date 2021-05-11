@@ -6,7 +6,61 @@
 
 You can also track upcoming features in OpenSearch and Dashboards by watching the code repositories or checking the [project website](https://opensearch.org/blog/).
 
-## BREAKING CHANGES
+## OpenSearch Migration
+
+### Opensearch SQL
+
+* OpenSearch migration for JDBC driver ([#3](https://github.com/opensearch-project/sql/pull/3))
+* OpenSearch Migration for SQL/PPL ([#2](https://github.com/opensearch-project/sql/pull/2))
+* OpenSearch migration for ODBC driver ([#7](https://github.com/opensearch-project/sql/pull/7))
+* Migrate workbench to OpenSearch Dashboards ([#6](https://github.com/opensearch-project/sql/pull/6))
+* OpenSearch Readiness: SQL/PPL, JDBC, ODBC ([#8](https://github.com/opensearch-project/sql/pull/8))
+* Opensearch migration for sql-cli and doctest module ([#4](https://github.com/opensearch-project/sql/pull/4))
+* Remove CodeCov Usage ([#9](https://github.com/opensearch-project/sql/pull/9))
+* Add license header to SQL/PPL, CLI, JDBC, ODBC ([#11](https://github.com/opensearch-project/sql/pull/11))
+* Add License Headers to Workbench ([#10](https://github.com/opensearch-project/sql/pull/10))
+* SQL/PPL API migration for OpenSearch ([#14](https://github.com/opensearch-project/sql/pull/14))
+* SQL/PPL artifact renaming and version reset ([#15](https://github.com/opensearch-project/sql/pull/15))
+* Change workbench version to 1.0.0, change api to _opensearch ([#17](https://github.com/opensearch-project/sql/pull/17))
+* Migrate SQL/PPL to OpenSearch namespace ([#16](https://github.com/opensearch-project/sql/pull/16))
+* Rename ODBC driver and DSN name ([#20](https://github.com/opensearch-project/sql/pull/20))
+* Doctest/SQL-CLI API migration to OpenSearch, renaming and version reset ([#19](https://github.com/opensearch-project/sql/pull/19))
+* Add release notes for OpenSearch 1.0.0.0-beta1 ([#21](https://github.com/opensearch-project/sql/pull/21))
+* Build SQL/PPL against OpenSearch 1.0.0-alpha2 ([#22](https://github.com/opensearch-project/sql/pull/22))
+* Build SQL/PPL against OpenSearch 1.0.0-beta1 ([#23](https://github.com/opensearch-project/sql/pull/23))
+* Bump Workbench Version to Beta1 for OpenSearch Release ([#24](https://github.com/opensearch-project/sql/pull/24))
+
+### Opensearch Notebooks Dashboards Plugin
+* Migrate Notebooks frontend and backend plugin to OpenSearch ([#3](https://github.com/opensearch-project/dashboards-notebooks/pull/3))
+* Change dashboards nav and pkgbuild.gradle to use OpenSearch ([#5](https://github.com/opensearch-project/dashboards-notebooks/pull/5))
+* Add license header to all files ([#6](https://github.com/opensearch-project/dashboards-notebooks/pull/6))
+* Change version to 1.0.0, change api to _opensearch ([#7](https://github.com/opensearch-project/dashboards-notebooks/pull/7))
+* Migrate to OpenSearch Alpha2 ([#11](https://github.com/opensearch-project/dashboards-notebooks/pull/11))
+* Update to Beta1 for OpenSearch Release ([#14](https://github.com/opensearch-project/dashboards-notebooks/pull/14))
+
+### Opensearch Reports Dashboards Plugin
+* Migrate reporting frontend plugin to OpenSearch Dashboards ([#4](https://github.com/opensearch-project/dashboards-reports/pull/4))
+* [migration] Rename elasticsearch to opensearch for reports-scheduler ([#5](https://github.com/opensearch-project/dashboards-reports/pull/5))
+* Change dashboards nav to use OpenSearch ([#6](https://github.com/opensearch-project/dashboards-reports/pull/6))
+* Add license headers for OpenSearch ([#8](https://github.com/opensearch-project/dashboards-reports/pull/8))
+* dashboards-reports version reset ([#23](https://github.com/opensearch-project/dashboards-reports/pull/23)) 
+* [Migration] Reports-scheduler renaming, version reset, fix CI ([#22](https://github.com/opensearch-project/dashboards-reports/pull/22)) 
+* [Migration] Build reporting against OpenSearch 1.0.0-alpha2 ([#25](https://github.com/opensearch-project/dashboards-reports/pull/25))
+* Update opensearch version to 1.0.0 beta1 ([#26](https://github.com/opensearch-project/dashboards-reports/pull/26))
+
+### Opensearch Trace Analytics
+* Migrate trace analytics to OpenSearch Dashboards ([#1](https://github.com/opensearch-project/trace-analytics/pull/1))
+* Change nav bar to use OpenSearch ([#2](https://github.com/opensearch-project/trace-analytics/pull/2))
+* Add license headers for OpenSearch ([#3](https://github.com/opensearch-project/trace-analytics/pull/3))
+* Change plugin versions to 1.0.0 ([#4](https://github.com/opensearch-project/trace-analytics/pull/4))
+* Rebase commits from opendistro repo ([#5](https://github.com/opensearch-project/trace-analytics/pull/5))
+* Bump Version to Beta1 for OpenSearch Release ([#7](https://github.com/opensearch-project/trace-analytics/pull/7))
+
+### Opensearch Dashboards Visualizations
+* Migrate gantt chart to OpenSearch Dashboards ([#1](https://github.com/opensearch-project/dashboards-visualizations/pull/1))
+* Add license headers for OpenSearch ([#2](https://github.com/opensearch-project/dashboards-visualizations/pull/2))
+* Change plugin versions to 1.0.0 ([#3](https://github.com/opensearch-project/dashboards-visualizations/pull/3))
+* Bump version to beta1 for OpenSearch release ([#5](https://github.com/opensearch-project/dashboards-visualizations/pull/5))
 
 ## FEATURES
 
@@ -20,10 +74,14 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * migrate plugin to be compatible with OpenSearch [#1](https://github.com/opensearch-project/index-management/pull/1)
 * rename plugin [#5](https://github.com/opensearch-project/index-management/pull/5)
 
+### Opensearch Alerting
+* Update plugin install name ([#9](https://github.com/opensearch-project/alerting/pull/9))
 
 ### Opensearch Security
 * Check and create multi-tenant index with alias for Update and Delete requests. Try to find a name for the multi-tenant index if index/alias with ".kibana_..._#" already exists ([#1058](https://github.com/opensearch-project/security/pull/1058))
 
+### Opensearch Anomaly Detection Dashboards
+* Migrate plugin to be compatible with OpenSearch Dashboards ([#1](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/1))
 
 ### Opensearch Security Dashboards Plugin
 * Save tenant selection by default and remove the checkbox [#725](https://github.com/opensearch-project/security-dashboards-plugin/pull/725)
@@ -49,17 +107,39 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * fix text and remove svg content [#751](https://github.com/opensearch-project/security-dashboards-plugin/pull/751)
 * fix readme badge and audit log text [#753](https://github.com/opensearch-project/security-dashboards-plugin/pull/753)
 
+### Opensearch Alerting
+* Update jackson CVE-2020-28491 ([#8](https://github.com/opensearch-project/alerting/pull/8))
 
 ## INFRASTRUCTURE
 
 ### Opensearch Index Management
 * update github workflows [#5](https://github.com/opensearch-project/index-management/pull/5)
 
+### Opensearch Alerting
+* Fix integ tests so they execute successfully in the test workflow ([#7](https://github.com/opensearch-project/alerting/pull/7))
+* Fix Test Workflow ([#6](https://github.com/opensearch-project/alerting/pull/6))
+
+### OpenSearch Common-utils
+* Updated templates from .github ([#7](https://github.com/opensearch-project/common-utils/pull/7))
+* Publish to maven local and add CI ([#8](https://github.com/opensearch-project/common-utils/pull/8))
+* Update test workflow for alpha1 ([#9](https://github.com/opensearch-project/common-utils/pull/9))
+* Update test workflow and publish beta1 ([#14](https://github.com/opensearch-project/common-utils/pull/14))
+
+### Opensearch Asynchronous Search
+* Adds templates for PR, bug report and feature request ([#5](https://github.com/opensearch-project/asynchronous-search/pull/5))
+* Changes to use OpenSearch 1.0.0-alpha1 ([#6](https://github.com/opensearch-project/asynchronous-search/pull/6))
+
+### Opensearch Alerting Dashboards
+* Fix Unit tests and Cypress test workflows ([#4](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/4))
+* Update github workflows for alpha2 ([#6](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/6))
 
 ### Opensearch Index Management Dashboards Plugin
 * Updates versions and fixes the unit test workflow ([#7](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/7))
 * Fix cypress workflow ([#8](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/8))
 
+### Opensearch Anomaly Detection Dashboards
+* Reset plugin version to 1.0.0.0, fix UT workflow ([#9](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/9))
+* Rename plugin helpers file to fix zip build ([#12](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/12))
 
 ### Opensearch Knn
 * Update upstream ([#1](https://github.com/opensearch-project/k-NN/pull/1))
@@ -97,13 +177,13 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * Run integration tests in CI + alpha2 ([#12](https://github.com/opensearch-project/job-scheduler/pull/12))
 * consume opensearch 1.0.0-beta1 ([#18](https://github.com/opensearch-project/job-scheduler/pull/18))
 
-### Opensearch Trace Analytics
-* Migrate trace analytics to OpenSearch Dashboards ([#1](https://github.com/opensearch-project/trace-analytics/pull/1))
-* Change nav bar to use OpenSearch ([#2](https://github.com/opensearch-project/trace-analytics/pull/2))
-* Add license headers for OpenSearch ([#3](https://github.com/opensearch-project/trace-analytics/pull/3))
-* Change plugin versions to 1.0.0 ([#4](https://github.com/opensearch-project/trace-analytics/pull/4))
-* Rebase commits from opendistro repo ([#5](https://github.com/opensearch-project/trace-analytics/pull/5))
-* Bump Version to Beta1 for OpenSearch Release ([#7](https://github.com/opensearch-project/trace-analytics/pull/7))
+
+### Opensearch Anomaly Detection
+* Removing few lingering Elasticsearch strings in the repo ([#6](https://github.com/opensearch-project/anomaly-detection/pull/6))
+* Updating the license and docs ([#7](https://github.com/opensearch-project/anomaly-detection/pull/7))
+* Add SPDX license header to all files ([#10](https://github.com/opensearch-project/anomaly-detection/pull/10))
+* Updating the Notice.txt to relfect the right software being used ([#11](https://github.com/opensearch-project/anomaly-detection/pull/11))
+* Updated copyright and external links. ([#12](https://github.com/opensearch-project/anomaly-detection/pull/12))
 
 
 ## DOCUMENTATION
@@ -115,10 +195,30 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * update MAINTAINERS file [#5](https://github.com/opensearch-project/index-management/pull/5)
 * add release notes for 1.0.0.0-beta1 release [#6](https://github.com/opensearch-project/index-management/pull/6)
 
+### Opensearch Anomaly Detection Dashboards
+* Update base documentation files; add issues & PR templates ([#5](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/5))
+* Add DCO info in CONTRIBUTING.md, remove admins from MAINTAINERS.md ([#6](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/6))
+* Add SPDX license header to all files ([#7](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/7))
+* Update NOTICE to reflect the direct software being used ([#8](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/8))
 
 ### Opensearch Index Management Dashboards Plugin
 * Adds new license header ([#6](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/6))
 
+### OpenSearch Common-utils
+* Update licenses ([#3](https://github.com/opensearch-project/common-utils/pull/3))
+* Add new license header ([#5](https://github.com/opensearch-project/common-utils/pull/5))
+* Update spotless license file ([#11](https://github.com/opensearch-project/common-utils/pull/11))
+* Add release notes and script to generate release notes ([#16](https://github.com/opensearch-project/common-utils/pull/16))
+
+### Opensearch Asynchronous Search
+* Update licenses ([#4](https://github.com/opensearch-project/asynchronous-search/pull/4))
+
+### Opensearch Alerting
+* Update licenses ([#5](https://github.com/opensearch-project/alerting/pull/5))
+* Update documentation to remove more ES references and update licenses  ([#4](https://github.com/opensearch-project/alerting/pull/4))
+
+### Opensearch Alerting Dashboards
+* Update license headers ([#3](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/3))
 
 ### Opensearch Knn
 * Standardize files with OpenSearch files contents ([#3](https://github.com/opensearch-project/k-NN/pull/3))
@@ -152,6 +252,16 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 ### Opensearch Index Management Dashboards Plugin
 * Bump plugin version to 1.0.0.0-beta1 ([#9](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/9))
 
+### Opensearch Anomaly Detection
+* Migrating plugin to work with OpenSearch ([#1](https://github.com/opensearch-project/anomaly-detection/pull/1))
+* Rename plugin to opensearch-anomaly-detection; bump plugin to 1.0.0-alpha2 ([#28](https://github.com/opensearch-project/anomaly-detection/pull/28))
+* Bump plugin + dependencies to version 1.0.0.0-beta1 ([#32](https://github.com/opensearch-project/anomaly-detection/pull/32))
+
+### Opensearch Anomaly Detection Dashboards
+* Bump plugin version to 1.0.0.0-beta1 ([#14](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/14))
+
+### Opensearch Alerting Dashboards
+* Bump plugin version to 1.0.0.0-beta1 ([#7](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/7))
 
 ### Opensearch Security
 * Redact BCrypt security config internal hashes from audit logs ([#756](https://github.com/opensearch-project/security/pull/756))
@@ -189,6 +299,24 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * Cleans up a few more references ([#5](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/5))
 * Update plugin id to indexManagementDashboards ([#10](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/10))
 
+### Opensearch Alerting
+* Change Kibana UserAgent to OpenSearchDashboards ([#3](https://github.com/opensearch-project/alerting/pull/3))
+* Migrate Alerting to OpenSearch ([#1](https://github.com/opensearch-project/alerting/pull/1))
+* Update version to alpha2 ([#10](https://github.com/opensearch-project/alerting/pull/10))
+* Update version to 1.0.0.0-beta1 ([#11](https://github.com/opensearch-project/alerting/pull/11))
+
+### OpenSearch Common-utils
+* Renaming lingering strings to OpenSearch ([#2](https://github.com/opensearch-project/common-utils/pull/2))
+* Update version to 1.0.0.0-alpha2 ([#15](https://github.com/opensearch-project/common-utils/pull/15))
+* Update version to 1.0.0.0-beta1 ([#17](https://github.com/opensearch-project/common-utils/pull/17))
+
+### Opensearch Alerting Dashboards
+* Migrate Alerting to OpenSearch-Dashboards ([#1](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/1))
+* Update plugin name and url ([#2](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/2))
+* Update plugin naming ([#5](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/5))
+
+### Opensearch Asynchronous Search
+* Update version to 1.0.0.0-beta1 ([#8](https://github.com/opensearch-project/asynchronous-search/pull/8))
 
 ### Opensearch Cli
 * Opensearch cli rename ([#2](https://github.com/opensearch-project/opensearch-cli/pull/2))
