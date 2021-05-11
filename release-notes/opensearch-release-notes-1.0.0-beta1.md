@@ -89,6 +89,22 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 ### Opensearch Sql
 * Fix ODBC build failures ([#13](https://github.com/opensearch-project/sql/pull/13))
 
+### Opensearch Job Scheduler Plugin
+* Build and publish to maven local, enable CI ([#8](https://github.com/opensearch-project/job-scheduler/pull/8))
+* Reset version to 1.0. ([#9](https://github.com/opensearch-project/job-scheduler/pull/9))
+* Build against OpenSearch 1.0.0-alpha1. ([#11](https://github.com/opensearch-project/job-scheduler/pull/11))
+* Rename plugin ([#14](https://github.com/opensearch-project/job-scheduler/pull/14))
+* Run integration tests in CI + alpha2 ([#12](https://github.com/opensearch-project/job-scheduler/pull/12))
+* consume opensearch 1.0.0-beta1 ([#18](https://github.com/opensearch-project/job-scheduler/pull/18))
+
+### Opensearch Trace Analytics
+* Migrate trace analytics to OpenSearch Dashboards ([#1](https://github.com/opensearch-project/trace-analytics/pull/1))
+* Change nav bar to use OpenSearch ([#2](https://github.com/opensearch-project/trace-analytics/pull/2))
+* Add license headers for OpenSearch ([#3](https://github.com/opensearch-project/trace-analytics/pull/3))
+* Change plugin versions to 1.0.0 ([#4](https://github.com/opensearch-project/trace-analytics/pull/4))
+* Rebase commits from opendistro repo ([#5](https://github.com/opensearch-project/trace-analytics/pull/5))
+* Bump Version to Beta1 for OpenSearch Release ([#7](https://github.com/opensearch-project/trace-analytics/pull/7))
+
 
 ## DOCUMENTATION
 
@@ -125,6 +141,12 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * Add SPDX license identifier ([#2](https://github.com/opensearch-project/perftop/pull/2))
 
 
+### Opensearch Job Scheduler Plugin
+* Update licenses ([#3](https://github.com/opensearch-project/job-scheduler/pull/3))
+* Go Public ([#2](https://github.com/opensearch-project/job-scheduler/pull/2))
+* Add new license header ([#6](https://github.com/opensearch-project/job-scheduler/pull/6))
+* update release note for 1.0.0.0-beta1 ([#17](https://github.com/opensearch-project/job-scheduler/pull/17))
+
 ## MAINTENANCE
 
 ### Opensearch Index Management Dashboards Plugin
@@ -155,6 +177,9 @@ You can also track upcoming features in OpenSearch and Dashboards by watching th
 * change version back to beta1 [#748](https://github.com/opensearch-project/security-dashboards-plugin/pull/748)
 * Fix tests and document cleanup [#754](https://github.com/opensearch-project/security-dashboards-plugin/pull/754)
 * Update 1.0.0.0-beta1 release notes [#755](https://github.com/opensearch-project/security-dashboards-plugin/pull/755)
+
+### Opensearch Job Scheduler Plugin
+* Migrate to OpenSearch ([#1](https://github.com/opensearch-project/job-scheduler/pull/1))
 
 
 ## REFACTORING
