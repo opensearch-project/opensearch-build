@@ -5,7 +5,7 @@ With this beta release, we have refactored all the Open Distro for Elasticsearch
 
 ## Release Details
 
-You can also track upcoming features in OpenSearch and Dashboards by watching the code repositories or checking the [project website](https://opensearch.org/blog/).
+OpenSearch and Dashboards 1.0.0-beta1 includes the following OpenSearch Migration, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates..
 
 ## OpenSearch Migration
 
