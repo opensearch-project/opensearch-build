@@ -1,6 +1,7 @@
 # OpenSearch and Dashboards 1.0.0-beta1 Release Notes
 
 ## Release Highlights
+With this beta release, we have refactored all the Open Distro for Elasticsearch plugins to work with OpenSearch and provide the community with downloadable artifacts (Linux tars and Docker images) to run OpenSearch and OpenSearch Dashboards with these plugins installed. 
 
 ## Release Details
 
