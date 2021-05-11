@@ -19,7 +19,7 @@ opensearch.hosts: ["https://localhost:9200"]
 opensearch.ssl.verificationMode: none
 opensearch.username: "kibanaserver"
 opensearch.password: "kibanaserver"
-opensearch.requestHeadersWhitelist: [ authorization ]
+opensearch.requestHeadersWhitelist: [ authorization,securitytenant ]
 
 opensearch_security.multitenancy.enabled: true
 opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
