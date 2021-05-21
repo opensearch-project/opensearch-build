@@ -66,7 +66,7 @@ done < <(env)
 # paths. Therefore, OpenSearch provides a mechanism to override
 # reading the cgroup path from /proc/self/cgroup and instead uses the
 # cgroup path defined the JVM system property
-# es.cgroups.hierarchy.override. Therefore, we set this value here so
+# opensearch.cgroups.hierarchy.override. Therefore, we set this value here so
 # that cgroup statistics are available for the container this process
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
