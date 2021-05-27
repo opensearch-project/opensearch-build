@@ -76,7 +76,6 @@ fi
 snapshot_url="${REPO_URL%/}/nexus/content/repositories/snapshots/org/opensearch"
 
 cd "$1"
-i=0
 
 # Import Opensearch GPG key
 curl -S https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import
@@ -89,6 +88,8 @@ if [ -z "${pomFiles}" ]; then
   exit 1
 fi
 
+artifacts=()
+count=0
 for pom in ${pomFiles}; do
   jar=${pom/.pom/.jar}
 
@@ -110,18 +111,21 @@ for pom in ${pomFiles}; do
   gpg --verify-files "${pomsig}" "${jarsig}"
 
   if [ $? -ne 0 ]; then
-    echo "Invalid signature on artifacts, skipping ${pom}"
-  else
-    echo "Uploading artifacts for ${pom}"
+    echo "Invalid signature on artifact, ${pom}"
+    exit 1
   fi
-
-  curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${pom}" "$snapshot_url${pom}"
-  curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${jar}" "$snapshot_url${jar}"
-  curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${pomsig}" "$snapshot_url${pomsig}"
-  curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${jarsig}" "$snapshot_url${jarsig}"
-  ((i++))
+  artifacts+=("${pom}" "${pomsig}" "${jar}" "${jarsig}")
+  ((count+=4))
 done
 
 echo "==========================================="
-echo "Finished deploying ${i} projects to $snapshot_url"
+echo "Found ${count} artifacts to upload"
+echo "==========================================="
+
+for i in "${artifacts[@]}"; do
+    curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${pom}" "$snapshot_url${pom}"
+done
+
+echo "==========================================="
+echo "Finished deploying ${count} artifacts to $snapshot_url"
 echo "==========================================="
