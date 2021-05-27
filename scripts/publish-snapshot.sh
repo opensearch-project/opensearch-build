@@ -122,10 +122,17 @@ echo "==========================================="
 echo "Found ${count} artifacts to upload"
 echo "==========================================="
 
-for i in "${artifacts[@]}"; do
-    curl -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${pom}" "$snapshot_url${pom}"
+success_count=0
+for artifact in "${artifacts[@]}"; do
+    response=$(curl -s -w "%{http_code}" -v -u "${SONATYPE_ID}":"${SONATYPE_PASSWORD}" --upload-file "${artifact}" "$snapshot_url${artifact}")
+    http_code=$(tail -n1 <<< "$response")
+    if [[ "${http_code}" != 2* ]]; then
+     echo "Failed to upload ${artifact}"
+     continue;
+    fi
+    ((success_count++))
 done
 
 echo "==========================================="
-echo "Finished deploying ${count} artifacts to $snapshot_url"
+echo "Finished deploying ${success_count} artifacts to $snapshot_url"
 echo "==========================================="
