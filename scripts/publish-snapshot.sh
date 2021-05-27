@@ -77,7 +77,7 @@ snapshot_url="${REPO_URL%/}/nexus/content/repositories/snapshots/org/opensearch"
 
 cd "$1"
 
-# Import Opensearch GPG key
+# Import Opensearch PUBLIC GPG key
 curl -S https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import
 
 echo "searching for poms under $PWD"
