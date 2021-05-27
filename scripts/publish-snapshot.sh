@@ -30,7 +30,7 @@ set -e
 }
 
 usage() {
-    echo "usage: $0 dir [-h]"
+    echo "usage: $0 [-h] [dir]"
     echo "  dir     parent directory of artifacts to be published to org/opensearch namespace."
     echo "          example: dir = ~/.m2/repository/org/opensearch where dir contains artifacts of a path:"
     echo "                   /plugin/reindex-client/1.0.0-SNAPSHOT/reindex-client-1.0.0-SNAPSHOT.jar"
@@ -46,7 +46,10 @@ while getopts ":h" option; do
   case $option in
     h)
        usage
-       exit;
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+       usage
+    ;;
   esac
 done
 
@@ -65,13 +68,18 @@ done
   exit 1
 }
 
-snapshot_url="${REPO_URL%/}/nexus/content/repositories/snapshots/org/opensearch"
+if [ ! -d "$1" ]; then
+  echo "Invalid directory $1 does not exist"
+  usage
+fi
 
-# Import Opensearch GPG key
-curl -S https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import
+snapshot_url="${REPO_URL%/}/nexus/content/repositories/snapshots/org/opensearch"
 
 cd "$1"
 i=0
+
+# Import Opensearch GPG key
+curl -S https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import
 
 echo "searching for poms under $PWD"
 
