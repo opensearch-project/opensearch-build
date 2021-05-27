@@ -89,7 +89,6 @@ if [ -z "${pomFiles}" ]; then
 fi
 
 artifacts=()
-count=0
 for pom in ${pomFiles}; do
   jar=${pom/.pom/.jar}
 
@@ -115,11 +114,10 @@ for pom in ${pomFiles}; do
     exit 1
   fi
   artifacts+=("${pom}" "${pomsig}" "${jar}" "${jarsig}")
-  ((count+=4))
 done
 
 echo "==========================================="
-echo "Found ${count} artifacts to upload"
+echo "Found ${#artifacts[@]} artifacts to upload"
 echo "==========================================="
 
 success_count=0
