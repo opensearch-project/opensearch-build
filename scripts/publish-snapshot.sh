@@ -12,7 +12,9 @@
 #
 # About:         Deploy opensearch artifacts to a sonatype snapshot repository.
 #                This script will search POM files under the passed in directory.
-#                If found, pom, jar, and signature files will be deployed to the org/opensearch namespace.
+#                If found, a signature check is performed and if successful pom, jar, and signature files will be deployed to the
+#                org/opensearch namespace. If any artifact fails signature check, nothing will be published.
+#                This script is intended to be run once per repository built.
 #
 # Prerequisites: The given directory must be the parent directory of org/opensearch artifacts.
 #                Environment variables must be set:
