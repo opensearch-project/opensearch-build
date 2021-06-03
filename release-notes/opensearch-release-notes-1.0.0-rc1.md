@@ -1,10 +1,10 @@
-# Open Distro for Elasticsearch 1.13.2 Release Notes
+# OpenSearch and Dashboards 1.0.0-rc1 Release Notes
 
 ## Release Highlights
 
 ## Release Details
 
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
+OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 ## BREAKING CHANGES
 
