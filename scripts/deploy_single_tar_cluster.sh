@@ -41,7 +41,6 @@ function usage() {
     echo ""
     echo "Optional arguments:"
     echo -e "-c \tCleanup Existing deployment only without new deployment."
-    echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -80,9 +79,6 @@ while getopts ":hct:v:s:p:" arg; do
             ;;
         t)
             TYPE=$OPTARG
-            ;;
-        s)
-            ENABLE_SECURITY=$OPTARG
             ;;
         h)
             usage
