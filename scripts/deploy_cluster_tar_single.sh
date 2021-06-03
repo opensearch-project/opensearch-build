@@ -60,7 +60,12 @@ function cleanup() {
     (ps -ef | grep -i [p]erformance) || echo -e "\tNo PerformanceAnalyzer PIDs"
 
     echo Remove Old Deployments
-    rm -rf /tmp/*_INTEGTEST_WORKSPACE
+    if [ -z "$TMPDIR" ]
+    then
+      rm -rf /tmp/*_INTEGTEST_WORKSPACE
+    else
+      rm -rf $TMPDIR/*_INTEGTEST_WORKSPACE
+    fi
 }
 
 
@@ -71,11 +76,11 @@ while getopts ":hct:v:s:p:" arg; do
             ;;
         c)
             cleanup
-	    exit
+            exit
             ;;
-	t)
+        t)
             TYPE=$OPTARG
-	    ;;
+            ;;
         s)
             ENABLE_SECURITY=$OPTARG
             ;;
