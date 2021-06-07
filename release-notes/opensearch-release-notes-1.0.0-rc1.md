@@ -17,6 +17,7 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 ### Opensearch Index Management Dashboards Plugin
 * Introducing transforms ([#16](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/16))
 
+
 ### Opensearch k-NN
 * Refactor interface to support method configuration in field mapping ([#20](https://github.com/opensearch-project/k-NN/pull/20))
 
