@@ -162,7 +162,7 @@ fi
 echo -e "\nStart OpenSearch"
 cd $DIR/opensearch
 nohup ./opensearch-tar-install.sh > opensearch.log 2>&1 &
-#sleep 10
+sleep 30
 
 # Setup Dashboards
 echo -e "\nSetup Dashboards"
