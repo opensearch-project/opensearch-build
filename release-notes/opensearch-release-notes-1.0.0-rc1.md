@@ -157,7 +157,6 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Update issue template with multiple labels ([#10](https://github.com/opensearch-project/index-management/pull/10))
   
 
-
 ### Opensearch k-NN
 * Update upstream to use 1.0 ([#30](https://github.com/opensearch-project/k-NN/pull/30))
 
