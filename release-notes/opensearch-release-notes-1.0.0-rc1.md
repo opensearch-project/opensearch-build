@@ -1,12 +1,11 @@
 # OpenSearch and Dashboards 1.0.0-rc1 Release Notes
 
 ## Release Highlights
+This Release Candidate is a version of the project that is feature complete and passing automated testing with the intent to validate expected functionality before moving to a General Availability (GA) launch. There are multiple enhancements and fixes that are part of this release including span filtering support in Trace Analytics, tenant support in Notebooks, K-NN field level algorithm selection, support for index management transforms, and support for scheduling and tenants in reporting.
 
 ## Release Details
 
 OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
-
-## BREAKING CHANGES
 
 ## FEATURES
 
@@ -74,10 +73,6 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Changes regarding the anonymous auth flow [#768](https://github.com/opensearch-project/security-dashboards-plugin/pull/768)
 
 
-### Opensearch Sql
-* Support querying a data stream ([#56](https://github.com/opensearch-project/sql/pull/56))
-
-
 ## BUG FIXES
 
 ### Opensearch Alerting Dashboards Plugin
@@ -118,10 +113,6 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 ### Opensearch Security Dashboards Plugin
 * Fixing JSON parsing in SAML for strings that contain '' character [#749](https://github.com/opensearch-project/security-dashboards-plugin/pull/749)
 * Fix login redirect [#777](https://github.com/opensearch-project/security-dashboards-plugin/pull/777)
-
-
-### Opensearch Sql
-* Fix Breadcrumb display in Query Workbench ([#105](https://github.com/opensearch-project/sql/pull/105))
 
 
 ### Opensearch Trace Analytics
@@ -189,7 +180,7 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 
 
 ### Opensearch Alerting Dashboards Plugin
-  * Update issue template with multiple labels ([#11](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/11))
+* Update issue template with multiple labels ([#11](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/11))
 
 
 ### Opensearch Anomaly Detection Dashboards
@@ -204,7 +195,7 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Update issue template with multiple labels ([#12](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/12))
 
 
-### Opensearch
+### Opensearch Job Scheduler
 * Update issue template with multiple labels ([#21](https://github.com/opensearch-project/job-scheduler/pull/21))
 
 
@@ -218,7 +209,7 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Update REST endpoint in document ([#10](https://github.com/opensearch-project/perftop/pull/10))
 
 
-### Opensearch Sql
+### Opensearch SQL
 * Migrate SQL/PPL, JDBC, ODBC docs to OpenSearch ([#68](https://github.com/opensearch-project/sql/pull/68))
 
 
@@ -249,7 +240,7 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Point to correct version of notification ([#18](https://github.com/opensearch-project/index-management/pull/18))
 
 
-### Opensearch
+### Opensearch Job Scheduler
 * Rename settings from OpenDistro and OpenSearch, with backwards compatibility, using fallback ([#20](https://github.com/opensearch-project/job-scheduler/pull/20))
 
 
@@ -322,8 +313,8 @@ OpenSearch and Dashboards 1.0.0-rc1 includes the following OpenSearch Migration,
 * Update API, settings, and doc link renaming ([#15](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/15))
 
 
-### Opensearch
-* Change plugin setting name from 'opensearch.' to 'pluigns.' ([#27](https://github.com/opensearch-project/job-scheduler/pull/27))
+### Opensearch Job Scheduler
+* Change plugin setting name from 'opensearch.' to 'plugins.' ([#27](https://github.com/opensearch-project/job-scheduler/pull/27))
 * Rename namespaces from odfe to opensearch ([#24](https://github.com/opensearch-project/job-scheduler/pull/24))
 * Change path of REST APIs for 'Sample Extension Plugin' and naming convension in filename and comments ([#25](https://github.com/opensearch-project/job-scheduler/pull/25))
 * Rename other identifiers from opendistro or elasticsearch to OpenSearch ([#28](https://github.com/opensearch-project/job-scheduler/pull/28))
