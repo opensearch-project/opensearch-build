@@ -41,6 +41,7 @@ function usage() {
     echo ""
     echo "Optional arguments:"
     echo -e "-c \tCleanup Existing deployment only without new deployment."
+    echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -75,10 +76,13 @@ while getopts ":hct:v:s:p:" arg; do
             ;;
         c)
             cleanup
-            exit
+	    exit
             ;;
-        t)
+	t)
             TYPE=$OPTARG
+	    ;;
+        s)
+            SECURITY_ENABLED=$OPTARG
             ;;
         h)
             usage
@@ -102,13 +106,15 @@ if [ -z "$VERSION" ] || [ -z "$TYPE" ]; then
   usage
   exit 1
 else
-  echo $VERSION $TYPE
+  echo VERSION:$VERSION TYPE:$TYPE SECURITY_ENABLED:$SECURITY_ENABLED
 fi
 
 # Setup instances
 sudo sysctl -w vm.max_map_count=262144
 sudo chmod -R 777 /dev/shm
 ulimit -n 65535
+#echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
+#echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 
 # Setup Work Directory
 cleanup
@@ -134,9 +140,8 @@ tar -xzf opensearch-dashboards.tgz -C opensearch-dashboards/ --strip-components=
 
 # Setup OpenSearch
 echo -e "\nSetup OpenSearch"
-cd $DIR/opensearch
-./opensearch-onetime-setup.sh
-mkdir -p backup_snapshots
+cd $DIR/opensearch && mkdir -p backup_snapshots
+$ROOT/opensearch-onetime-setup.sh $DIR/opensearch > /dev/null 2>&1
 sed -i /^node.max_local_storage_nodes/d ./config/opensearch.yml
 echo "path.repo: [\"$PWD/backup_snapshots\"]" >> config/opensearch.yml
 echo "node.name: init-master" >> config/opensearch.yml
@@ -146,15 +151,30 @@ echo "network.host: 0.0.0.0" >> config/opensearch.yml
 echo "plugins.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" >> config/opensearch.yml
 echo "script.context.field.max_compilations_rate: 1000/1m" >> config/opensearch.yml
 echo "webservice-bind-host = 0.0.0.0" >> plugins/opensearch-performance-analyzer/pa_config/performance-analyzer.properties
+if [ "$SECURITY_ENABLED" == "false" ]
+then
+  echo Remove OpenSearch Security
+  #./bin/opensearch-plugin remove opensearch-security
+  echo "plugins.security.disabled: true" >> config/opensearch.yml
+fi
 
 # Start OpenSearch
 echo -e "\nStart OpenSearch"
+cd $DIR/opensearch
 nohup ./opensearch-tar-install.sh > opensearch.log 2>&1 &
+#sleep 10
 
 # Setup Dashboards
 echo -e "\nSetup Dashboards"
 cd $DIR/opensearch-dashboards
 echo "server.host: 0.0.0.0" >> config/opensearch_dashboards.yml
+if [ "$SECURITY_ENABLED" == "false" ]
+then
+  echo Remove Dashboards Security
+  ./bin/opensearch-dashboards-plugin remove security-dashboards
+  sed -i /^opensearch_security/d config/opensearch_dashboards.yml
+  sed -i 's/https/http/' config/opensearch_dashboards.yml
+fi
 
 # Start Dashboards
 echo -e "\nStart Dashboards"
@@ -164,7 +184,8 @@ nohup ./opensearch-dashboards > opensearch-dashboards.log 2>&1 &
 # Wait for start
 echo -e "\nSleep 30"
 sleep 30
-echo Startup Complete
+echo Security Plugin: $SECURITY_ENABLED
+echo Startup OpenSearch/Dashboards Complete
 
 
 
