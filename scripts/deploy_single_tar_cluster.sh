@@ -112,7 +112,7 @@ fi
 # Setup instances
 #sudo sysctl -w vm.max_map_count=262144 || echo vm.max_map_count not changed due to no sudo
 #sudo chmod -R 777 /dev/shm || echo /dev/shm permission not changed due to no sudo
-ulimit -n 65535
+#ulimit -n 65535
 #echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
 #echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 
