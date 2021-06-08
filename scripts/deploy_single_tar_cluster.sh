@@ -42,7 +42,6 @@ function usage() {
     echo "Optional arguments:"
     echo -e "-c \tCleanup Existing deployment only without new deployment."
     echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
-    echo -e "-l SETUP_LIMITS\t(true | false) Specify whether you want to setup limits for OpenSearch/Dashboards to run, require sudo. Default to true."
     echo -e "-h\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -70,7 +69,7 @@ function cleanup() {
 }
 
 
-while getopts ":hct:v:s:p:" arg; do
+while getopts ":hct:v:s:" arg; do
     case $arg in
         v)
             VERSION=$OPTARG
@@ -84,9 +83,6 @@ while getopts ":hct:v:s:p:" arg; do
 	    ;;
         s)
             ENABLE_SECURITY=$OPTARG
-            ;;
-        s)
-            SETUP_LIMITS=$OPTARG
             ;;
         h)
             usage
@@ -111,18 +107,6 @@ if [ -z "$VERSION" ] || [ -z "$TYPE" ]; then
   exit 1
 else
   echo VERSION:$VERSION TYPE:$TYPE ENABLE_SECURITY:$ENABLE_SECURITY
-fi
-
-# Setup Limits
-if [ "$SETUP_LIMITS" != "false" ]
-then
-  ## Requirements for OpenSearch
-  sudo sysctl -w vm.max_map_count=262144
-  ulimit -n 65535
-  ## Requirements for PA
-  sudo chmod -R 777 /dev/shm
-  #echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
-  #echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 fi
 
 # Setup Work Directory
