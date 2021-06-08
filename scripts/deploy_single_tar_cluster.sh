@@ -40,7 +40,7 @@ function usage() {
     echo -e "-t TYPE\t(snapshots | releases) Specify the OpenSearch Type of artifacts to use, snapshots or releases."
     echo ""
     echo "Optional arguments:"
-    echo -e "-c Cleanup Existing deployment only without new deployment."
+    echo -e "-c \tCleanup Existing deployment only without new deployment."
     echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
@@ -141,7 +141,7 @@ tar -xzf opensearch-dashboards.tgz -C opensearch-dashboards/ --strip-components=
 # Setup OpenSearch
 echo -e "\nSetup OpenSearch"
 cd $DIR/opensearch && mkdir -p backup_snapshots
-$ROOT/opensearch-onetime-setup.sh $DIR/opensearch > /dev/null 2>&1
+$ROOT/opensearch-onetime-setup.sh $DIR/opensearch
 sed -i /^node.max_local_storage_nodes/d ./config/opensearch.yml
 echo "path.repo: [\"$PWD/backup_snapshots\"]" >> config/opensearch.yml
 echo "node.name: init-master" >> config/opensearch.yml
