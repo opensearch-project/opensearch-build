@@ -27,7 +27,12 @@
 # This script performs one-time setup for the OpenSearch tarball distribution.
 # It installs a demo security config and sets up the performance analyzer
 
-OPENSEARCH_HOME=`dirname $(realpath $0)`; cd $OPENSEARCH_HOME
+OPENSEARCH_HOME=$1
+if [ -z "$OPENSEARCH_HOME" ]
+then
+  OPENSEARCH_HOME=`dirname $(realpath $0)`; cd $OPENSEARCH_HOME
+fi
+echo $OPENSEARCH_HOME
 
 ##Security Plugin
 SECURITY_PLUGIN="opensearch-security"
