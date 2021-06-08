@@ -40,7 +40,7 @@ function usage() {
     echo -e "-t TYPE\t(snapshots | releases) Specify the OpenSearch Type of artifacts to use, snapshots or releases."
     echo ""
     echo "Optional arguments:"
-    echo -e "-c \tCleanup Existing deployment only without new deployment."
+    echo -e "-c Cleanup Existing deployment only without new deployment."
     echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
