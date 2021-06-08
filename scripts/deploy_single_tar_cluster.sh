@@ -42,7 +42,8 @@ function usage() {
     echo "Optional arguments:"
     echo -e "-c \tCleanup Existing deployment only without new deployment."
     echo -e "-s ENABLE_SECURITY\t(true | false) Specify whether you want to enable security plugin or not. Default to true."
-    echo -e "-h\t\tPrint this message."
+    echo -e "-l SETUP_LIMITS\t(true | false) Specify whether you want to setup limits for OpenSearch/Dashboards to run, require sudo. Default to true."
+    echo -e "-h\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
 
@@ -82,7 +83,10 @@ while getopts ":hct:v:s:p:" arg; do
             TYPE=$OPTARG
 	    ;;
         s)
-            SECURITY_ENABLED=$OPTARG
+            ENABLE_SECURITY=$OPTARG
+            ;;
+        s)
+            SETUP_LIMITS=$OPTARG
             ;;
         h)
             usage
@@ -106,15 +110,20 @@ if [ -z "$VERSION" ] || [ -z "$TYPE" ]; then
   usage
   exit 1
 else
-  echo VERSION:$VERSION TYPE:$TYPE SECURITY_ENABLED:$SECURITY_ENABLED
+  echo VERSION:$VERSION TYPE:$TYPE ENABLE_SECURITY:$ENABLE_SECURITY
 fi
 
-# Setup instances
-#sudo sysctl -w vm.max_map_count=262144 || echo vm.max_map_count not changed due to no sudo
-#sudo chmod -R 777 /dev/shm || echo /dev/shm permission not changed due to no sudo
-#ulimit -n 65535
-#echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
-#echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
+# Setup Limits
+if [ "$SETUP_LIMITS" != "false" ]
+then
+  ## Requirements for OpenSearch
+  sudo sysctl -w vm.max_map_count=262144
+  ulimit -n 65535
+  ## Requirements for PA
+  sudo chmod -R 777 /dev/shm
+  #echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
+  #echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
+fi
 
 # Setup Work Directory
 cleanup
@@ -151,7 +160,7 @@ echo "network.host: 0.0.0.0" >> config/opensearch.yml
 echo "plugins.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" >> config/opensearch.yml
 echo "script.context.field.max_compilations_rate: 1000/1m" >> config/opensearch.yml
 echo "webservice-bind-host = 0.0.0.0" >> plugins/opensearch-performance-analyzer/pa_config/performance-analyzer.properties
-if [ "$SECURITY_ENABLED" == "false" ]
+if [ "$ENABLE_SECURITY" == "false" ]
 then
   echo Remove OpenSearch Security
   #./bin/opensearch-plugin remove opensearch-security
@@ -168,7 +177,7 @@ sleep 30
 echo -e "\nSetup Dashboards"
 cd $DIR/opensearch-dashboards
 echo "server.host: 0.0.0.0" >> config/opensearch_dashboards.yml
-if [ "$SECURITY_ENABLED" == "false" ]
+if [ "$ENABLE_SECURITY" == "false" ]
 then
   echo Remove Dashboards Security
   ./bin/opensearch-dashboards-plugin remove security-dashboards
@@ -184,7 +193,7 @@ nohup ./opensearch-dashboards > opensearch-dashboards.log 2>&1 &
 # Wait for start
 echo -e "\nSleep 30"
 sleep 30
-echo Security Plugin: $SECURITY_ENABLED
+echo Security Plugin: $ENABLE_SECURITY
 echo Startup OpenSearch/Dashboards Complete
 
 
