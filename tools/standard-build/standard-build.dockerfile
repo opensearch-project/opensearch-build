@@ -6,13 +6,18 @@ RUN apt-get update && \
     apt-get install python -y && \
     apt-get install git -y
 
-# Create user and group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
+ARG UID=1000
+ARG GID=1000
 
-USER 1000
+# Create user and group
+RUN groupadd -g $GID opensearch && \
+    useradd -u $UID -g $GID -d /usr/share/opensearch opensearch && \
+    mkdir -p /usr/share/opensearch && \
+    chown -R $UID:$GID /usr/share/opensearch
+
+
+USER $UID
+
 WORKDIR /usr/share/opensearch
 
 # nvm environment variables
