@@ -18,6 +18,12 @@
 # on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
+#
+# About: This docker file generates an image that can be used as standard build enviornment for building all artifacts
+# Usage: docker build -f standard-build.dockerfile --tag <name>
+# Build arguments:
+#        UID: Optional. Specify the opensearch userid. Defaults to 1000.
+#        GID: Optional. Specify the opensearch groupid. Defaults to 1000.
 
 FROM ubuntu:20.04
 
