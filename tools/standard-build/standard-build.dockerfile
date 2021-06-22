@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # SPDX-License-Identifier: Apache-2.0
 #
 # The OpenSearch Contributors require contributions made to
@@ -27,7 +25,6 @@
 #        UID: Optional. Specify the opensearch userid. Defaults to 1000.
 #        GID: Optional. Specify the opensearch groupid. Defaults to 1000.
 
->>>>>>> d93fc077b7aefe90ccbe12fa39f16a5815678423
 FROM ubuntu:20.04
 
 RUN apt-get update && \
