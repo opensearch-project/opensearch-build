@@ -21,8 +21,10 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #
-# About: This shell script generate an opensearch tarball with all the provided plugins installed and ready to use. A mnaifest file and right permissions set up is essential to download the required artifacts 
-# Usage: ./opensearch-tar-build.sh -f <path/to/manifest/file/>
+# About:        This shell script generate an opensearch tarball with all the provided plugins installed and ready to use. 
+#               A manifest file and right permissions set up is essential to download the required artifacts
+# Dependencies: yq (More info: https://github.com/mikefarah/yq/tree/v4.4.1#install)
+# Usage: .      /opensearch-tar-build.sh -f <path/to/manifest/file/>
 #
 
 set -e
