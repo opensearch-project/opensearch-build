@@ -41,7 +41,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":ha:p:u:f:" arg; do
+while getopts ":ha:p:f:" arg; do
     case $arg in
         h)
             usage
