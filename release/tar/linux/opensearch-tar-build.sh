@@ -84,20 +84,20 @@ fi
 REPO_ROOT=`git rev-parse --show-toplevel`
 VERSION=`yq eval '.version' $MANIFEST_FILE`
 WORKING_DIR="opensearch-working-directory"
-OPENSEARCH_CORE_URL=`yq eval '.download_urls.OpenSearch' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
-OPENSEARCH_PLUGINS_URLS=`yq eval '.download_urls.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
-LIBS=`yq eval '.download_urls.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
+OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
+OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
+LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
 # Download plugins to local 
 mkdir -p ${WORKING_DIR}/plugins_downloads
 IFS=$'\n'
 cd ${WORKING_DIR}/plugins_downloads
 for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
-  aws s3 cp $plugin .
+  aws s3 cp $plugin . --profile staging
 done
 
 # Download k-NN lib
-aws s3 cp $LIBS .
+aws s3 cp $LIBS . --profile staging
 unzip opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip
 
 cd ..
