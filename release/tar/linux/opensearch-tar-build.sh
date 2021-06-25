@@ -72,8 +72,20 @@ if [ -z "$PLATFORM" ]; then
     PLATFORM="linux"
 fi
 
+if [ "$PLATFORM" != "linux" ]; then
+    echo "error: This platform is not supported yet!"
+    usage
+    exit 1
+fi
+
 if [ -z "$ARCHITECTURE" ]; then
     ARCHITECTURE="x64"
+fi
+
+if [ "$ARCHITECTURE" != "x64" ] || [ "$ARCHITECTURE" != "arm64" ]; then
+    echo "error: This architecture is not supported yet!"
+    usage
+    exit 1
 fi
 
 if [ -z "$MANIFEST_FILE" ]; then
