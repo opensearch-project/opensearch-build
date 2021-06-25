@@ -93,11 +93,11 @@ mkdir -p ${WORKING_DIR}/plugins_downloads
 IFS=$'\n'
 cd ${WORKING_DIR}/plugins_downloads
 for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
-  aws s3 cp $plugin . --profile staging
+  aws s3 cp $plugin .
 done
 
 # Download k-NN lib
-aws s3 cp $LIBS . --profile staging
+aws s3 cp $LIBS .
 unzip opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip
 
 cd ..
