@@ -48,10 +48,10 @@ while getopts ":ha:p:f:" arg; do
             exit 1
             ;;
         p)
-            PLATFORM=$OPTARG
+            PLATFORM=$(echo "$OPTARG" | tr '[:upper:]' '[:lower:]')
             ;;
         a)
-            ARCHITECTURE=$OPTARG
+            ARCHITECTURE=$(echo "$OPTARG" | tr '[:upper:]' '[:lower:]')
             ;;
         f)
             MANIFEST_FILE=$OPTARG
@@ -98,7 +98,7 @@ done
 
 # Download k-NN lib
 aws s3 cp $LIBS .
-unzip opensearch-knnlib-$VERSION-$PLATFORM-$ARCHITECTURE.zip
+unzip opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip
 
 cd ..
 
