@@ -31,6 +31,7 @@ set -e
 
 function usage() {
     echo "Usage: $0 [args]"
+    echo -e "Supported manifest schema-version: 1.0"
     echo ""
     echo "Required arguments:"
     echo -e "-f MANIFEST_FILE\tPath/to/manifest.yml file"
@@ -73,7 +74,7 @@ if [ -z "$PLATFORM" ]; then
 fi
 
 if [ "$PLATFORM" != "linux" ]; then
-    echo "error: This platform is not supported yet!"
+    echo "error: $PLATFORM platform is not supported yet!"
     usage
     exit 1
 fi
@@ -82,17 +83,34 @@ if [ -z "$ARCHITECTURE" ]; then
     ARCHITECTURE="x64"
 fi
 
-if [ "$ARCHITECTURE" != "x64" ] || [ "$ARCHITECTURE" != "arm64" ]; then
-    echo "error: This architecture is not supported yet!"
+if [ "$ARCHITECTURE" != "x64" ] && [ "$ARCHITECTURE" != "arm64" ]
+then
+    echo "error: $ARCHITECTURE architecture is not supported yet!"
     usage
     exit 1
 fi
 
 if [ -z "$MANIFEST_FILE" ]; then
-    echo "Please specify the right path to manifest file"
+    echo "error: You must specify the manifest file"
     usage
     exit 1
 fi
+
+if [ ! -f $MANIFEST_FILE ]; then
+    echo "error: The given file doesnot exist. Please check the specified path"
+    usage
+    exit 1
+fi
+
+SCHEMA_VERSION=`yq eval '.manifest.schema-version' $MANIFEST_FILE`
+echo $SCHEMA_VERSION
+
+if [ $SCHEMA_VERSION != 1.0 ]; then
+    echo "error: This script only supports manifest schema version 1.0. Please use the manifest file with right schema version"
+    usage
+    exit 1
+fi
+
 REPO_ROOT=`git rev-parse --show-toplevel`
 VERSION=`yq eval '.version' $MANIFEST_FILE`
 WORKING_DIR="opensearch-working-directory"
@@ -100,7 +118,7 @@ OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FIL
 OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
-# Download plugins to local 
+# # Download plugins to local 
 mkdir -p ${WORKING_DIR}/plugins_downloads
 IFS=$'\n'
 cd ${WORKING_DIR}/plugins_downloads
@@ -108,16 +126,16 @@ for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
   aws s3 cp $plugin .
 done
 
-# Download k-NN lib
+# # Download k-NN lib
 aws s3 cp $LIBS .
 unzip opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip
 
 cd ..
 
 # Download OpenSearch core TAR
-wget -q ${OPENSEARCH_CORE_URL}
-tar -xzf opensearch-min-*
-rm *tar.gz
+wget -q ${OPENSEARCH_CORE_URL} -O opensearch.tar.gz
+tar -xzf opensearch.tar.gz
+rm opensearch.tar.gz
 
 # Install plugins to OpenSearch
 cd opensearch-*
@@ -129,11 +147,10 @@ done
 echo "Plugins installed are:\n"
 ls -tlr plugins
 
-# Setup PA
+# Setup Performance Analyzer Agent
 cp -r plugins/opensearch-performance-analyzer/performance-analyzer-rca .
 chmod -R 755 performance-analyzer-rca
 mv bin/opensearch-performance-analyzer/performance-analyzer-agent-cli ./bin
-ls -ltr ./bin
 rm -rf ./bin/opensearch-performance-analyzer
 
 
@@ -150,8 +167,7 @@ cp $REPO_ROOT/release/tar/linux/opensearch-tar-install.sh .
 mkdir -p plugins/opensearch-knn/knnlib
 cp ../plugins_downloads/opensearch-knnlib-*/libKNNIndexV2_0_11.so plugins/opensearch-knn/knnlib 
 
-
-# Create TAR and Upload TAR to S3
+# Tar the bundle and clean up
 cd ..
 tar -czf opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz opensearch-*
 cd ..
