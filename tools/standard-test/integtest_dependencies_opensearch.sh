@@ -37,6 +37,14 @@ then
   echo "Example: $0 js 1.0.0 rc1"
 fi
 
+if [ -z "$3" ]
+then
+    REVISION=$2
+else
+    REVISION=$2-$3
+fi
+
+
 if [ "$1" == "os" ]
 then
     if [ -z "$3" ]
@@ -45,12 +53,20 @@ then
     else
         ./gradlew publishToMavenLocal -Dbuild.version_qualifier=$3 -Dbuild.snapshot=false --console=plain
     fi
-elif [ "$1" == "cu" ] || [ "$1" == "js" ]
+elif [ "$1" == "cu" ]
 then
-    if [ -z "$3" ]
-    then
-        ./gradlew publishToMavenLocal -Dopensearch.version=$2 -Dbuild.snapshot=false --console=plain
-    else
-        ./gradlew publishToMavenLocal -Dopensearch.version=$2-$3 -Dbuild.snapshot=false --console=plain
-    fi
+        ./gradlew publishToMavenLocal -Dopensearch.version=$REVISION -Dbuild.snapshot=false --console=plain
+elif [ "$1" == "js" ]
+then
+   ./gradlew publishToMavenLocal -Dopensearch.version=$REVISION -Dbuild.snapshot=false --console=plain
+   ./gradlew assemble -Dopensearch.version=$REVISION -Dbuild.snapshot=false
+
+    echo "Creating ../src/test/resources/job-scheduler ..."
+    mkdir -p ../src/test/resources/job-scheduler
+    pwd
+    echo "Copying ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
+    ls ./build/distributions/
+    cp ./build/distributions/*.zip ../src/test/resources/job-scheduler
+    echo "Copied ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
+    ls ../src/test/resources/job-scheduler
 fi
