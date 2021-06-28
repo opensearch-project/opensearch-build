@@ -28,7 +28,7 @@
 set -e
 
 # Source lib
-. ../lib/shell/common.sh
+. ../../lib/shell/common.sh
 
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 CURR_DIR=`pwd`
