@@ -49,8 +49,8 @@ elif [ "$1" == "cu" ] || [ "$1" == "js" ]
 then
     if [ -z "$3" ]
     then
-        ./gradlew publishToMavenLocal -Dopensearch.version=$2-$3 -Dbuild.snapshot=false --console=plain
-    else
         ./gradlew publishToMavenLocal -Dopensearch.version=$2 -Dbuild.snapshot=false --console=plain
+    else
+        ./gradlew publishToMavenLocal -Dopensearch.version=$2-$3 -Dbuild.snapshot=false --console=plain
     fi
 fi
