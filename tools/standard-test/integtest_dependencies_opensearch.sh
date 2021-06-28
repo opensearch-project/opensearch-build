@@ -24,8 +24,17 @@
 # permissions and limitations under the License.
 
 # This is a temporary measure before we have maven central setup
-# Assume this script is in the root directory of OpenSearch repository
+# Assume this script is in the root directory of OpenSearch repository for $1=os
+# Assume this script is in the root directory of common-utils repository for $1=cu
+# Assume this script is in the root directory of job-scheduler repository, 
+#     which itself is a subdirectory of the plugin repository that need to run the integTest for $1=js
+#     Example: anomaly-detection (plugin repo root that needs to run integTest)
+#                - job-schedular (run $1=js here)
+
+
 # https://github.com/opensearch-project/OpenSearch
+# https://github.com/opensearch-project/common-utils
+# https://github.com/opensearch-project/job-scheduler
 # $1 is the local repo that needs deployment
 # $2 is the version number such as 1.0.0, 2.0.0
 # $3 is the version qualifier such as beta1, rc1
