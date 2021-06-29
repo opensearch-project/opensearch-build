@@ -12,7 +12,8 @@
 
 
 #
-# About:        This shell script generate an opensearch tarball with all the provided plugins installed and ready to use. 
+# About:        This shell script generate an opensearch tarball with all the provided plugins installed and ready to use.
+#               It will create a folder named target that will consist of the tarball and shasum of the same.
 #               A manifest file and right permissions set up is essential to download the required artifacts
 # Dependencies: yq (More info: https://github.com/mikefarah/yq/tree/v4.4.1#install)
 # Usage:        ./opensearch-tar-build.sh -f <path/to/manifest/file/>
@@ -95,60 +96,62 @@ then
 fi
 
 REPO_ROOT=`git rev-parse --show-toplevel`
-BASE_DIR="opensearch-working-directory"
-TARGET_DIR=`pwd`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+DIR_NAME="opensearch-$VERSION"
+WORKING_DIR="$ROOT/$DIR_NAME"
+TARGET_DIR="$ROOT/target"
+PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
 # # Download plugins to local 
-mkdir -p $BASE_DIR/plugins_downloads
-cd $BASE_DIR
-WORKING_DIR=`pwd`
+mkdir $WORKING_DIR
+mkdir $TARGET_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
-cd ${WORKING_DIR}/plugins_downloads
 for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
-  aws s3 cp $plugin .
+  aws s3 cp $plugin $PLUGINS_TEMP/
 done
 
 # # Download k-NN lib
-aws s3 cp $LIBS .
-unzip opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip
+aws s3 cp $LIBS $PLUGINS_TEMP/
+unzip $PLUGINS_TEMP/opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip -d $PLUGINS_TEMP/
 
 # Download OpenSearch core TAR
 wget -q ${OPENSEARCH_CORE_URL} -O opensearch.tar.gz
 tar -xzf opensearch.tar.gz --strip-components=1 --directory "$WORKING_DIR" && rm -rf opensearch.tar.gz
 
 # Install plugins to OpenSearch
-cd ${WORKING_DIR}
 for plugins in $OPENSEARCH_PLUGINS_URLS; do
     plugin=`basename $plugins`
-  ./bin/opensearch-plugin install --batch file:${WORKING_DIR}/plugins_downloads/$plugin
+    $WORKING_DIR/bin/opensearch-plugin install --batch file:$PLUGINS_TEMP/$plugin
 done
 
 echo "Plugins installed are:"
-ls -tlr plugins
+ls -tlr $WORKING_DIR/plugins
 
 # Setup Performance Analyzer Agent
-cp -r plugins/opensearch-performance-analyzer/performance-analyzer-rca .
-chmod -R 755 performance-analyzer-rca
-mv bin/opensearch-performance-analyzer/performance-analyzer-agent-cli ./bin
-rm -rf ./bin/opensearch-performance-analyzer
+cp -r $WORKING_DIR/plugins/opensearch-performance-analyzer/performance-analyzer-rca $WORKING_DIR/
+chmod -R 755 $WORKING_DIR/performance-analyzer-rca
+mv $WORKING_DIR/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $WORKING_DIR/bin
+rm -rf $WORKING_DIR/bin/opensearch-performance-analyzer
 
-mkdir -p data
-chmod 755 data/
+mkdir -p $WORKING_DIR/data
+chmod 755 $WORKING_DIR/data/
 
 # Copy the tarball installation script 
 cp $REPO_ROOT/release/tar/linux/opensearch-tar-install.sh $WORKING_DIR/
 
 # Setup k-NN-library
 mkdir -p $WORKING_DIR/plugins/opensearch-knn/knnlib
-cp $WORKING_DIR/plugins_downloads/opensearch-knnlib-*/libKNNIndexV2_0_11.so $WORKING_DIR/plugins/opensearch-knn/knnlib 
+cp $PLUGINS_TEMP/opensearch-knnlib-*/libKNNIndexV*.so $WORKING_DIR/plugins/opensearch-knn/knnlib 
 
 # Tar the bundle and clean up
-rm -rf plugins_downloads
-tar -czf $TARGET_DIR/opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $TARGET_DIR/$BASE_DIR
+rm -rf $PLUGINS_TEMP
+cd $ROOT
+echo "Generating the tarball"
+tar -czf $TARGET_DIR/opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $DIR_NAME
 cd $TARGET_DIR
 shasum -a 512 opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 shasum -a 512 -c opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
