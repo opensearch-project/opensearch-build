@@ -67,6 +67,7 @@ SCHEMA_VERSION=`yq eval '.manifest.schema-version' $MANIFEST_FILE`
 PLATFORM=`yq eval '.build.platform' $MANIFEST_FILE`
 ARCHITECTURE=`yq eval '.build.architecture' $MANIFEST_FILE`
 VERSION=`yq eval '.build.version' $MANIFEST_FILE`
+UNDERLYING_ARCH=`uname -p`
 
 if [ -z "$VERSION" ]; then
     echo "error: Please specify the version in the manifest file"
@@ -93,6 +94,13 @@ then
     exit 1
 fi
 
+if [[ ( "$ARCHITECTURE" == "arm64" && ( "$UNDERLYING_ARCH" != "aarch64" && "$UNDERLYING_ARCH" != "arm64" )) ||  ( "$ARCHITECTURE" == "x64" && ( "$UNDERLYING_ARCH" != "x86_64" && "$UNDERLYING_ARCH" != "amd64" )) ]]
+then
+    echo "error: The underlying architecture($UNDERLYING_ARCH) doesnot match the product architecture($ARCHITECTURE) that you are trying to build"
+    echo "Please use the appropriate build environment"
+    exit 1
+fi
+
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 DIR_NAME="opensearch-$VERSION"
@@ -105,7 +113,7 @@ LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e '
 
 # # Download plugins to local 
 mkdir $WORKING_DIR
-mkdir $TARGET_DIR
+mkdir -p $TARGET_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
 for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
