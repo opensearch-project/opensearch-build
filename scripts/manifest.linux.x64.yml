@@ -1,7 +1,10 @@
 ---
 manifest:
   schema-version: 1.0
-version: 1.0.0
+build:
+  version: 1.0.0
+  platform: linux
+  architecture: x64
 products:
   opensearch: 
     opensearch-min: https://artifacts.opensearch.org/snapshots/core/opensearch/1.0.0/opensearch-min-1.0.0-SNAPSHOT-linux-x64-186.tar.gz
