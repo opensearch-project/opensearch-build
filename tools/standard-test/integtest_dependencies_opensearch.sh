@@ -53,6 +53,8 @@ else
     REVISION=$2-$3
 fi
 
+echo REVISION $REVISION
+
 
 if [ "$1" == "os" ]
 then
