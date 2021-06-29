@@ -25,10 +25,8 @@ function usage() {
     echo "Usage: $0 [args]"
     echo -e "Supported manifest schema-version: 1.0"
     echo ""
-    echo "Required arguments:"
-    echo -e "-f MANIFEST_FILE\tPath/to/manifest.yml file"
-    echo ""
-    echo "Optional arguments:"
+    echo "Arguments:"
+    echo -e "-f MANIFEST_FILE\t[Required] Path/to/manifest.yml file"
     echo -e "-h help"
 }
 
