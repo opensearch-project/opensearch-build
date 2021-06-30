@@ -24,17 +24,19 @@
 # permissions and limitations under the License.
 
 # This is a temporary measure before we have maven central setup
-# Assume this script is in the root directory of OpenSearch repository for $1=os
-# Assume this script is in the root directory of common-utils repository for $1=cu
-# Assume this script is in the root directory of job-scheduler repository, 
+# Assume this script is in the root directory of OpenSearch repository for $1=opensearch
+# Assume this script is in the root directory of common-utils repository for $1=common-utils
+# Assume this script is in the root directory of job-scheduler repository for $1=job-scheduler
 #     which itself is a subdirectory of the plugin repository that need to run the integTest for $1=js
 #     Example: anomaly-detection (plugin repo root that needs to run integTest)
 #                - job-schedular (run $1=js here)
+# Assume this script is in the root directory of alerting repository for $1=alerting
 
 
 # https://github.com/opensearch-project/OpenSearch
 # https://github.com/opensearch-project/common-utils
 # https://github.com/opensearch-project/job-scheduler
+# https://github.com/opensearch-project/alerting
 # $1 is the local repo that needs deployment
 # $2 is the version number such as 1.0.0, 2.0.0
 # $3 is the version qualifier such as beta1, rc1
@@ -42,8 +44,8 @@
 if [ -z "$1" ] || [ -z "$2" ]
 then
   echo "You must specify parameters 'ACTION VERSION [QUALIFIER]'"
-  echo "Example: $0 os 1.0.0"
-  echo "Example: $0 js 1.0.0 rc1"
+  echo "Example: $0 opensearch 1.0.0"
+  echo "Example: $0 job-scheduler 1.0.0 rc1"
 fi
 
 if [ -z "$3" ]
@@ -56,7 +58,7 @@ fi
 echo REVISION $REVISION
 
 
-if [ "$1" == "os" ]
+if [ "$1" = "opensearch" ]
 then
     if [ -z "$3" ]
     then
@@ -64,10 +66,10 @@ then
     else
         ./gradlew publishToMavenLocal -Dbuild.version_qualifier=$3 -Dbuild.snapshot=false --console=plain
     fi
-elif [ "$1" == "cu" ]
+elif [ "$1" = "common-utils" ]
 then
         ./gradlew publishToMavenLocal -Dopensearch.version=$REVISION -Dbuild.snapshot=false --console=plain
-elif [ "$1" == "js" ]
+elif [ "$1" = "job-scheduler" ]
 then
    ./gradlew publishToMavenLocal -Dopensearch.version=$REVISION -Dbuild.snapshot=false --console=plain
    ./gradlew assemble -Dopensearch.version=$REVISION -Dbuild.snapshot=false
@@ -81,4 +83,5 @@ then
     cp -v ./build/distributions/*.zip ../src/test/resources/job-scheduler
     echo "Copied ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
     ls ../src/test/resources/job-scheduler
+elif [ "$1" = "alerting" ]
 fi
