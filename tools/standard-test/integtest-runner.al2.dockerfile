@@ -74,7 +74,7 @@ WORKDIR /usr/share/opensearch
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 10.23.1
+ENV NODE_VERSION 10.24.1
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
@@ -87,7 +87,7 @@ RUN source $NVM_DIR/nvm.sh \
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
-RUN npm install -g yarn@^1.22.1
+RUN npm install -g yarn@^1.21.1
 # confirm installation
 RUN node -v
 RUN npm -v
