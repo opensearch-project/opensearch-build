@@ -77,7 +77,7 @@ then
     pwd
     echo "Copying ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
     ls ./build/distributions/
-    rm -rf -v../src/test/resources/job-scheduler/*
+    rm -rf -v ../src/test/resources/job-scheduler/*
     cp -v ./build/distributions/*.zip ../src/test/resources/job-scheduler
     echo "Copied ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
     ls ../src/test/resources/job-scheduler
