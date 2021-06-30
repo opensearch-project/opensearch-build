@@ -31,7 +31,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":ha:p:f:" arg; do
+while getopts ":hf:" arg; do
     case $arg in
         h)
             usage
@@ -125,8 +125,8 @@ wget -q ${OPENSEARCH_DASHBOARDS_CORE_URL} -O opensearch-dashboards.tar.gz
 tar -xzf opensearch-dashboards.tar.gz --strip-components=1 --directory "$WORKING_DIR" && rm -rf opensearch-dashboards.tar.gz
 
 # Install plugins to OpenSearch
-for plugins in $OPENSEARCH_DASHBOARDS_PLUGINS_URLS; do
-    plugin=`basename $plugins`
+for plugin_url in $OPENSEARCH_DASHBOARDS_PLUGINS_URLS; do
+    plugin=`basename $plugin_url`
     $WORKING_DIR/bin/opensearch-dashboards-plugin --allow-root install file:$PLUGINS_TEMP/$plugin
 done
 
@@ -144,4 +144,4 @@ tar -czf $TARGET_DIR/opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.
 cd $TARGET_DIR
 shasum -a 512 opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 shasum -a 512 -c opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-rm -rf ${WORKING_DIR}
+rm -rf ${WORKING_DIR} ${PLUGINS_TEMP}
