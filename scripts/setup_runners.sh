@@ -212,6 +212,7 @@ then
                          --output text; echo $?
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
+    curl -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token
     instance_runner_token=`curl -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     echo "instance token" $instance_runner_token
     # Wait 10 seconds for untar of runner binary to complete
