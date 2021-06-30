@@ -84,4 +84,6 @@ then
     echo "Copied ./build/distributions/*.zip to ../src/test/resources/job-scheduler ..."
     ls ../src/test/resources/job-scheduler
 elif [ "$1" = "alerting" ]
+then
+    ./gradlew :alerting-notification:publishToMavenLocal -Dopensearch.version=$REVISION -Dbuild.snapshot=false --console=plain
 fi
