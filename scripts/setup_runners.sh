@@ -157,8 +157,6 @@ IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO=${GIT_URL_REPO:-opensearch-project/opensearch-build}
-echo "git url repo:" $GIT_URL_REPO
-echo "git url all" : ${GIT_URL_BASE}/${GIT_URL_REPO}
 RUNNER_DIR="actions-runner"
 
 
@@ -204,21 +202,19 @@ then
     echo "[${instance_name2}]: Make change of the runner hostname"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo hostnamectl set-hostname '${instance_name2}'"]}' \
-                         --output text; echo $?
+                         --output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
-                         --output text; echo $?
+                         --output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
-    curl -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token"
-    instance_runner_token=`curl -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
-    echo "instance token" $instance_runner_token
+    instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"sleep 30 && cd '${RUNNER_DIR}' && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
-                         --output text; echo $?
+                         --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
 
