@@ -157,6 +157,8 @@ IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO=${GIT_URL_REPO:-opensearch-project/opensearch-build}
+echo "git url repo:" $GIT_URL_REPO
+echo "git url all" : ${GIT_URL_BASE}/${GIT_URL_REPO}
 RUNNER_DIR="actions-runner"
 
 
