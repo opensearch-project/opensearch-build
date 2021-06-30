@@ -213,6 +213,7 @@ then
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     instance_runner_token=`curl -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
+    echo "instance token" $instance_runner_token
     # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"sleep 30 && cd '${RUNNER_DIR}' && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
