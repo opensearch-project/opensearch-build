@@ -59,7 +59,7 @@ if [ -z "$MANIFEST_FILE" ]; then
 fi
 
 if [ ! -f "$MANIFEST_FILE" ]; then
-    echo "error: The given file doesnot exist. Please check the specified path"
+    echo "Error: The file '${MANIFEST_FILE}' does not exist"
     usage
     exit 1
 fi
@@ -71,34 +71,34 @@ VERSION=`yq eval '.build.version' $MANIFEST_FILE`
 UNDERLYING_ARCH=`uname -p`
 
 if [ -z "$VERSION" ]; then
-    echo "error: Please specify the version in the manifest file"
+    echo "Error: Please specify the version in the manifest file"
     usage
     exit 1
 fi
 
 if [ "$SCHEMA_VERSION" != "1.0" ]; then
-    echo "error: This script only supports manifest schema version 1.0. Please use the manifest file with right schema version"
+    echo "Error: This script only supports manifest schema version 1.0, but ${MANIFEST_FILE} is version '${SCHEMA_VERSION}'"
     usage
     exit 1
 fi
 
 if [ "$PLATFORM" != "linux" ]; then
-    echo "error: $PLATFORM platform is not supported yet! Only supported platform is linux"
+    echo "Error: $PLATFORM platform is not supported yet! Only supported platform is linux"
     usage
     exit 1
 fi
 
 if [ "$ARCHITECTURE" != "x64" ] && [ "$ARCHITECTURE" != "arm64" ]
 then
-    echo "error: $ARCHITECTURE architecture is not supported yet! Only supported architectures are x64 and arm64"
+    echo "Error: $ARCHITECTURE architecture is not supported yet! Only supported architectures are x64 and arm64"
     usage
     exit 1
 fi
 
 if [[ ( "$ARCHITECTURE" == "arm64" && ( "$UNDERLYING_ARCH" != "aarch64" && "$UNDERLYING_ARCH" != "arm64" )) ||  ( "$ARCHITECTURE" == "x64" && ( "$UNDERLYING_ARCH" != "x86_64" && "$UNDERLYING_ARCH" != "amd64" )) ]]
 then
-    echo "error: The underlying architecture($UNDERLYING_ARCH) doesnot match the product architecture($ARCHITECTURE) that you are trying to build"
-    echo "To build $ARCHITECTURE you need to be on an $ARCHITECTURE architecture environment"
+    echo "Error: The underlying architecture($UNDERLYING_ARCH) doesnot match the product architecture($ARCHITECTURE) that you are trying to build"
+    echo "To build $ARCHITECTURE you need to be on $ARCHITECTURE architecture environment"
     exit 1
 fi
 
@@ -111,9 +111,9 @@ PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_DASHBOARDS_CORE_URL=`yq eval '.products.opensearch-dashboards.opensearch-dashboards-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_DASHBOARDS_PLUGINS_URLS=`yq eval '.products.opensearch-dashboards.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
-TRAP_SIG_LIST="TERM INT EXIT CHLD"
+TRAP_SIG_LIST="TERM INT EXIT"
 function delete_temp_folders() {
-rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
+    rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
 }
 trap delete_temp_folders $TRAP_SIG_LIST
 
