@@ -102,7 +102,7 @@ then
 fi
 
 REPO_ROOT=`git rev-parse --show-toplevel`
-ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ROOT=`dirname $(realpath $0)`; cd $ROOT
 DIR_NAME="opensearch-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
 TARGET_DIR="$ROOT/target"
