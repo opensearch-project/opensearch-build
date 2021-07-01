@@ -79,7 +79,7 @@
 #
 #                10. JDK & SSM Agent
 #                    You should find a way to install JDK14 or later on the server
-#                    Dibian with: sudo add-apt-repository ppa:openjdk-r/ppa
+#                    Debian with: sudo add-apt-repository ppa:openjdk-r/ppa
 #                    RedHat with: https://fedoraproject.org/wiki/EPEL
 #                    
 #                    Also, you need to install ssm agent
