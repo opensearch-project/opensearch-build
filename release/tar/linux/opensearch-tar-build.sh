@@ -97,7 +97,7 @@ fi
 if [[ ( "$ARCHITECTURE" == "arm64" && ( "$UNDERLYING_ARCH" != "aarch64" && "$UNDERLYING_ARCH" != "arm64" )) ||  ( "$ARCHITECTURE" == "x64" && ( "$UNDERLYING_ARCH" != "x86_64" && "$UNDERLYING_ARCH" != "amd64" )) ]]
 then
     echo "error: The underlying architecture($UNDERLYING_ARCH) doesnot match the product architecture($ARCHITECTURE) that you are trying to build"
-    echo "Please use the appropriate build environment"
+    echo "To build $ARCHITECTURE you need to be on an $ARCHITECTURE architecture environment"
     exit 1
 fi
 
