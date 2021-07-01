@@ -111,6 +111,12 @@ PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_DASHBOARDS_CORE_URL=`yq eval '.products.opensearch-dashboards.opensearch-dashboards-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_DASHBOARDS_PLUGINS_URLS=`yq eval '.products.opensearch-dashboards.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
+TRAP_SIG_LIST="TERM INT EXIT CHLD"
+function delete_temp_folders() {
+rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
+}
+trap delete_temp_folders $TRAP_SIG_LIST
+
 # # Download plugins to local 
 mkdir $WORKING_DIR
 mkdir -p $TARGET_DIR
