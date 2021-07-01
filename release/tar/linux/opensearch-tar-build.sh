@@ -111,6 +111,12 @@ OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FIL
 OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
+TRAP_SIG_LIST="TERM INT EXIT CHLD"
+function delete_temp_folders() {
+rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
+}
+trap delete_temp_folders $TRAP_SIG_LIST
+
 # # Download plugins to local 
 mkdir $WORKING_DIR
 mkdir -p $TARGET_DIR
