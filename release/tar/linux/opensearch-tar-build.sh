@@ -118,7 +118,7 @@ function delete_temp_folders() {
 trap delete_temp_folders $TRAP_SIG_LIST
 
 # # Download plugins to local 
-mkdir $WORKING_DIR
+mkdir -p $WORKING_DIR
 mkdir -p $TARGET_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
