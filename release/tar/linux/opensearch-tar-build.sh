@@ -113,7 +113,10 @@ LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e '
 
 TRAP_SIG_LIST="TERM INT EXIT"
 function delete_temp_folders() {
-    rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
+    if [ $? -ne 0 ]; then
+      echo "Deleting the temp folders"
+      rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
+    fi
 }
 trap delete_temp_folders $TRAP_SIG_LIST
 
