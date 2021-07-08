@@ -101,11 +101,11 @@ then
     exit 1
 fi
 
+TARGET_DIR=`pwd`
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
 DIR_NAME="opensearch-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
-TARGET_DIR=`pwd`
 PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`

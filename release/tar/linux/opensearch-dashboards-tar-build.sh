@@ -102,11 +102,11 @@ then
     exit 1
 fi
 
+TARGET_DIR=`pwd`
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
 DIR_NAME="opensearch-dashboards-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
-TARGET_DIR=`pwd`
 PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_DASHBOARDS_CORE_URL=`yq eval '.products.opensearch-dashboards.opensearch-dashboards-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_DASHBOARDS_PLUGINS_URLS=`yq eval '.products.opensearch-dashboards.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
