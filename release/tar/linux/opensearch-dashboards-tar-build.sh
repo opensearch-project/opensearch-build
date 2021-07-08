@@ -102,27 +102,24 @@ then
     exit 1
 fi
 
+TARGET_DIR=`pwd`
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
 DIR_NAME="opensearch-dashboards-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
-TARGET_DIR="$ROOT/target"
 PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_DASHBOARDS_CORE_URL=`yq eval '.products.opensearch-dashboards.opensearch-dashboards-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_DASHBOARDS_PLUGINS_URLS=`yq eval '.products.opensearch-dashboards.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
 TRAP_SIG_LIST="TERM INT EXIT"
 function delete_temp_folders() {
-    if [ $? -ne 0 ]; then
       echo "Deleting the temp folders"
-      rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
-    fi
+      rm -rf $WORKING_DIR $PLUGINS_TEMP
 }
 trap delete_temp_folders $TRAP_SIG_LIST
 
 # # Download plugins to local 
 mkdir -p $WORKING_DIR
-mkdir -p $TARGET_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
 for plugin in ${OPENSEARCH_DASHBOARDS_PLUGINS_URLS}; do
@@ -153,4 +150,3 @@ tar -czf $TARGET_DIR/opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.
 cd $TARGET_DIR
 shasum -a 512 opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 shasum -a 512 -c opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-rm -rf ${WORKING_DIR} ${PLUGINS_TEMP}

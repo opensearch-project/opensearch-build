@@ -101,11 +101,11 @@ then
     exit 1
 fi
 
+TARGET_DIR=`pwd`
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
 DIR_NAME="opensearch-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
-TARGET_DIR="$ROOT/target"
 PLUGINS_TEMP=`mktemp -d`
 OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
@@ -113,16 +113,13 @@ LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e '
 
 TRAP_SIG_LIST="TERM INT EXIT"
 function delete_temp_folders() {
-    if [ $? -ne 0 ]; then
       echo "Deleting the temp folders"
-      rm -rf $WORKING_DIR $PLUGINS_TEMP $TARGET_DIR
-    fi
+      rm -rf $WORKING_DIR $PLUGINS_TEMP
 }
 trap delete_temp_folders $TRAP_SIG_LIST
 
 # # Download plugins to local 
 mkdir -p $WORKING_DIR
-mkdir -p $TARGET_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
 for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
@@ -139,7 +136,7 @@ tar -xzf opensearch.tar.gz --strip-components=1 --directory "$WORKING_DIR" && rm
 
 # Install plugins to OpenSearch
 for plugin_url in $OPENSEARCH_PLUGINS_URLS; do
-    plugin=`basename $plugins_url`
+    plugin=`basename $plugin_url`
     $WORKING_DIR/bin/opensearch-plugin install --batch file:$PLUGINS_TEMP/$plugin
 done
 
@@ -170,4 +167,3 @@ tar -czf $TARGET_DIR/opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $DIR_NAM
 cd $TARGET_DIR
 shasum -a 512 opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 shasum -a 512 -c opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-rm -rf ${WORKING_DIR} ${PLUGINS_TEMP}
