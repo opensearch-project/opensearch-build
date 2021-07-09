@@ -41,7 +41,10 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils
+
+# Remove yum cache so that docker image size reduces
+RUN yum clean all && rm -rf /var/cache/yum/*
 
 # Create an opensearch user, group, and directory
 RUN groupadd -g $GID opensearch && \
@@ -70,7 +73,10 @@ WORKDIR $OPENSEARCH_HOME
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils
+
+# Remove yum cache so that docker image size reduces
+RUN yum clean all && rm -rf /var/cache/yum/*
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
