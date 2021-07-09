@@ -24,11 +24,22 @@
 # This is a docker image specifically for standardize the test environment
 # for both developers and ci/cd tools in OpenSearch
 
+# You must run these commands on the LINUX host for OpenSearch process to run
+# sudo sysctl -w vm.max_map_count=262144
+# ulimit -n 65535
+
+# You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run
+# As well as running Dashboards integtest so headless chrome will not crash
+# Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
+# OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
+# sudo systemctl stop docker
+# sudo systemctl start docker
+
+# You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS
+# Make sure at least 4GiB of RAM is used, so Dashboards process can startup correctly
+
 
 FROM amazonlinux:2
-
-# Replace shell with bash so we can source files
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Add AdoptOpenJDK Repo
 RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" > /etc/yum.repos.d/adoptopenjdk.repo
@@ -46,17 +57,11 @@ RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x1
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools"
 
-# Remove yum cache
+# Remove yum cache so that docker images size reduces 300 to 400MiB
 RUN yum clean all && rm -rf /var/cache/yum/*
 
 # Setup Shared Memory
-RUN  chmod -R 777 /dev/shm
-
-# Must have values for ulimits on the server
-# sudo sysctl -w vm.max_map_count=262144
-# ulimit -n 65535
-# Docker /etc/sysconfig/docker has to have nofiles to 65535
-# OPTIONS="--default-ulimit nofile=65535:65535"
+RUN chmod -R 777 /dev/shm
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -64,7 +69,8 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
-# Environment variables JAVA
+# Set JAVA_HOME
+# AdoptOpenJDK apparently does not add JAVA_HOME after installation
 RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
 
 # Change User
@@ -88,7 +94,12 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
-# confirm installation
+# install cypress
+RUN npm install -g cypress@^6.9.1 && npm cache verify
+# We use the version test to check if packages installed correctly
+# And get added to the PATH
+# This will fail the docker build if any of the packages not exist
 RUN node -v
 RUN npm -v
 RUN yarn -v
+RUN cypress -v
