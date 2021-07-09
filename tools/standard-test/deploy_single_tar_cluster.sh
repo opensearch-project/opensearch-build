@@ -151,7 +151,7 @@ echo "server.host: 0.0.0.0" >> config/opensearch_dashboards.yml
 if [ "$ENABLE_SECURITY" == "false" ]
 then
     echo -e "\tRemove Dashboards Security"
-    ./bin/opensearch-dashboards-plugin remove security-dashboards
+    ./bin/opensearch-dashboards-plugin remove securityDashboards
     sed -i /^opensearch_security/d config/opensearch_dashboards.yml
     sed -i 's/https/http/' config/opensearch_dashboards.yml
 fi
