@@ -12,11 +12,12 @@
 
 
 #
-# About:        This shell script generate an opensearch tarball with all the provided plugins installed and ready to use.
+# About:        This shell script generate an opensearch-dashboards tarball with all the provided plugins installed and ready to use.
 #               It will create a folder named target that will consist of the tarball and shasum of the same.
 #               A manifest file and right permissions set up is essential to download the required artifacts
 # Dependencies: yq (More info: https://github.com/mikefarah/yq/tree/v4.4.1#install)
-# Usage:        ./opensearch-tar-build.sh -f <path/to/manifest/file/>
+#               shasum
+# Usage:        ./opensearch-dashboards-tar-build.sh -f <path/to/manifest/file/>
 #
 
 set -e
@@ -52,13 +53,13 @@ while getopts ":hf:" arg; do
 done
 
 if [ -z "$MANIFEST_FILE" ]; then
-    echo "Error: You must specify the manifest file"
+    echo "error: You must specify the manifest file"
     usage
     exit 1
 fi
 
 if [ ! -f "$MANIFEST_FILE" ]; then
-    echo "error: The given file doesnot exist. Please check the specified path"
+    echo "Error: The file '${MANIFEST_FILE}' does not exist"
     usage
     exit 1
 fi
@@ -104,12 +105,11 @@ fi
 TARGET_DIR=`pwd`
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
-DIR_NAME="opensearch-$VERSION"
+DIR_NAME="opensearch-dashboards-$VERSION"
 WORKING_DIR="$ROOT/$DIR_NAME"
 PLUGINS_TEMP=`mktemp -d`
-OPENSEARCH_CORE_URL=`yq eval '.products.opensearch.opensearch-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
-OPENSEARCH_PLUGINS_URLS=`yq eval '.products.opensearch.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
-LIBS=`yq eval '.products.opensearch.libs' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
+OPENSEARCH_DASHBOARDS_CORE_URL=`yq eval '.products.opensearch-dashboards.opensearch-dashboards-min' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
+OPENSEARCH_DASHBOARDS_PLUGINS_URLS=`yq eval '.products.opensearch-dashboards.plugins' $MANIFEST_FILE | sed s/^-// | sed -e 's/^[[:space:]]*//'`
 
 TRAP_SIG_LIST="TERM INT EXIT"
 function delete_temp_folders() {
@@ -122,48 +122,31 @@ trap delete_temp_folders $TRAP_SIG_LIST
 mkdir -p $WORKING_DIR
 echo "working dir is: ${WORKING_DIR}"
 IFS=$'\n'
-for plugin in ${OPENSEARCH_PLUGINS_URLS}; do
+for plugin in ${OPENSEARCH_DASHBOARDS_PLUGINS_URLS}; do
   aws s3 cp $plugin $PLUGINS_TEMP/
 done
 
-# # Download k-NN lib
-aws s3 cp $LIBS $PLUGINS_TEMP/
-unzip $PLUGINS_TEMP/opensearch-knnlib-*-$PLATFORM-$ARCHITECTURE.zip -d $PLUGINS_TEMP/
-
-# Download OpenSearch core TAR
-wget -q ${OPENSEARCH_CORE_URL} -O opensearch.tar.gz
-tar -xzf opensearch.tar.gz --strip-components=1 --directory "$WORKING_DIR" && rm -rf opensearch.tar.gz
+# Download OpenSearch Dashboards min tarball
+wget -q ${OPENSEARCH_DASHBOARDS_CORE_URL} -O opensearch-dashboards.tar.gz
+tar -xzf opensearch-dashboards.tar.gz --strip-components=1 --directory "$WORKING_DIR" && rm -rf opensearch-dashboards.tar.gz
 
 # Install plugins to OpenSearch
-for plugin_url in $OPENSEARCH_PLUGINS_URLS; do
+for plugin_url in $OPENSEARCH_DASHBOARDS_PLUGINS_URLS; do
     plugin=`basename $plugin_url`
-    $WORKING_DIR/bin/opensearch-plugin install --batch file:$PLUGINS_TEMP/$plugin
+    $WORKING_DIR/bin/opensearch-dashboards-plugin --allow-root install file:$PLUGINS_TEMP/$plugin
 done
 
 echo "Plugins installed are:"
 ls -tlr $WORKING_DIR/plugins
 
-# Setup Performance Analyzer Agent
-cp -r $WORKING_DIR/plugins/opensearch-performance-analyzer/performance-analyzer-rca $WORKING_DIR/
-chmod -R 755 $WORKING_DIR/performance-analyzer-rca
-mv $WORKING_DIR/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $WORKING_DIR/bin
-rm -rf $WORKING_DIR/bin/opensearch-performance-analyzer
-
-mkdir -p $WORKING_DIR/data
-chmod 755 $WORKING_DIR/data/
-
 # Copy the tarball installation script 
-cp $REPO_ROOT/release/tar/linux/opensearch-tar-install.sh $WORKING_DIR/
-
-# Setup k-NN-library
-mkdir -p $WORKING_DIR/plugins/opensearch-knn/knnlib
-cp $PLUGINS_TEMP/opensearch-knnlib-*/libKNNIndexV*.so $WORKING_DIR/plugins/opensearch-knn/knnlib 
+cp $REPO_ROOT/config/opensearch_dashboards.yml $WORKING_DIR/config/
 
 # Tar the bundle and clean up
 rm -rf $PLUGINS_TEMP
 cd $ROOT
 echo "Generating the tarball"
-tar -czf $TARGET_DIR/opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $DIR_NAME
+tar -czf $TARGET_DIR/opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $DIR_NAME
 cd $TARGET_DIR
-shasum -a 512 opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-shasum -a 512 -c opensearch-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 -c opensearch-dashboards-$VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
