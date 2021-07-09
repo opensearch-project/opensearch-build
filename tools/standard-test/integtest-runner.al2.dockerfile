@@ -55,10 +55,7 @@ RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GC
 RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
 
 # Add Yarn dependencies
-RUN yum groupinstall -y "Development Tools"
-
-# Remove yum cache so that docker images size reduces 300 to 400MiB
-RUN yum clean all && rm -rf /var/cache/yum/*
+RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
