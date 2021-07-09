@@ -90,6 +90,7 @@ trap '{ echo Removing Docker workspace in "$DIR"; rm -rf -- "$DIR"; }' TERM INT 
 
 # Copy configs
 cp -v config/${PRODUCT}/* $DIR/
+cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 
 # Copy TGZ
 if [ -z "$TARBALL" ]; then
