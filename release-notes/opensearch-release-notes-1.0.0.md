@@ -2,9 +2,16 @@
 
 ## Release Highlights
 
+Version 1.0.0 has multiple enhancements and fixes that are part of this release including span filtering support in Trace Analytics, tenant support in Notebooks, K-NN field level algorithm selection, support for index management transforms, and support for scheduling and tenants in reporting.
+
 ## Release Details
 
 OpenSearch and Dashboards 1.0.0 includes the following OpenSearch Migration, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.0.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.0.0.md).
+
 
 ## BREAKING CHANGES
 
