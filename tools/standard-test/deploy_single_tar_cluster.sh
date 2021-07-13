@@ -121,7 +121,7 @@ tar -xzf opensearch-dashboards.tgz -C opensearch-dashboards/ --strip-components=
 # Setup OpenSearch
 echo -e "\nSetup OpenSearch"
 cd $DIR/opensearch && mkdir -p backup_snapshots
-$ROOT/opensearch-onetime-setup.sh $DIR/opensearch
+cp -v ../../scripts/opensearch-onetime-setup.sh && ./opensearch-onetime-setup.sh
 sed -i /^node.max_local_storage_nodes/d ./config/opensearch.yml
 # Required for IM
 echo "path.repo: [\"$PWD/backup_snapshots\"]" >> config/opensearch.yml
