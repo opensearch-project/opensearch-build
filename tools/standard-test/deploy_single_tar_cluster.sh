@@ -95,7 +95,7 @@ fi
 
 # Setup Work Directory
 DIR=`Temp_Folder_Create`
-Trap_File_Delete_No_Sigchld
+Trap_File_Delete_No_Sigchld $DIR
 echo New workspace $DIR
 
 
