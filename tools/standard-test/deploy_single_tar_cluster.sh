@@ -94,7 +94,7 @@ else
 fi
 
 # Setup Work Directory
-DIR=Temp_Folder_Create
+DIR=`Temp_Folder_Create`
 Trap_File_Delete_No_Sigchld
 echo New workspace $DIR
 
