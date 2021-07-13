@@ -80,7 +80,8 @@ ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 10.24.1
 # install nvm
 # https://github.com/creationix/nvm#install-script
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+COPY nvm_install.sh .
+RUN bash nvm_install.sh
 # install node and npm
 RUN source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \

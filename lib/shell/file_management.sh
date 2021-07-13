@@ -12,9 +12,7 @@ TRAP_SIG_LIST="TERM INT EXIT CHLD"
 TRAP_SIG_LIST_NO_SIGCHLD="TERM INT EXIT"
 
 function Temp_Folder_Create() {
-    TEMP_SUFFIX="_TEMP"
-    TEMP_FOLDER=$(mktemp --suffix=$TEMP_SUFFIX -d)
-    echo $TEMP_FOLDER
+    mktemp -d
     
 }
 
