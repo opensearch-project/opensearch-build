@@ -32,13 +32,13 @@ function File_Delete() {
 function Trap_File_Delete() {
     FILE_NAME=$@
     echo "Trap deletion of $FILE_NAME for these signals: $TRAP_SIG_LIST"
-    trap '{File_Delete $FILE_NAME;}' TRAP_SIG_LIST
+    trap '{File_Delete $FILE_NAME;}' $TRAP_SIG_LIST
 }
 
 function Trap_File_Delete_No_Sigchld() {
     FILE_NAME=$@
     echo "Trap deletion of $FILE_NAME for these signals: $TRAP_SIG_LIST_NO_SIGCHLD"
-    trap '{File_Delete $FILE_NAME;}' TRAP_SIG_LIST_NO_SIGCHLD
+    trap '{File_Delete $FILE_NAME;}' $TRAP_SIG_LIST_NO_SIGCHLD
     
 }
 
