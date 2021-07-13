@@ -28,7 +28,9 @@
 set -e
 
 # Source lib
-. ../../lib/shell/common.sh
+. ../../lib/shell/file_management.sh
+. ../../lib/shell/process_control.sh
+
 
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 CURR_DIR=`pwd`
@@ -92,9 +94,8 @@ else
 fi
 
 # Setup Work Directory
-Temp_Folder_Create
+DIR=Temp_Folder_Create
 Trap_File_Delete_No_Sigchld
-DIR=$TEMP_FOLDER
 echo New workspace $DIR
 
 
