@@ -10,7 +10,6 @@ set -m
 
 TRAP_SIG_LIST="TERM INT EXIT CHLD"
 TRAP_SIG_LIST_NO_SIGCHLD="TERM INT EXIT"
-TEMP_FOLDER=""
 
 function Temp_Folder_Create() {
     TEMP_SUFFIX="_TEMP"
@@ -20,12 +19,14 @@ function Temp_Folder_Create() {
 }
 
 function Trap_File_Delete() {
+    TEMP_FOLDER=$@
     echo "Trap deletion of $TEMP_FOLDER for these signals: $TRAP_SIG_LIST"
     trap '{ echo Attempt to rm "$TEMP_FOLDER"; if [ ! -z "$TEMP_FOLDER" ]; then echo Removing "$TEMP_FOLDER"; rm -rf -- "$TEMP_FOLDER"; else echo No File/Folder Exist; fi;}' $TRAP_SIG_LIST
     
 }
 
 function Trap_File_Delete_No_Sigchld() {
+    TEMP_FOLDER=$@
     echo "Trap deletion of $TEMP_FOLDER for these signals: $TRAP_SIG_LIST_NO_SIGCHLD"
     trap '{ echo Attempt to rm "$TEMP_FOLDER"; if [ ! -z "$TEMP_FOLDER" ]; then echo Removing "$TEMP_FOLDER"; rm -rf -- "$TEMP_FOLDER"; else echo No File/Folder Exist; fi;}' $TRAP_SIG_LIST_NO_SIGCHLD
     
