@@ -19,7 +19,8 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
     This will also prevent errors during Dashboards integtest (cypress) so that headless chrome will not crash
     ```
     # Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
-    OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
+    # OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
+    # Then restart docker
     sudo systemctl stop docker
     sudo systemctl start docker
     ```
