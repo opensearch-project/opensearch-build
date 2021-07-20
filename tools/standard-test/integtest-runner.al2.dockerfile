@@ -3,20 +3,7 @@
 
 # This is a docker image specifically for standardize the test environment
 # for both developers and ci/cd tools in OpenSearch
-
-# You must run these commands on the LINUX host for OpenSearch process to run
-# sudo sysctl -w vm.max_map_count=262144
-# ulimit -n 65535
-
-# You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run
-# As well as running Dashboards integtest so headless chrome will not crash
-# Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
-# OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
-# sudo systemctl stop docker
-# sudo systemctl start docker
-
-# You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS
-# Make sure at least 4GiB of RAM is used, so Dashboards process can startup correctly
+# Please read the README.md file for all the requirements before using this dockerfile
 
 
 FROM amazonlinux:2
