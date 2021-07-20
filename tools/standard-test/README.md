@@ -10,8 +10,10 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
 ### Requirements
 * If you are using LINUX host to run dockerd, provision container based on the dockerfile, and execute integTest:
   * You must run these commands on the LINUX host for OpenSearch process to run
-    `sudo sysctl -w vm.max_map_count=262144`
-    `ulimit -n 65535`
+    ```
+    sudo sysctl -w vm.max_map_count=262144
+    ulimit -n 65535
+    ```
 
   * You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run
     This will also prevent errors during Dashboards integtest (cypress) so that headless chrome will not crash
