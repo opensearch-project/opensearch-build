@@ -26,8 +26,8 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
     ```
 
 * If you are using macOS host to run Docker Desktop, provision container based on the dockerfile, and execute integTest:
-  * You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS
-    * Make sure at least 4GiB of RAM is used, so Dashboards process can startup correctly
+  * You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS.
+    * Make sure at least 4GiB of RAM is used, so Dashboards process can startup correctly.
 
 ### Build docker image
 * If you only want to build the docker image for either x64 or arm64, run this on a x64 or arm64 host respectively:
@@ -56,7 +56,7 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
 ### Run deployment script
 * The deployment script is able to deploy a single node cluster with the specific version of OpenSearch/Dashboards bundle tarball on your host/container:
   * You must specify `-v VERSION`, `-t TYPE`, `-a ARCHITECTURE`, `-s ENABLE_SECURITY`
-  * The script will attempt to download bundled tarball of OpenSearch/Dashboards from `artifacts.opensearch.org` and deploy to a temporary working directory
+  * The script will attempt to download bundled tarball of OpenSearch/Dashboards from `artifacts.opensearch.org` and deploy to a temporary working directory.
   * Example:
     * Deploy OpenSearch/Dashboards 1.0.0 version, from snapshots channel, CPU arch x64, enable security
     ```
@@ -68,7 +68,7 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
     ./deploy_single_tar_cluster.sh -v 1.0.0 -t releases -a arm64 -s false
     ```
   * The script allows in process wait and cleanup, meaning a `SIGINT / SIGTERM / SIGEXIT` or any child process throlwing `EXIT` signal will result in termination of the
-    cluster as well as the temporary working directory
-  * If you want to run the deployment in detach mode, just run the command with `nohup <commands> &`
+    cluster as well as the temporary working directory.
+  * If you want to run the deployment in detach mode, just run the command with `nohup <commands> &`.
 
 
