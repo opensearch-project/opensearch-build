@@ -58,12 +58,11 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
   * You must specify `-v VERSION`, `-t TYPE`, `-a ARCHITECTURE`, `-s ENABLE_SECURITY`
   * The script will attempt to download bundled tarball of OpenSearch/Dashboards from `artifacts.opensearch.org` and deploy to a temporary working directory.
   * Example:
-    * Deploy OpenSearch/Dashboards 1.0.0 version, from snapshots channel, CPU arch x64, enable security
+    * Deploy OpenSearch/Dashboards 1.0.0 version, from snapshots channel, CPU arch x64, enable security:
     ```
     ./deploy_single_tar_cluster.sh -v 1.0.0 -t snapshots -a x64 -s true
-
     ```
-    * Deploy OpenSearch/Dashboards 1.0.0 version, from releases channel, CPU arch arm64, disable security
+    * Deploy OpenSearch/Dashboards 1.0.0 version, from releases channel, CPU arch arm64, disable security:
     ```
     ./deploy_single_tar_cluster.sh -v 1.0.0 -t releases -a arm64 -s false
     ```
