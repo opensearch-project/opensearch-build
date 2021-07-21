@@ -38,9 +38,9 @@ while getopts ":hv:t:a:s:" arg; do
         v)
             VERSION=$OPTARG
             ;;
-	t)
+        t)
             TYPE=$OPTARG
-	    ;;
+            ;;
         a)
             ARCHITECTURE=$OPTARG
             ;;
