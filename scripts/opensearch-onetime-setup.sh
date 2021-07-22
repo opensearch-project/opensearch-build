@@ -15,7 +15,6 @@ bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.
 ##Perf Plugin
 PA_PLUGIN="opensearch-performance-analyzer"
 chmod 755 $OPENSEARCH_HOME/plugins/$PA_PLUGIN/pa_bin/performance-analyzer-agent
-chmod -R 755 /dev/shm
 chmod 755 $OPENSEARCH_HOME/bin/performance-analyzer-agent-cli
 
 if ! grep -q '## OpenDistro Performance Analyzer' $OPENSEARCH_HOME/config/jvm.options; then

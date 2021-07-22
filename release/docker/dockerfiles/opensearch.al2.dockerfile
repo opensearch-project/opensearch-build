@@ -64,20 +64,20 @@ ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
 
-# Copy from Stage0
-COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
-WORKDIR $OPENSEARCH_HOME
-
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils util-linux && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
     adduser -u $UID -g $GID -d $OPENSEARCH_HOME opensearch
 
+# Copy from Stage0
+COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
+WORKDIR $OPENSEARCH_HOME
+
 # Setup OpenSearch
-RUN ./opensearch-onetime-setup.sh
+RUN su - opensearch -c "./opensearch-onetime-setup.sh"
 
 # Copy KNN Lib
 RUN cp -v $OPENSEARCH_HOME/plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
