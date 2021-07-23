@@ -17,15 +17,7 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
 
   * You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run.
     This will also prevent errors during Dashboards integtest (cypress) so that headless chrome will not crash.
-    * Option 1:
-      ```
-      # Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
-      # OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
-      # Then restart docker
-      sudo systemctl stop docker
-      sudo systemctl start docker
-      ```
-    * Option 2:
+    * Option 1 (Recommended):
       ```
       # Edit /etc/docker/daemon.json with these changes:
       {
@@ -38,6 +30,15 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
         },
         "default-shm-size": "1024M"
       }
+      # Then restart docker
+      sudo systemctl stop docker
+      sudo systemctl start docker
+      ```
+    * Option 2:
+      ```
+      # If you have /etc/sysconfig/docker on your LINUX host
+      # Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
+      # OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
       # Then restart docker
       sudo systemctl stop docker
       sudo systemctl start docker
