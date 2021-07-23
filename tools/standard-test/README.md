@@ -69,7 +69,7 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
     or save it locally as cache, means `docker images` will not show the image due to your host cannot have more than one CPU architecture.
   * Run these commands to actually build the docker image in multi-arch and push to Docker Hub (est. 1hr time depend on your host hardware specifications and network bandwidth):
     ```
-    docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> --push .
+    docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> -f <Docker File Path> --push .
     ```
 
 ### Run deployment script
