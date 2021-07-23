@@ -64,10 +64,6 @@ ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
 
-# Copy from Stage0
-COPY --from=linux_x64_stage_0 $OPENSEARCH_HOME $OPENSEARCH_HOME
-WORKDIR $OPENSEARCH_HOME
-
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
@@ -76,16 +72,21 @@ RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
 RUN groupadd -g $GID opensearch && \
     adduser -u $UID -g $GID -d $OPENSEARCH_HOME opensearch
 
-# Setup OpenSearch
-RUN ./opensearch-onetime-setup.sh && \
-    chown -R $UID:$GID $OPENSEARCH_HOME && \
-    echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh
+# Copy from Stage0
+COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
+WORKDIR $OPENSEARCH_HOME
+
+# Set $JAVA_HOME
+RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh
 
 # Copy KNN Lib
-RUN cp -v $OPENSEARCH_HOME/plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
+RUN cp -v plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
 
 # Change user
 USER $UID
+
+# Setup OpenSearch
+RUN ./opensearch-onetime-setup.sh
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)
 EXPOSE 9200 9300 9600 9650
