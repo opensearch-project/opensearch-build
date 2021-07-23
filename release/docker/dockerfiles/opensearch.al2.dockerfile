@@ -66,7 +66,7 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils util-linux && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -76,14 +76,14 @@ RUN groupadd -g $GID opensearch && \
 COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
-# Setup OpenSearch
-RUN su - opensearch -c "./opensearch-onetime-setup.sh"
-
 # Copy KNN Lib
-RUN cp -v $OPENSEARCH_HOME/plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
+RUN cp -v plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
 
 # Change user
 USER $UID
+
+# Setup OpenSearch
+RUN ./opensearch-onetime-setup.sh
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)
 EXPOSE 9200 9300 9600 9650
