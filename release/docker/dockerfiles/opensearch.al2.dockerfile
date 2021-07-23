@@ -76,6 +76,9 @@ RUN groupadd -g $GID opensearch && \
 COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
+# Set $JAVA_HOME
+RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh
+
 # Copy KNN Lib
 RUN cp -v plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
 
