@@ -38,7 +38,6 @@ FROM amazonlinux:2 AS linux_stage_0
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
-ARG ARCHITECTURE
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -50,8 +49,8 @@ RUN groupadd -g $GID opensearch && \
     mkdir /tmp/opensearch
 
 # Prepare working directory
-COPY opensearch-$ARCHITECTURE.tgz /tmp/opensearch/opensearch-$ARCHITECTURE.tgz
-RUN tar -xzf /tmp/opensearch/opensearch-$ARCHITECTURE.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
+COPY opensearch-*.tgz /tmp/opensearch/
+RUN tar -xzf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/

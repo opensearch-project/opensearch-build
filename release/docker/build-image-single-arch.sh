@@ -80,19 +80,20 @@ cp -v config/${PRODUCT}/* $DIR/
 cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 
 # Copy TGZ
+arch_uname=`echo ${ARCHITECTURE} | sed 's/x64/x86_64/g;s/arm64/aarch64/g'`
 if [ -z "$TARBALL" ]; then
     # No tarball file specified so download one
     URL="https://artifacts.opensearch.org/releases/bundle/${PRODUCT}/${VERSION}/${PRODUCT}-${VERSION}-linux-${ARCHITECTURE}.tar.gz"
     echo -e "\nDownloading ${PRODUCT} arch ${ARCHITECTURE} version ${VERSION} from ${URL}"
-    curl -f $URL -o $DIR/$PRODUCT-$ARCHITECTURE.tgz || exit 1
+    curl -f $URL -o $DIR/$PRODUCT-$arch_uname.tgz || exit 1
     ls -l $DIR
 else
     echo -e "\nCopying ${PRODUCT} arch ${ARCHITECTURE} version ${VERSION} from ${TARBALL}"
-    cp -v $TARBALL $DIR/$PRODUCT-$ARCHITECTURE.tgz
+    cp -v $TARBALL $DIR/$PRODUCT-$arch_uname.tgz
     ls -l $DIR
 fi
 
 # Docker build
-docker build --build-arg VERSION=$VERSION --build-arg ARCHITECTURE=$ARCHITECTURE --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
+docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
 docker tag opensearchproject/$PRODUCT:$VERSION opensearchproject/$PRODUCT:latest
 

@@ -37,7 +37,6 @@ FROM amazonlinux:2 AS linux_stage_0
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
-ARG ARCHITECTURE
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -49,8 +48,8 @@ RUN groupadd -g $GID opensearch-dashboards && \
     mkdir /tmp/opensearch-dashboards
 
 # Prepare working directory
-COPY opensearch-dashboards-$ARCHITECTURE.tgz /tmp/opensearch-dashboards/opensearch-dashboards-$ARCHITECTURE.tgz
-RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards-$ARCHITECTURE.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
+COPY opensearch-dashboards-*.tgz /tmp/opensearch-dashboards/
+RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
 COPY opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/
 COPY opensearch_dashboards.yml opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/
 

@@ -116,24 +116,26 @@ cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 
 # Copy TGZ
 if [ -z "$TARBALL" ]; then
-    for index1 in ${!ARCHITECTURE_ARRAY[@]}
+    for index in ${!ARCHITECTURE_ARRAY[@]}
     do
         # No tarball file specified so download one
-        URL="https://artifacts.opensearch.org/releases/bundle/${PRODUCT}/${VERSION}/${PRODUCT}-${VERSION}-linux-${ARCHITECTURE_ARRAY[$index1]}.tar.gz"
-        echo -e "\nDownloading ${PRODUCT} arch ${ARCHITECTURE_ARRAY[$index1]} version ${VERSION} from ${URL}"
-        curl -f $URL -o ${DIR}/${PRODUCT}-${ARCHITECTURE_ARRAY[$index1]}.tgz || exit 1
+        arch_uname=`echo ${ARCHITECTURE_ARRAY[$index]} | sed 's/x64/x86_64/g;s/arm64/aarch64/g'`
+        URL="https://artifacts.opensearch.org/releases/bundle/${PRODUCT}/${VERSION}/${PRODUCT}-${VERSION}-linux-${ARCHITECTURE_ARRAY[$index]}.tar.gz"
+        echo -e "\nDownloading ${PRODUCT} arch ${ARCHITECTURE_ARRAY[$index]} version ${VERSION} from ${URL}"
+        curl -f $URL -o ${DIR}/${PRODUCT}-${arch_uname}.tgz || exit 1
     done
     ls -l $DIR
 else
-    for index2 in ${!ARCHITECTURE_ARRAY[@]}
+    for index in ${!ARCHITECTURE_ARRAY[@]}
     do
-        echo -e "\nCopying ${PRODUCT} arch ${ARCHITECTURE_ARRAY[$index1]} version ${VERSION} from ${TARBALL_ARRAY[$index2]}"
-        cp -v ${TARBALL_ARRAY[$index2]} ${DIR}/${PRODUCT}-${ARCHITECTURE_ARRAY[$index2]}.tgz
+        arch_uname=`echo ${ARCHITECTURE_ARRAY[$index]} | sed 's/x64/x86_64/g;s/arm64/aarch64/g'`
+        echo -e "\nCopying ${PRODUCT} arch ${ARCHITECTURE_ARRAY[$index]} version ${VERSION} from ${TARBALL_ARRAY[$index]}"
+        cp -v ${TARBALL_ARRAY[$index]} ${DIR}/${PRODUCT}-${arch_uname}.tgz
     done
     ls -l $DIR
 fi
 
 # Build multi-arch images
 PLATFORMS=`echo "${ARCHITECTURE_ARRAY[@]/#/linux/}" | sed 's/x64/amd64/g;s/ /,/g'` && echo PLATFORMS $PLATFORMS
-docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg ARCHITECTURE=$ARCHITECTURE --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -t $REPOSITORY -f $DOCKERFILE --push .
+docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -t $REPOSITORY -f $DOCKERFILE --push $DIR
 
