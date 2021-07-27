@@ -17,13 +17,32 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
 
   * You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run.
     This will also prevent errors during Dashboards integtest (cypress) so that headless chrome will not crash.
-    ```
-    # Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
-    # OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
-    # Then restart docker
-    sudo systemctl stop docker
-    sudo systemctl start docker
-    ```
+    * Option 1 (Recommended):
+      ```
+      # Edit /etc/docker/daemon.json with these changes:
+      {
+        "default-ulimits": {
+          "nofile": {
+            "Hard": 65535,
+            "Name": "nofile",
+            "Soft": 65535
+          }
+        },
+        "default-shm-size": "1024M"
+      }
+      # Then restart docker
+      sudo systemctl stop docker
+      sudo systemctl start docker
+      ```
+    * Option 2:
+      ```
+      # If you have /etc/sysconfig/docker on your LINUX host
+      # Edit /etc/sysconfig/docker to have nofiles to 65535, and default shared memory to 1024MiB
+      # OPTIONS="--default-ulimit nofile=65535:65535 --default-shm-size 1024000000"
+      # Then restart docker
+      sudo systemctl stop docker
+      sudo systemctl start docker
+      ```
 
 * If you are using macOS host to run Docker Desktop, provision container based on the dockerfile, and execute integTest:
   * You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS.
@@ -50,7 +69,7 @@ nvm installation script from nvm github repo to help install nvm on the dockerfi
     or save it locally as cache, means `docker images` will not show the image due to your host cannot have more than one CPU architecture.
   * Run these commands to actually build the docker image in multi-arch and push to Docker Hub (est. 1hr time depend on your host hardware specifications and network bandwidth):
     ```
-    docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> --push .
+    docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> -f <Docker File Path> --push .
     ```
 
 ### Run deployment script
