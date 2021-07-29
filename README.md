@@ -1,41 +1,39 @@
- - [Contributing](#contributing)
- - [Code of Conduct](#code-of-conduct)
- - [Security](#security)
- - [Licensing](#licensing)
- - [Questions](#Questions)
- - [Issues](#Issues)
- - [Copyright](#copyright)
+<img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
- # OpenSearch / OpenSearch Dashboards build repository
+- [OpenSearch Build](#opensearch-build)
+- [Contributing](#contributing)
+- [Getting Help](#getting-help)
+- [Code of Conduct](#code-of-conduct)
+- [Security](#security)
+- [License](#license)
+- [Copyright](#copyright)
 
-This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
+## OpenSearch Build
+
+This repository contains the scripts for building OpenSearch, and OpenSearch Dashboards distributions.
 
 ## Contributing
 
-We welcome you to get involved in development, documentation, and testing of the build scripts.
+See [developer guide](DEVELOPER_GUIDE.md) and [how to contribute to this project](CONTRIBUTING.md). 
 
-See our [contribution guidelines](CONTRIBUTING.md) and the [developer guide](DEVELOPER_GUIDE.md) to get started.
+## Getting Help
+
+If you find a bug, or have a feature request, please don't hesitate to open an issue in this repository.
+
+For more information, see [project website](https://opensearch.org/) and [documentation](https://docs-beta.opensearch.org/). If you need help and are unsure where to open an issue, try [forums](https://discuss.opendistrocommunity.dev/).
 
 ## Code of Conduct
 
-This project has adopted an [Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
+This project has adopted the [Amazon Open Source Code of Conduct](CODE_OF_CONDUCT.md). For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq), or contact [opensource-codeofconduct@amazon.com](mailto:opensource-codeofconduct@amazon.com) with any additional questions or comments.
 
 ## Security
 
 If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public GitHub issue.
 
-## Licensing
+## License
 
-See the [LICENSE](LICENSE.txt) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
-
-## Questions
-
-If you have any questions, please join our community forum [here](https://discuss.opendistrocommunity.dev/)
-
-## Issues
-
-File any issues [here](https://github.com/opensearch-project/opensearch-build/issues).
+This project is licensed under the [Apache v2.0 License](LICENSE.txt).
 
 ## Copyright
 
-Copyright 2021 OpenSearch Contributors
+Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
