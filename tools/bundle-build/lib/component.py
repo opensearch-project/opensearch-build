@@ -48,3 +48,14 @@ class Component:
         print(f'Running {build_script} ...')
         self.git_repository().execute(build_script)
 
+    def artifacts_path(self):
+        dirname = self.git_repository().dir()
+        return os.path.realpath(os.path.join(dirname, 'artifacts'))
+
+    def export(self, dest):
+        artifacts_path = self.artifacts_path()
+        if os.path.exists(artifacts_path):
+            print(f'Publishing artifacts from {artifacts_path} into {dest} ...')
+            self.git_repository().execute(f'cp -r "{artifacts_path}/"* "{dest}"')
+        else:
+            print(f'No artifacts found in {artifacts_path}, skipping.')

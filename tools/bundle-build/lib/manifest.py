@@ -51,4 +51,4 @@ class Build:
         elif arch == 'aarch64' or arch == 'arm64':
             return  'arm64'
         else:
-            raise ValueError(f'Unsupported architecture: ' + arch)
+            raise ValueError(f'Unsupported architecture: {arch}')

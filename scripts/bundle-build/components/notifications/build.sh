@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outputDir=$(basename $PWD)-artifacts
+outputDir=artifacts
 mkdir -p $outputDir/maven
 cd notifications
 

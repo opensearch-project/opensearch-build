@@ -5,7 +5,7 @@ set -e
 version="$1"
 ARCHITECTURE="$2"
 
-outputDir=$(basename $PWD)-artifacts
+outputDir=artifacts
 mkdir -p "${outputDir}/maven"
 
 # Build project and publish to maven local.
@@ -15,7 +15,7 @@ mkdir -p "${outputDir}/maven"
 ./gradlew publishNebulaPublicationToTestRepository -Dbuild.snapshot=false
 
 # Copy maven publications to be promoted
-cp -r ./build/local-test-repo "${outputDir}"/maven
+cp -r ./build/local-test-repo/org/opensearch "${outputDir}"/maven
 
 if [ "${ARCHITECTURE}" = "x64" ]
 then

@@ -3,6 +3,7 @@ import sys
 import tempfile
 import urllib.request
 from lib.manifest import BuildManifest
+from lib.output import BuildOutput
 
 if (len(sys.argv) < 2):
     print("Build an OpenSearch Bundle")
@@ -12,7 +13,9 @@ if (len(sys.argv) < 2):
 with tempfile.TemporaryDirectory() as work_dir:
     manifest = BuildManifest.from_file(sys.argv[1])
     build = manifest.build()
-    print(f'Building {build.name()} ({build.arch()})')
+    output = BuildOutput()
+
+    print(f'Building {build.name()} ({build.arch()}) into {output.dest()}')
 
     os.chdir(work_dir)
 
@@ -20,3 +23,4 @@ with tempfile.TemporaryDirectory() as work_dir:
         print(f'=== Building {component.name()} ...')
         component.checkout()
         component.build(build.version(), build.arch())
+        component.export(output.dest())
