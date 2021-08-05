@@ -37,14 +37,14 @@ class Component:
     # default gradle script
     def default_script_path(self):
         dirname = os.path.dirname(os.path.abspath(__file__))      
-        return os.path.realpath(os.path.join(dirname, '../../../scripts/bundle-build/standard-gradle-build', self.name(), 'build.sh'))
+        return os.path.realpath(os.path.join(dirname, '../../../scripts/bundle-build/standard-gradle-build/build.sh'))
 
     def build_script(self):
         paths = [self.component_script_path(), self.custom_component_script_path(), self.default_script_path()]
         return next(filter(lambda path: os.path.exists(path), paths), None)
 
     def build(self, version, arch):
-        build_script = self.build_script() + " " + version + " " + arch 
-        print("Executing " + build_script)
+        build_script = f'{self.build_script()} {version} {arch}' 
+        print(f'Running {build_script} ...')
         self.git_repository().execute(build_script)
 
