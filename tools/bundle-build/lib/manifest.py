@@ -32,23 +32,9 @@ class Build:
     def __init__(self, data):
         self._name = data['name']
         self._version = data['version']
-        self._arch = Build.arch()
 
     def version(self):
         return self._version
 
     def name(self):
         return self._name
-
-    def arch(self):
-        return self._arch
-
-    @staticmethod
-    def arch():
-        arch = subprocess.check_output(['uname', '-m']).decode().strip()
-        if arch == 'x86_64':
-            return 'x64'
-        elif arch == 'aarch64' or arch == 'arm64':
-            return  'arm64'
-        else:
-            raise ValueError(f'Unsupported architecture: {arch}')

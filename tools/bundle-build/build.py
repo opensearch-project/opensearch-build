@@ -15,12 +15,12 @@ with tempfile.TemporaryDirectory() as work_dir:
     build = manifest.build()
     output = BuildOutput()
 
-    print(f'Building {build.name()} ({build.arch()}) into {output.dest()}')
+    print(f'Building {build.name()} ({output.arch()}) into {output.dest()}')
 
     os.chdir(work_dir)
 
     for component in manifest.components():
         print(f'=== Building {component.name()} ...')
         component.checkout()
-        component.build(build.version(), build.arch())
+        component.build(build.version(), output.arch())
         component.export(output.dest())
