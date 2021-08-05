@@ -17,9 +17,5 @@ class GitRepository:
 
     def execute(self, command):
         current = os.getcwd()
-        print(f'Executing "{command}" in {self._dir.name}')
-        os.chdir(self._dir.name)
-        try:
-            subprocess.check_call(command, shell = True)
-        finally:
-            os.chdir(current)
+        print(f'Executing "{command}" in {self.dir()}')
+        subprocess.check_call(command, cwd = self.dir(), shell = True)
