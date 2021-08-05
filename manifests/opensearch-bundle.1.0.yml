@@ -1,7 +1,5 @@
 ---
-manifest:
-  schema:
-    version: 1.0
+schema-version: 1.0
 build:
   name: OpenSearch
   version: 1.0.0

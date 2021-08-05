@@ -9,7 +9,7 @@ class BuildManifest:
             return BuildManifest(yaml.safe_load(file))
 
     def __init__(self, data):
-        self._schema = Schema(data['manifest']['schema'])
+        self._schema = Schema(data)
         self._build = Build(data['build'])
         self._components = list(map(lambda entry: Component(entry), data['components']))
 
@@ -21,7 +21,7 @@ class BuildManifest:
 
 class Schema:
     def __init__(self, data):
-        self._version = data['version']
+        self._version = data['schema-version']
         if self._version != 1:
             raise ValueError(f'Unsupported schema version: {self._version}')
 
