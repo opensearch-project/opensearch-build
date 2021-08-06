@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright OpenSearch Contributors.
+# SPDX-License-Identifier: Apache-2.0
+
+set -e
+
 opensearch_version=$1
 
 ./gradlew build -Dopensearch.version=$1
