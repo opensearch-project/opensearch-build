@@ -1,0 +1,101 @@
+Description: Template for setting up resources for the build-bundle-test workflows
+Resources:
+  BuildBucket:
+    Type: "AWS::S3::Bucket"
+  WorkflowUser:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: buildworkflow
+      Policies:
+        - PolicyName: AssumeRole
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "sts:AssumeRole"
+              Resource:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/opensearch-build"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/opensearch-bundle"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:role/opensearch-test"
+  BuildRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: opensearch-build
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt WorkflowUser.Arn
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: S3_Build_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BuildBucket}/builds/*"
+  BundleRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: opensearch-bundle
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt WorkflowUser.Arn
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: S3_Build_Read_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:GetObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BuildBucket}/builds/*"
+        - PolicyName: S3_Bundle_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BuildBucket}/bundles/*"
+  TestRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: opensearch-test
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt WorkflowUser.Arn
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: S3_Bundle_Read_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:GetObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BuildBucket}/bundles/*"
+        - PolicyName: S3_TestResults_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BuildBucket}/bundles/*/tests/*"
