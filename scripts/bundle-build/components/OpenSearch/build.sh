@@ -20,11 +20,11 @@ cp -r ./build/local-test-repo/org/opensearch "${outputDir}"/maven
 if [ "${ARCHITECTURE}" = "x64" ]
 then
   ./gradlew :distribution:archives:linux-tar:assemble -Dbuild.snapshot=false
-  cp -r distribution/archives/linux-tar/build/distributions/. $outputDir
+  cp -r distribution/archives/linux-tar/build/distributions/. "${outputDir}"/bundle
 elif [ "${ARCHITECTURE}" == "arm64" ]
 then
   ./gradlew :distribution:archives:linux-arm64-tar:assemble -Dbuild.snapshot=false
-  cp -r distribution/archives/linux-arm64-tar/build/distributions/ $outputDir
+  cp -r distribution/archives/linux-arm64-tar/build/distributions/ "${outputDir}"/bundle
 fi
 
 cd $outputDir
