@@ -24,3 +24,5 @@ with tempfile.TemporaryDirectory() as work_dir:
         component.checkout()
         component.build(build.version(), output.arch())
         component.export(output.dest())
+
+    manifest.save_to(os.path.join(output.dest(), 'manifest.yml'))

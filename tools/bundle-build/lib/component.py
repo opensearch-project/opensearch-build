@@ -59,3 +59,11 @@ class Component:
             self.git_repository().execute(f'cp -r "{artifacts_path}/"* "{dest}"')
         else:
             print(f'No artifacts found in {artifacts_path}, skipping.')
+
+    def dict(self):
+        return {
+            'name': self.name(),
+            'repository': self.repository(),
+            'ref': self.ref(),
+            'sha': self.git_repository().sha()
+        }

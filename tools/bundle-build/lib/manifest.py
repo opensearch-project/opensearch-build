@@ -13,6 +13,15 @@ class BuildManifest:
         self._build = Build(data['build'])
         self._components = list(map(lambda entry: Component(entry), data['components']))
 
+    def save_to(self, path):
+        with open(path, 'w') as file:
+            data = {
+                'schema-version' : 1.0,
+                'build': self.build().dict(),
+                'components': list(map(lambda component: component.dict(), self.components()))
+            }
+            yaml.dump(data, file)
+
     def build(self):
         return self._build
 
@@ -38,3 +47,9 @@ class Build:
 
     def name(self):
         return self._name
+
+    def dict(self):
+        return {
+            'name': self.name(),
+            'version': self.version()
+        }
