@@ -2,7 +2,7 @@ import os
 import sys
 import tempfile
 import urllib.request
-from test_workflow.manifest import BuildManifest
+from test_workflow.manifest import BundleManifest
 from test_workflow.test_cluster import LocalTestCluster
 from test_workflow.git import GitRepository
 from test_workflow.integ_test import IntegTestSuite
@@ -17,7 +17,7 @@ with tempfile.TemporaryDirectory() as work_dir:
     # Download the manifest
     with urllib.request.urlopen(sys.argv[1]) as response:
         text = response.read()
-        manifest = BuildManifest.from_text(text)
+        manifest = BundleManifest.from_text(text)
 
     # Spin up a test cluster
     cluster = LocalTestCluster(manifest.bundle_location)
