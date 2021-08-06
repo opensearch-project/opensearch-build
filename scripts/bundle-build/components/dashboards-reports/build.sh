@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright OpenSearch Contributors.
+# SPDX-License-Identifier: Apache-2.0
+
+set -e
+
 cd reports-scheduler
 ./gradlew assemble --no-daemon --refresh-dependencies -Dbuild.snapshot=false -DskipTests=true -Dopensearch.version=$1
 

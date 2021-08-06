@@ -2,7 +2,7 @@
 
 Builds the OpenSearch bundle.
 
-The OpenSearch repo is built first, followed by common-utils. These dependencies are published to maven local, and subsequent project builds pick up those. All final output is placed into an `artifacts` folder.
+The OpenSearch repo is built first, followed by common-utils. These dependencies are published to maven local, and subsequent project builds pick up those. All final output is placed into an `artifacts` folder along with a `manifest.yml` that contains output details.
 
 ### Usage
 
