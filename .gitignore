@@ -10,3 +10,5 @@ __pycache__
 .gradle/
 .settings/
 out.txt
+artifacts/
+
