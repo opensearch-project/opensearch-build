@@ -31,7 +31,7 @@ class Component:
     # script overridden in this repo
     def __set_custom_component_script_path(self):
         dirname = os.path.dirname(os.path.abspath(__file__))      
-        self.custom_component_script_path = os.path.realpath(os.path.join(dirname, '../../../scripts/bundle-build/components', self.name, 'build.sh'))
+        self.custom_component_script_path = os.path.realpath(os.path.join(dirname, '../../scripts/bundle-build/components', self.name, 'build.sh'))
 
     # script inside the component repo
     def __set_component_script_path(self):
@@ -41,7 +41,7 @@ class Component:
     # default gradle script
     def __set_default_script_path(self):
         dirname = os.path.dirname(os.path.abspath(__file__))      
-        self.default_script_path = os.path.realpath(os.path.join(dirname, '../../../scripts/bundle-build/standard-gradle-build/build.sh'))
+        self.default_script_path = os.path.realpath(os.path.join(dirname, '../../scripts/bundle-build/standard-gradle-build/build.sh'))
 
     def __set_build_script(self):
         paths = [self.component_script_path, self.custom_component_script_path, self.default_script_path]
