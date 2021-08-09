@@ -13,6 +13,7 @@ schema-version: 1.0
 build:
   name: string
   version: string
+  architecture: x64 or arm64
 components:
   - name: string
     repository: URL of git repository
@@ -56,11 +57,13 @@ class BuildManifest:
         def __init__(self, data):
             self.name = data['name']
             self.version = data['version']
+            self.architecture = data['architecture']
 
         def to_dict(self):
             return {
                 'name': self.name,
-                'version': self.version
+                'version': self.version,
+                'architecture': self.architecture
             }
 
     class Component:
