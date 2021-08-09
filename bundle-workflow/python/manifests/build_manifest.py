@@ -18,7 +18,7 @@ components:
   - name: string
     repository: URL of git repository
     ref: git ref that was built (sha, branch, or tag)
-    commitid: The actual git commit ID that was built (i.e. the resolved "ref")
+    commit_id: The actual git commit ID that was built (i.e. the resolved "ref")
     artifacts:
       maven:
         - maven/relative/path/to/artifact
@@ -71,7 +71,7 @@ class BuildManifest:
             self.name = data['name']
             self.repository = data['repository']
             self.ref = data['ref']
-            self.commitid = data['commitid']
+            self.commit_id = data['commit_id']
             self.artifacts = data['artifacts']
 
         def to_dict(self):
@@ -79,6 +79,6 @@ class BuildManifest:
                 'name': self.name,
                 'repository': self.repository,
                 'ref': self.ref,
-                'commitid': self.commitid,
+                'commit_id': self.commit_id,
                 'artifacts': self.artifacts
             }
