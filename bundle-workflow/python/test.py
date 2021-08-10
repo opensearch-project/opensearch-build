@@ -4,9 +4,9 @@ import os
 import tempfile
 import argparse
 from manifests.bundle_manifest import BundleManifest
+from git.git_repository import GitRepository
 from test_workflow.test_cluster import LocalTestCluster
-from test_workflow.git import GitRepository
-from test_workflow.integ_test import IntegTestSuite
+from test_workflow.integ_test_suite import IntegTestSuite
 
 parser = argparse.ArgumentParser(description = "Test an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
@@ -21,10 +21,10 @@ with tempfile.TemporaryDirectory() as work_dir:
     cluster = LocalTestCluster(manifest.bundle_location)
 
     # For each component, check out the git repo and run `integtest.sh`
-    for component in manifest.components():
-        print(component.name())
-        repo = GitRepository(component.repository_url(), component.commit_id())
-        test_suite = IntegTestSuite(component.name(), repo)
+    for component in manifest.components:
+        print(component.name)
+        repo = GitRepository(component.repository_url, component.commit_id)
+        test_suite = IntegTestSuite(component.name, repo)
         test_suite.execute(cluster)
 
     cluster.destroy()
