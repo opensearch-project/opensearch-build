@@ -1,11 +1,14 @@
 # Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
 
-import os
-import tempfile
 import subprocess
+import tempfile
 from dataclasses import dataclass
 
+'''
+This class checks out a Git repository at a particular ref into a temporary directory.
+Clients can obtain the actual commit ID by querying the "sha" attribute, and the temp directory name with "dir.name".
+'''
 @dataclass
 class GitRepository:
     url: str
@@ -25,4 +28,3 @@ class GitRepository:
     def execute(self, command):
         print(f'Executing "{command}" in {self.dir.name}')
         subprocess.check_call(command, cwd = self.dir.name, shell = True)
-        
