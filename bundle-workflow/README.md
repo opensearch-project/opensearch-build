@@ -7,7 +7,7 @@ The OpenSearch repo is built first, followed by common-utils. These dependencies
 ### Usage
 
 ```bash
-./tools/bundle-build/build.sh manifests/opensearch-bundle.1.0.yml
+./bundle-workflow/build.sh manifests/opensearch-1.0.0.yml
 ```
 
 ### Scripts
