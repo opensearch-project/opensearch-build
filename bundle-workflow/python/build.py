@@ -5,7 +5,6 @@ import os
 import sys
 import subprocess
 import tempfile
-import yaml
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
