@@ -53,7 +53,6 @@ with tempfile.TemporaryDirectory() as work_dir:
         builder.build(manifest.build.version, arch)
         builder.export_artifacts()
 
-    output_manifest = build_recorder.get_manifest()
-    manifest_path = os.path.join(output_dir, 'manifest.yml')
-    with open(manifest_path, 'w') as file:
-        yaml.dump(output_manifest.to_dict(), file)
+    build_recorder.write_manifest(output_dir)
+
+print('Done')
