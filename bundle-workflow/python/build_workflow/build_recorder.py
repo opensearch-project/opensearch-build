@@ -17,7 +17,7 @@ class BuildRecorder:
     def record_artifact(self, component_name, artifact_type, artifact_path, artifact_file):
         print(f'Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})')
         # Ensure the target directory exists
-        dest_file = os.path.join(self.output_dir, artifact_type, artifact_path)
+        dest_file = os.path.join(self.output_dir, artifact_path)
         dest_dir = os.path.dirname(dest_file)
         os.makedirs(dest_dir, exist_ok = True)
         # Copy the file
