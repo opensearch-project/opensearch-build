@@ -1,1 +1,1 @@
-Scripts invoked by [bundle-build](../tools/bundle-build).
+Scripts invoked by [bundle-workflow](../..).

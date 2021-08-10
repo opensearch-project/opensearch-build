@@ -6,4 +6,4 @@
 set -e
 
 DIR="$(dirname "$0")"
-python3 "$DIR/python/build.py" $@
+"$DIR/run.sh" "$DIR/python/build.py" $@
