@@ -16,6 +16,7 @@ from paths.script_finder import ScriptFinder
 
 parser = argparse.ArgumentParser(description = "Build an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
+parser.add_argument('-s', '--snapshot', action = 'store_true', default = False, help="Build snapshot.")
 args = parser.parse_args()
 
 component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
@@ -37,12 +38,12 @@ output_dir = os.path.join(os.getcwd(), 'artifacts')
 os.makedirs(output_dir, exist_ok = True)
 build_id = os.getenv('OPENSEARCH_BUILD_ID', uuid.uuid4().hex)
 
-with tempfile.TemporaryDirectory() as work_dir:
+with tempfile.TemporaryDirectory() as work_dir: 
     print(f'Building in {work_dir}')
 
     os.chdir(work_dir)
 
-    build_recorder = BuildRecorder(build_id, output_dir, manifest.build.name, manifest.build.version, arch)
+    build_recorder = BuildRecorder(build_id, output_dir, manifest.build.name, manifest.build.version, arch, args.snapshot)
 
     print(f'Building {manifest.build.name} ({arch}) into {output_dir}')
 
@@ -53,9 +54,9 @@ with tempfile.TemporaryDirectory() as work_dir:
                           repo,
                           script_finder,
                           build_recorder)
-        builder.build(manifest.build.version, arch)
+        builder.build(manifest.build.version, arch, args.snapshot)
         builder.export_artifacts()
 
     build_recorder.write_manifest(output_dir)
 
-print('Done')
+print('Done.')

@@ -7,9 +7,9 @@ import yaml
 from manifests.build_manifest import BuildManifest
 
 class BuildRecorder:
-    def __init__(self, build_id, output_dir, name, version, arch):
+    def __init__(self, build_id, output_dir, name, version, arch, snapshot):
         self.output_dir = output_dir
-        self.build_manifest = self.BuildManifestBuilder(build_id, name, version, arch)
+        self.build_manifest = self.BuildManifestBuilder(build_id, name, version, arch, snapshot)
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(component_name, git_repo.url, git_repo.ref, git_repo.sha)
@@ -35,13 +35,14 @@ class BuildRecorder:
             yaml.dump(output_manifest.to_dict(), file)
 
     class BuildManifestBuilder:
-        def __init__(self, build_id, name, version, arch):
+        def __init__(self, build_id, name, version, arch, snapshot):
             self.data = {}
             self.data['build'] = {}
             self.data['build']['id'] = build_id
             self.data['build']['name'] = name
             self.data['build']['version'] = str(version)
             self.data['build']['architecture'] = arch
+            self.data['build']['snapshot'] = str(snapshot).lower()
             self.data['schema-version'] = '1.0'
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BuildManifest this will get converted back into a list

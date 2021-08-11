@@ -5,9 +5,58 @@
 
 set -e
 
-opensearch_version=$1
+function usage() {
+    echo "Usage: $0 [args]"
+    echo ""
+    echo "Arguments:"
+    echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
+    echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
+    echo -e "-h help"
+}
 
-./gradlew build -Dopensearch.version=$1
-./gradlew publishToMavenLocal -Dopensearch.version=$1
+while getopts ":h:v:s:o:a:" arg; do
+    case $arg in
+        h)
+            usage
+            exit 1
+            ;;
+        v)
+            VERSION=$OPTARG
+            ;;
+        s)
+            SNAPSHOT=$OPTARG
+            ;;
+        o)
+            OUTPUT=$OPTARG
+            ;;
+        a)
+            ARCHITECTURE=$OPTARG
+            ;;
+        :)
+            echo "Error: -${OPTARG} requires an argument"
+            usage
+            exit 1
+            ;;
+        ?)
+            echo "Invalid option: -${arg}"
+            exit 1
+            ;;
+    esac
+done
+
+if [ -z "$VERSION" ]; then
+    echo "Error: You must specify the OpenSearch version"
+    usage
+    exit 1
+fi
+
+[[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
+[ -z "$OUTPUT" ] && OUTPUT=artifacts
+
+echo ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 mkdir -p artifacts/maven
-cp -r ~/.m2/repository/org/opensearch/common-utils artifacts/maven
+cp -r ~/.m2/repository/org/opensearch/common-utils $OUTPUT/maven

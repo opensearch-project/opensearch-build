@@ -5,16 +5,63 @@
 
 set -e
 
-opensearch_version=$1
+function usage() {
+    echo "Usage: $0 [args]"
+    echo ""
+    echo "Arguments:"
+    echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
+    echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
+    echo -e "-h help"
+}
 
-outputDir=artifacts
-mkdir -p $outputDir
-./gradlew assemble --no-daemon --refresh-dependencies -Dbuild.snapshot=false -DskipTests=true -Dopensearch.version=$1
+while getopts ":h:v:s:o:a:" arg; do
+    case $arg in
+        h)
+            usage
+            exit 1
+            ;;
+        v)
+            VERSION=$OPTARG
+            ;;
+        s)
+            SNAPSHOT=$OPTARG
+            ;;
+        o)
+            OUTPUT=$OPTARG
+            ;;
+        a)
+            ARCHITECTURE=$OPTARG
+            ;;
+        :)
+            echo "Error: -${OPTARG} requires an argument"
+            usage
+            exit 1
+            ;;
+        ?)
+            echo "Invalid option: -${arg}"
+            exit 1
+            ;;
+    esac
+done
 
-mkdir -p $outputDir/plugins
-cp ./build/distributions/*.zip ./$outputDir/plugins
+if [ -z "$VERSION" ]; then
+    echo "Error: You must specify the OpenSearch version"
+    usage
+    exit 1
+fi
 
-./gradlew publishToMavenLocal -Dopensearch.version=$1 -Dbuild.snapshot=false
-mkdir -p $outputDir/maven
-cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler $outputDir/maven
-cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler-spi $outputDir/maven
+[[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
+[ -z "$OUTPUT" ] && OUTPUT=artifacts
+
+mkdir -p $OUTPUT
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+
+mkdir -p $OUTPUT/plugins
+cp ./build/distributions/*.zip $OUTPUT/plugins
+
+./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+mkdir -p $OUTPUT/maven
+cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler $OUTPUT/maven
+cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler-spi $OUTPUT/maven

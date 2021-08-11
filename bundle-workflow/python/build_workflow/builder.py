@@ -22,15 +22,16 @@ class Builder:
         self.git_repo = git_repo
         self.script_finder = script_finder
         self.build_recorder = build_recorder
+        self.output_path = 'artifacts'
 
-    def build(self, version, arch):
+    def build(self, version, arch, snapshot):
         build_script = self.script_finder.find_build_script(self.component_name, self.git_repo.dir.name)
-        build_command = f'{build_script} {version} {arch}'
+        build_command = f'{build_script} -v {version} -a {arch} -s {str(snapshot).lower()} -o {self.output_path}'
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 
     def export_artifacts(self):
-        artifacts_dir = os.path.realpath(os.path.join(self.git_repo.dir.name, 'artifacts'))
+        artifacts_dir = os.path.realpath(os.path.join(self.git_repo.dir.name, self.output_path))
         for artifact_type in ["maven", "bundle", "plugins", "libs"]:
             for dir, dirs, files in os.walk(os.path.join(artifacts_dir, artifact_type)):
                 for file_name in files:
