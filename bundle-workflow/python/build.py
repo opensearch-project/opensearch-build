@@ -4,20 +4,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import sys
 import subprocess
 import tempfile
 import uuid
+import argparse
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
 from build_workflow.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
 
-if (len(sys.argv) < 2):
-    print("Build an OpenSearch Bundle")
-    print("usage: build.sh /path/to/manifest")
-    exit(1)
+parser = argparse.ArgumentParser(description = "Build an OpenSearch Bundle")
+parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
+args = parser.parse_args()
 
 component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
 default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
@@ -33,7 +32,7 @@ def get_arch():
         raise ValueError(f'Unsupported architecture: {arch}')
 
 arch = get_arch()
-manifest = InputManifest.from_file(sys.argv[1])
+manifest = InputManifest.from_file(args.manifest)
 output_dir = os.path.join(os.getcwd(), 'artifacts')
 os.makedirs(output_dir, exist_ok = True)
 build_id = os.getenv('OPENSEARCH_BUILD_ID', uuid.uuid4().hex)

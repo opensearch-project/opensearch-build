@@ -1,20 +1,17 @@
 import os
-import sys
 import tempfile
+import argparse
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
 
-if (len(sys.argv) < 2):
-    print("Build an OpenSearch Bundle")
-    print("usage: assemble.sh /path/to/build_manifest")
-    exit(1)
+parser = argparse.ArgumentParser(description = "Assembly an OpenSearch Bundle")
+parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
+args = parser.parse_args()
 
-
-build_manifest_path = sys.argv[1]
-build_manifest = BuildManifest.from_file(build_manifest_path)
+build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
-artifacts_dir = os.path.dirname(os.path.realpath(build_manifest_path))
+artifacts_dir = os.path.dirname(os.path.realpath(args.manifest))
 output_dir = os.path.join(os.getcwd(), 'bundle')
 os.makedirs(output_dir, exist_ok=True)
 

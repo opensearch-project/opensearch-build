@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import tempfile
-import urllib.request
-from test_workflow.manifest import BundleManifest
+import argparse
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.test_cluster import LocalTestCluster
 from test_workflow.git import GitRepository
 from test_workflow.integ_test import IntegTestSuite
 
-if (len(sys.argv) < 2):
-    print("Usage: tester.py /path/to/manifest")
-    exit(1)
+parser = argparse.ArgumentParser(description = "Test an OpenSearch Bundle")
+parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
+args = parser.parse_args()
+
+manifest = BundleManifest.from_file(args.manifest)
 
 with tempfile.TemporaryDirectory() as work_dir:
     os.chdir(work_dir)
-
-    # Download the manifest
-    with urllib.request.urlopen(sys.argv[1]) as response:
-        text = response.read()
-        manifest = BundleManifest.from_text(text)
 
     # Spin up a test cluster
     cluster = LocalTestCluster(manifest.bundle_location)
