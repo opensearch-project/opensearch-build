@@ -7,9 +7,9 @@ import yaml
 from manifests.build_manifest import BuildManifest
 
 class BuildRecorder:
-    def __init__(self, output_dir, name, version, arch):
+    def __init__(self, build_id, output_dir, name, version, arch):
         self.output_dir = output_dir
-        self.build_manifest = self.BuildManifestBuilder(name, version, arch)
+        self.build_manifest = self.BuildManifestBuilder(build_id, name, version, arch)
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(component_name, git_repo.url, git_repo.ref, git_repo.sha)
@@ -35,9 +35,10 @@ class BuildRecorder:
             yaml.dump(output_manifest.to_dict(), file)
 
     class BuildManifestBuilder:
-        def __init__(self, name, version, arch):
+        def __init__(self, build_id, name, version, arch):
             self.data = {}
             self.data['build'] = {}
+            self.data['build']['id'] = build_id
             self.data['build']['name'] = name
             self.data['build']['version'] = str(version)
             self.data['build']['architecture'] = arch

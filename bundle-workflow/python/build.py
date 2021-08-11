@@ -5,6 +5,7 @@ import os
 import sys
 import subprocess
 import tempfile
+import uuid
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
@@ -31,13 +32,14 @@ arch = get_arch()
 manifest = InputManifest.from_file(sys.argv[1])
 output_dir = os.path.join(os.getcwd(), 'artifacts')
 os.makedirs(output_dir, exist_ok = True)
+build_id = os.getenv('OPENSEARCH_BUILD_ID', uuid.uuid4().hex)
 
 with tempfile.TemporaryDirectory() as work_dir:
     print(f'Building in {work_dir}')
 
     os.chdir(work_dir)
 
-    build_recorder = BuildRecorder(output_dir, manifest.build.name, manifest.build.version, arch)
+    build_recorder = BuildRecorder(build_id, output_dir, manifest.build.name, manifest.build.version, arch)
 
     print(f'Building {manifest.build.name} ({arch}) into {output_dir}')
 
