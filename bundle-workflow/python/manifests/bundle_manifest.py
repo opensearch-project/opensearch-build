@@ -4,9 +4,9 @@
 import yaml
 
 '''
-A BuildManifest is an immutable view of the outputs from a build step
-The manifest contains information about the product that was built (in the `build` section),
-and the components that made up the build in the `components` section.
+A BundleManifest is an immutable view of the outputs from a assemble step
+The manifest contains information about the bundle that was built (in the `assemble` section),
+and the components that made up the bundle in the `components` section.
 
 The format for schema version 1.0 is:
 schema-version: 1.0
@@ -14,28 +14,21 @@ build:
   name: string
   version: string
   architecture: x64 or arm64
+  location: /relative/path/to/tarball
 components:
   - name: string
     repository: URL of git repository
     ref: git ref that was built (sha, branch, or tag)
     commit_id: The actual git commit ID that was built (i.e. the resolved "ref")
-    artifacts:
-      maven:
-        - maven/relative/path/to/artifact
-        - ...
-      plugins:
-        - plugins/relative/path/to/artifact
-        - ...
-      libs:
-        - libs/relative/path/to/artifact
-        - ...
-  - ...
+    location: /relative/path/to/artifact
 '''
-class BuildManifest:
+
+
+class BundleManifest:
     @staticmethod
     def from_file(path):
         with open(path, 'r') as file:
-            return BuildManifest(yaml.safe_load(file))
+            return BundleManifest(yaml.safe_load(file))
 
     def __init__(self, data):
         self.version = str(data['schema-version'])
@@ -58,6 +51,7 @@ class BuildManifest:
             self.name = data['name']
             self.version = data['version']
             self.architecture = data['architecture']
+            self.location = data['location']
             self.id = data['id']
 
         def to_dict(self):
@@ -65,6 +59,7 @@ class BuildManifest:
                 'name': self.name,
                 'version': self.version,
                 'architecture': self.architecture,
+                'location': self.location,
                 'id': self.id
             }
 
@@ -74,7 +69,7 @@ class BuildManifest:
             self.repository = data['repository']
             self.ref = data['ref']
             self.commit_id = data['commit_id']
-            self.artifacts = data['artifacts']
+            self.location = data['location']
 
         def to_dict(self):
             return {
@@ -82,5 +77,5 @@ class BuildManifest:
                 'repository': self.repository,
                 'ref': self.ref,
                 'commit_id': self.commit_id,
-                'artifacts': self.artifacts
+                'location': self.location
             }

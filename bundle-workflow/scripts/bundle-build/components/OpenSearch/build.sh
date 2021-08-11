@@ -30,7 +30,7 @@ then
   cp -r distribution/archives/linux-arm64-tar/build/distributions/ "${outputDir}"/bundle
 fi
 
-cd $outputDir
+cd $outputDir/bundle
 
 #rename included bundle to -min.
 ARTIFACT_FULL_NAME=`ls  | grep -E 'tar.gz$' | tail -n 1`
