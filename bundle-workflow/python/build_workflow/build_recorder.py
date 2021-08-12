@@ -40,7 +40,7 @@ class BuildRecorder:
             self.data['build'] = {}
             self.data['build']['id'] = build_id
             self.data['build']['name'] = name
-            self.data['build']['version'] = str(version)
+            self.data['build']['version'] = (str(version) + '-SNAPSHOT' if snapshot else str(version))
             self.data['build']['architecture'] = arch
             self.data['build']['snapshot'] = str(snapshot).lower()
             self.data['schema-version'] = '1.0'
