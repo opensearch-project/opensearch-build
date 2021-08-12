@@ -5,7 +5,7 @@ from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
 
-parser = argparse.ArgumentParser(description = "Assembly an OpenSearch Bundle")
+parser = argparse.ArgumentParser(description = "Assemble an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
 args = parser.parse_args()
 
