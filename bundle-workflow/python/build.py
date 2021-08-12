@@ -12,6 +12,7 @@ from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
 from build_workflow.git_repository import GitRepository
+from paths.script_finder import ScriptFinder
 
 if (len(sys.argv) < 2):
     print("Build an OpenSearch Bundle")
@@ -19,7 +20,8 @@ if (len(sys.argv) < 2):
     exit(1)
 
 component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
-default_build_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build/build.sh')
+default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
+script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
 
 def get_arch():
     arch = subprocess.check_output(['uname', '-m']).decode().strip()
@@ -50,8 +52,7 @@ with tempfile.TemporaryDirectory() as work_dir:
         repo = GitRepository(component.repository, component.ref)
         builder = Builder(component.name,
                           repo,
-                          component_scripts_path,
-                          default_build_path,
+                          script_finder,
                           build_recorder)
         builder.build(manifest.build.version, arch)
         builder.export_artifacts()

@@ -9,31 +9,22 @@ It will notify the build recorder of build information such as repository and gi
 Artifacts found in "<build root>/artifacts/<maven|plugins|libs|bundle>" will be recognized and recorded.
 '''
 class Builder:
-    def __init__(self, component_name, git_repo, component_scripts_path, default_build_script, build_recorder):
+    def __init__(self, component_name, git_repo, script_finder, build_recorder):
         '''
         Construct a new Builder instance.
         :param component_name: The name of the component to build.
         :param git_repo: A GitRepository instance containing the checked-out code.
-        :param component_scripts_path: Where to look for individual component "build.sh" scripts for those repositories that don't contain their own "scripts/build.sh".
-        :param default_build_script: Path to a defauld build script to use when neither a per-repo "scripts/build.sh" nor a "component_scripts_path/<component>/build.sh" script can be found.
+        :param script_finder: The ScriptFinder to use for finding build.sh scripts.
         :param build_recorder: The build recorder that will capture build information and artifacts.
         '''
 
         self.component_name = component_name
         self.git_repo = git_repo
-        self.component_scripts_path = component_scripts_path
-        self.default_build_script = default_build_script
+        self.script_finder = script_finder
         self.build_recorder = build_recorder
 
     def build(self, version, arch):
-        paths = [os.path.realpath(os.path.join(self.git_repo.dir.name, 'scripts/build.sh')),
-                 os.path.realpath(os.path.join(self.component_scripts_path, self.component_name, 'build.sh')),
-                 self.default_build_script]
-
-        build_script = next(filter(lambda path: os.path.exists(path), paths), None)
-        if build_script is None:
-            raise RuntimeError(f'Could not find build.sh script. Looked in {paths}')
-
+        build_script = self.script_finder.find_build_script(self.component_name, self.git_repo.dir.name)
         build_command = f'{build_script} {version} {arch}'
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
