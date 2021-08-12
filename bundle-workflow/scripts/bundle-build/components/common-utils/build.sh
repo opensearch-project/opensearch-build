@@ -55,7 +55,6 @@ fi
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-echo ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 ./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 mkdir -p artifacts/maven
