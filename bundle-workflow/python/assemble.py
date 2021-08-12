@@ -6,6 +6,7 @@
 import os
 import tempfile
 import argparse
+import shutil
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
@@ -13,6 +14,12 @@ from manifests.build_manifest import BuildManifest
 parser = argparse.ArgumentParser(description = "Assemble an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
 args = parser.parse_args()
+
+tarball_installation_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../release/tar/linux/opensearch-tar-install.sh')
+
+if not os.path.isfile(tarball_installation_script):
+    print(f'No installation script found at path: {tarball_installation_script}')
+    exit(1)
 
 build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
@@ -30,6 +37,9 @@ with tempfile.TemporaryDirectory() as work_dir:
 
     bundle.install_plugins()
     print(f'Installed plugins: {bundle.installed_plugins}')
+
+    # Copy the tar installation script into the bundle
+    shutil.copyfile(tarball_installation_script, os.path.join(bundle.archive_path, os.path.basename(tarball_installation_script)))
 
     #  Save a copy of the manifest inside of the tar
     bundle_recorder.write_manifest(bundle.archive_path)
