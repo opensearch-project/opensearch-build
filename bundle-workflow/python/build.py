@@ -11,8 +11,8 @@ import argparse
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
-from build_workflow.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
+from git.git_repository import GitRepository
 
 parser = argparse.ArgumentParser(description = "Build an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
