@@ -6,4 +6,4 @@
 set -e
 
 DIR="$(dirname "$0")"
-python3 "$DIR/python/assemble.py" $@
+python3 "$DIR/src/assemble.py" $@
