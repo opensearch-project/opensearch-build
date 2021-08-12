@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+
+# Copyright OpenSearch Contributors.
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 import tempfile
 import argparse
@@ -11,7 +16,7 @@ args = parser.parse_args()
 
 build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
-artifacts_dir = os.path.dirname(os.path.realpath(args.manifest))
+artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
 output_dir = os.path.join(os.getcwd(), 'bundle')
 os.makedirs(output_dir, exist_ok=True)
 
