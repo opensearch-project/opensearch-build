@@ -26,9 +26,8 @@ components:
 
 class BundleManifest:
     @staticmethod
-    def from_file(path):
-        with open(path, 'r') as file:
-            return BundleManifest(yaml.safe_load(file))
+    def from_file(file):
+        return BundleManifest(yaml.safe_load(file))
 
     def __init__(self, data):
         self.version = str(data['schema-version'])
