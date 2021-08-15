@@ -7,17 +7,14 @@ import os
 import subprocess
 import tempfile
 import uuid
-import argparse
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
+from build_workflow.build_args import BuildArgs
 from paths.script_finder import ScriptFinder
 from git.git_repository import GitRepository
 
-parser = argparse.ArgumentParser(description = "Build an OpenSearch Bundle")
-parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
-parser.add_argument('-s', '--snapshot', action = 'store_true', default = False, help="Build snapshot.")
-args = parser.parse_args()
+args = BuildArgs()
 
 component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
 default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
@@ -48,14 +45,21 @@ with tempfile.TemporaryDirectory() as work_dir:
     print(f'Building {manifest.build.name} ({arch}) into {output_dir}')
 
     for component in manifest.components:
-        print(f'Building {component.name}')
+
+        if args.component and args.component != component.name:
+            print(f'\nSkipping {component.name}')
+            continue
+
+        print(f'\nBuilding {component.name}')
         repo = GitRepository(component.repository, component.ref)
-        builder = Builder(component.name,
-                          repo,
-                          script_finder,
-                          build_recorder)
-        builder.build(manifest.build.version, arch, args.snapshot)
-        builder.export_artifacts()
+
+        try:
+            builder = Builder(component.name, repo, script_finder, build_recorder)
+            builder.build(manifest.build.version, arch, args.snapshot)
+            builder.export_artifacts()
+        except:
+            print(f'\nError building {component.name}, retry with\n\n\t{args.component_command(component.name)}\n')
+            raise
 
     build_recorder.write_manifest(output_dir)
 
