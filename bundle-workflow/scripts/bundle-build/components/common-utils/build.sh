@@ -3,7 +3,7 @@
 # Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
 
-set -e
+set -ex
 
 function usage() {
     echo "Usage: $0 [args]"
