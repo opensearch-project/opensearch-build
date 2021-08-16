@@ -13,7 +13,7 @@ class BuildArgs():
         parser = argparse.ArgumentParser(description = "Build an OpenSearch Bundle")
         parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
         parser.add_argument('-s', '--snapshot', action = 'store_true', default = False, help="Build snapshot.")
-        parser.add_argument('-c', '--component', type = str, help="Build a single component.")
+        parser.add_argument('-c', '--component', type = str, help="Rebuild a single component.")
         args = parser.parse_args()
         self.manifest = args.manifest
         self.snapshot = args.snapshot

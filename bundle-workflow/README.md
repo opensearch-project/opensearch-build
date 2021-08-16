@@ -38,10 +38,10 @@ Build Step:
 
 The following options are available.
 
-| name               | description                                                         |
-|--------------------|---------------------------------------------------------------------|
-| --snapshot         | Build a snapshot instead of a release artifact, default is `false`. |
-| --component [name] | Build a single component by name, e.g. `--component common-utils`.  |
+| name               | description                                                           |
+|--------------------|-----------------------------------------------------------------------|
+| --snapshot         | Build a snapshot instead of a release artifact, default is `false`.   |
+| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.  |
 
 Bundle step:
 ```bash
