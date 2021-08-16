@@ -3,28 +3,27 @@
 
 import yaml
 
-'''
-A BundleManifest is an immutable view of the outputs from a assemble step
-The manifest contains information about the bundle that was built (in the `assemble` section),
-and the components that made up the bundle in the `components` section.
-
-The format for schema version 1.0 is:
-schema-version: 1.0
-build:
-  name: string
-  version: string
-  architecture: x64 or arm64
-  location: /relative/path/to/tarball
-components:
-  - name: string
-    repository: URL of git repository
-    ref: git ref that was built (sha, branch, or tag)
-    commit_id: The actual git commit ID that was built (i.e. the resolved "ref")
-    location: /relative/path/to/artifact
-'''
-
-
 class BundleManifest:
+    '''
+    A BundleManifest is an immutable view of the outputs from a assemble step
+    The manifest contains information about the bundle that was built (in the `assemble` section),
+    and the components that made up the bundle in the `components` section.
+
+    The format for schema version 1.0 is:
+        schema-version: 1.0
+        build:
+          name: string
+          version: string
+          architecture: x64 or arm64
+          location: /relative/path/to/tarball
+        components:
+          - name: string
+            repository: URL of git repository
+            ref: git ref that was built (sha, branch, or tag)
+            commit_id: The actual git commit ID that was built (i.e. the resolved "ref")
+            location: /relative/path/to/artifact
+    '''
+
     @staticmethod
     def from_file(file):
         return BundleManifest(yaml.safe_load(file))
