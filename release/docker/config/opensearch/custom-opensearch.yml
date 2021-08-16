@@ -1,0 +1,20 @@
+cluster.name: docker-cluster
+
+network.host: 0.0.0.0
+
+plugins.security.ssl.transport.pemcert_filepath: certs/opensearch-crt.pem
+plugins.security.ssl.transport.pemkey_filepath: certs/opensearch-key.pem
+plugins.security.ssl.transport.pemtrustedcas_filepath: certs/opensearch-ca.crt
+plugins.security.ssl.transport.enforce_hostname_verification: false
+
+plugins.security.ssl.http.enabled: true
+plugins.security.ssl.http.pemcert_filepath: certs/opensearch-crt.pem
+plugins.security.ssl.http.pemkey_filepath: certs/opensearch-key.pem
+plugins.security.ssl.http.pemtrustedcas_filepath: certs/opensearch-ca.crt
+
+plugins.security.allow_unsafe_democertificates: true
+plugins.security.allow_default_init_securityindex: true
+
+plugins.security.nodes_dn:
+  - 'CN=opensearch-svc'
+

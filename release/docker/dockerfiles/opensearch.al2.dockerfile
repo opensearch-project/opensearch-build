@@ -35,13 +35,13 @@
 ########################### Stage 0 ########################
 FROM amazonlinux:2 AS linux_x64_stage_0
 
-ARG UID=1000
-ARG GID=1000
+ARG UID=1999
+ARG GID=1999
 ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils openssl && yum clean all
 
 # Create an opensearch user, group, and directory
 RUN groupadd -g $GID opensearch && \
@@ -52,7 +52,7 @@ RUN groupadd -g $GID opensearch && \
 COPY opensearch.tgz /tmp/opensearch/opensearch.tgz
 RUN tar -xzf /tmp/opensearch/opensearch.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
-COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
+COPY log4j2.properties opensearch.yml custom-opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
 
 
@@ -60,13 +60,13 @@ COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-perform
 # Copy working directory to the actual release docker images
 FROM amazonlinux:2
 
-ARG UID=1000
-ARG GID=1000
+ARG UID=1999
+ARG GID=1999
 ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils openssl && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -87,6 +87,10 @@ USER $UID
 
 # Setup OpenSearch
 RUN ./opensearch-onetime-setup.sh
+
+# remove Demo key and certificates
+RUN rm -f /usr/share/opensearch/config/root-ca.pem && rm -f /usr/share/opensearch/config/esnode* && rm -f /usr/share/opensearch/config/admin*.pem && rm -f /usr/share/opensearch/config/kirk*.pem
+
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)
 EXPOSE 9200 9300 9600 9650
