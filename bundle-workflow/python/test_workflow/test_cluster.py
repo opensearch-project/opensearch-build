@@ -45,7 +45,8 @@ class LocalTestCluster:
             except TimeoutExpired:
                 print('Process failed to terminate even after SIGKILL')
                 raise
-        print(f'Process terminated with exit code {self.process.returncode}')
-        self.stdout.close()
-        self.stderr.close()
-        self.process = None
+        finally:
+            print(f'Process terminated with exit code {self.process.returncode}')
+            self.stdout.close()
+            self.stderr.close()
+            self.process = None
