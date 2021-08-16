@@ -4,9 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import subprocess
 import tempfile
 import uuid
+import uuid
+from system.arch import current_arch
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
@@ -20,16 +21,7 @@ component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__))
 default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
 script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
 
-def get_arch():
-    arch = subprocess.check_output(['uname', '-m']).decode().strip()
-    if arch == 'x86_64':
-        return 'x64'
-    elif arch == 'aarch64' or arch == 'arm64':
-        return  'arm64'
-    else:
-        raise ValueError(f'Unsupported architecture: {arch}')
-
-arch = get_arch()
+arch = current_arch()
 manifest = InputManifest.from_file(args.manifest)
 output_dir = os.path.join(os.getcwd(), 'artifacts')
 os.makedirs(output_dir, exist_ok = True)
