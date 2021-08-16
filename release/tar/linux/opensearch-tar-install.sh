@@ -20,7 +20,6 @@ bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configurati
 
 ##Perf Plugin
 chmod 755 $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_bin/performance-analyzer-agent
-chmod -R 755 /dev/shm
 chmod 755 $OPENSEARCH_HOME/bin/performance-analyzer-agent-cli
 echo "done security"
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/log4j2.xml \
@@ -70,4 +69,4 @@ else
 fi
 
 ##Start OpenSearch
-bash $OPENSEARCH_HOME/bin/opensearch "$@"
+exec $OPENSEARCH_HOME/bin/opensearch "$@"
