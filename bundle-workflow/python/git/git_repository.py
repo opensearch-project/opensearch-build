@@ -19,9 +19,7 @@ class GitRepository:
             self.dir = self.temp_dir.name
         else:
             self.dir = directory
-            print(f'Deleting {self.dir}')
-            shutil.rmtree(self.dir, ignore_errors = True)
-            os.makedirs(self.dir, exist_ok = True)
+            os.makedirs(self.dir, exist_ok = False)
 
         # Check out the repository
         self.execute(f'git init', True)
