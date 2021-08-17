@@ -11,7 +11,7 @@ components:
     repository: https://github.com/opensearch-project/common-utils.git
     ref: main
   - name: job-scheduler
-    repository: https://github.com/dblock/job-scheduler.git
+    repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
@@ -22,9 +22,9 @@ components:
   - name: notifications
     repository: https://github.com/dblock/notifications.git
     ref: fix-snapshot-build
-  # - name: security
-  #   repository: https://github.com/opensearch-project/security.git
-  #   ref: main
+  - name: security
+    repository: https://github.com/dblock/security.git
+    ref: fix-snapshot-build
   # - name: performance-analyzer-rca
   #   repository: https://github.com/opensearch-project/performance-analyzer-rca.git
   #   ref: main
@@ -39,13 +39,13 @@ components:
   #   ref: main
   - name: anomaly-detection
     repository: https://github.com/dblock/anomaly-detection.git
-    ref: fix-snapshot-builds
+    ref: fix-snapshot-build
   # - name: asynchronous-search
   #   repository: https://github.com/opensearch-project/asynchronous-search.git
   #   ref: main
-  # - name: dashboards-reports
-  #   repository: https://github.com/opensearch-project/dashboards-reports.git
-  #   ref: main
-  # - name: dashboards-notebooks
-  #   repository: https://github.com/opensearch-project/dashboards-notebooks.git
-  #   ref: main
+  - name: dashboards-reports
+    repository: https://github.com/dblock/dashboards-reports.git
+    ref: fix-snapshot-build
+  - name: dashboards-notebooks
+    repository: https://github.com/dblock/dashboards-notebooks.git
+    ref: fix-snapshot-build
