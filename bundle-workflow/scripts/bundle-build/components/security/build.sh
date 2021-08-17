@@ -16,7 +16,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -30,6 +30,9 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
+            ;;
+        d)
+            DEST=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG

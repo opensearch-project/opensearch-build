@@ -55,8 +55,26 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+for plugin in job-scheduler notifications; do
+    PLUGIN_VERSION=$VERSION.0
+    [[ "$SNAPSHOT" == "true" ]] && PLUGIN_VERSION=$PLUGIN_VERSION-SNAPSHOT
+    ZIP=$DEST/plugins/opensearch-$plugin-$PLUGIN_VERSION.zip
+    if [[ ! -f $ZIP ]]; then
+        echo "error: missing $ZIP, $plugin must be built first"
+        exit 1
+    fi
+    cp $ZIP src/test/resources/$plugin
+done
+
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -x test
-./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+mkdir -p $OUTPUT
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+
+zipPath=$(find . -path \*build/distributions/*.zip)
+distributions="$(dirname "${zipPath}")"
+
+echo "COPY ${distributions}/*.zip"
+mkdir -p $OUTPUT/plugins
+cp ${distributions}/*.zip ./$OUTPUT/plugins
