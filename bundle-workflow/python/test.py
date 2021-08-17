@@ -22,17 +22,18 @@ script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
 with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(work_dir)
 
-    # Spin up a test cluster
-    cluster = LocalTestCluster(manifest)
-    cluster.create()
-
-    # For each component, check out the git repo and run `integtest.sh`
+    # Spin up a test cluster with security
+    # TODO: Refactor this into a TestRun class so we can run with-security and without-security without cut-and-pasting a bunch of code
+    cluster = LocalTestCluster(work_dir, manifest, True)
     try:
+        cluster.create()
+
+        # For each component, check out the git repo and run `integtest.sh`
         for component in manifest.components:
             print(component.name)
             repo = GitRepository(component.repository, component.commit_id, os.path.join(work_dir, component.name))
-            test_suite = IntegTestSuite(component.name, repo)
-            test_suite.execute(cluster)
+            test_suite = IntegTestSuite(component.name, repo, script_finder)
+            test_suite.execute(cluster, True)
     finally:
         cluster.destroy()
 
