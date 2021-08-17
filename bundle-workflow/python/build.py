@@ -42,7 +42,7 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
             continue
 
         print(f'\nBuilding {component.name}')
-        repo = GitRepository(component.repository, component.ref)
+        repo = GitRepository(component.repository, component.ref, os.path.join(work_dir, component.name))
 
         try:
             builder = Builder(component.name, repo, script_finder, build_recorder)
