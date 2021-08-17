@@ -25,7 +25,7 @@ function usage() {
     echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>', due to multi-arch image either save in cache or directly upload to Docker Hub Repo, no local copies."
     echo ""
     echo "Optional arguments:"
-    echo -e "-o TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-t TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -41,13 +41,13 @@ function cleanup_all() {
     cleanup_docker_buildx
     File_Delete $DIR
 }
-while getopts ":ho:v:f:p:a:r:" arg; do
+while getopts ":ht:v:f:p:a:r:" arg; do
     case $arg in
         h)
             usage
             exit 1
             ;;
-        o)
+        t)
             TARBALL=`realpath $OPTARG`
             ;;
         v)
@@ -78,14 +78,26 @@ while getopts ":ho:v:f:p:a:r:" arg; do
 done
 
 # Validate the required parameters to present
-if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCHITECTURE" ]; then
-  echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT', '-a ARCHITECTURE'"
+if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCHITECTURE" ] || [ -z "$REPOSITORY" ]; then
+  echo "You must specify '-v VERSION', '-f DOCKERFILE', '-p PRODUCT', '-a ARCHITECTURE', '-r REPOSITORY'"
   usage
   exit 1
 else
   echo $VERSION $DOCKERFILE $PRODUCT $ARCHITECTURE
   IFS=', ' read -r -a ARCHITECTURE_ARRAY <<< "$ARCHITECTURE"
   IFS=', ' read -r -a TARBALL_ARRAY <<< "$TARBALL"
+fi
+
+if [ "$PRODUCT" != "opensearch" ] || [ "$PRODUCT" != "opensearch-dashboards" ]
+then
+    echo "Enter either 'opensearch' or 'opensearch-dashboards' as product name for -p parameter"
+    exit 1
+fi
+
+if [ "$ARCHITECTURE" != "x64" ] || [ "$ARCHITECTURE" != "arm64" ]
+then
+    echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
+    exit 1
 fi
 
 # Warning docker desktop

@@ -23,18 +23,18 @@ function usage() {
     echo -e "-a ARCHITECTURE\tSpecify one and only one architecture, e.g. x64 or arm64."
     echo ""
     echo "Optional arguments:"
-    echo -e "-o TARBALL\tSpecify a local opensearch or opensearch-dashboards tarball. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-t TARBALL\tSpecify a local opensearch or opensearch-dashboards tarball. You still need to specify the version - this tool does not attempt to parse the filename."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
 
-while getopts ":ho:v:f:p:a:" arg; do
+while getopts ":ht:v:f:p:a:" arg; do
     case $arg in
         h)
             usage
             exit 1
             ;;
-        o)
+        t)
             TARBALL=`realpath $OPTARG`
             ;;
         v)
@@ -68,6 +68,18 @@ if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCH
   exit 1
 else
   echo $VERSION $DOCKERFILE $PRODUCT $ARCHITECTURE
+fi
+
+if [ "$PRODUCT" != "opensearch" ] || [ "$PRODUCT" != "opensearch-dashboards" ]
+then
+    echo "Enter either 'opensearch' or 'opensearch-dashboards' as product name for -p parameter"
+    exit 1
+fi
+
+if [ "$ARCHITECTURE" != "x64" ] || [ "$ARCHITECTURE" != "arm64" ]
+then
+    echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
+    exit 1
 fi
 
 # Create temp workdirectory
