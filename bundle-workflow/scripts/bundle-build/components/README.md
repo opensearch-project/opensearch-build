@@ -1,0 +1,1 @@
+These scripts override [default script](../standard-gradle-build/build.sh) in the bundle build.
