@@ -71,6 +71,9 @@ done < <(env)
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
+if [[ "${DISABLE_INSTALL_DEMO_CONFIG}" =~ [tT]rue ]]; then
+    rm /usr/share/opensearch/config/{esnode-key.pem,esnode.pem,kirk-key.pem,kirk.pem,root-ca.pem}
+fi
 
 # Start up the opensearch and performance analyzer agent processes.
 # When either of them halts, this script exits, or we receive a SIGTERM or SIGINT signal then we want to kill both these processes.
