@@ -25,15 +25,17 @@ with tempfile.TemporaryDirectory() as temp_work_dir:
     os.chdir(work_dir)
 
     # Spin up a test cluster
-    cluster = LocalTestCluster(manifest.build.location)
+    cluster = LocalTestCluster(manifest)
+    cluster.create()
 
     # For each component, check out the git repo and run `integtest.sh`
-    for component in manifest.components:
-        print(component.name)
-        repo = GitRepository(component.repository, component.commit_id, os.path.join(work_dir, component.name))
-        test_suite = IntegTestSuite(component.name, repo)
-        test_suite.execute(cluster)
-
-    cluster.destroy()
+    try:
+        for component in manifest.components:
+            print(component.name)
+            repo = GitRepository(component.repository, component.commit_id, os.path.join(work_dir, component.name))
+            test_suite = IntegTestSuite(component.name, repo)
+            test_suite.execute(cluster)
+    finally:
+        cluster.destroy()
 
     # TODO: Store test results, send notification.
