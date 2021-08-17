@@ -4,10 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import tempfile
-import uuid
 import uuid
 from system.arch import current_arch
+from system.temporary_directory import TemporaryDirectory
 from manifests.input_manifest import InputManifest
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
@@ -27,7 +26,7 @@ output_dir = os.path.join(os.getcwd(), 'artifacts')
 os.makedirs(output_dir, exist_ok = True)
 build_id = os.getenv('OPENSEARCH_BUILD_ID', uuid.uuid4().hex)
 
-with tempfile.TemporaryDirectory() as work_dir: 
+with TemporaryDirectory(keep = args.keep) as work_dir: 
     print(f'Building in {work_dir}')
 
     os.chdir(work_dir)
