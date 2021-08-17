@@ -38,10 +38,11 @@ Build Step:
 
 The following options are available.
 
-| name               | description                                                           |
-|--------------------|-----------------------------------------------------------------------|
-| --snapshot         | Build a snapshot instead of a release artifact, default is `false`.   |
-| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.  |
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
+| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
+| --keep             | Do not delete the temporary working directory on both success or error. |
 
 Bundle step:
 ```bash
