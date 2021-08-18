@@ -84,7 +84,10 @@ class Bundle:
         return [c for c in build_components if "plugins" in c.artifacts]
 
     def get_min_bundle(self, build_components):
-        return next(iter([c for c in build_components if "bundle" in c.artifacts]), None)
+        min_bundle = next(iter([c for c in build_components if "bundle" in c.artifacts]), None)
+        if min_bundle == None:
+            raise ValueError(f'Missing min "bundle" in input artifacts.')
+        return min_bundle
 
     def copy_knnlib(self, component):
         local_path = self.get_rel_path(component, 'libs')
