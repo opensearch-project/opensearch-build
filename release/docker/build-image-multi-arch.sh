@@ -130,7 +130,6 @@ cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 if [ -z "$TARBALL" ]; then
     for index in ${!ARCHITECTURE_ARRAY[@]}
     do
-        # No tarball file specified so download one
         arch_uname=`echo ${ARCHITECTURE_ARRAY[$index]} | sed 's/x64/x86_64/g;s/arm64/aarch64/g'`
         URL="https://artifacts.opensearch.org/releases/bundle/${PRODUCT}/${VERSION}/${PRODUCT}-${VERSION}-linux-${ARCHITECTURE_ARRAY[$index]}.tar.gz"
         echo -e "\nDownloading ${PRODUCT} arch ${ARCHITECTURE_ARRAY[$index]} version ${VERSION} from ${URL}"
