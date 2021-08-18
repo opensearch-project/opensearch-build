@@ -8,7 +8,8 @@ import shutil
 
 class GitRepository:
     '''
-    This class checks out a Git repository at a particular ref into a named directory (or temporary a directory if no named directory is given). Temporary directories will be automatically deleted when the GitRepository object goes out of scope; named directories will be deleted and recreated when the GitRepository is constructed.
+    This class checks out a Git repository at a particular ref into an empty named directory (or temporary a directory if no named directory is given).
+    Temporary directories will be automatically deleted when the GitRepository object goes out of scope; named directories will be left alone.
     Clients can obtain the actual commit ID by querying the "sha" attribute, and the temp directory name with "dir".
     '''
     def __init__(self, url, ref, directory = None):
