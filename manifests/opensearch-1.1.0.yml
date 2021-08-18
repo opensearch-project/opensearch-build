@@ -20,8 +20,8 @@ components:
     repository: https://github.com/opensearch-project/alerting.git
     ref: main
   - name: notifications
-    repository: https://github.com/dblock/notifications.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
   - name: security
     repository: https://github.com/dblock/security.git
     ref: fix-snapshot-build
@@ -47,5 +47,5 @@ components:
     repository: https://github.com/dblock/dashboards-reports.git
     ref: fix-snapshot-build
   - name: dashboards-notebooks
-    repository: https://github.com/dblock/dashboards-notebooks.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/dashboards-notebooks.git
+    ref: main
