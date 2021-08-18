@@ -35,7 +35,7 @@ components:
     repository: https://github.com/dblock/index-management.git
     ref: fix-snapshot-build
   - name: k-NN
-    repository: https://github.com/VijayanB/k-NN.git
+    repository: https://github.com/VijayanB/k-NN-2.git
     ref: update-workflow
   - name: anomaly-detection
     repository: https://github.com/dblock/anomaly-detection.git
