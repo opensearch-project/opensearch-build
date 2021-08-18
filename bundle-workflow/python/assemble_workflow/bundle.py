@@ -38,6 +38,8 @@ class Bundle:
         for plugin in self.plugins:
             print(f'Installing {plugin.name}')
             self.install_plugin(plugin)
+            if plugin.name == 'k-NN':
+                self.copy_knnlib(plugin)
         self.installed_plugins = os.listdir(os.path.join(self.archive_path, 'plugins'))
 
     def install_plugin(self, plugin):
@@ -83,3 +85,12 @@ class Bundle:
 
     def get_min_bundle(self, build_components):
         return next(iter([c for c in build_components if "bundle" in c.artifacts]), None)
+
+    def copy_knnlib(self, component):
+        local_path = self.get_rel_path(component, 'libs')
+        if local_path:
+            knnlib = os.path.join(self.artifacts_dir, local_path)
+            dest_path = os.path.join(self.archive_path, 'plugins/opensearch-knn/knnlib')
+            os.makedirs(dest_path, exist_ok=True)
+            dest = os.path.join(dest_path, os.path.basename(knnlib))
+            shutil.copyfile(knnlib, dest)
