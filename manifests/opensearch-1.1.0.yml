@@ -34,15 +34,15 @@ components:
   - name: index-management
     repository: https://github.com/dblock/index-management.git
     ref: fix-snapshot-build
-  # - name: k-NN
-  #   repository: https://github.com/opensearch-project/k-NN.git
-  #   ref: main
+  - name: k-NN
+    repository: https://github.com/VijayanB/k-NN.git
+    ref: update-workflow
   - name: anomaly-detection
     repository: https://github.com/dblock/anomaly-detection.git
     ref: fix-snapshot-build
-  # - name: asynchronous-search
-  #   repository: https://github.com/opensearch-project/asynchronous-search.git
-  #   ref: main
+  - name: asynchronous-search
+    repository: https://github.com/adnapibar/asynchronous-search.git
+    ref: snapshot-build
   - name: dashboards-reports
     repository: https://github.com/dblock/dashboards-reports.git
     ref: fix-snapshot-build

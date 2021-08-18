@@ -33,7 +33,7 @@ All plugins built in step 1 will be installed and output to a `bundle` folder.
 
 Build Step:
 ```bash
-./bundle-workflow/build.sh manifests/opensearch-1.1.0.0.yml
+./bundle-workflow/build.sh manifests/opensearch-1.1.0.yml
 ```
 
 The following options are available.
