@@ -17,8 +17,8 @@ components:
     repository: https://github.com/opensearch-project/sql.git
     ref: main
   - name: alerting
-    repository: https://github.com/dblock/alerting.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
   - name: notifications
     repository: https://github.com/dblock/notifications.git
     ref: fix-snapshot-build
