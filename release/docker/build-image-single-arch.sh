@@ -70,13 +70,13 @@ else
   echo $VERSION $DOCKERFILE $PRODUCT $ARCHITECTURE
 fi
 
-if [ "$PRODUCT" != "opensearch" ] || [ "$PRODUCT" != "opensearch-dashboards" ]
+if [ "$PRODUCT" != "opensearch" ] && [ "$PRODUCT" != "opensearch-dashboards" ]
 then
     echo "Enter either 'opensearch' or 'opensearch-dashboards' as product name for -p parameter"
     exit 1
 fi
 
-if [ "$ARCHITECTURE" != "x64" ] || [ "$ARCHITECTURE" != "arm64" ]
+if [ "$ARCHITECTURE" != "x64" ] && [ "$ARCHITECTURE" != "arm64" ]
 then
     echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
     exit 1
