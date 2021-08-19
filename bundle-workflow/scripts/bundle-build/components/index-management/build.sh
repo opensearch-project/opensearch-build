@@ -10,7 +10,6 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
-    echo -e "-o DEST\t[Required] Full destination path from which to pickup dependent artifacts."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
@@ -31,9 +30,6 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
-            ;;
-        d)
-            DEST=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG

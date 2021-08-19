@@ -31,9 +31,6 @@ while getopts ":h:v:s:o:a:" arg; do
         o)
             OUTPUT=$OPTARG
             ;;
-        d)
-            DEST=$OPTARG
-            ;;
         a)
             ARCHITECTURE=$OPTARG
             ;;
