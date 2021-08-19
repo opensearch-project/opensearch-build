@@ -55,7 +55,7 @@ fi
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-mvn -B clean package -Padvanced -DskipTests -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+mvn -B clean package -Padvanced -DskipTests -Dopensearch.version=$VERSION
 artifact_zip=$(ls $(pwd)/target/releases/opensearch-security-*.zip | grep -v admin-standalone)
 ./gradlew assemble --no-daemon -ParchivePath=$artifact_zip -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
