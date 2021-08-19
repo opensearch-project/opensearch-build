@@ -10,7 +10,9 @@
 
 ## OpenSearch Build
 
-This repository contains the scripts for building OpenSearch, and OpenSearch Dashboards distributions.
+This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
+
+* [OpenSearch Bundle Workflow](bundle-workflow/README.md)
 
 ## Contributing
 
