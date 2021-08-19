@@ -32,7 +32,7 @@ class Builder:
 
     def export_artifacts(self):
         artifacts_dir = os.path.realpath(os.path.join(self.git_repo.dir, self.output_path))
-        for artifact_type in ["maven", "bundle", "plugins", "libs"]:
+        for artifact_type in ["maven", "bundle", "plugins", "libs", "core-plugins"]:
             for dir, dirs, files in os.walk(os.path.join(artifacts_dir, artifact_type)):
                 for file_name in files:
                     absolute_path = os.path.join(dir, file_name)

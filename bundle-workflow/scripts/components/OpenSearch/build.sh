@@ -90,3 +90,16 @@ ARTIFACT_BUILD_NAME=opensearch-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 ARTIFACT_TARGET_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 mkdir -p "${OUTPUT}/bundle"
 cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/bundle/$ARTIFACT_TARGET_NAME
+
+echo "Building core plugins..."
+mkdir -p "${OUTPUT}/core-plugins"
+cd plugins
+../gradlew assemble -Dbuild.snapshot="$SNAPSHOT"
+cd ..
+for plugin in plugins/*; do
+  PLUGIN_NAME=$(basename "$plugin")
+  if [ -d "$plugin" ] && [ "examples" != "$PLUGIN_NAME" ]; then
+    PLUGIN_ARTIFACT_BUILD_NAME=$PLUGIN_NAME-$VERSION$IDENTIFIER.zip
+    cp "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/core-plugins/"$PLUGIN_ARTIFACT_BUILD_NAME"
+  fi
+done
