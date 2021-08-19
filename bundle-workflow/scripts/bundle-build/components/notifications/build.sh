@@ -55,9 +55,16 @@ fi
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-outputDir=$OUTPUT
-mkdir -p $outputDir/maven
+mkdir -p $OUTPUT/maven
+mkdir -p $OUTPUT/plugins
+
 cd notifications
-
 ./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+cd ..
 
+zipPath=$(find . -path \*notifications/build/distributions/*.zip)
+distributions="$(dirname "${zipPath}")"
+echo "COPY ${distributions}/*.zip"
+mkdir -p $OUTPUT/plugins
+cp ${distributions}/*.zip ./$OUTPUT/plugins
