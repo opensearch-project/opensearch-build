@@ -16,7 +16,7 @@ plugins can be found.
 
 class Bundle:
 
-    def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
+    def __init__(self, build_manifest, artifacts_dir, bundle_recorder, script_finder):
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -29,6 +29,7 @@ class Bundle:
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.installed_plugins = []
+        self.script_finder = script_finder
         tmp_path = self.add_component(self.min_tarball, "bundle")
         self.unpack(tmp_path, self.tmp_dir.name)
         # OpenSearch & Dashboard tars will include only a single folder at the top level of the tar
@@ -38,14 +39,14 @@ class Bundle:
         for plugin in self.plugins:
             print(f'Installing {plugin.name}')
             self.install_plugin(plugin)
-            if plugin.name == 'k-NN':
-                self.copy_knnlib(plugin)
         self.installed_plugins = os.listdir(os.path.join(self.archive_path, 'plugins'))
 
     def install_plugin(self, plugin):
         tmp_path = self.add_component(plugin, "plugins")
         cli_path = os.path.join(self.archive_path, 'bin/opensearch-plugin')
         self.execute(f'{cli_path} install --batch file:{tmp_path}')
+        post_install_script = self.script_finder.find_install_script(plugin.name)
+        self.execute(f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"')
 
     def add_component(self, component, component_type):
         rel_path = self.get_rel_path(component, component_type)
@@ -89,11 +90,3 @@ class Bundle:
             raise ValueError(f'Missing min "bundle" in input artifacts.')
         return min_bundle
 
-    def copy_knnlib(self, component):
-        local_path = self.get_rel_path(component, 'libs')
-        if local_path:
-            knnlib = os.path.join(self.artifacts_dir, local_path)
-            dest_path = os.path.join(self.archive_path, 'plugins/opensearch-knn/knnlib')
-            os.makedirs(dest_path, exist_ok=True)
-            dest = os.path.join(dest_path, os.path.basename(knnlib))
-            shutil.copyfile(knnlib, dest)

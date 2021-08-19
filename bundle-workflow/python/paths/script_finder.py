@@ -19,11 +19,12 @@ class ScriptFinder:
     default_scripts_path: str
 
     def find_build_script(self, component_name, git_dir):
-        paths = [os.path.realpath(os.path.join(git_dir, 'build.sh')),
-                 os.path.realpath(os.path.join(git_dir, 'scripts/build.sh')),
-                 os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'build.sh')),
-                 os.path.realpath(os.path.join(self.default_scripts_path, 'build.sh'))
-                 ]
+        paths = [
+            os.path.realpath(os.path.join(git_dir, 'build.sh')),
+            os.path.realpath(os.path.join(git_dir, 'scripts/build.sh')),
+            os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'build.sh')),
+            os.path.realpath(os.path.join(self.default_scripts_path, 'build.sh'))
+        ]
 
         build_script = next(filter(lambda path: os.path.exists(path), paths), None)
         if build_script is None:
@@ -31,13 +32,25 @@ class ScriptFinder:
         return build_script
 
     def find_integ_test_script(self, component_name, git_dir):
-        paths = [os.path.realpath(os.path.join(git_dir, 'integtest.sh')),
-                 os.path.realpath(os.path.join(git_dir, 'scripts/integtest.sh')),
-                 os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'integtest.sh')),
-                 os.path.realpath(os.path.join(self.default_scripts_path, 'integtest.sh'))
-                 ]
+        paths = [
+            os.path.realpath(os.path.join(git_dir, 'integtest.sh')),
+            os.path.realpath(os.path.join(git_dir, 'scripts/integtest.sh')),
+            os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'integtest.sh')),
+            os.path.realpath(os.path.join(self.default_scripts_path, 'integtest.sh'))
+        ]
 
         test_script = next(filter(lambda path: os.path.exists(path), paths), None)
         if test_script is None:
             raise RuntimeError(f'Could not find integtest.sh script. Looked in {paths}')
         return test_script
+
+    def find_install_script(self, component_name):
+        paths = [
+            os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'install.sh')),
+            os.path.realpath(os.path.join(self.default_scripts_path, 'install.sh'))
+        ]
+
+        install_script = next(filter(lambda path: os.path.exists(path), paths), None)
+        if install_script is None:
+            raise RuntimeError(f'Could not find install.sh script. Looked in {paths}')
+        return install_script
