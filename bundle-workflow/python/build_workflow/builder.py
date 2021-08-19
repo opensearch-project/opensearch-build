@@ -26,7 +26,7 @@ class Builder:
 
     def build(self, version, arch, snapshot):
         build_script = self.script_finder.find_build_script(self.component_name, self.git_repo.dir)
-        build_command = f'{build_script} -v {version} -a {arch} -s {str(snapshot).lower()} -o {self.output_path} -d {self.build_recorder.output_dir}'
+        build_command = f'{build_script} -v {version} -a {arch} -s {str(snapshot).lower()} -o {self.output_path}'
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 
