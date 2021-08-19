@@ -54,8 +54,7 @@ fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-outputDir=$OUTPUT
-mkdir -p "${outputDir}/maven"
+mkdir -p $OUTPUT/maven/org/opensearch
 
 # Build project and publish to maven local.
 ./gradlew publishToMavenLocal -Dbuild.snapshot=$SNAPSHOT
@@ -64,7 +63,7 @@ mkdir -p "${outputDir}/maven"
 ./gradlew publishNebulaPublicationToTestRepository -Dbuild.snapshot=$SNAPSHOT
 
 # Copy maven publications to be promoted
-cp -r ./build/local-test-repo/org/opensearch "${outputDir}"/maven
+cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org/opensearch
 
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
@@ -89,5 +88,5 @@ esac
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
 ARTIFACT_BUILD_NAME=opensearch-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 ARTIFACT_TARGET_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
-mkdir -p "${outputDir}/bundle"
-cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${outputDir}"/bundle/$ARTIFACT_TARGET_NAME
+mkdir -p "${OUTPUT}/bundle"
+cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/bundle/$ARTIFACT_TARGET_NAME

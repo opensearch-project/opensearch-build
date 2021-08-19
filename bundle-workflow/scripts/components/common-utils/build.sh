@@ -57,5 +57,5 @@ fi
 
 ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 ./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-mkdir -p artifacts/maven
-cp -r ~/.m2/repository/org/opensearch/common-utils $OUTPUT/maven
+mkdir -p $OUTPUT/maven/org/opensearch
+cp -r ~/.m2/repository/org/opensearch/common-utils $OUTPUT/maven/org/opensearch/common-utils

@@ -56,9 +56,9 @@ fi
 ./gradlew build --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
 ./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-mkdir -p $OUTPUT/maven
-cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler $OUTPUT/maven
-cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler-spi $OUTPUT/maven
+mkdir -p $OUTPUT/maven/org/opensearch
+cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler $OUTPUT/maven/org/opensearch
+cp -r ~/.m2/repository/org/opensearch/opensearch-job-scheduler-spi $OUTPUT/maven/org/opensearch
 
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
