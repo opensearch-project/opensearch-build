@@ -32,7 +32,7 @@
 #   OPENSEARCH_DASHBOARDS_HOME: Optional. Specify the opensearch-dashboards root directory. Defaults to /usr/share/opensearch-dashboards.
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2 AS linux_x64_stage_0
+FROM amazonlinux:2 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -48,8 +48,8 @@ RUN groupadd -g $GID opensearch-dashboards && \
     mkdir /tmp/opensearch-dashboards
 
 # Prepare working directory
-COPY opensearch-dashboards.tgz /tmp/opensearch-dashboards/opensearch-dashboards.tgz
-RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
+COPY opensearch-dashboards-*.tgz /tmp/opensearch-dashboards/
+RUN tar -xzf /tmp/opensearch-dashboards/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
 COPY opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/
 COPY opensearch_dashboards.yml opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/
 
@@ -75,7 +75,7 @@ RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x1
 RUN groupadd -g $GID opensearch-dashboards && \
     adduser -u $UID -g $GID -d $OPENSEARCH_DASHBOARDS_HOME opensearch-dashboards
 
-COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_DASHBOARDS_HOME $OPENSEARCH_DASHBOARDS_HOME
+COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_DASHBOARDS_HOME $OPENSEARCH_DASHBOARDS_HOME
 
 # Change user
 USER $UID
