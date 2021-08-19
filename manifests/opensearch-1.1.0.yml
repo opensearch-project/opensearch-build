@@ -32,20 +32,20 @@ components:
   #   repository: https://github.com/opensearch-project/performance-analyzer.git
   #   ref: main
   - name: index-management
-    repository: https://github.com/dblock/index-management.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
   - name: k-NN
     repository: https://github.com/VijayanB/k-NN-2.git
     ref: update-workflow
   - name: anomaly-detection
-    repository: https://github.com/dblock/anomaly-detection.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: main
   - name: asynchronous-search
-    repository: https://github.com/adnapibar/asynchronous-search.git
-    ref: snapshot-build
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: main
   - name: dashboards-reports
-    repository: https://github.com/dblock/dashboards-reports.git
-    ref: fix-snapshot-build
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: main
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     ref: main
