@@ -16,7 +16,7 @@ plugins can be found.
 
 class Bundle:
 
-    def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
+    def __init__(self, build_manifest, artifacts_dir, script_finder, bundle_recorder):
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -26,6 +26,7 @@ class Bundle:
         self.min_tarball = self.get_min_bundle(build_manifest.components)
         self.plugins = self.get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
+        self.script_finder = script_finder
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.installed_plugins = []
@@ -38,14 +39,19 @@ class Bundle:
         for plugin in self.plugins:
             print(f'Installing {plugin.name}')
             self.install_plugin(plugin)
-            if plugin.name == 'k-NN':
-                self.copy_knnlib(plugin)
         self.installed_plugins = os.listdir(os.path.join(self.archive_path, 'plugins'))
 
     def install_plugin(self, plugin):
-        tmp_path = self.add_component(plugin, "plugins")
+        plugin_path = self.add_component(plugin, "plugins")
         cli_path = os.path.join(self.archive_path, 'bin/opensearch-plugin')
-        self.execute(f'{cli_path} install --batch file:{tmp_path}')
+        self.execute(f'{cli_path} install --batch file:{plugin_path}')
+        self.execute_custom_setup_script(plugin, plugin_path)
+
+    def execute_custom_setup_script(self, plugin, plugin_path):
+        script = self.script_finder.find_custom_install_script(plugin.name)
+        if script:
+            lib_path = self.get_rel_path(plugin, 'libs')
+            self.execute(f'{script} -d {self.archive_path} -l {lib_path}')
 
     def add_component(self, component, component_type):
         rel_path = self.get_rel_path(component, component_type)
@@ -88,12 +94,3 @@ class Bundle:
         if min_bundle == None:
             raise ValueError(f'Missing min "bundle" in input artifacts.')
         return min_bundle
-
-    def copy_knnlib(self, component):
-        local_path = self.get_rel_path(component, 'libs')
-        if local_path:
-            knnlib = os.path.join(self.artifacts_dir, local_path)
-            dest_path = os.path.join(self.archive_path, 'plugins/opensearch-knn/knnlib')
-            os.makedirs(dest_path, exist_ok=True)
-            dest = os.path.join(dest_path, os.path.basename(knnlib))
-            shutil.copyfile(knnlib, dest)

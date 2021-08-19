@@ -4,6 +4,7 @@
 import os
 from dataclasses import dataclass
 
+
 @dataclass
 class ScriptFinder:
     '''
@@ -41,3 +42,7 @@ class ScriptFinder:
         if test_script is None:
             raise RuntimeError(f'Could not find integtest.sh script. Looked in {paths}')
         return test_script
+
+    def find_custom_install_script(self, component_name):
+        install_script = os.path.realpath(os.path.join(self.component_scripts_path, component_name, 'bundle-setup.sh'))
+        return install_script if os.path.exists(install_script) else None

@@ -58,6 +58,15 @@ fi
 # remove this script when https://github.com/opensearch-project/performance-analyzer/issues/44 is fixed
 git fetch origin main
 git checkout main
+git checkout -
+
+echo $PWD
+ls ..
 
 ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -x test
+mkdir -p $OUTPUT/plugins
+cp ./build/distributions/*.zip $OUTPUT/plugins
+
+mkdir -p $OUTPUT/maven/org/opensearch
 ./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+cp -r ~/.m2/repository/org/opensearch/opensearch-performance-analyzer $OUTPUT/maven/org/opensearch

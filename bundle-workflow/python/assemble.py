@@ -10,6 +10,7 @@ import shutil
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
+from paths.script_finder import ScriptFinder
 
 parser = argparse.ArgumentParser(description = "Assemble an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest file.")
@@ -20,6 +21,10 @@ tarball_installation_script = os.path.join(os.path.dirname(os.path.abspath(__fil
 if not os.path.isfile(tarball_installation_script):
     print(f'No installation script found at path: {tarball_installation_script}')
     exit(1)
+
+component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
+default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-install')
+script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
 
 build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
@@ -33,7 +38,7 @@ with tempfile.TemporaryDirectory() as work_dir:
     os.chdir(work_dir)
 
     bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
-    bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
+    bundle = Bundle(build_manifest, artifacts_dir, script_finder, bundle_recorder)
 
     bundle.install_plugins()
     print(f'Installed plugins: {bundle.installed_plugins}')
