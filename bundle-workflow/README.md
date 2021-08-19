@@ -48,6 +48,10 @@ Bundle step:
 ```bash
 ./bundle-workflow/assemble.sh artifacts/manifest.yml
 ```
-### Scripts
+### Custom Build Scripts
 
-Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/bundle-build/standard-gradle-build](scripts/bundle-build/standard-gradle-build).
+Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/bundle-build/standard-gradle-build/build.sh](scripts/bundle-build/standard-gradle-build/build.sh).
+
+#### Custom Install Scripts
+
+You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/bundle-build/standard-gradle-build/install.sh](scripts/bundle-build/standard-gradle-build/install.sh).
