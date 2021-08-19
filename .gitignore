@@ -12,4 +12,4 @@ __pycache__
 out.txt
 
 artifacts/
-build/
+bundle/
