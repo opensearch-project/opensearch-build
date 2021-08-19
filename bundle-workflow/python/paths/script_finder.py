@@ -2,21 +2,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-from dataclasses import dataclass
 
-@dataclass
 class ScriptFinder:
     '''
-    ScriptFinder is a helper that abstracts away the details of where to look for build and test scripts.
-    Given a component name and a checked-out Git repository, it will look in the following locations, in order, for either "build.sh" or "integtest.sh", depending on the use case:
+    ScriptFinder is a helper that abstracts away the details of where to look for build, test and install scripts.
+
+    For build.sh and integtest.sh scripts, given a component name and a checked-out Git repository, 
+    it will look in the following locations, in order:
       * Root of the Git repository
       * /scripts/<script-name> in the Git repository
       * <component_scripts_path>/<component_name>/<script-name>
       * <default_scripts_path>/<script-name>
+
+    For install.sh scripts, given a component name, it will look in the following locations, in order:
+      * <component_scripts_path>/<component_name>/<script-name>
+      * <default_scripts_path>/<script-name>
     '''
 
-    component_scripts_path: str
-    default_scripts_path: str
+    def __init__(self):
+        self.component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../scripts/components')
+        self.default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../scripts/default')
 
     def find_build_script(self, component_name, git_dir):
         paths = [

@@ -17,15 +17,11 @@ parser.add_argument('manifest', type = argparse.FileType('r'), help="Manifest fi
 args = parser.parse_args()
 
 tarball_installation_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../release/tar/linux/opensearch-tar-install.sh')
-
-component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
-default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
-script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
-
 if not os.path.isfile(tarball_installation_script):
     print(f'No installation script found at path: {tarball_installation_script}')
     exit(1)
 
+script_finder = ScriptFinder()
 build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
 artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
