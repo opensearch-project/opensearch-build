@@ -15,9 +15,7 @@ parser.add_argument('--keep', dest = 'keep', action='store_true', help = "Do not
 args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.manifest)
-component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
-default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-test')
-script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
+script_finder = ScriptFinder()
 
 with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(work_dir)

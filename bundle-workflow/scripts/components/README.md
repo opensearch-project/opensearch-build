@@ -1,0 +1,1 @@
+These scripts override [default scripts](../default/) in bundle workflow for individial components.

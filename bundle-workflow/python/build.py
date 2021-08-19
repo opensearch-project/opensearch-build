@@ -15,11 +15,7 @@ from paths.script_finder import ScriptFinder
 from git.git_repository import GitRepository
 
 args = BuildArgs()
-
-component_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/components')
-default_scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../scripts/bundle-build/standard-gradle-build')
-script_finder = ScriptFinder(component_scripts_path, default_scripts_path)
-
+script_finder = ScriptFinder()
 arch = current_arch()
 manifest = InputManifest.from_file(args.manifest)
 output_dir = os.path.join(os.getcwd(), 'artifacts')
