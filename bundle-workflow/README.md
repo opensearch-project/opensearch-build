@@ -6,10 +6,12 @@
 
 ## OpenSearch Bundle Workflow
 
+This workflow builds a complete OpenSearch bundle from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
+
 ### Build from Source
 
 ```bash
-./bundle-workflow/build.sh manifests/opensearch-1.0.0.yml
+./bundle-workflow/build.sh manifests/opensearch-1.1.0.yml --snapshot
 ```
 
 The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
