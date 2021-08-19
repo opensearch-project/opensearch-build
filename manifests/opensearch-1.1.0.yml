@@ -23,8 +23,12 @@ components:
     repository: https://github.com/opensearch-project/notifications.git
     ref: main
   - name: security
+    # https://github.com/opensearch-project/security/issues/1403
     repository: https://github.com/dblock/security.git
     ref: fix-snapshot-build
+  #
+  # https://github.com/opensearch-project/opensearch-build/issues/148
+  #
   # - name: performance-analyzer-rca
   #   repository: https://github.com/opensearch-project/performance-analyzer-rca.git
   #   ref: main
@@ -35,6 +39,7 @@ components:
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
   - name: k-NN
+    # https://github.com/opensearch-project/k-NN/issues/78
     repository: https://github.com/VijayanB/k-NN-2.git
     ref: update-workflow
   - name: anomaly-detection
