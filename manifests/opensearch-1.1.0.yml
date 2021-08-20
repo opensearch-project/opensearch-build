@@ -36,9 +36,8 @@ components:
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
   - name: k-NN
-    # https://github.com/opensearch-project/k-NN/issues/78
-    repository: https://github.com/VijayanB/k-NN-2.git
-    ref: update-workflow
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: main
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: main
