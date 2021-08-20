@@ -57,7 +57,7 @@ fi
 
 mkdir -p $OUTPUT/plugins
 
-./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -x ktlint
 
 zipPath=$(find . -path \*build/distributions/*.zip)
 distributions="$(dirname "${zipPath}")"
@@ -65,4 +65,4 @@ distributions="$(dirname "${zipPath}")"
 echo "COPY ${distributions}/*.zip"
 cp ${distributions}/*.zip ./$OUTPUT/plugins
 
-./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -x ktlint
