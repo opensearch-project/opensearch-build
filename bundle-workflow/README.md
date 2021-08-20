@@ -65,13 +65,10 @@ The signing step (optional) takes the manifest file created from the build step 
 
 The following options are available. 
 
-| name        | description                                                         |
-|-------------|---------------------------------------------------------------------|
-| --component | The component name of the component whose artifacts will be signed  |
-| --type      | The artifact type to be signed. Currently one of 3 options:         |
-|             | 	1. plugins                                                      |
-|             |     2. maven                                                        |
-|             |     3. bundle                                                       |
+| name        | description                                                                         |
+|-------------|-------------------------------------------------------------------------------------|
+| --component | The component name of the component whose artifacts will be signed                  |
+| --type      | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]|
 
 The signed artifacts (<artifact>.asc) will be found in the same location as the original artifact. 
 
