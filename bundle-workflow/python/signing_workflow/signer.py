@@ -15,13 +15,13 @@ The signed artifacts will be found in the same location as the original artifact
 class Signer:
     def __init__(self):
         self.git_repo = GitRepository("https://github.com/opensearch-project/opensearch-signer-client.git", "HEAD")
-        self.git_repo.execute("./bootstrap", "src")
-        self.git_repo.execute("rm config.cfg", "src")
+        self.git_repo.execute("./bootstrap", subdirname = "src")
+        self.git_repo.execute("rm config.cfg", subdirname = "src")
 
     def sign(self, filename):
         signature_file = filename + ".asc"
         signing_cmd = ['./opensearch-signer-client', '-i', filename, '-o', signature_file, '-p', 'pgp']
-        self.git_repo.execute(" ".join(signing_cmd), "src")
+        self.git_repo.execute(" ".join(signing_cmd), subdirname = "src")
 
     def verify(self, filename):
         verify_cmd = ['gpg', '--verify-files', filename]
