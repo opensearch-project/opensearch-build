@@ -4,7 +4,6 @@
 import os
 import subprocess
 import tempfile
-import shutil
 
 class GitRepository:
     '''
@@ -30,9 +29,13 @@ class GitRepository:
         self.sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd = self.dir).decode().strip()
         print(f'Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}')
 
-    def execute(self, command, silent = False):
-        print(f'Executing "{command}" in {self.dir}')
+    def execute(self, command, silent = False, subdirname = None):
+        dirname = self.dir
+        if subdirname:
+            dirname = os.path.join(self.dir, subdirname)
+        print(f'Executing "{command}" in {dirname}')
         if silent:
-            subprocess.check_call(command, cwd = self.dir, shell = True, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
+            subprocess.check_call(command, cwd = dirname, shell = True, stdout = subprocess.DEVNULL, stderr = subprocess.DEVNULL)
         else:
-            subprocess.check_call(command, cwd = self.dir, shell = True)
+            subprocess.check_call(command, cwd = dirname, shell = True)
+
