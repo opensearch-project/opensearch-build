@@ -3,6 +3,7 @@
         - [Custom Build Scripts](#custom-build-scripts)
     - [Assemble the Bundle](#assemble-the-bundle)
         - [Custom Install Scripts](#custom-install-scripts)
+    - [Signing Artifacts](#signing-artifacts)
 
 ## OpenSearch Bundle Workflow
 
@@ -58,9 +59,9 @@ Artifacts will be updated as follows.
 
 You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/bundle-build/standard-gradle-build/install.sh](scripts/bundle-build/standard-gradle-build/install.sh).
 
-Step 3: Signing [optional]
+### Signing Artifacts
 
-The signing step takes the manifest file created from the build step and signs all its component artifacts using the opensearch-signer-client. The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
+The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using the opensearch-signer-client. The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
 
 The following options are available. 
 
@@ -68,9 +69,9 @@ The following options are available.
 |-------------|---------------------------------------------------------------------|
 | --component | The component name of the component whose artifacts will be signed  |
 | --type      | The artifact type to be signed. Currently one of 3 options:         |
-|             | 	1. plugins                                                  |
-|             |         2. maven                                                    |
-|             |         3. bundle                                                   |
+|             | 	1. plugins                                                      |
+|             |     2. maven                                                        |
+|             |     3. bundle                                                       |
 
 The signed artifacts (<artifact>.asc) will be found in the same location as the original artifact. 
 
