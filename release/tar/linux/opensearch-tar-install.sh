@@ -26,7 +26,7 @@ PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$OPENSEARCH_HOME/plugins/opensearc
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
               -XX:InitialBootClassLoaderMetaspaceSize=30720 -XX:MaxRAM=400m"
 
-OPENSEARCH_MAIN_CLASS="com.amazon.opendistro.opensearch.performanceanalyzer.PerformanceAnalyzerApp" \
+OPENSEARCH_MAIN_CLASS="org.opensearch.performanceanalyzer.PerformanceAnalyzerApp" \
 OPENSEARCH_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opensearch-performance-analyzer \
 OPENSEARCH_JAVA_OPTS=$PA_AGENT_JAVA_OPTS
 
