@@ -14,9 +14,10 @@ class TestCluster(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def destroy(self):
+    def destroy(self, test_recorder):
         '''
-        Tear down the cluster. If the cluster is already destroyed or has not yet been created then this is a no-op.
+        Tear down the cluster and record server logs. If the cluster is already destroyed or has not yet been created then this is a no-op.
+        :param test_recorder: The test recorder to register server logs with.
         '''
         pass
 

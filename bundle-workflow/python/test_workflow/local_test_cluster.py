@@ -4,7 +4,9 @@ import subprocess
 import time
 import ssl
 import requests
+import itertools
 from test_workflow.test_cluster import TestCluster, ClusterCreationException
+from paths.tree_walker import walk
 
 class LocalTestCluster(TestCluster):
     '''
@@ -22,10 +24,10 @@ class LocalTestCluster(TestCluster):
         self.download()
         self.stdout = open('stdout.txt', 'w')
         self.stderr = open('stderr.txt', 'w')
-        dir = f'opensearch-{self.manifest.build.version}'
+        self.install_dir = f'opensearch-{self.manifest.build.version}'
         if not self.security_enabled:
-            self.disable_security(dir)
-        self.process = subprocess.Popen('./opensearch-tar-install.sh', cwd = dir, shell = True, stdout = self.stdout, stderr = self.stderr)
+            self.disable_security(self.install_dir)
+        self.process = subprocess.Popen('./opensearch-tar-install.sh', cwd = self.install_dir, shell = True, stdout = self.stdout, stderr = self.stderr)
         print(f'Started OpenSearch with PID {self.process.pid}')
         self.wait_for_service()
 
@@ -35,29 +37,12 @@ class LocalTestCluster(TestCluster):
     def port(self):
         return 9200
 
-    def destroy(self):
+    def destroy(self, test_recorder):
         if self.process is None:
             print('Local test cluster is not started')
             return
-        print(f'Sending SIGTERM to PID {self.process.pid}')
-        self.process.terminate()
-        try:
-            print('Waiting for process to terminate')
-            self.process.wait(10)
-        except TimeoutExpired:
-            print('Process did not terminate after 10 seconds. Sending SIGKILL')
-            self.process.kill()
-            try:
-                print('Waiting for process to terminate')
-                self.process.wait(10)
-            except TimeoutExpired:
-                print('Process failed to terminate even after SIGKILL')
-                raise
-        finally:
-            print(f'Process terminated with exit code {self.process.returncode}')
-            self.stdout.close()
-            self.stderr.close()
-            self.process = None
+        self.terminate_process()
+        test_recorder.record_cluster_logs(itertools.chain([(os.path.realpath(self.stdout.name), 'stdout'), (os.path.realpath(self.stderr.name), 'stderr')], walk(os.path.join(self.install_dir, 'logs'))))
 
     def url(self, path=''):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
@@ -92,3 +77,24 @@ class LocalTestCluster(TestCluster):
                 print(f'Service not available yet')
             time.sleep(10)
         raise ClusterCreationException('Cluster is not green after 10 attempts')
+
+    def terminate_process(self):
+        print(f'Sending SIGTERM to PID {self.process.pid}')
+        self.process.terminate()
+        try:
+            print('Waiting for process to terminate')
+            self.process.wait(10)
+        except TimeoutExpired:
+            print('Process did not terminate after 10 seconds. Sending SIGKILL')
+            self.process.kill()
+            try:
+                print('Waiting for process to terminate')
+                self.process.wait(10)
+            except TimeoutExpired:
+                print('Process failed to terminate even after SIGKILL')
+                raise
+        finally:
+            print(f'Process terminated with exit code {self.process.returncode}')
+            self.stdout.close()
+            self.stderr.close()
+            self.process = None
