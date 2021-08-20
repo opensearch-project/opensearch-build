@@ -26,15 +26,12 @@ components:
     # https://github.com/opensearch-project/security/issues/1403
     repository: https://github.com/dblock/security.git
     ref: fix-snapshot-build
-  #
-  # https://github.com/opensearch-project/opensearch-build/issues/148
-  #
-  # - name: performance-analyzer-rca
-  #   repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-  #   ref: main
-  # - name: performance-analyzer
-  #   repository: https://github.com/opensearch-project/performance-analyzer.git
-  #   ref: main
+  - name: performance-analyzer-rca
+    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+    ref: main
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: main
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
