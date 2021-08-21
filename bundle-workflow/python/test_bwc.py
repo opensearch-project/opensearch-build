@@ -51,7 +51,7 @@ def main():
         for component in manifest.components:
             # check if component is supported
             if not is_component_test_supported(component):
-                #print('Skipping tests for %s, as it is currently not supported' % component.name)
+                print('Skipping tests for %s, as it is currently not supported' % component.name)
                 continue
             pull_component(component, work_dir)
             console_output = run_tests(work_dir + "/" + component.name)
