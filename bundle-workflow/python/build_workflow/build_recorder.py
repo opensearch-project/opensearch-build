@@ -3,8 +3,10 @@
 
 import os
 import shutil
+
 import yaml
 from manifests.build_manifest import BuildManifest
+
 
 class BuildRecorder:
     def __init__(self, build_id, output_dir, name, version, arch, snapshot):

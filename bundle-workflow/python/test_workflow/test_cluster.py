@@ -1,5 +1,6 @@
 import abc
 
+
 class TestCluster(abc.ABC):
     '''
     Abstract base class for all types of test clusters.

@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+from urllib.parse import urljoin
+
 import yaml
 from manifests.bundle_manifest import BundleManifest
-from urllib.parse import urljoin
 
 
 class BundleRecorder:

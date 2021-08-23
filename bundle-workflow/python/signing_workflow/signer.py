@@ -2,8 +2,9 @@
 
 # Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
-import sys
+
 import os
+import sys
 
 sys.path.insert(0,"../git")
 from git.git_repository import GitRepository

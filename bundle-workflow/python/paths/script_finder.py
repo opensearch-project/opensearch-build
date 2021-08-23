@@ -3,6 +3,7 @@
 
 import os
 
+
 class ScriptFinder:
     '''
     ScriptFinder is a helper that abstracts away the details of where to look for build, test and install scripts.

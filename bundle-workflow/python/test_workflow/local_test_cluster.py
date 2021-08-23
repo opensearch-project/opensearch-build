@@ -1,10 +1,12 @@
 import os
-import urllib.request
+import ssl
 import subprocess
 import time
-import ssl
+import urllib.request
+
 import requests
-from test_workflow.test_cluster import TestCluster, ClusterCreationException
+from test_workflow.test_cluster import ClusterCreationException, TestCluster
+
 
 class LocalTestCluster(TestCluster):
     '''

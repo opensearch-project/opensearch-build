@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import tarfile
-import tempfile
 import shutil
 import subprocess
+import tarfile
+import tempfile
 
 '''
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.

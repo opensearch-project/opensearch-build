@@ -3,6 +3,7 @@
 
 import yaml
 
+
 class BundleManifest:
     '''
     A BundleManifest is an immutable view of the outputs from a assemble step

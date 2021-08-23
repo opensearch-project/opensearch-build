@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pyyaml = "~=5.4"
 requests = "~=2.26"
+isort = "~=5.9"
 
 [dev-packages]
 

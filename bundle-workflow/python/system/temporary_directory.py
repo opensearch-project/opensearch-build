@@ -1,6 +1,7 @@
-from contextlib import contextmanager
-import tempfile
 import shutil
+import tempfile
+from contextlib import contextmanager
+
 
 @contextmanager
 def TemporaryDirectory(keep = False):

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import os
 import argparse
+import os
+
 from manifests.build_manifest import BuildManifest
 from signing_workflow.signer import Signer
 

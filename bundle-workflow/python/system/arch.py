@@ -1,5 +1,6 @@
 import subprocess
 
+
 def current_arch():
     arch = subprocess.check_output(['uname', '-m']).decode().strip()
     if arch == 'x86_64':

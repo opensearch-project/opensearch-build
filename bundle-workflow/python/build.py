@@ -5,14 +5,15 @@
 
 import os
 import uuid
-from system.arch import current_arch
-from system.temporary_directory import TemporaryDirectory
-from manifests.input_manifest import InputManifest
+
+from build_workflow.build_args import BuildArgs
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
-from build_workflow.build_args import BuildArgs
-from paths.script_finder import ScriptFinder
 from git.git_repository import GitRepository
+from manifests.input_manifest import InputManifest
+from paths.script_finder import ScriptFinder
+from system.arch import current_arch
+from system.temporary_directory import TemporaryDirectory
 
 args = BuildArgs()
 script_finder = ScriptFinder()

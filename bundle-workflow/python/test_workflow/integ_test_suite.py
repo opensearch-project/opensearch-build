@@ -1,5 +1,6 @@
 import os
 
+
 class IntegTestSuite:
     def __init__(self, name, repo, script_finder):
         self.name = name

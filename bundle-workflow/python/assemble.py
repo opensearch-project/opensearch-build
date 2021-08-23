@@ -3,10 +3,11 @@
 # Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
 
-import os
-import tempfile
 import argparse
+import os
 import shutil
+import tempfile
+
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest

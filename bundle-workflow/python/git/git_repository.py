@@ -5,6 +5,7 @@ import os
 import subprocess
 import tempfile
 
+
 class GitRepository:
     '''
     This class checks out a Git repository at a particular ref into an empty named directory (or temporary a directory if no named directory is given).
