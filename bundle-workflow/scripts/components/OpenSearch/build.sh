@@ -72,7 +72,7 @@ case $ARCHITECTURE in
         TARGET="linux-tar"
         QUALIFIER="linux-x86"
         ;;
-    x64)
+    arm64)
         TARGET="linux-arm64-tar"
         QUALIFIER="linux-arm64"
         ;;
