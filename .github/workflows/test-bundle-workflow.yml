@@ -27,3 +27,6 @@ jobs:
       - name: Check for Sorted Imports
         run: |
           pipenv run isort --check .
+      - name: Enforce Style Guide
+        run: |
+          pipenv run flake8 .
