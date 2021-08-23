@@ -68,7 +68,7 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org/opensearch
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
-    x86)
+    x64)
         TARGET="linux-tar"
         QUALIFIER="linux-x86"
         ;;
