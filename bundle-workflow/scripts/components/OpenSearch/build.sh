@@ -63,7 +63,7 @@ mkdir -p $OUTPUT/maven/org/opensearch
 ./gradlew publishNebulaPublicationToTestRepository -Dbuild.snapshot=$SNAPSHOT
 
 # Copy maven publications to be promoted
-cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org/opensearch
+cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
