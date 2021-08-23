@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import pathlib
 import sys
 
 from git.git_repository import GitRepository
@@ -17,10 +18,25 @@ sys.path.insert(0, "../git")
 
 
 class Signer:
+
+    ACCEPTED_FILE_TYPES = ['.zip', '.jar', '.war', '.pom', '.module', '.tar.gz']
+
     def __init__(self):
         self.git_repo = GitRepository(self.get_repo_url(), "HEAD")
         self.git_repo.execute("./bootstrap", subdirname="src")
         self.git_repo.execute("rm config.cfg", subdirname="src")
+
+    def sign_artifacts(self, artifacts, basepath):
+        for artifact in artifacts:
+            if self.is_invalid_file_type(artifact):
+                print(f'Skipping signing of file ${artifact}')
+                continue
+            location = os.path.join(basepath, artifact)
+            self.sign(location)
+            self.verify(location + ".asc")
+
+    def is_invalid_file_type(self, file_name):
+        return ''.join(pathlib.Path(file_name).suffixes) not in Signer.ACCEPTED_FILE_TYPES
 
     def get_repo_url(self):
         if "GITHUB_TOKEN" in os.environ:
