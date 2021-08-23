@@ -1,15 +1,80 @@
+<!-- TOC -->
+
 - [Developer Guide](#developer-guide)
-  - [Forking and Cloning](#forking-and-cloning)
-  - [Submitting Changes](#submitting-changes)
+    - [Forking and Cloning](#forking-and-cloning)
+    - [Install Prerequisites](#install-prerequisites)
+        - [Python 3.7](#python-37)
+        - [Pip](#pip)
+        - [Pipenv](#pipenv)
+    - [Run bundle-workflow](#run-bundle-workflow)
+    - [Code Linting](#code-linting)
+
+<!-- /TOC -->
 
 ## Developer Guide
-
-So you want to contribute code to this project? Excellent! We're glad you're here. Here's what you need to do.
 
 ### Forking and Cloning
 
 Fork this repository on GitHub, and clone locally with `git clone`.
 
-### Submitting Changes
+### Install Prerequisites
 
-See [CONTRIBUTING](CONTRIBUTING.md).
+#### Python 3.7
+
+Python projects in this repository, including the [bundle-workflow](./bundle-workflow) project, use Python 3.7. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language. 
+
+```
+$ python3 --version
+Python 3.7.11
+```
+
+#### Pip
+
+[Pip](https://docs.python.org/3/installing/index.html) in the preferred installer program for Python3 modules. See [Pip Installation](https://pip.pypa.io/en/stable/installation/) for more details.
+
+```
+$ pip --version
+pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.7)
+```
+
+#### Pipenv
+
+This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typically installed with `pip install --user pipenv`. Pipenv automatically creates and manages a virtualenv for your projects, as well as adds/removes packages from your `Pipfile` as you install/uninstall packages. It also generates the ever-important `Pipfile.lock`, which is used to produce deterministic builds.
+
+```
+$ pipenv --version
+pipenv, version 11.9.0
+```
+
+### Run bundle-workflow
+
+Try running `./build.sh` from [bundle-workflow](./bundle-workflow). It should complete and show usage.
+
+```
+$ ./build.sh 
+Installing dependencies in . ...
+Installing dependencies from Pipfile.lock (41aca1)…
+  🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
+To activate this project's virtualenv, run the following:
+ $ pipenv shell
+Running ./python/build.py  ...
+usage: build.py [-h] [-s] [-c COMPONENT] [--keep] manifest
+build.py: error: the following arguments are required: manifest
+```
+
+### Code Linting
+
+This project uses [isort](https://github.com/PyCQA/isort) to ensure that imports are sorted, and [flake8](https://flake8.pycqa.org/en/latest/) to enforce code style. 
+
+Use [black](https://black.readthedocs.io/en/stable/) to auto-format your code.
+
+```
+$ pipenv run black .
+All done! ✨ 🍰 ✨
+23 files left unchanged.
+
+$ pipenv run flake8
+./python/assemble_workflow/bundle_recorder.py:30:13: W503 line break before binary operator
+```
+
+If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
