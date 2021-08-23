@@ -70,7 +70,7 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org/opensearch
 case $ARCHITECTURE in
     x64)
         TARGET="linux-tar"
-        QUALIFIER="linux-x86"
+        QUALIFIER="linux-x64"
         ;;
     arm64)
         TARGET="linux-arm64-tar"
