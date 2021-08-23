@@ -57,7 +57,7 @@ Installing dependencies from Pipfile.lock (41aca1)…
   🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
 To activate this project's virtualenv, run the following:
  $ pipenv shell
-Running ./python/build.py  ...
+Running ./src/build.py  ...
 usage: build.py [-h] [-s] [-c COMPONENT] [--keep] manifest
 build.py: error: the following arguments are required: manifest
 ```
@@ -74,7 +74,7 @@ All done! ✨ 🍰 ✨
 23 files left unchanged.
 
 $ pipenv run flake8
-./python/assemble_workflow/bundle_recorder.py:30:13: W503 line break before binary operator
+./src/assemble_workflow/bundle_recorder.py:30:13: W503 line break before binary operator
 ```
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 

@@ -8,6 +8,7 @@ pyyaml = "~=5.4"
 requests = "~=2.26"
 isort = "~=5.9"
 flake8 = "~=3.9"
+pytest = "*"
 
 [dev-packages]
 

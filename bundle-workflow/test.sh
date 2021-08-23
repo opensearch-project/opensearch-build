@@ -6,4 +6,4 @@
 set -e
 
 DIR="$(dirname "$0")"
-"$DIR/run.sh" "$DIR/python/test.py" $@
+"$DIR/run.sh" "$DIR/src/test.py" $@
