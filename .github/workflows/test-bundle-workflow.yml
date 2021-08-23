@@ -30,3 +30,6 @@ jobs:
       - name: Enforce Style Guide
         run: |
           pipenv run flake8 .
+      - name: Run Tests
+        run: |
+          pipenv run pytest

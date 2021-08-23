@@ -8,6 +8,7 @@
         - [Pipenv](#pipenv)
     - [Run bundle-workflow](#run-bundle-workflow)
     - [Code Linting](#code-linting)
+    - [Unit Tests](#unit-tests)
 
 <!-- /TOC -->
 
@@ -66,15 +67,33 @@ build.py: error: the following arguments are required: manifest
 
 This project uses [isort](https://github.com/PyCQA/isort) to ensure that imports are sorted, and [flake8](https://flake8.pycqa.org/en/latest/) to enforce code style. 
 
+```
+$ pipenv run flake8
+./src/assemble_workflow/bundle_recorder.py:30:13: W503 line break before binary operator
+```
+
+Use `isort .` to fix any sorting order.
+
+```
+$ pipenv run isort .
+Fixing bundle-workflow/tests/system/test_arch.py
+```
+
 Use [black](https://black.readthedocs.io/en/stable/) to auto-format your code.
 
 ```
 $ pipenv run black .
 All done! ✨ 🍰 ✨
 23 files left unchanged.
-
-$ pipenv run flake8
-./src/assemble_workflow/bundle_recorder.py:30:13: W503 line break before binary operator
 ```
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
+
+### Unit Tests
+
+This project uses [pytest](https://docs.pytest.org/en/6.2.x/) to ensure code quality. See [bundle-workflow/tests](bundle-workflow).
+
+```
+$ pipenv run pytest
+2 passed in 0.02s
+```
