@@ -1,4 +1,4 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
 
 # This is a docker image specifically for standardize the test environment
