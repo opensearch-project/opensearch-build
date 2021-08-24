@@ -1,3 +1,6 @@
+# Copyright OpenSearch Contributors.
+# SPDX-License-Identifier: Apache-2.0
+
 import subprocess
 import unittest
 from unittest.mock import MagicMock

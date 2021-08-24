@@ -21,31 +21,25 @@ class ScriptFinder:
     """
 
     def __init__(self):
-        self.__component_scripts_path = os.path.realpath(
+        self.component_scripts_path = os.path.realpath(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "../../scripts/components"
             )
         )
-        self.__default_scripts_path = os.path.realpath(
+        self.default_scripts_path = os.path.realpath(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "../../scripts/default"
             )
         )
-
-    def component_scripts_path(self):
-        return self.__component_scripts_path
-
-    def default_scripts_path(self):
-        return self.__default_scripts_path
 
     def find_build_script(self, component_name, git_dir):
         paths = [
             os.path.realpath(os.path.join(git_dir, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts/build.sh")),
             os.path.realpath(
-                os.path.join(self.__component_scripts_path, component_name, "build.sh")
+                os.path.join(self.component_scripts_path, component_name, "build.sh")
             ),
-            os.path.realpath(os.path.join(self.__default_scripts_path, "build.sh")),
+            os.path.realpath(os.path.join(self.default_scripts_path, "build.sh")),
         ]
 
         build_script = next(filter(lambda path: os.path.exists(path), paths), None)
@@ -59,10 +53,10 @@ class ScriptFinder:
             os.path.realpath(os.path.join(git_dir, "scripts/integtest.sh")),
             os.path.realpath(
                 os.path.join(
-                    self.__component_scripts_path, component_name, "integtest.sh"
+                    self.component_scripts_path, component_name, "integtest.sh"
                 )
             ),
-            os.path.realpath(os.path.join(self.__default_scripts_path, "integtest.sh")),
+            os.path.realpath(os.path.join(self.default_scripts_path, "integtest.sh")),
         ]
 
         test_script = next(filter(lambda path: os.path.exists(path), paths), None)
@@ -73,11 +67,9 @@ class ScriptFinder:
     def find_install_script(self, component_name):
         paths = [
             os.path.realpath(
-                os.path.join(
-                    self.__component_scripts_path, component_name, "install.sh"
-                )
+                os.path.join(self.component_scripts_path, component_name, "install.sh")
             ),
-            os.path.realpath(os.path.join(self.__default_scripts_path, "install.sh")),
+            os.path.realpath(os.path.join(self.default_scripts_path, "install.sh")),
         ]
 
         install_script = next(filter(lambda path: os.path.exists(path), paths), None)

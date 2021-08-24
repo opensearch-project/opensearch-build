@@ -1,3 +1,6 @@
+# Copyright OpenSearch Contributors.
+# SPDX-License-Identifier: Apache-2.0
+
 import shutil
 import tempfile
 from contextlib import contextmanager
