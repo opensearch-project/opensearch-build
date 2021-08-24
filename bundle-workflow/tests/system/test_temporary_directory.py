@@ -1,6 +1,5 @@
-import unittest
 import os
-from unittest.mock import MagicMock
+import unittest
 
 from src.system.temporary_directory import TemporaryDirectory
 
@@ -11,7 +10,7 @@ class TestTemporaryDirectory(unittest.TestCase):
             self.assertTrue(os.path.exists(work_dir))
         self.assertTrue(os.path.exists(work_dir))
 
-    def test_keep_faklse(self):
+    def test_keep_false(self):
         with TemporaryDirectory() as work_dir:
             self.assertTrue(os.path.exists(work_dir))
         self.assertFalse(os.path.exists(work_dir))
