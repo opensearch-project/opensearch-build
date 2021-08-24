@@ -63,16 +63,16 @@ mkdir -p $OUTPUT/maven/org/opensearch
 ./gradlew publishNebulaPublicationToTestRepository -Dbuild.snapshot=$SNAPSHOT
 
 # Copy maven publications to be promoted
-cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org/opensearch
+cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
-    x86)
-        TARGET="linux-tar"
-        QUALIFIER="linux-x86"
-        ;;
     x64)
+        TARGET="linux-tar"
+        QUALIFIER="linux-x64"
+        ;;
+    arm64)
         TARGET="linux-arm64-tar"
         QUALIFIER="linux-arm64"
         ;;
@@ -90,3 +90,16 @@ ARTIFACT_BUILD_NAME=opensearch-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 ARTIFACT_TARGET_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 mkdir -p "${OUTPUT}/bundle"
 cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/bundle/$ARTIFACT_TARGET_NAME
+
+echo "Building core plugins..."
+mkdir -p "${OUTPUT}/core-plugins"
+cd plugins
+../gradlew assemble -Dbuild.snapshot="$SNAPSHOT"
+cd ..
+for plugin in plugins/*; do
+  PLUGIN_NAME=$(basename "$plugin")
+  if [ -d "$plugin" ] && [ "examples" != "$PLUGIN_NAME" ]; then
+    PLUGIN_ARTIFACT_BUILD_NAME=$PLUGIN_NAME-$VERSION$IDENTIFIER.zip
+    cp "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/core-plugins/"$PLUGIN_ARTIFACT_BUILD_NAME"
+  fi
+done

@@ -2,20 +2,19 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import tarfile
-import tempfile
 import shutil
 import subprocess
+import tarfile
+import tempfile
 
-'''
+"""
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.
-It requires a min tarball distribution where plugins will be installed and the path to an artifacts directory where 
+It requires a min tarball distribution where plugins will be installed and the path to an artifacts directory where
 plugins can be found.
-'''
+"""
 
 
 class Bundle:
-
     def __init__(self, build_manifest, artifacts_dir, bundle_recorder, script_finder):
         """
         Construct a new Bundle instance.
@@ -33,20 +32,24 @@ class Bundle:
         tmp_path = self.add_component(self.min_tarball, "bundle")
         self.unpack(tmp_path, self.tmp_dir.name)
         # OpenSearch & Dashboard tars will include only a single folder at the top level of the tar
-        self.archive_path = next(iter([file.path for file in os.scandir(self.tmp_dir.name) if file.is_dir()]))
+        self.archive_path = next(
+            iter([file.path for file in os.scandir(self.tmp_dir.name) if file.is_dir()])
+        )
 
     def install_plugins(self):
         for plugin in self.plugins:
-            print(f'Installing {plugin.name}')
+            print(f"Installing {plugin.name}")
             self.install_plugin(plugin)
-        self.installed_plugins = os.listdir(os.path.join(self.archive_path, 'plugins'))
+        self.installed_plugins = os.listdir(os.path.join(self.archive_path, "plugins"))
 
     def install_plugin(self, plugin):
         tmp_path = self.add_component(plugin, "plugins")
-        cli_path = os.path.join(self.archive_path, 'bin/opensearch-plugin')
-        self.execute(f'{cli_path} install --batch file:{tmp_path}')
+        cli_path = os.path.join(self.archive_path, "bin/opensearch-plugin")
+        self.execute(f"{cli_path} install --batch file:{tmp_path}")
         post_install_script = self.script_finder.find_install_script(plugin.name)
-        self.execute(f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"')
+        self.execute(
+            f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
+        )
 
     def add_component(self, component, component_type):
         rel_path = self.get_rel_path(component, component_type)
@@ -79,14 +82,15 @@ class Bundle:
             shutil.copyfile(local_path, dest_path)
             return os.path.join(dest, os.path.basename(local_path))
         else:
-            raise ValueError(f'No file found at path: {local_path}')
+            raise ValueError(f"No file found at path: {local_path}")
 
     def get_plugins(self, build_components):
         return [c for c in build_components if "plugins" in c.artifacts]
 
     def get_min_bundle(self, build_components):
-        min_bundle = next(iter([c for c in build_components if "bundle" in c.artifacts]), None)
-        if min_bundle == None:
-            raise ValueError(f'Missing min "bundle" in input artifacts.')
+        min_bundle = next(
+            iter([c for c in build_components if "bundle" in c.artifacts]), None
+        )
+        if min_bundle is None:
+            raise ValueError('Missing min "bundle" in input artifacts.')
         return min_bundle
-

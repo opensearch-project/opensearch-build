@@ -1,0 +1,68 @@
+pipeline {
+    agent none
+    environment {
+        OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
+    }
+    tools {
+      jdk "JDK14"
+      maven "maven-3.8.2"
+    }
+    stages {
+        stage('parameters') {
+            steps {
+                script {
+                    properties([
+                            parameters([
+                                    string(
+                                            defaultValue: '',
+                                            name: 'BUILD_MANIFEST',
+                                            trim: true
+                                    )
+                            ])
+                    ])
+                }
+            }
+        }
+        stage('build') {
+            parallel {
+                stage('build-x86') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        }
+                    }
+                    steps {
+                        script {
+                            build()
+                        }
+                    }
+                }
+                stage('build-arm64') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-al2-arm64-m6gxlarge'
+                        }
+                    }
+                    steps {
+                        script {
+                            build()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void build() {
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+    sh "./bundle-workflow/build.sh manifests/$BUILD_MANIFEST"
+    sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
+
+    script { manifest = readYaml(file: 'artifacts/manifest.yml') }
+
+    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
+    }
+}

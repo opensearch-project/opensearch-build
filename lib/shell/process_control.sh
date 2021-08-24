@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
 
 # This is a library of all Processes related functions

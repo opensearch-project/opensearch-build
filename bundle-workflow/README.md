@@ -3,6 +3,7 @@
         - [Custom Build Scripts](#custom-build-scripts)
     - [Assemble the Bundle](#assemble-the-bundle)
         - [Custom Install Scripts](#custom-install-scripts)
+    - [Signing Artifacts](#signing-artifacts)
 
 ## OpenSearch Bundle Workflow
 
@@ -23,6 +24,7 @@ Artifacts will contain the following folders.
   bundle/ <- contains opensearch min tarball 
   maven/ <- all built maven artifacts
   plugins/ <- all built plugin zips
+  core-plugins/ <- all built core plugins zip
   manifest.yml <- build manifest describing all built components and their artifacts
 ```
 
@@ -44,7 +46,7 @@ Each component build relies on a `build.sh` script that is used to prepare bundl
 ./bundle-workflow/assemble.sh artifacts/manifest.yml
 ```
 
-The bundling step takes output from the build step, installs plugins, and assembles a full bundle into a `bundle` folder. The input requires a path to the build manifest and is expected to be inside the `artifacts` directory that contains `bundle`, `maven` and `plugins` subdirectories from the build step.
+The bundling step takes output from the build step, installs plugins, and assembles a full bundle into a `bundle` folder. The input requires a path to the build manifest and is expected to be inside the `artifacts` directory that contains `bundle`, `maven`, `plugins` and `core-plugins` subdirectories from the build step.
 
 Artifacts will be updated as follows.
 
@@ -57,3 +59,21 @@ Artifacts will be updated as follows.
 #### Custom Install Scripts
 
 You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/bundle-build/standard-gradle-build/install.sh](scripts/bundle-build/standard-gradle-build/install.sh).
+
+### Signing Artifacts
+
+The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using the opensearch-signer-client. The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
+
+The following options are available. 
+
+| name        | description                                                                         |
+|-------------|-------------------------------------------------------------------------------------|
+| --component | The component name of the component whose artifacts will be signed                  |
+| --type      | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]|
+
+The signed artifacts (<artifact>.asc) will be found in the same location as the original artifact. 
+
+Signing step (to sign all artifacts):
+```bash
+./bundle_workflow/sign.sh artifacts/manifest.yml
+```

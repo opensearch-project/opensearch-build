@@ -3,6 +3,7 @@ import glob
 from system.execute import execute
 from paths.tree_walker import walk
 
+
 class IntegTestSuite:
     def __init__(self, name, repo, script_finder, test_recorder):
         self.name = name
@@ -23,4 +24,4 @@ class IntegTestSuite:
                                        'integTest')
             self.test_recorder.record_integ_test_outcome(self.name, status, stdout, stderr, walk(results_dir))
         else:
-            print(f'{script} does not exist. Skipping integ tests for {self.name}')
+            print(f"{script} does not exist. Skipping integ tests for {self.name}")

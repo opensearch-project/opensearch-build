@@ -4,7 +4,6 @@
 | --------------- | --------- | ----------- |
 | Peter Zhu | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon |
 | Peter Nied | [peternied](https://github.com/peternied) | Amazon |
-| Cameron Skinner | [camerski](https://github.com/camerski) | Amazon |
 | Barani Bikshandi | [bbarani](https://github.com/bbarani) | Amazon |
 | Sayali Gaikawad | [gaiksaya](https://github.com/gaiksaya) | Amazon |
 
