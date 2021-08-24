@@ -58,7 +58,7 @@ Artifacts will be updated as follows.
 
 #### Custom Install Scripts
 
-You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/defaults/install.sh](scripts/defaults/install.sh).
+You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/default/install.sh](scripts/default/install.sh).
 
 ### Signing Artifacts
 
