@@ -1,16 +1,13 @@
-<!-- TOC -->
-
 - [Developer Guide](#developer-guide)
-    - [Forking and Cloning](#forking-and-cloning)
-    - [Install Prerequisites](#install-prerequisites)
-        - [Python 3.7](#python-37)
-        - [Pip](#pip)
-        - [Pipenv](#pipenv)
-    - [Run bundle-workflow](#run-bundle-workflow)
-    - [Code Linting](#code-linting)
-    - [Unit Tests](#unit-tests)
-
-<!-- /TOC -->
+  - [Forking and Cloning](#forking-and-cloning)
+  - [Install Prerequisites](#install-prerequisites)
+    - [Pyenv](#pyenv)
+    - [Python 3.7](#python-37)
+    - [Pipenv](#pipenv)
+  - [Install Dependencies](#install-dependencies)
+  - [Run Tests](#run-tests)
+  - [Run bundle-workflow](#run-bundle-workflow)
+  - [Code Linting](#code-linting)
 
 ## Developer Guide
 
@@ -19,6 +16,10 @@
 Fork this repository on GitHub, and clone locally with `git clone`.
 
 ### Install Prerequisites
+
+#### Pyenv
+
+Use pyenv to manage multiple versions of Python. This can be easily installed with [pyenv-installer](https://github.com/pyenv/pyenv-installer).
 
 #### Python 3.7
 
@@ -29,13 +30,10 @@ $ python3 --version
 Python 3.7.11
 ```
 
-#### Pip
-
-[Pip](https://docs.python.org/3/installing/index.html) in the preferred installer program for Python3 modules. See [Pip Installation](https://pip.pypa.io/en/stable/installation/) for more details.
+If you are using pyenv.
 
 ```
-$ pip --version
-pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.7)
+$ pyenv install 3.7.11
 ```
 
 #### Pipenv
@@ -44,7 +42,29 @@ This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typicall
 
 ```
 $ pipenv --version
-pipenv, version 11.9.0
+pipenv, version 19.0
+```
+
+### Install Dependencies
+
+Install dependencies. 
+
+```
+cd bundle-workflow
+~/.../bundle-workflow $ pipenv install
+Installing dependencies from Pipfile.lock (1f4869)...
+ 🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 0/0 — 00:00:00
+To activate this project's virtualenv, run pipenv shell.
+Alternatively, run a command inside the virtualenv with pipenv run. 
+```
+
+### Run Tests
+
+This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure code quality. See [bundle-workflow/tests](bundle-workflow).
+
+```
+~/.../bundle-workflow $ pipenv run pytest
+2 passed in 02s
 ```
 
 ### Run bundle-workflow
@@ -55,10 +75,10 @@ Try running `./build.sh` from [bundle-workflow](./bundle-workflow). It should co
 $ ./build.sh 
 Installing dependencies in . ...
 Installing dependencies from Pipfile.lock (41aca1)…
-  🐍   ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
+ 🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
 To activate this project's virtualenv, run the following:
  $ pipenv shell
-Running ./src/build.py  ...
+Running ./src/build.py ...
 usage: build.py [-h] [-s] [-c COMPONENT] [--keep] manifest
 build.py: error: the following arguments are required: manifest
 ```
@@ -88,12 +108,3 @@ All done! ✨ 🍰 ✨
 ```
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
-
-### Unit Tests
-
-This project uses [pytest](https://docs.pytest.org/en/6.2.x/) to ensure code quality. See [bundle-workflow/tests](bundle-workflow).
-
-```
-$ pipenv run pytest
-2 passed in 0.02s
-```
