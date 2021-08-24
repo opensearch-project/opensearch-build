@@ -20,6 +20,7 @@ class GitRepository:
             self.temp_dir = tempfile.TemporaryDirectory()
             self.dir = self.temp_dir.name
         else:
+            self.temp_dir = None
             self.dir = directory
             os.makedirs(self.dir, exist_ok=False)
 
