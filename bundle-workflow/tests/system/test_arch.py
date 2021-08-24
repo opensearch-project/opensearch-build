@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from src.system.arch import current_arch
 
 
-class ArchTests(unittest.TestCase):
+class TestArch(unittest.TestCase):
     def test_current_arch(self):
         self.assertTrue(current_arch() in ["x64", "arm64"])
 
