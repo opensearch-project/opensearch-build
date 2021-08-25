@@ -2,7 +2,7 @@
 # Usage
 #
 # ./assume-role.sh $CLIENT_ROLE_ARN client
-# aws s3 ls --profile client --region eu-central-1
+
 
 ROLE_ARN=$1
 OUTPUT_PROFILE=$2
