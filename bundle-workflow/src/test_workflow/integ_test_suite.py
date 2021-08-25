@@ -1,4 +1,3 @@
-import glob
 import os
 
 from paths.tree_walker import walk
