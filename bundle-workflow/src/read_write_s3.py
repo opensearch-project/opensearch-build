@@ -24,11 +24,11 @@ class read_write_files:
             RoleSessionName=RoleSessionName,
             DurationSeconds=3600)['Credentials']
 
-
-        client = boto3.client('s3',
-                              aws_access_key_id=acct_b['AccessKeyId'],
-                              aws_secret_access_key=acct_b['SecretAccessKey'],
-                              aws_session_token=acct_b['SessionToken'])
+        client = boto3.client(
+                    's3',
+                    aws_access_key_id=acct_b['AccessKeyId'],
+                    aws_secret_access_key=acct_b['SecretAccessKey'],
+                    aws_session_token=acct_b['SessionToken'])
 
         try:
             client.download_file(bucketname, bucket_bundle, path_tosave_Bundle)
@@ -47,12 +47,15 @@ class read_write_files:
             DurationSeconds=3600)['Credentials']
 
 
-        client = boto3.client('s3',
-                              aws_access_key_id=acct_b['AccessKeyId'],
-                              aws_secret_access_key=acct_b['SecretAccessKey'],
-                              aws_session_token=acct_b['SessionToken'])
+        client = boto3.client(
+                    's3',
+                     aws_access_key_id=acct_b['AccessKeyId'],
+                     aws_secret_access_key=acct_b['SecretAccessKey'],
+                     aws_session_token=acct_b['SessionToken'])
 
         try:
             client.upload_file(filename, bucketname, filePath)
         except:
             print("An exception occurred. No file found for uploading.")
+
+    print("Done.")
