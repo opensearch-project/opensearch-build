@@ -6,10 +6,13 @@ build:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 1.0
+    ref: tags/1.0.0
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 1.0
+    ref: tags/1.0.0.0
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 1.0.0.0
+    ref: tags/1.0.0.0
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: tags/1.0.0.0
