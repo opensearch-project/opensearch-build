@@ -1,5 +1,5 @@
+
 import boto3
-import json
 
 class read_write_files:
 
