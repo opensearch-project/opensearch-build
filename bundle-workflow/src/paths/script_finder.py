@@ -1,5 +1,8 @@
-# Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
 
 import os
 
@@ -21,11 +24,15 @@ class ScriptFinder:
     """
 
     def __init__(self):
-        self.component_scripts_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../scripts/components"
+        self.component_scripts_path = os.path.realpath(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "../../scripts/components"
+            )
         )
-        self.default_scripts_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../scripts/default"
+        self.default_scripts_path = os.path.realpath(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "../../scripts/default"
+            )
         )
 
     def find_build_script(self, component_name, git_dir):

@@ -1,5 +1,8 @@
-# Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
 
 import os
 import subprocess
@@ -20,6 +23,7 @@ class GitRepository:
             self.temp_dir = tempfile.TemporaryDirectory()
             self.dir = self.temp_dir.name
         else:
+            self.temp_dir = None
             self.dir = directory
             os.makedirs(self.dir, exist_ok=False)
 
