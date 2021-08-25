@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import itertools
-
 import os
 import subprocess
 import time
