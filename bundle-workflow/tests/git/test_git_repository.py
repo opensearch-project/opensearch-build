@@ -8,7 +8,7 @@ import os
 import subprocess
 import tempfile
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 from src.git.git_repository import GitRepository
 
@@ -43,31 +43,23 @@ class TestGitRepository(unittest.TestCase):
             os.path.isfile(os.path.join(self.repo.dir, "ISSUE_TEMPLATE/created.txt"))
         )
 
-    def test_execute_silent(self):
-        _check_call = subprocess.check_call
-        subprocess.check_call = MagicMock(return_value=None)
-        try:
-            self.repo.execute("echo .", silent=True)
-            subprocess.check_call.assert_called_with(
-                "echo .",
-                cwd=self.repo.dir,
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        finally:
-            subprocess.check_call = _check_call
+    @patch("subprocess.check_call")
+    def test_execute_silent(self, mock_subprocess):
+        self.repo.execute("echo .", silent=True)
+        subprocess.check_call.assert_called_with(
+            "echo .",
+            cwd=self.repo.dir,
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
 
-    def test_execute_not_silent(self):
-        _check_call = subprocess.check_call
-        subprocess.check_call = MagicMock(return_value=None)
-        try:
-            self.repo.execute("echo .", silent=False)
-            subprocess.check_call.assert_called_with(
-                "echo .", cwd=self.repo.dir, shell=True
-            )
-        finally:
-            subprocess.check_call = _check_call
+    @patch("subprocess.check_call")
+    def test_execute_not_silent(self, mock_subprocess):
+        self.repo.execute("echo .", silent=False)
+        subprocess.check_call.assert_called_with(
+            "echo .", cwd=self.repo.dir, shell=True
+        )
 
 
 class TestGitRepositoryDir(unittest.TestCase):
