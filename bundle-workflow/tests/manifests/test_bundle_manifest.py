@@ -30,6 +30,7 @@ class TestBundleManifest(unittest.TestCase):
         self.assertEqual(
             self.manifest.build.location, "bundle/opensearch-1.1.0-linux-x64.tar.gz"
         )
+        self.assertEqual(self.manifest.build.architecture, "x64")
         self.assertEqual(len(self.manifest.components), 13)
 
     def test_component(self):
