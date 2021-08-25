@@ -55,7 +55,7 @@ pipeline {
 }
 
 void build() {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'opensearch-1.0.1-manifest'
     sh "./bundle-workflow/build.sh manifests/$BUILD_MANIFEST"
     sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
 
