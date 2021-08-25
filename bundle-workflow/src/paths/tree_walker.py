@@ -1,5 +1,6 @@
 import os
 
+
 def walk(root):
     print(f'Walking tree from {root}')
     for dir, dirs, files in os.walk(root):

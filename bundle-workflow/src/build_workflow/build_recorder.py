@@ -5,7 +5,6 @@ import os
 import shutil
 
 import yaml
-
 from manifests.build_manifest import BuildManifest
 
 

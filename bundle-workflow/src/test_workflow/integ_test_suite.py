@@ -1,7 +1,8 @@
-import os
 import glob
-from system.execute import execute
+import os
+
 from paths.tree_walker import walk
+from system.execute import execute
 
 
 class IntegTestSuite:
