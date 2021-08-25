@@ -21,13 +21,13 @@ components:
     ref: 1.0.0.0
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: main
+    ref: 1.0
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-    ref: main
+    ref: 1.0.1
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
+    ref: 1.0.1
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
