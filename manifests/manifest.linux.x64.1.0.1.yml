@@ -29,7 +29,7 @@ products:
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.0.0.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/security-dashboards-1.0.1.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/alerting-dashboards-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.0.0.0.zip
+        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.0.1.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/notebooks-dashboards-1.0.1.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/gantt-chart-dashboards-1.0.0.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/reports-dashboards-1.0.1.0-linux-arm64.zip
