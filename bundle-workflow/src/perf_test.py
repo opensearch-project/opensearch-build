@@ -1,12 +1,14 @@
-import os
 import argparse
-import yaml
+import os
 import subprocess
+
+import yaml
+
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
+from system.temporary_directory import TemporaryDirectory
 from test_workflow.perf_test_cluster import PerformanceTestCluster
 from test_workflow.perf_test_suite import PerformanceTestSuite
-from system.temporary_directory import TemporaryDirectory
 
 parser = argparse.ArgumentParser(description = "Test an OpenSearch Bundle")
 parser.add_argument('manifest', type = argparse.FileType('r'), help = "Manifest file.")
@@ -27,8 +29,8 @@ workspace = os.getcwd()
 with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(workspace)
     
-    current_workspace = os.path.join(workspace, 'infra40')
-    cloned_repo = GitRepository(f'https://{args.token}:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', current_workspace)
+    current_workspace = os.path.join(workspace, 'infra')
+    cloned_repo = GitRepository(config['Constants']['Repository'], 'main', current_workspace)
     
     security = False
     for component in manifest.components:
@@ -47,9 +49,3 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
         perf_test_suite.execute()
     except:
         perf_cluster.destroy()
-        os.chdir(workspace)
-        subprocess.check_call(f'rm -rf {current_workspace}', cwd=os.getcwd(), shell=True)
-    finally:
-        perf_cluster.destroy()
-        os.chdir(workspace)
-        subprocess.check_call(f'rm -rf {current_workspace}', cwd=os.getcwd(), shell=True)

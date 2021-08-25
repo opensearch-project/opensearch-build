@@ -1,7 +1,9 @@
+import json
 import os
 import subprocess
-import json
+
 from test_workflow.test_cluster import TestCluster
+
 
 class PerformanceTestCluster(TestCluster):
     def __init__(self, bundle_manifest, config, stack_name, security):

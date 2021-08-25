@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 class PerformanceTestSuite:
     def __init__(self, bundle_manifest, endpoint, security):
         self.manifest = bundle_manifest
