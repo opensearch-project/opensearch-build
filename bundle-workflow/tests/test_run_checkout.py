@@ -68,4 +68,4 @@ class TestRunChecout(unittest.TestCase):
             any_order=True,
         )
 
-        self.assertEqual(mock_repo.call_count, 14)
+        self.assertEqual(mock_repo.call_count, 15)
