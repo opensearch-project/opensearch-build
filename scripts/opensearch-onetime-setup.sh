@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Copyright OpenSearch Contributors.
 # SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
 
 # This script performs one-time setup for the OpenSearch tarball distribution.
 # It installs a demo security config and sets up the performance analyzer

@@ -8,6 +8,7 @@
   - [Run Tests](#run-tests)
   - [Run bundle-workflow](#run-bundle-workflow)
   - [Code Linting](#code-linting)
+  - [Pre-Commit Cheatsheet](#pre-commit-cheatsheet)
 
 ## Developer Guide
 
@@ -108,3 +109,16 @@ All done! ✨ 🍰 ✨
 ```
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
+
+### Pre-Commit Cheatsheet
+
+Run from `bundle-workflow` before making pull requests.
+
+```
+cd bundle-workflow
+
+pipenv run isort .
+pipenv run black .
+pipenv run flake8
+pipenv run pytest
+```
