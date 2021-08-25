@@ -42,7 +42,5 @@ class read_write_files:
         except:
             print("An exception occurred. No file found for uploading.")
 
-r1 = read_write_files()
-#r1.put_S3Objects("sampleexampletests", "arn:aws:iam::656667992710:role/s3-upload-role", "new_test_session3", "sample.html", "tests/sample.html")
-#r1.get_S3Objects("sampleexampletests", "arn:aws:iam::656667992710:role/s3-upload-role", "new_test_session3", "tests/sample.html", "tests/sample.html", "/Users/kavmegha/Documents/sample_bundle.html", "/Users/kavmegha/Documents/sample_manifest.html")
+
 
