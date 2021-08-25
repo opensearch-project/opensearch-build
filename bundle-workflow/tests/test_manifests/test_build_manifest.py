@@ -9,7 +9,7 @@ import unittest
 
 import yaml
 
-from src.manifests.build_manifest import BuildManifest
+from manifests.build_manifest import BuildManifest
 
 
 class TestBuildManifest(unittest.TestCase):

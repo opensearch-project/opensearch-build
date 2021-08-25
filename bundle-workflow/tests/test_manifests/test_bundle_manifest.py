@@ -9,7 +9,7 @@ import unittest
 
 import yaml
 
-from src.manifests.bundle_manifest import BundleManifest
+from manifests.bundle_manifest import BundleManifest
 
 
 class TestBundleManifest(unittest.TestCase):

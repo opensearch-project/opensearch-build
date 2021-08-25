@@ -8,7 +8,7 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from src.system.arch import current_arch
+from system.arch import current_arch
 
 
 class TestArch(unittest.TestCase):

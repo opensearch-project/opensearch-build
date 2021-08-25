@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from src.signing_workflow.signer import Signer
+from signing_workflow.signer import Signer
 
 
 class TestSigner(unittest.TestCase):
-    @patch("src.signing_workflow.signer.GitRepository")
+    @patch("signing_workflow.signer.GitRepository")
     def test_accepted_file_types(self, git_repo):
 
         artifacts = [

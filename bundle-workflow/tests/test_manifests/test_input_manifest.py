@@ -7,7 +7,7 @@
 import os
 import unittest
 
-from src.manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputManifest
 
 
 class TestInputManifest(unittest.TestCase):
