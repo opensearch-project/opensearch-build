@@ -40,6 +40,10 @@ class TestBuildManifest(unittest.TestCase):
             opensearch_component.commit_id, "07a57d9bbb3922079b7bb1be83a01252f57f81ec"
         )
         self.assertEqual(opensearch_component.ref, "1.x")
+        self.assertEqual(
+            sorted(opensearch_component.artifacts.keys()),
+            ["bundle", "core-plugins", "maven"],
+        )
 
     def test_to_dict(self):
         data = self.manifest.to_dict()
