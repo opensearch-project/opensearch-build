@@ -27,7 +27,7 @@ workspace = os.getcwd()
 with TemporaryDirectory(keep = args.keep) as work_dir:
     os.chdir(workspace)
     
-    current_workspace = os.path.join(workspace, 'infra36')
+    current_workspace = os.path.join(workspace, 'infra40')
     cloned_repo = GitRepository(f'https://{args.token}:x-oauth-basic@github.com/opensearch-project/opensearch-infra', 'main', current_workspace)
     
     security = False
@@ -53,4 +53,3 @@ with TemporaryDirectory(keep = args.keep) as work_dir:
         perf_cluster.destroy()
         os.chdir(workspace)
         subprocess.check_call(f'rm -rf {current_workspace}', cwd=os.getcwd(), shell=True)
-        
