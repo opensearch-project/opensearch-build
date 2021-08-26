@@ -1,5 +1,7 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
+[![test-bundle-workflow](https://github.com/opensearch-project/opensearch-build/actions/workflows/test-bundle-workflow.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/test-bundle-workflow.yml)
+
 - [OpenSearch Build](#opensearch-build)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
@@ -10,7 +12,9 @@
 
 ## OpenSearch Build
 
-This repository contains the scripts for building OpenSearch, and OpenSearch Dashboards distributions.
+This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
+
+* [OpenSearch Bundle Workflow](bundle-workflow/README.md)
 
 ## Contributing
 
@@ -36,4 +40,4 @@ This project is licensed under the [Apache v2.0 License](LICENSE.txt).
 
 ## Copyright
 
-Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Copyright OpenSearch Contributors. See [NOTICE](NOTICE) for details.

@@ -33,7 +33,7 @@
 
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2 AS linux_x64_stage_0
+FROM amazonlinux:2 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -49,8 +49,8 @@ RUN groupadd -g $GID opensearch && \
     mkdir /tmp/opensearch
 
 # Prepare working directory
-COPY opensearch.tgz /tmp/opensearch/opensearch.tgz
-RUN tar -xzf /tmp/opensearch/opensearch.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
+COPY opensearch-*.tgz /tmp/opensearch/
+RUN tar -xzf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
@@ -73,7 +73,7 @@ RUN groupadd -g $GID opensearch && \
     adduser -u $UID -g $GID -d $OPENSEARCH_HOME opensearch
 
 # Copy from Stage0
-COPY --from=linux_x64_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
+COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
 # Set $JAVA_HOME

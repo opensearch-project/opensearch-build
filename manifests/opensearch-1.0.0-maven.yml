@@ -1,0 +1,18 @@
+---
+schema-version: 1.0
+build:
+  name: OpenSearch
+  version: 1.0.0
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: tags/1.0.0
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: tags/1.0.0.0
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: tags/1.0.0.0
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: tags/1.0.0.0
