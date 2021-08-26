@@ -7,13 +7,12 @@
 # Modifications Copyright OpenSearch Contributors. See
 # GitHub history for details.
 
-#!/usr/bin/env python
-
 import subprocess
 
-class ShellExecutor():
+
+class ShellExecutor:
     def check_output(command, work_dir, is_shell):
-        subprocess.check_output(command, cwd = work_dir, shell = is_shell)
+        subprocess.check_output(command, cwd=work_dir, shell=is_shell)
 
     def check_call(command, work_dir, is_shell):
-        subprocess.check_call(command, cwd = work_dir, shell = is_shell)
+        subprocess.check_call(command, cwd=work_dir, shell=is_shell)

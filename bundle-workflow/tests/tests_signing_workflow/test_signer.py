@@ -17,7 +17,7 @@ class TestSigner(unittest.TestCase):
             "the-module.module",
             "the-tar.tar.gz",
             "random-file.txt",
-            "something-1.0.0.0.jar"
+            "something-1.0.0.0.jar",
         ]
         expected = [
             call("/path/the-jar.jar"),

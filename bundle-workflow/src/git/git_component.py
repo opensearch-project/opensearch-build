@@ -6,13 +6,13 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-#!/usr/bin/env python
-
 from git.git_repository import GitRepository
+
 
 class GitComponent:
     repository: str
     commit_id: str
+
     def __init__(self, respository, commit_id):
         self.repository = respository
         self.commit_id = commit_id

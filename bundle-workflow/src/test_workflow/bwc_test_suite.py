@@ -7,18 +7,18 @@
 # Modifications Copyright OpenSearch Contributors. See
 # GitHub history for details.
 
-#!/usr/bin/env python
-
 import os
 
-from system.shell_executor import ShellExecutor
 from git.git_component import GitComponent
+from system.shell_executor import ShellExecutor
 from system.temporary_directory import TemporaryDirectory
+
 
 class BwcTestSuite:
     manifest: str
     component: str
     keep: bool
+
     def __init__(self, manifest, component, keep):
         self.manifest = manifest
         self.component = component
@@ -47,5 +47,5 @@ class BwcTestSuite:
             # For each component, check out the git repo and run `bwctest.sh`
             for component in self.manifest.components:
                 if self.component is None or self.component == component.name:
-                    console_output = self.component_bwc_tests(component, work_dir)
-            # TODO: Store and report test results, send notification via {console_output}
+                    # TODO: Store and report test results, send notification via {console_output}
+                    self.component_bwc_tests(component, work_dir)

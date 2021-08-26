@@ -6,9 +6,10 @@
 
 import os
 import shutil
-from system.shell_executor import ShellExecutor
 import tarfile
 import tempfile
+
+from system.shell_executor import ShellExecutor
 
 """
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.
