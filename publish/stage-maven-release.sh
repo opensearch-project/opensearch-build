@@ -119,7 +119,7 @@ EOF
 function create_staging_repository() {
   staging_repo_id=$(mvn --settings="${mvn_settings}" \
     org.sonatype.plugins:nexus-staging-maven-plugin:rc-open \
-    -DnexusUrl="${NEXUS_URL}" \
+    -DnexusUrl="${REPO_URL}" \
     -DserverId=nexus \
     -DstagingProfileId="${STAGING_PROFILE_ID}" \
     -DstagingDescription="Staging artifacts for build ${BUILD_ID}" \
@@ -128,8 +128,6 @@ function create_staging_repository() {
   echo "Opened staging repository ID $staging_repo_id"
 }
 
-
-url="${REPO_URL}"
 create_maven_settings
 create_staging_repository
 
@@ -140,7 +138,7 @@ echo "==========================================="
 mvn --settings="${mvn_settings}" \
   org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5:deploy-staged-repository \
   -DrepositoryDirectory="${staged_repo}" \
-  -DnexusUrl="${url}" \
+  -DnexusUrl="${REPO_URL}" \
   -DserverId=nexus \
   -DautoReleaseAfterClose=false \
   -DstagingProgressTimeoutMinutes=30 \
