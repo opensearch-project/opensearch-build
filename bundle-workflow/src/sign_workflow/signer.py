@@ -36,7 +36,14 @@ class Signer:
             self.verify(location + ".asc")
 
     def is_valid_file_type(self, file_name):
-        return any(x in [pathlib.Path(file_name).suffix, "".join(pathlib.Path(file_name).suffixes)] for x in Signer.ACCEPTED_FILE_TYPES)
+        return any(
+            x
+            in [
+                pathlib.Path(file_name).suffix,
+                "".join(pathlib.Path(file_name).suffixes),
+            ]
+            for x in Signer.ACCEPTED_FILE_TYPES
+        )
 
     def get_repo_url(self):
         if "GITHUB_TOKEN" in os.environ:

@@ -44,9 +44,9 @@ class BuildRecorder:
     def get_manifest(self):
         return self.build_manifest.to_manifest()
 
-    def write_manifest(self, folder):
+    def write_manifest(self, dest_dir):
         output_manifest = self.get_manifest()
-        manifest_path = os.path.join(folder, "manifest.yml")
+        manifest_path = os.path.join(dest_dir, "manifest.yml")
         with open(manifest_path, "w") as file:
             yaml.dump(output_manifest.to_dict(), file)
 
