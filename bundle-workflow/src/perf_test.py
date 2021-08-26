@@ -13,7 +13,6 @@ parser.add_argument('manifest', type=argparse.FileType('r'), help="Manifest file
 parser.add_argument('--keep', dest='keep', action='store_true', help="Do not delete the working temporary directory.")
 parser.add_argument('--stack', dest='stack', help='Stack name for performance test')
 parser.add_argument('config', type=argparse.FileType('r'), help="Config file.")
-parser.add_argument("-t", '--token', help="Github Token")
 args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.manifest)

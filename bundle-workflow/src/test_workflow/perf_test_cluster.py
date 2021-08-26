@@ -29,8 +29,9 @@ class PerformanceTestCluster(TestCluster):
 
         command = f'cdk deploy -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
                   f'-c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} '\
-                  f'-c architecture={self.manifest.build.architecture} --require-approval=never -c assume-role-credentials:writeIamRoleName={self.role} '\
-                  f'-c assume-role-credentials:readIamRoleName={self.role} --outputs-file {self.output_file}'
+                  f'-c architecture={self.manifest.build.architecture} --require-approval=never --plugin cdk-assume-role-credential-plugin '\
+                  f'-c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role} '\
+                  f'--outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
         with open(self.output_file, 'r') as read_file:
@@ -53,7 +54,7 @@ class PerformanceTestCluster(TestCluster):
 
         command = f'cdk destroy -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
                   f'-c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} '\
-                  f'-c architecture={self.manifest.build.architecture} --require-approval=never -c assume-role-credentials:writeIamRoleName={self.role} '\
-                  f'-c assume-role-credentials:readIamRoleName={self.role}'
+                  f'-c architecture={self.manifest.build.architecture} --require-approval=never --plugin cdk-assume-role-credential-plugin '\
+                  f'-c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
