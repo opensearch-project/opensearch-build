@@ -26,9 +26,10 @@ class PerformanceTestCluster(TestCluster):
         if self.security:
             security = 'enable'
 
-        command = f'cdk deploy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
+        command = f'cdk deploy -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
                   f'-c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} '\
-                  f'-c architecture={self.manifest.build.architecture} --require-approval=never --profile infra --outputs-file {self.output_file}'
+                  f'-c architecture={self.manifest.build.architecture} --require-approval=never -c assume-role-credentials:writeIamRoleName=cfn-set-up '\
+                  f'-c assume-role-credentials:readIamRoleName=cfn-set-up --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)
         with open(self.output_file, 'r') as read_file:
@@ -49,8 +50,9 @@ class PerformanceTestCluster(TestCluster):
         if self.security:
             security = 'enable'
 
-        command = f'cdk destroy --all -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
+        command = f'cdk destroy -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id} '\
                   f'-c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={security} '\
-                  f'-c architecture={self.manifest.build.architecture} --profile infra --require-approval=never'
+                  f'-c architecture={self.manifest.build.architecture} --require-approval=never -c assume-role-credentials:writeIamRoleName=cfn-set-up '\
+                  f'-c assume-role-credentials:readIamRoleName=cfn-set-up'
         print(f'Executing "{command}" in {dir}')
         subprocess.check_call(command, cwd=dir, shell=True)

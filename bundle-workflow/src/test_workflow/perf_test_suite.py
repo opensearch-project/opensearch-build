@@ -13,6 +13,7 @@ class PerformanceTestSuite:
         os.chdir(self.work_dir)
         dir = os.getcwd()
         # Install the depedencies for the private repo
+        # TODO Move the installation to the repo itself
         subprocess.check_call('pip3 install boto3 requests setuptools retry dataclasses_json', cwd=dir, shell=True)
 
         if self.security:
