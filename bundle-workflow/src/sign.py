@@ -21,7 +21,7 @@ parser.add_argument("--type", nargs="?", help="Artifact type")
 args = parser.parse_args()
 
 manifest = BuildManifest.from_file(args.manifest)
-basepath = os.path.dirname(os.path.abspath(manifest.name))
+basepath = os.path.dirname(os.path.abspath(args.manifest.name))
 signer = Signer()
 
 for component in manifest.components:
