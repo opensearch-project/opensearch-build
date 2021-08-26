@@ -19,9 +19,15 @@ manifest = BundleManifest.from_file(args.manifest)
 config = yaml.load(args.config, Loader=yaml.FullLoader)
 
 
+def get_repo_url():
+    if "GITHUB_TOKEN" in os.environ:
+        return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
+    return "https://github.com/opensearch-project/opensearch-infra.git"
+
+
 os.chdir(os.getcwd())
 current_workspace = os.path.join(os.getcwd(), 'infra')
-cloned_repo = GitRepository(config['Constants']['Repository'], 'main', current_workspace)
+cloned_repo = GitRepository(get_repo_url(), 'main', current_workspace)
 security = False
 for component in manifest.components:
     if component.name == 'security':
