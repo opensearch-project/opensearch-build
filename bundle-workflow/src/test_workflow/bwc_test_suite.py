@@ -10,14 +10,10 @@
 #!/usr/bin/env python
 
 import os
-import sys
-import subprocess
 
-from manifests.bundle_manifest import BundleManifest
 from system.shell_executor import ShellExecutor
-from git.git_repository import GitRepository
+from git.git_component import GitComponent
 from system.temporary_directory import TemporaryDirectory
-from test_workflow.test_args import TestArgs
 
 class BwcTestSuite:
     manifest: str
@@ -28,9 +24,6 @@ class BwcTestSuite:
         self.component = component
         self.keep = keep
 
-    def pull_component(self, component, work_dir):
-        GitRepository(component.repository, component.commit_id, os.path.join(work_dir, component.name))
-
     def run_tests(self, work_dir):
         bwc_script = "bwctest.sh"
         run_bwctests = f"./{bwc_script}"
@@ -38,7 +31,8 @@ class BwcTestSuite:
         return output
 
     def component_bwc_tests(self, component, work_dir):
-        self.pull_component(component, work_dir)
+        git_component = GitComponent(component.repository, component.commit_id)
+        git_component.checkout(os.path.join(work_dir, component.name))
         try:
             console_output = self.run_tests(work_dir + "/" + component.name)
             return console_output
@@ -52,7 +46,6 @@ class BwcTestSuite:
             os.chdir(work_dir)
             # For each component, check out the git repo and run `bwctest.sh`
             for component in self.manifest.components:
-
                 if self.component is None or self.component == component.name:
                     console_output = self.component_bwc_tests(component, work_dir)
             # TODO: Store and report test results, send notification via {console_output}
