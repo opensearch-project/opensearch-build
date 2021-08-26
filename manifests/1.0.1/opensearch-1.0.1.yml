@@ -9,7 +9,7 @@ components:
     ref: tags/1.0.0
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: tage/1.0.0.0
+    ref: tags/1.0.0.0
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: tags/1.0.0.0
