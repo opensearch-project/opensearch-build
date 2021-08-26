@@ -7,7 +7,7 @@
 import os
 import unittest
 
-from src.paths.script_finder import ScriptFinder
+from paths.script_finder import ScriptFinder
 
 
 class TestScriptFinder(unittest.TestCase):

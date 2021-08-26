@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from src.signing_workflow.signer import Signer
+from signing_workflow.signer import Signer
 
 
 class TestSigner(unittest.TestCase):
-    @patch("src.signing_workflow.signer.GitRepository")
+    @patch("signing_workflow.signer.GitRepository")
     def test_accepted_file_types(self, git_repo):
 
         artifacts = [
@@ -17,6 +17,7 @@ class TestSigner(unittest.TestCase):
             "the-module.module",
             "the-tar.tar.gz",
             "random-file.txt",
+            "something-1.0.0.0.jar"
         ]
         expected = [
             call("/path/the-jar.jar"),
@@ -25,6 +26,7 @@ class TestSigner(unittest.TestCase):
             call("/path/the-pom.pom"),
             call("/path/the-module.module"),
             call("/path/the-tar.tar.gz"),
+            call("/path/something-1.0.0.0.jar"),
         ]
         signer = Signer()
         signer.sign = MagicMock()
