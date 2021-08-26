@@ -28,17 +28,15 @@ class Signer:
 
     def sign_artifacts(self, artifacts, basepath):
         for artifact in artifacts:
-            if self.is_invalid_file_type(artifact):
+            if not self.is_valid_file_type(artifact):
                 print(f"Skipping signing of file ${artifact}")
                 continue
             location = os.path.join(basepath, artifact)
             self.sign(location)
             self.verify(location + ".asc")
 
-    def is_invalid_file_type(self, file_name):
-        return (
-            "".join(pathlib.Path(file_name).suffixes) not in Signer.ACCEPTED_FILE_TYPES
-        )
+    def is_valid_file_type(self, file_name):
+        return any(x in [pathlib.Path(file_name).suffix, "".join(pathlib.Path(file_name).suffixes)] for x in Signer.ACCEPTED_FILE_TYPES)
 
     def get_repo_url(self):
         if "GITHUB_TOKEN" in os.environ:
