@@ -7,7 +7,7 @@
 import os
 import unittest
 
-from src.system.temporary_directory import TemporaryDirectory
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestTemporaryDirectory(unittest.TestCase):
