@@ -51,3 +51,32 @@ Bundle step:
 ### Scripts
 
 Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/bundle-build/standard-gradle-build](scripts/bundle-build/standard-gradle-build).
+
+## Bundle Test
+Tests the OpenSearch bundle
+
+This workflow contains two steps:
+
+Step 1: Integration Tests
+This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
+
+Step 2: Backward Compatibility Tests
+This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
+
+### Usage
+
+Kick off all test suites on a manifest:
+```bash
+./bundle-workflow/test.sh manifests/opensearch-1.0.0.yml
+```
+Kick off BWC Test Suite on a manifest:
+```
+python3 bundle-workflow/src/test.py manifests/opensearch-1.0.0.yml
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
+| --keep             | Do not delete the temporary working directory on both success or error. |
