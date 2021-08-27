@@ -110,7 +110,7 @@ All done! ✨ 🍰 ✨
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
 
-## Type Checking
+### Type Checking
 
 This project uses [mypy](https://github.com/python/mypy) as an optional static type checker.
 
@@ -130,4 +130,5 @@ pipenv run isort .
 pipenv run black .
 pipenv run flake8
 pipenv run pytest
+pipenv run mypy .
 ```
