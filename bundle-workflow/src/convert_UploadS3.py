@@ -4,8 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 import os
-import json
 import argparse
+import json
 import boto3
 import read_write_s3
 
