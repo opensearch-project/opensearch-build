@@ -15,6 +15,7 @@ from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test_suite import IntegTestSuite
 from test_workflow.local_test_cluster import LocalTestCluster
+from test_workflow.test_recorder import TestRecorder
 
 parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
 parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
@@ -28,6 +29,7 @@ args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.manifest)
 script_finder = ScriptFinder()
+test_recorder = TestRecorder(os.path.dirname(args.manifest.name))
 
 with TemporaryDirectory(keep=args.keep) as work_dir:
     os.chdir(work_dir)
@@ -40,15 +42,15 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         # For each component, check out the git repo and run `integtest.sh`
         for component in manifest.components:
-            print(component.name)
+            print(f'Testing {component.name}')
             repo = GitRepository(
                 component.repository,
                 component.commit_id,
                 os.path.join(work_dir, component.name),
             )
-            test_suite = IntegTestSuite(component.name, repo, script_finder)
+            test_suite = IntegTestSuite(component.name, repo, script_finder, test_recorder)
             test_suite.execute(cluster, True)
     finally:
-        cluster.destroy()
+        cluster.destroy(test_recorder)
 
     # TODO: Store test results, send notification.
