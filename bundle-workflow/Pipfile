@@ -5,9 +5,12 @@ name = "pypi"
 
 [packages]
 pyyaml = "~=5.4"
+types-PyYAML = "~=5.4"
 requests = "~=2.26"
+types-requests = "~=2.25"
 isort = "~=5.9"
 flake8 = "~=3.9"
+mypy = "~=0.9"
 pytest = "*"
 
 [dev-packages]

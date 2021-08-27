@@ -110,6 +110,15 @@ All done! ✨ 🍰 ✨
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/test-bundle-workflow.yml) will make sure to remind you. 
 
+### Type Checking
+
+This project uses [mypy](https://github.com/python/mypy) as an optional static type checker.
+
+```
+pipenv run mypy .
+bundle-workflow/src/assemble.py:14: error: Cannot find implementation or library stub for module named "assemble_workflow.bundle"
+```
+
 ### Pre-Commit Cheatsheet
 
 Run from `bundle-workflow` before making pull requests.
@@ -121,4 +130,5 @@ pipenv run isort .
 pipenv run black .
 pipenv run flake8
 pipenv run pytest
+pipenv run mypy .
 ```
