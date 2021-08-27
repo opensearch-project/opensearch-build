@@ -7,8 +7,6 @@ import argparse
 import json
 import os
 
-import boto3
-
 import read_write_s3
 
 
@@ -123,21 +121,21 @@ class convertWrite:
                             <h2>Test Details</h2>
                             <table border="2" style="margin-left: auto; margin-right: auto;">
                             <tr>
-                                <th>testExecutionId</th>
-                                <th>testOwner</th> 
-                                <th>testStartTime</th> 
-                                <th>testEndTime</th> 
-                                <th>testDuration</th> 
+                            <th>testExecutionId</th>
+                            <th>testOwner</th>
+                            <th>testStartTime</th>
+                            <th>testEndTime</th>
+                            <th>testDuration</th>
                             </tr>
-                            <tr>      
-                """
+                            <tr>
+                    """
                 for i in range(1, 6):
                     if (i < 3):
                         text = text + "<td>" + str(data[testParameters[i]]) + "</td>"
                     else:
                         text = text + "<td>" + str(data['testResults'][testParameters[i]]) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                        </table>
                                        <h2>operationsSummary</h2>
                                        <table border="2" style="margin-left: auto; margin-right: auto;">
@@ -164,22 +162,21 @@ class convertWrite:
                                        </tr>
                                        <tr>
                                          <th scope="row">index</th>
-                       """
+                    """
                 it = testResults_OS('index')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """        
+                    """
                                        <tr>
                                         <th scope="row">query</th>
-                       """
+                    """
                 it = testResults_OS('query')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """    
+                    """
                                    </table>
-       
                                    <h2>operations</h2>
                                    <table border="2" style="margin-left: auto; margin-right: auto;">
                                    <col>
@@ -205,46 +202,46 @@ class convertWrite:
                                    </tr>
                                    <tr>
                                        <th scope="row">auto-date-histogram</th>
-                       """
+                    """
                 it = testResults_Operations('auto-date-histogram')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    <tr>
                                        <th scope="row">date-histogram-with-tz</th>
-                       """
+                    """
                 it = testResults_Operations('date-histogram-with-tz')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    <tr>
                                        <th scope="row">date-histogram</th>
-                       """
+                    """
                 it = testResults_Operations('date-histogram')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                     <tr>
                                        <th scope="row">auto-date-histogram-with-tz</th>
-                       """
+                    """
                 it = testResults_Operations('auto-date-histogram-with-tz')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    <tr>
                                        <th scope="row">index-append</th>
-                       """
+                    """
                 it = testResults_Operations('index-append')
                 for i in range(1, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    </table>
-                                   <h3>cpuStats and memoryStats</h3>    
+                                   <h3>cpuStats and memoryStats</h3>
                                    <table border="2" style="margin-left: auto; margin-right: auto;">
                                      <col>
                                      <colgroup span="2"></colgroup>
@@ -260,51 +257,51 @@ class convertWrite:
                                        <th scope="col">p100</th>
                                      </tr>
                                      <th scope="row">cpuStats</th>
-                       """
+                    """
                 it = testResults_Stats('cpuStats')
                 for i in range(7, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    <th scope="row">memoryStats</th>
-                       """
+                    """
                 it = testResults_Stats('memoryStats')
                 for i in range(7, 11):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
-                                </table>
+                    """
+                               </table>
                                <h2>garbageCollection</h2>
                                <h4>overall</h4>
                                <table border="2" style="margin-left: auto; margin-right: auto;">
+                               <tr>
+                                <th>oldGCTimeMillis</th>
+                                <th>youngGCTimeMillis</th>
+                               </tr>
                                    <tr>
-                                       <th>oldGCTimeMillis</th>
-                                       <th>youngGCTimeMillis</th> 
-                                   </tr>
-                                   <tr>
-                       """
+                    """
                 it = testResults_Garbage()
                 for i in range(1, 3):
                     text = text + "<td>" + str(it.get(i)) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    </table>
                                    <h2>SystemUnderTest</h2>
                                    <table border="2" style="margin-left: auto; margin-right: auto;">
                                    <tr>
                                        <th>dataNodeCount</th>
-                                       <th>masterNodeCount</th> 
-                                       <th>dataNodeInstanceType</th> 
-                                       <th>masterNodeInstanceType</th> 
-                                       <th>elasticsearchDistributionType</th> 
-                                       <th>aes</th> 
-                                       <th>clusterName</th> 
-                                       <th>awsAccount</th> 
-                                       <th>endpoint</th> 
-                                       <th>region</th> 
+                                       <th>masterNodeCount</th>
+                                       <th>dataNodeInstanceType</th>
+                                       <th>masterNodeInstanceType</th>
+                                       <th>elasticsearchDistributionType</th>
+                                       <th>aes</th>
+                                       <th>clusterName</th>
+                                       <th>awsAccount</th>
+                                       <th>endpoint</th>
+                                       <th>region</th>
                                    </tr>
                                    <tr>
-                       """
+                    """
                 for i in range(1, 11):
                     if (i < 7):
                         text = text + "<td>" + str(data['systemUnderTest'][sut_Parameters[i]]) + "</td>"
@@ -312,26 +309,25 @@ class convertWrite:
                         text = text + "<td>" + str(
                             data['systemUnderTest']['clusterIdentity'][sut_Parameters[i]]) + "</td>"
                 text = text + "</tr>" + \
-                       """
+                    """
                                    </table>
                                    <h2>Workload Config</h2>
                                    <table border="2" style="margin-left: auto; margin-right: auto;">
                                    <tr>
-                                       <th>dataset</th>
-                                       <th>warmupIterations</th> 
-                                       <th>testIterations</th>
+                                   <th>dataset</th>
+                                   <th>warmupIterations</th>
+                                   <th>testIterations</th>
                                    </tr>
                                    <tr>
-                       """
+                    """
                 for i in range(1, 4):
                     text = text + "<td>" + str(data['workloadConfig'][work_config[i]]) + "</td>"
                 text = text + "</tr>" + \
-                       """
-                                   </table>
-                                   </body>
-                                   </html>
-       
-                       """.format(**locals())
+                    """
+                        </table>
+                        </body>
+                        </html>
+                    """.format(**locals())
                 file1 = open(filename, 'w')
                 file1.write(text)
                 file1.close()
