@@ -30,20 +30,22 @@ class IntegTestSuite:
         for config in self.test_config.integ_test['test-configs']:
             self._setup_cluster_and_execute_test_config(config)
 
+    # TODO: fetch pre-built dependencies from s3
     def _fetch_plugin_specific_dependencies(self):
         os.chdir(self.work_dir)
-        subprocess.run('mv -v job-scheduler ' + self.component.name, shell=True)
+        subprocess.run('mv -v job-scheduler ' + self.component.name, shell=True, check=True)
         os.chdir(self.work_dir + '/' + self.component.name + '/job-scheduler')
         subprocess.run(self.work_dir +
                        '/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh job-scheduler ' +
-                       self.bundle_manifest.build.version, shell=True)
+                       self.bundle_manifest.build.version, shell=True, check=True, capture_output=True)
         os.chdir(self.work_dir)
-        subprocess.run('mv alerting notifications', shell=True)
+        subprocess.run('mv alerting notifications', shell=True, check=True)
         os.chdir(self.work_dir + '/' + '/notifications')
         subprocess.run(self.work_dir +
                        '/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh alerting ' +
-                       self.bundle_manifest.build.version, shell=True)
+                       self.bundle_manifest.build.version, shell=True, check=True, capture_output=True)
 
+    # TODO: revisit this once the test_manifest.yml is finalized
     def _is_security_enabled(self, config):
         # TODO: Separate this logic in function once we have test-configs defined
         if config == 'with-security':
@@ -60,8 +62,6 @@ class IntegTestSuite:
             print("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
-            # repo = GitRepository(component.repository, component.commit_id, os.path.join(work_dir, component.name))
-            # repo = GitRepository(component.repository, 'main', os.path.join(work_dir, component.name))
             self._execute_integtest_sh(cluster, security)
         finally:
             cluster.destroy()

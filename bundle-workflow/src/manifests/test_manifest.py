@@ -59,6 +59,6 @@ class TestManifest:
         def to_dict(self):
             return {
                 "name": self.name,
-                "integTest": self.integ_test,
-                "bwcTest": self.bwc_test
+                "integ-test": self.integ_test,
+                "bwc-test": self.bwc_test
             }
