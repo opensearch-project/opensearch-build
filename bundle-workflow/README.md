@@ -4,6 +4,9 @@
     - [Assemble the Bundle](#assemble-the-bundle)
         - [Custom Install Scripts](#custom-install-scripts)
     - [Signing Artifacts](#signing-artifacts)
+    - [Test the Bundle](#test-the-bundle)
+        - [Integration Tests](#integration-tests)
+        - [Backwards Compatibility Tests](#backward-compatibility-tests)
 
 ## OpenSearch Bundle Workflow
 
@@ -88,26 +91,22 @@ Signing step (to sign all artifacts):
 ./bundle_workflow/sign.sh artifacts/manifest.yml
 ```
 
-### Bundle Tests
-Tests the OpenSearch bundle
+### Test the Bundle
+Tests the OpenSearch bundle.
 
-This workflow contains two steps:
+This workflow contains two sections: Integration Tests, Backwards Compatibility Tests.
 
-Step 1: Integration Tests
+#### Integration Tests
 This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
 
-Step 2: Backward Compatibility Tests
+#### Backwards Compatibility Tests
 This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
 
-#### Usage
+Usage:
 
 Kick off all test suites on a manifest:
 ```bash
 ./bundle-workflow/test.sh manifests/opensearch-1.0.0.yml
-```
-Kick off BWC Test Suite on a manifest:
-```
-python3 bundle-workflow/src/test.py manifests/opensearch-1.0.0.yml
 ```
 
 The following options are available.

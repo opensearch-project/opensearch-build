@@ -6,9 +6,9 @@
 
 import os
 import shutil
+import subprocess
 import tarfile
 import tempfile
-import subprocess
 
 """
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.

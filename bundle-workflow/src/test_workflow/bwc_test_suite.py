@@ -10,8 +10,8 @@
 import os
 import subprocess
 
-from test_workflow.test_component import TestComponent
 from system.temporary_directory import TemporaryDirectory
+from test_workflow.test_component import TestComponent
 
 
 class BwcTestSuite:
