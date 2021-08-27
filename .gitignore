@@ -14,5 +14,7 @@ coverage.xml
 .settings/
 out.txt
 
-artifacts/
-bundle/
+./artifacts/
+./bundle/
+./bundle-workflow/artifacts/
+./bundle-workflow/bundle/
