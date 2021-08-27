@@ -7,7 +7,7 @@
 import boto3
 
 
-class read_write_files:
+class Read_Write_Files:
 
     # get_S3Objects:Used for getting the files from S3
     # bucketname: Name of the bucket you want to get the file from
