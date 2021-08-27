@@ -6,11 +6,10 @@
 
 import itertools
 import os
+import requests
 import subprocess
 import time
 import urllib.request
-
-import requests
 
 from paths.tree_walker import walk
 from test_workflow.test_cluster import ClusterCreationException, TestCluster

@@ -8,7 +8,6 @@ import os
 import unittest
 
 import yaml
-
 from manifests.bundle_manifest import BundleManifest
 
 

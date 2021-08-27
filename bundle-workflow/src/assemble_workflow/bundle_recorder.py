@@ -8,7 +8,6 @@ import os
 from urllib.parse import urljoin
 
 import yaml
-
 from manifests.bundle_manifest import BundleManifest
 
 

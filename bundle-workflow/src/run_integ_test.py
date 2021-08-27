@@ -11,12 +11,11 @@ import subprocess
 import sys
 
 from git.git_repository import GitRepository
-from test_workflow.integ.integ_test_suite import IntegTestSuite
-from system.temporary_directory import TemporaryDirectory
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
-
+from system.temporary_directory import TemporaryDirectory
+from test_workflow.integ.integ_test_suite import IntegTestSuite
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
@@ -43,7 +42,7 @@ def parse_arguments():
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):
-    print("PULL COMMON DEPENDENCIES")
+    print("Pulling common dependencies for integration tests")
     print("Pulling opensearch-build")
     os.chdir(work_dir)
     GitRepository('https://github.com/opensearch-project/opensearch-build.git', 'main',

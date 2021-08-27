@@ -8,7 +8,6 @@ import os
 import unittest
 
 import yaml
-
 from manifests.build_manifest import BuildManifest
 
 
