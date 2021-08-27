@@ -3,13 +3,12 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
-#!/usr/bin/env python3
 
+import argparse
 import boto3
 import json
-import read_write_s3
 import os
-import argparse
+import read_write_s3
 
 
 class convertWrite:
