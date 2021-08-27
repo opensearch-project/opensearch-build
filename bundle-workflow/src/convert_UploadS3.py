@@ -9,7 +9,6 @@ import json
 import boto3
 import read_write_s3
 import os
-import sys
 import argparse
 
 
