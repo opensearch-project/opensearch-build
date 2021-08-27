@@ -8,7 +8,6 @@
 
 import os
 
-from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
@@ -16,6 +15,7 @@ from test_workflow.bwc_test_suite import BwcTestSuite
 from test_workflow.integ_test_suite import IntegTestSuite
 from test_workflow.local_test_cluster import LocalTestCluster
 from test_workflow.test_args import TestArgs
+from test_workflow.test_component import TestComponent
 
 args = TestArgs()
 manifest = BundleManifest.from_file(args.manifest)
@@ -34,11 +34,8 @@ def integ_test_suite():
         try:
             for component in manifest.components:
                 print(component.name)
-                repo = GitRepository(
-                    component.repository,
-                    component.commit_id,
-                    os.path.join(work_dir, component.name),
-                )
+                test_component = TestComponent(component.repository, component.commit_id)
+                repo = test_component.checkout(os.path.join(work_dir, component.name))
                 test_suite = IntegTestSuite(component.name, repo)
                 test_suite.execute(cluster)
         finally:

@@ -18,4 +18,4 @@ class TestComponent:
         self.commit_id = commit_id
 
     def checkout(self, directory):
-        GitRepository(self.repository, self.commit_id, directory)
+        return GitRepository(self.repository, self.commit_id, directory)
