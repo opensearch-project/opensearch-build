@@ -9,7 +9,6 @@ requests = "~=2.26"
 isort = "~=5.9"
 flake8 = "~=3.9"
 pytest = "*"
-boto3 = "*"
 
 [dev-packages]
 
