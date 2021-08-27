@@ -55,8 +55,7 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         try:
             builder = Builder(component.name, repo, script_finder, build_recorder)
-            # builder.build(manifest.build.version, arch, args.snapshot)
-            builder.build('1.0.0', arch, args.snapshot)
+            builder.build(manifest.build.version, arch, args.snapshot)
             builder.export_artifacts()
         except:
             print(
