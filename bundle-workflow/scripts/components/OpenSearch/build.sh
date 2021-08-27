@@ -89,8 +89,8 @@ esac
 
 # Copy artifact to bundle output with -min in the name
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
-ARTIFACT_BUILD_NAME=opensearch-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
-ARTIFACT_TARGET_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
+ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch.*$QUALIFIER.tar.gz"`
+ARTIFACT_TARGET_NAME=`echo $ARTIFACT_BUILD_NAME | sed 's/opensearch/opensearch-min/g'`
 mkdir -p "${OUTPUT}/bundle"
 cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/bundle/$ARTIFACT_TARGET_NAME
 
@@ -102,7 +102,7 @@ cd ..
 for plugin in plugins/*; do
   PLUGIN_NAME=$(basename "$plugin")
   if [ -d "$plugin" ] && [ "examples" != "$PLUGIN_NAME" ]; then
-    PLUGIN_ARTIFACT_BUILD_NAME=$PLUGIN_NAME-$VERSION$IDENTIFIER.zip
+    PLUGIN_ARTIFACT_BUILD_NAME=`ls "$plugin"/build/distributions/ | grep "$PLUGIN_NAME.*$IDENTIFIER.zip"`
     cp "$plugin"/build/distributions/"$PLUGIN_ARTIFACT_BUILD_NAME" "${OUTPUT}"/core-plugins/"$PLUGIN_ARTIFACT_BUILD_NAME"
   fi
 done

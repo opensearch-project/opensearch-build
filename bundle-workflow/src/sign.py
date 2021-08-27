@@ -7,9 +7,10 @@
 # compatible open source license.
 
 import argparse
+import os
 
 from manifests.build_manifest import BuildManifest
-from signing_workflow.signer import Signer
+from sign_workflow.signer import Signer
 
 parser = argparse.ArgumentParser(description="Sign artifacts")
 parser.add_argument(
@@ -20,6 +21,7 @@ parser.add_argument("--type", nargs="?", help="Artifact type")
 args = parser.parse_args()
 
 manifest = BuildManifest.from_file(args.manifest)
+basepath = os.path.dirname(os.path.abspath(args.manifest.name))
 signer = Signer()
 
 for component in manifest.components:
@@ -34,6 +36,6 @@ for component in manifest.components:
         if args.type and args.type != artifact_type:
             continue
 
-        signer.sign(component.artifacts[artifact_type])
+        signer.sign_artifacts(component.artifacts[artifact_type], basepath)
 
 print("Done.")
