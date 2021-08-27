@@ -7,7 +7,6 @@
 
 import argparse
 
-
 import read_write_s3
 
 
