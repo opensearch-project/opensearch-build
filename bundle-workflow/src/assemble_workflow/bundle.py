@@ -62,7 +62,7 @@ class Bundle:
 
     def execute(self, command):
         print(f'Executing "{command}" in {self.archive_path}')
-        subprocess.check_call(command, self.archive_path, True)
+        subprocess.check_call(command, cwd=self.archive_path, shell=True)
 
     def unpack(self, tar_path, dest):
         with tarfile.open(tar_path) as tar:

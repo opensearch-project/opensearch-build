@@ -52,5 +52,5 @@ def bwc_test_suite():
     test_suite.execute()
 
 
-# integ_test_suite()
+integ_test_suite()
 bwc_test_suite()
