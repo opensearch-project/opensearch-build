@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from src.git.git_repository import GitRepository
+from git.git_repository import GitRepository
 
 
 class TestGitRepository(unittest.TestCase):

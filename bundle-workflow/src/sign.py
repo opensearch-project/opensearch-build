@@ -10,7 +10,7 @@ import argparse
 import os
 
 from manifests.build_manifest import BuildManifest
-from signing_workflow.signer import Signer
+from sign_workflow.signer import Signer
 
 parser = argparse.ArgumentParser(description="Sign artifacts")
 parser.add_argument(
