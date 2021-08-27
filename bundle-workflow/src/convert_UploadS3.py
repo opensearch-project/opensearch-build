@@ -5,8 +5,8 @@
 # compatible open source license.
 #!/usr/bin/env python3
 
-import json
 import boto3
+import json
 import read_write_s3
 import os
 import argparse
