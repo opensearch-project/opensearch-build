@@ -30,6 +30,10 @@ jobs:
       - name: Enforce Style Guide
         run: |
           pipenv run flake8 .
+      - name: Run Type Checker
+        run: |
+          mypy --install-types --non-interactive
+          mypy .
       - name: Run Tests
         run: |
           pipenv run pytest
