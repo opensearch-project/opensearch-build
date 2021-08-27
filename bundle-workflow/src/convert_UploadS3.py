@@ -5,7 +5,7 @@
 # compatible open source license.
 
 import argparse
-import boto3
+# import boto3
 import json
 import os
 import read_write_s3
