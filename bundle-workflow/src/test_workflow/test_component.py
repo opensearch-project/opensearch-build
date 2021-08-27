@@ -9,7 +9,7 @@
 from git.git_repository import GitRepository
 
 
-class GitComponent:
+class TestComponent:
     repository: str
     commit_id: str
 

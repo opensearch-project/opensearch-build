@@ -8,9 +8,9 @@
 # GitHub history for details.
 
 import os
+import subprocess
 
-from git.git_component import GitComponent
-from system.shell_executor import ShellExecutor
+from test_workflow.test_component import TestComponent
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -27,12 +27,12 @@ class BwcTestSuite:
     def run_tests(self, work_dir):
         bwc_script = "bwctest.sh"
         run_bwctests = f"./{bwc_script}"
-        output = ShellExecutor.check_output(run_bwctests, work_dir, True)
+        output = subprocess.check_output(run_bwctests, cwd=work_dir, shell=True)
         return output
 
     def component_bwc_tests(self, component, work_dir):
-        git_component = GitComponent(component.repository, component.commit_id)
-        git_component.checkout(os.path.join(work_dir, component.name))
+        test_component = TestComponent(component.repository, component.commit_id)
+        test_component.checkout(os.path.join(work_dir, component.name))
         try:
             console_output = self.run_tests(work_dir + "/" + component.name)
             return console_output

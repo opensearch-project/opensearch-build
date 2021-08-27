@@ -8,8 +8,7 @@ import os
 import shutil
 import tarfile
 import tempfile
-
-from system.shell_executor import ShellExecutor
+import subprocess
 
 """
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.
@@ -63,7 +62,7 @@ class Bundle:
 
     def execute(self, command):
         print(f'Executing "{command}" in {self.archive_path}')
-        ShellExecutor.check_call(command, self.archive_path, True)
+        subprocess.check_call(command, self.archive_path, True)
 
     def unpack(self, tar_path, dest):
         with tarfile.open(tar_path) as tar:
