@@ -8,6 +8,8 @@
   - [Run Tests](#run-tests)
   - [Run bundle-workflow](#run-bundle-workflow)
   - [Code Linting](#code-linting)
+  - [Type Checking](#type-checking)
+  - [Code Coverage](#code-coverage)
   - [Pre-Commit Cheatsheet](#pre-commit-cheatsheet)
 
 ## Developer Guide
@@ -117,6 +119,18 @@ This project uses [mypy](https://github.com/python/mypy) as an optional static t
 ```
 pipenv run mypy .
 bundle-workflow/src/assemble.py:14: error: Cannot find implementation or library stub for module named "assemble_workflow.bundle"
+```
+
+### Code Coverage
+
+This project uses [codecov](https://about.codecov.io/) for code coverage. Use `pipenv run codecov` to run codecov locally.
+
+```
+$ pipenv run coverage run -m pytest
+47 passed in 5.89s
+
+$ pipenv run coverage report
+TOTAL 23491 12295 48%
 ```
 
 ### Pre-Commit Cheatsheet
