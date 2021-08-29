@@ -10,6 +10,8 @@ import subprocess
 import tarfile
 import tempfile
 
+from paths.script_finder import ScriptFinder
+
 """
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.
 It requires a min tarball distribution where plugins will be installed and the path to an artifacts directory where
@@ -18,7 +20,7 @@ plugins can be found.
 
 
 class Bundle:
-    def __init__(self, build_manifest, artifacts_dir, bundle_recorder, script_finder):
+    def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -31,7 +33,6 @@ class Bundle:
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.installed_plugins = []
-        self.script_finder = script_finder
         tmp_path = self.add_component(self.min_tarball, "bundle")
         self.unpack(tmp_path, self.tmp_dir.name)
         # OpenSearch & Dashboard tars will include only a single folder at the top level of the tar
@@ -49,7 +50,7 @@ class Bundle:
         tmp_path = self.add_component(plugin, "plugins")
         cli_path = os.path.join(self.archive_path, "bin/opensearch-plugin")
         self.execute(f"{cli_path} install --batch file:{tmp_path}")
-        post_install_script = self.script_finder.find_install_script(plugin.name)
+        post_install_script = ScriptFinder.find_install_script(plugin.name)
         self.execute(
             f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
         )

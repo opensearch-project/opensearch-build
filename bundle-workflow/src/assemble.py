@@ -14,7 +14,6 @@ import tempfile
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
-from paths.script_finder import ScriptFinder
 
 parser = argparse.ArgumentParser(description="Assemble an OpenSearch Bundle")
 parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
@@ -28,7 +27,6 @@ if not os.path.isfile(tarball_installation_script):
     print(f"No installation script found at path: {tarball_installation_script}")
     exit(1)
 
-script_finder = ScriptFinder()
 build_manifest = BuildManifest.from_file(args.manifest)
 build = build_manifest.build
 artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
@@ -41,7 +39,7 @@ with tempfile.TemporaryDirectory() as work_dir:
     os.chdir(work_dir)
 
     bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
-    bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder, script_finder)
+    bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
 
     bundle.install_plugins()
     print(f"Installed plugins: {bundle.installed_plugins}")

@@ -17,7 +17,6 @@ class TestBuilder(unittest.TestCase):
         self.builder = Builder(
             "component",
             MagicMock(dir="/tmp/checked-out-component"),
-            ScriptFinder(),
             MagicMock(),
         )
 
@@ -32,7 +31,7 @@ class TestBuilder(unittest.TestCase):
                 [
                     os.path.realpath(
                         os.path.join(
-                            self.builder.script_finder.default_scripts_path, "build.sh"
+                            ScriptFinder.default_scripts_path, "build.sh"
                         )
                     ),
                     "-v 1.0.0",
@@ -53,7 +52,7 @@ class TestBuilder(unittest.TestCase):
                 [
                     os.path.realpath(
                         os.path.join(
-                            self.builder.script_finder.default_scripts_path, "build.sh"
+                            ScriptFinder.default_scripts_path, "build.sh"
                         )
                     ),
                     "-v 1.0.0",
