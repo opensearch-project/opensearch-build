@@ -79,8 +79,8 @@ create_maven_settings() {
   <servers>
     <server>
       <id>nexus</id>
-      <username>${MAVEN_USERNAME}</username>
-      <password>${MAVEN_PASSWORD}</password>
+      <username>${SONATYPE_USERNAME}</username>
+      <password>${SONATYPE_PASSWORD}</password>
     </server>
   </servers>
 </settings>
@@ -118,7 +118,7 @@ for pom in ${pomFiles}; do
          mvn --settings="${mvn_settings}" deploy:deploy-file \
          -DgeneratePom=false \
          -DrepositoryId=nexus \
-         -Durl="${SNAPSHOT_URL}" \
+         -Durl="${SNAPSHOT_REPO_URL}" \
          -DpomFile="${pom}" \
          -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
        ;;
