@@ -12,6 +12,8 @@ isort = "~=5.9"
 flake8 = "~=3.9"
 mypy = "~=0.9"
 pytest = "*"
+coverage = "~=4.5.4"
+pytest-cov = "~=2.10.0"
 
 [dev-packages]
 
