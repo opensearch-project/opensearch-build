@@ -20,8 +20,7 @@ class TestBuildManifest(unittest.TestCase):
         self.manifest_filename = os.path.join(
             self.data_path, "opensearch-build-1.1.0.yml"
         )
-        with open(self.manifest_filename) as f:
-            self.manifest = BuildManifest.from_file(f)
+        self.manifest = BuildManifest.from_path(self.manifest_filename)
 
     def test_build(self):
         self.assertEqual(self.manifest.version, "1.0")

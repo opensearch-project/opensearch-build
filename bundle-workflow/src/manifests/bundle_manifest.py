@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import yaml
+from manifests.manifest import Manifest
 
 
-class BundleManifest:
+class BundleManifest(Manifest):
     """
     A BundleManifest is an immutable view of the outputs from a assemble step
     The manifest contains information about the bundle that was built (in the `assemble` section),
@@ -28,14 +28,9 @@ class BundleManifest:
             location: /relative/path/to/artifact
     """
 
-    @staticmethod
-    def from_file(file):
-        return BundleManifest(yaml.safe_load(file))
-
     def __init__(self, data):
-        self.version = str(data["schema-version"])
-        if self.version != "1.0":
-            raise ValueError(f"Unsupported schema version: {self.version}")
+        super().__init__(data)
+
         self.build = self.Build(data["build"])
         self.components = list(
             map(lambda entry: self.Component(entry), data["components"])

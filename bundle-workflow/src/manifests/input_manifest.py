@@ -4,8 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import yaml
-
 """
 An InputManifest is an immutable view of the input manifest for the build system.
 The manifest contains information about the product that is being built (in the `build` section),
@@ -23,16 +21,13 @@ components:
   - ...
 """
 
+from manifests.manifest import Manifest
 
-class InputManifest:
-    @staticmethod
-    def from_file(file):
-        return InputManifest(yaml.safe_load(file))
 
+class InputManifest(Manifest):
     def __init__(self, data):
-        self.version = str(data["schema-version"])
-        if self.version != "1.0":
-            raise ValueError(f"Unsupported schema version: {self.version}")
+        super().__init__(data)
+
         self.build = self.Build(data["build"])
         self.components = list(
             map(lambda entry: self.Component(entry), data["components"])
