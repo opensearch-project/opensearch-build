@@ -19,7 +19,7 @@ from test_workflow.test_recorder import TestRecorder
 
 args = TestArgs()
 manifest = BundleManifest.from_file(args.manifest)
-test_recorder = TestRecorder(os.path.dirname(args.manifest.name))
+test_recorder = TestRecorder(os.path.dirname(manifest.name))
 
 
 def integ_test_suite():
