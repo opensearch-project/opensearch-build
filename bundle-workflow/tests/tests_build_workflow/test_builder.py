@@ -30,9 +30,7 @@ class TestBuilder(unittest.TestCase):
             " ".join(
                 [
                     os.path.realpath(
-                        os.path.join(
-                            ScriptFinder.default_scripts_path, "build.sh"
-                        )
+                        os.path.join(ScriptFinder.default_scripts_path, "build.sh")
                     ),
                     "-v 1.0.0",
                     "-a x64",
@@ -51,9 +49,7 @@ class TestBuilder(unittest.TestCase):
             " ".join(
                 [
                     os.path.realpath(
-                        os.path.join(
-                            ScriptFinder.default_scripts_path, "build.sh"
-                        )
+                        os.path.join(ScriptFinder.default_scripts_path, "build.sh")
                     ),
                     "-v 1.0.0",
                     "-a x64",

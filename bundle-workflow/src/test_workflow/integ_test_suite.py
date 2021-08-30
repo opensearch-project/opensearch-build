@@ -19,15 +19,14 @@ class IntegTestSuite:
 
     def execute(self, cluster, security):
         script = ScriptFinder.find_integ_test_script(self.name, self.repo.dir)
-        if (os.path.exists(script)):
-            cmd = f'sh {script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}'
+        if os.path.exists(script):
+            cmd = f"sh {script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}"
             (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
-            results_dir = os.path.join(self.repo.dir,
-                                       'integ-test',
-                                       'build',
-                                       'reports',
-                                       'tests',
-                                       'integTest')
-            self.test_recorder.record_integ_test_outcome(self.name, status, stdout, stderr, walk(results_dir))
+            results_dir = os.path.join(
+                self.repo.dir, "integ-test", "build", "reports", "tests", "integTest"
+            )
+            self.test_recorder.record_integ_test_outcome(
+                self.name, status, stdout, stderr, walk(results_dir)
+            )
         else:
             print(f"{script} does not exist. Skipping integ tests for {self.name}")

@@ -32,17 +32,13 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_build_script_default(self):
         self.assertEqual(
             os.path.join(ScriptFinder.default_scripts_path, "build.sh"),
-            ScriptFinder.find_build_script(
-                "invalid", self.component_without_scripts
-            ),
+            ScriptFinder.find_build_script("invalid", self.component_without_scripts),
             msg="A component without an override resolves to a default.",
         )
 
     def test_find_build_script_component_override(self):
         self.assertEqual(
-            os.path.join(
-                ScriptFinder.component_scripts_path, "OpenSearch/build.sh"
-            ),
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch/build.sh"),
             ScriptFinder.find_build_script(
                 "OpenSearch", self.component_without_scripts
             ),
@@ -52,9 +48,7 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_build_script_component_script(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts, "build.sh"),
-            ScriptFinder.find_build_script(
-                "OpenSearch", self.component_with_scripts
-            ),
+            ScriptFinder.find_build_script("OpenSearch", self.component_with_scripts),
             msg="A component with a script resolves to the script at the root.",
         )
 
@@ -69,7 +63,10 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_build_script_does_not_exist(self, *mocks):
-        with self.assertRaisesRegex(ScriptFinder.ScriptNotFoundError, "Could not find build.sh script. Looked in .*"):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find build.sh script. Looked in .*",
+        ):
             ScriptFinder.find_build_script("anything", self.component_without_scripts)
 
     # find_integ_test_script
@@ -114,8 +111,13 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_integ_test_script_does_not_exist(self, *mocks):
-        with self.assertRaisesRegex(ScriptFinder.ScriptNotFoundError, "Could not find integtest.sh script. Looked in .*"):
-            ScriptFinder.find_integ_test_script("anything", self.component_without_scripts)
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find integtest.sh script. Looked in .*",
+        ):
+            ScriptFinder.find_integ_test_script(
+                "anything", self.component_without_scripts
+            )
 
     # find_install_script
 
@@ -135,5 +137,8 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_install_script_does_not_exist(self, *mocks):
-        with self.assertRaisesRegex(ScriptFinder.ScriptNotFoundError, "Could not find install.sh script. Looked in .*"):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find install.sh script. Looked in .*",
+        ):
             ScriptFinder.find_install_script("anything")
