@@ -113,5 +113,5 @@ The following options are available.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
+| --component [name] | Test a single component by name, e.g. `--component common-utils`.    |
 | --keep             | Do not delete the temporary working directory on both success or error. |

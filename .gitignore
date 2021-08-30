@@ -7,9 +7,14 @@ Thumbs.db
 __pycache__
 .pytest_cache
 
+.coverage
+coverage.xml
+
 .gradle/
 .settings/
 out.txt
 
-artifacts/
-bundle/
+./artifacts/
+./bundle/
+./bundle-workflow/artifacts/
+./bundle-workflow/bundle/

@@ -6,13 +6,13 @@
 
 import os
 import unittest
+from unittest.mock import patch
 
 from paths.script_finder import ScriptFinder
 
 
 class TestScriptFinder(unittest.TestCase):
     def setUp(self):
-        self.script_finder = ScriptFinder()
         # use root of this repo as the default git checkout directory
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")
@@ -31,19 +31,15 @@ class TestScriptFinder(unittest.TestCase):
 
     def test_find_build_script_default(self):
         self.assertEqual(
-            os.path.join(self.script_finder.default_scripts_path, "build.sh"),
-            self.script_finder.find_build_script(
-                "invalid", self.component_without_scripts
-            ),
+            os.path.join(ScriptFinder.default_scripts_path, "build.sh"),
+            ScriptFinder.find_build_script("invalid", self.component_without_scripts),
             msg="A component without an override resolves to a default.",
         )
 
     def test_find_build_script_component_override(self):
         self.assertEqual(
-            os.path.join(
-                self.script_finder.component_scripts_path, "OpenSearch/build.sh"
-            ),
-            self.script_finder.find_build_script(
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch/build.sh"),
+            ScriptFinder.find_build_script(
                 "OpenSearch", self.component_without_scripts
             ),
             msg="A component without scripts resolves to a component override.",
@@ -52,27 +48,33 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_build_script_component_script(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts, "build.sh"),
-            self.script_finder.find_build_script(
-                "OpenSearch", self.component_with_scripts
-            ),
+            ScriptFinder.find_build_script("OpenSearch", self.component_with_scripts),
             msg="A component with a script resolves to the script at the root.",
         )
 
     def test_find_build_script_component_script_in_folder(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts_folder, "scripts/build.sh"),
-            self.script_finder.find_build_script(
+            ScriptFinder.find_build_script(
                 "OpenSearch", self.component_with_scripts_folder
             ),
             msg="A component with a scripts folder resolves to a script in that folder.",
         )
 
+    @patch("os.path.exists", return_value=False)
+    def test_find_build_script_does_not_exist(self, *mocks):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find build.sh script. Looked in .*",
+        ):
+            ScriptFinder.find_build_script("anything", self.component_without_scripts)
+
     # find_integ_test_script
 
     def test_find_integ_test_script_default(self):
         self.assertEqual(
-            os.path.join(self.script_finder.default_scripts_path, "integtest.sh"),
-            self.script_finder.find_integ_test_script(
+            os.path.join(ScriptFinder.default_scripts_path, "integtest.sh"),
+            ScriptFinder.find_integ_test_script(
                 "invalid", self.component_without_scripts
             ),
             msg="A component without an override resolves to a default.",
@@ -81,9 +83,9 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_integ_test_script_component_override(self):
         self.assertEqual(
             os.path.join(
-                self.script_finder.component_scripts_path, "OpenSearch/integtest.sh"
+                ScriptFinder.component_scripts_path, "OpenSearch/integtest.sh"
             ),
-            self.script_finder.find_integ_test_script(
+            ScriptFinder.find_integ_test_script(
                 "OpenSearch", self.component_without_scripts
             ),
             msg="A component without scripts resolves to a component override.",
@@ -92,7 +94,7 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_integ_test_script_component_script(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts, "integtest.sh"),
-            self.script_finder.find_integ_test_script(
+            ScriptFinder.find_integ_test_script(
                 "OpenSearch", self.component_with_scripts
             ),
             msg="A component with a script resolves to the script at the root.",
@@ -101,24 +103,42 @@ class TestScriptFinder(unittest.TestCase):
     def test_find_integ_test_script_component_script_in_folder(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts_folder, "scripts/integtest.sh"),
-            self.script_finder.find_integ_test_script(
+            ScriptFinder.find_integ_test_script(
                 "OpenSearch", self.component_with_scripts_folder
             ),
             msg="A component with a scripts folder resolves to a script in that folder.",
         )
 
+    @patch("os.path.exists", return_value=False)
+    def test_find_integ_test_script_does_not_exist(self, *mocks):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find integtest.sh script. Looked in .*",
+        ):
+            ScriptFinder.find_integ_test_script(
+                "anything", self.component_without_scripts
+            )
+
     # find_install_script
 
     def test_find_install_script_default(self):
         self.assertEqual(
-            os.path.join(self.script_finder.default_scripts_path, "install.sh"),
-            self.script_finder.find_install_script("invalid"),
+            os.path.join(ScriptFinder.default_scripts_path, "install.sh"),
+            ScriptFinder.find_install_script("invalid"),
             msg="A component without an override resolves to a default.",
         )
 
     def test_find_install_script_component_override(self):
         self.assertEqual(
-            os.path.join(self.script_finder.component_scripts_path, "k-NN/install.sh"),
-            self.script_finder.find_install_script("k-NN"),
+            os.path.join(ScriptFinder.component_scripts_path, "k-NN/install.sh"),
+            ScriptFinder.find_install_script("k-NN"),
             msg="A component without scripts resolves to a component override.",
         )
+
+    @patch("os.path.exists", return_value=False)
+    def test_find_install_script_does_not_exist(self, *mocks):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find install.sh script. Looked in .*",
+        ):
+            ScriptFinder.find_install_script("anything")
