@@ -4,17 +4,11 @@
 
 ## Release Details
 
-OpenSearch and Dashboards 1.0.1 includes the following OpenSearch Migration, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
+OpenSearch and Dashboards 1.0.1 includes the following OpenSearch bug fixes, documentation and maintenance updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.0.0.md).
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.0.0.md).
-
-## BREAKING CHANGES
-
-## FEATURES
-
-## ENHANCEMENTS
 
 ## BUG FIXES
 
@@ -55,11 +49,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### Opensearch Security Dashboards Plugin
-* add resolve pemission to UI ([#803](https://github.com/opensearch-project/security-dashboards-plugin/pull/803))
+* Add resolve pemission to UI ([#803](https://github.com/opensearch-project/security-dashboards-plugin/pull/803))
 * Add refresh page to account-app.tsx to solve the tenant display issue ([#811](https://github.com/opensearch-project/security-dashboards-plugin/pull/811))
 
-
-## INFRASTRUCTURE
 
 ## DOCUMENTATION
 
@@ -100,6 +92,4 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add Integtest.sh for OpenSearch integtest setups ([#783](https://github.com/opensearch-project/security-dashboards-plugin/pull/783))
 * Bump plugin version to 1.0.1.0 ([#813](https://github.com/opensearch-project/security-dashboards-plugin/pull/813))
 
-
-## REFACTORING
 
