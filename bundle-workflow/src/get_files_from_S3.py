@@ -20,9 +20,7 @@ class GetBundleManifest:
         parser.add_argument("-o", "--object_bundle", help="ObjectPath in Bucket for Bundle", required=True)
         parser.add_argument("-bp", "--bundle_path", help="Path for storing the bundle locally", required=True)
 
-
         args = parser.parse_args()
-
         return args
 
     def download_files_from_S3(self, args):
