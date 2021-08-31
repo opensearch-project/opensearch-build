@@ -14,6 +14,7 @@ from system.execute import execute
 from test_workflow.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder import TestRecorder
 
+
 class IntegTestSuite:
     """
     Kicks of integration tests for a component based on test configurations provided in
