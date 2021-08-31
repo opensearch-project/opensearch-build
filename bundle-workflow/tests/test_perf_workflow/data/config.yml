@@ -1,0 +1,7 @@
+Description: Configuration file to store contants required to run rally for performance test
+Constants:
+  SecurityGroupId: sg-00000000
+  VpcId: vpc-12345
+  AccountId: 12345678
+  Region: us-west-2
+  Role: role-arn

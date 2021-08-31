@@ -44,7 +44,7 @@ class PerformanceTestCluster(TestCluster):
         return self.cluster_endpoint
 
     def port(self):
-        self.cluster_port = 443 if self.security else 9200
+        self.cluster_port = 443 if self.security == 'enable' else 9200
         return self.cluster_port
 
     def destroy(self):

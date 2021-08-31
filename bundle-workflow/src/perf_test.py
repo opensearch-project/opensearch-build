@@ -25,7 +25,6 @@ def get_infra_repo_url():
     return "https://github.com/opensearch-project/opensearch-infra.git"
 
 
-os.chdir(os.getcwd())
 current_workspace = os.path.join(os.getcwd(), 'infra')
 cloned_repo = GitRepository(get_infra_repo_url(), 'main', current_workspace)
 security = False
