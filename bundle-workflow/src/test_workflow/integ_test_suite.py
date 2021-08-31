@@ -20,6 +20,7 @@ class IntegTestSuite:
     Kicks of integration tests for a component based on test configurations provided in
     test_support_matrix.yml
     """
+
     def __init__(self, component, test_config, bundle_manifest, work_dir):
         self.component = component
         self.bundle_manifest = bundle_manifest
@@ -27,32 +28,48 @@ class IntegTestSuite:
         self.test_config = test_config
         self.script_finder = ScriptFinder()
         self.test_recorder = TestRecorder(os.path.dirname(bundle_manifest.name))
-        self.repo = GitRepository(self.component.repository, self.component.commit_id, os.path.join(self.work_dir, self.component.name))
+        self.repo = GitRepository(
+            self.component.repository,
+            self.component.commit_id,
+            os.path.join(self.work_dir, self.component.name),
+        )
 
     def execute(self):
         self._fetch_plugin_specific_dependencies()
-        for config in self.test_config.integ_test['test-configs']:
+        for config in self.test_config.integ_test["test-configs"]:
             self._setup_cluster_and_execute_test_config(config)
 
     # TODO: fetch pre-built dependencies from s3
     def _fetch_plugin_specific_dependencies(self):
         os.chdir(self.work_dir)
-        subprocess.run('mv -v job-scheduler ' + self.component.name, shell=True, check=True)
-        os.chdir(self.work_dir + '/' + self.component.name + '/job-scheduler')
-        subprocess.run(self.work_dir
-                       + '/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh job-scheduler '
-                       + self.bundle_manifest.build.version, shell=True, check=True, capture_output=True)
+        subprocess.run(
+            "mv -v job-scheduler " + self.component.name, shell=True, check=True
+        )
+        os.chdir(self.work_dir + "/" + self.component.name + "/job-scheduler")
+        deps_script = os.path.join(
+            self.work_dir,
+            "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
+        )
+        subprocess.run(
+            f"{deps_script} job-scheduler {self.bundle_manifest.build.version}",
+            shell=True,
+            check=True,
+            capture_output=True,
+        )
         os.chdir(self.work_dir)
-        subprocess.run('mv alerting notifications', shell=True, check=True)
-        os.chdir(self.work_dir + '/' + '/notifications')
-        subprocess.run(self.work_dir
-                       + '/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh alerting '
-                       + self.bundle_manifest.build.version, shell=True, check=True, capture_output=True)
+        subprocess.run("mv alerting notifications", shell=True, check=True)
+        os.chdir(self.work_dir + "/" + "/notifications")
+        subprocess.run(
+            f"{deps_script} alerting {self.bundle_manifest.build.version}",
+            shell=True,
+            check=True,
+            capture_output=True,
+        )
 
     # TODO: revisit this once the test_manifest.yml is finalized
     def _is_security_enabled(self, config):
         # TODO: Separate this logic in function once we have test-configs defined
-        if config == 'with-security':
+        if config == "with-security":
             return True
         else:
             return False
@@ -71,7 +88,9 @@ class IntegTestSuite:
             cluster.destroy()
 
     def _execute_integtest_sh(self, cluster, security):
-        script = self.script_finder.find_integ_test_script(self.component.name, self.repo.dir)
+        script = self.script_finder.find_integ_test_script(
+            self.component.name, self.repo.dir
+        )
         if os.path.exists(script):
             cmd = f"sh {script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}"
             (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)

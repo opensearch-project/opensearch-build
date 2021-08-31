@@ -60,5 +60,5 @@ class TestManifest:
             return {
                 "name": self.name,
                 "integ-test": self.integ_test,
-                "bwc-test": self.bwc_test
+                "bwc-test": self.bwc_test,
             }

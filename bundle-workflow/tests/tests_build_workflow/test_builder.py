@@ -15,9 +15,7 @@ from paths.script_finder import ScriptFinder
 class TestBuilder(unittest.TestCase):
     def setUp(self):
         self.builder = Builder(
-            "component",
-            MagicMock(dir="/tmp/checked-out-component"),
-            MagicMock(),
+            "component", MagicMock(dir="/tmp/checked-out-component"), MagicMock()
         )
 
     def test_builder(self):
