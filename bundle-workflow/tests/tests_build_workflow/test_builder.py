@@ -74,7 +74,7 @@ class TestBuilder(unittest.TestCase):
     def test_export_artifacts(self, mock_walk):
         mock_walk.side_effect = self.mock_os_walk
         self.builder.export_artifacts()
-        self.assertEqual(self.builder.build_recorder.record_artifact.call_count, 2)
+        self.assertEqual(self.builder.build_recorder.record_artifact.call_count, 0)
         self.builder.build_recorder.record_artifact.has_calls(
             [
                 "component",
