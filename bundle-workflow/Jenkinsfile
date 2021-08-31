@@ -4,8 +4,8 @@ pipeline {
         OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
     }
     tools {
-      jdk "JDK14"
-      maven "maven-3.8.2"
+        jdk "JDK14"
+        maven "maven-3.8.2"
     }
     stages {
         stage('parameters') {
@@ -25,6 +25,25 @@ pipeline {
         }
         stage('build') {
             parallel {
+                stage('build-snapshots') {
+                    environment {
+                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
+                    }
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        }
+                    }
+                    steps {
+                        script {
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            sh "./bundle-workflow/build.sh manifests/$BUILD_MANIFEST --snapshot"
+                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
+                            }
+                        }
+                    }
+                }
                 stage('build-x86') {
                     agent {
                         node {
