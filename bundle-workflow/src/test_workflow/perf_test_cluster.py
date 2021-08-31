@@ -19,6 +19,8 @@ class PerformanceTestCluster(TestCluster):
         self.role = config['Constants']['Role']
         self.work_dir = 'tools/cdk/mensor/single-node/'
         self.stack_name = stack_name
+        self.cluster_endpoint = None
+        self.cluster_port = None
         self.output_file = 'output.json'
         self.ip_address = None
         self.security = 'enable' if security else 'disable'
@@ -38,12 +40,12 @@ class PerformanceTestCluster(TestCluster):
         print('Private IP:', self.ip_address)
 
     def endpoint(self):
-        return self.ip_address
+        self.cluster_endpoint = self.ip_address
+        return self.cluster_endpoint
 
     def port(self):
-        if self.security:
-            return 443
-        return 9200
+        self.cluster_port = 443 if self.security else 9200
+        return self.cluster_port
 
     def destroy(self):
         os.chdir(self.work_dir)
