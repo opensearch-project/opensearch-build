@@ -46,10 +46,12 @@ class IntegTestSuite:
             "mv -v job-scheduler " + self.component.name, shell=True, check=True
         )
         os.chdir(self.work_dir + "/" + self.component.name + "/job-scheduler")
+        deps_script = os.path.join(
+            self.work_dir,
+            "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
+        )
         subprocess.run(
-            self.work_dir
-            + "/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh job-scheduler "
-            + self.bundle_manifest.build.version,
+            f"{deps_script} job-scheduler {self.bundle_manifest.build.version}",
             shell=True,
             check=True,
             capture_output=True,
@@ -58,9 +60,7 @@ class IntegTestSuite:
         subprocess.run("mv alerting notifications", shell=True, check=True)
         os.chdir(self.work_dir + "/" + "/notifications")
         subprocess.run(
-            self.work_dir
-            + "/opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh alerting "
-            + self.bundle_manifest.build.version,
+            f"{deps_script} alerting {self.bundle_manifest.build.version}",
             shell=True,
             check=True,
             capture_output=True,
