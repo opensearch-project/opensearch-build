@@ -14,7 +14,7 @@ import read_write_s3
 class GetBundleManifest:
     def parse_arguments(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-a", "--assume_role", nargs="?", default="${OPENSEARCH_TESTING_ROLE}", help="Assume role")
+        parser.add_argument("-a", "--assume_role", nargs="?", default="os.getenv('OPENSEARCH_TESTING_ROLE')", help="Assume role")
         parser.add_argument("-s", "--session", nargs="?", default="get-files-session", help="Session name")
         parser.add_argument("-b", "--bucket_name", help="Bucketname", required=True)
         parser.add_argument("-o", "--object_bundle", help="ObjectPath in Bucket for Bundle", required=True)
