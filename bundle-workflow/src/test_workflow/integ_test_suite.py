@@ -9,8 +9,10 @@ import subprocess
 
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
+from paths.tree_walker import walk
+from system.execute import execute
 from test_workflow.local_test_cluster import LocalTestCluster
-
+from test_workflow.test_recorder import TestRecorder
 
 class IntegTestSuite:
     """
@@ -23,6 +25,7 @@ class IntegTestSuite:
         self.work_dir = work_dir
         self.test_config = test_config
         self.script_finder = ScriptFinder()
+        self.test_recorder = TestRecorder(os.path.dirname(bundle_manifest.name))
         self.repo = GitRepository(self.component.repository, self.component.commit_id, os.path.join(self.work_dir, self.component.name))
 
     def execute(self):
@@ -69,8 +72,13 @@ class IntegTestSuite:
     def _execute_integtest_sh(self, cluster, security):
         script = self.script_finder.find_integ_test_script(self.component.name, self.repo.dir)
         if os.path.exists(script):
-            self.repo.execute(
-                f"{script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}"
+            cmd = f"sh {script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}"
+            (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
+            results_dir = os.path.join(
+                self.repo.dir, "integ-test", "build", "reports", "tests", "integTest"
+            )
+            self.test_recorder.record_integ_test_outcome(
+                self.name, status, stdout, stderr, walk(results_dir)
             )
         else:
             print(f"{script} does not exist. Skipping integ tests for {self.name}")
