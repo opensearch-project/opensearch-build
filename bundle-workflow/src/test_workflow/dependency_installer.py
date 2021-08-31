@@ -7,15 +7,10 @@ class DependencyInstaller:
     Provides functionality to copy the maven dependencies from S3 to maven local.
     """
 
-    def __init__(self, build_id, dependency_name, version, arch):
-        self.build_id = build_id
-        self.dependency_name = dependency_name
-        self.version = version
-        self.arch = arch
-        self.dependency_path = f"org/opensearch/{self.dependency_name}/{self.version}/"
-        self.maven_local_path = os.path.join(
-            os.path.expanduser("~"), ".m2/repository/", self.dependency_path
-        )
+    def __init__(self, build):
+        self.build_id = build.id
+        self.version = build.version
+        self.arch = build.architecture
 
     # TODO: This is currently a stubbed function which returns files from the current directory,
     # to be replaced after it is implemented
@@ -28,10 +23,15 @@ class DependencyInstaller:
             )
         ]
 
-    def install(self):
-        # s3_path = f"/builds/{self.version}/{self.build_id}/{self.arch}/maven/{self.dependency_path()}"
+    def install(self, dependencies):
         file_handler = self.MavenLocalFileHandler()
-        file_handler.copy(self.download(), self.maven_local_path)
+        for dependency in dependencies:
+            # s3_path = f"/builds/{self.version}/{self.build_id}/{self.arch}/maven/{dependency}"
+            maven_local_path = os.path.join(
+                os.path.expanduser("~"),
+                f".m2/{self.build_id}/repository/org/opensearch/{dependency}/{self.version}/",
+            )
+            file_handler.copy(self.download(), maven_local_path)
 
     class MavenLocalFileHandler:
         """
