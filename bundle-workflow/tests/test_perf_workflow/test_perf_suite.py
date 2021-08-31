@@ -29,7 +29,5 @@ class TestPerformanceSuite(unittest.TestCase):
         with self.assertRaises(subprocess.CalledProcessError) as process_ret:
             self.perf_test_suite.execute()
             mock_chdir.assert_called_once_with('tools/cdk/mensor/single-node/')
-
-        command = f'pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}'\
-                  f' -a {self.manifest.build.architecture} '
-        self.assertEqual(process_ret.exception.cmd, command)
+        cmd = 'python3 -m pipenv install'
+        self.assertEqual(process_ret.exception.cmd, cmd)

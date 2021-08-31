@@ -41,7 +41,7 @@ class TestPerformanceCluster(unittest.TestCase):
             self.perf_test_cluster.create()
             mock_chdir.assert_called_once_with('tools/cdk/mensor/single-node/')
 
-        self.assertEqual(process_ret.exception.returncode, 1)
+        self.assertEqual(process_ret.exception.returncode, 127)
         command = f'cdk deploy -c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id}'\
                   f' -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security=enable'\
                   f' -c architecture={self.manifest.build.architecture} --require-approval=never --plugin cdk-assume-role-credential-plugin'\
