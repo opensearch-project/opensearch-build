@@ -6,6 +6,7 @@
 import os
 
 import boto3
+import botocore
 
 
 class S3Bucket:
@@ -50,8 +51,12 @@ class S3Bucket:
                     my_bucket.download_file(obj.key, target)
             else:
                 self.client.download_file(self.bucket_name, prefix, dest)
-        except Exception as e:
-            print(e)
+
+        except botocore.exceptions.ClientError as e:
+            error_message = ''.join(e.args)
+            raise ValueError('ERROR DOWNLOADING FILE FROM AWS BUCKET ' + error_message)
+        except OSError:
+            raise ValueError("The error is either: Wrong file or file path provided.")
     """
     put_S3Objects:Used for putting the files into S3
     file_name: The file that you want to put in the S3 bucket
@@ -61,4 +66,4 @@ class S3Bucket:
         try:
             self.client.upload_file(file_name, self.bucket_name, file_path)
         except Exception as e:
-            print(e)
+            raise ValueError("The Error is: " + e.__str__())
