@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Read Manifest') {
+            steps {
+                echo "todo: read the manifest file and download the bundle"
+            }
+        }
+        stage('Execute Tests') {
+            steps {
+                // Freestyle build trigger calls a list of jobs
+                // Pipeline build() step only calls one job
+                // To run all three jobs in parallel, we use "parallel" step
+                // https://jenkins.io/doc/pipeline/examples/#jobs-in-parallel
+                parallel (
+                    IntegTests: {
+                        // build job: 'opensearch_bundle_integtest'
+                        build job: 'opensearch_bundle_integtest',
+                        parameters: [
+                            string(name: 'PLUGIN_REPO_REFERENCE', value: 'main'),
+                            string(name: 'PLUGIN_VERSION', value: '1.0.0.0'),
+                            string(name: 'VERSION', value: '1.0.0'),
+                            string(name: 'ENABLE_SECURITY', value: 'true'),
+                            string(name: 'PLUGIN_TYPE', value: 'opensearch'),
+                            string(name: 'PLUGIN_NAME', value: 'anomaly-detection'),
+                            string(name: 'ARCHITECTURE', value: 'x64'),
+                            string(name: 'CLUSTER_PORT', value: '9200'),
+                            string(name: 'REVISION', value: '1.0.0'),
+                            string(name: 'QUALIFIER', value: '')
+                            ]
+                    },
+                    PerfTests: {
+                        build job: 'perf-tests'
+                    },
+                    BwcTests: {
+                        build job: 'bwc-tests'
+                    },
+                    failFast: true)
+            }
+        }
+        stage('Notify') {
+            failFast false
+            steps {
+                echo "todo: Notify slack channel for successful build"
+            }
+        }
+    }
+}
