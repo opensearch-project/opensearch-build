@@ -2,11 +2,16 @@
 
 ## Release Details
 
-OpenSearch and Dashboards 1.0.1 includes the following OpenSearch bug fixes, documentation and maintenance updates.
+OpenSearch and Dashboards 1.0.1 includes the following OpenSearch enhancements, bug fixes, documentation and maintenance updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.0.0.md).
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.0.0.md).
+
+## ENHANCEMENTS
+
+### OpenSearch Release Engineering
+* Optimize Docker images size, thanks @osddeitf ([#93](https://github.com/opensearch-project/opensearch-build/pull/93))
 
 ## BUG FIXES
 
