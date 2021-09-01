@@ -4,22 +4,17 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
-import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
-import yaml
-
 from build_workflow.build_recorder import BuildRecorder
-from manifests.build_manifest import BuildManifest
 
 
-class TestBuildRecorder(unittest.TestCase):
+class TestBuildRecorderSnapshot(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.build_recorder = BuildRecorder(
-            "1", "output_dir", "OpenSearch", "1.1.0", "x64", False
+            "1", "output_dir", "OpenSearch", "1.1.0", "x64", True
         )
 
     @patch("shutil.copyfile")
@@ -34,14 +29,6 @@ class TestBuildRecorder(unittest.TestCase):
             ),
         )
 
-        self.build_recorder.record_artifact(
-            "common-utils", "files", "../file1.jar", __file__
-        )
-
-        self.build_recorder.record_artifact(
-            "common-utils", "files", "../file2.jar", __file__
-        )
-
         self.assertEqual(
             self.build_recorder.get_manifest().to_dict(),
             {
@@ -49,55 +36,20 @@ class TestBuildRecorder(unittest.TestCase):
                     "architecture": "x64",
                     "id": "1",
                     "name": "OpenSearch",
-                    "version": "1.1.0",
+                    "version": "1.1.0-SNAPSHOT",
                 },
                 "components": [
                     {
-                        "artifacts": {"files": ["../file1.jar", "../file2.jar"]},
+                        "artifacts": {},
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
                         "name": "common-utils",
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/common-utils",
-                        "version": "1.1.0.0",
+                        "version": "1.1.0.0-SNAPSHOT",
                     }
                 ],
                 "schema-version": "1.0",
             },
-        )
-
-        mock_copyfile.assert_called()
-        mock_makedirs.assert_called()
-
-    @patch("shutil.copyfile")
-    @patch("os.makedirs")
-    def test_record_artifact(self, mock_makedirs, mock_copyfile):
-        self.build_recorder.record_component(
-            "common-utils",
-            MagicMock(
-                url="https://github.com/opensearch-project/common-utils",
-                ref="main",
-                sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
-            ),
-        )
-
-        self.build_recorder.record_artifact(
-            "common-utils", "files", "../file1.jar", __file__
-        )
-
-        mock_makedirs.assert_called_with("output_dir/..", exist_ok=True)
-        mock_copyfile.assert_called_with(__file__, "output_dir/../file1.jar")
-
-    @patch("shutil.copyfile")
-    @patch("os.makedirs")
-    def test_record_artifact_check_plugin_zip_extension(self, *mocks):
-        self.build_recorder.record_component("security", MagicMock())
-        with self.assertRaises(BuildRecorder.ArtifactInvalidError) as context:
-            self.build_recorder.record_artifact(
-                "security", "plugins", "../file1.zip", "invalid.file"
-            )
-        self.assertEqual(
-            "Artifact invalid.file is invalid: not a zip file.",
-            context.exception.__str__(),
         )
 
     @patch("shutil.copyfile")
@@ -109,7 +61,7 @@ class TestBuildRecorder(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.zip"
             )
         self.assertEqual(
-            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0.",
+            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0-SNAPSHOT.",
             context.exception.__str__(),
         )
 
@@ -123,10 +75,10 @@ class TestBuildRecorder(unittest.TestCase):
             )
             with self.assertRaises(BuildRecorder.ArtifactInvalidError) as context:
                 self.build_recorder.record_artifact(
-                    "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
+                    "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but none was found.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but none was found.",
                 context.exception.__str__(),
             )
 
@@ -140,10 +92,10 @@ class TestBuildRecorder(unittest.TestCase):
             )
             with self.assertRaises(BuildRecorder.ArtifactInvalidError) as context:
                 self.build_recorder.record_artifact(
-                    "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
+                    "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but was 1.2.3.4.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but was 1.2.3.4.",
                 context.exception.__str__(),
             )
 
@@ -153,37 +105,11 @@ class TestBuildRecorder(unittest.TestCase):
         self.build_recorder.record_component("security", MagicMock())
         with patch("build_workflow.build_recorder.ZipFile") as mock_zipfile:
             mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
-                "opensearch.version=1.1.0\nversion=1.1.0.0"
+                "opensearch.version=1.1.0\nversion=1.1.0.0-SNAPSHOT"
             )
             self.build_recorder.record_artifact(
-                "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
+                "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
             )
             manifest_dict = self.build_recorder.get_manifest().to_dict()
-            self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
-            self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0")
-
-    def test_get_manifest(self):
-        manifest = self.build_recorder.get_manifest()
-        self.assertIs(type(manifest), BuildManifest)
-        self.assertEqual(
-            manifest.to_dict(),
-            {
-                "build": {
-                    "architecture": "x64",
-                    "id": "1",
-                    "name": "OpenSearch",
-                    "version": "1.1.0",
-                },
-                "components": [],
-                "schema-version": "1.0",
-            },
-        )
-
-    def test_write_manifest(self):
-        with tempfile.TemporaryDirectory() as dest_dir:
-            self.build_recorder.write_manifest(dest_dir)
-            manifest_path = os.path.join(dest_dir, "manifest.yml")
-            self.assertTrue(os.path.isfile(manifest_path))
-            data = self.build_recorder.get_manifest().to_dict()
-            with open(manifest_path) as f:
-                self.assertEqual(yaml.safe_load(f), data)
+            self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
+            self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")
