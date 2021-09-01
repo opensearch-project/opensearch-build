@@ -1,7 +1,5 @@
 # OpenSearch and Dashboards 1.0.1 Release Notes
 
-## Release Highlights
-
 ## Release Details
 
 OpenSearch and Dashboards 1.0.1 includes the following OpenSearch bug fixes, documentation and maintenance updates.
