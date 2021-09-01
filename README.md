@@ -15,11 +15,17 @@
 
 This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
 
-* [OpenSearch Bundle Workflow](bundle-workflow/README.md)
+- [OpenSearch Bundle Workflow](bundle-workflow/README.md)
+
+### Organization
+
+OpenSearch's centralized DevOps team manages centralized build and release processes.
+
+- [Organization](ORGANIZATION.md)
 
 ## Contributing
 
-See [developer guide](DEVELOPER_GUIDE.md) and [how to contribute to this project](CONTRIBUTING.md). 
+See [developer guide](DEVELOPER_GUIDE.md) and [how to contribute to this project](CONTRIBUTING.md).
 
 ## Getting Help
 
