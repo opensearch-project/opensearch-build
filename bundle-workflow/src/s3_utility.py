@@ -89,7 +89,8 @@ class S3ReadWrite:
         :param object_name: s3 object name for the file
         """
         try:
-            response = self.s3_client.upload_file(file_path, bucket_name, object_name)
+            self.s3_client.upload_file(file_path, bucket_name, object_name)
         except ClientError as e:
+            print("The upload failed with error code: %s" % e.response["Error"]["Code"])
             return False
         return True
