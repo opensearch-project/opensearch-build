@@ -5,19 +5,18 @@
 # compatible open source license.
 
 import os
-
-import boto3
-
-from botocore.exceptions import ClientError
 from pathlib import Path
 from urllib.parse import urlparse
+
+import boto3
+from botocore.exceptions import ClientError
 
 
 def file_download_helper(bucket, key, path):
     try:
         bucket.download_file(key, path)
-    except ClientError as e: # TODO: handle the right exception
-        if e.response['Error']['Code'] == "404":
+    except ClientError as e:  # TODO: handle the right exception
+        if e.response["Error"]["Code"] == "404":
             print("The object does not exist.")
         else:
             raise
@@ -25,11 +24,16 @@ def file_download_helper(bucket, key, path):
 
 class S3ReadWrite:
     def __init__(self, role_arn=None, role_session_name=None):
-        self.role_arn = role_arn if role_arn is not None else os.environ.get('JENKINS_S3_ROLE_ARN')
-        self.role_session_name = role_session_name \
-            if role_session_name is not None else os.environ.get('JENKINS_S3_ROLE_SESSION_NAME')
-        self.s3_resource = boto3.resource('s3')
-        self.s3_client = boto3.client('s3')
+        self.role_arn = (
+            role_arn if role_arn is not None else os.environ.get("JENKINS_S3_ROLE_ARN")
+        )
+        self.role_session_name = (
+            role_session_name
+            if role_session_name is not None
+            else os.environ.get("JENKINS_S3_ROLE_SESSION_NAME")
+        )
+        self.s3_resource = boto3.resource("s3")
+        self.s3_client = boto3.client("s3")
         # TODO: make sts role logic work for local dev
         # sts_connection = boto3.client('sts')
         # assumed_role = sts_connection.assume_role(
@@ -49,12 +53,16 @@ class S3ReadWrite:
         :param local_dir: a relative or absolute directory path in the local file system
         """
         bucket = self.s3_resource.Bucket(urlparse(s3_uri).hostname)
-        s3_path = urlparse(s3_uri).path.lstrip('/')
+        s3_path = urlparse(s3_uri).path.lstrip("/")
         local_dir = Path(local_dir)
         for obj in bucket.objects.filter(Prefix=s3_path):
-            target = obj.key if local_dir is None else local_dir / Path(obj.key).relative_to(s3_path)
+            target = (
+                obj.key
+                if local_dir is None
+                else local_dir / Path(obj.key).relative_to(s3_path)
+            )
             target.parent.mkdir(parents=True, exist_ok=True)
-            if obj.key[-1] == '/':
+            if obj.key[-1] == "/":
                 continue
             file_download_helper(bucket, obj.key, str(target))
 
@@ -67,8 +75,8 @@ class S3ReadWrite:
         :param file_name: (Optional) If provided, overrides the filename locally with file_name.
         """
         bucket = self.s3_resource.Bucket(urlparse(s3_uri).hostname)
-        key = urlparse(s3_uri).path.lstrip('/')
-        file_name = file_name if file_name is not None else key.split('/')[-1]
+        key = urlparse(s3_uri).path.lstrip("/")
+        file_name = file_name if file_name is not None else key.split("/")[-1]
         target = Path(local_dir) / Path(file_name)
         file_download_helper(bucket, key, str(target))
 
