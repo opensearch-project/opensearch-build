@@ -1,12 +1,8 @@
-# OpenSearch and Dashboards 1.0.1 Release Notes
+# OpenSearch Distribution Version 1.0.1 Release Notes
 
 ## Release Details
 
-OpenSearch and Dashboards 1.0.1 includes the following OpenSearch enhancements, bug fixes, documentation and maintenance updates.
-
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.0.0.md).
-
-OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.0.0.md).
+OpenSearch Distribution Version 1.0.1 includes the following enhancements, bug fixes, documentation and maintenance updates.
 
 ## ENHANCEMENTS
 
@@ -94,5 +90,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### Opensearch Security Dashboards Plugin
 * Add Integtest.sh for OpenSearch integtest setups ([#783](https://github.com/opensearch-project/security-dashboards-plugin/pull/783))
 * Bump plugin version to 1.0.1.0 ([#813](https://github.com/opensearch-project/security-dashboards-plugin/pull/813))
+
+## NOTES
+No changes were made to [OpenSearch](https://github.com/opensearch-project/OpenSearch/releases/tag/1.0.0) and [OpenSearch-Dashboards](https://github.com/opensearch-project/OpenSearch-Dashboards/releases/tag/1.0.0).
 
 
