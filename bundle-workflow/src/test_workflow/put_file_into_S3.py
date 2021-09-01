@@ -1,3 +1,4 @@
+# !/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 #
 # The OpenSearch Contributors require contributions made to
@@ -7,7 +8,7 @@ import argparse
 import json
 import os
 
-from src.read_write_s3 import ReadWriteFiles
+from src.read_write_s3 import S3Bucket
 
 
 class ConvertWrite:
@@ -21,12 +22,12 @@ class ConvertWrite:
     """
     def parse_arguments(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-r", "--result_file", help="Result file")
-        parser.add_argument("-a", "--assume_role", help="Assume role")
-        parser.add_argument("-s", "--session", help="Session name")
-        parser.add_argument("-b", "--bucket_name", help="Bucketname")
-        parser.add_argument("-o", "--object_path", help="ObjectPath in Bucket")
-        parser.add_argument("-f", "--file_path", help="Filepath of the result file")
+        parser.add_argument("-r", "--result_file", help="Result file", required=True)
+        parser.add_argument("-a", "--assume_role", nargs="?", default="os.getenv('OPENSEARCH_TESTING_ROLE')", help="Assume role")
+        parser.add_argument("-s", "--session", nargs="?", default="get-files-session", help="Session name")
+        parser.add_argument("-b", "--bucket_name", help="Bucket name", required=True)
+        parser.add_argument("-o", "--object_path", help="ObjectPath in Bucket", required=True)
+        parser.add_argument("-f", "--file_path", help="Filepath of the result file", required=True)
 
         args = parser.parse_args()
 
@@ -339,8 +340,8 @@ class ConvertWrite:
                 file1 = open(filename, 'w')
                 file1.write(text)
                 file1.close()
-                objectname = ReadWriteFiles(args.assume_role, args.session)
-                objectname.put_S3_objects(args.bucket_name, filename, args.object_path + filename)
+                objectname = S3Bucket(args.assume_role, args.session, args.bucket_name)
+                objectname.upload(filename, args.object_path + filename)
                 os.remove("%s" % args.result_file)
                 os.remove("%s" % filename)
             except:
@@ -349,8 +350,8 @@ class ConvertWrite:
                 file1 = open("error_file.html", "w")
                 file1.write(data)
                 file1.close()
-                objectname = ReadWriteFiles(args.assume_role, args.session)
-                objectname.put_S3_objects(args.bucket_name, "error_file.html", args.object_path + "error_file.html")
+                objectname = S3Bucket(args.assume_role, args.session, args.bucket_name)
+                objectname.upload("error_file.html", args.object_path + "error_file.html")
                 os.remove("%s" % args.result_file)
                 os.remove("error_file.html")
 
