@@ -11,6 +11,14 @@ from src.read_write_s3 import ReadWriteFiles
 
 
 class ConvertWrite:
+    """
+    result_file- the file where the console output will be stored
+    assume_role- Amazon Resource Name (ARN) of the role that you want to assume
+    session- Name of the session
+    bucket_name- Name of the Bucket
+    object_path- Path in the Bucket where you want to store the file
+    file_path- File path where the console output result_file is present
+    """
     def parse_arguments(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-r", "--result_file", help="Result file")
