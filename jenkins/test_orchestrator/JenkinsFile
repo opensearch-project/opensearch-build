@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 's3_bucket'),
+        string(name: 'opensearch_version'),
+        string(name: 'build_id'),
+        string(name: 'platform_architecture')
+    }
+
     stages {
         stage('Read Manifest') {
             steps {
@@ -28,7 +35,16 @@ pipeline {
                             string(name: 'CLUSTER_PORT', value: '9200'),
                             string(name: 'REVISION', value: '1.0.0'),
                             string(name: 'QUALIFIER', value: '')
-                            ]
+                        ]
+                    },
+                    IntegTests: {
+                        build job: 'integ-tests'
+                        parameters: [
+                            string(name: 's3_bucket', value: ${params.s3_bucket}),
+                            string(name: 'opensearch_version', value: ${params.opensearch_version}),
+                            string(name: 'build_id', value: ${params.build_id}),
+                            string(name: 'platform_architecture', value: ${params.platform_architecture})
+                        ]
                     },
                     PerfTests: {
                         build job: 'perf-tests'
