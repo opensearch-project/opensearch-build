@@ -12,16 +12,6 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def file_download_helper(bucket, key, path):
-    try:
-        bucket.download_file(key, path)
-    except ClientError as e:  # TODO: handle the right exception
-        if e.response["Error"]["Code"] == "404":
-            print("The object does not exist.")
-        else:
-            raise
-
-
 class S3ReadWrite:
     def __init__(self, role_arn=None, role_session_name=None):
         self.role_arn = (
@@ -45,6 +35,16 @@ class S3ReadWrite:
         # self.s3_resource = boto3.resource('s3', aws_access_key_id=assumed_role['AccessKeyId'], aws_secret_access_key=assumed_role['SecretAccessKey'],
         #                                 aws_session_token=assumed_role['SessionToken'])
 
+    @staticmethod
+    def __file_download_helper(bucket, key, path):
+        try:
+            bucket.download_file(key, path)
+        except ClientError as e:  # TODO: handle the right exception
+            if e.response["Error"]["Code"] == "404":
+                raise FileNotFoundError("The object does not exist.")
+            else:
+                raise
+
     def download_folder(self, s3_uri, local_dir):
         """
         Download the contents of a folder directory
@@ -64,7 +64,7 @@ class S3ReadWrite:
             target.parent.mkdir(parents=True, exist_ok=True)
             if obj.key[-1] == "/":
                 continue
-            file_download_helper(bucket, obj.key, str(target))
+            self.__file_download_helper(bucket, obj.key, str(target))
 
     def download_file(self, s3_uri, local_dir, file_name=None):
         """
@@ -78,7 +78,7 @@ class S3ReadWrite:
         key = urlparse(s3_uri).path.lstrip("/")
         file_name = file_name if file_name is not None else key.split("/")[-1]
         target = Path(local_dir) / Path(file_name)
-        file_download_helper(bucket, key, str(target))
+        self.__file_download_helper(bucket, key, str(target))
 
     def upload_file(self, file_path, bucket_name, object_name):
         """
