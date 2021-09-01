@@ -30,6 +30,13 @@ jobs:
       - name: Enforce Style Guide
         run: |
           pipenv run flake8 .
-      - name: Run Tests
+      - name: Run Type Checker
         run: |
-          pipenv run pytest
+          pipenv run mypy .
+      - name: Run Tests with Coverage
+        run: |
+          pipenv run coverage run -m pytest --cov=./src --cov-report=xml
+      - name: Upload Coverage Report
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./bundle-workflow/coverage.xml

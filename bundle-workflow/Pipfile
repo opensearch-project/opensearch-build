@@ -5,12 +5,17 @@ name = "pypi"
 
 [packages]
 pyyaml = "~=5.4"
+types-PyYAML = "~=5.4"
 requests = "~=2.26"
+types-requests = "~=2.25"
 isort = "~=5.9"
 flake8 = "~=3.9"
+mypy = "~=0.9"
 pytest = "*"
 boto3 = "1.18.31"
 botocore = "1.21.33"
+coverage = "~=4.5.4"
+pytest-cov = "~=2.10.0"
 
 [dev-packages]
 

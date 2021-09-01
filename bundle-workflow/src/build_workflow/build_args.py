@@ -40,16 +40,14 @@ class BuildArgs:
         self.snapshot = args.snapshot
         self.component = args.component
         self.keep = args.keep
-
-    def script_path(self):
-        return sys.argv[0].replace("/src/build.py", "/build.sh")
+        self.script_path = sys.argv[0].replace("/src/build.py", "/build.sh")
 
     def component_command(self, name):
         return " ".join(
             filter(
                 None,
                 [
-                    self.script_path(),
+                    self.script_path,
                     self.manifest.name,
                     f"--component {name}",
                     "--snapshot" if self.snapshot else None,

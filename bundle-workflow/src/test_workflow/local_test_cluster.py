@@ -35,8 +35,13 @@ class LocalTestCluster(TestCluster):
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
-        self.process = subprocess.Popen("./opensearch-tar-install.sh", cwd=self.install_dir, shell=True,
-                                        stdout=self.stdout, stderr=self.stderr)
+        self.process = subprocess.Popen(
+            "./opensearch-tar-install.sh",
+            cwd=self.install_dir,
+            shell=True,
+            stdout=self.stdout,
+            stderr=self.stderr,
+        )
         print(f"Started OpenSearch with PID {self.process.pid}")
         self.wait_for_service()
 
@@ -51,9 +56,15 @@ class LocalTestCluster(TestCluster):
             print("Local test cluster is not started")
             return
         self.terminate_process()
-        test_recorder.record_cluster_logs(itertools.chain(
-            [(os.path.realpath(self.stdout.name), "stdout"), (os.path.realpath(self.stderr.name), "stderr")],
-            walk(os.path.join(self.install_dir, "logs"))))
+        test_recorder.record_cluster_logs(
+            itertools.chain(
+                [
+                    (os.path.realpath(self.stdout.name), "stdout"),
+                    (os.path.realpath(self.stderr.name), "stderr"),
+                ],
+                walk(os.path.join(self.install_dir, "logs")),
+            )
+        )
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
@@ -71,7 +82,9 @@ class LocalTestCluster(TestCluster):
 
     def disable_security(self, dir):
         subprocess.check_call(
-            f'echo "plugins.security.disabled: true" >> {os.path.join(dir, "config", "opensearch.yml")}', shell=True)
+            f'echo "plugins.security.disabled: true" >> {os.path.join(dir, "config", "opensearch.yml")}',
+            shell=True,
+        )
 
     def wait_for_service(self):
         print("Waiting for service to become available")

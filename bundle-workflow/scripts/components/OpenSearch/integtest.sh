@@ -1,1 +1,1 @@
-# TODO: This is used by script_finder tests, needs a working integtest.sh for OpenSearch.
+# TODO: This is used by ScriptFinder tests, needs a working integtest.sh for OpenSearch.

@@ -4,6 +4,9 @@
     - [Assemble the Bundle](#assemble-the-bundle)
         - [Custom Install Scripts](#custom-install-scripts)
     - [Signing Artifacts](#signing-artifacts)
+    - [Test the Bundle](#test-the-bundle)
+        - [Integration Tests](#integration-tests)
+        - [Backwards Compatibility Tests](#backward-compatibility-tests)
 
 ## OpenSearch Bundle Workflow
 
@@ -87,3 +90,28 @@ Signing step (to sign all artifacts):
 ```bash
 ./bundle_workflow/sign.sh artifacts/manifest.yml
 ```
+
+### Test the Bundle
+Tests the OpenSearch bundle.
+
+This workflow contains two sections: Integration Tests, Backwards Compatibility Tests.
+
+#### Integration Tests
+This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
+
+#### Backwards Compatibility Tests
+This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
+
+Usage:
+
+Kick off all test suites on a manifest:
+```bash
+./bundle-workflow/test.sh manifests/opensearch-1.0.0.yml
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| --component [name] | Test a single component by name, e.g. `--component common-utils`.    |
+| --keep             | Do not delete the temporary working directory on both success or error. |

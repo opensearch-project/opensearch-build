@@ -14,12 +14,10 @@ from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
-from paths.script_finder import ScriptFinder
 from system.arch import current_arch
 from system.temporary_directory import TemporaryDirectory
 
 args = BuildArgs()
-script_finder = ScriptFinder()
 arch = current_arch()
 manifest = InputManifest.from_file(args.manifest)
 output_dir = os.path.join(os.getcwd(), "artifacts")
@@ -54,7 +52,7 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
         )
 
         try:
-            builder = Builder(component.name, repo, script_finder, build_recorder)
+            builder = Builder(component.name, repo, build_recorder)
             builder.build(manifest.build.version, arch, args.snapshot)
             builder.export_artifacts()
         except:
