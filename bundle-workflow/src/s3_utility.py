@@ -15,25 +15,33 @@ from botocore.exceptions import ClientError
 class S3ReadWrite:
     def __init__(self, role_arn=None, role_session_name=None):
         self.role_arn = (
-            role_arn if role_arn is not None else os.environ.get("JENKINS_S3_ROLE_ARN")
+            role_arn
+            if role_arn is not None
+            else os.environ.get("TEST_ORCHESTRATOR_ROLE_ARN")
         )
         self.role_session_name = (
             role_session_name
             if role_session_name is not None
-            else os.environ.get("JENKINS_S3_ROLE_SESSION_NAME")
+            else os.environ.get("SESSION_NAME")
         )
-        self.s3_resource = boto3.resource("s3")
-        self.s3_client = boto3.client("s3")
-        # TODO: make sts role logic work for local dev
-        # sts_connection = boto3.client('sts')
-        # assumed_role = sts_connection.assume_role(
-        #     RoleArn=self.role_arn,
-        #     RoleSessionName=self.role_session_name,
-        #     DurationSeconds=3600)['Credentials']
-        # self.s3_client = boto3.client('s3', aws_access_key_id=assumed_role['AccessKeyId'], aws_secret_access_key=assumed_role['SecretAccessKey'],
-        #                       aws_session_token=assumed_role['SessionToken'])
-        # self.s3_resource = boto3.resource('s3', aws_access_key_id=assumed_role['AccessKeyId'], aws_secret_access_key=assumed_role['SecretAccessKey'],
-        #                                 aws_session_token=assumed_role['SessionToken'])
+        sts_connection = boto3.client("sts")
+        assumed_role = sts_connection.assume_role(
+            RoleArn=self.role_arn,
+            RoleSessionName=self.role_session_name,
+            DurationSeconds=3600,
+        )["Credentials"]
+        self.s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=assumed_role["AccessKeyId"],
+            aws_secret_access_key=assumed_role["SecretAccessKey"],
+            aws_session_token=assumed_role["SessionToken"],
+        )
+        self.s3_resource = boto3.resource(
+            "s3",
+            aws_access_key_id=assumed_role["AccessKeyId"],
+            aws_secret_access_key=assumed_role["SecretAccessKey"],
+            aws_session_token=assumed_role["SessionToken"],
+        )
 
     @staticmethod
     def __file_download_helper(bucket, key, path):
