@@ -1,0 +1,43 @@
+---
+schema-version: 1.0
+build:
+  name: OpenSearch Dashboards
+  version: 1.0.0
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 1.x
+  # hybrid repo (workbench)
+  - name: queryWorkbench
+    repository: https://github.com/opensearch-project/sql.git
+    ref: main
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin
+    ref: main
+  # hybrid repo (dashboards-notifications)
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin
+    ref: main
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: main
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: main
+  # hybrid repo (dashboards-reports)
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: main
+  # hybrid repo (dashboards-notebooks)
+  - name: notebooksDashboards
+    repository: https://github.com/opensearch-project/dashboards-notebooks.git
+    ref: main
+  - name: traceAnalyticsDashboards
+    repository: https://github.com/opensearch-project/trace-analytics.git
+    ref: main
+  # - name: ganttChartDashboards
+  #   repository: ????????
+  #   ref: main
