@@ -7,10 +7,13 @@
 # compatible open source license.
 
 import sys
+
 import bwc_test
+
 
 def main():
     bwc_test.main()
+
 
 if __name__ == "__main__":
     sys.exit(main())
