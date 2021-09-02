@@ -11,6 +11,7 @@ flake8 = "~=3.9"
 pytest = "*"
 boto3 = "1.18.31"
 botocore = "1.21.33"
+json2table = "1.1.5"
 
 [dev-packages]
 
