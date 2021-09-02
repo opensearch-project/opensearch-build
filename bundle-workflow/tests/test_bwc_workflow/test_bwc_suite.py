@@ -7,7 +7,7 @@
 import os
 import subprocess
 import unittest
-from unittest.mock import ANY, MagicMock, call, patch
+from unittest.mock import MagicMock, call, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.bwc_test_suite import BwcTestSuite
@@ -19,7 +19,8 @@ class TestBwcSuite(unittest.TestCase):
         manifest_file_handle = open("data/test_manifest.yaml", "r")
         self.manifest = BundleManifest.from_file(manifest_file_handle)
         self.bwc_test_suite = BwcTestSuite(
-            manifest=self.manifest, component=self.manifest.components[1], work_dir=".")
+            manifest=self.manifest, component=self.manifest.components[1], work_dir="."
+        )
         manifest_file_handle.close()
 
     def test_run_bwctest(self):

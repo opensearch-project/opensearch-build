@@ -24,7 +24,7 @@ class BwcTestSuite:
         self.work_dir = work_dir
 
     def run_tests(self, work_dir):
-        run_bwctests = f"./bwctest.sh"
+        run_bwctests = "./bwctest.sh"
         output = subprocess.check_output(run_bwctests, cwd=work_dir, shell=True)
         return output
 
