@@ -9,6 +9,11 @@ from system.working_directory import WorkingDirectory
 from test_workflow.perf_test_cluster import PerformanceTestCluster
 from test_workflow.perf_test_suite import PerformanceTestSuite
 
+"""
+    Entry point for Performance Test with bundle manifest, config file containing the required arguments for running
+    rally test and the stack name for the cluster. Will call out in test.sh with perf as argument
+"""
+
 parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
 parser.add_argument('--bundle-manifest', type=argparse.FileType('r'), help="Bundle Manifest file.")
 parser.add_argument('--stack', dest='stack', help='Stack name for performance test')
