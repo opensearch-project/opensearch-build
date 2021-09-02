@@ -22,6 +22,8 @@ plugins can be found.
 
 
 class Bundle:
+    OPENSEARCH = "OpenSearch"
+    OPENSEARCH_DASHBOARDS = "OpenSearch Dashboards"
     def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
         """
         Construct a new Bundle instance.
@@ -29,6 +31,7 @@ class Bundle:
         :param artifacts_dir: Dir location where build artifacts can be found locally
         :param bundle_recorder: The bundle recorder that will capture and build a BundleManifest
         """
+        self.name = build_manifest.build.name
         self.min_tarball = self.__get_min_bundle(build_manifest.components)
         self.plugins = self.__get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
@@ -48,8 +51,14 @@ class Bundle:
 
     def install_plugin(self, plugin):
         tmp_path = self.__copy_component(plugin, "plugins")
-        cli_path = os.path.join(self.archive_path, "bin/opensearch-plugin")
-        self.__execute(f"{cli_path} install --batch file:{tmp_path}")
+        if self.name == self.OPENSEARCH:
+            cli_path = os.path.join(self.archive_path, "bin/opensearch-plugin")
+            self.__execute(f"{cli_path} install --batch file:{tmp_path}")
+        elif self.name == self.OPENSEARCH_DASHBOARDS:
+            cli_path =os.path.join(self.archive_path, "bin/opensearch-dashboards-plugin")
+            self.__execute(f"{cli_path} --allow-root install file:{tmp_path}")
+        else:
+            raise ValueError(f"Unsupported build: {self.name}")
         post_install_script = ScriptFinder.find_install_script(plugin.name)
         self.__execute(
             f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
