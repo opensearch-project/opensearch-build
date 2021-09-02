@@ -4,6 +4,8 @@
     - [Pyenv](#pyenv)
     - [Python 3.7](#python-37)
     - [Pipenv](#pipenv)
+    - [NVM and Node](#nvm-and-node)
+    - [Yarn](#yarn)
   - [Install Dependencies](#install-dependencies)
   - [Run Tests](#run-tests)
   - [Run bundle-workflow](#run-bundle-workflow)
@@ -46,6 +48,21 @@ This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typicall
 ```
 $ pipenv --version
 pipenv, version 19.0
+```
+
+#### NVM and Node
+Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node 10.24.1 version as it is required
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+nvm install v10.24.1
+```
+
+#### Yarn
+[Yarn](https://classic.yarnpkg.com/en/docs/install) is required for building and running the OpenSearch Dashboards and plugins
+
+```
+npm install -g yarn
 ```
 
 ### Install Dependencies
