@@ -10,42 +10,32 @@
 import os
 import subprocess
 
-from system.temporary_directory import TemporaryDirectory
 from test_workflow.test_component import TestComponent
 
 
 class BwcTestSuite:
     manifest: str
     component: str
-    keep: bool
+    work_dir: str
 
-    def __init__(self, manifest, component, keep):
+    def __init__(self, manifest, component, work_dir):
         self.manifest = manifest
         self.component = component
-        self.keep = keep
+        self.work_dir = work_dir
 
     def run_tests(self, work_dir):
-        bwc_script = "bwctest.sh"
-        run_bwctests = f"./{bwc_script}"
+        run_bwctests = f"./bwctest.sh"
         output = subprocess.check_output(run_bwctests, cwd=work_dir, shell=True)
         return output
 
-    def component_bwc_tests(self, component, work_dir):
-        test_component = TestComponent(component.repository, component.commit_id)
-        test_component.checkout(os.path.join(work_dir, component.name))
+    def component_bwc_tests(self):
+        test_component = TestComponent(
+            self.component.repository, self.component.commit_id
+        )
+        test_component.checkout(os.path.join(self.work_dir, self.component.name))
         try:
-            console_output = self.run_tests(work_dir + "/" + component.name)
+            console_output = self.run_tests(self.work_dir + "/" + self.component.name)
             return console_output
         except:
             # TODO: Store and report test failures for {component}
-            print(f"Exception while running BWC tests for {component.name}")
-
-    def execute(self):
-        # TODO copy all maven dependencies from S3 to local
-        with TemporaryDirectory(keep=self.keep) as work_dir:
-            os.chdir(work_dir)
-            # For each component, check out the git repo and run `bwctest.sh`
-            for component in self.manifest.components:
-                if self.component is None or self.component == component.name:
-                    # TODO: Store and report test results, send notification via {console_output}
-                    self.component_bwc_tests(component, work_dir)
+            print(f"Exception while running BWC tests for {self.component.name}")
