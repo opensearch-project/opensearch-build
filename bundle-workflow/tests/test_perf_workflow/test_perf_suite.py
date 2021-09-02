@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import os
-import subprocess
 import unittest
 from unittest.mock import patch
 
@@ -16,18 +15,14 @@ from test_workflow.perf_test_suite import PerformanceTestSuite
 class TestPerformanceSuite(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
-        manifest_file_handle = open("data/test_manifest.yaml", "r")
-        self.manifest = BundleManifest.from_file(manifest_file_handle)
+        self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
         self.endpoint = None
         self.perf_test_suite = PerformanceTestSuite(
-            bundle_manifest=self.manifest, endpoint=None, security=False
+            bundle_manifest=self.manifest, endpoint=None, security=False, current_workspace='current_workspace'
         )
-        manifest_file_handle.close()
 
-    @patch('test_workflow.perf_test_suite.os.chdir')
-    def test_execute(self, mock_chdir):
-        with self.assertRaises(subprocess.CalledProcessError) as process_ret:
-            self.perf_test_suite.execute()
-            mock_chdir.assert_called_once_with('tools/cdk/mensor/single-node/')
-        cmd = 'python3 -m pipenv install'
-        self.assertEqual(process_ret.exception.cmd, cmd)
+    def test_execute(self):
+        with patch('test_workflow.perf_test_suite.os.chdir'):
+            with patch("subprocess.check_call") as mock_check_call:
+                self.perf_test_suite.execute()
+                self.assertEqual(mock_check_call.call_count, 3)

@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+from contextlib import contextmanager
 
 from test_workflow.test_cluster import TestCluster
 
@@ -28,6 +29,14 @@ class PerformanceTestCluster(TestCluster):
                       f' -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={self.security}'\
                       f' -c architecture={self.manifest.build.architecture} --require-approval=never --plugin cdk-assume-role-credential-plugin'\
                       f' -c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role}'
+
+    @contextmanager
+    def cluster(self):
+        try:
+            self.create()
+            yield self.endpoint()
+        finally:
+            self.destroy()
 
     def create(self):
         os.chdir(self.work_dir)

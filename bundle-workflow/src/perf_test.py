@@ -5,6 +5,7 @@ import yaml
 
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
+from system.working_directory import WorkingDirectory
 from test_workflow.perf_test_cluster import PerformanceTestCluster
 from test_workflow.perf_test_suite import PerformanceTestSuite
 
@@ -31,16 +32,10 @@ security = False
 for component in manifest.components:
     if component.name == 'security':
         security = True
-os.chdir(current_workspace)
-perf_cluster = PerformanceTestCluster(manifest, config, args.stack, security)
-try:
-    perf_cluster.create()
 
-    # IP of the cluster
-    endpoint = perf_cluster.endpoint()
-    os.chdir(current_workspace)
-    perf_test_suite = PerformanceTestSuite(manifest, endpoint, security)
-    perf_test_suite.execute()
-finally:
-    os.chdir(current_workspace)
-    perf_cluster.destroy()
+with WorkingDirectory(current_workspace) as curdir:
+    with PerformanceTestCluster(manifest, config, args.stack, security).cluster() as test_cluster_endpoint:
+
+        os.chdir(current_workspace)
+        perf_test_suite = PerformanceTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+        perf_test_suite.execute()
