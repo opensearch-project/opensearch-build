@@ -24,11 +24,6 @@ class PerfTestCluster(TestCluster):
 
     def __init__(self, bundle_manifest, config, stack_name, security):
         self.manifest = bundle_manifest
-        self.security_id = config['Constants']['SecurityGroupId']
-        self.vpc_id = config['Constants']['VpcId']
-        self.account_id = config['Constants']['AccountId']
-        self.region = config['Constants']['Region']
-        self.role = config['Constants']['Role']
         self.work_dir = 'tools/cdk/mensor/single-node/'
         self.stack_name = stack_name
         self.cluster_endpoint = None
@@ -36,22 +31,23 @@ class PerfTestCluster(TestCluster):
         self.output_file = 'output.json'
         self.ip_address = None
         self.security = 'enable' if security else 'disable'
-        self.params_dict = {
+        role = config['Constants']['Role']
+        params_dict = {
             'url': self.manifest.build.location,
-            'security_group_id': self.security_id,
-            'vpc_id': self.vpc_id,
-            'account_id': self.account_id,
-            'region': self.region,
+            'security_group_id': config['Constants']['SecurityGroupId'],
+            'vpc_id': config['Constants']['VpcId'],
+            'account_id': config['Constants']['AccountId'],
+            'region': config['Constants']['Region'],
             'stack_name': self.stack_name,
             'security': self.security,
             'architecture': self.manifest.build.architecture,
         }
-        self.params_list = []
-        for key, value in self.params_dict.items():
-            self.params_list.append(f' -c {key}={value}')
-        self.role_params = f' --require-approval=never --plugin cdk-assume-role-credential-plugin'\
-                           f' -c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role} '
-        self.params = ''.join(self.params_list) + self.role_params
+        params_list = []
+        for key, value in params_dict.items():
+            params_list.append(f' -c {key}={value}')
+        role_params = f' --require-approval=never --plugin cdk-assume-role-credential-plugin'\
+                           f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
+        self.params = ''.join(params_list) + role_params
 
     def create(self):
         os.chdir(self.work_dir)
