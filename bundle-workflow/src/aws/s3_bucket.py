@@ -23,30 +23,20 @@ class S3Bucket:
         """
         self.bucket_name = bucket_name
         self.role_arn = (
-            role_arn
-            if role_arn is not None
-            else os.environ.get("AWS_ROLE_ARN")
+            role_arn if role_arn is not None else os.environ.get("AWS_ROLE_ARN")
         )
         self.role_session_name = (
             role_session_name
             if role_session_name is not None
             else os.environ.get("AWS_ROLE_SESSION_NAME")
         )
-        assumed_role_cred = self.__assume_role()
-        self.__s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=assumed_role_cred["AccessKeyId"],
-            aws_secret_access_key=assumed_role_cred["SecretAccessKey"],
-            aws_session_token=assumed_role_cred["SessionToken"],
-        )
-        self.__s3_resource = boto3.resource(
-            "s3",
-            aws_access_key_id=assumed_role_cred["AccessKeyId"],
-            aws_secret_access_key=assumed_role_cred["SecretAccessKey"],
-            aws_session_token=assumed_role_cred["SessionToken"],
+        # TODO: later use for credential refereshing
+        assumed_role_creds = self.__sts_assume_role()
+        self.__s3_client, self.__s3_resource = self.__create_s3_clients(
+            assumed_role_creds
         )
 
-    def __assume_role(self):
+    def __sts_assume_role(self):
         try:
             sts_connection = boto3.client("sts")
             return sts_connection.assume_role(
@@ -55,23 +45,33 @@ class S3Bucket:
                 DurationSeconds=3600,
             )["Credentials"]
         except Exception as e:
-            print("Assume role failed due to ", str(e.__repr__()))
-            raise e
+            raise STSError(e)
 
+    def __create_s3_clients(self, assumed_role_cred):
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=assumed_role_cred["AccessKeyId"],
+            aws_secret_access_key=assumed_role_cred["SecretAccessKey"],
+            aws_session_token=assumed_role_cred["SessionToken"],
+        )
+        s3_resource = boto3.resource(
+            "s3",
+            aws_access_key_id=assumed_role_cred["AccessKeyId"],
+            aws_secret_access_key=assumed_role_cred["SecretAccessKey"],
+            aws_session_token=assumed_role_cred["SessionToken"],
+        )
+        return s3_client, s3_resource
 
-    @classmethod
-    def download_folder(cls, bucket_name, prefix, dest, role_arn=None, role_session_name=None):
+    def download_folder(self, prefix, dest):
         """
         Download the contents of a folder directory
 
-        :param bucket_name: The s3 bucket name
         :param prefix: The folder path inside the bucket
         :param dest: local destination to download the folder at
         :param role_arn: the arn of the role that has permissions to access S3
         :param role_session_name: the aws role session name
         """
-        s3bucket = cls(bucket_name, role_arn, role_session_name)
-        bucket = s3bucket.__s3_resource.Bucket(bucket_name)
+        bucket = self.__s3_resource.Bucket(self.bucket_name)
         s3_path = urlparse(prefix).path.lstrip("/")
         local_dir = Path(dest)
         for obj in bucket.objects.filter(Prefix=s3_path):
@@ -83,55 +83,60 @@ class S3Bucket:
             target.parent.mkdir(parents=True, exist_ok=True)
             if obj.key[-1] == "/":
                 continue
-            s3bucket.__file_download_helper(bucket, obj.key, str(target))
+            self.__download(bucket, obj.key, str(target))
 
-    @classmethod
-    def download_file(cls, bucket_name, key, dest, role_arn=None, role_session_name=None):
+    def download_file(self, key, dest):
         """
         Download a single object from s3.
 
-        :param bucket_name: The s3 bucket name
         :param key: The s3 key for the object to download
         :param dest: local destination
-        :param role_arn: the arn of the role that has permissions to access S3
-        :param role_session_name: the aws role session name
         """
-        s3bucket = cls(bucket_name, role_arn, role_session_name)
-        bucket = s3bucket.__s3_resource.Bucket(bucket_name)
+        bucket = self.__s3_resource.Bucket(self.bucket_name)
         local_dir = Path(dest)
         file_name = key.split("/")[-1]
         target = Path(local_dir) / Path(file_name)
-        return s3bucket.__file_download_helper(bucket, key, str(target))
+        return self.__download(bucket, key, str(target))
 
     @staticmethod
-    def __file_download_helper(bucket, key, path):
+    def __download(bucket, key, path):
         try:
             bucket.download_file(key, path)
         except ClientError as e:
-            raise S3DownloadFailureException(e)
+            raise S3DownloadError(e)
 
-
-    @classmethod
-    def upload_file(cls, bucket_name, key, source, role_arn=None, role_session_name=None):
+    def upload_file(self, key, source):
         """
         Upload a file to s3.
 
-        :param bucket_name: The s3 bucket name
         :param key: The s3 key for the uploaded object
         :param source: local path of the file
-        :param role_arn: the arn of the role that has permissions to access S3
-        :param role_session_name: the aws role session name
         """
-        s3bucket = cls(bucket_name, role_arn, role_session_name)
         try:
-            s3bucket.__s3_client.upload_file(source, bucket_name, key)
+            self.__s3_client.upload_file(source, self.bucket_name, key)
         except ClientError as e:
-            raise S3UploadFailureException(e)
+            raise S3UploadError(e)
 
 
-class S3DownloadFailureException(Exception):
+class S3Error(Exception):
+    """Base class for S3 Errors"""
+
     pass
 
 
-class S3UploadFailureException(Exception):
+class STSError(Exception):
+    """Base class for STS Error"""
+
+    pass
+
+
+class S3DownloadError(S3Error):
+    """Raised when there is a download object failure"""
+
+    pass
+
+
+class S3UploadError(S3Error):
+    """Raised when there is an upload object failure"""
+
     pass
