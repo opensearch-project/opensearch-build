@@ -41,7 +41,7 @@ class TestBundleRecorder(unittest.TestCase):
             {
                 "build": {
                     "architecture": "x64",
-                    "id": "f39b2d68f8b74389a0037f3e8d6ba0b0",
+                    "id": "c3ff7a232d25403fa8cc14c97799c323",
                     "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
                     "name": "OpenSearch",
                     "version": "1.1.0",
@@ -67,7 +67,7 @@ class TestBundleRecorder(unittest.TestCase):
             {
                 "build": {
                     "architecture": "x64",
-                    "id": "f39b2d68f8b74389a0037f3e8d6ba0b0",
+                    "id": "c3ff7a232d25403fa8cc14c97799c323",
                     "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
                     "name": "OpenSearch",
                     "version": "1.1.0",

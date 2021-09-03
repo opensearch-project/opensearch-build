@@ -76,6 +76,7 @@ class BuildManifest(Manifest):
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
             self.artifacts = data["artifacts"]
+            self.version = data["version"]
 
         def to_dict(self):
             return {
@@ -84,4 +85,5 @@ class BuildManifest(Manifest):
                 "ref": self.ref,
                 "commit_id": self.commit_id,
                 "artifacts": self.artifacts,
+                "version": self.version,
             }

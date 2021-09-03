@@ -36,7 +36,7 @@ class TestBuildManifest(unittest.TestCase):
             "https://github.com/opensearch-project/OpenSearch.git",
         )
         self.assertEqual(
-            opensearch_component.commit_id, "07a57d9bbb3922079b7bb1be83a01252f57f81ec"
+            opensearch_component.commit_id, "b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583"
         )
         self.assertEqual(opensearch_component.ref, "1.x")
         self.assertEqual(

@@ -17,10 +17,10 @@ class TestManifest(unittest.TestCase):
     def test_manifest_is_abstract(self):
         with self.assertRaises(TypeError) as context:
             Manifest(None)
-            self.assertEqual(
-                "Can't instantiate abstract class Manifest with abstract methods __init__",
-                context.exception.__str__(),
-            )
+        self.assertEqual(
+            "Can't instantiate abstract class Manifest with abstract methods __init__",
+            context.exception.__str__(),
+        )
 
     def test_invalid_version(self):
         class TestManifest(Manifest):
@@ -31,6 +31,6 @@ class TestManifest(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             TestManifest.from_path(manifest_path)
-            self.assertEqual(
-                "Unsupported schema version: invalid", context.exception.__str__()
-            )
+        self.assertEqual(
+            "Unsupported schema version: invalid", context.exception.__str__()
+        )
