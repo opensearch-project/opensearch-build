@@ -36,7 +36,7 @@ components:
     ref: main
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
+    ref: "1.1"
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: main
