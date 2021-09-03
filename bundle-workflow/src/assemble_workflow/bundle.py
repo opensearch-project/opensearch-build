@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import errno
+import logging
 import os
 import shutil
 import subprocess
@@ -39,7 +40,7 @@ class Bundle:
 
     def install_plugins(self):
         for plugin in self.plugins:
-            print(f"Installing {plugin.name}")
+            logging.info(f"Installing {plugin.name}")
             self.install_plugin(plugin)
         plugins_path = os.path.join(self.archive_path, "plugins")
         if os.path.isdir(plugins_path):
@@ -61,7 +62,7 @@ class Bundle:
         shutil.copyfile(tar_name, os.path.join(dest, tar_name))
 
     def __execute(self, command):
-        print(f'Executing "{command}" in {self.archive_path}')
+        logging.info(f'Executing "{command}" in {self.archive_path}')
         subprocess.check_call(command, cwd=self.archive_path, shell=True)
 
     def __copy_component(self, component, component_type):

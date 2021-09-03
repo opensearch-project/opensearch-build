@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import shutil
 import tempfile
 from contextlib import contextmanager
@@ -16,6 +17,6 @@ def TemporaryDirectory(keep=False):
         yield name
     finally:
         if keep:
-            print(f"Keeping {name}")
+            logging.info(f"Keeping {name}")
         else:
             shutil.rmtree(name)

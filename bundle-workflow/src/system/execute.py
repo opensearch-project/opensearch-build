@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import subprocess
 
 
@@ -14,7 +15,7 @@ def execute(command, dir, capture=True, raise_on_failure=True):
     :param dir: The full path to the directory that the command should be executed in.
     :returns a tuple containing the exit code, stdout, and stderr.
     """
-    print(f'Executing "{command}" in {dir}')
+    logging.info(f'Executing "{command}" in {dir}')
     result = subprocess.run(
         command, cwd=dir, shell=True, capture_output=capture, text=True
     )

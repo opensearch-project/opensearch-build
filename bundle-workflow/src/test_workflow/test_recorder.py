@@ -4,18 +4,20 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
+
 
 class TestRecorder:
     def __init__(self, location):
         self.location = location
-        print(f"TestRecorder storing results in {location}")
+        logging.info(f"TestRecorder storing results in {location}")
 
     def record_cluster_logs(self, log_files):
         """
         Record the test cluster logs.
         :param results: A generator that yields tuples containing test cluster log files, in the form (absolute_path, relative_path)
         """
-        print(f"Recording log files: {list(log_files)}")
+        logging.info(f"Recording log files: {list(log_files)}")
 
     def record_integ_test_outcome(
         self, component_name, exit_status, stdout, stderr, results
@@ -29,6 +31,6 @@ class TestRecorder:
         :param stderr: A string containing the stderr stream from the test process.
         :param results: A generator that yields tuples containing test results files, in the form (absolute_path, relative_path).
         """
-        print(
+        logging.info(
             f"Recording test results for {component_name}. Exit status: {exit_status}, stdout: {stdout}, stderr: {stderr}, results files: {results}"
         )

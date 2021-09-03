@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import shutil
 from zipfile import ZipFile
@@ -89,7 +90,7 @@ class BuildRecorder:
     def record_artifact(
         self, component_name, artifact_type, artifact_path, artifact_file
     ):
-        print(
+        logging.info(
             f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})"
         )
         # Ensure the target directory exists
@@ -132,7 +133,9 @@ class BuildRecorder:
             properties = BuildRecorder.PropertiesFile(artifact_file, data)
             properties.check_value("version", self.component_version)
             properties.check_value("opensearch.version", self.version)
-            print(f'Checked {artifact_file} ({properties.get_value("version", "N/A")})')
+            logging.info(
+                f'Checked {artifact_file} ({properties.get_value("version", "N/A")})'
+            )
 
     def __check_maven_artifact(self, artifact_file):
         ext = os.path.splitext(artifact_file)[1]
@@ -161,7 +164,7 @@ class BuildRecorder:
                     "Implementation-Version",
                     [self.component_version, self.opensearch_version, None],
                 )
-                print(
+                logging.info(
                     f'Checked {artifact_file} ({properties.get_value("Implementation-Version", "N/A")})'
                 )
 

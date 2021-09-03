@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import unittest
 from unittest.mock import patch
@@ -46,6 +47,14 @@ class TestBuildArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--snapshot"])
     def test_snapshot_true(self):
         self.assertTrue(BuildArgs().snapshot)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_verbose_default(self):
+        self.assertEqual(BuildArgs().logging_level, logging.INFO)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--verbose"])
+    def test_verbose_true(self):
+        self.assertTrue(BuildArgs().logging_level, logging.DEBUG)
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_component_default(self):

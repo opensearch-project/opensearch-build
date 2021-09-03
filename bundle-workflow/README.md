@@ -1,12 +1,12 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
-    - [Build from Source](#build-from-source)
-        - [Custom Build Scripts](#custom-build-scripts)
-    - [Assemble the Bundle](#assemble-the-bundle)
-        - [Custom Install Scripts](#custom-install-scripts)
-    - [Signing Artifacts](#signing-artifacts)
-    - [Test the Bundle](#test-the-bundle)
-        - [Integration Tests](#integration-tests)
-        - [Backwards Compatibility Tests](#backward-compatibility-tests)
+  - [Build from Source](#build-from-source)
+    - [Custom Build Scripts](#custom-build-scripts)
+  - [Assemble the Bundle](#assemble-the-bundle)
+    - [Custom Install Scripts](#custom-install-scripts)
+  - [Signing Artifacts](#signing-artifacts)
+  - [Test the Bundle](#test-the-bundle)
+    - [Integration Tests](#integration-tests)
+    - [Backwards Compatibility Tests](#backwards-compatibility-tests)
 
 ## OpenSearch Bundle Workflow
 
@@ -48,6 +48,7 @@ The following options are available in `bundle-workflow/build.sh`.
 | --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
 | --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
 
 #### Custom Build Scripts
 
@@ -79,10 +80,11 @@ The signing step (optional) takes the manifest file created from the build step 
 
 The following options are available. 
 
-| name        | description                                                                         |
-|-------------|-------------------------------------------------------------------------------------|
-| --component | The component name of the component whose artifacts will be signed                  |
-| --type      | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]|
+| name          | description                                                                         |
+|---------------|-------------------------------------------------------------------------------------|
+| --component   | The component name of the component whose artifacts will be signed                  |
+| --type        | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]|
+| -v, --verbose | Show more verbose output.                                                           |
 
 The signed artifacts (<artifact>.asc) will be found in the same location as the original artifact. 
 
@@ -113,5 +115,6 @@ The following options are available.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| --component [name] | Test a single component by name, e.g. `--component common-utils`.    |
+| --component [name] | Test a single component by name, e.g. `--component common-utils`.       |
 | --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |

@@ -7,6 +7,7 @@
 # Modifications Copyright OpenSearch Contributors. See
 # GitHub history for details.
 
+import logging
 import os
 import subprocess
 
@@ -38,7 +39,7 @@ class BwcTestSuite:
             return console_output
         except:
             # TODO: Store and report test failures for {component}
-            print(f"Exception while running BWC tests for {component.name}")
+            logging.info(f"Exception while running BWC tests for {component.name}")
 
     def execute(self):
         # TODO copy all maven dependencies from S3 to local
