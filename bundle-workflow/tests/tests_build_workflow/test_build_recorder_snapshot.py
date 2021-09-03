@@ -112,4 +112,6 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
             )
             manifest_dict = self.build_recorder.get_manifest().to_dict()
             self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
-            self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")
+            self.assertEqual(
+                manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT"
+            )

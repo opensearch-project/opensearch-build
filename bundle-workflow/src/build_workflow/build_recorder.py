@@ -5,11 +5,11 @@
 # compatible open source license.
 
 import os
-import re
 import shutil
 from zipfile import ZipFile
 
 import yaml
+from jproperties import Properties  # type: ignore
 
 from manifests.build_manifest import BuildManifest
 
@@ -22,27 +22,46 @@ class BuildRecorder:
                 f"Artifact {os.path.basename(path)} is invalid: {message}."
             )
 
-    class PropertiesFile:
+    class PropertiesFile(Properties):
         def __init__(self, filename, data):
+            super().__init__(self)
             self.filename = filename
-            self.data = data
+            self.load(data)
 
-        def get_value(self, key):
-            result = re.findall(f"^{key}=(.*)$", self.data, re.MULTILINE)
-            return result[0] if result else None
+        def get_value(self, key, default_value=None):
+            try:
+                return self[key].data
+            except KeyError:
+                return default_value
 
         def check_value(self, key, expected_value):
-            value = self.get_value(key)
-            if not value:
+            try:
+                value = self[key].data
+                if value != expected_value:
+                    raise BuildRecorder.ArtifactInvalidError(
+                        self.filename,
+                        f"expected to have {key}={expected_value}, but was {value}",
+                    )
+            except KeyError:
                 raise BuildRecorder.ArtifactInvalidError(
                     self.filename,
                     f"expected to have {key}={expected_value}, but none was found",
                 )
-            elif value != expected_value:
-                raise BuildRecorder.ArtifactInvalidError(
-                    self.filename,
-                    f"expected to have {key}={expected_value}, but was {value}",
-                )
+
+        def check_value_in(self, key, expected_values):
+            try:
+                value = self[key].data
+                if value not in expected_values:
+                    raise BuildRecorder.ArtifactInvalidError(
+                        self.filename,
+                        f"expected to have {key}=any of {expected_values}, but was {value}",
+                    )
+            except KeyError:
+                if None not in expected_values:
+                    raise BuildRecorder.ArtifactInvalidError(
+                        self.filename,
+                        f"expected to have {key}=any of {expected_values}, but none was found",
+                    )
 
     def __init__(self, build_id, output_dir, name, version, arch, snapshot):
         self.output_dir = output_dir
@@ -113,9 +132,38 @@ class BuildRecorder:
             properties = BuildRecorder.PropertiesFile(artifact_file, data)
             properties.check_value("version", self.component_version)
             properties.check_value("opensearch.version", self.version)
+            print(f'Checked {artifact_file} ({properties.get_value("version", "N/A")})')
 
     def __check_maven_artifact(self, artifact_file):
-        pass
+        ext = os.path.splitext(artifact_file)[1]
+        if ext not in [
+            ".jar",
+            ".asc",
+            ".md5",
+            ".sha1",
+            ".pom",
+            ".xml",
+            ".sha1",
+            ".sha256",
+            ".sha512",
+            ".module",
+            ".zip",
+            ".war",
+        ]:
+            raise BuildRecorder.ArtifactInvalidError(
+                artifact_file, f"{ext} is not a valid extension for a maven file"
+            )
+        if os.path.splitext(artifact_file)[1] == ".jar":
+            with ZipFile(artifact_file, "r") as zip:
+                data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
+                properties = BuildRecorder.PropertiesFile(artifact_file, data)
+                properties.check_value_in(
+                    "Implementation-Version",
+                    [self.component_version, self.opensearch_version, None],
+                )
+                print(
+                    f'Checked {artifact_file} ({properties.get_value("Implementation-Version", "N/A")})'
+                )
 
     class BuildManifestBuilder:
         def __init__(self, build_id, name, version, arch, snapshot):

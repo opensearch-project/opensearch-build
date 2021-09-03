@@ -162,6 +162,59 @@ class TestBuildRecorder(unittest.TestCase):
             self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
             self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0")
 
+    @patch("shutil.copyfile")
+    @patch("os.makedirs")
+    def test_record_artifact_check_maven_version_properties_mismatch(self, *mocks):
+        self.build_recorder.record_component("security", MagicMock())
+        with patch("build_workflow.build_recorder.ZipFile") as mock_zipfile:
+            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
+                "Implementation-Version: 1.2.3.4"
+            )
+            with self.assertRaises(BuildRecorder.ArtifactInvalidError) as context:
+                self.build_recorder.record_artifact(
+                    "security", "maven", "../file1.zip", "valid.jar"
+                )
+            self.assertEqual(
+                "Artifact valid.jar is invalid: expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was 1.2.3.4.",
+                context.exception.__str__(),
+            )
+
+    @patch("shutil.copyfile")
+    @patch("os.makedirs")
+    def test_record_artifact_check_maven_version_properties_none(self, *mocks):
+        self.build_recorder.record_component("security", MagicMock())
+        with patch("build_workflow.build_recorder.ZipFile") as mock_zipfile:
+            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
+                ""
+            )
+            self.build_recorder.record_artifact(
+                "security", "maven", "../file1.jar", "valid.jar"
+            )
+            manifest_dict = self.build_recorder.get_manifest().to_dict()
+            self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
+            self.assertEqual(
+                manifest_dict["components"][0]["artifacts"]["maven"], ["../file1.jar"]
+            )
+
+    @patch("shutil.copyfile")
+    @patch("os.makedirs")
+    def test_record_maven_artifact_after_checking_maven_version_properties(
+        self, *mocks
+    ):
+        self.build_recorder.record_component("security", MagicMock())
+        with patch("build_workflow.build_recorder.ZipFile") as mock_zipfile:
+            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
+                "Implementation-Version: 1.1.0.0"
+            )
+            self.build_recorder.record_artifact(
+                "security", "maven", "../file1.jar", "valid.jar"
+            )
+            manifest_dict = self.build_recorder.get_manifest().to_dict()
+            self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
+            self.assertEqual(
+                manifest_dict["components"][0]["artifacts"]["maven"], ["../file1.jar"]
+            )
+
     def test_get_manifest(self):
         manifest = self.build_recorder.get_manifest()
         self.assertIs(type(manifest), BuildManifest)
