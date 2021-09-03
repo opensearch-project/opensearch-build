@@ -46,7 +46,7 @@ class PerfTestCluster(TestCluster):
         for key, value in params_dict.items():
             params_list.append(f' -c {key}={value}')
         role_params = f' --require-approval=never --plugin cdk-assume-role-credential-plugin'\
-                           f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
+                      f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
         self.params = ''.join(params_list) + role_params
 
     def create(self):
