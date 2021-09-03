@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import itertools
+import logging
 import os
 import subprocess
 import time
@@ -42,7 +43,7 @@ class LocalTestCluster(TestCluster):
             stdout=self.stdout,
             stderr=self.stderr,
         )
-        print(f"Started OpenSearch with PID {self.process.pid}")
+        logging.info(f"Started OpenSearch with PID {self.process.pid}")
         self.wait_for_service()
 
     def endpoint(self):
@@ -53,7 +54,7 @@ class LocalTestCluster(TestCluster):
 
     def destroy(self, test_recorder):
         if self.process is None:
-            print("Local test cluster is not started")
+            logging.info("Local test cluster is not started")
             return
         self.terminate_process()
         test_recorder.record_cluster_logs(
@@ -70,15 +71,15 @@ class LocalTestCluster(TestCluster):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
     def download(self):
-        print(f"Creating local test cluster in {self.work_dir}")
+        logging.info(f"Creating local test cluster in {self.work_dir}")
         os.chdir(self.work_dir)
-        print(f"Downloading bundle from {self.manifest.build.location}")
+        logging.info(f"Downloading bundle from {self.manifest.build.location}")
         urllib.request.urlretrieve(self.manifest.build.location, "bundle.tgz")
-        print(f'Downloaded bundle to {os.path.realpath("bundle.tgz")}')
+        logging.info(f'Downloaded bundle to {os.path.realpath("bundle.tgz")}')
 
-        print("Unpacking")
+        logging.info("Unpacking")
         subprocess.check_call("tar -xzf bundle.tgz", shell=True)
-        print("Unpacked")
+        logging.info("Unpacked")
 
     def disable_security(self, dir):
         subprocess.check_call(
@@ -87,39 +88,39 @@ class LocalTestCluster(TestCluster):
         )
 
     def wait_for_service(self):
-        print("Waiting for service to become available")
+        logging.info("Waiting for service to become available")
         url = self.url("/_cluster/health")
 
         for attempt in range(10):
             try:
-                print(f"Pinging {url} attempt {attempt}")
+                logging.info(f"Pinging {url} attempt {attempt}")
                 response = requests.get(url, verify=False, auth=("admin", "admin"))
-                print(f"{response.status_code}: {response.text}")
+                logging.info(f"{response.status_code}: {response.text}")
                 if response.status_code == 200 and '"status":"green"' in response.text:
-                    print("Cluster is green")
+                    logging.info("Cluster is green")
                     return
             except requests.exceptions.ConnectionError:
-                print("Service not available yet")
+                logging.info("Service not available yet")
             time.sleep(10)
         raise ClusterCreationException("Cluster is not green after 10 attempts")
 
     def terminate_process(self):
-        print(f"Sending SIGTERM to PID {self.process.pid}")
+        logging.info(f"Sending SIGTERM to PID {self.process.pid}")
         self.process.terminate()
         try:
-            print("Waiting for process to terminate")
+            logging.info("Waiting for process to terminate")
             self.process.wait(10)
         except subprocess.TimeoutExpired:
-            print("Process did not terminate after 10 seconds. Sending SIGKILL")
+            logging.info("Process did not terminate after 10 seconds. Sending SIGKILL")
             self.process.kill()
             try:
-                print("Waiting for process to terminate")
+                logging.info("Waiting for process to terminate")
                 self.process.wait(10)
             except subprocess.TimeoutExpired:
-                print("Process failed to terminate even after SIGKILL")
+                logging.info("Process failed to terminate even after SIGKILL")
                 raise
         finally:
-            print(f"Process terminated with exit code {self.process.returncode}")
+            logging.info(f"Process terminated with exit code {self.process.returncode}")
             self.stdout.close()
             self.stderr.close()
             self.process = None

@@ -6,6 +6,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import pathlib
 
@@ -29,7 +30,7 @@ class Signer:
     def sign_artifacts(self, artifacts, basepath):
         for artifact in artifacts:
             if not self.is_valid_file_type(artifact):
-                print(f"Skipping signing of file ${artifact}")
+                logging.info(f"Skipping signing of file ${artifact}")
                 continue
             location = os.path.join(basepath, artifact)
             self.sign(location)

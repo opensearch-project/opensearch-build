@@ -6,6 +6,7 @@
 # compatible open source license.
 
 import argparse
+import logging
 import os
 import subprocess
 import sys
@@ -14,6 +15,7 @@ from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
+from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test_suite import IntegTestSuite
 
@@ -41,14 +43,23 @@ def parse_arguments():
         action="store_true",
         help="Do not delete the working temporary directory.",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Show more verbose output.",
+        action="store_const",
+        default=logging.INFO,
+        const=logging.DEBUG,
+        dest="logging_level",
+    )
     args = parser.parse_args()
     return args
 
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):
-    print("Pulling common dependencies for integration tests")
-    print("Pulling opensearch-build")
+    logging.info("Pulling common dependencies for integration tests")
+    logging.info("Pulling opensearch-build")
     os.chdir(work_dir)
     GitRepository(
         "https://github.com/opensearch-project/opensearch-build.git",
@@ -57,7 +68,7 @@ def pull_common_dependencies(work_dir, build_manifest):
     )
     for component in build_manifest.components:
         if component.name in COMMON_DEPENDENCIES:
-            print("Pulling " + component.name)
+            logging.info("Pulling " + component.name)
             GitRepository(
                 component.repository,
                 component.commit_id,
@@ -89,6 +100,7 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 
 def main():
     args = parse_arguments()
+    console.configure(level=args.logging_level)
     bundle_manifest = BundleManifest.from_file(args.bundle_manifest)
     build_manifest = BuildManifest.from_file(args.build_manifest)
     test_manifest = TestManifest.from_file(args.test_manifest)
@@ -97,7 +109,7 @@ def main():
         if component.integ_test is not None:
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        print("Switching to temporary work_dir: " + work_dir)
+        logging.info("Switching to temporary work_dir: " + work_dir)
         os.chdir(work_dir)
         pull_common_dependencies(work_dir, build_manifest)
         sync_dependencies_to_maven_local(work_dir, build_manifest.build.version)
@@ -111,7 +123,7 @@ def main():
                 )
                 test_suite.execute()
             else:
-                print(
+                logging.info(
                     "Skipping tests for %s, as it is currently not supported"
                     % component.name
                 )

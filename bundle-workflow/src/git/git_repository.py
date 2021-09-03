@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import subprocess
 import tempfile
@@ -37,13 +38,13 @@ class GitRepository:
             .decode()
             .strip()
         )
-        print(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
+        logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
 
     def execute(self, command, silent=False, subdirname=None):
         dirname = self.dir
         if subdirname:
             dirname = os.path.join(self.dir, subdirname)
-        print(f'Executing "{command}" in {dirname}')
+        logging.info(f'Executing "{command}" in {dirname}')
         if silent:
             subprocess.check_call(
                 command,

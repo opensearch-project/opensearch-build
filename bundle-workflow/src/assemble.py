@@ -7,6 +7,7 @@
 # compatible open source license.
 
 import argparse
+import logging
 import os
 import shutil
 import tempfile
@@ -14,17 +15,29 @@ import tempfile
 from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
+from system import console
 
 parser = argparse.ArgumentParser(description="Assemble an OpenSearch Bundle")
 parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
+parser.add_argument(
+    "-v",
+    "--verbose",
+    help="Show more verbose output.",
+    action="store_const",
+    default=logging.INFO,
+    const=logging.DEBUG,
+    dest="logging_level",
+)
 args = parser.parse_args()
+
+console.configure(level=args.logging_level)
 
 tarball_installation_script = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "../../release/tar/linux/opensearch-tar-install.sh",
 )
 if not os.path.isfile(tarball_installation_script):
-    print(f"No installation script found at path: {tarball_installation_script}")
+    logging.info(f"No installation script found at path: {tarball_installation_script}")
     exit(1)
 
 build_manifest = BuildManifest.from_file(args.manifest)
@@ -34,7 +47,7 @@ output_dir = os.path.join(os.getcwd(), "bundle")
 os.makedirs(output_dir, exist_ok=True)
 
 with tempfile.TemporaryDirectory() as work_dir:
-    print(f"Bundling {build.name} ({build.architecture}) into {output_dir} ...")
+    logging.info(f"Bundling {build.name} ({build.architecture}) into {output_dir} ...")
 
     os.chdir(work_dir)
 
@@ -42,7 +55,7 @@ with tempfile.TemporaryDirectory() as work_dir:
     bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
 
     bundle.install_plugins()
-    print(f"Installed plugins: {bundle.installed_plugins}")
+    logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
     # Copy the tar installation script into the bundle
     shutil.copyfile(
@@ -58,4 +71,4 @@ with tempfile.TemporaryDirectory() as work_dir:
 
     bundle_recorder.write_manifest(output_dir)
 
-print("Done.")
+logging.info("Done.")

@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import subprocess
 
@@ -80,7 +81,7 @@ class IntegTestSuite:
             # Spin up a test cluster
             cluster = LocalTestCluster(self.work_dir, self.bundle_manifest, security)
             cluster.create()
-            print("component name: " + self.component.name)
+            logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
             self._execute_integtest_sh(cluster, security)
@@ -101,4 +102,6 @@ class IntegTestSuite:
                 self.name, status, stdout, stderr, walk(results_dir)
             )
         else:
-            print(f"{script} does not exist. Skipping integ tests for {self.name}")
+            logging.info(
+                f"{script} does not exist. Skipping integ tests for {self.name}"
+            )
