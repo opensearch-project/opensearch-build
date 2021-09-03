@@ -13,6 +13,9 @@ from botocore.exceptions import ClientError
 
 
 class S3Bucket:
+    AWS_ROLE_ARN = "AWS_ROLE_ARN"
+    AWS_ROLE_SESSION_NAME = "AWS_ROLE_SESSION_NAME"
+
     def __init__(self, bucket_name, role_arn=None, role_session_name=None):
         """
         Provides methods to download/upload files and folders to S3 bucket
@@ -23,12 +26,12 @@ class S3Bucket:
         """
         self.bucket_name = bucket_name
         self.role_arn = (
-            role_arn if role_arn is not None else os.environ.get("AWS_ROLE_ARN")
+            role_arn if role_arn is not None else os.environ.get(S3Bucket.AWS_ROLE_ARN)
         )
         self.role_session_name = (
             role_session_name
             if role_session_name is not None
-            else os.environ.get("AWS_ROLE_SESSION_NAME")
+            else os.environ.get(S3Bucket.AWS_ROLE_SESSION_NAME)
         )
         # TODO: later use for credential refereshing
         assumed_role_creds = self.__sts_assume_role()
@@ -39,11 +42,12 @@ class S3Bucket:
     def __sts_assume_role(self):
         try:
             sts_connection = boto3.client("sts")
-            return sts_connection.assume_role(
+            response = sts_connection.assume_role(
                 RoleArn=self.role_arn,
                 RoleSessionName=self.role_session_name,
                 DurationSeconds=3600,
-            )["Credentials"]
+            )
+            return response['Credentials']
         except Exception as e:
             raise STSError(e)
 
@@ -72,7 +76,8 @@ class S3Bucket:
         bucket = self.__s3_resource.Bucket(self.bucket_name)
         s3_path = urlparse(prefix).path.lstrip("/")
         local_dir = Path(dest)
-        for obj in bucket.objects.filter(Prefix=s3_path):
+        s3_response = bucket.objects.filter(Prefix=s3_path)
+        for obj in s3_response:
             target = (
                 obj.key
                 if local_dir is None
