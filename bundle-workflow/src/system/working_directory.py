@@ -7,12 +7,11 @@
 import os
 from contextlib import contextmanager
 
-saved_path = os.getcwd()
-
 
 @contextmanager
 def WorkingDirectory(path):
     try:
+        saved_path = os.getcwd()
         yield os.chdir(path)
     finally:
         os.chdir(saved_path)

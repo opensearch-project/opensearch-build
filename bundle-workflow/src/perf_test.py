@@ -6,8 +6,8 @@ import yaml
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from system.working_directory import WorkingDirectory
-from test_workflow.perf_test_cluster import PerformanceTestCluster
-from test_workflow.perf_test_suite import PerformanceTestSuite
+from test_workflow.perf_test_cluster import Cluster
+from test_workflow.perf_test_suite import PerfTestSuite
 
 """
     Entry point for Performance Test with bundle manifest, config file containing the required arguments for running
@@ -39,8 +39,8 @@ for component in manifest.components:
         security = True
 
 with WorkingDirectory(current_workspace) as curdir:
-    with PerformanceTestCluster(manifest, config, args.stack, security).cluster() as test_cluster_endpoint:
+    with Cluster.create(manifest, config, args.stack, security) as test_cluster_endpoint:
 
         os.chdir(current_workspace)
-        perf_test_suite = PerformanceTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+        perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
         perf_test_suite.execute()

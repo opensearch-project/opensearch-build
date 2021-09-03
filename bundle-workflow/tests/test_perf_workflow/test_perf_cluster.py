@@ -9,13 +9,18 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.perf_test_cluster import PerformanceTestCluster
+from test_workflow.perf_test_cluster import PerfTestCluster
 
 
-class TestPerformanceCluster(unittest.TestCase):
+class TestPerfCluster(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(__file__))
-        self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
+        self.data_path = os.path.realpath(
+            os.path.join(os.path.dirname(__file__), "data")
+        )
+        self.manifest_filename = os.path.join(
+            self.data_path, "test_manifest.yaml"
+        )
+        self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.stack_name = 'stack'
         self.security = 'disable'
         config = {
@@ -27,7 +32,7 @@ class TestPerformanceCluster(unittest.TestCase):
                 'Role': 'role-arn'
             }
         }
-        self.perf_test_cluster = PerformanceTestCluster(
+        self.perf_test_cluster = PerfTestCluster(
             bundle_manifest=self.manifest, config=config, stack_name=self.stack_name, security=self.security
         )
 

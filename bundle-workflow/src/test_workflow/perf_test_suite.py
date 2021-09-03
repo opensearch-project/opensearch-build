@@ -1,8 +1,10 @@
 import os
 import subprocess
 
+from system.working_directory import WorkingDirectory
 
-class PerformanceTestSuite:
+
+class PerfTestSuite:
     """
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
     """
@@ -18,13 +20,14 @@ class PerformanceTestSuite:
 
     def execute(self):
         try:
-            os.chdir(self.work_dir)
-            dir = os.getcwd()
-            subprocess.check_call('python3 -m pipenv install', cwd=dir, shell=True)
-            subprocess.check_call('pipenv install', cwd=dir, shell=True)
-            if self.security:
-                subprocess.check_call(f'{self.command} -s', cwd=dir, shell=True)
-            else:
-                subprocess.check_call(f'{self.command}', cwd=dir, shell=True)
+            with WorkingDirectory(self.work_dir):
+                dir = os.getcwd()
+                subprocess.check_call('python3 -m pipenv install', cwd=dir, shell=True)
+                subprocess.check_call('pipenv install', cwd=dir, shell=True)
+
+                if self.security:
+                    subprocess.check_call(f'{self.command} -s', cwd=dir, shell=True)
+                else:
+                    subprocess.check_call(f'{self.command}', cwd=dir, shell=True)
         finally:
             os.chdir(self.current_workspace)

@@ -6,7 +6,18 @@ from contextlib import contextmanager
 from test_workflow.test_cluster import TestCluster
 
 
-class PerformanceTestCluster(TestCluster):
+class Cluster:
+    @contextmanager
+    def create(manifest, config, stack_name, security):
+        perf_test_cluster = PerfTestCluster(manifest, config, stack_name, security)
+        try:
+            perf_test_cluster.create()
+            yield perf_test_cluster.endpoint()
+        finally:
+            perf_test_cluster.destroy()
+
+
+class PerfTestCluster(TestCluster):
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """
@@ -25,18 +36,22 @@ class PerformanceTestCluster(TestCluster):
         self.output_file = 'output.json'
         self.ip_address = None
         self.security = 'enable' if security else 'disable'
-        self.params = f'-c url={self.manifest.build.location} -c security_group_id={self.security_id} -c vpc_id={self.vpc_id}'\
-                      f' -c account_id={self.account_id} -c region={self.region} -c stack_name={self.stack_name} -c security={self.security}'\
-                      f' -c architecture={self.manifest.build.architecture} --require-approval=never --plugin cdk-assume-role-credential-plugin'\
-                      f' -c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role}'
-
-    @contextmanager
-    def cluster(self):
-        try:
-            self.create()
-            yield self.endpoint()
-        finally:
-            self.destroy()
+        self.params_dict = {
+            'url': self.manifest.build.location,
+            'security_group_id': self.security_id,
+            'vpc_id': self.vpc_id,
+            'account_id': self.account_id,
+            'region': self.region,
+            'stack_name': self.stack_name,
+            'security': self.security,
+            'architecture': self.manifest.build.architecture,
+        }
+        self.params_list = []
+        for key, value in self.params_dict.items():
+            self.params_list.append(f' -c {key}={value}')
+        self.role_params = f' --require-approval=never --plugin cdk-assume-role-credential-plugin'\
+                           f' -c assume-role-credentials:writeIamRoleName={self.role} -c assume-role-credentials:readIamRoleName={self.role} '
+        self.params = ''.join(self.params_list) + self.role_params
 
     def create(self):
         os.chdir(self.work_dir)
