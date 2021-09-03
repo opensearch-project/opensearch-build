@@ -68,8 +68,6 @@ class S3Bucket:
 
         :param prefix: The folder path inside the bucket
         :param dest: local destination to download the folder at
-        :param role_arn: the arn of the role that has permissions to access S3
-        :param role_session_name: the aws role session name
         """
         bucket = self.__s3_resource.Bucket(self.bucket_name)
         s3_path = urlparse(prefix).path.lstrip("/")
