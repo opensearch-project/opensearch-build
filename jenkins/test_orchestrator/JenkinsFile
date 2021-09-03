@@ -44,6 +44,14 @@ pipeline {
                     failFast: false)
             }
         }
+
+        stage('ResultPublisher') {
+            steps {
+                echo "todo: Its purpose is to publish test results/logs after the test workflow is complete"
+            }
+            failFast false
+        }
+
         stage('Notify') {
             steps {
                 echo "todo: This step is stubbed. Its purpose is to notify different channels for successful build"
