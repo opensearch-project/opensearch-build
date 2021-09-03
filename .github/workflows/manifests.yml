@@ -3,13 +3,24 @@ name: manifests
 on: [push, pull_request]
 
 jobs:
-  check:
 
+  list-manifests:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls manifests/opensearch*.yml | jq -R -s -c 'split("\n")[:-1]')"
 
+  check:
+    needs: list-manifests
+    runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
-
+    strategy:
+      matrix:
+        manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_VERSION }}
@@ -19,6 +30,6 @@ jobs:
       - name: Install Pipenv and Dependencies
         run: |
           python -m pip install --upgrade pipenv wheel
-      - name: OpenSearch 1.1
+      - name: OpenSearch Manifests
         run: |
-          ./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml
+          ./bundle-workflow/ci.sh ${{ matrix.manifest }}
