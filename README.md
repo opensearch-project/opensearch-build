@@ -1,6 +1,7 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
-[![test-bundle-workflow](https://github.com/opensearch-project/opensearch-build/actions/workflows/test-bundle-workflow.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/test-bundle-workflow.yml)
+[![tests](https://github.com/opensearch-project/opensearch-build/actions/workflows/bundle-workflow.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/bundle-workflow.yml)
+[![manifests](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml)
 [![codecov](https://codecov.io/gh/opensearch-project/opensearch-build/branch/main/graph/badge.svg?token=03S5XZ80UI)](https://codecov.io/gh/opensearch-project/opensearch-build)
 
 - [OpenSearch Build](#opensearch-build)

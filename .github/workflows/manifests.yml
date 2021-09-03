@@ -1,0 +1,24 @@
+name: manifests
+
+on: [push, pull_request]
+
+jobs:
+  check:
+
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHON_VERSION: 3.7
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Pipenv and Dependencies
+        run: |
+          python -m pip install --upgrade pipenv wheel
+      - name: OpenSearch 1.1
+        run: |
+          ./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml
