@@ -41,14 +41,14 @@ pipeline {
                             string(name: 'architecture', value: ${params.architecture})
                         ]
                     },
-                    failFast: true)
+                    failFast: false)
             }
         }
         stage('Notify') {
-            failFast false
             steps {
                 echo "todo: This step is stubbed. Its purpose is to notify different channels for successful build"
             }
+            failFast false
         }
     }
 }
