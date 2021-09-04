@@ -96,7 +96,6 @@ fi
 
 for ARCH in $ARCHITECTURE_ARRAY
 do
-  echo $ARCH      #Executed for all values of ''I'', up to a disaster-condition if any.
   if [ "$ARCH" != "x64" ] && [ "$ARCH" != "arm64" ]
   then
 	echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
