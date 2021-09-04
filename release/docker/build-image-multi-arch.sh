@@ -84,7 +84,7 @@ if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCH
   exit 1
 else
   echo $VERSION $DOCKERFILE $PRODUCT $ARCHITECTURE
-  IFS=', ' read -r -a ARCHITECTURE_ARRAY <<< "$ARCHITECTURE"
+  IFS=',' read -r -a ARCHITECTURE_ARRAY <<< "$ARCHITECTURE"
   IFS=', ' read -r -a TARBALL_ARRAY <<< "$TARBALL"
 fi
 
@@ -94,11 +94,15 @@ then
     exit 1
 fi
 
-if [ "$ARCHITECTURE" != "x64" ] && [ "$ARCHITECTURE" != "arm64" ]
-then
-    echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
-    exit 1
-fi
+for ARCH in $ARCHITECTURE_ARRAY
+do
+  echo $ARCH      #Executed for all values of ''I'', up to a disaster-condition if any.
+  if [ "$ARCH" != "x64" ] && [ "$ARCH" != "arm64" ]
+  then
+	echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
+    	exit 1       	   #Abandon the loop.
+  fi
+done
 
 # Warning docker desktop
 if (! docker buildx version)
