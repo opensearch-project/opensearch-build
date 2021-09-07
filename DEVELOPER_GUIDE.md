@@ -110,7 +110,7 @@ All done! ✨ 🍰 ✨
 23 files left unchanged.
 ```
 
-If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/ci.yml) will make sure to remind you. 
+If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/bundle-workflow.yml) will make sure to remind you. 
 
 ### Type Checking
 
