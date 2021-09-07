@@ -45,4 +45,4 @@ components:
     ref: "1.1"
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
-    ref: main
+    ref: "1.1"
