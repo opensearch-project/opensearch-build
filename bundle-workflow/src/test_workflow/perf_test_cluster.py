@@ -1,23 +1,9 @@
 import json
 import os
 import subprocess
-from contextlib import contextmanager
-
-from test_workflow.test_cluster import TestCluster
 
 
-class Cluster:
-    @contextmanager
-    def create(manifest, config, stack_name, security):
-        perf_test_cluster = PerfTestCluster(manifest, config, stack_name, security)
-        try:
-            perf_test_cluster.create()
-            yield perf_test_cluster.endpoint()
-        finally:
-            perf_test_cluster.destroy()
-
-
-class PerfTestCluster(TestCluster):
+class PerfTestCluster():
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """

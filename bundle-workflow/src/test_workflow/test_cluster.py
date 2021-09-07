@@ -5,20 +5,29 @@
 # compatible open source license.
 
 import abc
+from contextlib import contextmanager
+from test_workflow.perf_test_cluster import PerfTestCluster
 
 
 class TestCluster(abc.ABC):
     """
     Abstract base class for all types of test clusters.
     """
-
+    @staticmethod
     @abc.abstractmethod
-    def create(self):
+    @contextmanager
+    def create(cluster_type, *args):
         """
         Set up the cluster. When this method returns, the cluster must be available to take requests.
         Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
         """
-        pass
+        if cluster_type == 'PERFORMANCE_TEST':
+            test_cluster = PerfTestCluster(args[0], args[1], args[2], args[3])
+        try:
+            test_cluster.create()
+            yield test_cluster.endpoint()
+        finally:
+            test_cluster.destroy()
 
     @abc.abstractmethod
     def destroy(self, test_recorder):
