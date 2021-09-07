@@ -43,6 +43,9 @@ components:
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
     ref: "1.1"
+    working_directory: "reports-scheduler"
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     ref: "1.1"
+    working_directory: "opensearch-notebooks"
+    

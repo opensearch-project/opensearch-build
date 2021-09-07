@@ -31,7 +31,7 @@ class Builder:
 
     def build(self, version, arch, snapshot):
         build_script = ScriptFinder.find_build_script(
-            self.component_name, self.git_repo.dir
+            self.component_name, self.git_repo.working_directory
         )
         build_command = f"{build_script} -v {version} -a {arch} -s {str(snapshot).lower()} -o {self.output_path}"
         self.git_repo.execute(build_command)
@@ -39,7 +39,7 @@ class Builder:
 
     def export_artifacts(self):
         artifacts_dir = os.path.realpath(
-            os.path.join(self.git_repo.dir, self.output_path)
+            os.path.join(self.git_repo.working_directory, self.output_path)
         )
         for artifact_type in ["maven", "bundle", "plugins", "libs", "core-plugins"]:
             for dir, dirs, files in os.walk(os.path.join(artifacts_dir, artifact_type)):
