@@ -172,7 +172,6 @@ class TestS3Bucket(unittest.TestCase):
             mock_s3_resource.Bucket(bucket_name).download_file.call_count, 1
         )
 
-    # , side_effect=MockS3Response.mock_list_objects_response
     @patch("boto3.client")
     @patch("boto3.resource")
     def test_download_file_failure(self, mock_boto_resource, mock_boto_client):
