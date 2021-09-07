@@ -7,6 +7,7 @@
   - [Test the Bundle](#test-the-bundle)
     - [Integration Tests](#integration-tests)
     - [Backwards Compatibility Tests](#backwards-compatibility-tests)
+  - [Sanity Check the Bundle](#sanity-check-the-bundle)
 
 ## OpenSearch Bundle Workflow
 
@@ -24,6 +25,7 @@ Each build requires a manifest to be passed as input.  We currently have the fol
 
 
 Usage:
+
 ```bash
 ./bundle-workflow/build.sh manifests/opensearch-1.1.0.yml --snapshot
 ```
@@ -94,14 +96,17 @@ Signing step (to sign all artifacts):
 ```
 
 ### Test the Bundle
+
 Tests the OpenSearch bundle.
 
 This workflow contains two sections: Integration Tests, Backwards Compatibility Tests.
 
 #### Integration Tests
+
 This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
 
 #### Backwards Compatibility Tests
+
 This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
 
 Usage:
@@ -109,6 +114,26 @@ Usage:
 Kick off all test suites on a manifest:
 ```bash
 ./bundle-workflow/test.sh manifests/opensearch-1.0.0.yml
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| --component [name] | Test a single component by name, e.g. `--component common-utils`.       |
+| --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
+
+### Sanity Check the Bundle
+
+Runs basic sanity checks on the OpenSearch bundle.
+
+This workflow runs basic sanity checks on every component present in the bundle. For starters, it ensures that the component GitHub repositories are correct.
+
+Usage:
+
+```bash
+./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml
 ```
 
 The following options are available.
