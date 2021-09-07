@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import argparse
+import logging
 import sys
 
 
@@ -35,7 +36,18 @@ class BuildArgs:
             action="store_true",
             help="Do not delete the working temporary directory.",
         )
+        parser.add_argument(
+            "-v",
+            "--verbose",
+            help="Show more verbose output.",
+            action="store_const",
+            default=logging.INFO,
+            const=logging.DEBUG,
+            dest="logging_level",
+        )
+
         args = parser.parse_args()
+        self.logging_level = args.logging_level
         self.manifest = args.manifest
         self.snapshot = args.snapshot
         self.component = args.component

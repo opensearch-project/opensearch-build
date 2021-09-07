@@ -39,7 +39,7 @@ class TestInputManifest(unittest.TestCase):
             self.assertEqual(manifest.version, "1.0")
             self.assertEqual(manifest.build.name, "OpenSearch")
             self.assertEqual(manifest.build.version, "1.1.0")
-            self.assertEqual(len(manifest.components), 15)
+            self.assertEqual(len(manifest.components), 14)
             opensearch_component = manifest.components[0]
             self.assertEqual(opensearch_component.name, "OpenSearch")
             self.assertEqual(

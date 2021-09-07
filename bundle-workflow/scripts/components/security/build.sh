@@ -55,6 +55,7 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+OPENSEARCH_RELEASE=$VERSION
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
@@ -62,7 +63,7 @@ fi
 PLUGIN_VERSION=$(cat plugin-descriptor.properties | grep ^version= | cut -d= -f2 | sed "s/-SNAPSHOT//")
 [[ "$SNAPSHOT" == "true" ]] && PLUGIN_VERSION=$PLUGIN_VERSION-SNAPSHOT
 
-sed -i "s/\(^opensearch\.version=\).*\$/\1${VERSION}/" plugin-descriptor.properties
+sed -i "s/\(^opensearch\.version=\).*\$/\1${OPENSEARCH_RELEASE}/" plugin-descriptor.properties
 sed -i "s/\(^version=\).*\$/\1${PLUGIN_VERSION}/" plugin-descriptor.properties
 sed -i "s/\(<opensearch.version>\).*\(<\/opensearch.version>\)/\1${VERSION}\2/g" pom.xml
 sed -i -e "1,/<version>/s/\(<version>\).*\(<\/version>\)/\1${PLUGIN_VERSION}\2/g" pom.xml

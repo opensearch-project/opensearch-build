@@ -4,19 +4,14 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
-import shutil
-import tempfile
+import os
 from contextlib import contextmanager
 
 
 @contextmanager
-def TemporaryDirectory(keep=False):
-    name = tempfile.mkdtemp()
+def WorkingDirectory(path):
     try:
-        yield name
+        saved_path = os.getcwd()
+        yield os.chdir(path)
     finally:
-        if keep:
-            logging.info(f"Keeping {name}")
-        else:
-            shutil.rmtree(name)
+        os.chdir(saved_path)
