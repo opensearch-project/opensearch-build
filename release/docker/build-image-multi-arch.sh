@@ -94,11 +94,14 @@ then
     exit 1
 fi
 
-if [ "$ARCHITECTURE" != "x64" ] && [ "$ARCHITECTURE" != "arm64" ]
-then
-    echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
-    exit 1
-fi
+for ARCH in $ARCHITECTURE_ARRAY
+do
+  if [ "$ARCH" != "x64" ] && [ "$ARCH" != "arm64" ]
+  then
+	echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
+    	exit 1
+  fi
+done
 
 # Warning docker desktop
 if (! docker buildx version)
