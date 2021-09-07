@@ -15,7 +15,7 @@ components:
     ref: main
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: main
+    ref: "1.1"
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
     ref: main
