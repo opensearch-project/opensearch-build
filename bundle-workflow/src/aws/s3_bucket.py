@@ -47,7 +47,7 @@ class S3Bucket:
                 RoleSessionName=self.role_session_name,
                 DurationSeconds=3600,
             )
-            return response['Credentials']
+            return response["Credentials"]
         except Exception as e:
             raise STSError(e)
 
