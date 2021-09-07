@@ -84,7 +84,7 @@ if [ -z "$VERSION" ] || [ -z "$DOCKERFILE" ] || [ -z "$PRODUCT" ] || [ -z "$ARCH
   exit 1
 else
   echo $VERSION $DOCKERFILE $PRODUCT $ARCHITECTURE
-  IFS=',' read -r -a ARCHITECTURE_ARRAY <<< "$ARCHITECTURE"
+  IFS=', ' read -r -a ARCHITECTURE_ARRAY <<< "$ARCHITECTURE"
   IFS=', ' read -r -a TARBALL_ARRAY <<< "$TARBALL"
 fi
 
@@ -99,7 +99,7 @@ do
   if [ "$ARCH" != "x64" ] && [ "$ARCH" != "arm64" ]
   then
 	echo "We only support 'x64' and 'arm64' as architecture name for -a parameter"
-    	exit 1       	   #Abandon the loop.
+    	exit 1
   fi
 done
 
