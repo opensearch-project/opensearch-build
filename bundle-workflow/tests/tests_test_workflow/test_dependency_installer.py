@@ -1,5 +1,5 @@
 import os
-import tempfile
+import shutil
 import unittest
 from unittest.mock import call, patch
 
@@ -15,51 +15,79 @@ class DependencyInstallerTests(unittest.TestCase):
             "../tests_assemble_workflow/data/opensearch-build-1.1.0.yml",
         )
         self.manifest = BuildManifest.from_path(self.manifest_filename)
+
+    @patch("test_workflow.dependency_installer.S3Bucket")
+    def test_install_maven_dependencies(self, mock_s3_bucket):
+        s3_bucket = mock_s3_bucket.return_value
         self.dependency_installer = DependencyInstaller(self.manifest.build)
-
-    def test_install(self):
-        with patch(
-            "test_workflow.dependency_installer.DependencyInstaller.MavenLocalFileHandler.copy"
-        ) as mock_maven_copy:
-            self.dependency_installer.maven_local_file_handler = [
-                DependencyInstaller.MavenLocalFileHandler(),
-                DependencyInstaller.MavenLocalFileHandler(),
-            ]
-            dependencies = ["job-scheduler", "anomaly-detection"]
-            self.dependency_installer.install(dependencies)
-            self.assertEqual(mock_maven_copy.call_count, 2)
-            maven_local_paths = []
-            for dependency in dependencies:
-                maven_local_paths.append(os.path.join(
-                    os.path.expanduser("~"),
-                    f".m2/{self.manifest.build.id}/repository/org/opensearch/{dependency}/{self.manifest.build.version}/",
-                ))
-            mock_maven_copy.assert_has_calls(
-                [
-                    call(self.__get_test_dependencies(), maven_local_paths[0]),
-                    call(self.__get_test_dependencies(), maven_local_paths[1]),
-                ]
-            )
-
-    @staticmethod
-    def __get_test_dependencies():
-        test_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../src/test_workflow"
+        dependencies = dict(
+            {
+                "opensearch-job-scheduler": "1.1.0.0",
+                "opensearch-anomaly-detection": "1.1.0.0",
+            }
         )
-        return [
-            file_name
-            for file_name in os.listdir(test_dir)
-            if os.path.isfile(os.path.join(test_dir, file_name))
-        ]
+        self.dependency_installer.install_maven_dependencies(dependencies)
+        self.assertEqual(s3_bucket.download_folder.call_count, 2)
+        maven_local_paths = []
+        for dependency, version in dependencies.items():
+            maven_local_paths.append(
+                os.path.join(
+                    os.path.expanduser("~"),
+                    f".m2/repository/org/opensearch/{dependency}/{version}/",
+                )
+            )
+        s3_bucket.download_folder.assert_has_calls(
+            [
+                call(
+                    "opensearch-job-scheduler/1.1.0.0",
+                    maven_local_paths[0],
+                ),
+                call(
+                    "opensearch-anomaly-detection/1.1.0.0",
+                    maven_local_paths[1],
+                ),
+            ]
+        )
 
-    class MavenLocalFileHandlerTests(unittest.TestCase):
-        def setUp(self):
-            self.maven_local_file_handler = DependencyInstaller.MavenLocalFileHandler()
+    @patch("test_workflow.dependency_installer.S3Bucket")
+    def test_install_build_dependencies(self, mock_s3_bucket):
+        s3_bucket = mock_s3_bucket.return_value
+        self.dependency_installer = DependencyInstaller(self.manifest.build)
+        dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
+        self.dependency_installer.install_build_dependencies(
+            dependencies, os.path.dirname(__file__)
+        )
+        self.assertEqual(s3_bucket.download_file.call_count, 1)
+        s3_bucket.download_file.assert_has_calls(
+            [
+                call(
+                    "opensearch-job-scheduler-1.1.0.0.zip",
+                    os.path.dirname(__file__),
+                )
+            ]
+        )
 
-        def test_copy(self):
-            with tempfile.TemporaryFile() as maven_local_path:
-                test_files = DependencyInstallerTests.__get_test_dependencies()
-                self.assertTrue(len(test_files) > 0)
-                self.maven_local_file_handler.copy(test_files, maven_local_path)
-                self.assertCountEqual(test_files, os.listdir(maven_local_path))
-                self.assertListEqual(sorted(test_files), sorted(os.listdir(maven_local_path)))
+    def test_cleanup_for_dir(self):
+        self.dependency_installer = DependencyInstaller(self.manifest.build)
+        dest_path = self.__get_test_dir()
+        os.makedirs(dest_path)
+        shutil.copy(self.manifest_filename, dest_path)
+        self.assertEqual(len(os.listdir(dest_path)), 1)
+        self.dependency_installer.cleanup(dest_path)
+        self.assertFalse(os.path.exists(dest_path))
+
+    def test_cleanup_for_file(self):
+        self.dependency_installer = DependencyInstaller(self.manifest.build)
+        dest_dir = self.__get_test_dir()
+        dest_path = os.path.join(dest_dir, "opensearch-build-1.1.0.yml")
+        os.makedirs(dest_dir)
+        shutil.copy(self.manifest_filename, dest_path)
+        self.assertEqual(len(os.listdir(dest_dir)), 1)
+        self.dependency_installer.cleanup(dest_path)
+        self.assertFalse(os.path.exists(dest_path))
+        self.assertTrue(os.path.exists(dest_dir))
+        shutil.rmtree(dest_dir)
+        self.assertFalse(os.path.exists(dest_dir))
+
+    def __get_test_dir(self):
+        return os.path.join(os.path.dirname(__file__), "test-temp")
