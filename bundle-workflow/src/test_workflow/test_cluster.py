@@ -6,7 +6,6 @@
 
 import abc
 from contextlib import contextmanager
-from test_workflow.perf_test_cluster import PerfTestCluster
 
 
 class TestCluster(abc.ABC):
@@ -14,7 +13,6 @@ class TestCluster(abc.ABC):
     Abstract base class for all types of test clusters.
     """
     @staticmethod
-    @abc.abstractmethod
     @contextmanager
     def create(cluster_type, *args):
         """
@@ -22,6 +20,7 @@ class TestCluster(abc.ABC):
         Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
         """
         if cluster_type == 'PERFORMANCE_TEST':
+            from test_workflow.perf_test_cluster import PerfTestCluster
             test_cluster = PerfTestCluster(args[0], args[1], args[2], args[3])
         try:
             test_cluster.create()

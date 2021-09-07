@@ -2,8 +2,10 @@ import json
 import os
 import subprocess
 
+from test_workflow.test_cluster import TestCluster
 
-class PerfTestCluster():
+
+class PerfTestCluster(TestCluster):
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """

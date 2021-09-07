@@ -12,7 +12,7 @@ from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test_cluster import PerfTestCluster
 
 
-class TestPerfCluster(unittest.TestCase):
+class TestPerfTestCluster(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")

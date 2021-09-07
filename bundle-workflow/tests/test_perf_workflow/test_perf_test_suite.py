@@ -12,7 +12,7 @@ from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test_suite import PerfTestSuite
 
 
-class TestPerfSuite(unittest.TestCase):
+class TestPerfTestSuite(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
         self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
