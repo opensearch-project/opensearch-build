@@ -60,10 +60,10 @@ class TestBuilder(unittest.TestCase):
             "component", self.builder.git_repo
         )
 
-    def mock_os_walk(self, artifact_type):
-        if artifact_type == "/tmp/checked-out-component/artifacts/core-plugins":
+    def mock_os_walk(self, artifact_path):
+        if artifact_path.endswith("/checked-out-component/artifacts/core-plugins"):
             return [["/core-plugins", [], ["plugin1.zip"]]]
-        if artifact_type == "/tmp/checked-out-component/artifacts/maven":
+        if artifact_path.endswith("/checked-out-component/artifacts/maven"):
             return [("/maven", [], ["artifact1.jar"])]
         else:
             return []
