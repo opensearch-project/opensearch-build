@@ -24,10 +24,10 @@ components:
     ref: main
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-    ref: main
+    ref: "1.1"
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
+    ref: "1.1"
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: "1.1"
