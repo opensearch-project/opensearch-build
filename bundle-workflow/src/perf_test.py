@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.bundle_manifest)
 
-config = yaml.load(args.config, Loader=yaml.FullLoader)
+config = yaml.safe_load(args.config)
 
 
 def get_infra_repo_url():
