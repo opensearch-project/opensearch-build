@@ -1,0 +1,74 @@
+pipeline {
+    agent none
+    environment {
+        BUNDLE_TEST_ID = "${BUILD_NUMBER}"
+    }
+    tools {
+        jdk "JDK14"
+        maven "maven-3.8.2"
+    }
+    stages {
+        stage('Parameters') {
+            steps {
+                script {
+                    properties([
+                            parameters([
+                                    string(
+                                            defaultValue: '',
+                                            name: 's3_bucket',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'bundle_manifest',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'build_manifest',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'architecture',
+                                            trim: true
+                                    ),
+                            ])
+                    ])
+                }
+            }
+        }
+        stage('Choose Agent Node') {
+            steps {
+                script {
+                    if ("${architecture}" == 'x64') {
+                        agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
+                    } else if ("${architecture}" == 'arm64') {
+                        agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
+                    } else {
+                        agentLabel = ""
+                    }
+                }
+            }
+        }
+        stage('Run Integration Tests') {
+            agent {
+                node {
+                    label "${agentLabel}"
+                }
+            }
+            steps {
+                withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                    s3Download(file: 'tests/bundle_manifest.yml', bucket: "${ARTIFACT_BUCKET_NAME}", path: "$bundle_manifest", force:true)
+                    s3Download(file: 'tests/build_manifest.yml', bucket: "${ARTIFACT_BUCKET_NAME}", path: "$build_manifest", force:true)
+                }
+                sh "./bundle-workflow/test_integration.sh --bundle-manifest tests/bundle_manifest.yml --build-manifest tests/build_manifest.yml --test-manifest bundle-workflow/src/test_workflow/config/test_manifest.yml"
+            }
+            post() {
+                always {
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+}
