@@ -12,25 +12,25 @@ components:
     ref: main
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: main
+    ref: "1.1"
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: main
+    ref: "1.1"
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: main
+    ref: "1.1"
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-    ref: main
+    ref: "1.1"
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
+    ref: "1.1"
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: main
+    ref: "1.1"
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
@@ -45,4 +45,4 @@ components:
     ref: "1.1"
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
-    ref: main
+    ref: "1.1"

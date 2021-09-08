@@ -41,7 +41,8 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+# Install which to allow running of securityadmin.sh
+RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 
 # Create an opensearch user, group, and directory
 RUN groupadd -g $GID opensearch && \
@@ -50,7 +51,7 @@ RUN groupadd -g $GID opensearch && \
 
 # Prepare working directory
 COPY opensearch-*.tgz /tmp/opensearch/
-RUN tar -xzf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch
+RUN tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch && chmod 750 $OPENSEARCH_HOME/plugins/opensearch-security/tools/*
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
@@ -66,7 +67,8 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
-RUN yum update -y && yum install -y tar gzip shadow-utils && yum clean all
+# Install which to allow running of securityadmin.sh
+RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
