@@ -1,5 +1,4 @@
 import os
-import shutil
 import unittest
 from unittest.mock import call, patch
 
@@ -57,26 +56,3 @@ class DependencyInstallerTests(unittest.TestCase):
                 )
             ]
         )
-
-    def test_cleanup_for_dir(self):
-        dest_path = self.__get_test_dir()
-        os.makedirs(dest_path)
-        shutil.copy(self.manifest_filename, dest_path)
-        self.assertEqual(len(os.listdir(dest_path)), 1)
-        self.dependency_installer.cleanup(dest_path)
-        self.assertFalse(os.path.exists(dest_path))
-
-    def test_cleanup_for_file(self):
-        dest_dir = self.__get_test_dir()
-        dest_path = os.path.join(dest_dir, "opensearch-build-1.1.0.yml")
-        os.makedirs(dest_dir)
-        shutil.copy(self.manifest_filename, dest_path)
-        self.assertEqual(len(os.listdir(dest_dir)), 1)
-        self.dependency_installer.cleanup(dest_path)
-        self.assertFalse(os.path.exists(dest_path))
-        self.assertTrue(os.path.exists(dest_dir))
-        shutil.rmtree(dest_dir)
-        self.assertFalse(os.path.exists(dest_dir))
-
-    def __get_test_dir(self):
-        return os.path.join(os.path.dirname(__file__), "test-temp")

@@ -1,6 +1,4 @@
-import logging
 import os
-import shutil
 
 from aws.s3_bucket import S3Bucket
 
@@ -50,19 +48,6 @@ class DependencyInstaller:
         for dependency, version in dependency_dict.items():
             s3_path = f"{self.s3_build_location}/{dependency}-{version}.zip"
             s3_bucket.download_file(s3_path, custom_local_path)
-
-    def cleanup(self, local_path):
-        """
-        Provides functionality to clean up the downloaded contents in a maven local path or a custom path.
-        """
-        try:
-            if os.path.isfile(local_path) or os.path.islink(local_path):
-                os.unlink(local_path)
-            elif os.path.isdir(local_path):
-                shutil.rmtree(local_path)
-        except OSError as e:
-            logging.error(f"Failed to clean {local_path}. Reason: {e}")
-            raise
 
     def maven_local_path(self, dependency, version):
         return os.path.join(
