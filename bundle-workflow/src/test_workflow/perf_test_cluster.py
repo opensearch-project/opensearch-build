@@ -36,7 +36,7 @@ class PerfTestCluster(TestCluster):
                       f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
         self.params = ''.join(params_list) + role_params
 
-    def cluster_create(self):
+    def create_cluster(self):
         os.chdir(self.work_dir)
         command = f'cdk deploy {self.params} --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {os.getcwd()}')

@@ -21,7 +21,7 @@ class TestCluster(abc.ABC):
         """
         cluster = cls(*args)
         try:
-            cluster.cluster_create()
+            cluster.create_cluster()
             yield cluster.endpoint()
         finally:
             cluster.destroy()
