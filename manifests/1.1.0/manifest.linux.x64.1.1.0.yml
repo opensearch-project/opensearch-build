@@ -7,7 +7,7 @@ build:
   architecture: x64
 products:
   opensearch: 
-    opensearch-min: https://artifacts.opensearch.org/release-candidates/core/opensearch-dashboards/1.1.0/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
+    opensearch-min: https://artifacts.opensearch.org/release-candidates/core/opensearch/1.1.0/opensearch-min-1.1.0-linux-x64.tar.gz
     libs:
         - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knnlib-1.1.0.0-linux-x64.zip
     plugins:
