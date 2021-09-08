@@ -18,7 +18,7 @@ class TestPerfTestCluster(unittest.TestCase):
             os.path.join(os.path.dirname(__file__), "data")
         )
         self.manifest_filename = os.path.join(
-            self.data_path, "test_manifest.yaml"
+            self.data_path, "bundle_manifest.yaml"
         )
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.stack_name = 'stack'
@@ -42,7 +42,7 @@ class TestPerfTestCluster(unittest.TestCase):
             with patch("subprocess.check_call") as mock_check_call:
                 with patch("builtins.open", MagicMock()):
                     with patch("json.load", mock_file):
-                        self.perf_test_cluster.create()
+                        self.perf_test_cluster.cluster_create()
                         mock_chdir.assert_called_once_with('tools/cdk/mensor/single-node/')
                         self.assertEqual(mock_check_call.call_count, 1)
 

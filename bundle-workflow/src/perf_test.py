@@ -6,7 +6,7 @@ import yaml
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from system.working_directory import WorkingDirectory
-from test_workflow.test_cluster import TestCluster
+from test_workflow.perf_test_cluster import PerfTestCluster
 from test_workflow.perf_test_suite import PerfTestSuite
 
 """
@@ -39,7 +39,7 @@ for component in manifest.components:
         security = True
 
 with WorkingDirectory(current_workspace) as curdir:
-    with TestCluster.create('PERFORMANCE_TEST', manifest, config, args.stack, security) as test_cluster_endpoint:
+    with PerfTestCluster.create(manifest, config, args.stack, security) as test_cluster_endpoint:
         os.chdir(current_workspace)
         perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
         perf_test_suite.execute()

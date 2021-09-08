@@ -9,7 +9,6 @@ class PerfTestCluster(TestCluster):
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """
-
     def __init__(self, bundle_manifest, config, stack_name, security):
         self.manifest = bundle_manifest
         self.work_dir = 'tools/cdk/mensor/single-node/'
@@ -37,7 +36,7 @@ class PerfTestCluster(TestCluster):
                       f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
         self.params = ''.join(params_list) + role_params
 
-    def create(self):
+    def cluster_create(self):
         os.chdir(self.work_dir)
         command = f'cdk deploy {self.params} --outputs-file {self.output_file}'
         print(f'Executing "{command}" in {os.getcwd()}')
