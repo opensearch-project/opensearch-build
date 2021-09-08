@@ -12,10 +12,15 @@ from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test_suite import PerfTestSuite
 
 
-class TestPerfSuite(unittest.TestCase):
+class TestPerfTestSuite(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(__file__))
-        self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
+        self.data_path = os.path.realpath(
+            os.path.join(os.path.dirname(__file__), "data")
+        )
+        self.manifest_filename = os.path.join(
+            self.data_path, "bundle_manifest.yaml"
+        )
+        self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.endpoint = None
         self.perf_test_suite = PerfTestSuite(
             bundle_manifest=self.manifest, endpoint=None, security=False, current_workspace='current_workspace'

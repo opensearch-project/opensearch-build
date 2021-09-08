@@ -5,20 +5,26 @@
 # compatible open source license.
 
 import abc
+from contextlib import contextmanager
 
 
 class TestCluster(abc.ABC):
     """
     Abstract base class for all types of test clusters.
     """
-
-    @abc.abstractmethod
-    def create(self):
+    @classmethod
+    @contextmanager
+    def create(cls, *args):
         """
         Set up the cluster. When this method returns, the cluster must be available to take requests.
         Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
         """
-        pass
+        cluster = cls(*args)
+        try:
+            cluster.create_cluster()
+            yield cluster.endpoint()
+        finally:
+            cluster.destroy()
 
     @abc.abstractmethod
     def destroy(self, test_recorder):

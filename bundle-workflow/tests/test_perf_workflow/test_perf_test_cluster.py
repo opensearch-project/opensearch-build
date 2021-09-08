@@ -12,13 +12,13 @@ from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test_cluster import PerfTestCluster
 
 
-class TestPerfCluster(unittest.TestCase):
+class TestPerfTestCluster(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")
         )
         self.manifest_filename = os.path.join(
-            self.data_path, "test_manifest.yaml"
+            self.data_path, "bundle_manifest.yaml"
         )
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.stack_name = 'stack'
@@ -42,7 +42,7 @@ class TestPerfCluster(unittest.TestCase):
             with patch("subprocess.check_call") as mock_check_call:
                 with patch("builtins.open", MagicMock()):
                     with patch("json.load", mock_file):
-                        self.perf_test_cluster.create()
+                        self.perf_test_cluster.create_cluster()
                         mock_chdir.assert_called_once_with('tools/cdk/mensor/single-node/')
                         self.assertEqual(mock_check_call.call_count, 1)
 
