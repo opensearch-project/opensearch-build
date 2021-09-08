@@ -9,7 +9,7 @@ components:
     ref: 1.x
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: main
+    ref: "1.1"
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
