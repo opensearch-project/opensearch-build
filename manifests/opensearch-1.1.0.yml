@@ -12,7 +12,7 @@ components:
     ref: main
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: main
+    ref: "1.1"
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: main
