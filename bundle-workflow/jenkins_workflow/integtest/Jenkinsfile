@@ -27,12 +27,12 @@ pipeline {
                                     ),
                                     string(
                                             defaultValue: '',
-                                            name: 'architecture',
+                                            name: 'test_run_id',
                                             trim: true
                                     ),
                                     string(
                                             defaultValue: '',
-                                            name: 'test_run_id',
+                                            name: 'architecture',
                                             trim: true
                                     ),
                             ])
