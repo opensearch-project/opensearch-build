@@ -6,22 +6,6 @@ build:
   platform: linux
   architecture: x64
 products:
-#  opensearch: 
-#    opensearch-min: https://artifacts.opensearch.org/release-candidates/core/opensearch/1.1.0/opensearch-min-1.1.0-linux-x64.tar.gz
-#    libs:
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knnlib-1.1.0.0-linux-x64.zip
-#    plugins:
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-sql-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-alerting-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-job-scheduler-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-security-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-performance-analyzer-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-index-management-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knn-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-anomaly-detection-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-reports-scheduler-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-asynchronous-search-1.1.0.0.zip
-#        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-notebooks-1.1.0.0.zip
   opensearch-dashboards: 
     opensearch-dashboards-min: https://artifacts.opensearch.org/releases/core/opensearch-dashboards/1.0.0/opensearch-dashboards-min-1.0.0-linux-x64.tar.gz
     plugins:
