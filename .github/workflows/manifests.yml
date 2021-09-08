@@ -22,42 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
+      JDK_VERSION: 14
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
     steps:
 
-      # HACK: build OpenSearch and common-utils dependencies until working Maven
-      - name: Set Up JDK ${{ matrix.java }}
-        if: ${{ matrix.manifest == 'manifests/opensearch-1.1.0.yml' }}
+      - uses: actions/checkout@v2
+      - name: Set Up JDK ${{ env.JDK_VERSION }}
         uses: actions/setup-java@v1
         with:
-          java-version: 14
-      - name: Checkout OpenSearch
-        if: ${{ matrix.manifest == 'manifests/opensearch-1.1.0.yml' }}
-        uses: actions/checkout@v2
-        with:
-          repository: 'opensearch-project/OpenSearch'
-          path: OpenSearch
-          ref: '1.x'
-      - name: Build OpenSearch
-        if: ${{ matrix.manifest == 'manifests/opensearch-1.1.0.yml' }}
-        working-directory: ./OpenSearch
-        run: ./gradlew publishToMavenLocal
-      - name: Checkout common-utils
-        if: ${{ matrix.manifest == 'manifests/opensearch-1.1.0.yml' }}
-        uses: actions/checkout@v2
-        with:
-          ref: 'main'
-          repository: 'opensearch-project/common-utils'
-          path: common-utils
-      - name: Build common-utils
-        if: ${{ matrix.manifest == 'manifests/opensearch-1.1.0.yml' }}
-        working-directory: ./common-utils
-        run: ./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT
-
-      # manifest CI        
-      - uses: actions/checkout@v2
+          java-version: ${{ env.JDK_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v2
         with:

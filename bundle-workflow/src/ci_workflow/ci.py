@@ -9,6 +9,8 @@ from ci_workflow.check_gradle_dependencies_open_search import (
     CheckGradlePluginDependenciesOpenSearchVersion)
 from ci_workflow.check_gradle_properties_version import \
     CheckGradlePropertiesVersion
+from ci_workflow.check_gradle_publish_to_maven_local import \
+    CheckGradlePublishToMavenLocal
 
 """
 This class is responsible for sanity checking the OpenSearch bundle.
@@ -20,6 +22,7 @@ class Ci:
         "gradle:properties:version": CheckGradlePropertiesVersion,
         "gradle:dependencies:opensearch.version": CheckGradleDependenciesOpenSearchVersion,
         "gradle:plugin.dependencies:opensearch.version": CheckGradlePluginDependenciesOpenSearchVersion,
+        "gradle:publish": CheckGradlePublishToMavenLocal,
     }
 
     class InvalidCheckError(Exception):
