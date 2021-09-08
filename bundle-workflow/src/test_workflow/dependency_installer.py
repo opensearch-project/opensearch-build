@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 
@@ -8,6 +9,8 @@ class DependencyInstaller:
     """
     Provides a dependency installer for the test suites.
     """
+
+    ARTIFACT_S3_BUCKET = "artifact-bucket-stack-buildbucket-9omh0hnpg12q"
 
     def __init__(self, build):
         self.build_id = build.id
@@ -28,13 +31,10 @@ class DependencyInstaller:
         :param dependency_dict: list of dependency names with version for which the maven artifacts need to be downloaded.
         Example: {'opensearch-job-scheduler':'1.1.0.0', 'opensearch-core':'1.1.0'}
         """
-        s3_bucket = S3Bucket(self.s3_maven_location)
+        s3_bucket = S3Bucket(self.ARTIFACT_S3_BUCKET)
         for dependency, version in dependency_dict.items():
-            s3_path = f"{dependency}/{version}"
-            maven_local_path = os.path.join(
-                os.path.expanduser("~"),
-                f".m2/repository/org/opensearch/{dependency}/{version}/",
-            )
+            s3_path = f"{self.s3_maven_location}/{dependency}/{version}"
+            maven_local_path = self.maven_local_path(dependency, version)
             s3_bucket.download_folder(s3_path, maven_local_path)
 
     def install_build_dependencies(self, dependency_dict, custom_local_path):
@@ -46,9 +46,9 @@ class DependencyInstaller:
         Example: {'opensearch-job-scheduler':'1.1.0.0'}
         :param custom_local_path: the path where the downloaded dependencies need to copied.
         """
-        s3_bucket = S3Bucket(self.s3_build_location)
+        s3_bucket = S3Bucket(self.ARTIFACT_S3_BUCKET)
         for dependency, version in dependency_dict.items():
-            s3_path = f"{dependency}-{version}.zip"
+            s3_path = f"{self.s3_build_location}/{dependency}-{version}.zip"
             s3_bucket.download_file(s3_path, custom_local_path)
 
     def cleanup(self, local_path):
@@ -61,5 +61,11 @@ class DependencyInstaller:
             elif os.path.isdir(local_path):
                 shutil.rmtree(local_path)
         except OSError as e:
-            print(f"Failed to clean {local_path}. Reason: {e}")
+            logging.error(f"Failed to clean {local_path}. Reason: {e}")
             raise
+
+    def maven_local_path(self, dependency, version):
+        return os.path.join(
+            os.path.expanduser("~"),
+            f".m2/repository/org/opensearch/{dependency}/{version}/",
+        )
