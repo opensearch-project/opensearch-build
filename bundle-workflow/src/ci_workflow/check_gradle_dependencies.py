@@ -33,6 +33,8 @@ class CheckGradleDependencies(Check):
         stack = ["root"]
         props = PropertiesFile("")
         for line in lines.split("\n"):
+            # e.g. "|    +--- org.opensearch:opensearch-core:1.1.0-SNAPSHOT"
+            # see job_scheduler_dependencies.txt in tests for an example
             match = re.search(r"---\s(.*):([0-9,\w,.-]*)[\s]*", line)
             if match:
                 levels = line.count("   ") + line.count("---")
