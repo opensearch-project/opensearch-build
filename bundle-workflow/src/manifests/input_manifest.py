@@ -20,8 +20,10 @@ components:
     ref: git ref to build (sha, branch, or tag)
     working_directory: optional relative directory to run commands in
     checks: CI checks
-      - gradle.properties.version: check version of plugin
-      - gradle.properties.opensearch.version: check version of OpenSearch dependency
+      - gradle:properties:version: check version of component
+      - gradle:dependencies:opensearch.version: check dependency on OpenSearch
+      - gradle:plugin.dependencies:opensearch.version: check plugin dependency on OpenSearch
+      - gradle:publish: check that publish to maven local works (and publishes to maven local)
   - ...
 """
 
