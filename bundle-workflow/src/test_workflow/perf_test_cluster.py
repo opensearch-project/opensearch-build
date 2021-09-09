@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import subprocess
 
@@ -39,12 +40,12 @@ class PerfTestCluster(TestCluster):
     def create_cluster(self):
         os.chdir(self.work_dir)
         command = f'cdk deploy {self.params} --outputs-file {self.output_file}'
-        print(f'Executing "{command}" in {os.getcwd()}')
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
         with open(self.output_file, 'r') as read_file:
             load_output = json.load(read_file)
         self.ip_address = load_output[self.stack_name]['PrivateIp']
-        print('Private IP:', self.ip_address)
+        logging.info('Private IP:', self.ip_address)
 
     def endpoint(self):
         self.cluster_endpoint = self.ip_address
@@ -57,5 +58,5 @@ class PerfTestCluster(TestCluster):
     def destroy(self):
         os.chdir(self.work_dir)
         command = f'cdk destroy {self.params} --force'
-        print(f'Executing "{command}" in {os.getcwd()}')
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
