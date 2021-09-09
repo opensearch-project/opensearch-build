@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import ANY, MagicMock, call, patch
 
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.bwc_test_suite import BwcTestSuite
+from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 
 
 class TestBwcSuite(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestBwcSuite(unittest.TestCase):
         self.assertEqual(process_ret.exception.returncode, 127)
         self.assertEqual(process_ret.exception.cmd, "./bwctest.sh")
 
-    @patch("test_workflow.bwc_test_suite.TestComponent")
+    @patch("test_workflow.bwc_test.bwc_test_suite.TestComponent")
     def test_component_bwctest(self, test_component_mock):
         component = self.manifest.components[1]
         self.bwc_test_suite.run_tests = MagicMock()

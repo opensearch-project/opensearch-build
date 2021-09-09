@@ -6,8 +6,8 @@ import yaml
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from system.working_directory import WorkingDirectory
-from test_workflow.perf_test_cluster import PerfTestCluster
-from test_workflow.perf_test_suite import PerfTestSuite
+from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
+from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 """
     Entry point for Performance Test with bundle manifest, config file containing the required arguments for running

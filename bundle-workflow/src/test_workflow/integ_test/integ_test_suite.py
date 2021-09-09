@@ -12,7 +12,7 @@ from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
 from paths.tree_walker import walk
 from system.execute import execute
-from test_workflow.local_test_cluster import LocalTestCluster
+from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder import TestRecorder
 
 
