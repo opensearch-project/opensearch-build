@@ -15,11 +15,6 @@ pipeline {
                             parameters([
                                     string(
                                             defaultValue: '',
-                                            name: 's3_bucket',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
                                             name: 'bundle_manifest',
                                             trim: true
                                     ),
