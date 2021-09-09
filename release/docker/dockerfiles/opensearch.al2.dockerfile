@@ -64,8 +64,6 @@ FROM amazonlinux:2
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
-ARG DISABLE_INSTALL_DEMO_CONFIG=true
-ARG DISABLE_SECURITY_PLUGIN=false
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -89,7 +87,11 @@ RUN cp -v plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
 # Change user
 USER $UID
 
-# Setup OpenSearch, disable security demo installation during image build, and allow user to disable during startup of the container
+# Setup OpenSearch
+# Disable security demo installation during image build, and allow user to disable during startup of the container
+# Enable security plugin during image build, and allow user to disable during startup of the container
+ARG DISABLE_INSTALL_DEMO_CONFIG=true
+ARG DISABLE_SECURITY_PLUGIN=false
 RUN ./opensearch-onetime-setup.sh
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)

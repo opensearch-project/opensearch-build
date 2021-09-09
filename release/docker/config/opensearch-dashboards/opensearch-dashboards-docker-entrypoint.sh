@@ -180,7 +180,7 @@ done
 # Files created at run-time should be group-writable, for Openshift's sake.
 umask 0002
 
-##Security Plugin
+##Security Dashboards Plugin
 SECURITY_DASHBOARDS_PLUGIN="securityDashboards"
 if [ -d "$OPENSEARCH_DASHBOARDS_HOME/plugins/$SECURITY_DASHBOARDS_PLUGIN" ]; then
 

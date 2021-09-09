@@ -23,6 +23,7 @@ if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
 
     if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
         echo "Disable OpenSearch Security Plugin"
+        sed -i '/plugins.security.disabled/d' $OPENSEARCH_HOME/config/opensearch.yml
         echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
     else
         echo "Enable OpenSearch Security Plugin"
