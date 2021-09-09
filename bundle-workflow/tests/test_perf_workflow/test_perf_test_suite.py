@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.perf_test_suite import PerfTestSuite
+from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 
 class TestPerfTestSuite(unittest.TestCase):

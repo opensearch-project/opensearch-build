@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import ANY, MagicMock, call, patch
 
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.bwc_test_suite import BwcTestSuite
+from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 
 
 class TestBwcSuite(unittest.TestCase):

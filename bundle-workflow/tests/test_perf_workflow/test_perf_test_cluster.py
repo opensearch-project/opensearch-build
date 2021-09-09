@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.perf_test_cluster import PerfTestCluster
+from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
 
 
 class TestPerfTestCluster(unittest.TestCase):
