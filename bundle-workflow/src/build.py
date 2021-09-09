@@ -8,10 +8,10 @@
 
 import logging
 import os
-import uuid
 
 from build_workflow.build_args import BuildArgs
 from build_workflow.build_recorder import BuildRecorder
+from build_workflow.build_target import BuildTarget
 from build_workflow.builder import Builder
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
@@ -21,28 +21,28 @@ from system.temporary_directory import TemporaryDirectory
 
 args = BuildArgs()
 console.configure(level=args.logging_level)
-
-arch = current_arch()
 manifest = InputManifest.from_file(args.manifest)
-output_dir = os.path.join(os.getcwd(), "artifacts")
-os.makedirs(output_dir, exist_ok=True)
-build_id = os.getenv("OPENSEARCH_BUILD_ID", uuid.uuid4().hex)
 
 with TemporaryDirectory(keep=args.keep) as work_dir:
     logging.info(f"Building in {work_dir}")
 
     os.chdir(work_dir)
 
-    build_recorder = BuildRecorder(
-        build_id,
-        output_dir,
-        manifest.build.name,
-        manifest.build.version,
-        arch,
-        args.snapshot,
+    target = BuildTarget(
+        name=manifest.build.name,
+        version=manifest.build.version,
+        snapshot=args.snapshot,
+        arch=current_arch(),
+        output_dir=os.path.join(os.getcwd(), "artifacts"),
     )
 
-    logging.info(f"Building {manifest.build.name} ({arch}) into {output_dir}")
+    os.makedirs(target.output_dir, exist_ok=True)
+
+    build_recorder = BuildRecorder(target)
+
+    logging.info(
+        f"Building {manifest.build.name} ({target.arch}) into {target.output_dir}"
+    )
 
     for component in manifest.components:
 
@@ -60,7 +60,7 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         try:
             builder = Builder(component.name, repo, build_recorder)
-            builder.build(manifest.build.version, arch, args.snapshot)
+            builder.build(target)
             builder.export_artifacts()
         except:
             logging.error(
@@ -68,6 +68,6 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
             )
             raise
 
-    build_recorder.write_manifest(output_dir)
+    build_recorder.write_manifest()
 
 logging.info("Done.")

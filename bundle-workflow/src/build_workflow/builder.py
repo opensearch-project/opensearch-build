@@ -29,11 +29,11 @@ class Builder:
         self.build_recorder = build_recorder
         self.output_path = "artifacts"
 
-    def build(self, version, arch, snapshot):
+    def build(self, target):
         build_script = ScriptFinder.find_build_script(
             self.component_name, self.git_repo.working_directory
         )
-        build_command = f"{build_script} -v {version} -a {arch} -s {str(snapshot).lower()} -o {self.output_path}"
+        build_command = f"{build_script} -v {target.version} -a {target.arch} -s {str(target.snapshot).lower()} -o {self.output_path}"
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 

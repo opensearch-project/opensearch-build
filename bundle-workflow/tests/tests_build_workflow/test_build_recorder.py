@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 import yaml
 
 from build_workflow.build_recorder import BuildRecorder
+from build_workflow.build_target import BuildTarget
 from manifests.build_manifest import BuildManifest
 
 
@@ -19,7 +20,14 @@ class TestBuildRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.build_recorder = BuildRecorder(
-            "1", "output_dir", "OpenSearch", "1.1.0", "x64", False
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.1.0",
+                arch="x64",
+                snapshot=False,
+            )
         )
 
     @patch("shutil.copyfile")
@@ -234,7 +242,8 @@ class TestBuildRecorder(unittest.TestCase):
 
     def test_write_manifest(self):
         with tempfile.TemporaryDirectory() as dest_dir:
-            self.build_recorder.write_manifest(dest_dir)
+            self.build_recorder.target.output_dir = dest_dir
+            self.build_recorder.write_manifest()
             manifest_path = os.path.join(dest_dir, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = self.build_recorder.get_manifest().to_dict()
