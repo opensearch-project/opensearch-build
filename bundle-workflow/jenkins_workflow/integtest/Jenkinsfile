@@ -50,6 +50,13 @@ pipeline {
                     } else {
                         error("Unknown CPU architecture is provided")
                     }
+                    post() {
+                        always {
+                            sh "ls -la"
+                            sh "pwd"
+                            cleanWs disableDeferredWipeout: false, deleteDirs: true
+                        }
+                    }
                 }
             }
         }
