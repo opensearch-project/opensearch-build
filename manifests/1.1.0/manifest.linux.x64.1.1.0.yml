@@ -7,7 +7,7 @@ build:
   architecture: x64
 products:
   opensearch-dashboards: 
-    opensearch-dashboards-min: https://artifacts.opensearch.org/releases/core/opensearch-dashboards/1.0.0/opensearch-dashboards-min-1.0.0-linux-x64.tar.gz
+    opensearch-dashboards-min: https://artifacts.opensearch.org/releases/core/opensearch-dashboards/1.1.0/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
     plugins:
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/query-workbench-dashboards-1.1.0.0.zip
         - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.1.0.0.zip
