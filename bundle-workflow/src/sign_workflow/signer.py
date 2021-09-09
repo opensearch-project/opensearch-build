@@ -23,9 +23,9 @@ class Signer:
     ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz"]
 
     def __init__(self):
-        self.git_repo = GitRepository(self.get_repo_url(), "HEAD")
-        self.git_repo.execute("./bootstrap", subdirname="src")
-        self.git_repo.execute("rm config.cfg", subdirname="src")
+        self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")
+        self.git_repo.execute("./bootstrap")
+        self.git_repo.execute("rm config.cfg")
 
     def sign_artifacts(self, artifacts, basepath):
         for artifact in artifacts:
@@ -62,7 +62,7 @@ class Signer:
             "-p",
             "pgp",
         ]
-        self.git_repo.execute(" ".join(signing_cmd), subdirname="src")
+        self.git_repo.execute(" ".join(signing_cmd))
 
     def verify(self, filename):
         verify_cmd = ["gpg", "--verify-files", filename]

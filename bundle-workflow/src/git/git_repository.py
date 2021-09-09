@@ -17,7 +17,7 @@ class GitRepository:
     Clients can obtain the actual commit ID by querying the "sha" attribute, and the temp directory name with "dir".
     """
 
-    def __init__(self, url, ref, directory=None):
+    def __init__(self, url, ref, directory=None, working_subdirectory=None):
         self.url = url
         self.ref = ref
         if directory is None:
@@ -29,29 +29,38 @@ class GitRepository:
             os.makedirs(self.dir, exist_ok=False)
 
         # Check out the repository
-        self.execute("git init", True)
-        self.execute(f"git remote add origin {self.url}", True)
-        self.execute(f"git fetch --depth 1 origin {self.ref}", True)
-        self.execute("git checkout FETCH_HEAD", True)
-        self.sha = (
-            subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.dir)
-            .decode()
-            .strip()
-        )
+        self.working_subdirectory = working_subdirectory
+        self.execute_silent("git init", self.dir)
+        self.execute_silent(f"git remote add origin {self.url}", self.dir)
+        self.execute_silent(f"git fetch --depth 1 origin {self.ref}", self.dir)
+        self.execute_silent("git checkout FETCH_HEAD", self.dir)
+        self.sha = self.output("git rev-parse HEAD", self.dir).decode().strip()
         logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
 
-    def execute(self, command, silent=False, subdirname=None):
-        dirname = self.dir
-        if subdirname:
-            dirname = os.path.join(self.dir, subdirname)
-        logging.info(f'Executing "{command}" in {dirname}')
-        if silent:
-            subprocess.check_call(
-                command,
-                cwd=dirname,
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
+    @property
+    def working_directory(self):
+        if self.working_subdirectory:
+            return os.path.join(self.dir, self.working_subdirectory)
         else:
-            subprocess.check_call(command, cwd=dirname, shell=True)
+            return self.dir
+
+    def execute_silent(self, command, cwd=None):
+        cwd = cwd or self.working_directory
+        logging.info(f'Executing "{command}" in {cwd}')
+        subprocess.check_call(
+            command,
+            cwd=cwd,
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+    def output(self, command, cwd=None):
+        cwd = cwd or self.working_directory
+        logging.info(f'Executing "{command}" in {cwd}')
+        return subprocess.check_output(command, cwd=cwd, shell=True)
+
+    def execute(self, command, cwd=None):
+        cwd = cwd or self.working_directory
+        logging.info(f'Executing "{command}" in {cwd}')
+        subprocess.check_call(command, cwd=cwd, shell=True)

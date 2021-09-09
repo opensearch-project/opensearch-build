@@ -7,7 +7,6 @@ from sign_workflow.signer import Signer
 class TestSigner(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
     def test_accepted_file_types(self, git_repo):
-
         artifacts = [
             "bad-xml.xml",
             "the-jar.jar",
@@ -32,3 +31,13 @@ class TestSigner(unittest.TestCase):
         signer.sign = MagicMock()
         signer.sign_artifacts(artifacts, "/path")
         self.assertEqual(signer.sign.call_args_list, expected)
+
+    @patch(
+        "sign_workflow.signer.Signer.get_repo_url",
+        return_value="https://github.com/opensearch-project/.github",
+    )
+    @patch("sign_workflow.signer.GitRepository.execute")
+    def test_signer_checks_out_tool(self, mock_execute, mock_signer):
+        Signer()
+        self.assertEqual(mock_execute.call_count, 2)
+        mock_execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])

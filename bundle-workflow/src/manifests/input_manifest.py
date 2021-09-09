@@ -43,3 +43,4 @@ class InputManifest(Manifest):
             self.name = data["name"]
             self.repository = data["repository"]
             self.ref = data["ref"]
+            self.working_directory = data.get("working_directory", None)
