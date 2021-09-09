@@ -12,7 +12,7 @@ from zipfile import ZipFile
 import yaml
 
 from manifests.build_manifest import BuildManifest
-from system.properties_file import PropertiesFile  # type: ignore
+from system.properties_file import PropertiesFile
 
 
 class BuildRecorder:

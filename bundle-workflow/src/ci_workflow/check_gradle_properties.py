@@ -5,7 +5,7 @@
 # compatible open source license.
 
 from ci_workflow.check import Check
-from system.properties_file import PropertiesFile  # type: ignore
+from system.properties_file import PropertiesFile
 
 
 class CheckGradleProperties(Check):

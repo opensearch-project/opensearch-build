@@ -27,9 +27,14 @@ class PropertiesFile(Properties):
                 else f"Expected to have {key}=any of {expected}, but none was found."
             )
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         super().__init__(self)
-        self.load(data)
+        if type(data) is str:
+            self.load(data)
+        elif type(data) is dict:
+            self.properties = data
+        elif data is not None:
+            raise TypeError()
 
     def get_value(self, key, default_value=None):
         try:

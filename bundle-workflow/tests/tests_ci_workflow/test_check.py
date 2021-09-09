@@ -5,14 +5,16 @@
 # compatible open source license.
 
 import unittest
-from unittest.mock import MagicMock, PropertyMock
-from manifests.input_manifest import InputManifest
+from unittest.mock import MagicMock
 
 from ci_workflow.check import Check
+from manifests.input_manifest import InputManifest
+
 
 class DummyTestCheck(Check):
-    def check():
+    def check(self):
         pass
+
 
 class TestCheck(unittest.TestCase):
     def setUp(self):
@@ -31,6 +33,7 @@ class TestCheck(unittest.TestCase):
         self.assertEqual(self.check.opensearch_version, "1.1.0")
         self.assertEqual(self.check.component_version, "1.1.0.0")
 
+
 class TestCheckSnapshot(unittest.TestCase):
     def setUp(self):
         self.check = DummyTestCheck(
@@ -46,14 +49,13 @@ class TestCheckSnapshot(unittest.TestCase):
         self.assertEqual(self.check.opensearch_version, "1.1.0-SNAPSHOT")
         self.assertEqual(self.check.component_version, "1.1.0.0-SNAPSHOT")
 
+
 class TestCheckOpenSearch(unittest.TestCase):
     def setUp(self):
         self.check = DummyTestCheck(
-            component=InputManifest.Component({ 
-                "name": "OpenSearch",
-                "repository": "",
-                "ref": "",
-            }),
+            component=InputManifest.Component(
+                {"name": "OpenSearch", "repository": "", "ref": ""}
+            ),
             git_repo=MagicMock(),
             version="1.1.0",
             arch="x86",

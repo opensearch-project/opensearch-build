@@ -8,9 +8,6 @@ from ci_workflow.check import Check
 
 
 class CheckGradlePublishToMavenLocal(Check):
-    def __init__(self, component, git_repo, version, arch, snapshot):
-        super().__init__(component, git_repo, version, arch, snapshot)
-
     def check(self):
         cmd = " ".join(
             [
@@ -20,4 +17,4 @@ class CheckGradlePublishToMavenLocal(Check):
             ]
         )
 
-        self.git_repo.output(cmd)
+        self.git_repo.execute(cmd)

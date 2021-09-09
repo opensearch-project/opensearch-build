@@ -13,6 +13,7 @@ from paths.script_finder import ScriptFinder
 
 class TestScriptFinder(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         # use root of this repo as the default git checkout directory
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")
@@ -63,9 +64,9 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_build_script_does_not_exist(self, *mocks):
-        with self.assertRaises(
+        with self.assertRaisesRegex(
             ScriptFinder.ScriptNotFoundError,
-            msg="Could not find build.sh script. Looked in .*",
+            "Could not find build.sh script. Looked in .*",
         ):
             ScriptFinder.find_build_script("anything", self.component_without_scripts)
 
@@ -111,9 +112,9 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_integ_test_script_does_not_exist(self, *mocks):
-        with self.assertRaises(
+        with self.assertRaisesRegex(
             ScriptFinder.ScriptNotFoundError,
-            msg="Could not find integtest.sh script. Looked in .*",
+            "Could not find integtest.sh script. Looked in .*",
         ):
             ScriptFinder.find_integ_test_script(
                 "anything", self.component_without_scripts
@@ -137,8 +138,8 @@ class TestScriptFinder(unittest.TestCase):
 
     @patch("os.path.exists", return_value=False)
     def test_find_install_script_does_not_exist(self, *mocks):
-        with self.assertRaises(
+        with self.assertRaisesRegex(
             ScriptFinder.ScriptNotFoundError,
-            msg="Could not find install.sh script. Looked in .*",
+            "Could not find install.sh script. Looked in .*",
         ):
             ScriptFinder.find_install_script("anything")
