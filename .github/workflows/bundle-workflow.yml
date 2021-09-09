@@ -1,6 +1,12 @@
 name: bundle-workflow
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - bundle-workflow/**
+  pull_request:
+    paths:
+      - bundle-workflow/**
 
 jobs:
   test:
