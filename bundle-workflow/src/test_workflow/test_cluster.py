@@ -22,7 +22,7 @@ class TestCluster(abc.ABC):
         cluster = cls(*args)
         try:
             cluster.create_cluster()
-            yield cluster.endpoint()
+            yield cluster.endpoint(), cluster.port()
         finally:
             cluster.destroy()
 

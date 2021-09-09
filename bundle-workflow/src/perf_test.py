@@ -39,7 +39,7 @@ for component in manifest.components:
         security = True
 
 with WorkingDirectory(current_workspace) as curdir:
-    with PerfTestCluster.create(manifest, config, args.stack, security) as test_cluster_endpoint:
+    with PerfTestCluster.create(manifest, config, args.stack, security) as (test_cluster_endpoint, test_cluster_port):
         os.chdir(current_workspace)
         perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
         perf_test_suite.execute()

@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import itertools
 import logging
 import os
 import subprocess
@@ -13,7 +12,6 @@ import urllib.request
 
 import requests
 
-from paths.tree_walker import walk
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 
 
@@ -29,7 +27,7 @@ class LocalTestCluster(TestCluster):
         self.security_enabled = security_enabled
         self.process = None
 
-    def create(self):
+    def create_cluster(self):
         self.download()
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
@@ -52,20 +50,11 @@ class LocalTestCluster(TestCluster):
     def port(self):
         return 9200
 
-    def destroy(self, test_recorder):
+    def destroy(self):
         if self.process is None:
             logging.info("Local test cluster is not started")
             return
         self.terminate_process()
-        test_recorder.record_cluster_logs(
-            itertools.chain(
-                [
-                    (os.path.realpath(self.stdout.name), "stdout"),
-                    (os.path.realpath(self.stderr.name), "stderr"),
-                ],
-                walk(os.path.join(self.install_dir, "logs")),
-            )
-        )
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
