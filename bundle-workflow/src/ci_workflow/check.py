@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 from abc import ABC, abstractmethod
 
 
@@ -23,4 +22,4 @@ class Check(ABC):
 
     @abstractmethod
     def check(self):
-        logging.info(f"Checking {self.component.name}, {self.__class__.__name__}.")
+        pass
