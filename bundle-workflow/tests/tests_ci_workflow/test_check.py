@@ -33,6 +33,7 @@ class TestCheck(unittest.TestCase):
         self.assertEqual(self.check.opensearch_version, "1.1.0")
         self.assertEqual(self.check.component_version, "1.1.0.0")
 
+
 class TestCheckSnapshot(unittest.TestCase):
     def setUp(self):
         self.check = DummyTestCheck(
