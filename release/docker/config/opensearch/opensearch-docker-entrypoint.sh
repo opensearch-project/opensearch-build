@@ -78,9 +78,9 @@ export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEAR
 SECURITY_PLUGIN="opensearch-security"
 if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
     if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
-        echo "Disabling Install Demo Config for OpenSearch Security Plugin"
+        echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
     else
-        echo "Enabling Install Demo Config for OpenSearch Security Plugin"
+        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
         bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
     fi
 
