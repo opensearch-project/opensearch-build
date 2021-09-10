@@ -37,11 +37,14 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         logging.info(f"Sanity checking {component.name}")
         repo = GitRepository(
-            component.repository, component.ref, os.path.join(work_dir, component.name)
+            component.repository,
+            component.ref,
+            os.path.join(work_dir, component.name),
+            component.working_directory,
         )
 
         try:
-            ci = Ci(component.name, repo)
+            ci = Ci(component, repo)
             ci.check(manifest.build.version, arch, args.snapshot)
         except:
             logging.error(

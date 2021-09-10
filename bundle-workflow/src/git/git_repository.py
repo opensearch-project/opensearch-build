@@ -8,6 +8,7 @@ import logging
 import os
 import subprocess
 import tempfile
+from pathlib import Path
 
 
 class GitRepository:
@@ -34,7 +35,7 @@ class GitRepository:
         self.execute_silent(f"git remote add origin {self.url}", self.dir)
         self.execute_silent(f"git fetch --depth 1 origin {self.ref}", self.dir)
         self.execute_silent("git checkout FETCH_HEAD", self.dir)
-        self.sha = self.output("git rev-parse HEAD", self.dir).decode().strip()
+        self.sha = self.output("git rev-parse HEAD", self.dir)
         logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
 
     @property
@@ -58,9 +59,15 @@ class GitRepository:
     def output(self, command, cwd=None):
         cwd = cwd or self.working_directory
         logging.info(f'Executing "{command}" in {cwd}')
-        return subprocess.check_output(command, cwd=cwd, shell=True)
+        return subprocess.check_output(command, cwd=cwd, shell=True).decode().strip()
 
     def execute(self, command, cwd=None):
         cwd = cwd or self.working_directory
         logging.info(f'Executing "{command}" in {cwd}')
         subprocess.check_call(command, cwd=cwd, shell=True)
+
+    def path(self, subdirname=None):
+        dirname = self.dir
+        if subdirname:
+            dirname = os.path.join(self.dir, subdirname)
+        return Path(dirname)

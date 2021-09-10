@@ -94,5 +94,5 @@ class TestGitRepositoryWithWorkingDir(unittest.TestCase):
 
         self.assertEqual(repo.working_directory, os.path.join(repo.dir, "ISSUE_TEMPLATE"))
 
-        pwd = repo.output("pwd").decode().strip()
+        pwd = repo.output("pwd")
         self.assertEqual(pwd, os.path.join(repo.dir, "ISSUE_TEMPLATE"))

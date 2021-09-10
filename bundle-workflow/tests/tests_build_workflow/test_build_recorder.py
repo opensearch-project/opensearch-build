@@ -96,7 +96,7 @@ class TestBuildRecorder(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.file"
             )
         self.assertEqual(
-            "Artifact invalid.file is invalid: not a zip file.",
+            "Artifact invalid.file is invalid. Not a zip file.",
             context.exception.__str__(),
         )
 
@@ -109,7 +109,7 @@ class TestBuildRecorder(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.zip"
             )
         self.assertEqual(
-            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0.",
+            "Artifact invalid.zip is invalid. Expected filename to include 1.1.0.0.",
             context.exception.__str__(),
         )
 
@@ -126,7 +126,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but none was found.",
+                "Artifact valid-1.1.0.0.zip is invalid. Expected to have version='1.1.0.0', but none was found.",
                 context.exception.__str__(),
             )
 
@@ -143,7 +143,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but was 1.2.3.4.",
+                "Artifact valid-1.1.0.0.zip is invalid. Expected to have version='1.1.0.0', but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 
@@ -175,7 +175,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "maven", "../file1.zip", "valid.jar"
                 )
             self.assertEqual(
-                "Artifact valid.jar is invalid: expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was 1.2.3.4.",
+                "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 

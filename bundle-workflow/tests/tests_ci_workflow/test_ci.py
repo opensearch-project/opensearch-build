@@ -15,7 +15,7 @@ class TestCi(unittest.TestCase):
         self.ci = Ci("component", MagicMock(dir="/tmp/checked-out-component"))
 
     def test_ci(self):
-        self.assertEqual(self.ci.component_name, "component")
+        self.assertEqual(self.ci.component, "component")
 
     def test_check(self):
         pass
