@@ -185,7 +185,7 @@ SECURITY_DASHBOARDS_PLUGIN="securityDashboards"
 if [ -d "$OPENSEARCH_DASHBOARDS_HOME/plugins/$SECURITY_DASHBOARDS_PLUGIN" ]; then
 
     if [ "$DISABLE_SECURITY_DASHBOARDS_PLUGIN" = "true" ]; then
-        echo "Disable OpenSearch Security Dashboards Plugin"
+        echo "Disabling OpenSearch Security Dashboards Plugin"
         ./bin/opensearch-dashboards-plugin remove securityDashboards
         sed -i /^opensearch_security/d $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
         sed -i 's/https/http/' $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
