@@ -9,16 +9,16 @@ from system.properties_file import PropertiesFile
 
 
 class CheckGradleProperties(Check):
-    def __init__(self, component, git_repo, version, arch, snapshot):
-        super().__init__(component, git_repo, version, arch, snapshot)
+    def __init__(self, component, git_repo, target):
+        super().__init__(component, git_repo, target)
         self.properties = self.__get_properties()
 
     def __get_properties(self):
         cmd = " ".join(
             [
                 "./gradlew properties",
-                f"-Dopensearch.version={self.opensearch_version}",
-                f"-Dbuild.snapshot={str(self.snapshot).lower()}",
+                f"-Dopensearch.version={self.target.opensearch_version}",
+                f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
             ]
         )
 

@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from ci_workflow.check_gradle_properties import CheckGradleProperties
+from ci_workflow.ci_target import CiTarget
 
 
 class TestCheckGradleProperties(unittest.TestCase):
@@ -22,9 +23,7 @@ class TestCheckGradleProperties(unittest.TestCase):
         TestCheckGradleProperties.DummyProperties(
             component=MagicMock(),
             git_repo=git_repo,
-            version="1.1.0",
-            arch="x86",
-            snapshot=False,
+            target=CiTarget(version="1.1.0", snapshot=False),
         )
 
         git_repo.output.assert_called_once_with(
@@ -38,9 +37,7 @@ class TestCheckGradleProperties(unittest.TestCase):
         TestCheckGradleProperties.DummyProperties(
             component=MagicMock(),
             git_repo=git_repo,
-            version="1.1.0",
-            arch="x86",
-            snapshot=True,
+            target=CiTarget(version="1.1.0", snapshot=True),
         )
 
         git_repo.output.assert_called_once_with(

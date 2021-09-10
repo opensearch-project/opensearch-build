@@ -8,13 +8,21 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from build_workflow.build_recorder import BuildRecorder
+from build_workflow.build_target import BuildTarget
 
 
 class TestBuildRecorderSnapshot(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.build_recorder = BuildRecorder(
-            "1", "output_dir", "OpenSearch", "1.1.0", "x64", True
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.1.0",
+                arch="x64",
+                snapshot=True,
+            )
         )
 
     @patch("shutil.copyfile")

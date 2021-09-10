@@ -29,7 +29,6 @@ jobs:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
     steps:
-
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
         uses: actions/setup-java@v1

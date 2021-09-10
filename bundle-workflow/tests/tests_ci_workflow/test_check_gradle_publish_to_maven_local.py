@@ -9,6 +9,7 @@ from unittest.mock import MagicMock
 
 from ci_workflow.check_gradle_publish_to_maven_local import \
     CheckGradlePublishToMavenLocal
+from ci_workflow.ci_target import CiTarget
 
 
 class TestCheckGradlePublishToMavenLocal(unittest.TestCase):
@@ -16,9 +17,7 @@ class TestCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            version="1.1.0",
-            arch="x86",
-            snapshot=False,
+            target=CiTarget(version="1.1.0", snapshot=False),
         )
         check.check()
         check.git_repo.execute.assert_called_once_with(
@@ -29,9 +28,7 @@ class TestCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            version="1.1.0",
-            arch="x86",
-            snapshot=True,
+            target=CiTarget(version="1.1.0", snapshot=True),
         )
         check.check()
         check.git_repo.execute.assert_called_once_with(

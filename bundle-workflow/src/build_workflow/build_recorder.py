@@ -21,24 +21,14 @@ class BuildRecorder:
             self.path = path
             super().__init__(f"Artifact {os.path.basename(path)} is invalid. {message}")
 
-    def __init__(self, build_id, output_dir, name, version, arch, snapshot):
-        self.output_dir = output_dir
-        self.version = str(version)
-        self.opensearch_version = (
-            self.version + "-SNAPSHOT" if snapshot else self.version
-        )
-        # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
-        self.component_version = (
-            self.version + ".0-SNAPSHOT" if snapshot else f"{self.version}.0"
-        )
-        self.build_manifest = self.BuildManifestBuilder(
-            build_id, name, self.opensearch_version, arch, snapshot
-        )
+    def __init__(self, target):
+        self.build_manifest = self.BuildManifestBuilder(target)
+        self.target = target
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(
             component_name,
-            self.component_version,
+            self.target.component_version,
             git_repo.url,
             git_repo.ref,
             git_repo.sha,
@@ -51,7 +41,7 @@ class BuildRecorder:
             f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})"
         )
         # Ensure the target directory exists
-        dest_file = os.path.join(self.output_dir, artifact_path)
+        dest_file = os.path.join(self.target.output_dir, artifact_path)
         dest_dir = os.path.dirname(dest_file)
         os.makedirs(dest_dir, exist_ok=True)
         # Check artifact
@@ -66,9 +56,9 @@ class BuildRecorder:
     def get_manifest(self):
         return self.build_manifest.to_manifest()
 
-    def write_manifest(self, dest_dir):
+    def write_manifest(self):
         output_manifest = self.get_manifest()
-        manifest_path = os.path.join(dest_dir, "manifest.yml")
+        manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
         with open(manifest_path, "w") as file:
             yaml.dump(output_manifest.to_dict(), file)
 
@@ -81,16 +71,17 @@ class BuildRecorder:
     def __check_plugin_artifact(self, artifact_file):
         if os.path.splitext(artifact_file)[1] != ".zip":
             raise BuildRecorder.ArtifactInvalidError(artifact_file, "Not a zip file.")
-        if not artifact_file.endswith(f"-{self.component_version}.zip"):
+        if not artifact_file.endswith(f"-{self.target.component_version}.zip"):
             raise BuildRecorder.ArtifactInvalidError(
-                artifact_file, f"Expected filename to include {self.component_version}."
+                artifact_file,
+                f"Expected filename to include {self.target.component_version}.",
             )
         with ZipFile(artifact_file, "r") as zip:
             data = zip.read("plugin-descriptor.properties").decode("UTF-8")
             properties = PropertiesFile(data)
             try:
-                properties.check_value("version", self.component_version)
-                properties.check_value("opensearch.version", self.version)
+                properties.check_value("version", self.target.component_version)
+                properties.check_value("opensearch.version", self.target.version)
             except PropertiesFile.CheckError as e:
                 raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
             logging.info(
@@ -123,7 +114,11 @@ class BuildRecorder:
                 try:
                     properties.check_value_in(
                         "Implementation-Version",
-                        [self.component_version, self.opensearch_version, None],
+                        [
+                            self.target.component_version,
+                            self.target.opensearch_version,
+                            None,
+                        ],
                     )
                 except PropertiesFile.CheckError as e:
                     raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
@@ -132,14 +127,14 @@ class BuildRecorder:
                 )
 
     class BuildManifestBuilder:
-        def __init__(self, build_id, name, version, arch, snapshot):
+        def __init__(self, target):
             self.data = {}
             self.data["build"] = {}
-            self.data["build"]["id"] = build_id
-            self.data["build"]["name"] = name
-            self.data["build"]["version"] = version
-            self.data["build"]["architecture"] = arch
-            self.data["build"]["snapshot"] = str(snapshot).lower()
+            self.data["build"]["id"] = target.build_id
+            self.data["build"]["name"] = target.name
+            self.data["build"]["version"] = target.opensearch_version
+            self.data["build"]["architecture"] = target.arch
+            self.data["build"]["snapshot"] = str(target.snapshot).lower()
             self.data["schema-version"] = "1.0"
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BuildManifest this will get converted back into a list

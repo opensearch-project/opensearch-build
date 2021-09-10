@@ -32,20 +32,22 @@ class Ci:
                 f"Invalid check {check}, must be one of {Ci.CHECKS.keys()}."
             )
 
-    def __init__(self, component, git_repo):
+    def __init__(self, component, git_repo, target):
         """
         Construct a new instance of Ci.
         :param component: The component to sanity-check.
         :param git_repo: A GitRepository instance containing the checked-out code.
+        :param target: Ci target.
         """
 
         self.component = component
         self.git_repo = git_repo
+        self.target = target
 
-    def check(self, version, arch, snapshot):
+    def check(self):
         for check in self.component.checks:
             klass = Ci.CHECKS[check]
             if klass is None:
                 raise Ci.InvalidCheckError(check)
-            instance = klass(self.component, self.git_repo, version, arch, snapshot)
+            instance = klass(self.component, self.git_repo, self.target)
             instance.check()
