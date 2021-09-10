@@ -12,14 +12,12 @@ import subprocess
 import sys
 
 from git.git_repository import GitRepository
-from manifests.build_manifest import BuildManifest
-from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
-from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
 from test_workflow.utils.build_manifest_provider import BuildManifestProvider
+from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py

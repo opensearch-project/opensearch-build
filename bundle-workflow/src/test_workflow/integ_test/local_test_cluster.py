@@ -8,13 +8,12 @@ import logging
 import os
 import subprocess
 import time
-import urllib.request
 
 import requests
 
+from aws.s3_bucket import S3Bucket
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
-from aws.s3_bucket import S3Bucket
 
 
 class LocalTestCluster(TestCluster):
@@ -71,8 +70,7 @@ class LocalTestCluster(TestCluster):
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")
         os.chdir(self.work_dir)
-        logging.info(f"Downloading bundle from s3")
-        # urllib.request.urlretrieve(self.manifest.build.location, "bundle.tgz")
+        logging.info("Downloading bundle from s3")
         bundle_name = self.__download_tarball_from_s3()
         logging.info(f'Downloaded bundle to {os.path.realpath(bundle_name)}')
         logging.info("Unpacking")

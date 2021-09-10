@@ -18,5 +18,5 @@ class TestBundleManifestProvider(unittest.TestCase):
 
     def test_get_tarball_name(self):
         actual = BundleManifestProvider.get_tarball_name('1.1.0', 'x64')
-        expected = f"opensearch-1.1.0-linux-x64.tar.gz"
+        expected = "opensearch-1.1.0-linux-x64.tar.gz"
         self.assertEqual(actual, expected, "the tarball name is not as expected")

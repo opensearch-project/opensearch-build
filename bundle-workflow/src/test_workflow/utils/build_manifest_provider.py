@@ -8,8 +8,9 @@
 # GitHub history for details.
 
 import os
-from manifests.build_manifest import BuildManifest
+
 from aws.s3_bucket import S3Bucket
+from manifests.build_manifest import BuildManifest
 
 
 class BuildManifestProvider:

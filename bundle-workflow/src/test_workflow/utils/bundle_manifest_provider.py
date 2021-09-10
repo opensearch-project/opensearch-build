@@ -8,8 +8,9 @@
 # GitHub history for details.
 
 import os
-from manifests.bundle_manifest import BundleManifest
+
 from aws.s3_bucket import S3Bucket
+from manifests.bundle_manifest import BundleManifest
 
 
 class BundleManifestProvider:
@@ -32,6 +33,3 @@ class BundleManifestProvider:
         S3Bucket(bucket_name).download_file(manifest_s3_path, local_path)
         with open('manifest.yml', 'r') as file:
             return BundleManifest.from_file(file)
-
-
-
