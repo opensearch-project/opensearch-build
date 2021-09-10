@@ -37,7 +37,9 @@ class TestGitRepository(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.repo.dir, "created.txt")))
 
     def test_execute_in_dir(self):
-        self.repo.execute("echo $PWD > created.txt", subdirname="ISSUE_TEMPLATE")
+        self.repo.execute(
+            "echo $PWD > created.txt", os.path.join(self.repo.dir, "ISSUE_TEMPLATE")
+        )
         self.assertFalse(os.path.isfile(os.path.join(self.repo.dir, "created.txt")))
         self.assertTrue(
             os.path.isfile(os.path.join(self.repo.dir, "ISSUE_TEMPLATE/created.txt"))
@@ -45,7 +47,7 @@ class TestGitRepository(unittest.TestCase):
 
     @patch("subprocess.check_call")
     def test_execute_silent(self, mock_subprocess):
-        self.repo.execute("echo .", silent=True)
+        self.repo.execute_silent("echo .")
         subprocess.check_call.assert_called_with(
             "echo .",
             cwd=self.repo.dir,
@@ -54,11 +56,11 @@ class TestGitRepository(unittest.TestCase):
             stderr=subprocess.DEVNULL,
         )
 
-    @patch("subprocess.check_call")
-    def test_execute_not_silent(self, mock_subprocess):
-        self.repo.execute("echo .", silent=False)
-        subprocess.check_call.assert_called_with(
-            "echo .", cwd=self.repo.dir, shell=True
+    @patch("subprocess.check_output")
+    def test_output(self, mock_subprocess):
+        self.repo.output("echo hello")
+        subprocess.check_output.assert_called_with(
+            "echo hello", cwd=self.repo.dir, shell=True
         )
 
 
@@ -80,3 +82,17 @@ class TestGitRepositoryDir(unittest.TestCase):
             self.assertTrue(
                 os.path.isfile(os.path.join(repo.dir, "CODE_OF_CONDUCT.md"))
             )
+
+
+class TestGitRepositoryWithWorkingDir(unittest.TestCase):
+    def test_checkout_into_dir(self):
+        repo = GitRepository(
+            url="https://github.com/opensearch-project/.github",
+            ref="163b5acaf6c7d220f800684801bbf2e12f99c797",
+            working_subdirectory="ISSUE_TEMPLATE",
+        )
+
+        self.assertEqual(repo.working_directory, os.path.join(repo.dir, "ISSUE_TEMPLATE"))
+
+        pwd = repo.output("pwd")
+        self.assertEqual(pwd, os.path.join(repo.dir, "ISSUE_TEMPLATE"))

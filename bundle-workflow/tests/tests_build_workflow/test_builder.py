@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from build_workflow.builder import Builder
 from paths.script_finder import ScriptFinder
@@ -15,7 +15,9 @@ from paths.script_finder import ScriptFinder
 class TestBuilder(unittest.TestCase):
     def setUp(self):
         self.builder = Builder(
-            "component", MagicMock(dir="/tmp/checked-out-component"), MagicMock()
+            "component",
+            MagicMock(working_directory="/tmp/checked-out-component"),
+            MagicMock(),
         )
 
     def test_builder(self):
@@ -60,10 +62,10 @@ class TestBuilder(unittest.TestCase):
             "component", self.builder.git_repo
         )
 
-    def mock_os_walk(self, artifact_type):
-        if artifact_type == "/tmp/checked-out-component/artifacts/core-plugins":
+    def mock_os_walk(self, artifact_path):
+        if artifact_path.endswith("/checked-out-component/artifacts/core-plugins"):
             return [["/core-plugins", [], ["plugin1.zip"]]]
-        if artifact_type == "/tmp/checked-out-component/artifacts/maven":
+        if artifact_path.endswith("/checked-out-component/artifacts/maven"):
             return [("/maven", [], ["artifact1.jar"])]
         else:
             return []
@@ -73,17 +75,17 @@ class TestBuilder(unittest.TestCase):
         mock_walk.side_effect = self.mock_os_walk
         self.builder.export_artifacts()
         self.assertEqual(self.builder.build_recorder.record_artifact.call_count, 2)
-        self.builder.build_recorder.record_artifact.has_calls(
-            [
+        self.builder.build_recorder.record_artifact.assert_has_calls([
+            call(
                 "component",
                 "maven",
                 "../../../maven/artifact1.jar",
                 "/maven/artifact1.jar",
-            ],
-            [
+            ),
+            call(
                 "component",
                 "core-plugins",
                 "../../../core-plugins/plugin1.zip",
                 "/core-plugins/plugin1.zip",
-            ],
-        )
+            ),
+        ])

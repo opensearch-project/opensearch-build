@@ -61,7 +61,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.zip"
             )
         self.assertEqual(
-            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0-SNAPSHOT.",
+            "Artifact invalid.zip is invalid. Expected filename to include 1.1.0.0-SNAPSHOT.",
             context.exception.__str__(),
         )
 
@@ -78,7 +78,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but none was found.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version='1.1.0.0-SNAPSHOT', but none was found.",
                 context.exception.__str__(),
             )
 
@@ -95,7 +95,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but was 1.2.3.4.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version='1.1.0.0-SNAPSHOT', but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 

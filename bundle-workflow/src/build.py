@@ -52,7 +52,10 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         logging.info(f"Building {component.name}")
         repo = GitRepository(
-            component.repository, component.ref, os.path.join(work_dir, component.name)
+            component.repository,
+            component.ref,
+            os.path.join(work_dir, component.name),
+            component.working_directory,
         )
 
         try:

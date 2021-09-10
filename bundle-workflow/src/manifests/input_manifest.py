@@ -18,6 +18,10 @@ components:
   - name: string
     repository: URL of git repository
     ref: git ref to build (sha, branch, or tag)
+    working_directory: optional relative directory to run commands in
+    checks: CI checks
+      - check1
+      - ...
   - ...
 """
 
@@ -43,3 +47,5 @@ class InputManifest(Manifest):
             self.name = data["name"]
             self.repository = data["repository"]
             self.ref = data["ref"]
+            self.working_directory = data.get("working_directory", None)
+            self.checks = data.get("checks", [])

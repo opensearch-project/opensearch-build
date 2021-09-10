@@ -10,7 +10,7 @@ import os
 
 from manifests.bundle_manifest import BundleManifest
 from system import console
-from test_workflow.bwc_test_suite import BwcTestSuite
+from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder import TestRecorder
 

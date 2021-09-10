@@ -46,6 +46,7 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
@@ -63,6 +64,7 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
@@ -80,6 +82,7 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
