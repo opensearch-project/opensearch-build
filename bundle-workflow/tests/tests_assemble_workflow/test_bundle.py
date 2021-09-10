@@ -106,9 +106,9 @@ class TestBundle(unittest.TestCase):
         with open(
             os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
         ) as f:
-            with self.assertRaises(
+            with self.assertRaisesRegex(
                 FileNotFoundError,
-                msg="does-not-exist/bundle/opensearch-min-1.1.0-linux-x64.tar.gz",
+                "does-not-exist/bundle/opensearch-min-1.1.0-linux-x64.tar.gz",
             ):
                 Bundle(
                     BuildManifest.from_file(f),
