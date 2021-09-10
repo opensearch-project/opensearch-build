@@ -7,13 +7,11 @@
 
 class CiTarget:
     version: str
-    arch: str
     snapshot: bool
 
-    def __init__(self, version, arch, snapshot=True):
+    def __init__(self, version, snapshot=True):
         self.version = version
         self.snapshot = snapshot
-        self.arch = arch
 
     @property
     def opensearch_version(self):

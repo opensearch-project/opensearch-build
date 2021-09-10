@@ -23,7 +23,7 @@ class TestCheckGradlePropertiesVersion(unittest.TestCase):
             return CheckGradlePropertiesVersion(
                 component=component or MagicMock(),
                 git_repo=MagicMock(),
-                target=CiTarget(version="1.1.0", arch="x86", snapshot=snapshot),
+                target=CiTarget(version="1.1.0", snapshot=snapshot),
             )
 
     def test_has_version(self):

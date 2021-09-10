@@ -24,7 +24,7 @@ class TestCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             return CheckGradleDependenciesOpenSearchVersion(
                 component=MagicMock(),
                 git_repo=MagicMock(),
-                target=CiTarget(version="1.1.0", arch="x86", snapshot=True),
+                target=CiTarget(version="1.1.0", snapshot=True),
             )
 
     def test_gradle_project(self):
@@ -53,7 +53,7 @@ class TestCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
         check = CheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", arch="x86", snapshot=True),
+            target=CiTarget(version="1.1.0", snapshot=True),
         )
         check.git_repo.output.assert_called_once_with(
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
@@ -65,7 +65,7 @@ class TestCheckGradlePluginDependenciesOpenSearchVersion(unittest.TestCase):
         check = CheckGradlePluginDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", arch="x86", snapshot=True),
+            target=CiTarget(version="1.1.0", snapshot=True),
         )
         self.assertEqual(check.gradle_project, "plugin")
         check.git_repo.output.assert_called_once_with(

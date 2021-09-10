@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest import mock
+from unittest.mock import patch
 
 from build_workflow.build_target import BuildTarget
 
@@ -20,7 +20,7 @@ class TestBuildTarget(unittest.TestCase):
     def test_build_id_hex(self):
         self.assertEqual(len(BuildTarget(version="1.1.0", arch="x86").build_id), 32)
 
-    @mock.patch.dict(os.environ, {"OPENSEARCH_BUILD_ID": "id"})
+    @patch.dict(os.environ, {"OPENSEARCH_BUILD_ID": "id"})
     def test_build_id_from_env(self):
         self.assertEqual(BuildTarget(version="1.1.0", arch="x86").build_id, "id")
 
@@ -51,4 +51,13 @@ class TestBuildTarget(unittest.TestCase):
         self.assertEqual(
             BuildTarget(version="1.1.0", arch="x86", snapshot=True).component_version,
             "1.1.0.0-SNAPSHOT",
+        )
+
+    @patch("build_workflow.build_target.current_arch", return_value="value")
+    def test_arch(self, *mock):
+        self.assertEqual(BuildTarget(version="1.1.0", snapshot=False).arch, "value")
+
+    def test_arch_value(self):
+        self.assertEqual(
+            BuildTarget(version="1.1.0", arch="value", snapshot=False).arch, "value"
         )

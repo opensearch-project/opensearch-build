@@ -16,7 +16,6 @@ from build_workflow.builder import Builder
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
 from system import console
-from system.arch import current_arch
 from system.temporary_directory import TemporaryDirectory
 
 args = BuildArgs()
@@ -32,7 +31,6 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
         name=manifest.build.name,
         version=manifest.build.version,
         snapshot=args.snapshot,
-        arch=current_arch(),
         output_dir=os.path.join(os.getcwd(), "artifacts"),
     )
 

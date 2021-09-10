@@ -7,6 +7,8 @@
 import os
 import uuid
 
+from system.arch import current_arch
+
 
 class BuildTarget:
     build_id: str
@@ -19,7 +21,7 @@ class BuildTarget:
     def __init__(
         self,
         version,
-        arch,
+        arch=None,
         name=None,
         snapshot=True,
         build_id=None,
@@ -29,7 +31,7 @@ class BuildTarget:
         self.name = name
         self.version = version
         self.snapshot = snapshot
-        self.arch = arch
+        self.arch = arch or current_arch()
         self.output_dir = output_dir
 
     @property
