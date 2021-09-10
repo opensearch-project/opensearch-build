@@ -10,6 +10,13 @@ from ci_workflow.check_gradle_properties import CheckGradleProperties
 
 
 class CheckGradlePropertiesVersion(CheckGradleProperties):
+    @property
+    def checked_version(self):
+        if self.component.name == "OpenSearch":
+            return self.target.opensearch_version
+        else:
+            return self.target.component_version
+
     def check(self):
-        self.properties.check_value("version", self.component_version)
-        logging.info(f"Checked {self.component.name} ({self.component_version}).")
+        self.properties.check_value("version", self.checked_version)
+        logging.info(f"Checked {self.component.name} ({self.checked_version}).")

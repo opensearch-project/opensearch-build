@@ -12,8 +12,8 @@ class CheckGradlePublishToMavenLocal(Check):
         cmd = " ".join(
             [
                 "./gradlew publishToMavenLocal",
-                f"-Dopensearch.version={self.opensearch_version}",
-                f"-Dbuild.snapshot={str(self.snapshot).lower()}",
+                f"-Dopensearch.version={self.target.opensearch_version}",
+                f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
             ]
         )
 

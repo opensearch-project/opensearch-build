@@ -9,21 +9,21 @@ from unittest.mock import MagicMock, patch
 
 from ci_workflow.check_gradle_properties_version import \
     CheckGradlePropertiesVersion
+from ci_workflow.ci_target import CiTarget
+from manifests.input_manifest import InputManifest
 from system.properties_file import PropertiesFile
 
 
 class TestCheckGradlePropertiesVersion(unittest.TestCase):
-    def __mock_check(self, props=None):
+    def __mock_check(self, props=None, component=None, snapshot=True):
         with patch.object(
             CheckGradlePropertiesVersion, "_CheckGradleProperties__get_properties"
         ) as mock_properties:
             mock_properties.return_value = PropertiesFile(props)
             return CheckGradlePropertiesVersion(
-                component=MagicMock(),
+                component=component or MagicMock(),
                 git_repo=MagicMock(),
-                version="1.1.0",
-                arch="x86",
-                snapshot=True,
+                target=CiTarget(version="1.1.0", arch="x86", snapshot=snapshot),
             )
 
     def test_has_version(self):
@@ -43,4 +43,40 @@ class TestCheckGradlePropertiesVersion(unittest.TestCase):
         self.assertEqual(
             str(err.exception),
             "Expected to have version='1.1.0.0-SNAPSHOT', but was '1.2.0-SNAPSHOT'.",
+        )
+
+    def test_component_version_opensearch(self):
+        check = self.__mock_check(
+            props={"version": "1.1.0.0-SNAPSHOT"},
+            component=InputManifest.Component(
+                {"name": "OpenSearch", "repository": "", "ref": ""}
+            ),
+        )
+
+        self.assertEqual(check.checked_version, "1.1.0-SNAPSHOT")
+
+        with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
+            check.check()
+
+        self.assertEqual(
+            str(err.exception),
+            "Expected to have version='1.1.0-SNAPSHOT', but was '1.1.0.0-SNAPSHOT'.",
+        )
+
+    def test_component_version(self):
+        check = self.__mock_check(
+            props={"version": "1.1.0-SNAPSHOT"},
+            component=InputManifest.Component(
+                {"name": "Plugin", "repository": "", "ref": ""}
+            ),
+        )
+
+        self.assertEqual(check.checked_version, "1.1.0.0-SNAPSHOT")
+
+        with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
+            check.check()
+
+        self.assertEqual(
+            str(err.exception),
+            "Expected to have version='1.1.0.0-SNAPSHOT', but was '1.1.0-SNAPSHOT'.",
         )

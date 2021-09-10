@@ -12,26 +12,22 @@ from ci_workflow.check_gradle_dependencies import CheckGradleDependencies
 class CheckGradleDependenciesProjectOpenSearchVersion(CheckGradleDependencies):
     def check(self):
         self.dependencies.check_value(
-            "org.opensearch:opensearch", self.opensearch_version
+            "org.opensearch:opensearch", self.target.opensearch_version
         )
         logging.info(
-            f"Checked {self.component.name} OpenSearch dependency ({self.opensearch_version})."
+            f"Checked {self.component.name} OpenSearch dependency ({self.target.opensearch_version})."
         )
 
 
 class CheckGradleDependenciesOpenSearchVersion(
     CheckGradleDependenciesProjectOpenSearchVersion
 ):
-    def __init__(self, component, git_repo, version, arch, snapshot):
-        super().__init__(
-            component, git_repo, version, arch, snapshot, gradle_project=None
-        )
+    def __init__(self, component, git_repo, target):
+        super().__init__(component, git_repo, target, gradle_project=None)
 
 
 class CheckGradlePluginDependenciesOpenSearchVersion(
     CheckGradleDependenciesProjectOpenSearchVersion
 ):
-    def __init__(self, component, git_repo, version, arch, snapshot):
-        super().__init__(
-            component, git_repo, version, arch, snapshot, gradle_project="plugin"
-        )
+    def __init__(self, component, git_repo, target):
+        super().__init__(component, git_repo, target, gradle_project="plugin")
