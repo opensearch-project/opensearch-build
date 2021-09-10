@@ -20,11 +20,12 @@ class IntegTestSuite:
     test_support_matrix.yml
     """
 
-    def __init__(self, component, test_config, bundle_manifest, work_dir):
+    def __init__(self, component, test_config, bundle_manifest, work_dir, s3_bucket_name):
         self.component = component
         self.bundle_manifest = bundle_manifest
         self.work_dir = work_dir
         self.test_config = test_config
+        self.s3_bucket_name = s3_bucket_name
         self.script_finder = ScriptFinder()
         self.repo = GitRepository(
             self.component.repository,
@@ -74,7 +75,7 @@ class IntegTestSuite:
 
     def _setup_cluster_and_execute_test_config(self, config):
         security = self._is_security_enabled(config)
-        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security) as (test_cluster_endpoint, test_cluster_port):
+        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security, self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
             logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
