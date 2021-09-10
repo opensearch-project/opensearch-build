@@ -58,7 +58,7 @@ with tempfile.TemporaryDirectory() as work_dir:
     logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
     # Copy the tar installation script into the bundle
-    shutil.copyfile(
+    shutil.copy2(
         tarball_installation_script,
         os.path.join(
             bundle.archive_path, os.path.basename(tarball_installation_script)
