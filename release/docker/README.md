@@ -14,7 +14,7 @@ docker pull opensearchproject/opensearch:latest
 docker pull opensearchproject/opensearch-dashboards:latest
 ```
 
-### Building docker images 
+### Building Docker Images
 We provide two scripts to build docker images.
 For single-arch image you need to install just the Docker Engine on your host machine.
 For multi-arch image (currently support x64/arm64) you need to install Docker Desktop.
@@ -60,3 +60,46 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
   ```
   ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>" -t "opensearch-1.0.0.tar.gz,opensearch-dashboards-1.0.0.tar.gz"
   ```
+
+### Disable Security Plugin, Security Dashboards Plugin, and Security Demo Configurations and Related Configurations (This change is added since OpenSearch/OpenSearch-Dashboards 1.1.0)
+There are 3 environment variables available for users to disable security related settings during docker container startup:
+
+2 for OpenSearch:
+`DISABLE_INSTALL_DEMO_CONFIG`: Default to `null`, set to `true` disables running of [install_demo_configuration.sh](https://github.com/opensearch-project/security/blame/main/tools/install_demo_configuration.sh) bundled with Security Plugin, which installs demo certificates and security configurations to OpenSearch.
+`DISABLE_SECURITY_PLUGIN`: Default to `null`, set to `true` disables Security Plugin entirely in OpenSearch by setting `plugins.security.disabled: true` in opensearch.yml.
+
+1 for Dashboards:
+`DISABLE_SECURITY_DASHBOARDS_PLUGIN`: Default to `null`, set to `true` disables Security Dashboards Plugin in OpenSearch-Dashboards by removing securityDashboards plugin folder, remove all related settings in opensearch_dashboards.yml, and set `opensearch.hosts` entry protocol from HTTPS to HTTP. This step is not reversible as the Security Dashboards Plugin is removed in the process. If you want to re-enable security for OpenSearch-Dashboards, you need to start a new container with `DISABLE_SECURITY_DASHBOARDS_PLUGIN` unset, or false.
+
+Here are three example scenarios of using above variables:
+
+* Scenario 1: Original behavior, install demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards:
+  * OpenSearch:
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.1.0
+     ```
+  * OpenSearch-Dashboards:
+     ```
+     $ docker run -it --network="host" opensearchproject/opensearch-dashboards:1.1.0
+     ```
+
+* Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
+  * OpenSearch:
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
+     ```
+  * OpenSearch-Dashboards:
+     ```
+     $ docker run -it --network="host" -e "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" opensearchproject/opensearch-dashboards:1.1.0
+     ```
+
+* Scenario 3: No demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards (cluster exit with errors due to demo install script is not run. Therefore, no certs/configs are available for Security Plugin. Useful if you want to setup your own certs/configs):
+  * OpenSearch:
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" opensearchproject/opensearch:1.1.0
+     ```
+  * Dashboards:
+     ```
+     $ docker run -it --network="host" -e opensearchproject/opensearch-dashboards:1.1.0
+     ```
+
