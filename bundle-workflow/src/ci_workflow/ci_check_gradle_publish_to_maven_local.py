@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from ci_workflow.check import Check
+from ci_workflow.ci_check import CiCheck
 
 
-class CheckGradlePublishToMavenLocal(Check):
+class CiCheckGradlePublishToMavenLocal(CiCheck):
     def check(self):
         cmd = " ".join(
             [
