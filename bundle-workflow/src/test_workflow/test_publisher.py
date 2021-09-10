@@ -18,12 +18,14 @@ class TestPublisher:
         s3_bucket = S3Bucket('test-publisher-upload', 'arn:aws:iam::821468782434:role/test-publisher', 'test-publisher')
         base_path = self._get_base_path()
 
-        for subdir,dirs,files in os.walk('/Users/kazabdu/1/'):
-            for filename in files:
-                file_path = subdir + '/' + filename
+        for subdir,dirs,files in os.walk('/Users/kazabdu/tmp/tmp-dir/tests/1/component/integ'):
+            test_path = subdir[subdir.find('tests'):]
+            for file_name in files:
+                file_path = os.path.join(subdir, file_name)
                 if not file_path.startswith('.'):
-                    s3_path = base_path + file_path
-                    print(s3_path)
+                    s3_path = os.path.join(base_path, test_path, file_name)
+                    print('FILE', file_path)
+                    print('S3', s3_path)
                     s3_bucket.upload_file(s3_path, file_path)
 
     def _get_base_path(self):
@@ -34,7 +36,7 @@ class TestPublisher:
         bundle_version = self.bundle_manifest.build.version
         build_id = self.bundle_manifest.build.id
         arch = self.bundle_manifest.build.architecture
-        s3_path = os.path.join(work_dir, bundle_version, build_id, arch, 'tests')
+        s3_path = os.path.join(work_dir, bundle_version, build_id, arch)
         return s3_path
 
 test_publisher = TestPublisher()
