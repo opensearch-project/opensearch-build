@@ -41,7 +41,7 @@ class LocalTestCluster(TestCluster):
             stdout=self.stdout,
             stderr=self.stderr,
         )
-        logging.info(f"Started OpenSearch with parentPID {self.process.pid}")
+        logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
         self.wait_for_service()
 
     def endpoint(self):
