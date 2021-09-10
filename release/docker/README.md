@@ -61,7 +61,8 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
   ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>" -t "opensearch-1.0.0.tar.gz,opensearch-dashboards-1.0.0.tar.gz"
   ```
 
-### Disable Security Plugin, Security Dashboards Plugin, and Security Demo Configurations and Related Configurations (This change is added since OpenSearch/OpenSearch-Dashboards 1.1.0)
+### Disable Security Plugin, Security Dashboards Plugin, Security Demo Configurations and Related Configurations
+(This change is added since OpenSearch/OpenSearch-Dashboards 1.1.0)
 There are 3 environment variables available for users to disable security related settings during docker container startup:
 
 2 for OpenSearch:
