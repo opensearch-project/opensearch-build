@@ -35,6 +35,9 @@ pipeline {
                                             name: 'architecture',
                                             trim: true
                                     ),
+                                    file(
+                                            name: 'manifest'
+                                    ),
                             ])
                     ])
                 }
