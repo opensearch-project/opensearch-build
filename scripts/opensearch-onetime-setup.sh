@@ -13,7 +13,23 @@ OPENSEARCH_HOME=`dirname $(realpath $0)`; cd $OPENSEARCH_HOME
 
 ##Security Plugin
 SECURITY_PLUGIN="opensearch-security"
-bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
+    if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+        echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+    else
+        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+        bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+    fi
+
+    if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
+        echo "Disabling OpenSearch Security Plugin"
+        sed -i '/plugins.security.disabled/d' $OPENSEARCH_HOME/config/opensearch.yml
+        echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
+    else
+        echo "Enabling OpenSearch Security Plugin"
+        sed -i '/plugins.security.disabled/d' $OPENSEARCH_HOME/config/opensearch.yml
+    fi
+fi
 
 ##Perf Plugin
 PA_PLUGIN="opensearch-performance-analyzer"
