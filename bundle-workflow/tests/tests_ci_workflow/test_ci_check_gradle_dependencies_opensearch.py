@@ -7,21 +7,21 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.check_gradle_dependencies_opensearch import (
-    CheckGradleDependenciesOpenSearchVersion,
-    CheckGradlePluginDependenciesOpenSearchVersion)
+from ci_workflow.ci_check_gradle_dependencies_opensearch import (
+    CiCheckGradleDependenciesOpenSearchVersion,
+    CiCheckGradlePluginDependenciesOpenSearchVersion)
 from ci_workflow.ci_target import CiTarget
 from system.properties_file import PropertiesFile
 
 
-class TestCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
+class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
     def __mock_check(self, props=None):
         with patch.object(
-            CheckGradleDependenciesOpenSearchVersion,
-            "_CheckGradleDependencies__get_dependencies",
+            CiCheckGradleDependenciesOpenSearchVersion,
+            "_CiCheckGradleDependencies__get_dependencies",
         ) as mock_dependencies:
             mock_dependencies.return_value = PropertiesFile(props)
-            return CheckGradleDependenciesOpenSearchVersion(
+            return CiCheckGradleDependenciesOpenSearchVersion(
                 component=MagicMock(),
                 git_repo=MagicMock(),
                 target=CiTarget(version="1.1.0", snapshot=True),
@@ -50,7 +50,7 @@ class TestCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
         )
 
     def test_executes_gradle_command(self):
-        check = CheckGradleDependenciesOpenSearchVersion(
+        check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", snapshot=True),
@@ -62,7 +62,7 @@ class TestCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
 
 class TestCheckGradlePluginDependenciesOpenSearchVersion(unittest.TestCase):
     def test_executes_gradle_plugin_command(self):
-        check = CheckGradlePluginDependenciesOpenSearchVersion(
+        check = CiCheckGradlePluginDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", snapshot=True),
