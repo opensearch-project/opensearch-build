@@ -16,18 +16,17 @@ class BuildArtifactCheckMaven(BuildArtifactCheck):
     def check(self, path):
         ext = os.path.splitext(path)[1]
         if ext not in [
-            ".jar",
             ".asc",
+            ".jar",
             ".md5",
-            ".sha1",
+            ".module",
             ".pom",
-            ".xml",
             ".sha1",
             ".sha256",
             ".sha512",
-            ".module",
-            ".zip",
             ".war",
+            ".xml",
+            ".zip",
         ]:
             raise BuildArtifactCheck.BuildArtifactInvalidError(
                 path, f"{ext} is not a valid extension for a maven file"
