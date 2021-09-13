@@ -1,4 +1,8 @@
 import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
+from aws.s3_bucket import S3Bucket
 
 
 class TestPublisher:
@@ -12,6 +16,7 @@ class TestPublisher:
             Publishes tests results to S3 pulling information from {self.test_recorder}
             And cleans up all local storage after publishing ({self.test_recorder}.clean_up())
         """
+        s3_bucket = S3Bucket(self.s3_bucket, 'arn:aws:iam::724293578735:role/opensearch-test', 'test-publisher-session')
         base_path = self._get_base_path()
 
         for subdir, dirs, files in os.walk(self.test_recorder.location):
@@ -20,7 +25,7 @@ class TestPublisher:
                 file_path = os.path.join(subdir, file_name)
                 if not file_path.startswith('.'):
                     s3_path = os.path.join(base_path, test_path, file_name)
-                    self.s3_bucket.upload_file(s3_path, file_path)
+                    s3_bucket.upload_file(s3_path, file_path)
 
     def _get_base_path(self):
         """
