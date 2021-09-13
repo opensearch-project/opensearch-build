@@ -21,15 +21,15 @@ class Manifest(ABC):
 
     @classmethod
     def compact(cls, d):
-        clean = {}
+        result = {}
         for k, v in d.items():
             if isinstance(v, dict):
                 nested = cls.compact(v)
-                if len(nested.keys()) > 0:
-                    clean[k] = nested
-            elif v is not None and v != []:
-                clean[k] = v
-        return clean
+                if nested:
+                    result[k] = nested
+            elif v and v != []:
+                result[k] = v
+        return result
 
     def __to_dict(self):
         return {}
