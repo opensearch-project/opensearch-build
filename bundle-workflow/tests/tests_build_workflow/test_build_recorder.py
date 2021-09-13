@@ -235,7 +235,6 @@ class TestBuildRecorder(unittest.TestCase):
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
-                "components": [],
                 "schema-version": "1.0",
             },
         )

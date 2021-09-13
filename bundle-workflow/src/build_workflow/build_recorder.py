@@ -9,8 +9,6 @@ import os
 import shutil
 from zipfile import ZipFile
 
-import yaml
-
 from manifests.build_manifest import BuildManifest
 from system.properties_file import PropertiesFile
 
@@ -57,10 +55,8 @@ class BuildRecorder:
         return self.build_manifest.to_manifest()
 
     def write_manifest(self):
-        output_manifest = self.get_manifest()
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
-        with open(manifest_path, "w") as file:
-            yaml.dump(output_manifest.to_dict(), file)
+        self.get_manifest().to_file(manifest_path)
         logging.info(f'Created build manifest {manifest_path}')
 
     def __check_artifact(self, artifact_type, artifact_file):
