@@ -7,8 +7,6 @@
 import os
 from urllib.parse import urljoin
 
-import yaml
-
 from manifests.bundle_manifest import BundleManifest
 
 
@@ -67,10 +65,8 @@ class BundleRecorder:
         return self.bundle_manifest.to_manifest()
 
     def write_manifest(self, folder):
-        output_manifest = self.get_manifest()
         manifest_path = os.path.join(folder, "manifest.yml")
-        with open(manifest_path, "w") as file:
-            yaml.dump(output_manifest.to_dict(), file)
+        self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
         def __init__(self, build_id, name, version, arch, location):
