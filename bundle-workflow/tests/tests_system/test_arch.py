@@ -15,24 +15,25 @@ class TestArch(unittest.TestCase):
     def test_current_arch(self):
         self.assertTrue(current_arch() in ["x64", "arm64"])
 
-    @patch("subprocess.check_output")
-    def test_x64_arch(self, mock_subprocess):
-        mock_subprocess.return_value = "x86_64".encode()
+    @patch("subprocess.check_output", return_value="x86_64".encode())
+    def test_x86_64_return_x64_arch(self, mock_subprocess):
         self.assertTrue(current_arch() == "x64")
 
-    @patch("subprocess.check_output")
-    def test_arm64_arch(self, mock_subprocess):
-        mock_subprocess.return_value = "aarch64".encode()
-        self.assertTrue(current_arch() == "arm64")
-        mock_subprocess.return_value = "arm64".encode()
+    @patch("subprocess.check_output", return_value="aarch64".encode())
+    def test_aarch64_return_arm64_arch(self, mock_subprocess):
         self.assertTrue(current_arch() == "arm64")
 
-    @patch("subprocess.check_output")
+    @patch("subprocess.check_output", return_value="arm64".encode())
+    def test_arm64_return_arm64_arch(self, mock_subprocess):
+        self.assertTrue(current_arch() == "arm64")
+
+    @patch("subprocess.check_output", return_value="invalid".encode())
     def test_invalid_arch(self, mock_subprocess):
-        mock_subprocess.return_value = "invalid".encode()
         with self.assertRaises(ValueError) as context:
             current_arch()
+        self.assertEqual("Unsupported architecture: invalid", str(context.exception))
+
+    @patch("subprocess.check_output", return_value="x86_64".encode())
+    def test_subprocess_call(self, mock_subprocess):
+        current_arch()
         subprocess.check_output.assert_called_with(["uname", "-m"])
-        self.assertEqual(
-            "Unsupported architecture: invalid", context.exception.__str__()
-        )
