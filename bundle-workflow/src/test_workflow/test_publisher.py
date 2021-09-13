@@ -16,7 +16,7 @@ class TestPublisher:
             Publishes tests results to S3 pulling information from {self.test_recorder}
             And cleans up all local storage after publishing ({self.test_recorder}.clean_up())
         """
-        s3_bucket = S3Bucket(self.s3_bucket, 'arn:aws:iam::724293578735:role/opensearch-test', 'test-publisher-session')
+        s3_bucket = S3Bucket(self.s3_bucket, 'arn:aws:iam::791023489099:role/opensearch-test', 'test-publisher-session')
         base_path = self._get_base_path()
 
         for subdir, dirs, files in os.walk(self.test_recorder.location):
