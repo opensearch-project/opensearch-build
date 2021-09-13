@@ -18,7 +18,6 @@ args = TestArgs()
 console.configure(level=args.logging_level)
 
 manifest = BundleManifest.from_file(args.manifest)
-test_recorder = TestRecorder(os.path.dirname(manifest.name))
 
 
 def bwc_test_suite():
