@@ -39,7 +39,7 @@ class Manifest(ABC):
 
     def to_file(self, path):
         with open(path, "w") as file:
-            yaml.dump(self.to_dict(), file)
+            yaml.safe_dump(self.to_dict(), file)
 
     @abstractmethod
     def __init__(self, data):
