@@ -18,6 +18,7 @@ from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
+from test_workflow.test_recorder import TestRecorder
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
@@ -38,6 +39,9 @@ def parse_arguments():
         "--test-manifest", type=argparse.FileType("r"), help="Test Manifest file."
     )
     parser.add_argument(
+        "--test-run-id", type=str, help="Test Run ID"
+    )
+    parser.add_argument(
         "--keep",
         dest="keep",
         action="store_true",
@@ -54,7 +58,6 @@ def parse_arguments():
     )
     args = parser.parse_args()
     return args
-
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):
@@ -100,10 +103,12 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 
 def main():
     args = parse_arguments()
+    logging.getLogger('').handlers = []
     console.configure(level=args.logging_level)
     bundle_manifest = BundleManifest.from_file(args.bundle_manifest)
     build_manifest = BuildManifest.from_file(args.build_manifest)
     test_manifest = TestManifest.from_file(args.test_manifest)
+    test_recorder = TestRecorder(args.test_run_id, "integ-test")
     integ_test_config = dict()
     for component in test_manifest.components:
         if component.integ_test is not None:
@@ -120,6 +125,7 @@ def main():
                     integ_test_config[component.name],
                     bundle_manifest,
                     work_dir,
+                    test_recorder
                 )
                 test_suite.execute()
             else:

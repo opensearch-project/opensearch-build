@@ -12,6 +12,7 @@ import urllib.request
 
 import requests
 
+from paths.tree_walker import walk
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 
 
@@ -20,11 +21,14 @@ class LocalTestCluster(TestCluster):
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
 
-    def __init__(self, work_dir, bundle_manifest, security_enabled):
+    def __init__(self, work_dir, bundle_manifest, component_name, component_config, test_recorder):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
-        self.security_enabled = security_enabled
+        self.component_config = component_config
+        self.component_name = component_name
+        self.test_recorder = test_recorder
+        self.security = None
         self.process = None
 
     def create_cluster(self):
@@ -32,7 +36,8 @@ class LocalTestCluster(TestCluster):
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
         self.install_dir = f"opensearch-{self.manifest.build.version}"
-        if not self.security_enabled:
+        self.security = self._is_security_enabled(self.component_config)
+        if not self.security:
             self.disable_security(self.install_dir)
         self.process = subprocess.Popen(
             "./opensearch-tar-install.sh",
@@ -55,9 +60,13 @@ class LocalTestCluster(TestCluster):
             logging.info("Local test cluster is not started")
             return
         self.terminate_process()
+        logs_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
+        self.test_recorder.record_local_cluster_logs(self.component_name, self.component_config, self.local_cluster_stdout,
+                                                     self.local_cluster_stderr,
+                                                     logs_files)
 
     def url(self, path=""):
-        return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
+        return f'{"https" if self.security else "http"}://{self.endpoint()}:{self.port()}{path}'
 
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")
@@ -65,10 +74,16 @@ class LocalTestCluster(TestCluster):
         logging.info(f"Downloading bundle from {self.manifest.build.location}")
         urllib.request.urlretrieve(self.manifest.build.location, "bundle.tgz")
         logging.info(f'Downloaded bundle to {os.path.realpath("bundle.tgz")}')
-
         logging.info("Unpacking")
         subprocess.check_call("tar -xzf bundle.tgz", shell=True)
         logging.info("Unpacked")
+
+    def _is_security_enabled(self, config):
+        # TODO: Separate this logic in function once we have test-configs defined
+        if config == "with-security":
+            return True
+        else:
+            return False
 
     def disable_security(self, dir):
         subprocess.check_call(
@@ -110,6 +125,10 @@ class LocalTestCluster(TestCluster):
                 raise
         finally:
             logging.info(f"Process terminated with exit code {self.process.returncode}")
+            stdout = open(os.path.join(os.path.realpath(self.work_dir), self.stdout.name), "r")
+            stderr = open(os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r")
+            self.local_cluster_stdout = stdout.read()
+            self.local_cluster_stderr = stderr.read()
             self.stdout.close()
             self.stderr.close()
             self.process = None

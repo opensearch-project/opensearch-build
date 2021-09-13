@@ -10,6 +10,7 @@ import subprocess
 
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
+from paths.tree_walker import walk
 from system.execute import execute
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 
@@ -20,21 +21,24 @@ class IntegTestSuite:
     test_support_matrix.yml
     """
 
-    def __init__(self, component, test_config, bundle_manifest, work_dir):
+    def __init__(self, component, test_config, bundle_manifest, work_dir, test_recorder):
         self.component = component
         self.bundle_manifest = bundle_manifest
         self.work_dir = work_dir
         self.test_config = test_config
+        self.test_recorder = test_recorder
         self.script_finder = ScriptFinder()
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
             os.path.join(self.work_dir, self.component.name),
         )
+        self.individual_config = None
 
     def execute(self):
         self._fetch_plugin_specific_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
+            self.individual_config = config
             self._setup_cluster_and_execute_test_config(config)
 
     # TODO: fetch pre-built dependencies from s3
@@ -73,11 +77,12 @@ class IntegTestSuite:
             return False
 
     def _setup_cluster_and_execute_test_config(self, config):
-        security = self._is_security_enabled(config)
-        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security) as (test_cluster_endpoint, test_cluster_port):
+        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, self.component.name, config,
+                                     self.test_recorder) as (test_cluster_endpoint, test_cluster_port):
             logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
+            security = self._is_security_enabled(config)
             self._execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security)
 
     def _execute_integtest_sh(self, endpoint, port, security):
@@ -87,7 +92,13 @@ class IntegTestSuite:
         if os.path.exists(script):
             cmd = f"sh {script} -b {endpoint} -p {port} -s {str(security).lower()}"
             (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
+            results_dir = os.path.join(
+                self.repo.dir, "integ-test", "build", "reports", "tests", "integTest"
+            )
+            self.test_recorder.record_test_outcome(
+                self.component.name, self.individual_config, status, stdout, stderr, walk(results_dir)
+            )
         else:
             logging.info(
-                f"{script} does not exist. Skipping integ tests for {self.name}"
+                f"{script} does not exist. Skipping integ tests for {self.component.name}"
             )
