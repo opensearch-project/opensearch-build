@@ -59,6 +59,7 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
+
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):
     logging.info("Pulling common dependencies for integration tests")
