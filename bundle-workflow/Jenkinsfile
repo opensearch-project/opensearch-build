@@ -24,6 +24,11 @@ pipeline {
             }
         }
         stage('build') {
+            agent {
+                node {
+                    label 'Jenkins-Agent-al2-x64-m5xlarge'
+                }
+            }
             stages {
                 stage('build-snapshots') {
                     environment {
@@ -87,6 +92,14 @@ pipeline {
                     }
                 }
             }
+            post() {
+                success {
+                    publishNotificaiton(":white_check-mark:", "Successful Build")
+                }
+                failure {
+                    publishNotificaiton(":warning:", "Failed Build")
+                }
+            }
         }
     }
 }
@@ -101,5 +114,11 @@ void build() {
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
         s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
+    }
+}
+
+void publishNotificaiton(icon, msg) {
+    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
+        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}"}' $TOKEN"""
     }
 }
