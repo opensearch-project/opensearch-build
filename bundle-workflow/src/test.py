@@ -6,13 +6,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
-
 from manifests.bundle_manifest import BundleManifest
 from system import console
 from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 from test_workflow.test_args import TestArgs
-from test_workflow.test_recorder import TestRecorder
 
 args = TestArgs()
 console.configure(level=args.logging_level)
