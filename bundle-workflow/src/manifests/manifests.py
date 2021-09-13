@@ -9,8 +9,7 @@ import logging
 import os
 import re
 
-import yaml
-from sortedcontainers import SortedDict # type: ignore
+from sortedcontainers import SortedDict  # type: ignore
 
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
@@ -39,7 +38,7 @@ class Manifests(SortedDict):
                 version = match.group(1)
                 manifest = InputManifest.from_path(filename)
                 logging.debug(f"Loaded {version} ({manifest.to_int()}) from {filename}")
-                self.__setitem__(manifest.to_int(), manifest)
+                self.__setitem__(version, manifest)
 
     @property
     def versions(self):
@@ -122,6 +121,8 @@ class Manifests(SortedDict):
                 "build": {"name": "OpenSearch", "version": release_version},
                 "components": [],
             }
+            # TODO: was this an increment from a component?
+            # if so, copy OpenSearch and common-utils from the previous manifest
             for component in main_versions[release_version]:
                 logging.info(f" Adding {component.name}")
                 data["components"].append(
@@ -135,6 +136,5 @@ class Manifests(SortedDict):
             manifest_path = os.path.join(
                 self.manifests_path, f"opensearch-{release_version}.yml"
             )
-            with open(manifest_path, "w") as file:
-                yaml.dump(manifest.to_dict(), file)
+            manifest.to_file(manifest_path)
             logging.info(f"Wrote {manifest_path}")
