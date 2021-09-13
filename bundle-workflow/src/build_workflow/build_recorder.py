@@ -61,6 +61,7 @@ class BuildRecorder:
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
         with open(manifest_path, "w") as file:
             yaml.dump(output_manifest.to_dict(), file)
+        logging.info(f'Created build manifest {manifest_path}')
 
     def __check_artifact(self, artifact_type, artifact_file):
         if artifact_type == "plugins":
