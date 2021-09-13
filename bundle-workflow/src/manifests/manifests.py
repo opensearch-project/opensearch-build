@@ -10,7 +10,7 @@ import os
 import re
 
 import yaml
-from sortedcontainers import SortedDict
+from sortedcontainers import SortedDict # type: ignore
 
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
