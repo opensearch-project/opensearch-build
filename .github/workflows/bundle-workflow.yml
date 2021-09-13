@@ -10,16 +10,17 @@ on:
 
 jobs:
   test:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
     env:
       PYTHON_VERSION: 3.7
-
     defaults:
       run:
         working-directory: ./bundle-workflow
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_VERSION }}

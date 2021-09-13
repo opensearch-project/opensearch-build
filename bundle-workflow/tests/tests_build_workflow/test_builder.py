@@ -75,19 +75,17 @@ class TestBuilder(unittest.TestCase):
         mock_walk.side_effect = self.mock_os_walk
         self.builder.export_artifacts()
         self.assertEqual(self.builder.build_recorder.record_artifact.call_count, 2)
-        self.builder.build_recorder.record_artifact.assert_has_calls(
-            [
-                call(
-                    "component",
-                    "maven",
-                    "../../../maven/artifact1.jar",
-                    "/maven/artifact1.jar",
-                ),
-                call(
-                    "component",
-                    "core-plugins",
-                    "../../../core-plugins/plugin1.zip",
-                    "/core-plugins/plugin1.zip",
-                ),
-            ]
-        )
+        self.builder.build_recorder.record_artifact.assert_has_calls([
+            call(
+                "component",
+                "maven",
+                os.path.relpath("/maven/artifact1.jar", self.builder.artifacts_path),
+                "/maven/artifact1.jar",
+            ),
+            call(
+                "component",
+                "core-plugins",
+                os.path.relpath("/core-plugins/plugin1.zip", self.builder.artifacts_path),
+                "/core-plugins/plugin1.zip",
+            ),
+        ])
