@@ -1,32 +1,26 @@
 import os
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
-from aws.s3_bucket import S3Bucket
-from manifests.bundle_manifest import BundleManifest
+
 
 class TestPublisher:
-    def __init__(self, s3_bucket=None, bundle_manifest=None, test_recorder=None):
-        self.bundle_manifest = BundleManifest.from_path('/Users/kazabdu/Downloads/manifest.yaml')
-        #self.bundle_manifest = bundle_manifest
+    def __init__(self, s3_bucket, bundle_manifest, test_recorder):
+        self.s3_bucket = s3_bucket
+        self.bundle_manifest = bundle_manifest
         self.test_recorder = test_recorder
-    
+
     def publish_test_results_to_s3(self):
         """
             Publishes tests results to S3 pulling information from {self.test_recorder}
             And cleans up all local storage after publishing ({self.test_recorder}.clean_up())
         """
-        s3_bucket = S3Bucket('test-publisher-upload', 'arn:aws:iam::821468782434:role/test-publisher', 'test-publisher')
         base_path = self._get_base_path()
 
-        for subdir,dirs,files in os.walk('/Users/kazabdu/tmp/tmp-dir/tests/1/component/integ'):
+        for subdir, dirs, files in os.walk(self.test_recorder.location):
             test_path = subdir[subdir.find('tests'):]
             for file_name in files:
                 file_path = os.path.join(subdir, file_name)
                 if not file_path.startswith('.'):
                     s3_path = os.path.join(base_path, test_path, file_name)
-                    print('FILE', file_path)
-                    print('S3', s3_path)
-                    s3_bucket.upload_file(s3_path, file_path)
+                    self.s3_bucket.upload_file(s3_path, file_path)
 
     def _get_base_path(self):
         """
@@ -38,6 +32,3 @@ class TestPublisher:
         arch = self.bundle_manifest.build.architecture
         s3_path = os.path.join(work_dir, bundle_version, build_id, arch)
         return s3_path
-
-test_publisher = TestPublisher()
-test_publisher.publish_test_results_to_s3()

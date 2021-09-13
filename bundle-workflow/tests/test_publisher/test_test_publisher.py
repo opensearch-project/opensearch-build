@@ -8,6 +8,7 @@ from test_workflow.test_publisher import TestPublisher
 
 TestPublisher.__test__ = False
 
+
 class TestTestPublisher(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(
@@ -21,11 +22,11 @@ class TestTestPublisher(unittest.TestCase):
         self.test_publisher = TestPublisher(
             s3_bucket=self.bucket_name, bundle_manifest=self.manifest, test_recorder=None
         )
- 
+
     def test_get_base_path(self):
         s3_path = self.test_publisher._get_base_path()
         self.assertEqual(s3_path, 'builds/bundles/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/x64')
-    
+
     @patch("boto3.client")
     def test_publish_test_results_to_s3(self, mock_boto_client):
         s3bucket = S3Bucket(self.bucket_name)
@@ -39,4 +40,3 @@ class TestTestPublisher(unittest.TestCase):
             self.bucket_name,
             "tests/1.1.0/x64/opensearch-1.1.0-linux-x64.tar.gz",
         )
-        
