@@ -17,9 +17,9 @@ from system.properties_file import PropertiesFile
 from system.temporary_directory import TemporaryDirectory
 
 
-class Manifests(SortedDict):
+class InputManifests(SortedDict):
     def __init__(self):
-        super(Manifests, self).__init__()
+        super(InputManifests, self).__init__()
         self.__discover()
 
     @property
@@ -37,7 +37,7 @@ class Manifests(SortedDict):
             if match:
                 version = match.group(1)
                 manifest = InputManifest.from_path(filename)
-                logging.debug(f"Loaded {version} ({manifest.to_int()}) from {filename}")
+                logging.debug(f"Loaded {version} from {filename}")
                 self.__setitem__(version, manifest)
 
     @property

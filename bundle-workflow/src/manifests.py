@@ -8,13 +8,13 @@
 
 import logging
 
-from manifests.manifests import Manifests
+from manifests_workflow.input_manifests import InputManifests
 from manifests_workflow.manifests_args import ManifestsArgs
 from system import console
 
 args = ManifestsArgs()
 console.configure(level=args.logging_level)
-manifests = Manifests()
+manifests = InputManifests()
 
 if args.action == "list":
     for manifest in manifests.values():
