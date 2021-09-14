@@ -104,7 +104,6 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 
 def main():
     args = parse_arguments()
-    logging.getLogger('').handlers = []
     console.configure(level=args.logging_level)
     bundle_manifest = BundleManifest.from_file(args.bundle_manifest)
     build_manifest = BuildManifest.from_file(args.build_manifest)
