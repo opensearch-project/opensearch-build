@@ -7,20 +7,20 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.check_gradle_properties_version import \
-    CheckGradlePropertiesVersion
+from ci_workflow.ci_check_gradle_properties_version import \
+    CiCheckGradlePropertiesVersion
 from ci_workflow.ci_target import CiTarget
 from manifests.input_manifest import InputManifest
 from system.properties_file import PropertiesFile
 
 
-class TestCheckGradlePropertiesVersion(unittest.TestCase):
+class TestCiCheckGradlePropertiesVersion(unittest.TestCase):
     def __mock_check(self, props=None, component=None, snapshot=True):
         with patch.object(
-            CheckGradlePropertiesVersion, "_CheckGradleProperties__get_properties"
+            CiCheckGradlePropertiesVersion, "_CiCheckGradleProperties__get_properties"
         ) as mock_properties:
             mock_properties.return_value = PropertiesFile(props)
-            return CheckGradlePropertiesVersion(
+            return CiCheckGradlePropertiesVersion(
                 component=component or MagicMock(),
                 git_repo=MagicMock(),
                 target=CiTarget(version="1.1.0", snapshot=snapshot),

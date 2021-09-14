@@ -8,12 +8,12 @@ import os
 import unittest
 from unittest.mock import MagicMock
 
-from ci_workflow.check_gradle_dependencies import CheckGradleDependencies
+from ci_workflow.ci_check_gradle_dependencies import CiCheckGradleDependencies
 from ci_workflow.ci_target import CiTarget
 
 
-class TestCheckGradleDependencies(unittest.TestCase):
-    class DummyDependencies(CheckGradleDependencies):
+class TestCiCheckGradleDependencies(unittest.TestCase):
+    class DummyDependencies(CiCheckGradleDependencies):
         def check(self):
             pass
 
@@ -21,7 +21,7 @@ class TestCheckGradleDependencies(unittest.TestCase):
         git_repo = MagicMock()
         git_repo.output.return_value = props
 
-        return TestCheckGradleDependencies.DummyDependencies(
+        return TestCiCheckGradleDependencies.DummyDependencies(
             component=MagicMock(),
             git_repo=git_repo,
             target=CiTarget(version="1.1.0", snapshot=snapshot),

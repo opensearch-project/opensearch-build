@@ -23,6 +23,8 @@ console.configure(level=args.logging_level)
 manifest = InputManifest.from_file(args.manifest)
 
 with TemporaryDirectory(keep=args.keep) as work_dir:
+    output_dir = os.path.join(os.getcwd(), "artifacts")
+
     logging.info(f"Building in {work_dir}")
 
     os.chdir(work_dir)
@@ -31,7 +33,7 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
         name=manifest.build.name,
         version=manifest.build.version,
         snapshot=args.snapshot,
-        output_dir=os.path.join(os.getcwd(), "artifacts"),
+        output_dir=output_dir,
     )
 
     os.makedirs(target.output_dir, exist_ok=True)

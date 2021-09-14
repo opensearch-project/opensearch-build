@@ -6,10 +6,10 @@
 
 import logging
 
-from ci_workflow.check_gradle_dependencies import CheckGradleDependencies
+from ci_workflow.ci_check_gradle_dependencies import CiCheckGradleDependencies
 
 
-class CheckGradleDependenciesProjectOpenSearchVersion(CheckGradleDependencies):
+class CiCheckGradleDependenciesProjectOpenSearchVersion(CiCheckGradleDependencies):
     def check(self):
         self.dependencies.check_value(
             "org.opensearch:opensearch", self.target.opensearch_version
@@ -19,15 +19,15 @@ class CheckGradleDependenciesProjectOpenSearchVersion(CheckGradleDependencies):
         )
 
 
-class CheckGradleDependenciesOpenSearchVersion(
-    CheckGradleDependenciesProjectOpenSearchVersion
+class CiCheckGradleDependenciesOpenSearchVersion(
+    CiCheckGradleDependenciesProjectOpenSearchVersion
 ):
     def __init__(self, component, git_repo, target):
         super().__init__(component, git_repo, target, gradle_project=None)
 
 
-class CheckGradlePluginDependenciesOpenSearchVersion(
-    CheckGradleDependenciesProjectOpenSearchVersion
+class CiCheckGradlePluginDependenciesOpenSearchVersion(
+    CiCheckGradleDependenciesProjectOpenSearchVersion
 ):
     def __init__(self, component, git_repo, target):
         super().__init__(component, git_repo, target, gradle_project="plugin")

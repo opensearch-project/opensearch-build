@@ -10,7 +10,7 @@ The manifest contains information about the product that is being built (in the 
 and the components that make up the product in the `components` section.
 
 The format for schema version 1.0 is:
-schema-version: 1.0
+schema-version: "1.0"
 build:
   name: string
   version: string
@@ -37,10 +37,22 @@ class InputManifest(Manifest):
             map(lambda entry: self.Component(entry), data["components"])
         )
 
+    def __to_dict__(self):
+        return {
+            "schema-version": "1.0",
+            "build": self.build.__to_dict__(),
+            "components": list(
+                map(lambda component: component.__to_dict__(), self.components)
+            ),
+        }
+
     class Build:
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
+
+        def __to_dict__(self):
+            return {"name": self.name, "version": self.version}
 
     class Component:
         def __init__(self, data):
@@ -49,3 +61,14 @@ class InputManifest(Manifest):
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = data.get("checks", [])
+
+        def __to_dict__(self):
+            return Manifest.compact(
+                {
+                    "name": self.name,
+                    "repository": self.repository,
+                    "ref": self.ref,
+                    "working_directory": self.working_directory,
+                    "checks": self.checks,
+                }
+            )

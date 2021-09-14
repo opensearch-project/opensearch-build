@@ -7,7 +7,7 @@
 from abc import ABC, abstractmethod
 
 
-class Check(ABC):
+class CiCheck(ABC):
     def __init__(self, component, git_repo, target):
         self.component = component
         self.git_repo = git_repo

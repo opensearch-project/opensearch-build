@@ -7,5 +7,5 @@
 import unittest
 
 
-class TestCheck(unittest.TestCase):
+class TestCiCheck(unittest.TestCase):
     pass

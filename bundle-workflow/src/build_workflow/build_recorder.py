@@ -7,20 +7,13 @@
 import logging
 import os
 import shutil
-from zipfile import ZipFile
 
-import yaml
-
+from build_workflow.build_artifact_check_maven import BuildArtifactCheckMaven
+from build_workflow.build_artifact_check_plugin import BuildArtifactCheckPlugin
 from manifests.build_manifest import BuildManifest
-from system.properties_file import PropertiesFile
 
 
 class BuildRecorder:
-    class ArtifactInvalidError(Exception):
-        def __init__(self, path, message):
-            self.path = path
-            super().__init__(f"Artifact {os.path.basename(path)} is invalid. {message}")
-
     def __init__(self, target):
         self.build_manifest = self.BuildManifestBuilder(target)
         self.target = target
@@ -57,74 +50,15 @@ class BuildRecorder:
         return self.build_manifest.to_manifest()
 
     def write_manifest(self):
-        output_manifest = self.get_manifest()
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
-        with open(manifest_path, "w") as file:
-            yaml.dump(output_manifest.to_dict(), file)
+        self.get_manifest().to_file(manifest_path)
+        logging.info(f'Created build manifest {manifest_path}')
 
     def __check_artifact(self, artifact_type, artifact_file):
         if artifact_type == "plugins":
-            self.__check_plugin_artifact(artifact_file)
+            BuildArtifactCheckPlugin(self.target).check(artifact_file)
         elif artifact_type == "maven":
-            self.__check_maven_artifact(artifact_file)
-
-    def __check_plugin_artifact(self, artifact_file):
-        if os.path.splitext(artifact_file)[1] != ".zip":
-            raise BuildRecorder.ArtifactInvalidError(artifact_file, "Not a zip file.")
-        if not artifact_file.endswith(f"-{self.target.component_version}.zip"):
-            raise BuildRecorder.ArtifactInvalidError(
-                artifact_file,
-                f"Expected filename to include {self.target.component_version}.",
-            )
-        with ZipFile(artifact_file, "r") as zip:
-            data = zip.read("plugin-descriptor.properties").decode("UTF-8")
-            properties = PropertiesFile(data)
-            try:
-                properties.check_value("version", self.target.component_version)
-                properties.check_value("opensearch.version", self.target.version)
-            except PropertiesFile.CheckError as e:
-                raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
-            logging.info(
-                f'Checked {artifact_file} ({properties.get_value("version", "N/A")})'
-            )
-
-    def __check_maven_artifact(self, artifact_file):
-        ext = os.path.splitext(artifact_file)[1]
-        if ext not in [
-            ".jar",
-            ".asc",
-            ".md5",
-            ".sha1",
-            ".pom",
-            ".xml",
-            ".sha1",
-            ".sha256",
-            ".sha512",
-            ".module",
-            ".zip",
-            ".war",
-        ]:
-            raise BuildRecorder.ArtifactInvalidError(
-                artifact_file, f"{ext} is not a valid extension for a maven file"
-            )
-        if os.path.splitext(artifact_file)[1] == ".jar":
-            with ZipFile(artifact_file, "r") as zip:
-                data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
-                properties = PropertiesFile(data)
-                try:
-                    properties.check_value_in(
-                        "Implementation-Version",
-                        [
-                            self.target.component_version,
-                            self.target.opensearch_version,
-                            None,
-                        ],
-                    )
-                except PropertiesFile.CheckError as e:
-                    raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
-                logging.info(
-                    f'Checked {artifact_file} ({properties.get_value("Implementation-Version", "N/A")})'
-                )
+            BuildArtifactCheckMaven(self.target).check(artifact_file)
 
     class BuildManifestBuilder:
         def __init__(self, target):

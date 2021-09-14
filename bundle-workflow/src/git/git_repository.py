@@ -23,7 +23,7 @@ class GitRepository:
         self.ref = ref
         if directory is None:
             self.temp_dir = tempfile.TemporaryDirectory()
-            self.dir = self.temp_dir.name
+            self.dir = os.path.realpath(self.temp_dir.name)
         else:
             self.temp_dir = None
             self.dir = directory

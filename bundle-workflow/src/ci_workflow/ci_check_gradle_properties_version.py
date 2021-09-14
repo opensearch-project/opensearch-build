@@ -6,10 +6,10 @@
 
 import logging
 
-from ci_workflow.check_gradle_properties import CheckGradleProperties
+from ci_workflow.ci_check_gradle_properties import CiCheckGradleProperties
 
 
-class CheckGradlePropertiesVersion(CheckGradleProperties):
+class CiCheckGradlePropertiesVersion(CiCheckGradleProperties):
     @property
     def checked_version(self):
         if self.component.name == "OpenSearch":
