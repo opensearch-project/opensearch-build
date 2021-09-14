@@ -40,17 +40,18 @@ class ComponentOpenSearchMin(Component):
         )
 
     def publish_to_maven_local(self):
-        cmd = self.gradle_cmd(
+        cmd = Component.gradle_cmd(
             "publishToMavenLocal", {"build.snapshot": str(self.snapshot).lower()}
         )
         self.git_repo.execute_silent(cmd)
 
-    def get_properties(self):
-        cmd = self.gradle_cmd(
+    @property
+    def properties(self):
+        cmd = Component.gradle_cmd(
             "properties", {"build.snapshot": str(self.snapshot).lower()}
         )
         return PropertiesFile(self.git_repo.output(cmd))
 
     @property
     def version(self):
-        return self.get_properties().get_value("version")
+        return self.properties.get_value("version")

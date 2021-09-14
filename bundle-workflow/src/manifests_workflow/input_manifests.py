@@ -97,7 +97,7 @@ class InputManifests(Manifests):
                     logging.info(f" {component.name}={main_version}")
 
             # generate new manifests
-            for release_version in main_versions.keys() - known_versions:
+            for release_version in sorted(main_versions.keys() - known_versions):
                 logging.info(f"Creating new version: {release_version}")
                 data = {
                     "schema-version": "1.0",
@@ -114,6 +114,7 @@ class InputManifests(Manifests):
                             "ref": component.git_repo.ref,
                         }
                     )
+
                 manifest = InputManifest(data)
                 manifest_path = os.path.join(
                     self.manifests_path(), f"opensearch-{release_version}.yml"

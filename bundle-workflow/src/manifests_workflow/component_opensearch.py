@@ -36,8 +36,9 @@ class ComponentOpenSearch(Component):
         super().__init__(name, repo, snapshot)
         self.opensearch_version = opensearch_version
 
-    def get_properties(self):
-        cmd = self.gradle_cmd(
+    @property
+    def properties(self):
+        cmd = Component.gradle_cmd(
             "properties",
             {
                 "opensearch.version": self.opensearch_version,
@@ -48,4 +49,4 @@ class ComponentOpenSearch(Component):
 
     @property
     def version(self):
-        return self.get_properties().get_value("version")
+        return self.properties.get_value("version")

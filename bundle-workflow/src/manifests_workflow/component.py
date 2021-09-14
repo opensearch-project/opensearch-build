@@ -11,6 +11,7 @@ class Component:
         self.git_repo = repo
         self.snapshot = snapshot
 
+    @classmethod
     def gradle_cmd(self, target, props={}):
         cmd = [f"./gradlew {target}"]
         cmd.extend([f"-D{k}={v}" for k, v in props.items()])
