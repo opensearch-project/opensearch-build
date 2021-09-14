@@ -60,7 +60,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./bundle-workflow/test_integration.sh --s3-bucket ${s3_bucket} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
+                sh "./bundle-workflow/test.sh --s3-bucket ${s3_bucket} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
             }
             post() {
                 always {
