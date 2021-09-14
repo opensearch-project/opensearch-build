@@ -35,9 +35,6 @@ pipeline {
                                             name: 'architecture',
                                             trim: true
                                     ),
-                                    file(
-                                            name: 'manifest'
-                                    ),
                             ])
                     ])
                 }
@@ -52,13 +49,6 @@ pipeline {
                         agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
                     } else {
                         error("Unknown CPU architecture is provided")
-                    }
-                    post() {
-                        always {
-                            sh "ls -la"
-                            sh "pwd"
-                            cleanWs disableDeferredWipeout: false, deleteDirs: true
-                        }
                     }
                 }
             }
