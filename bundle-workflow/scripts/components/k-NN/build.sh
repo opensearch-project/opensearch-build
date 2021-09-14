@@ -63,6 +63,12 @@ mkdir -p $OUTPUT/libs
 
 # Build knnlib and copy it to libs
 cd jni
+
+# For x64, generalize arch so library is compatible for processors without simd instruction extensions
+if [ "$ARCHITECTURE" = "x64" ]; then 
+    sed -i 's/-march=native/-march=x86-64/g' external/nmslib/similarity_search/CMakeLists.txt
+fi
+
 cmake .
 make
 
