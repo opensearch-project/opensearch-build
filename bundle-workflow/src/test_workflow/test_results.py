@@ -1,22 +1,19 @@
 import os
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
 from aws.s3_bucket import S3Bucket
 
 
-class TestPublisher:
-    def __init__(self, s3_bucket, bundle_manifest, test_recorder):
-        self.s3_bucket = s3_bucket
+class TestResults:
+    def __init__(self, bundle_manifest, test_recorder):
         self.bundle_manifest = bundle_manifest
         self.test_recorder = test_recorder
 
-    def publish_test_results_to_s3(self):
+    def to_s3(self, bucket):
         """
             Publishes tests results to S3 pulling information from {self.test_recorder}
             And cleans up all local storage after publishing ({self.test_recorder}.clean_up())
         """
-        s3_bucket = S3Bucket(self.s3_bucket, '<role-arn>', 'test-publisher-session')
+        s3_bucket = S3Bucket(bucket, '<role-arn>', 'test-publisher-session')
         base_path = self._get_base_path()
 
         for subdir, dirs, files in os.walk(self.test_recorder.location):
