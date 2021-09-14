@@ -33,12 +33,10 @@ class IntegTestSuite:
             self.component.commit_id,
             os.path.join(self.work_dir, self.component.name),
         )
-        self.individual_config = None
 
     def execute(self):
         self._fetch_plugin_specific_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
-            self.individual_config = config
             self._setup_cluster_and_execute_test_config(config)
 
     # TODO: fetch pre-built dependencies from s3
@@ -83,9 +81,9 @@ class IntegTestSuite:
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
             security = self._is_security_enabled(config)
-            self._execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security)
+            self._execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
 
-    def _execute_integtest_sh(self, endpoint, port, security):
+    def _execute_integtest_sh(self, endpoint, port, security, config):
         script = self.script_finder.find_integ_test_script(
             self.component.name, self.repo.dir
         )
@@ -95,9 +93,13 @@ class IntegTestSuite:
             results_dir = os.path.join(
                 self.repo.dir, "integ-test", "build", "reports", "tests", "integTest"
             )
-            self.test_recorder.record_test_outcome(
-                self.component.name, self.individual_config, status, stdout, stderr, walk(results_dir)
-            )
+            self.test_recorder.record_test_outcome(self.component.name,
+                                                   config,
+                                                   status,
+                                                   stdout,
+                                                   stderr,
+                                                   walk(results_dir)
+                                                   )
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.component.name}"

@@ -61,7 +61,9 @@ class LocalTestCluster(TestCluster):
             return
         self.terminate_process()
         logs_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
-        self.test_recorder.record_local_cluster_logs(self.component_name, self.component_config, self.local_cluster_stdout,
+        self.test_recorder.record_local_cluster_logs(self.component_name,
+                                                     self.component_config,
+                                                     self.local_cluster_stdout,
                                                      self.local_cluster_stderr,
                                                      logs_files)
 

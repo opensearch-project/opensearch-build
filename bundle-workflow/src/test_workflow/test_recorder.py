@@ -116,7 +116,7 @@ class TestRecorder:
             return "FAILED/ERROR"
 
     def __generate_test_outcome_yml(self, component_name, component_test_config, exit_status, log_file_location):
-        dict_file = {
+        outcome = {
             "test_type": self.test_type,
             "test_run_id": self.test_run_id,
             "component_name": component_name,
@@ -125,20 +125,11 @@ class TestRecorder:
             "log_file_location": log_file_location
         }
         with open("%s.yml" % component_name, "w") as file:
-            yaml.dump(dict_file, file)
+            yaml.dump(outcome, file)
         return os.path.realpath("%s.yml" % component_name)
 
-    def __generate_std_files(self, stdout, stderr, location):
-        stdout_file = open(os.path.join(location, "stdout.txt"), "w")
-        stderr_file = open(os.path.join(location, "stderr.txt"), "w")
-        try:
+    def __generate_std_files(self, stdout, stderr, output_path):
+        with open(os.path.join(output_path, "stdout.txt"), "w") as stdout_file:
             stdout_file.write(stdout)
+        with open(os.path.join(output_path, "stderr.txt"), "w") as stderr_file:
             stderr_file.write(stderr)
-        finally:
-            stdout_file.close()
-            stderr_file.close()
-
-    def cleanup(self):
-        if self.location:
-            logging.info(f"Removing the {os.path.realpath(self.location)} directory")
-            os.remove(os.path.realpath(self.location))
