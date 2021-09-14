@@ -45,7 +45,6 @@ class TestRecorder:
             f"Recording local cluster logs for {component_name} with {component_test_config} config in {os.path.realpath(dest_directory)}")
         self.__generate_std_files(stdout, stderr, os.path.realpath(dest_directory))
         local_cluster_log_files = list(log_files)
-        print(f"Log files are: {local_cluster_log_files}")
         for log_file in local_cluster_log_files:
             dest_file = os.path.join(dest_directory, os.path.basename(log_file[0]))
             shutil.copyfile(log_file[0], dest_file)
