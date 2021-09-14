@@ -8,49 +8,36 @@ import glob
 import logging
 import os
 import re
+import subprocess
 
-from sortedcontainers import SortedDict  # type: ignore
-
-from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
-from system.properties_file import PropertiesFile
+from manifests.manifests import Manifests
+from manifests_workflow.component_opensearch import ComponentOpenSearch
+from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
 from system.temporary_directory import TemporaryDirectory
 
 
-class InputManifests(SortedDict):
+class InputManifests(Manifests):
     def __init__(self):
-        super(InputManifests, self).__init__()
-        self.__discover()
+        super().__init__(InputManifest, self.files())
 
-    @property
+    @classmethod
     def manifests_path(self):
         return os.path.realpath(
             os.path.join(os.path.dirname(__file__), "../../../manifests")
         )
 
-    def __discover(self):
+    @classmethod
+    def files(self):
+        results = []
         for filename in glob.glob(
-            os.path.join(self.manifests_path, "opensearch-*.yml")
+            os.path.join(self.manifests_path(), "opensearch-*.yml")
         ):
-            logging.debug(f"Checking {filename}")
+            # avoids the -maven manifest
             match = re.search(r"^opensearch-([0-9.]*).yml$", os.path.basename(filename))
             if match:
-                version = match.group(1)
-                manifest = InputManifest.from_path(filename)
-                logging.debug(f"Loaded {version} from {filename}")
-                self.__setitem__(version, manifest)
-
-    @property
-    def versions(self):
-        return list(map(lambda manifest: manifest.build.version, self.values()))
-
-    @property
-    def last(self):
-        # use the latest manifest
-        if len(self) == 0:
-            raise RuntimeError("No manifests found")
-
-        return self.values()[-1]
+                results.append(filename)
+        return results
 
     def update(self):
         known_versions = self.versions
@@ -59,82 +46,77 @@ class InputManifests(SortedDict):
         with TemporaryDirectory() as work_dir:
             logging.info(f"Checking out components into {work_dir}")
             os.chdir(work_dir)
-            manifest = self.last
+
+            # check out and build OpenSearch#main, 1.x, etc.
+            opensearch_branches = ComponentOpenSearchMin.get_root_branches()
+            logging.info(f"Checking OpenSearch {opensearch_branches} branches")
+            for branch in opensearch_branches:
+                opensearch = ComponentOpenSearchMin.checkout(
+                    path=os.path.join(work_dir, f"OpenSearch/{branch}"), branch=branch
+                )
+                opensearch.publish_to_maven_local()
+                opensearch_version = opensearch.version
+                logging.info(f"OpenSearch#{branch} is version {opensearch_version}")
+                if opensearch_version not in main_versions.keys():
+                    main_versions[opensearch_version] = []
+                main_versions[opensearch_version].append(opensearch)
+
+            # components can increment their own version first without incrementing min
+            manifest = self.latest
             for component in manifest.components:
+                if component.name == "OpenSearch":
+                    continue
+
                 logging.info(f"Checking out {component.name}#main")
-                repo = GitRepository(
-                    component.repository,
-                    "main",
-                    os.path.join(work_dir, component.name),
-                    component.working_directory,
+                component = ComponentOpenSearch.checkout(
+                    name=component.name,
+                    path=os.path.join(work_dir, component.name),
+                    opensearch_version=manifest.build.version,
+                    branch="main",
                 )
 
                 try:
-                    # if OpenSearch incremented the version first, this is expected to fail
-                    # if the component incremented the version first, it depends on an older version and will succeed
-
-                    # HACK: publish to maven local until we have working Maven
-                    if component.name in ["OpenSearch", "common-utils"]:
-                        cmd = " ".join(
-                            [
-                                "./gradlew publishToMavenLocal",
-                                f"-Dopensearch.version={manifest.build.version}-SNAPSHOT"
-                                if component.name != "OpenSearch"
-                                else "",
-                                "-Dbuild.snapshot=false",
-                            ]
-                        )
-                        # repo.execute_silent(cmd)
-
-                    # collect properties
-                    cmd = " ".join(
-                        [
-                            "./gradlew properties",
-                            f"-Dopensearch.version={manifest.build.version}-SNAPSHOT"
-                            if component.name != "OpenSearch"
-                            else "",
-                            "-Dbuild.snapshot=false",
-                        ]
-                    )
-
-                    properties = PropertiesFile(repo.output(cmd))
-                    version = properties.get_value("version")
-                    if version:
-                        release_version = ".".join(version.split(".")[:3])
-                        logging.info(
-                            f"Found version {release_version} (from {version}) in {component.name}"
-                        )
+                    component_version = component.version
+                    if component_version:
+                        release_version = ".".join(component_version.split(".")[:3])
                         if release_version not in main_versions.keys():
                             main_versions[release_version] = []
                         main_versions[release_version].append(component)
-                except Exception:
-                    logging.warn(f"Error building {component.name}, ignored.")
+                        logging.info(
+                            f"{component.name}#main is version {release_version} (from {component_version})"
+                        )
+                except subprocess.CalledProcessError as err:
+                    logging.warn(
+                        f"Error getting version of {component.name}: {str(err)}, ignored"
+                    )
 
-        logging.info("Found versions on main:")
-        for main_version in main_versions.keys():
-            for component in main_versions[main_version]:
-                logging.info(f" {component.name}={main_version}")
-        for release_version in main_versions.keys() - known_versions:
-            logging.info(f"Creating new version: {release_version}")
-            data = {
-                "schema-version": "1.0",
-                "build": {"name": "OpenSearch", "version": release_version},
-                "components": [],
-            }
-            # TODO: was this an increment from a component?
-            # if so, copy OpenSearch and common-utils from the previous manifest
-            for component in main_versions[release_version]:
-                logging.info(f" Adding {component.name}")
-                data["components"].append(
-                    {
-                        "name": component.name,
-                        "repository": component.repository,
-                        "ref": "main",
-                    }
+            # summarize
+            logging.info("Found versions on main:")
+            for main_version in main_versions.keys():
+                for component in main_versions[main_version]:
+                    logging.info(f" {component.name}={main_version}")
+
+            # generate new manifests
+            for release_version in main_versions.keys() - known_versions:
+                logging.info(f"Creating new version: {release_version}")
+                data = {
+                    "schema-version": "1.0",
+                    "build": {"name": "OpenSearch", "version": release_version},
+                    "components": [],
+                }
+                # TODO: copy OpenSearch and common-utils from the previous manifest
+                for component in main_versions[release_version]:
+                    logging.info(f" Adding {component.name}")
+                    data["components"].append(
+                        {
+                            "name": component.name,
+                            "repository": component.git_repo.url,
+                            "ref": component.git_repo.ref,
+                        }
+                    )
+                manifest = InputManifest(data)
+                manifest_path = os.path.join(
+                    self.manifests_path(), f"opensearch-{release_version}.yml"
                 )
-            manifest = InputManifest(data)
-            manifest_path = os.path.join(
-                self.manifests_path, f"opensearch-{release_version}.yml"
-            )
-            manifest.to_file(manifest_path)
-            logging.info(f"Wrote {manifest_path}")
+                manifest.to_file(manifest_path)
+                logging.info(f"Wrote {manifest_path}")
