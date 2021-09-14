@@ -7,10 +7,9 @@ This job runs integration tests for a bundle via `test_integration.sh` in Jenkin
 #### Job Parameters
 | name        | description                                                |
 |-------------|------------------------------------------------------------|
-| ARTIFACT_BUCKET_NAME |  Artifact S3 bucket in Jenkins ENV                |
-| AWS_ACCOUNT_PUBLIC |  AWS Account ID to read S3 bucket in Jenkins ENV    |
-| BUNDLE_TEST_ID |  Unique identifier for a bundle test suite run          |
-| bundle_manifest |  Path to bundle manifest in Artifact S3 bucket         |
-| build_manifest |  Path to build manifest in Artifact S3 bucket           |
+| s3_bucket |  Artifact S3 bucket                                          |
+| opensearch_version |  OpenSearch version                                 |
+| build_id |  Unique identifier for a bundle build                         |
 | architecture | CPU Architecture of bundle                                |
+| test_run_id | Unique identifier for a test run                           |
  

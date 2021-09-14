@@ -1,8 +1,5 @@
 pipeline {
     agent none
-    environment {
-        BUNDLE_TEST_ID = "${BUILD_NUMBER}"
-    }
     tools {
         jdk "JDK14"
         maven "maven-3.8.2"
@@ -15,17 +12,27 @@ pipeline {
                             parameters([
                                     string(
                                             defaultValue: '',
-                                            name: 'bundle_manifest',
+                                            name: 's3_bucket',
                                             trim: true
                                     ),
                                     string(
                                             defaultValue: '',
-                                            name: 'build_manifest',
+                                            name: 'opensearch_version',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'build_id',
                                             trim: true
                                     ),
                                     string(
                                             defaultValue: '',
                                             name: 'architecture',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'test_run_id',
                                             trim: true
                                     ),
                             ])
@@ -41,7 +48,7 @@ pipeline {
                     } else if ("${architecture}" == 'arm64') {
                         agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
                     } else {
-                        agentLabel = ""
+                        error("Unknown CPU architecture is provided")
                     }
                 }
             }
@@ -53,11 +60,7 @@ pipeline {
                 }
             }
             steps {
-                withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                    s3Download(file: 'tests/bundle_manifest.yml', bucket: "${ARTIFACT_BUCKET_NAME}", path: "$bundle_manifest", force:true)
-                    s3Download(file: 'tests/build_manifest.yml', bucket: "${ARTIFACT_BUCKET_NAME}", path: "$build_manifest", force:true)
-                }
-                sh "./bundle-workflow/test_integration.sh --bundle-manifest tests/bundle_manifest.yml --build-manifest tests/build_manifest.yml --test-manifest bundle-workflow/src/test_workflow/config/test_manifest.yml"
+                sh "./bundle-workflow/test_integration.sh --s3-bucket ${s3_bucket} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
             }
             post() {
                 always {
