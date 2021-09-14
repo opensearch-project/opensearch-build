@@ -8,13 +8,21 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from build_workflow.build_recorder import BuildRecorder
+from build_workflow.build_target import BuildTarget
 
 
 class TestBuildRecorderSnapshot(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.build_recorder = BuildRecorder(
-            "1", "output_dir", "OpenSearch", "1.1.0", "x64", True
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.1.0",
+                arch="x64",
+                snapshot=True,
+            )
         )
 
     @patch("shutil.copyfile")
@@ -61,7 +69,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.zip"
             )
         self.assertEqual(
-            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0-SNAPSHOT.",
+            "Artifact invalid.zip is invalid. Expected filename to include 1.1.0.0-SNAPSHOT.",
             context.exception.__str__(),
         )
 
@@ -78,7 +86,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but none was found.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version='1.1.0.0-SNAPSHOT', but none was found.",
                 context.exception.__str__(),
             )
 
@@ -95,7 +103,7 @@ class TestBuildRecorderSnapshot(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid: expected to have version=1.1.0.0-SNAPSHOT, but was 1.2.3.4.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version='1.1.0.0-SNAPSHOT', but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 

@@ -11,23 +11,24 @@ import os
 
 from ci_workflow.ci import Ci
 from ci_workflow.ci_args import CiArgs
+from ci_workflow.ci_target import CiTarget
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
 from system import console
-from system.arch import current_arch
 from system.temporary_directory import TemporaryDirectory
 
 args = CiArgs()
 console.configure(level=args.logging_level)
-arch = current_arch()
 manifest = InputManifest.from_file(args.manifest)
+
+target = CiTarget(version=manifest.build.version, snapshot=args.snapshot)
 
 with TemporaryDirectory(keep=args.keep) as work_dir:
     logging.info(f"Sanity-testing in {work_dir}")
 
     os.chdir(work_dir)
 
-    logging.info(f"Sanity testing {manifest.build.name} ({arch})")
+    logging.info(f"Sanity testing {manifest.build.name}")
 
     for component in manifest.components:
 
@@ -37,12 +38,15 @@ with TemporaryDirectory(keep=args.keep) as work_dir:
 
         logging.info(f"Sanity checking {component.name}")
         repo = GitRepository(
-            component.repository, component.ref, os.path.join(work_dir, component.name)
+            component.repository,
+            component.ref,
+            os.path.join(work_dir, component.name),
+            component.working_directory,
         )
 
         try:
-            ci = Ci(component.name, repo)
-            ci.check(manifest.build.version, arch, args.snapshot)
+            ci = Ci(component, repo, target)
+            ci.check()
         except:
             logging.error(
                 f"Error checking {component.name}, retry with: {args.component_command(component.name)}"

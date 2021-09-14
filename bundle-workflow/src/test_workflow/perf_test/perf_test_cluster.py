@@ -1,27 +1,15 @@
 import json
+import logging
 import os
 import subprocess
-from contextlib import contextmanager
 
 from test_workflow.test_cluster import TestCluster
-
-
-class Cluster:
-    @contextmanager
-    def create(manifest, config, stack_name, security):
-        perf_test_cluster = PerfTestCluster(manifest, config, stack_name, security)
-        try:
-            perf_test_cluster.create()
-            yield perf_test_cluster.endpoint()
-        finally:
-            perf_test_cluster.destroy()
 
 
 class PerfTestCluster(TestCluster):
     """
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """
-
     def __init__(self, bundle_manifest, config, stack_name, security):
         self.manifest = bundle_manifest
         self.work_dir = 'tools/cdk/mensor/single-node/'
@@ -49,15 +37,15 @@ class PerfTestCluster(TestCluster):
                       f' -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} '
         self.params = ''.join(params_list) + role_params
 
-    def create(self):
+    def create_cluster(self):
         os.chdir(self.work_dir)
         command = f'cdk deploy {self.params} --outputs-file {self.output_file}'
-        print(f'Executing "{command}" in {os.getcwd()}')
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
         with open(self.output_file, 'r') as read_file:
             load_output = json.load(read_file)
         self.ip_address = load_output[self.stack_name]['PrivateIp']
-        print('Private IP:', self.ip_address)
+        logging.info('Private IP:', self.ip_address)
 
     def endpoint(self):
         self.cluster_endpoint = self.ip_address
@@ -70,5 +58,5 @@ class PerfTestCluster(TestCluster):
     def destroy(self):
         os.chdir(self.work_dir)
         command = f'cdk destroy {self.params} --force'
-        print(f'Executing "{command}" in {os.getcwd()}')
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)

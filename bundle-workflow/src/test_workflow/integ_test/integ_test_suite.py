@@ -10,10 +10,8 @@ import subprocess
 
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
-from paths.tree_walker import walk
 from system.execute import execute
-from test_workflow.local_test_cluster import LocalTestCluster
-from test_workflow.test_recorder import TestRecorder
+from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 
 
 class IntegTestSuite:
@@ -28,7 +26,6 @@ class IntegTestSuite:
         self.work_dir = work_dir
         self.test_config = test_config
         self.script_finder = ScriptFinder()
-        self.test_recorder = TestRecorder(os.path.dirname(bundle_manifest.name))
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
@@ -77,30 +74,19 @@ class IntegTestSuite:
 
     def _setup_cluster_and_execute_test_config(self, config):
         security = self._is_security_enabled(config)
-        try:
-            # Spin up a test cluster
-            cluster = LocalTestCluster(self.work_dir, self.bundle_manifest, security)
-            cluster.create()
+        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security) as (test_cluster_endpoint, test_cluster_port):
             logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
-            self._execute_integtest_sh(cluster, security)
-        finally:
-            cluster.destroy()
+            self._execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security)
 
-    def _execute_integtest_sh(self, cluster, security):
+    def _execute_integtest_sh(self, endpoint, port, security):
         script = self.script_finder.find_integ_test_script(
             self.component.name, self.repo.dir
         )
         if os.path.exists(script):
-            cmd = f"sh {script} -b {cluster.endpoint()} -p {cluster.port()} -s {str(security).lower()}"
+            cmd = f"sh {script} -b {endpoint} -p {port} -s {str(security).lower()}"
             (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
-            results_dir = os.path.join(
-                self.repo.dir, "integ-test", "build", "reports", "tests", "integTest"
-            )
-            self.test_recorder.record_integ_test_outcome(
-                self.name, status, stdout, stderr, walk(results_dir)
-            )
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.name}"

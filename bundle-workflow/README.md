@@ -7,6 +7,7 @@
   - [Test the Bundle](#test-the-bundle)
     - [Integration Tests](#integration-tests)
     - [Backwards Compatibility Tests](#backwards-compatibility-tests)
+    - [Performance Tests](#performance-tests)
   - [Sanity Check the Bundle](#sanity-check-the-bundle)
 
 ## OpenSearch Bundle Workflow
@@ -15,16 +16,15 @@ This workflow builds a complete OpenSearch bundle from source. You can currently
 
 ### Build from Source
 
-Each build requires a manifest to be passed as input.  We currently have the following input manifests:
+Each build requires a manifest to be passed as input. We currently have the following input manifests.
 
-| name        | description                                                                         |
-|-------------|-------------------------------------------------------------------------------------|
-| [opensearch-1.0.0.yml](/manifests/opensearch-1.0.0.yml) |  Manifest to reproduce 1.0.0 build.                 |
-| [opensearch-1.0.0-maven.yml](/manifests/opensearch-1.0.0-maven.yml)|   One-time manifest to build and push maven artifacts for 1.0 from tags. Going forward a separate maven manifest is not required. For 1.0.0 we do not have solid 1.0 refs for all repos nor do we need to rebuild the full bundle.|
-| [opensearch-1.1.0.yml](/manifests/opensearch-1.1.0.yml)| Manifest to build upcoming 1.x release.
+| name                                                                  | description                                                   |
+|-----------------------------------------------------------------------|---------------------------------------------------------------|
+| [opensearch-1.0.0.yml](/manifests/opensearch-1.0.0.yml)               | Manifest to reproduce 1.0.0 build.                            |
+| [opensearch-1.0.0-maven.yml](/manifests/opensearch-1.0.0-maven.yml)   | One-time manifest to build maven artifacts for 1.0 from tags. |
+| [opensearch-1.1.0.yml](/manifests/opensearch-1.1.0.yml)               | Manifest to build upcoming 1.x release.                       |
 
-
-Usage:
+The following example builds a shapshot version of OpenSearch 1.1.0.
 
 ```bash
 ./bundle-workflow/build.sh manifests/opensearch-1.1.0.yml --snapshot
@@ -78,19 +78,20 @@ You can perform additional plugin install steps by adding an `install.sh` script
 
 ### Signing Artifacts
 
-The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using the opensearch-signer-client. The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
+The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using a tool called `opensearch-signer-client` (in progress of being open-sourced). The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
 
 The following options are available. 
 
-| name          | description                                                                         |
-|---------------|-------------------------------------------------------------------------------------|
-| --component   | The component name of the component whose artifacts will be signed                  |
-| --type        | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]|
-| -v, --verbose | Show more verbose output.                                                           |
+| name          | description                                                                           |
+|---------------|---------------------------------------------------------------------------------------|
+| --component   | The component name of the component whose artifacts will be signed.                   |
+| --type        | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]. |
+| -v, --verbose | Show more verbose output.                                                             |
 
 The signed artifacts (<artifact>.asc) will be found in the same location as the original artifact. 
 
-Signing step (to sign all artifacts):
+The following command signs all artifacts.
+
 ```bash
 ./bundle_workflow/sign.sh artifacts/manifest.yml
 ```
@@ -99,21 +100,12 @@ Signing step (to sign all artifacts):
 
 Tests the OpenSearch bundle.
 
-This workflow contains two sections: Integration Tests, Backwards Compatibility Tests.
+This workflow contains integration, backwards compatibility and performance tests.
 
-#### Integration Tests
+The following example kicks off all test suites for a distribution of OpenSearch 1.1.0.
 
-This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
-
-#### Backwards Compatibility Tests
-
-This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
-
-Usage:
-
-Kick off all test suites on a manifest:
 ```bash
-./bundle-workflow/test.sh manifests/opensearch-1.0.0.yml
+./bundle-workflow/test.sh manifests/opensearch-1.1.0.yml
 ```
 
 The following options are available.
@@ -124,16 +116,46 @@ The following options are available.
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
 
+#### Integration Tests
+
+This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
+
+#### Backwards Compatibility Tests
+
+This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
+
+#### Performance Tests
+
+TODO
+
 ### Sanity Check the Bundle
 
-Runs basic sanity checks on the OpenSearch bundle.
+This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](/.github/workflows/manifests.yml) in this repostiory. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch version.
 
-This workflow runs basic sanity checks on every component present in the bundle. For starters, it ensures that the component GitHub repositories are correct.
+To use checks, nest them under `checks` in the manifest.
 
-Usage:
+```yaml
+- name: common-utils
+  repository: https://github.com/opensearch-project/common-utils.git
+  ref: main
+  checks:
+    - gradle:publish
+    - gradle:properties:version
+```
+
+The following checks are available.
+
+| name                                          | description                                                   |
+|-----------------------------------------------|---------------------------------------------------------------|
+| gradle:properties:version                     | Check version of the component.                               |
+| gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch.        |
+| gradle:plugin.dependencies:opensearch.version | Check plugin dependency on the correct version of OpenSearch. |                                              |
+| gradle:publish                                | Check that publishing to Maven local works, and publish.      |
+
+The following example sanity-checks components in the the OpenSearch 1.1.0 manifest.
 
 ```bash
-./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml
+./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml --snapshot
 ```
 
 The following options are available.

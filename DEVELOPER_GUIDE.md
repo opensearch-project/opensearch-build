@@ -140,8 +140,8 @@ Run from `bundle-workflow` before making pull requests.
 ```
 cd bundle-workflow
 
+git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
 pipenv run isort .
-pipenv run black .
 pipenv run flake8
 pipenv run pytest
 pipenv run mypy .

@@ -12,7 +12,7 @@ The manifest contains information about the product that was built (in the `buil
 and the components that made up the build in the `components` section.
 
 The format for schema version 1.0 is:
-schema-version: 1.0
+schema-version: "1.0"
 build:
   name: string
   version: string
@@ -45,12 +45,12 @@ class BuildManifest(Manifest):
             map(lambda entry: self.Component(entry), data["components"])
         )
 
-    def to_dict(self):
+    def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "build": self.build.to_dict(),
+            "build": self.build.__to_dict__(),
             "components": list(
-                map(lambda component: component.to_dict(), self.components)
+                map(lambda component: component.__to_dict__(), self.components)
             ),
         }
 
@@ -61,7 +61,7 @@ class BuildManifest(Manifest):
             self.architecture = data["architecture"]
             self.id = data["id"]
 
-        def to_dict(self):
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "version": self.version,
@@ -78,7 +78,7 @@ class BuildManifest(Manifest):
             self.artifacts = data["artifacts"]
             self.version = data["version"]
 
-        def to_dict(self):
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "repository": self.repository,

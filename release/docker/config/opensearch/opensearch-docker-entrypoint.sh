@@ -28,6 +28,9 @@
 # If either process failed, the entire docker container will be removed
 # in favor of a newly started container
 
+# Export OpenSearch Home
+export OPENSEARCH_HOME=/usr/share/opensearch
+
 # Files created by OpenSearch should always be group writable too
 umask 0002
 
@@ -71,6 +74,25 @@ done < <(env)
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
+##Security Plugin
+SECURITY_PLUGIN="opensearch-security"
+if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
+    if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+        echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+    else
+        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+        bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+    fi
+
+    if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
+        echo "Disabling OpenSearch Security Plugin"
+        sed -i '/plugins.security.disabled/d' $OPENSEARCH_HOME/config/opensearch.yml
+        echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
+    else
+        echo "Enabling OpenSearch Security Plugin"
+        sed -i '/plugins.security.disabled/d' $OPENSEARCH_HOME/config/opensearch.yml
+    fi
+fi
 
 # Start up the opensearch and performance analyzer agent processes.
 # When either of them halts, this script exits, or we receive a SIGTERM or SIGINT signal then we want to kill both these processes.
@@ -93,9 +115,6 @@ set -m
 
 # Make sure we terminate the child processes in the event of us received TERM (e.g. "docker container stop"), INT (e.g. ctrl-C), EXIT (this script terminates for an unexpected reason), or CHLD (one of the processes terminated unexpectedly)
 trap terminateProcesses TERM INT EXIT CHLD
-
-# Export OpenSearch Home
-export OPENSEARCH_HOME=/usr/share/opensearch
 
 # Start opensearch
 $OPENSEARCH_HOME/bin/opensearch "${opensearch_opts[@]}" &

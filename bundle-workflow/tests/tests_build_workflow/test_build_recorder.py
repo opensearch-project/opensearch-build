@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 import yaml
 
 from build_workflow.build_recorder import BuildRecorder
+from build_workflow.build_target import BuildTarget
 from manifests.build_manifest import BuildManifest
 
 
@@ -19,7 +20,14 @@ class TestBuildRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.build_recorder = BuildRecorder(
-            "1", "output_dir", "OpenSearch", "1.1.0", "x64", False
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.1.0",
+                arch="x64",
+                snapshot=False,
+            )
         )
 
     @patch("shutil.copyfile")
@@ -96,7 +104,7 @@ class TestBuildRecorder(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.file"
             )
         self.assertEqual(
-            "Artifact invalid.file is invalid: not a zip file.",
+            "Artifact invalid.file is invalid. Not a zip file.",
             context.exception.__str__(),
         )
 
@@ -109,7 +117,7 @@ class TestBuildRecorder(unittest.TestCase):
                 "security", "plugins", "../file1.zip", "invalid.zip"
             )
         self.assertEqual(
-            "Artifact invalid.zip is invalid: expected filename to include 1.1.0.0.",
+            "Artifact invalid.zip is invalid. Expected filename to include 1.1.0.0.",
             context.exception.__str__(),
         )
 
@@ -126,7 +134,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but none was found.",
+                "Artifact valid-1.1.0.0.zip is invalid. Expected to have version='1.1.0.0', but none was found.",
                 context.exception.__str__(),
             )
 
@@ -143,7 +151,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "plugins", "../file1.zip", "valid-1.1.0.0.zip"
                 )
             self.assertEqual(
-                "Artifact valid-1.1.0.0.zip is invalid: expected to have version=1.1.0.0, but was 1.2.3.4.",
+                "Artifact valid-1.1.0.0.zip is invalid. Expected to have version='1.1.0.0', but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 
@@ -175,7 +183,7 @@ class TestBuildRecorder(unittest.TestCase):
                     "security", "maven", "../file1.zip", "valid.jar"
                 )
             self.assertEqual(
-                "Artifact valid.jar is invalid: expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was 1.2.3.4.",
+                "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was '1.2.3.4'.",
                 context.exception.__str__(),
             )
 
@@ -227,14 +235,14 @@ class TestBuildRecorder(unittest.TestCase):
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
-                "components": [],
                 "schema-version": "1.0",
             },
         )
 
     def test_write_manifest(self):
         with tempfile.TemporaryDirectory() as dest_dir:
-            self.build_recorder.write_manifest(dest_dir)
+            self.build_recorder.target.output_dir = dest_dir
+            self.build_recorder.write_manifest()
             manifest_path = os.path.join(dest_dir, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = self.build_recorder.get_manifest().to_dict()

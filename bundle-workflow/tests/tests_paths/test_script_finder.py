@@ -13,6 +13,7 @@ from paths.script_finder import ScriptFinder
 
 class TestScriptFinder(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         # use root of this repo as the default git checkout directory
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")

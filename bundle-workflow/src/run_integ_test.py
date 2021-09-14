@@ -17,7 +17,7 @@ from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
-from test_workflow.integ_test_suite import IntegTestSuite
+from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py

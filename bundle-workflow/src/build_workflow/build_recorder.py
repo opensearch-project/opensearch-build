@@ -9,79 +9,24 @@ import os
 import shutil
 from zipfile import ZipFile
 
-import yaml
-from jproperties import Properties  # type: ignore
-
 from manifests.build_manifest import BuildManifest
+from system.properties_file import PropertiesFile
 
 
 class BuildRecorder:
     class ArtifactInvalidError(Exception):
         def __init__(self, path, message):
             self.path = path
-            super().__init__(
-                f"Artifact {os.path.basename(path)} is invalid: {message}."
-            )
+            super().__init__(f"Artifact {os.path.basename(path)} is invalid. {message}")
 
-    class PropertiesFile(Properties):
-        def __init__(self, filename, data):
-            super().__init__(self)
-            self.filename = filename
-            self.load(data)
-
-        def get_value(self, key, default_value=None):
-            try:
-                return self[key].data
-            except KeyError:
-                return default_value
-
-        def check_value(self, key, expected_value):
-            try:
-                value = self[key].data
-                if value != expected_value:
-                    raise BuildRecorder.ArtifactInvalidError(
-                        self.filename,
-                        f"expected to have {key}={expected_value}, but was {value}",
-                    )
-            except KeyError:
-                raise BuildRecorder.ArtifactInvalidError(
-                    self.filename,
-                    f"expected to have {key}={expected_value}, but none was found",
-                )
-
-        def check_value_in(self, key, expected_values):
-            try:
-                value = self[key].data
-                if value not in expected_values:
-                    raise BuildRecorder.ArtifactInvalidError(
-                        self.filename,
-                        f"expected to have {key}=any of {expected_values}, but was {value}",
-                    )
-            except KeyError:
-                if None not in expected_values:
-                    raise BuildRecorder.ArtifactInvalidError(
-                        self.filename,
-                        f"expected to have {key}=any of {expected_values}, but none was found",
-                    )
-
-    def __init__(self, build_id, output_dir, name, version, arch, snapshot):
-        self.output_dir = output_dir
-        self.version = str(version)
-        self.opensearch_version = (
-            self.version + "-SNAPSHOT" if snapshot else self.version
-        )
-        # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
-        self.component_version = (
-            self.version + ".0-SNAPSHOT" if snapshot else f"{self.version}.0"
-        )
-        self.build_manifest = self.BuildManifestBuilder(
-            build_id, name, self.opensearch_version, arch, snapshot
-        )
+    def __init__(self, target):
+        self.build_manifest = self.BuildManifestBuilder(target)
+        self.target = target
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(
             component_name,
-            self.component_version,
+            self.target.component_version,
             git_repo.url,
             git_repo.ref,
             git_repo.sha,
@@ -94,7 +39,7 @@ class BuildRecorder:
             f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})"
         )
         # Ensure the target directory exists
-        dest_file = os.path.join(self.output_dir, artifact_path)
+        dest_file = os.path.join(self.target.output_dir, artifact_path)
         dest_dir = os.path.dirname(dest_file)
         os.makedirs(dest_dir, exist_ok=True)
         # Check artifact
@@ -109,11 +54,10 @@ class BuildRecorder:
     def get_manifest(self):
         return self.build_manifest.to_manifest()
 
-    def write_manifest(self, dest_dir):
-        output_manifest = self.get_manifest()
-        manifest_path = os.path.join(dest_dir, "manifest.yml")
-        with open(manifest_path, "w") as file:
-            yaml.dump(output_manifest.to_dict(), file)
+    def write_manifest(self):
+        manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
+        self.get_manifest().to_file(manifest_path)
+        logging.info(f'Created build manifest {manifest_path}')
 
     def __check_artifact(self, artifact_type, artifact_file):
         if artifact_type == "plugins":
@@ -123,16 +67,20 @@ class BuildRecorder:
 
     def __check_plugin_artifact(self, artifact_file):
         if os.path.splitext(artifact_file)[1] != ".zip":
-            raise BuildRecorder.ArtifactInvalidError(artifact_file, "not a zip file")
-        if not artifact_file.endswith(f"-{self.component_version}.zip"):
+            raise BuildRecorder.ArtifactInvalidError(artifact_file, "Not a zip file.")
+        if not artifact_file.endswith(f"-{self.target.component_version}.zip"):
             raise BuildRecorder.ArtifactInvalidError(
-                artifact_file, f"expected filename to include {self.component_version}"
+                artifact_file,
+                f"Expected filename to include {self.target.component_version}.",
             )
         with ZipFile(artifact_file, "r") as zip:
             data = zip.read("plugin-descriptor.properties").decode("UTF-8")
-            properties = BuildRecorder.PropertiesFile(artifact_file, data)
-            properties.check_value("version", self.component_version)
-            properties.check_value("opensearch.version", self.version)
+            properties = PropertiesFile(data)
+            try:
+                properties.check_value("version", self.target.component_version)
+                properties.check_value("opensearch.version", self.target.version)
+            except PropertiesFile.CheckError as e:
+                raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
             logging.info(
                 f'Checked {artifact_file} ({properties.get_value("version", "N/A")})'
             )
@@ -159,24 +107,31 @@ class BuildRecorder:
         if os.path.splitext(artifact_file)[1] == ".jar":
             with ZipFile(artifact_file, "r") as zip:
                 data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
-                properties = BuildRecorder.PropertiesFile(artifact_file, data)
-                properties.check_value_in(
-                    "Implementation-Version",
-                    [self.component_version, self.opensearch_version, None],
-                )
+                properties = PropertiesFile(data)
+                try:
+                    properties.check_value_in(
+                        "Implementation-Version",
+                        [
+                            self.target.component_version,
+                            self.target.opensearch_version,
+                            None,
+                        ],
+                    )
+                except PropertiesFile.CheckError as e:
+                    raise BuildRecorder.ArtifactInvalidError(artifact_file, e.__str__())
                 logging.info(
                     f'Checked {artifact_file} ({properties.get_value("Implementation-Version", "N/A")})'
                 )
 
     class BuildManifestBuilder:
-        def __init__(self, build_id, name, version, arch, snapshot):
+        def __init__(self, target):
             self.data = {}
             self.data["build"] = {}
-            self.data["build"]["id"] = build_id
-            self.data["build"]["name"] = name
-            self.data["build"]["version"] = version
-            self.data["build"]["architecture"] = arch
-            self.data["build"]["snapshot"] = str(snapshot).lower()
+            self.data["build"]["id"] = target.build_id
+            self.data["build"]["name"] = target.name
+            self.data["build"]["version"] = target.opensearch_version
+            self.data["build"]["architecture"] = target.arch
+            self.data["build"]["snapshot"] = str(target.snapshot).lower()
             self.data["schema-version"] = "1.0"
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BuildManifest this will get converted back into a list
