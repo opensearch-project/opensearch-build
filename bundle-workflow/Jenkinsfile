@@ -119,6 +119,6 @@ void build() {
 
 void publishNotification(icon, msg) {
     withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}"}' $TOKEN"""
+        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${BUILD_MANIFEST}"}' $TOKEN"""
     }
 }
