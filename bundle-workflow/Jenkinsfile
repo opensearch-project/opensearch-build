@@ -94,10 +94,10 @@ pipeline {
             }
             post() {
                 success {
-                    publishNotificaiton(":white_check-mark:", "Successful Build")
+                    publishNotification(":white_check-mark:", "Successful Build")
                 }
                 failure {
-                    publishNotificaiton(":warning:", "Failed Build")
+                    publishNotification(":warning:", "Failed Build")
                 }
             }
         }
@@ -117,7 +117,7 @@ void build() {
     }
 }
 
-void publishNotificaiton(icon, msg) {
+void publishNotification(icon, msg) {
     withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
         sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}"}' $TOKEN"""
     }
