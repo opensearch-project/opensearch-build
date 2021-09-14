@@ -120,11 +120,18 @@ The following options are available.
 
 This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
 
-To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3,
-reads all components of the bundle and runs integration tests against each component.
+To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3, reads all components of the bundle and runs integration tests against each component.
  
 ```
-cd opensearch-build/bundle-workflow
+export AWS_ROLE_ARN=arn:aws:iam::<AWS_JENKINS_ACCOUNT>:role/opensearch-test
+export AWS_ROLE_SESSION_NAME=dummy-session
+
+Next, configure temporary credentials in environment w/
+export AWS_SESSION_TOKEN=<value>
+export AWS_ACCESS_KEY_ID=<value>
+export AWS_SECRET_ACCESS_KEY=<value>
+
+cd bundle-workflow
 pipenv install
 pipenv shell
 python src/run_integ_test.py --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>

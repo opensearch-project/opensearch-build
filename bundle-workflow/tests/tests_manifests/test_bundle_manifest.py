@@ -53,3 +53,20 @@ class TestBundleManifest(unittest.TestCase):
         data = self.manifest.to_dict()
         with open(self.manifest_filename) as f:
             self.assertEqual(yaml.safe_load(f), data)
+
+    def test_get_manifest_relative_location(self):
+        actual = BundleManifest.get_bundle_manifest_relative_location(
+            '25', '1.1.0', 'x64'
+        )
+        expected = 'bundles/1.1.0/25/x64/manifest.yml'
+        self.assertEqual(actual, expected, "the manifest relative location is not as expected")
+
+    def test_get_tarball_relative_location(self):
+        actual = BundleManifest.get_tarball_relative_location('25', '1.1.0', 'x64')
+        expected = 'bundles/1.1.0/25/x64/opensearch-1.1.0-linux-x64.tar.gz'
+        self.assertEqual(actual, expected, "the tarball relative location is not as expected")
+
+    def test_get_tarball_name(self):
+        actual = BundleManifest.get_tarball_name('1.1.0', 'x64')
+        expected = "opensearch-1.1.0-linux-x64.tar.gz"
+        self.assertEqual(actual, expected, "the tarball name is not as expected")

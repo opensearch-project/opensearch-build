@@ -12,12 +12,12 @@ import subprocess
 import sys
 
 from git.git_repository import GitRepository
+from manifests.build_manifest import BuildManifest
+from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
-from test_workflow.utils.build_manifest_provider import BuildManifestProvider
-from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
@@ -39,6 +39,9 @@ def parse_arguments():
     )
     parser.add_argument(
         "--architecture", type=str, help="The os architecture e.g. x64, arm64"
+    )
+    parser.add_argument(
+        "--test-run-id", type=str, help="The unique execution id for the test"
     )
     parser.add_argument(
         "--keep",
@@ -104,10 +107,9 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 def main():
     args = parse_arguments()
     console.configure(level=args.logging_level)
-    script_dir = str(os.getcwd())
-    test_manifest_path = ("%s%s" % (script_dir, '/src/test_workflow/config/test_manifest.yml'))
-    with open(test_manifest_path, 'r') as file:
-        test_manifest = TestManifest.from_file(file)
+    script_dir = os.path.realpath(os.path.dirname(__file__))
+    test_manifest_path = ("%s%s" % (script_dir, '/test_workflow/config/test_manifest.yml'))
+    test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
         if component.integ_test is not None:
@@ -115,9 +117,9 @@ def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
         os.chdir(work_dir)
-        bundle_manifest = BundleManifestProvider.load_manifest(
+        bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture)
-        build_manifest = BuildManifestProvider.load_manifest(
+        build_manifest = BuildManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture)
         pull_common_dependencies(work_dir, build_manifest)
         sync_dependencies_to_maven_local(work_dir, build_manifest.build.version)

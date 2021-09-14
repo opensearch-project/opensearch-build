@@ -12,8 +12,8 @@ import time
 import requests
 
 from aws.s3_bucket import S3Bucket
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
-from test_workflow.utils.bundle_manifest_provider import BundleManifestProvider
 
 
 class LocalTestCluster(TestCluster):
@@ -62,10 +62,10 @@ class LocalTestCluster(TestCluster):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
     def __download_tarball_from_s3(self):
-        s3_path = BundleManifestProvider.get_tarball_relative_location(
+        s3_path = BundleManifest.get_tarball_relative_location(
             self.manifest.build.id, self.manifest.build.version, self.manifest.build.architecture)
         S3Bucket(self.bucket_name).download_file(s3_path, self.work_dir)
-        return BundleManifestProvider.get_tarball_name(self.manifest.build.version, self.manifest.build.architecture)
+        return BundleManifest.get_tarball_name(self.manifest.build.version, self.manifest.build.architecture)
 
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")

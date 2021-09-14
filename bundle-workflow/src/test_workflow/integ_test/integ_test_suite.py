@@ -86,7 +86,7 @@ class IntegTestSuite:
             self.component.name, self.repo.dir
         )
         if os.path.exists(script):
-            cmd = f"sh {script} -b {endpoint} -p {port} -s {str(security).lower()}"
+            cmd = f"bash {script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
             (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
         else:
             logging.info(

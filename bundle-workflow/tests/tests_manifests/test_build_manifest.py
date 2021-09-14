@@ -48,3 +48,10 @@ class TestBuildManifest(unittest.TestCase):
         data = self.manifest.to_dict()
         with open(self.manifest_filename) as f:
             self.assertEqual(yaml.safe_load(f), data)
+
+    def test_get_manifest_relative_location(self):
+        actual = BuildManifest.get_build_manifest_relative_location(
+            '25', '1.1.0', 'x64'
+        )
+        expected = 'builds/1.1.0/25/x64/manifest.yml'
+        self.assertEqual(actual, expected, "the manifest relative location is not as expected")
