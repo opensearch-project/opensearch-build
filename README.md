@@ -8,6 +8,7 @@
   - [Creating a New Version](#creating-a-new-version)
   - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
   - [Making a Release](#making-a-release)
+  - [Deploying infrastructure](#deploying-infrastructure)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
 - [Code of Conduct](#code-of-conduct)
@@ -21,13 +22,17 @@
 
 OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). A job is then added to start building this new version.  
 
-### Building and Testing an OpenSearch Distribution 
+### Building and Testing an OpenSearch Distribution
 
 OpenSearch and its components are built from source, assembled, signed and tested using the [bundle workflow](bundle-workflow/README.md).
 
 ### Making a Release
 
 TODO
+
+### Deploying infrastructure
+
+Storage and access roles for the OpenSearch release process are codified in a [CDK project](deployment/README.md).
 
 ## Contributing
 
