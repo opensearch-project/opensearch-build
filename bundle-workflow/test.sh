@@ -9,11 +9,4 @@
 set -e
 
 DIR="$(dirname "$0")"
-case $1 in
-  "integ-test")
-  "$DIR/run.sh" "$DIR/src/run_integ_test.py" "${@:2}"
-  ;;
-  *)
-  echo "Invalid Test suite"
-  ;;
-esac
+"$DIR/run.sh" "$DIR/src/test.py" $@

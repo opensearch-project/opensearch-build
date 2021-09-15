@@ -102,8 +102,10 @@ Tests the OpenSearch bundle.
 
 This workflow contains integration, backwards compatibility and performance tests.
 
+The following example kicks off all test suites for a distribution of OpenSearch 1.1.0.
+
 ```bash
-./bundle-workflow/test.sh integ-test
+./bundle-workflow/test.sh manifests/opensearch-1.1.0.yml
 ```
 
 The following options are available.
@@ -116,11 +118,11 @@ The following options are available.
 
 #### Integration Tests
 
-This step runs integration tests invoking `run_integ_test.py` in each component from bundle manifest.
+This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
 
 #### Backwards Compatibility Tests
 
-TODO
+This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
 
 #### Performance Tests
 

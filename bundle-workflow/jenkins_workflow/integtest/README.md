@@ -7,7 +7,7 @@ This job runs integration tests for a bundle via `test_integration.sh` in Jenkin
 #### Job Parameters
 | name        | description                                                |
 |-------------|------------------------------------------------------------|
-| s3_bucket |  Artifact S3 bucket                                          |
+| ARTIFACT_BUCKET_NAME |  Artifact S3 bucket in Jenkins ENV                |
 | opensearch_version |  OpenSearch version                                 |
 | build_id |  Unique identifier for a bundle build                         |
 | architecture | CPU Architecture of bundle                                |

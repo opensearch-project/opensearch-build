@@ -12,11 +12,6 @@ pipeline {
                             parameters([
                                     string(
                                             defaultValue: '',
-                                            name: 's3_bucket',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
                                             name: 'opensearch_version',
                                             trim: true
                                     ),
@@ -60,7 +55,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./bundle-workflow/test.sh integ-test --s3-bucket ${s3_bucket} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
+                sh "./bundle-workflow/test.sh integ-test --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
             }
             post() {
                 always {
