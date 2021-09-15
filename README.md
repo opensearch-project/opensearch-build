@@ -4,7 +4,10 @@
 [![manifests](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml/badge.svg)](https://github.com/opensearch-project/opensearch-build/actions/workflows/manifests.yml)
 [![codecov](https://codecov.io/gh/opensearch-project/opensearch-build/branch/main/graph/badge.svg?token=03S5XZ80UI)](https://codecov.io/gh/opensearch-project/opensearch-build)
 
-- [OpenSearch Build](#opensearch-build)
+- [Releasing OpenSearch](#releasing-opensearch)
+  - [Creating a New Version](#creating-a-new-version)
+  - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
+  - [Making a Release](#making-a-release)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
 - [Code of Conduct](#code-of-conduct)
@@ -12,11 +15,19 @@
 - [License](#license)
 - [Copyright](#copyright)
 
-## OpenSearch Build
+## Releasing OpenSearch
 
-This repository contains the scripts for building OpenSearch and OpenSearch Dashboards distributions.
+### Creating a New Version
 
-* [OpenSearch Bundle Workflow](bundle-workflow/README.md)
+OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). A job is then added to start building this new version.  
+
+### Building and Testing an OpenSearch Distribution 
+
+OpenSearch and its components are built from source, assembled, signed and tested using the [bundle workflow](bundle-workflow/README.md).
+
+### Making a Release
+
+TODO
 
 ## Contributing
 
