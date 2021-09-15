@@ -31,6 +31,18 @@ class TestManifestsArgs(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.assertEqual(ManifestsArgs().action, "invalid")
 
+    @patch("argparse._sys.argv", [MANIFESTS_PY, "list"])
+    def test_verbose_default(self):
+        self.assertTrue(ManifestsArgs().logging_level, logging.INFO)
+
     @patch("argparse._sys.argv", [MANIFESTS_PY, "list", "--verbose"])
     def test_verbose_true(self):
         self.assertTrue(ManifestsArgs().logging_level, logging.DEBUG)
+
+    @patch("argparse._sys.argv", [MANIFESTS_PY, "list"])
+    def test_keep_default(self):
+        self.assertFalse(ManifestsArgs().keep)
+
+    @patch("argparse._sys.argv", [MANIFESTS_PY, "list", "--keep"])
+    def test_keep_true(self):
+        self.assertTrue(ManifestsArgs().keep)

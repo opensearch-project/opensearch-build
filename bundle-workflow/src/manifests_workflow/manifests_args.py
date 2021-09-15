@@ -9,15 +9,16 @@ import logging
 
 
 class ManifestsArgs:
-
     def __init__(self):
-        parser = argparse.ArgumentParser(
-            description="Manifest management"
+        parser = argparse.ArgumentParser(description="Manifest management")
+        parser.add_argument(
+            "action", choices=["list", "update"], help="Operation to perform."
         )
         parser.add_argument(
-            "action",
-            choices=['list', 'update'],
-            help="Operation to perform.",
+            "--keep",
+            dest="keep",
+            action="store_true",
+            help="Do not delete the working temporary directory.",
         )
         parser.add_argument(
             "-v",
@@ -31,3 +32,4 @@ class ManifestsArgs:
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.action = args.action
+        self.keep = args.keep

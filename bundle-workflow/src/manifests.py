@@ -20,6 +20,6 @@ if args.action == "list":
     for manifest in manifests.values():
         logging.info(f"{manifest.build.name} {manifest.build.version}")
 elif args.action == "update":
-    manifests.update()
+    manifests.update(keep=args.keep)
 
 logging.info("Done.")

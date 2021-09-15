@@ -39,11 +39,11 @@ class InputManifests(Manifests):
                 results.append(filename)
         return results
 
-    def update(self):
+    def update(self, keep=False):
         known_versions = self.versions
         logging.info(f"Known versions: {known_versions}")
         main_versions = {}
-        with TemporaryDirectory() as work_dir:
+        with TemporaryDirectory(keep=keep) as work_dir:
             logging.info(f"Checking out components into {work_dir}")
             os.chdir(work_dir)
 
