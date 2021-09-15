@@ -23,6 +23,7 @@ class CiCheckGradleDependencies(CiCheck):
                 f"./gradlew {self.gradle_project or ''}:dependencies",
                 f"-Dopensearch.version={self.target.opensearch_version}",
                 f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
+                "--configuration compileOnly",
                 '| grep -e "---"',
             ]
         )

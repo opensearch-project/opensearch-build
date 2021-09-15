@@ -31,19 +31,19 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
     def test_executes_gradle_dependencies(self):
         check = self.__mock_dependencies()
         check.git_repo.output.assert_called_once_with(
-            './gradlew :dependencies -Dopensearch.version=1.1.0 -Dbuild.snapshot=false | grep -e "---"'
+            './gradlew :dependencies -Dopensearch.version=1.1.0 -Dbuild.snapshot=false --configuration compileOnly | grep -e "---"'
         )
 
     def test_executes_gradle_dependencies_snapshot(self):
         check = self.__mock_dependencies(snapshot=True)
         check.git_repo.output.assert_called_once_with(
-            './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
+            './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
     def test_executes_gradle_dependencies_project(self):
         check = self.__mock_dependencies(snapshot=True, gradle_project="project")
         check.git_repo.output.assert_called_once_with(
-            './gradlew project:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
+            './gradlew project:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
     def test_loads_tree(self):
