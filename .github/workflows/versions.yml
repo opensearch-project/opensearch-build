@@ -36,7 +36,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Updated manifests.
-          branch: manifests/auto
           delete-branch: true
           title: '[AUTO] Updated input manifests.'
           body: |
