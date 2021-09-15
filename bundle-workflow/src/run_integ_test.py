@@ -118,9 +118,9 @@ def main():
         logging.info("Switching to temporary work_dir: " + work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture)
+            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         build_manifest = BuildManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture)
+            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_common_dependencies(work_dir, build_manifest)
         sync_dependencies_to_maven_local(work_dir, build_manifest.build.version)
         for component in bundle_manifest.components:

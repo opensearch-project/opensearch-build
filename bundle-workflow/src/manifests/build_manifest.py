@@ -62,12 +62,14 @@ class BuildManifest(Manifest):
         return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
     @staticmethod
-    def from_s3(bucket_name, build_id, opensearch_version, architecture):
-        local_path = str(os.getcwd())
+    def from_s3(bucket_name, build_id, opensearch_version, architecture, work_dir=None):
+        work_dir = work_dir if not None else str(os.getcwd())
         manifest_s3_path = BuildManifest.get_build_manifest_relative_location(build_id, opensearch_version, architecture)
-        S3Bucket(bucket_name).download_file(manifest_s3_path, local_path)
+        S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
         with open('manifest.yml', 'r') as file:
-            return BuildManifest.from_file(file)
+            build_manifest = BuildManifest.from_file(file)
+        os.remove(os.path.realpath(os.path.join(work_dir, 'manifest.yml')))
+        return build_manifest
 
     class Build:
         def __init__(self, data):

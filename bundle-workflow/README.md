@@ -132,9 +132,7 @@ export AWS_ACCESS_KEY_ID=<value>
 export AWS_SECRET_ACCESS_KEY=<value>
 
 cd bundle-workflow
-pipenv install
-pipenv shell
-python src/run_integ_test.py --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
+bash test.sh integ-test --test-run-id <execution-id> --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
 ```
 #### Backwards Compatibility Tests
 
