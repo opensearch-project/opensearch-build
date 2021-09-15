@@ -8,10 +8,11 @@ import logging
 import os
 import subprocess
 import time
-import urllib.request
 
 import requests
 
+from aws.s3_bucket import S3Bucket
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 
 
@@ -20,11 +21,12 @@ class LocalTestCluster(TestCluster):
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
 
-    def __init__(self, work_dir, bundle_manifest, security_enabled):
+    def __init__(self, work_dir, bundle_manifest, security_enabled, s3_bucket_name):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
         self.security_enabled = security_enabled
+        self.bucket_name = s3_bucket_name
         self.process = None
 
     def create_cluster(self):
@@ -59,15 +61,20 @@ class LocalTestCluster(TestCluster):
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
+    def __download_tarball_from_s3(self):
+        s3_path = BundleManifest.get_tarball_relative_location(
+            self.manifest.build.id, self.manifest.build.version, self.manifest.build.architecture)
+        S3Bucket(self.bucket_name).download_file(s3_path, self.work_dir)
+        return BundleManifest.get_tarball_name(self.manifest.build.version, self.manifest.build.architecture)
+
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")
         os.chdir(self.work_dir)
-        logging.info(f"Downloading bundle from {self.manifest.build.location}")
-        urllib.request.urlretrieve(self.manifest.build.location, "bundle.tgz")
-        logging.info(f'Downloaded bundle to {os.path.realpath("bundle.tgz")}')
-
+        logging.info("Downloading bundle from s3")
+        bundle_name = self.__download_tarball_from_s3()
+        logging.info(f'Downloaded bundle to {os.path.realpath(bundle_name)}')
         logging.info("Unpacking")
-        subprocess.check_call("tar -xzf bundle.tgz", shell=True)
+        subprocess.check_call(f"tar -xzf {bundle_name}", shell=True)
         logging.info("Unpacked")
 
     def disable_security(self, dir):

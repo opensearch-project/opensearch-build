@@ -29,13 +29,19 @@ COMMON_DEPENDENCIES = ["OpenSearch", "common-utils", "job-scheduler", "alerting"
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
     parser.add_argument(
-        "--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file."
+        "--s3-bucket", type=str, help="S3 bucket name"
     )
     parser.add_argument(
-        "--build-manifest", type=argparse.FileType("r"), help="Build Manifest file."
+        "--opensearch-version", type=str, help="OpenSearch version to test"
     )
     parser.add_argument(
-        "--test-manifest", type=argparse.FileType("r"), help="Test Manifest file."
+        "--build-id", type=str, help="The build id for the built artifact"
+    )
+    parser.add_argument(
+        "--architecture", type=str, help="The os architecture e.g. x64, arm64"
+    )
+    parser.add_argument(
+        "--test-run-id", type=str, help="The unique execution id for the test"
     )
     parser.add_argument(
         "--keep",
@@ -101,9 +107,8 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 def main():
     args = parse_arguments()
     console.configure(level=args.logging_level)
-    bundle_manifest = BundleManifest.from_file(args.bundle_manifest)
-    build_manifest = BuildManifest.from_file(args.build_manifest)
-    test_manifest = TestManifest.from_file(args.test_manifest)
+    test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
+    test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
         if component.integ_test is not None:
@@ -111,6 +116,10 @@ def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
         os.chdir(work_dir)
+        bundle_manifest = BundleManifest.from_s3(
+            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+        build_manifest = BuildManifest.from_s3(
+            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_common_dependencies(work_dir, build_manifest)
         sync_dependencies_to_maven_local(work_dir, build_manifest.build.version)
         for component in bundle_manifest.components:
@@ -120,6 +129,7 @@ def main():
                     integ_test_config[component.name],
                     bundle_manifest,
                     work_dir,
+                    args.s3_bucket
                 )
                 test_suite.execute()
             else:

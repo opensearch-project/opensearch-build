@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from unittest.mock import mock_open, patch
 
 import yaml
 
@@ -48,3 +49,34 @@ class TestBuildManifest(unittest.TestCase):
         data = self.manifest.to_dict()
         with open(self.manifest_filename) as f:
             self.assertEqual(yaml.safe_load(f), data)
+
+    def test_get_manifest_relative_location(self):
+        actual = BuildManifest.get_build_manifest_relative_location(
+            "25", "1.1.0", "x64"
+        )
+        expected = "builds/1.1.0/25/x64/manifest.yml"
+        self.assertEqual(
+            actual, expected, "the manifest relative location is not as expected"
+        )
+
+    @patch("manifests.build_manifest.S3Bucket")
+    def test_from_s3(self, mock_s3_bucket):
+        s3_bucket = mock_s3_bucket.return_value
+        with patch("os.remove"):
+            with patch("builtins.open", mock_open()):
+                s3_download_path = BuildManifest.get_build_manifest_relative_location(
+                    self.manifest.build.id,
+                    self.manifest.build.version,
+                    self.manifest.build.architecture,
+                )
+                with patch("manifests.build_manifest.BuildManifest.from_file"):
+                    BuildManifest.from_s3(
+                        "bucket_name",
+                        self.manifest.build.id,
+                        self.manifest.build.version,
+                        self.manifest.build.architecture,
+                        "/xyz",
+                    )
+                    self.assertEqual(s3_bucket.download_file.call_count, 1)
+                    s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
+                    os.remove.assert_called_with("/xyz/manifest.yml")

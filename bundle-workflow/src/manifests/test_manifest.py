@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import yaml
+from manifests.manifest import Manifest
 
 
-class TestManifest:
+class TestManifest(Manifest):
     """
     TestManifest contains the test support matrix for any component.
 
@@ -29,15 +29,8 @@ class TestManifest:
                 - with-security
                 - without-security
     """
-
-    @staticmethod
-    def from_file(file):
-        return TestManifest(yaml.safe_load(file))
-
     def __init__(self, data):
-        self.version = str(data["schema-version"])
-        if self.version != "1.0":
-            raise ValueError(f"Unsupported schema version: {self.version}")
+        super().__init__(data)
         self.components = list(
             map(lambda entry: self.Component(entry), data["components"])
         )

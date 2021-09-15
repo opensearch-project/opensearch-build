@@ -4,6 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
+
+from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
 
 
@@ -44,6 +47,28 @@ class BundleManifest(Manifest):
                 map(lambda component: component.__to_dict__(), self.components)
             ),
         }
+
+    @staticmethod
+    def from_s3(bucket_name, build_id, opensearch_version, architecture, work_dir=None):
+        work_dir = work_dir if not None else str(os.getcwd())
+        manifest_s3_path = BundleManifest.get_bundle_manifest_relative_location(build_id, opensearch_version, architecture)
+        S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
+        with open('manifest.yml', 'r') as file:
+            bundle_manifest = BundleManifest.from_file(file)
+        os.remove(os.path.realpath(os.path.join(work_dir, 'manifest.yml')))
+        return bundle_manifest
+
+    @staticmethod
+    def get_tarball_relative_location(build_id, opensearch_version, architecture):
+        return f"bundles/{opensearch_version}/{build_id}/{architecture}/opensearch-{opensearch_version}-linux-{architecture}.tar.gz"
+
+    @staticmethod
+    def get_tarball_name(opensearch_version, architecture):
+        return f"opensearch-{opensearch_version}-linux-{architecture}.tar.gz"
+
+    @staticmethod
+    def get_bundle_manifest_relative_location(build_id, opensearch_version, architecture):
+        return f"bundles/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
     class Build:
         def __init__(self, data):
