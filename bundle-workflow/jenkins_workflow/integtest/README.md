@@ -2,7 +2,7 @@
   - [Job Parameters](#job-parameters)
 ### Integration Tests Jenkins Job
 
-This job runs integration tests for a bundle via `test_integration.sh` in Jenkins.
+This job runs integration tests for a bundle via `test.sh` in Jenkins.
 
 #### Job Parameters
 | name        | description                                                |
