@@ -25,6 +25,8 @@ components:
   - ...
 """
 
+from typing import Union
+
 from manifests.manifest import Manifest
 from manifests.typechecked import dataclass_typechecked
 
@@ -60,7 +62,7 @@ class InputManifest(Manifest):
         name: str
         repository: str
         ref: str
-        working_directory: [type(None), str]
+        working_directory: Union[None, str]
         checks: list
 
         def __init__(self, data):

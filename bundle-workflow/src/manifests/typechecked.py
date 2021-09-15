@@ -21,7 +21,7 @@ def _add_validate_member_types_method(cls: type):
             typeguard.check_type(member_name, member_value, member_type)
 
     assert not hasattr(cls, "_validate_member_types")
-    cls._validate_member_types = _validate_member_types
+    cls._validate_member_types = _validate_member_types  # type:ignore
 
 
 @typechecked
@@ -36,7 +36,7 @@ def _override_set_state_method(cls: type):
             self.__dict__ = d
         self._validate_member_types()
 
-    cls.__setstate__ = setstate
+    cls.__setstate__ = setstate  # type:ignore
 
 
 @typechecked
@@ -49,7 +49,7 @@ def _override_post_init_method(cls: type):
         if old_post_init is not None:
             old_post_init(self)
 
-    cls.__post_init__ = postinit
+    cls.__post_init__ = postinit  # type:ignore
 
 
 @typechecked
@@ -78,7 +78,7 @@ def _override_set_attr_method(cls: type):
         else:
             self.__dict__[name] = value
 
-    cls.__setattr__ = setattr
+    cls.__setattr__ = setattr  # type:ignore
 
 
 def _dataclass_typechecked(cls, *args, **kwargs):

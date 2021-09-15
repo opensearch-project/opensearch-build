@@ -64,4 +64,4 @@ class TestManifest(Manifest):
             }
 
 
-TestManifest.__test__ = False
+TestManifest.__test__ = False  # type:ignore
