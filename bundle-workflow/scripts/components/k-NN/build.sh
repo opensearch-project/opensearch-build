@@ -61,8 +61,19 @@ fi
 work_dir=$PWD
 mkdir -p $OUTPUT/libs
 
+# Pull library submodule explicitly. While "cmake ." actually pulls the submodule if its not there, we 
+# need to pull it before calling cmake. Also, we need to call it from the root git directory.
+# Otherwise, the submodule update call may fail on earlier versions of git.
+git submodule update --init -- jni/external/nmslib
+
 # Build knnlib and copy it to libs
 cd jni
+
+# For x64, generalize arch so library is compatible for processors without simd instruction extensions
+if [ "$ARCHITECTURE" = "x64" ]; then 
+    sed -i 's/-march=native/-march=x86-64/g' external/nmslib/similarity_search/CMakeLists.txt
+fi
+
 cmake .
 make
 
