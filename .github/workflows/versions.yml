@@ -11,7 +11,7 @@ jobs:
     env:
       PYTHON_VERSION: 3.7
       JDK_VERSION: 14
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -25,6 +25,10 @@ jobs:
       - name: Install Pipenv and Dependencies
         run: |
           python -m pip install --upgrade pipenv wheel
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-cache-maven-local
       - name: Update OpenSearch Manifests
         run: |
           ./bundle-workflow/manifests.sh update
