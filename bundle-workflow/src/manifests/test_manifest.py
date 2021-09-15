@@ -35,11 +35,11 @@ class TestManifest(Manifest):
             map(lambda entry: self.Component(entry), data["components"])
         )
 
-    def to_dict(self):
+    def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "components": list(
-                map(lambda component: component.to_dict(), self.components)
+                map(lambda component: component.__to_dict__(), self.components)
             ),
         }
 
@@ -49,7 +49,7 @@ class TestManifest(Manifest):
             self.integ_test = data["integ-test"]
             self.bwc_test = data["bwc-test"]
 
-        def to_dict(self):
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "integ-test": self.integ_test,

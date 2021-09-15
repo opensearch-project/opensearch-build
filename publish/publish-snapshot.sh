@@ -24,25 +24,26 @@ set -e
 }
 
 usage() {
-    echo "usage: $0 [-h] [dir]"
-    echo "  dir     parent directory of artifacts to be published to org/opensearch namespace."
-    echo "          example: dir = ~/.m2/repository/org/opensearch where dir contains artifacts of a path:"
-    echo "                   /maven/reindex-client/1.0.0-SNAPSHOT/reindex-client-1.0.0-SNAPSHOT.jar"
-    echo "  -h      display help"
-    echo "Required environment variables:"
-    echo "SONATYPE_USERNAME - username with publish rights to a sonatype repository"
-    echo "SONATYPE_PASSWORD - password for sonatype"
-    echo "SNAPSHOT_REPO_URL - repository URL ex. http://localhost:8081/nexus/content/repositories/snapshots/"
-    exit 1
+  echo "usage: $0 [-h] [dir]"
+  echo "  dir     parent directory of artifacts to be published to org/opensearch namespace."
+  echo "          example: dir = ~/.m2/repository/org/opensearch where dir contains artifacts of a path:"
+  echo "                   /maven/reindex-client/1.0.0-SNAPSHOT/reindex-client-1.0.0-SNAPSHOT.jar"
+  echo "  -h      display help"
+  echo "Required environment variables:"
+  echo "SONATYPE_USERNAME - username with publish rights to a sonatype repository"
+  echo "SONATYPE_PASSWORD - password for sonatype"
+  echo "SNAPSHOT_REPO_URL - repository URL ex. http://localhost:8081/nexus/content/repositories/snapshots/"
+  exit 1
 }
 
 while getopts ":h" option; do
   case $option in
-    h)
-       usage
+  h)
+    usage
     ;;
-    \?) echo "Invalid option -$OPTARG" >&2
-       usage
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    usage
     ;;
   esac
 done
@@ -68,9 +69,9 @@ if [ ! -d "$1" ]; then
 fi
 
 create_maven_settings() {
-    # Create a settings.xml file with the user+password for maven
-    mvn_settings="${workdir}/mvn-settings.xml"
-    cat > ${mvn_settings} <<-EOF
+  # Create a settings.xml file with the user+password for maven
+  mvn_settings="${workdir}/mvn-settings.xml"
+  cat >${mvn_settings} <<-EOF
 <?xml version="1.0" encoding="UTF-8" ?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -110,19 +111,25 @@ fi
 
 for pom in ${pomFiles}; do
   pom_dir="$(dirname "${pom}")"
-  for FILE in "${pom_dir}"/*;  do
-    if [[ ! $FILE == *"-javadoc.jar"* ]] && [[ ! $FILE == *"-sources.jar"* ]]; then
-    extension="${FILE##*.}"
-      case $extension in jar|war|zip)
-        echo "Uploading: ${FILE} to ${url}"
-         mvn --settings="${mvn_settings}" deploy:deploy-file \
-         -DgeneratePom=false \
-         -DrepositoryId=nexus \
-         -Durl="${SNAPSHOT_REPO_URL}" \
-         -DpomFile="${pom}" \
-         -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
-       ;;
-           *) echo "Skipping upload for ${FILE}"
+  for FILE in "${pom_dir}"/*; do
+    # The POM is deployed with the artifact in a single deploy-file command, we can skip over it
+    if [[ $FILE != $pom ]]; then
+      extension="${FILE##*.}"
+      case $extension in jar | war | zip)
+        # Ensure we are only pushing the artifact that ends with -SNAPSHOT.<extension> and its pom.
+        if [[ $FILE == *SNAPSHOT.${extension} ]]; then
+          echo "Uploading: ${FILE} with ${pom} to ${url}"
+          mvn --settings="${mvn_settings}" deploy:deploy-file \
+            -DgeneratePom=false \
+            -DrepositoryId=nexus \
+            -Durl="${SNAPSHOT_REPO_URL}" \
+            -DpomFile="${pom}" \
+            -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
+        else
+          echo "Skipping upload of additional artifact: ${FILE}"
+        fi
+        ;;
+      *) echo "Skipping upload for ${FILE}" ;;
       esac
     fi
   done

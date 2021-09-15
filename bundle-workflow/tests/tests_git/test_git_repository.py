@@ -25,7 +25,7 @@ class TestGitRepository(unittest.TestCase):
         self.assertEqual(self.repo.ref, "8ac515431bf24caf92fea9d9b0af3b8f10b88453")
         self.assertEqual(self.repo.sha, "8ac515431bf24caf92fea9d9b0af3b8f10b88453")
         self.assertIs(type(self.repo.temp_dir), tempfile.TemporaryDirectory)
-        self.assertEqual(self.repo.dir, self.repo.temp_dir.name)
+        self.assertEqual(self.repo.dir, os.path.realpath(self.repo.temp_dir.name))
         self.assertTrue(
             os.path.isfile(os.path.join(self.repo.dir, "CODE_OF_CONDUCT.md"))
         )

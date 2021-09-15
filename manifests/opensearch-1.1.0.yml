@@ -1,12 +1,12 @@
 ---
-schema-version: 1.0
+schema-version: "1.0"
 build:
   name: OpenSearch
   version: 1.1.0
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 1.x
+    ref: "1.1"
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -57,7 +57,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: main
+    ref: "1.1"
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version

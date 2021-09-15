@@ -3,16 +3,17 @@
     - [Custom Build Scripts](#custom-build-scripts)
   - [Assemble the Bundle](#assemble-the-bundle)
     - [Custom Install Scripts](#custom-install-scripts)
-  - [Signing Artifacts](#signing-artifacts)
+  - [Sign Artifacts](#sign-artifacts)
   - [Test the Bundle](#test-the-bundle)
     - [Integration Tests](#integration-tests)
     - [Backwards Compatibility Tests](#backwards-compatibility-tests)
     - [Performance Tests](#performance-tests)
   - [Sanity Check the Bundle](#sanity-check-the-bundle)
+  - [Auto-Generate Manifests](#auto-generate-manifests)
 
 ## OpenSearch Bundle Workflow
 
-This workflow builds a complete OpenSearch bundle from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
+The bundle workflow builds a complete OpenSearch distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
 
 ### Build from Source
 
@@ -76,7 +77,7 @@ Artifacts will be updated as follows.
 
 You can perform additional plugin install steps by adding an `install.sh` script. By default the tool will look for a script in [scripts/bundle-build/components](scripts/bundle-build/components), then default to a noop version implemented in [scripts/default/install.sh](scripts/default/install.sh).
 
-### Signing Artifacts
+### Sign Artifacts
 
 The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using a tool called `opensearch-signer-client` (in progress of being open-sourced). The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
 
@@ -177,5 +178,28 @@ The following options are available.
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
 | --component [name] | Test a single component by name, e.g. `--component common-utils`.       |
+| --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
+
+### Auto-Generate Manifests
+
+The [manifests workflow](src/manifests) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. When a new version is identified, it creates a new input manifest in [manifests](../manifests) and [opens a pull request](../.github/workflows/manifests.yml).
+
+Show information about existing manifests. 
+
+```bash
+./bundle-workflow/manifests.sh list
+```
+
+Check for updates and create any new manifests. 
+
+```bash
+./bundle-workflow/manifests.sh update
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |

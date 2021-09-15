@@ -17,7 +17,7 @@ class BundleManifest(Manifest):
     and the components that made up the bundle in the `components` section.
 
     The format for schema version 1.0 is:
-        schema-version: 1.0
+        schema-version: "1.0"
         build:
           name: string
           version: string
@@ -39,12 +39,12 @@ class BundleManifest(Manifest):
             map(lambda entry: self.Component(entry), data["components"])
         )
 
-    def to_dict(self):
+    def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "build": self.build.to_dict(),
+            "build": self.build.__to_dict__(),
             "components": list(
-                map(lambda component: component.to_dict(), self.components)
+                map(lambda component: component.__to_dict__(), self.components)
             ),
         }
 
@@ -78,7 +78,7 @@ class BundleManifest(Manifest):
             self.location = data["location"]
             self.id = data["id"]
 
-        def to_dict(self):
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "version": self.version,
@@ -95,7 +95,7 @@ class BundleManifest(Manifest):
             self.commit_id = data["commit_id"]
             self.location = data["location"]
 
-        def to_dict(self):
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "repository": self.repository,

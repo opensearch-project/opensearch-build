@@ -18,3 +18,4 @@ case $1 in
   echo "Invalid Test suite"
   ;;
 esac
+
