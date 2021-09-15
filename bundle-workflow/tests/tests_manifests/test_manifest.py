@@ -15,6 +15,8 @@ from manifests.manifest import Manifest
 
 class TestManifest(unittest.TestCase):
     class SampleManifest(Manifest):
+        data: str
+
         def __init__(self, data):
             super().__init__(data)
             self.data = data

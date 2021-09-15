@@ -5,6 +5,7 @@
 # compatible open source license.
 
 from manifests.manifest import Manifest
+from manifests.typechecked import dataclass_typechecked
 
 
 class TestManifest(Manifest):
@@ -29,6 +30,7 @@ class TestManifest(Manifest):
                 - with-security
                 - without-security
     """
+
     def __init__(self, data):
         super().__init__(data)
         self.components = list(
@@ -43,7 +45,12 @@ class TestManifest(Manifest):
             ),
         }
 
+    @dataclass_typechecked
     class Component:
+        name: str
+        integ_test: dict
+        bwc_test: dict
+
         def __init__(self, data):
             self.name = data["name"]
             self.integ_test = data["integ-test"]
@@ -55,3 +62,6 @@ class TestManifest(Manifest):
                 "integ-test": self.integ_test,
                 "bwc-test": self.bwc_test,
             }
+
+
+TestManifest.__test__ = False

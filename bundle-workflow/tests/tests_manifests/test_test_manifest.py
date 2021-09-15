@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+import os
+import unittest
+
+import yaml
+
+from manifests.test_manifest import TestManifest
+
+
+class TestTestManifest(unittest.TestCase):
+    def setUp(self):
+        self.data_path = os.path.realpath(
+            os.path.join(os.path.dirname(__file__), "data")
+        )
+        self.manifest_filename = os.path.join(
+            self.data_path, "opensearch-test-1.1.0.yml"
+        )
+        self.manifest = TestManifest.from_path(self.manifest_filename)
+
+    def test_component(self):
+        component = self.manifest.components[0]
+        self.assertEqual(component.name, "index-management")
+        self.assertEqual(
+            component.integ_test,
+            {
+                "dependencies": ["job-scheduler", "alerting"],
+                "test-configs": [
+                    "with-security",
+                    "without-security",
+                    "with-less-security",
+                ],
+            },
+        )
+        self.assertEqual(
+            component.bwc_test,
+            {
+                "dependencies": None,
+                "test-configs": ["with-security", "without-security"],
+            },
+        )
+
+    def test_to_dict(self):
+        data = self.manifest.to_dict()
+        with open(self.manifest_filename) as f:
+            self.assertEqual(yaml.safe_load(f), data)

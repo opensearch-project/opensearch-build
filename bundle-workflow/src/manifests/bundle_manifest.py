@@ -8,6 +8,7 @@ import os
 
 from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
+from manifests.typechecked import dataclass_typechecked
 
 
 class BundleManifest(Manifest):
@@ -70,7 +71,14 @@ class BundleManifest(Manifest):
     def get_bundle_manifest_relative_location(build_id, opensearch_version, architecture):
         return f"bundles/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
+    @dataclass_typechecked
     class Build:
+        name: str
+        version: str
+        architecture: str
+        location: str
+        id: str
+
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
@@ -87,7 +95,14 @@ class BundleManifest(Manifest):
                 "id": self.id,
             }
 
+    @dataclass_typechecked
     class Component:
+        name: str
+        repository: str
+        ref: str
+        commit_id: str
+        location: str
+
         def __init__(self, data):
             self.name = data["name"]
             self.repository = data["repository"]

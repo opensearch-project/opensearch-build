@@ -10,6 +10,8 @@ import yaml
 
 
 class Manifest(ABC):
+    version: str
+
     @classmethod
     def from_file(cls, file):
         return cls(yaml.safe_load(file))

@@ -59,3 +59,13 @@ class TestInputManifest(unittest.TestCase):
         data = manifest.to_dict()
         with open(path) as f:
             self.assertEqual(yaml.safe_load(f), data)
+
+    def test_invalid_ref(self):
+        data_path = os.path.join(os.path.dirname(__file__), "data")
+        manifest_path = os.path.join(data_path, "invalid-ref.yml")
+
+        with self.assertRaises(TypeError) as context:
+            InputManifest.from_path(manifest_path)
+        self.assertEqual(
+            "type of ref must be str; got float instead", str(context.exception)
+        )

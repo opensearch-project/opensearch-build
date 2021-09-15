@@ -26,6 +26,7 @@ components:
 """
 
 from manifests.manifest import Manifest
+from manifests.typechecked import dataclass_typechecked
 
 
 class InputManifest(Manifest):
@@ -54,7 +55,14 @@ class InputManifest(Manifest):
         def __to_dict__(self):
             return {"name": self.name, "version": self.version}
 
+    @dataclass_typechecked
     class Component:
+        name: str
+        repository: str
+        ref: str
+        working_directory: [type(None), str]
+        checks: list
+
         def __init__(self, data):
             self.name = data["name"]
             self.repository = data["repository"]

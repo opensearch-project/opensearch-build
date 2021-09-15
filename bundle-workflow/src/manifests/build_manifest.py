@@ -8,6 +8,7 @@ import os
 
 from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
+from manifests.typechecked import dataclass_typechecked
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -40,6 +41,8 @@ components:
 
 
 class BuildManifest(Manifest):
+    components: list
+
     def __init__(self, data):
         super().__init__(data)
 
@@ -71,7 +74,13 @@ class BuildManifest(Manifest):
         os.remove(os.path.realpath(os.path.join(work_dir, 'manifest.yml')))
         return build_manifest
 
+    @dataclass_typechecked
     class Build:
+        name: str
+        version: str
+        architecture: str
+        id: str
+
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
@@ -86,7 +95,15 @@ class BuildManifest(Manifest):
                 "id": self.id,
             }
 
+    @dataclass_typechecked
     class Component:
+        name: str
+        repository: str
+        ref: str
+        commit_id: str
+        version: str
+        artifacts: dict
+
         def __init__(self, data):
             self.name = data["name"]
             self.repository = data["repository"]
