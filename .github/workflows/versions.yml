@@ -32,10 +32,11 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Updated manifests.
+          branch: manifests/auto
           delete-branch: true
-          title: 'Updated manifests.'
+          title: '[AUTO] Updated input manifests.'
           body: |
-            I've noticed that a repo has incremented a version and have made some updates to build manifests.
+            I've noticed that a repo has incremented a version and have made some updates to input manifests.
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
