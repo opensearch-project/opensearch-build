@@ -94,7 +94,7 @@ pipeline {
             }
             post() {
                 success {
-                    publishNotification(":white_check-mark:", "Successful Build")
+                    publishNotification(":white_check_mark:", "Successful Build")
                 }
                 failure {
                     publishNotification(":warning:", "Failed Build")
