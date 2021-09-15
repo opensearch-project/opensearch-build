@@ -46,7 +46,7 @@ class TestInputManifests(unittest.TestCase):
     ):
         mock_tmpdir.__enter__.return_value = "dir"
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
-        mock_component_opensearch_min.get_root_branches.return_value = ["main", "0.9.0"]
+        mock_component_opensearch_min.get_branches.return_value = ["main", "0.9.0"]
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
         mock_component_opensearch.return_value = MagicMock(name="common-utils")
         mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
