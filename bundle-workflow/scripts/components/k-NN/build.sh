@@ -61,6 +61,11 @@ fi
 work_dir=$PWD
 mkdir -p $OUTPUT/libs
 
+# Pull library submodule explicitly. While "cmake ." actually pulls the submodule if its not there, we 
+# need to pull it before calling cmake. Also, we need to call it from the root git directory.
+# Otherwise, the submodule update call may fail on earlier versions of git.
+git submodule update --init -- jni/external/nmslib
+
 # Build knnlib and copy it to libs
 cd jni
 
