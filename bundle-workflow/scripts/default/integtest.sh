@@ -17,7 +17,7 @@ function usage() {
     echo -e "-s SECURITY_ENABLED\t(true | false), defaults to true. Specify the OpenSearch/Dashboards have security enabled or not."
     echo -e "-c CREDENTIAL\t(usename:password), no defaults, effective when SECURITY_ENABLED=true."
     echo -e "-v OPENSEARCH_VERSION\t, no defaults"
-    echo -e "-n IS_SNAPSHOT\t, defaults to false"
+    echo -e "-n SNAPSHOT\t, defaults to false"
     echo -e "-h\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -44,7 +44,7 @@ while getopts ":hb:p:s:c:v:n" arg; do
             OPENSEARCH_VERSION=$OPTARG
             ;;
         n)
-            IS_SNAPSHOT=$OPTARG
+            SNAPSHOT=$OPTARG
             ;;
         :)
             echo "-${OPTARG} requires an argument"
@@ -74,9 +74,9 @@ then
   SECURITY_ENABLED="true"
 fi
 
-if [ -z "$IS_SNAPSHOT" ]
+if [ -z "$SNAPSHOT" ]
 then
-  IS_SNAPSHOT="false"
+  SNAPSHOT="false"
 fi
 
 if [ -z "$CREDENTIAL" ]
@@ -86,4 +86,4 @@ then
   PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 fi
 
-./gradlew integTest -Dopensearch.version=$OPENSEARCH_VERSION -Dbuild.snapshot=$IS_SNAPSHOT -Dtests.rest.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.clustername="opensearch-integrationtest" -Dhttps=$SECURITY_ENABLED -Duser=$USERNAME -Dpassword=$PASSWORD --console=plain
+./gradlew integTest -Dopensearch.version=$OPENSEARCH_VERSION -Dbuild.snapshot=$SNAPSHOT -Dtests.rest.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.clustername="opensearch-integrationtest" -Dhttps=$SECURITY_ENABLED -Duser=$USERNAME -Dpassword=$PASSWORD --console=plain

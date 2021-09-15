@@ -107,8 +107,7 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 def main():
     args = parse_arguments()
     console.configure(level=args.logging_level)
-    script_dir = os.path.realpath(os.path.dirname(__file__))
-    test_manifest_path = ("%s%s" % (script_dir, '/test_workflow/config/test_manifest.yml'))
+    test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
