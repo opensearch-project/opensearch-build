@@ -6,6 +6,8 @@
 
 import os
 
+from cerberus import Validator
+
 from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
 
@@ -33,6 +35,10 @@ class BundleManifest(Manifest):
 
     def __init__(self, data):
         super().__init__(data)
+
+        v = Validator(BundleManifest.schema)
+        if not v.validate(data, BundleManifest.schema):
+            raise ValueError(f'Invalid Bundle manifest, some fields might need type hints eg !!str\n{v.errors}')
 
         self.build = self.Build(data["build"])
         self.components = list(
@@ -103,3 +109,35 @@ class BundleManifest(Manifest):
                 "commit_id": self.commit_id,
                 "location": self.location,
             }
+
+    schema = {
+        'build': {
+            'required': True,
+            'type': 'dict',
+            'schema': {
+                'architecture': {'required': True, 'type': 'string'},
+                'id': {'required': True, 'type': 'string'},
+                'location': {'required': True, 'type': 'string'},
+                'name': {'required': True, 'type': 'string'},
+                'version': {'required': True, 'type': 'string'},
+            }
+        },
+        'schema-version': {
+            'required': True,
+            'type': 'string'
+        },
+        'components': {
+            'required': True,
+            'type': 'list',
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'commit_id': {'required': True, 'type': 'string'},
+                    'location': {'required': True, 'type': 'string'},
+                    'name': {'required': True, 'type': 'string'},
+                    'ref': {'required': True, 'type': 'string'},
+                    'repository': {'required': True, 'type': 'string'}
+                }
+            }
+        }
+    }
