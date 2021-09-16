@@ -8,10 +8,11 @@ from abc import ABC, abstractmethod
 
 
 class CiCheck(ABC):
-    def __init__(self, component, git_repo, target):
+    def __init__(self, component, git_repo, target, args=None):
         self.component = component
         self.git_repo = git_repo
         self.target = target
+        self.args = args
 
     @abstractmethod
     def check(self):

@@ -7,9 +7,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.ci_check_gradle_dependencies_opensearch import (
-    CiCheckGradleDependenciesOpenSearchVersion,
-    CiCheckGradlePluginDependenciesOpenSearchVersion)
+from ci_workflow.ci_check_gradle_dependencies_opensearch import \
+    CiCheckGradleDependenciesOpenSearchVersion
 from ci_workflow.ci_target import CiTarget
 from system.properties_file import PropertiesFile
 
@@ -25,6 +24,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
                 component=MagicMock(),
                 git_repo=MagicMock(),
                 target=CiTarget(version="1.1.0", snapshot=True),
+                args=None,
             )
 
     def test_gradle_project(self):
@@ -54,20 +54,19 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", snapshot=True),
+            args=None,
         )
         check.git_repo.output.assert_called_once_with(
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
         )
 
-
-class TestCheckGradlePluginDependenciesOpenSearchVersion(unittest.TestCase):
-    def test_executes_gradle_plugin_command(self):
-        check = CiCheckGradlePluginDependenciesOpenSearchVersion(
+    def test_executes_gradle_command_with_arg(self):
+        check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", snapshot=True),
+            args="plugin",
         )
-        self.assertEqual(check.gradle_project, "plugin")
         check.git_repo.output.assert_called_once_with(
             './gradlew plugin:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
         )

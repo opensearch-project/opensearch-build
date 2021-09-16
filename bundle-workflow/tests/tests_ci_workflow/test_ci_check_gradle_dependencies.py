@@ -25,7 +25,7 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
             component=MagicMock(),
             git_repo=git_repo,
             target=CiTarget(version="1.1.0", snapshot=snapshot),
-            gradle_project=gradle_project,
+            args=gradle_project,
         )
 
     def test_executes_gradle_dependencies(self):

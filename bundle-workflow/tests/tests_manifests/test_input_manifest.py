@@ -43,6 +43,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(manifest.components), 14)
+        # opensearch component
         opensearch_component = manifest.components[0]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
@@ -50,8 +51,19 @@ class TestInputManifest(unittest.TestCase):
             "https://github.com/opensearch-project/OpenSearch.git",
         )
         self.assertEqual(opensearch_component.ref, "1.1")
+        # components
         for component in manifest.components:
             self.assertIsInstance(component.ref, str)
+        # alerting component checks
+        alerting_component = next(
+            c for c in manifest.components if c.name == "alerting"
+        )
+        self.assertIsNotNone(alerting_component)
+        self.assertEqual(len(alerting_component.checks), 2)
+        for check in alerting_component.checks:
+            self.assertIsInstance(check, InputManifest.Check)
+        self.assertIsNone(alerting_component.checks[0].args)
+        self.assertEqual(alerting_component.checks[1].args, "alerting")
 
     def test_to_dict(self):
         path = os.path.join(self.manifests_path, "opensearch-1.1.0.yml")

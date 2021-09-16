@@ -60,7 +60,9 @@ class InputManifest(Manifest):
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
-            self.checks = data.get("checks", [])
+            self.checks = list(
+                map(lambda entry: InputManifest.Check(entry), data.get("checks", []))
+            )
 
         def __to_dict__(self):
             return Manifest.compact(
@@ -69,6 +71,22 @@ class InputManifest(Manifest):
                     "repository": self.repository,
                     "ref": self.ref,
                     "working_directory": self.working_directory,
-                    "checks": self.checks,
+                    "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
                 }
             )
+
+    class Check:
+        def __init__(self, data):
+            if isinstance(data, dict):
+                if len(data) != 1:
+                    raise ValueError(f"Invalid check format: {data}")
+                self.name, self.args = next(iter(data.items()))
+            else:
+                self.name = data
+                self.args = None
+
+        def __to_dict__(self):
+            if self.args:
+                return {self.name: self.args}
+            else:
+                return self.name

@@ -156,6 +156,8 @@ To use checks, nest them under `checks` in the manifest.
   checks:
     - gradle:publish
     - gradle:properties:version
+    - gradle:dependencies:opensearch.version
+    - gradle:dependencies:opensearch.version: alerting
 ```
 
 The following checks are available.
@@ -164,7 +166,6 @@ The following checks are available.
 |-----------------------------------------------|---------------------------------------------------------------|
 | gradle:properties:version                     | Check version of the component.                               |
 | gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch.        |
-| gradle:plugin.dependencies:opensearch.version | Check plugin dependency on the correct version of OpenSearch. |                                              |
 | gradle:publish                                | Check that publishing to Maven local works, and publish.      |
 
 The following example sanity-checks components in the the OpenSearch 1.1.0 manifest.
