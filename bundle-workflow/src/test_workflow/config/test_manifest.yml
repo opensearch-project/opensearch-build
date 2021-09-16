@@ -15,8 +15,6 @@ components:
   - name: anomaly-detection
     integ-test:
       dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
@@ -28,8 +26,6 @@ components:
   - name: asynchronous-search
     integ-test:
       dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
@@ -40,8 +36,6 @@ components:
   - name: sql
     integ-test:
       dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
@@ -53,14 +47,12 @@ components:
   - name: k-NN
     integ-test:
       dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
       dependencies:
       test-configs:
-       - with-security
+        - with-security
         - without-security
 schema-version: '1.0'

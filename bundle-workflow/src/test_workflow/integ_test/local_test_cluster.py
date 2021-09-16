@@ -92,13 +92,13 @@ class LocalTestCluster(TestCluster):
                 logging.info(f"Pinging {url} attempt {attempt}")
                 response = requests.get(url, verify=False, auth=("admin", "admin"))
                 logging.info(f"{response.status_code}: {response.text}")
-                if response.status_code == 200:
-                    logging.info("Cluster is green")
+                if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
+                    logging.info("Service is available")
                     return
             except requests.exceptions.ConnectionError:
                 logging.info("Service not available yet")
             time.sleep(10)
-        raise ClusterCreationException("Cluster is not green after 10 attempts")
+        raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
         logging.info(f"Sending SIGTERM to PID {self.process.pid}")
