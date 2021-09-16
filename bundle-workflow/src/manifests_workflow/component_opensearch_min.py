@@ -17,7 +17,7 @@ class ComponentOpenSearchMin(Component):
         super().__init__("OpenSearch", repo, snapshot)
 
     @classmethod
-    def get_root_branches(self):
+    def get_branches(self):
         branches = ["main"]
         remote_branches = (
             subprocess.check_output(
@@ -27,6 +27,7 @@ class ComponentOpenSearchMin(Component):
             .decode()
             .split("\n")
         )
+        # return "main" and "x.y" branches only
         branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
         return branches
 

@@ -183,7 +183,7 @@ The following options are available.
 
 ### Auto-Generate Manifests
 
-The [manifests workflow](src/manifests) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. When a new version is identified, it creates a new input manifest in [manifests](../manifests) and [opens a pull request](../.github/workflows/manifests.yml).
+The [manifests workflow](src/manifests) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. Currently OpenSearch `main`, and `x.y` branches are checked out one-by-one, published to local maven, and their versions extracted using `./gradlew properties`. When a new version is found, a new input manifest is added to [manifests](../manifests), and [a pull request is opened](../.github/workflows/manifests.yml) (e.g. [opensearch-build#491](https://github.com/opensearch-project/opensearch-build/pull/491)).
 
 Show information about existing manifests. 
 
