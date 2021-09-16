@@ -19,7 +19,7 @@ class TestBwcSuite(unittest.TestCase):
         manifest_file_handle = open("data/test_manifest.yaml", "r")
         self.manifest = BundleManifest.from_file(manifest_file_handle)
         self.bwc_test_suite = BwcTestSuite(
-            manifest=self.manifest, component=None, keep=False
+            manifest=self.manifest, work_dir=".", component=None, keep=False
         )
         manifest_file_handle.close()
 

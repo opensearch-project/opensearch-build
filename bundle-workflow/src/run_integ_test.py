@@ -5,7 +5,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import argparse
 import logging
 import os
 import subprocess
@@ -23,8 +22,8 @@ from test_workflow.test_args import TestArgs
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
 
-
 COMMON_DEPENDENCIES = ["OpenSearch", "common-utils", "job-scheduler", "alerting"]
+
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):

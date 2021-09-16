@@ -2,7 +2,7 @@ pipeline {
     agent none
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
-        AWS_ROLE_SESSION_NAME = "jenkins-integration-test-session"
+        AWS_ROLE_SESSION_NAME = "jenkins-bwc-test-session"
     }
     tools {
         jdk "JDK14"
@@ -52,7 +52,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Integration Tests') {
+        stage('Run Backwards Compatibility Tests') {
             agent {
                 node {
                     label "${agentLabel}"

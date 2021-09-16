@@ -11,8 +11,8 @@ import sys
 
 from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory
-from test_workflow.test_args import TestArgs
 from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
+from test_workflow.test_args import TestArgs
 
 
 def main():
