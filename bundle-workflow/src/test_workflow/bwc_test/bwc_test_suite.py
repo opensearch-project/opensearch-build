@@ -17,6 +17,7 @@ from test_workflow.test_component import TestComponent
 
 class BwcTestSuite:
     manifest: str
+    work_dir: str
     component: str
     keep: bool
 
@@ -33,6 +34,7 @@ class BwcTestSuite:
         )
         if os.path.exists(script):
             cmd = f"{script}"
+            print(cmd)
             output = subprocess.check_output(cmd, cwd=work_dir, shell=True)
             return output
         else:
