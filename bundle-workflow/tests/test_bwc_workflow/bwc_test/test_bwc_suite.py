@@ -35,10 +35,7 @@ class TestBwcSuite(unittest.TestCase):
 
     def test_run_bwctest(self):
         response = self.bwc_test_suite.run_tests(".", self.manifest.components[1].name)
-        # 1 ret code == could find the script but the script exited because `./gradlew` doesn't exist
-        logging.info(response)
-        print(response)
-        self.assertEqual(response[0], 1)  # status code
+        # could find the script but the script exited because `./gradlew` doesn't exist
         self.assertTrue("default/bwctest.sh" in response[2])  # stderr
 
     @patch("test_workflow.bwc_test.bwc_test_suite.TestComponent")
