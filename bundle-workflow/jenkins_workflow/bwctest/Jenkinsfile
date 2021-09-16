@@ -1,0 +1,71 @@
+pipeline {
+    agent none
+    environment {
+        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
+        AWS_ROLE_SESSION_NAME = "jenkins-integration-test-session"
+    }
+    tools {
+        jdk "JDK14"
+        maven "maven-3.8.2"
+    }
+    stages {
+        stage('Parameters') {
+            steps {
+                script {
+                    properties([
+                            parameters([
+                                    string(
+                                            defaultValue: '',
+                                            name: 'opensearch_version',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'build_id',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'architecture',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
+                                            name: 'test_run_id',
+                                            trim: true
+                                    ),
+                            ])
+                    ])
+                }
+            }
+        }
+        stage('Choose Agent Node') {
+            steps {
+                script {
+                    if ("${architecture}" == 'x64') {
+                        agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
+                    } else if ("${architecture}" == 'arm64') {
+                        agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
+                    } else {
+                        error("Unknown CPU architecture is provided")
+                    }
+                }
+            }
+        }
+        stage('Run Integration Tests') {
+            agent {
+                node {
+                    label "${agentLabel}"
+                }
+            }
+            steps {
+                sh "./bundle-workflow/test.sh bwc-test --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
+            }
+            post() {
+                always {
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+}

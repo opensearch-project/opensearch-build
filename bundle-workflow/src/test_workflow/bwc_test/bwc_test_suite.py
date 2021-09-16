@@ -11,7 +11,6 @@ import logging
 import os
 import subprocess
 
-from system.temporary_directory import TemporaryDirectory
 from test_workflow.test_component import TestComponent
 
 
@@ -20,8 +19,9 @@ class BwcTestSuite:
     component: str
     keep: bool
 
-    def __init__(self, manifest, component, keep):
+    def __init__(self, manifest, work_dir, component=None, keep=False):
         self.manifest = manifest
+        self.work_dir = work_dir
         self.component = component
         self.keep = keep
 
@@ -42,11 +42,8 @@ class BwcTestSuite:
             logging.info(f"Exception while running BWC tests for {component.name}")
 
     def execute(self):
-        # TODO copy all maven dependencies from S3 to local
-        with TemporaryDirectory(keep=self.keep) as work_dir:
-            os.chdir(work_dir)
-            # For each component, check out the git repo and run `bwctest.sh`
-            for component in self.manifest.components:
-                if self.component is None or self.component == component.name:
-                    # TODO: Store and report test results, send notification via {console_output}
-                    self.component_bwc_tests(component, work_dir)
+        # For each component, check out the git repo and run `bwctest.sh`
+        for component in self.manifest.components:
+            if self.component is None or self.component == component.name:
+                # TODO: Store and report test results, send notification via {console_output}
+                self.component_bwc_tests(component, self.work_dir)

@@ -18,49 +18,13 @@ from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
+from test_workflow.test_args import TestArgs
 
 # TODO: 1. log test related logging into a log file. Output only workflow logs on shell.
 # TODO: 2. Move common functions to utils.py
 
 
 COMMON_DEPENDENCIES = ["OpenSearch", "common-utils", "job-scheduler", "alerting"]
-
-
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-    parser.add_argument(
-        "--s3-bucket", type=str, help="S3 bucket name"
-    )
-    parser.add_argument(
-        "--opensearch-version", type=str, help="OpenSearch version to test"
-    )
-    parser.add_argument(
-        "--build-id", type=str, help="The build id for the built artifact"
-    )
-    parser.add_argument(
-        "--architecture", type=str, help="The os architecture e.g. x64, arm64"
-    )
-    parser.add_argument(
-        "--test-run-id", type=str, help="The unique execution id for the test"
-    )
-    parser.add_argument(
-        "--keep",
-        dest="keep",
-        action="store_true",
-        help="Do not delete the working temporary directory.",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        help="Show more verbose output.",
-        action="store_const",
-        default=logging.INFO,
-        const=logging.DEBUG,
-        dest="logging_level",
-    )
-    args = parser.parse_args()
-    return args
-
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def pull_common_dependencies(work_dir, build_manifest):
@@ -105,7 +69,7 @@ def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
 
 
 def main():
-    args = parse_arguments()
+    args = TestArgs()
     console.configure(level=args.logging_level)
     test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
     test_manifest = TestManifest.from_path(test_manifest_path)
