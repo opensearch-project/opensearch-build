@@ -103,27 +103,8 @@ Tests the OpenSearch bundle.
 
 This workflow contains integration, backwards compatibility and performance tests.
 
-The following example kicks off all test suites for a distribution of OpenSearch 1.1.0.
-
+Usage:
 ```bash
-./bundle-workflow/test.sh manifests/opensearch-1.1.0.yml
-```
-
-The following options are available.
-
-| name               | description                                                             |
-|--------------------|-------------------------------------------------------------------------|
-| --component [name] | Test a single component by name, e.g. `--component common-utils`.       |
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose      | Show more verbose output.                                               |
-
-#### Integration Tests
-
-This step runs integration tests invoking `integtest.sh` in each component from bundle manifest.
-
-To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3, reads all components of the bundle and runs integration tests against each component.
- 
-```
 export AWS_ROLE_ARN=arn:aws:iam::<AWS_JENKINS_ACCOUNT>:role/opensearch-test
 export AWS_ROLE_SESSION_NAME=dummy-session
 
@@ -131,13 +112,43 @@ Next, configure temporary credentials in environment w/
 export AWS_SESSION_TOKEN=<value>
 export AWS_ACCESS_KEY_ID=<value>
 export AWS_SECRET_ACCESS_KEY=<value>
+./bundle-workflow/test.sh <test-type>
+```
 
+The following options are available.
+
+| name                 | description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| test-type            | Run tests of a test suite. [integ-test, bwc-test]                       |
+| --test-run-id        | Unique identifier for a test run                                        |
+| --s3-bucket          | Artifact S3 bucket to pull manifests and dependencies                   |
+| --opensearch-version | OpenSearch version                                                      |
+| --build-id           | Unique identifier for a build                                           |
+| --architecture       | CPU architecture for all components                                     |
+| --component          | Test a specific component in a manifest                                 |
+| --keep               | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose        | Show more verbose output.                                               |
+
+#### Integration Tests
+
+This step runs integration tests invoking `run_integ_test.py` in each component from bundle manifest.
+
+To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3, reads all components of the bundle and runs integration tests against each component.
+ 
+Usage:
+```bash
 cd bundle-workflow
 ./test.sh integ-test --test-run-id <execution-id> --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
 ```
 #### Backwards Compatibility Tests
 
-This step run backward compatibility invoking `bwctest.sh` in each component from bundle manifest.
+This step run backward compatibility invoking `run_bwc_test.py` in each component from bundle manifest.
+
+Usage:
+```bash
+cd bundle-workflow
+./test.sh bwc-test --test-run-id <execution-id> --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
+```
 
 #### Performance Tests
 
