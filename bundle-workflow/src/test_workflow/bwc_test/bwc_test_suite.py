@@ -32,14 +32,9 @@ class BwcTestSuite:
         script = self.script_finder.find_bwc_test_script(
             component_name, work_dir
         )
-        if os.path.exists(script):
-            cmd = f"{script}"
-            (status, stdout, stderr) = execute(cmd, work_dir, True, False)
-            return (status, stdout, stderr)
-        else:
-            logging.info(
-                f"{script} does not exist. Skipping bwc tests for {component_name}"
-            )
+        cmd = f"{script}"
+        (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+        return (status, stdout, stderr)
 
     def component_bwc_tests(self, component):
         test_component = TestComponent(component.repository, component.commit_id)
