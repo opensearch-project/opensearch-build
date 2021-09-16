@@ -36,7 +36,7 @@ pipeline {
                                     ),
                                     string(
                                             defaultValue: '',
-                                            name: 'test_suite_type',
+                                            name: 'test_suite',
                                             trim: true
                                     ),
                             ])
@@ -64,7 +64,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./bundle-workflow/test.sh ${test_suite_type} --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
+                sh "./bundle-workflow/test.sh ${test_suite} --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
             }
             post() {
                 always {

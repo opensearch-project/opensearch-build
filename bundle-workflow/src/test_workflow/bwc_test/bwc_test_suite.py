@@ -9,7 +9,6 @@
 
 import logging
 import os
-import subprocess
 
 from paths.script_finder import ScriptFinder
 from system.execute import execute
