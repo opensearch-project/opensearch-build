@@ -12,4 +12,4 @@ This job runs integration/bwc tests for a bundle via `test.sh` in Jenkins.
 | build_id |  Unique identifier for a bundle build                         |
 | architecture | CPU Architecture of bundle                                |
 | test_run_id | Unique identifier for a test run                           |
-| test_suite_type | Run a specific test suite. [integ-test, bwc-test]      |
+| test_suite | Run a specific test suite. [integ-test, bwc-test]           |

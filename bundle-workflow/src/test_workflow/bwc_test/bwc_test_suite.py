@@ -9,33 +9,38 @@
 
 import logging
 import os
-import subprocess
 
+from paths.script_finder import ScriptFinder
+from system.execute import execute
 from test_workflow.test_component import TestComponent
 
 
 class BwcTestSuite:
     manifest: str
+    work_dir: str
     component: str
     keep: bool
 
     def __init__(self, manifest, work_dir, component=None, keep=False):
         self.manifest = manifest
         self.work_dir = work_dir
+        self.script_finder = ScriptFinder()
         self.component = component
         self.keep = keep
 
-    def run_tests(self, work_dir):
-        bwc_script = "bwctest.sh"
-        run_bwctests = f"./{bwc_script}"
-        output = subprocess.check_output(run_bwctests, cwd=work_dir, shell=True)
-        return output
+    def run_tests(self, work_dir, component_name):
+        script = self.script_finder.find_bwc_test_script(
+            component_name, work_dir
+        )
+        cmd = f"{script}"
+        (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+        return (status, stdout, stderr)
 
     def component_bwc_tests(self, component):
         test_component = TestComponent(component.repository, component.commit_id)
         test_component.checkout(os.path.join(self.work_dir, component.name))
         try:
-            console_output = self.run_tests(self.work_dir + "/" + component.name)
+            console_output = self.run_tests(self.work_dir + "/" + component.name, component.name)
             return console_output
         except:
             # TODO: Store and report test failures for {component}

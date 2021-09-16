@@ -108,7 +108,6 @@ Usage:
 export AWS_ROLE_ARN=arn:aws:iam::<AWS_JENKINS_ACCOUNT>:role/opensearch-test
 export AWS_ROLE_SESSION_NAME=dummy-session
 
-Next, configure temporary credentials in environment w/
 export AWS_SESSION_TOKEN=<value>
 export AWS_ACCESS_KEY_ID=<value>
 export AWS_SECRET_ACCESS_KEY=<value>
