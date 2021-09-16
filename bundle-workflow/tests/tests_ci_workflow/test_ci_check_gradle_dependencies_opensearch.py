@@ -56,7 +56,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             target=CiTarget(version="1.1.0", snapshot=True),
         )
         check.git_repo.output.assert_called_once_with(
-            './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
+            './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
 
@@ -69,5 +69,5 @@ class TestCheckGradlePluginDependenciesOpenSearchVersion(unittest.TestCase):
         )
         self.assertEqual(check.gradle_project, "plugin")
         check.git_repo.output.assert_called_once_with(
-            './gradlew plugin:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true | grep -e "---"'
+            './gradlew plugin:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
