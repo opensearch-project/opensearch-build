@@ -7,7 +7,7 @@
 import os
 import subprocess
 import unittest
-from unittest.mock import ANY, MagicMock, call, patch
+from unittest.mock import MagicMock, call, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
@@ -26,7 +26,7 @@ class TestBwcSuite(unittest.TestCase):
     def test_execute(self):
         expected = []
         for component in self.manifest.components:
-            expected.append(call(component, ANY))
+            expected.append(call(component))
         self.bwc_test_suite.component_bwc_tests = MagicMock()
         self.bwc_test_suite.execute()
         self.assertEqual(
@@ -46,7 +46,7 @@ class TestBwcSuite(unittest.TestCase):
         self.bwc_test_suite.run_tests = MagicMock()
         expected = [call("./" + self.manifest.components[1].name)]
 
-        self.bwc_test_suite.component_bwc_tests(component, ".")
+        self.bwc_test_suite.component_bwc_tests(component)
         test_component_mock.return_value.checkout.assert_called_with(
             "./" + component.name
         )

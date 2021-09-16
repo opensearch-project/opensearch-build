@@ -31,11 +31,11 @@ class BwcTestSuite:
         output = subprocess.check_output(run_bwctests, cwd=work_dir, shell=True)
         return output
 
-    def component_bwc_tests(self, component, work_dir):
+    def component_bwc_tests(self, component):
         test_component = TestComponent(component.repository, component.commit_id)
-        test_component.checkout(os.path.join(work_dir, component.name))
+        test_component.checkout(os.path.join(self.work_dir, component.name))
         try:
-            console_output = self.run_tests(work_dir + "/" + component.name)
+            console_output = self.run_tests(self.work_dir + "/" + component.name)
             return console_output
         except:
             # TODO: Store and report test failures for {component}
@@ -46,4 +46,4 @@ class BwcTestSuite:
         for component in self.manifest.components:
             if self.component is None or self.component == component.name:
                 # TODO: Store and report test results, send notification via {console_output}
-                self.component_bwc_tests(component, self.work_dir)
+                self.component_bwc_tests(component)
