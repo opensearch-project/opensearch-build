@@ -40,7 +40,6 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
-                            "dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [

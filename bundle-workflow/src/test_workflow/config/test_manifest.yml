@@ -1,9 +1,6 @@
 components:
   - name: index-management
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
@@ -14,7 +11,6 @@ components:
         - without-security
   - name: anomaly-detection
     integ-test:
-      dependencies:
       test-configs:
         - with-security
         - without-security
@@ -25,7 +21,6 @@ components:
         - without-security
   - name: asynchronous-search
     integ-test:
-      dependencies:
       test-configs:
         - with-security
         - without-security
@@ -35,7 +30,6 @@ components:
         - without-security
   - name: sql
     integ-test:
-      dependencies:
       test-configs:
         - with-security
         - without-security
@@ -46,7 +40,6 @@ components:
         - without-security
   - name: k-NN
     integ-test:
-      dependencies:
       test-configs:
         - with-security
         - without-security
