@@ -42,9 +42,6 @@ class IntegTestSuite:
     def _fetch_plugin_specific_dependencies(self):
         dependencies_dir = os.path.join(self.work_dir, 'dependencies')
         os.chdir(self.work_dir)
-        # subprocess.run(
-        #     "cp opensearch-build/bundle-workflow/scripts/default/integtest.sh " + self.component.name, shell=True, check=True
-        # )
         subprocess.run(
             "cp -r dependencies/job-scheduler " + self.component.name, shell=True, check=True
         )

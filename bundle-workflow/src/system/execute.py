@@ -21,7 +21,4 @@ def execute(command, dir, capture=True, raise_on_failure=True):
     )
     if raise_on_failure:
         result.check_returncode()
-    logging.info("DEBUG LOGS")
-    logging.info(result.stdout)
-    logging.info(result.stderr)
     return (result.returncode, result.stdout, result.stderr)

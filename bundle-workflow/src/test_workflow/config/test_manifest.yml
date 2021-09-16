@@ -1,17 +1,17 @@
 components:
-  # - name: index-management
-  #   integ-test:
-  #     dependencies:
-  #       - job-scheduler
-  #       - alerting
-  #     test-configs:
-  #       - with-security
-  #       - without-security
-  #   bwc-test:
-  #     dependencies:
-  #     test-configs:
-  #       - with-security
-  #       - without-security
+  - name: index-management
+    integ-test:
+      dependencies:
+        - job-scheduler
+        - alerting
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      dependencies:
+      test-configs:
+        - with-security
+        - without-security
   - name: anomaly-detection
     integ-test:
       dependencies:
@@ -36,5 +36,31 @@ components:
     bwc-test:
       test-configs:
         - with-security
+        - without-security
+  - name: sql
+    integ-test:
+      dependencies:
+        - job-scheduler
+        - alerting
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      dependencies:
+      test-configs:
+        - with-security
+        - without-security
+  - name: k-NN
+    integ-test:
+      dependencies:
+        - job-scheduler
+        - alerting
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      dependencies:
+      test-configs:
+       - with-security
         - without-security
 schema-version: '1.0'
