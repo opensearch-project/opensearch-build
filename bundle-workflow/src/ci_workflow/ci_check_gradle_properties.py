@@ -9,8 +9,8 @@ from system.properties_file import PropertiesFile
 
 
 class CiCheckGradleProperties(CiCheck):
-    def __init__(self, component, git_repo, target):
-        super().__init__(component, git_repo, target)
+    def __init__(self, component, git_repo, target, args=None):
+        super().__init__(component, git_repo, target, args)
         self.properties = self.__get_properties()
 
     def __get_properties(self):

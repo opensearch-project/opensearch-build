@@ -27,13 +27,13 @@ components:
     ref: "1.1"
     checks:
       - gradle:properties:version
-      - gradle:plugin.dependencies:opensearch.version
+      - gradle:dependencies:opensearch.version: plugin
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
     ref: "1.1"
     checks:
       - gradle:properties:version
-#      - gradle:plugin.dependencies:opensearch.version
+      - gradle:dependencies:opensearch.version: alerting
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
@@ -42,7 +42,6 @@ components:
     ref: "1.1"
     checks:
       - gradle:properties:version
-#      - gradle:plugin.dependencies:opensearch.version
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
     ref: "1.1"

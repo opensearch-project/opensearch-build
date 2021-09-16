@@ -48,7 +48,7 @@ class TestBundleManifest(unittest.TestCase):
             opensearch_min_component.commit_id,
             "b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583",
         )
-        self.assertEqual(opensearch_min_component.ref, "1.x")
+        self.assertEqual(opensearch_min_component.ref, "1.1")
 
     def test_to_dict(self):
         data = self.manifest.to_dict()

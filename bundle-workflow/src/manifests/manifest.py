@@ -7,9 +7,14 @@
 from abc import ABC, abstractmethod
 
 import yaml
+from cerberus import Validator  # type:ignore
 
 
 class Manifest(ABC):
+    SCHEMA = {
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]}
+    }
+
     @classmethod
     def from_file(cls, file):
         return cls(yaml.safe_load(file))
@@ -43,6 +48,14 @@ class Manifest(ABC):
 
     @abstractmethod
     def __init__(self, data):
+        self.validate(data)
         self.version = str(data["schema-version"])
-        if self.version != "1.0":
-            raise ValueError(f"Unsupported schema version: {self.version}")
+
+    @property
+    def schema(self):
+        return self.SCHEMA
+
+    def validate(self, data):
+        v = Validator(self.schema)
+        if not v.validate(data):
+            raise ValueError(f"Invalid manifest schema: {v.errors}")
