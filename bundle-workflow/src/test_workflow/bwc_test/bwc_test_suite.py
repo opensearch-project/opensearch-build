@@ -35,10 +35,8 @@ class BwcTestSuite:
         )
         if os.path.exists(script):
             cmd = f"{script}"
-            print(cmd, component_name, work_dir)
             (status, stdout, stderr) = execute(cmd, work_dir, True, False)
-            print(status, stdout, stderr)
-            return status
+            return (status, stdout, stderr)
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.name}"

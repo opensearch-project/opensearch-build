@@ -9,7 +9,7 @@ components:
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/bundle/opensearch-min-1.0.0-linux-x64.tar.gz
     name: OpenSearch
     ref: 1.0
-    repository: https://github.com/saratvemulapalli/OpenSearch.git
+    repository: https://github.com/opensearch-project/OpenSearch.git
   - commit_id: 7fad9529358259de529763c1c923fd947817a3bd
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/plugins/opensearch-job-scheduler-1.0.0.0.zip
     name: job-scheduler
