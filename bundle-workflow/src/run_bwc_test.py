@@ -6,7 +6,6 @@
 # compatible open source license.
 
 import logging
-import os
 import sys
 
 from manifests.bundle_manifest import BundleManifest
