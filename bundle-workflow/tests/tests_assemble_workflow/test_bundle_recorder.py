@@ -7,7 +7,6 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import MagicMock
 
 import yaml
 
@@ -28,11 +27,15 @@ class TestBundleRecorder(unittest.TestCase):
             )
 
     def test_record_component(self):
-        component = MagicMock(
-            name="job_scheduler",
-            repository="https://github.com/opensearch-project/job_scheduler",
-            ref="main",
-            commit_id="3913d7097934cbfe1fdcf919347f22a597d00b76",
+        component = BuildManifest.Component(
+            {
+                "name": "job_scheduler",
+                "repository": "https://github.com/opensearch-project/job_scheduler",
+                "ref": "main",
+                "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
+                "artifacts": [],
+                "version": "1.0",
+            }
         )
         self.bundle_recorder.record_component(component, "plugins")
 

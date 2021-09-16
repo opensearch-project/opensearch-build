@@ -12,6 +12,7 @@ import yaml
 
 from manifests.bundle_manifest import BundleManifest
 
+
 class TestBundleManifest(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(

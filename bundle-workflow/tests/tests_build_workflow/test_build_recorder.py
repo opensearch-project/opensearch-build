@@ -45,9 +45,9 @@ class TestBuildRecorder(unittest.TestCase):
             ),
         )
 
-        recorder.record_artifact("common-utils", "files", "../file1.jar", __file__)
+        recorder.record_artifact("common-utils", "libs", "../file1.jar", __file__)
 
-        recorder.record_artifact("common-utils", "files", "../file2.jar", __file__)
+        recorder.record_artifact("common-utils", "libs", "../file2.jar", __file__)
 
         self.assertEqual(
             recorder.get_manifest().to_dict(),
@@ -60,7 +60,7 @@ class TestBuildRecorder(unittest.TestCase):
                 },
                 "components": [
                     {
-                        "artifacts": {"files": ["../file1.jar", "../file2.jar"]},
+                        "artifacts": {"libs": ["../file1.jar", "../file2.jar"]},
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
                         "name": "common-utils",
                         "ref": "main",
@@ -152,7 +152,14 @@ class TestBuildRecorder(unittest.TestCase):
     @patch.object(BuildArtifactCheckPlugin, "check")
     def test_record_artifact_check_plugin_version_properties(self, *mocks):
         mock = self.__mock(snapshot=False)
-        mock.record_component("security", MagicMock())
+        mock.record_component(
+            "security",
+            MagicMock(
+                url="https://github.com/opensearch-project/security",
+                ref="main",
+                sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
+            ),
+        )
         mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.1.0.0.zip")
         manifest_dict = mock.get_manifest().to_dict()
         self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
@@ -163,7 +170,14 @@ class TestBuildRecorder(unittest.TestCase):
     @patch.object(BuildArtifactCheckPlugin, "check")
     def test_record_artifact_check_plugin_version_properties_snapshot(self, *mocks):
         mock = self.__mock(snapshot=True)
-        mock.record_component("security", MagicMock())
+        mock.record_component(
+            "security",
+            MagicMock(
+                url="https://github.com/opensearch-project/security",
+                ref="main",
+                sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
+            ),
+        )
         mock.record_artifact(
             "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
         )

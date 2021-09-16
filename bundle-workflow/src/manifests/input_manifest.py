@@ -29,6 +29,34 @@ from manifests.manifest import Manifest
 
 
 class InputManifest(Manifest):
+    SCHEMA = {
+        "build": {
+            "required": True,
+            "type": "dict",
+            "schema": {
+                "name": {"required": True, "type": "string"},
+                "version": {"required": True, "type": "string"},
+            },
+        },
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "components": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"required": True, "type": "string"},
+                    "ref": {"required": True, "type": "string"},
+                    "repository": {"required": True, "type": "string"},
+                    "working_directory": {"type": "string"},
+                    "checks": {
+                        "type": "list",
+                        "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]},
+                    },
+                },
+            },
+        },
+    }
+
     def __init__(self, data):
         super().__init__(data)
 
