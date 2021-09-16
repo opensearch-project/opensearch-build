@@ -52,7 +52,7 @@ class BuildRecorder:
     def write_manifest(self):
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
         self.get_manifest().to_file(manifest_path)
-        logging.info(f'Created build manifest {manifest_path}')
+        logging.info(f"Created build manifest {manifest_path}")
 
     def __check_artifact(self, artifact_type, artifact_file):
         if artifact_type == "plugins":
@@ -68,11 +68,8 @@ class BuildRecorder:
             self.data["build"]["name"] = target.name
             self.data["build"]["version"] = target.opensearch_version
             self.data["build"]["architecture"] = target.arch
-            self.data["build"]["snapshot"] = str(target.snapshot).lower()
             self.data["schema-version"] = "1.0"
-            # We need to store components as a hash so that we can append artifacts by component name
-            # When we convert to a BuildManifest this will get converted back into a list
-            self.data["components_hash"] = {}
+            self.components_hash = {}
 
         def append_component(self, name, version, repository_url, ref, commit_id):
             component = {
@@ -83,10 +80,10 @@ class BuildRecorder:
                 "artifacts": {},
                 "version": version,
             }
-            self.data["components_hash"][name] = component
+            self.components_hash[name] = component
 
         def append_artifact(self, component, type, path):
-            artifacts = self.data["components_hash"][component]["artifacts"]
+            artifacts = self.components_hash[component]["artifacts"]
             list = artifacts.get(type, [])
             if len(list) == 0:
                 artifacts[type] = list
@@ -94,6 +91,7 @@ class BuildRecorder:
 
         def to_manifest(self):
             # The build manifest expects `components` to be a list, not a hash, so we need to munge things a bit
-            components = self.data["components_hash"].values()
-            self.data["components"] = components
+            components = self.components_hash.values()
+            if len(components) > 0:
+                self.data["components"] = list(components)
             return BuildManifest(self.data)

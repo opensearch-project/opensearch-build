@@ -24,11 +24,52 @@ class TestManifest(Manifest):
                 - without-security
                 - with-less-security
             bwc-test:
-              dependencies:
               test-configs:
                 - with-security
                 - without-security
     """
+
+    SCHEMA = {
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "components": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"required": True, "type": "string"},
+                    "integ-test": {
+                        "type": "dict",
+                        "schema": {
+                            "dependencies": {"type": "list"},
+                            "test-configs": {
+                                "type": "list",
+                                "allowed": [
+                                    "with-security",
+                                    "without-security",
+                                    "with-less-security",
+                                ],
+                            },
+                        },
+                    },
+                    "bwc-test": {
+                        "type": "dict",
+                        "schema": {
+                            "dependencies": {"type": "list"},
+                            "test-configs": {
+                                "type": "list",
+                                "allowed": [
+                                    "with-security",
+                                    "without-security",
+                                    "with-less-security",
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
+
     def __init__(self, data):
         super().__init__(data)
         self.components = list(
@@ -55,3 +96,6 @@ class TestManifest(Manifest):
                 "integ-test": self.integ_test,
                 "bwc-test": self.bwc_test,
             }
+
+
+TestManifest.__test__ = False  # type:ignore

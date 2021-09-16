@@ -21,7 +21,7 @@ components:
     ref: tags/1.0.0.0
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 1.0
+    ref: "1.0"
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
     ref: 1.0.1
@@ -30,7 +30,7 @@ components:
     ref: 1.0.1
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 1.0
+    ref: "1.0"
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: tags/1.0.0.0
