@@ -84,3 +84,16 @@ class ScriptFinder:
         ]
 
         return cls.__find_script("install.sh", paths)
+
+    @classmethod
+    def find_bwc_test_script(cls, component_name, git_dir):
+        paths = [
+            os.path.realpath(os.path.join(git_dir, "bwctest.sh")),
+            os.path.realpath(os.path.join(git_dir, "scripts/bwctest.sh")),
+            os.path.realpath(
+                os.path.join(cls.component_scripts_path, component_name, "bwctest.sh")
+            ),
+            os.path.realpath(os.path.join(cls.default_scripts_path, "bwctest.sh")),
+        ]
+
+        return cls.__find_script("bwctest.sh", paths)
