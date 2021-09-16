@@ -48,7 +48,7 @@ class InputManifests(Manifests):
             os.chdir(work_dir)
 
             # check out and build OpenSearch#main, 1.x, etc.
-            opensearch_branches = ComponentOpenSearchMin.get_root_branches()
+            opensearch_branches = ComponentOpenSearchMin.get_branches()
             logging.info(f"Checking OpenSearch {opensearch_branches} branches")
             for branch in opensearch_branches:
                 opensearch = ComponentOpenSearchMin.checkout(

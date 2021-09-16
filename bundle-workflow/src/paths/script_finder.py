@@ -64,8 +64,9 @@ class ScriptFinder:
     @classmethod
     def find_integ_test_script(cls, component_name, git_dir):
         paths = [
-            os.path.realpath(os.path.join(git_dir, "integtest.sh")),
-            os.path.realpath(os.path.join(git_dir, "scripts/integtest.sh")),
+            # TODO: Uncomment this after the integtest.sh tool is removed from plugin repos. See issue #497
+            # os.path.realpath(os.path.join(git_dir, "integtest.sh")),
+            # os.path.realpath(os.path.join(git_dir, "scripts/integtest.sh")),
             os.path.realpath(
                 os.path.join(cls.component_scripts_path, component_name, "integtest.sh")
             ),

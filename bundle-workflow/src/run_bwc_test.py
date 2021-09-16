@@ -28,6 +28,5 @@ def main():
                 args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, cur_dir)
             BwcTestSuite(bundle_manifest, cur_dir, args.component, args.keep).execute()
 
-
 if __name__ == "__main__":
     sys.exit(main())
