@@ -12,6 +12,7 @@ import os
 import subprocess
 
 from paths.script_finder import ScriptFinder
+from system.execute import execute
 from test_workflow.test_component import TestComponent
 
 
@@ -35,7 +36,8 @@ class BwcTestSuite:
         if os.path.exists(script):
             cmd = f"{script}"
             print(cmd, component_name, work_dir)
-            output = subprocess.check_output(cmd, cwd=work_dir, shell=True)
+            output = execute(cmd, work_dir, True, False)
+            #output = subprocess.check_output(cmd, cwd=work_dir, shell=True)
             return output
         else:
             logging.info(
