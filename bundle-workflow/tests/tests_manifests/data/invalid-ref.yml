@@ -10,3 +10,4 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+      

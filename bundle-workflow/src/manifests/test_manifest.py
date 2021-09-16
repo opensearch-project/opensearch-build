@@ -4,8 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from manifests.dataclass_typechecked import dataclass_typechecked
 from manifests.manifest import Manifest
-from manifests.typechecked import dataclass_typechecked
 
 
 class TestManifest(Manifest):

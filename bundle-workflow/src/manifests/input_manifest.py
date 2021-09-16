@@ -27,8 +27,8 @@ components:
 
 from typing import Union
 
+from manifests.dataclass_typechecked import dataclass_typechecked
 from manifests.manifest import Manifest
-from manifests.typechecked import dataclass_typechecked
 
 
 class InputManifest(Manifest):

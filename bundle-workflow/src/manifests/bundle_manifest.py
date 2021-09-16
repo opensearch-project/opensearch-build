@@ -7,8 +7,8 @@
 import os
 
 from aws.s3_bucket import S3Bucket
+from manifests.dataclass_typechecked import dataclass_typechecked
 from manifests.manifest import Manifest
-from manifests.typechecked import dataclass_typechecked
 
 
 class BundleManifest(Manifest):
