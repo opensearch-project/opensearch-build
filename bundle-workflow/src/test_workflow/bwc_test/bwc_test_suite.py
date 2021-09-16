@@ -34,7 +34,7 @@ class BwcTestSuite:
         )
         if os.path.exists(script):
             cmd = f"{script}"
-            print(cmd)
+            print(cmd, component_name, work_dir)
             output = subprocess.check_output(cmd, cwd=work_dir, shell=True)
             return output
         else:
