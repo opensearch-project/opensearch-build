@@ -38,7 +38,7 @@ class BwcTestSuite:
             return (status, stdout, stderr)
         else:
             logging.info(
-                f"{script} does not exist. Skipping integ tests for {self.name}"
+                f"{script} does not exist. Skipping bwc tests for {component_name}"
             )
 
     def component_bwc_tests(self, component):
