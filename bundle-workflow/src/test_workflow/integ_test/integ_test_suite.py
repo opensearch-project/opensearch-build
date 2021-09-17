@@ -42,29 +42,29 @@ class IntegTestSuite:
     def _fetch_plugin_specific_dependencies(self):
         dependencies_dir = os.path.join(self.work_dir, 'dependencies')
         os.chdir(self.work_dir)
-        subprocess.run(
-            "cp -r dependencies/job-scheduler " + self.component.name, shell=True, check=True
+        subprocess.check_output(
+            "cp -r dependencies/job-scheduler " + self.component.name, cwd=self.work_dir, shell=True
         )
-        os.chdir(self.work_dir + "/" + self.component.name + "/job-scheduler")
+        job_scheduler_dir = os.path.join(self.work_dir, self.component.name, 'job-scheduler')
+        os.chdir(job_scheduler_dir)
         deps_script = os.path.join(
             self.work_dir,
             "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
         )
-        subprocess.run(
+        subprocess.check_output(
             f"{deps_script} job-scheduler {self.bundle_manifest.build.version}",
-            shell=True,
-            check=True,
-            capture_output=True,
+            cwd=job_scheduler_dir,
+            shell=True
         )
         os.chdir(dependencies_dir)
         if not (os.path.isdir('notifications')):
-            subprocess.run("cp -r alerting notifications", shell=True, check=True)
-        os.chdir(dependencies_dir + "/" + "notifications")
-        subprocess.run(
+            subprocess.check_output("cp -r alerting notifications", cwd=dependencies_dir, shell=True)
+        notifications_dir = os.path.join(dependencies_dir, 'notifications')
+        os.chdir(notifications_dir)
+        subprocess.check_output(
             f"{deps_script} alerting {self.bundle_manifest.build.version}",
-            shell=True,
-            check=True,
-            capture_output=True,
+            cwd=notifications_dir,
+            shell=True
         )
 
     # TODO: revisit this once the test_manifest.yml is finalized

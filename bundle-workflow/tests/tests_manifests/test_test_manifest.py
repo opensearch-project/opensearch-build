@@ -28,6 +28,7 @@ class TestTestManifest(unittest.TestCase):
         self.assertEqual(
             component.integ_test,
             {
+                "dependencies": ["job-scheduler", "alerting"],
                 "test-configs": [
                     "with-security",
                     "without-security",
