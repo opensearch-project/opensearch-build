@@ -19,16 +19,18 @@ The bundle workflow builds a complete OpenSearch distribution from source. You c
 
 Each build requires a manifest to be passed as input. We currently have the following input manifests.
 
-| name                                                                  | description                                                   |
-|-----------------------------------------------------------------------|---------------------------------------------------------------|
-| [opensearch-1.0.0.yml](/manifests/opensearch-1.0.0.yml)               | Manifest to reproduce 1.0.0 build.                            |
-| [opensearch-1.0.0-maven.yml](/manifests/opensearch-1.0.0-maven.yml)   | One-time manifest to build maven artifacts for 1.0 from tags. |
-| [opensearch-1.1.0.yml](/manifests/opensearch-1.1.0.yml)               | Manifest to build upcoming 1.x release.                       |
+| name                                                                        | description                                                   |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------|
+| [opensearch-1.0.0.yml](/manifests/1.0.0/opensearch-1.0.0.yml)               | Manifest to reproduce 1.0.0 build.                            |
+| [opensearch-1.0.0-maven.yml](/manifests/1.0.0/opensearch-1.0.0-maven.yml)   | One-time manifest to build maven artifacts for 1.0 from tags. |
+| [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest for 1.1.0, the next version.                         |
+| [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)               | Manifest for 1.2.0, the following version.                    |
+| [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)               | Manifest for 2.0.0, the next major version of OpenSearch.     |
 
 The following example builds a shapshot version of OpenSearch 1.1.0.
 
 ```bash
-./bundle-workflow/build.sh manifests/opensearch-1.1.0.yml --snapshot
+./bundle-workflow/build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
 ```
 
 The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
@@ -181,7 +183,7 @@ The following checks are available.
 The following example sanity-checks components in the the OpenSearch 1.1.0 manifest.
 
 ```bash
-./bundle-workflow/ci.sh manifests/opensearch-1.1.0.yml --snapshot
+./bundle-workflow/ci.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
 ```
 
 The following options are available.

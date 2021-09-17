@@ -31,7 +31,7 @@ class InputManifests(Manifests):
     def files(self):
         results = []
         for filename in glob.glob(
-            os.path.join(self.manifests_path(), "opensearch-*.yml")
+            os.path.join(self.manifests_path(), "**/opensearch-*.yml")
         ):
             # avoids the -maven manifest
             match = re.search(r"^opensearch-([0-9.]*).yml$", os.path.basename(filename))
@@ -110,8 +110,8 @@ class InputManifests(Manifests):
                     data["components"].append(component.to_dict())
 
                 manifest = InputManifest(data)
-                manifest_path = os.path.join(
-                    self.manifests_path(), f"opensearch-{release_version}.yml"
-                )
+                manifest_dir = os.path.join(self.manifests_path(), release_version)
+                os.makedirs(manifest_dir, exist_ok=True)
+                manifest_path = os.path.join(manifest_dir, f"opensearch-{release_version}.yml")
                 manifest.to_file(manifest_path)
                 logging.info(f"Wrote {manifest_path}")
