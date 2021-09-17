@@ -15,12 +15,17 @@ body:
    validations:
     required: true
  - type: textarea
-   id: to-Reproduce
+     id: to-Reproduce
+     attributes:
+       label: To reproduce
+       description: Steps to reproduce the behavior
+     validations:
+       required: true
+ - type: textarea
+   id: Expected-behaviour
    attributes:
     label: Expected behavior
     description: A clear and concise description of what you expected to happen.
-   validations:
-    required: true
  - type: textarea
    id: screenshots
    attributes:
