@@ -41,29 +41,30 @@ def pull_common_dependencies(work_dir, build_manifest):
             GitRepository(
                 component.repository,
                 component.commit_id,
-                os.path.join(work_dir, component.name),
+                os.path.join(work_dir, 'dependencies', component.name),
             )
 
 
 # TODO: replace with DependencyProvider - https://github.com/opensearch-project/opensearch-build/issues/283
 def sync_dependencies_to_maven_local(work_dir, manifest_build_ver):
-    os.chdir(work_dir + "/OpenSearch")
+    dependencies_dir = os.path.join(work_dir, 'dependencies')
+    opensearch_dir = os.path.join(dependencies_dir, 'OpenSearch')
+    os.chdir(opensearch_dir)
     deps_script = os.path.join(
         work_dir,
         "opensearch-build/tools/standard-test/integtest_dependencies_opensearch.sh",
     )
-    subprocess.run(
+    subprocess.check_output(
         f"{deps_script} opensearch {manifest_build_ver}",
-        shell=True,
-        check=True,
-        capture_output=True,
+        cwd=opensearch_dir,
+        shell=True
     )
-    os.chdir(work_dir + "/common-utils")
-    subprocess.run(
+    common_utils_dir = os.path.join(dependencies_dir, 'common-utils')
+    os.chdir(common_utils_dir)
+    subprocess.check_output(
         f"{deps_script} common-utils {manifest_build_ver}",
-        shell=True,
-        check=True,
-        capture_output=True,
+        cwd=common_utils_dir,
+        shell=True
     )
 
 
