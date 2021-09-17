@@ -19,11 +19,13 @@ The bundle workflow builds a complete OpenSearch distribution from source. You c
 
 Each build requires a manifest to be passed as input. We currently have the following input manifests.
 
-| name                                                                  | description                                                   |
-|-----------------------------------------------------------------------|---------------------------------------------------------------|
+| name                                                                        | description                                                   |
+|-----------------------------------------------------------------------------|---------------------------------------------------------------|
 | [opensearch-1.0.0.yml](/manifests/1.0.0/opensearch-1.0.0.yml)               | Manifest to reproduce 1.0.0 build.                            |
 | [opensearch-1.0.0-maven.yml](/manifests/1.0.0/opensearch-1.0.0-maven.yml)   | One-time manifest to build maven artifacts for 1.0 from tags. |
-| [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest to build upcoming 1.x release.                       |
+| [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest for 1.1.0, the next version.                         |
+| [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)               | Manifest for 1.2.0, the following version.                    |
+| [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)               | Manifest for 2.0.0, the next major version of OpenSearch.     |
 
 The following example builds a shapshot version of OpenSearch 1.1.0.
 
