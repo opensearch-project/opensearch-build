@@ -9,7 +9,7 @@ import os
 import subprocess
 import time
 
-import psutil
+import psutil  # type: ignore
 import requests
 
 from aws.s3_bucket import S3Bucket
