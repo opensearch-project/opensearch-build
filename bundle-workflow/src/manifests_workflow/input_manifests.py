@@ -107,13 +107,7 @@ class InputManifests(Manifests):
                 # TODO: copy OpenSearch and common-utils from the previous manifest
                 for component in main_versions[release_version]:
                     logging.info(f" Adding {component.name}")
-                    data["components"].append(
-                        {
-                            "name": component.name,
-                            "repository": component.git_repo.url,
-                            "ref": component.git_repo.ref,
-                        }
-                    )
+                    data["components"].append(component.to_dict())
 
                 manifest = InputManifest(data)
                 manifest_path = os.path.join(

@@ -50,3 +50,17 @@ class TestComponentOpenSearchMin(unittest.TestCase):
         repo.output.return_value = "version=2.1"
         component = ComponentOpenSearchMin(repo)
         self.assertEqual(component.properties.get_value("version"), "2.1")
+
+    def test_to_dict(self):
+        repo = MagicMock(ref="ref", url="repo")
+        repo.output.return_value = "version=2.1"
+        component = ComponentOpenSearchMin(repo)
+        self.assertEqual(
+            component.to_dict(),
+            {
+                "checks": ["gradle:publish", "gradle:properties:version"],
+                "name": "OpenSearch",
+                "ref": "ref",
+                "repository": "repo",
+            },
+        )
