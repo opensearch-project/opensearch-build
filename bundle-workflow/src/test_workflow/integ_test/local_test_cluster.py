@@ -9,6 +9,7 @@ import os
 import subprocess
 import time
 
+import psutil  # type: ignore
 import requests
 
 from aws.s3_bucket import S3Bucket
@@ -101,6 +102,14 @@ class LocalTestCluster(TestCluster):
         raise ClusterCreationException("Cluster is not green after 10 attempts")
 
     def terminate_process(self):
+        parent = psutil.Process(self.process.pid)
+        logging.debug("Checking for child processes")
+        child_processes = parent.children(recursive=True)
+        for child in child_processes:
+            logging.debug(f"Found child process with pid {child.pid}")
+            if child.pid != self.process.pid:
+                logging.debug(f"Sending SIGKILL to {child.pid} ")
+                child.kill()
         logging.info(f"Sending SIGTERM to PID {self.process.pid}")
         self.process.terminate()
         try:
