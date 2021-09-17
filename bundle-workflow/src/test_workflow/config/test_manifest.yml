@@ -6,6 +6,8 @@ components:
         - without-security
     bwc-test:
       dependencies:
+        - job-scheduler
+        - alerting
       test-configs:
         - with-security
         - without-security
@@ -16,6 +18,8 @@ components:
         - without-security
     bwc-test:
       dependencies:
+        - job-scheduler
+        - alerting
       test-configs:
         - with-security
         - without-security
@@ -26,6 +30,8 @@ components:
         - without-security
     bwc-test:
       dependencies:
+        - job-scheduler
+        - alerting
       test-configs:
         - with-security
         - without-security
@@ -36,6 +42,8 @@ components:
         - without-security
     bwc-test:
       dependencies:
+        - job-scheduler
+        - alerting
       test-configs:
         - with-security
         - without-security
@@ -46,6 +54,8 @@ components:
         - without-security
     bwc-test:
       dependencies:
+        - job-scheduler
+        - alerting
       test-configs:
         - with-security
         - without-security
