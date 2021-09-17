@@ -10,15 +10,15 @@ body:
  - type: textarea
    id: what-happened
    attributes:
-    label: What happened?
-    description: Also tell us, what did you expect to happen?
+    label: Describe the bug
+    description: A clear and concise description of what the bug is.
    validations:
     required: true
  - type: textarea
    id: to-Reproduce
    attributes:
-    label: Steps to reproduce
-    description: Tell us how to reproduce this issue
+    label: Expected behavior
+    description: A clear and concise description of what you expected to happen.
    validations:
     required: true
  - type: textarea
@@ -32,6 +32,11 @@ body:
    attributes:
     label: Host / Environment
     description: Hosts / Environment information to reproduce this bug
+ - type: textarea
+   id: additional-context
+   attributes:
+     label: Additional context
+     description: Add any other context about the problem here.
  - type: textarea
    id: logs
    attributes:

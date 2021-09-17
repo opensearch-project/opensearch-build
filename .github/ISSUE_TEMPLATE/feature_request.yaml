@@ -21,12 +21,6 @@ body:
     validations:
       required: true
   - type: textarea
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: Attach the screenshots associated with this issue
-      value: If applicable, add screenshots to help explain your problem.
-  - type: textarea
     id: alternatives
     attributes:
       label: Describe alternatives you've considered
@@ -35,4 +29,4 @@ body:
     id: additional-context
     attributes:
       label: Additional context
-      description: Add any other context or screenshots on the feature request here.
+      description: Add any other context or screenshots about the feature request here.
