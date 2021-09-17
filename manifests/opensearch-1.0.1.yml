@@ -1,0 +1,8 @@
+build:
+  name: OpenSearch
+  version: 1.0.1
+components:
+- name: OpenSearch
+  ref: '1.0'
+  repository: https://github.com/opensearch-project/OpenSearch.git
+schema-version: '1.0'
