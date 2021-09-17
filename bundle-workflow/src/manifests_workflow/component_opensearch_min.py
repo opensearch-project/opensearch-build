@@ -14,7 +14,12 @@ from system.properties_file import PropertiesFile
 
 class ComponentOpenSearchMin(Component):
     def __init__(self, repo, snapshot=False):
-        super().__init__("OpenSearch", repo, snapshot)
+        super().__init__(
+            "OpenSearch",
+            repo,
+            snapshot,
+            ["gradle:publish", "gradle:properties:version"],
+        )
 
     @classmethod
     def get_branches(self):

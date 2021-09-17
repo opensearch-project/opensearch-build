@@ -30,3 +30,12 @@ class TestComponentOpenSearch(unittest.TestCase):
         repo.output.return_value = "version=2.1"
         component = ComponentOpenSearch("common-utils", repo, "1.1.0")
         self.assertEqual(component.properties.get_value("version"), "2.1")
+
+    def test_to_dict(self):
+        repo = MagicMock(ref="ref", url="repo")
+        repo.output.return_value = "version=2.1"
+        component = ComponentOpenSearch("common-utils", repo, "1.1.0")
+        self.assertEqual(
+            component.to_dict(),
+            {"name": "common-utils", "ref": "ref", "repository": "repo"},
+        )
