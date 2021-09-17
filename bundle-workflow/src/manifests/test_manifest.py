@@ -16,9 +16,6 @@ class TestManifest(Manifest):
         components:
           - name: index-management
             integ-test:
-              dependencies:
-                - job-scheduler
-                - alerting
               test-configs:
                 - with-security
                 - without-security
@@ -40,7 +37,6 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
-                            "dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -54,7 +50,6 @@ class TestManifest(Manifest):
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
-                            "dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
