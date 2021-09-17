@@ -16,9 +16,6 @@ class TestManifest(Manifest):
         components:
           - name: index-management
             integ-test:
-              dependencies:
-                - job-scheduler
-                - alerting
               test-configs:
                 - with-security
                 - without-security
