@@ -18,7 +18,7 @@ class TestInputManifests(unittest.TestCase):
         self.assertTrue(len(files) >= 2)
         manifest = os.path.realpath(
             os.path.join(
-                os.path.dirname(__file__), "../../../manifests/opensearch-1.1.0.yml"
+                os.path.dirname(__file__), "../../../manifests/1.1.0/opensearch-1.1.0.yml"
             )
         )
         self.assertTrue(manifest in files)
@@ -29,6 +29,7 @@ class TestInputManifests(unittest.TestCase):
         )
         self.assertEqual(path, InputManifests.manifests_path())
 
+    @patch("os.makedirs")
     @patch("os.chdir")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests.ComponentOpenSearchMin")
@@ -62,8 +63,8 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(mock_input_manifest().to_file.call_count, 2)
         calls = [
             call(
-                os.path.join(InputManifests.manifests_path(), "opensearch-0.10.0.yml")
+                os.path.join(InputManifests.manifests_path(), "0.10.0/opensearch-0.10.0.yml")
             ),
-            call(os.path.join(InputManifests.manifests_path(), "opensearch-0.9.0.yml")),
+            call(os.path.join(InputManifests.manifests_path(), "0.9.0/opensearch-0.9.0.yml")),
         ]
         mock_input_manifest().to_file.assert_has_calls(calls)

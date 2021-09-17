@@ -20,7 +20,7 @@ class TestInputManifest(unittest.TestCase):
         )
 
     def test_1_0(self):
-        path = os.path.join(self.manifests_path, "opensearch-1.0.0.yml")
+        path = os.path.join(self.manifests_path, "1.0.0/opensearch-1.0.0.yml")
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
@@ -37,7 +37,7 @@ class TestInputManifest(unittest.TestCase):
             self.assertIsInstance(component.ref, str)
 
     def test_1_1(self):
-        path = os.path.join(self.manifests_path, "opensearch-1.1.0.yml")
+        path = os.path.join(self.manifests_path, "1.1.0/opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
@@ -66,7 +66,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(alerting_component.checks[1].args, "alerting")
 
     def test_to_dict(self):
-        path = os.path.join(self.manifests_path, "opensearch-1.1.0.yml")
+        path = os.path.join(self.manifests_path, "1.1.0/opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path)
         data = manifest.to_dict()
         with open(path) as f:
