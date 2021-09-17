@@ -5,4 +5,7 @@ components:
 - name: OpenSearch
   ref: main
   repository: https://github.com/opensearch-project/OpenSearch.git
+  checks:
+    - gradle:publish
+    - gradle:properties:version
 schema-version: '1.0'
