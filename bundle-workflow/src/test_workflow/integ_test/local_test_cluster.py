@@ -103,12 +103,12 @@ class LocalTestCluster(TestCluster):
 
     def terminate_process(self):
         parent = psutil.Process(self.process.pid)
-        logging.info("Checking for child processes")
+        logging.debug("Checking for child processes")
         child_processes = parent.children(recursive=True)
         for child in child_processes:
-            logging.info(f"Found child process with pid {child.pid}")
+            logging.debug(f"Found child process with pid {child.pid}")
             if child.pid != self.process.pid:
-                logging.info(f"Sending SIGKILL to {child.pid} ")
+                logging.debug(f"Sending SIGKILL to {child.pid} ")
                 child.kill()
         logging.info(f"Sending SIGTERM to PID {self.process.pid}")
         self.process.terminate()
