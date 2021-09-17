@@ -1,8 +1,22 @@
 - [Tests Jenkins Job](#tests-jenkins-job)
   - [Job Parameters](#job-parameters)
-### Tests Jenkins Job
 
-This job runs integration/bwc tests for a bundle via `test.sh` in Jenkins.
+### Orchestrator
+
+This is a jenkins pipeline that kicks off all long running test jobs on a given build artifact. It accepts `build_id`, `opensearch_version` and `architecture` as input parameters to uniquely identify a build artifact. It kicks off `integ-test`, `bwc-test`, `perf-test` jobs in parallel and notifies the designated channels when the workflow finishes. 
+ 
+#### Input parameters
+
+| name        | description                                                |
+|-------------|------------------------------------------------------------|
+| opensearch_version |  OpenSearch version                                 |
+| build_id |  Unique identifier for a bundle build                         |
+| architecture | CPU Architecture of bundle                                |
+
+
+### Testsuite 
+
+This job runs integration/bwc/perf tests for a bundle via `test.sh` in Jenkins.
 
 #### Job Parameters
 | name        | description                                                |
@@ -12,4 +26,3 @@ This job runs integration/bwc tests for a bundle via `test.sh` in Jenkins.
 | build_id |  Unique identifier for a bundle build                         |
 | architecture | CPU Architecture of bundle                                |
 | test_run_id | Unique identifier for a test run                           |
-| test_suite | Run a specific test suite. [integ-test, bwc-test]           |
