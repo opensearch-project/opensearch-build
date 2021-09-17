@@ -20,6 +20,7 @@ case $1 in
   ;;
   *)
   echo "Invalid Test suite"
+  exit 1
   ;;
 esac
 
