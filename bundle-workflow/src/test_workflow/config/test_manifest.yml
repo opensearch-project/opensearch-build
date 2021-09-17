@@ -25,6 +25,7 @@ components:
         - with-security
         - without-security
     bwc-test:
+      dependencies:
       test-configs:
         - with-security
         - without-security
