@@ -84,6 +84,7 @@ class BundleManifest(Manifest):
             build_id, opensearch_version, architecture
         )
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
+        logging.info("Listing directory after fetching manifest: " + os.listdir(work_dir))
         with open("manifest.yml", "r") as file:
             bundle_manifest = BundleManifest.from_file(file)
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
