@@ -5,7 +5,7 @@
 # compatible open source license.
 
 import os
-
+import logging
 from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
 
@@ -79,6 +79,7 @@ class BundleManifest(Manifest):
     @staticmethod
     def from_s3(bucket_name, build_id, opensearch_version, architecture, work_dir=None):
         work_dir = work_dir if not None else str(os.getcwd())
+        logging.info("Working directory for from_s3 " + work_dir)
         manifest_s3_path = BundleManifest.get_bundle_manifest_relative_location(
             build_id, opensearch_version, architecture
         )
