@@ -10,6 +10,7 @@
     - [Performance Tests](#performance-tests)
   - [Sanity Check the Bundle](#sanity-check-the-bundle)
   - [Auto-Generate Manifests](#auto-generate-manifests)
+  - [Onboarding Requirements](#onboarding-requirements)
 
 ## OpenSearch Bundle Workflow
 
@@ -216,3 +217,17 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
+
+### Onboarding Requirements
+
+With many components included in the distribution each component has the responsibility to keep the release process streamlined and react to integration issues.
+
+- Components repositories must have a tag matching all manifest versions so issue can be appropriately tagged.
+- Component maintainers must be able to respond to blocking issue within 2 business days.
+- All incoming branches need continuous integration checks enabled and passing.
+  - If a component has defect that blocks the distribution, issues will be opened on that repository and depending on the circumstance the component might be rolled back
+- Automated quality checks need to be included
+  - Post build validation is executed as part of the `build.sh` script.  This validation should be performed against compiled artifacts for speed and consistency.  The branches continuous integration checks are recommended here, so long as they do not create any localhost or other network traffic.
+  - Bundle sanity checks, [see](#sanity-check-the-bundle).
+  - Integration validation is executed as part of the `run_integ_test.py` script.  These tests will be run against an OpenSearch service instance from the distribution build artifacts.  They should validation the components internal operations and there need to be tests that validate scenarios between multiple components.  Component teams will need to diagnose any failures.
+  - Backward compatibility tests are not a requirement at this time.
