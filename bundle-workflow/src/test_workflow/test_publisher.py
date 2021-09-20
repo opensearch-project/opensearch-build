@@ -3,7 +3,7 @@ import os
 from aws.s3_bucket import S3Bucket
 
 
-class TestResults:
+class TestPublisher:
     def __init__(self, bundle_manifest, test_recorder):
         self.bundle_manifest = bundle_manifest
         self.test_recorder = test_recorder
@@ -11,9 +11,9 @@ class TestResults:
     def to_s3(self, bucket):
         """
             Publishes tests results to S3 pulling information from {self.test_recorder}
-            And cleans up all local storage after publishing ({self.test_recorder}.clean_up())
         """
-        s3_bucket = S3Bucket(bucket, '<role-arn>', 'test-publisher-session')
+        bucket = os.environ.get('ARTIFACT_BUCKET_NAME')
+        s3_bucket = S3Bucket(bucket)
         base_path = self._get_base_path()
 
         for subdir, dirs, files in os.walk(self.test_recorder.location):

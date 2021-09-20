@@ -4,10 +4,10 @@ from unittest.mock import patch
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.test_results import TestResults
+from test_workflow.test_publisher import TestPublisher
 
 
-class TestTestResults(unittest.TestCase):
+class TestTestPublisher(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "data")
@@ -17,7 +17,7 @@ class TestTestResults(unittest.TestCase):
         )
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.bucket_name = "unitTestBucket"
-        self.test_publisher = TestResults(
+        self.test_publisher = TestPublisher(
             bundle_manifest=self.manifest, test_recorder=None
         )
 
