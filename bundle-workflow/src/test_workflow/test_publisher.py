@@ -8,7 +8,7 @@ class TestPublisher:
         self.bundle_manifest = bundle_manifest
         self.test_recorder = test_recorder
 
-    def to_s3(self, bucket):
+    def to_s3(self):
         """
             Publishes tests results to S3 pulling information from {self.test_recorder}
         """
