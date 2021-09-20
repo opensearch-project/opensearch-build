@@ -1,77 +1,72 @@
 components:
   - name: index-management
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
   - name: anomaly-detection
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
   - name: asynchronous-search
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
-      dependencies:
-        - job-scheduler
-        - alerting
+      test-configs:
+        - with-security
+        - without-security
+  - name: alerting
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
       test-configs:
         - with-security
         - without-security
   - name: sql
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
   - name: k-NN
     integ-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
         - without-security
     bwc-test:
-      dependencies:
-        - job-scheduler
-        - alerting
       test-configs:
         - with-security
+        - without-security
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
+  - name: dashboards-notebooks
+    working-directory: opensearch-notebooks
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
         - without-security
 schema-version: '1.0'

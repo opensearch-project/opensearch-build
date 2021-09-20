@@ -15,10 +15,8 @@ class TestManifest(Manifest):
         schema-version: '1.0'
         components:
           - name: index-management
+            working-directory: optional relative directory to run commands in
             integ-test:
-              dependencies:
-                - job-scheduler
-                - alerting
               test-configs:
                 - with-security
                 - without-security
@@ -37,10 +35,10 @@ class TestManifest(Manifest):
                 "type": "dict",
                 "schema": {
                     "name": {"required": True, "type": "string"},
+                    "working-directory": {"type": "string"},
                     "integ-test": {
                         "type": "dict",
                         "schema": {
-                            "dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -54,7 +52,6 @@ class TestManifest(Manifest):
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
-                            "dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -87,15 +84,19 @@ class TestManifest(Manifest):
     class Component:
         def __init__(self, data):
             self.name = data["name"]
+            self.working_directory = data.get("working-directory", None)
             self.integ_test = data["integ-test"]
             self.bwc_test = data["bwc-test"]
 
         def __to_dict__(self):
-            return {
-                "name": self.name,
-                "integ-test": self.integ_test,
-                "bwc-test": self.bwc_test,
-            }
+            return Manifest.compact(
+                {
+                    "name": self.name,
+                    "working-directory": self.working_directory,
+                    "integ-test": self.integ_test,
+                    "bwc-test": self.bwc_test,
+                }
+            )
 
 
 TestManifest.__test__ = False  # type:ignore

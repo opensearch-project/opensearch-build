@@ -22,7 +22,7 @@ function usage() {
     echo "--------------------------------------------------------------------------"
 }
 
-while getopts ":hb:p:s:c:v:n" arg; do
+while getopts ":hb:p:s:c:v:n:" arg; do
     case $arg in
         h)
             usage
