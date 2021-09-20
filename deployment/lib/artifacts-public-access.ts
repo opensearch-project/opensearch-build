@@ -24,7 +24,7 @@ export class ArtifactsPublicAccess {
       code: Code.fromInline(`
       exports.handler = (event, context, callback) => {
         const request = event.Records[0].cf.request;
-        request.uri = request.uri.replace(/^\\/ci\\/...\\//, '')
+        request.uri = request.uri.replace(/^\\/ci\\/...\\//, '\\/')
         callback(null, request);
       };`),
       handler: 'index.handler',
