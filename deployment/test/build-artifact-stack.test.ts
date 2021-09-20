@@ -12,7 +12,7 @@ test('Fresh BuildArtifact Stack', () => {
 
   // THEN
   expect(stack).to(countResources('AWS::S3::Bucket', 1));
-  expect(stack).to(countResources('AWS::IAM::Role', 3));
+  expect(stack).to(countResources('AWS::IAM::Role', 4));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));
@@ -27,7 +27,7 @@ test('Existing BuildArtifact Stack', () => {
 
   // THEN
   expect(stack).to(countResources('AWS::S3::Bucket', 0));
-  expect(stack).to(countResources('AWS::IAM::Role', 0));
+  expect(stack).to(countResources('AWS::IAM::Role', 1));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));

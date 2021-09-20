@@ -2,6 +2,7 @@ import { ArnPrincipal } from '@aws-cdk/aws-iam';
 import {
   CfnParameter, Construct, Stack, StackProps,
 } from '@aws-cdk/core';
+import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
 import { ArtifactsPublicAccess } from './artifacts-public-access';
 import { Buckets } from './buckets';
 import { Identities } from './identities';
@@ -17,7 +18,6 @@ export class BuildArtifactStack extends Stack {
     const buildAgentPrincipleParam = new CfnParameter(this, 'buildAgentRoleArn', {
       description: 'The role arn of the build agent',
       allowedPattern: '.+',
-      //      type: 'AWS::IAM::Role',
     });
 
     let buildBucket;
@@ -25,7 +25,6 @@ export class BuildArtifactStack extends Stack {
       const buildBucketParam = new CfnParameter(this, 'buildBucketArn', {
         description: 'The arn of the existing build bucket',
         allowedPattern: '.+',
-        type: 'AWS::S3::Bucket',
       });
       buildBucket = buildBucketParam.valueAsString;
     }

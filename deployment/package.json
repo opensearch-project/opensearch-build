@@ -23,6 +23,7 @@
   "dependencies": {
     "@aws-cdk/aws-cloudfront": "^1.123.0",
     "@aws-cdk/aws-iam": "^1.123.0",
+    "@aws-cdk/aws-lambda": "^1.123.0",
     "@aws-cdk/aws-s3": "^1.123.0",
     "@aws-cdk/core": "^1.123.0",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
