@@ -56,7 +56,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
-./gradlew build --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
 ./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 mkdir -p $OUTPUT/maven/org/opensearch
