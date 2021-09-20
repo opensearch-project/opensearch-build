@@ -44,4 +44,20 @@ components:
       test-configs:
         - with-security
         - without-security
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
+  - name: dashboards-notebooks
+    working-directory: opensearch-notebooks
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
 schema-version: '1.0'
