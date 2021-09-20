@@ -18,12 +18,11 @@ function usage() {
     echo -e "-c CREDENTIAL\t(usename:password), no defaults, effective when SECURITY_ENABLED=true."
     echo -e "-v OPENSEARCH_VERSION\t, no defaults"
     echo -e "-n SNAPSHOT\t, defaults to false"
-    echo -e "-d DIRECTORY\t, defaults to running directory. Some repos have more than 1 directory/component, specify the working directory to separate tests."
     echo -e "-h\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
 
-while getopts ":hb:p:s:c:v:n:d:" arg; do
+while getopts ":hb:p:s:c:v:n:" arg; do
     case $arg in
         h)
             usage
@@ -46,9 +45,6 @@ while getopts ":hb:p:s:c:v:n:d:" arg; do
             ;;
         n)
             SNAPSHOT=$OPTARG
-            ;;
-        d)
-            DIRECTORY=$OPTARG
             ;;
         :)
             echo "-${OPTARG} requires an argument"
@@ -90,8 +86,4 @@ then
   PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 fi
 
-if [ -n "$DIRECTORY" ]
-then
-  cd $DIRECTORY
-fi
 ./gradlew integTest -Dopensearch.version=$OPENSEARCH_VERSION -Dbuild.snapshot=$SNAPSHOT -Dtests.rest.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.clustername="opensearch-integrationtest" -Dhttps=$SECURITY_ENABLED -Duser=$USERNAME -Dpassword=$PASSWORD --console=plain

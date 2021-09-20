@@ -88,12 +88,11 @@ class IntegTestSuite:
             self.component.name, self.repo.dir
         )
         if os.path.exists(script):
-            cmd = (
-                f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version} -d {self.test_config.working_directory}"
-                if self.test_config.working_directory is not None
-                else f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
-            )
-            (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
+            cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+            if self.test_config.working_directory is not None:
+                (status, stdout, stderr) = execute(cmd, os.path.join(self.repo.dir, self.test_config.working_directory), True, False)
+            else:
+                (status, stdout, stderr) = execute(cmd, self.repo.dir, True, False)
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.name}"
