@@ -77,7 +77,8 @@ class IntegTestSuite:
 
     def _setup_cluster_and_execute_test_config(self, config):
         security = self._is_security_enabled(config)
-        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security, self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
+        with LocalTestCluster.create(self.work_dir, self.component.name, self.bundle_manifest,
+                                     security, self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
             logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
