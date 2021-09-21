@@ -1,4 +1,5 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
+  - [How it works](#how-it-works)
   - [Build from Source](#build-from-source)
     - [Custom Build Scripts](#custom-build-scripts)
   - [Assemble the Bundle](#assemble-the-bundle)
@@ -10,11 +11,32 @@
     - [Performance Tests](#performance-tests)
   - [Sanity Check the Bundle](#sanity-check-the-bundle)
   - [Auto-Generate Manifests](#auto-generate-manifests)
-  - [Onboarding Requirements](#onboarding-requirements)
+  - [Component Onboarding](#component-onboarding)
 
 ## OpenSearch Bundle Workflow
 
 The bundle workflow builds a complete OpenSearch distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
+
+### How it works
+
+This system performs a top-down build of all components required for a specific OpenSearch bundle release. 
+The input to the system is a manifest that defines the order in which components should be built. 
+All manifests for our current releases are [here](/manifests).
+ 
+To build components we rely on a common entry-point in the form of a `build.sh` script. See [Custom Build Scripts](#custom-build-scripts).
+Within each build script components have the option to place artifacts in a set of directories to be picked up and published on their behalf.  These are
+
+| name               | description                                                                                        |
+|--------------------|----------------------------------------------------------------------------------------------------|
+| /maven        | Include any publications that should be pushed to maven                                                 |
+| /plugins      | Where a plugin zip should be placed. If included it will be installed during bundle assembly.           |
+| /core-plugins | Where plugins shipped from `https://github.com/opensearch-project/OpenSearch` should be placed          |
+| /bundle       | Where the min bundle should be placed when built from `https://github.com/opensearch-project/OpenSearch`|
+| /libs         | Where any additional libs should be placed that are required during bundle assembly                     |
+
+The build order allows us to first publish `OpenSearch` followed by `common-utils` and publish these artifacts to maven local so that
+they are available for each component.  In order to ensure that the same versions are used, a `-Dopensearch.version` flag is passed to
+each component's build script that defines which version the component should build against.
 
 ### Build from Source
 
@@ -220,14 +242,21 @@ The following options are available.
 
 ### Onboarding Requirements
 
-With many components included in the distribution each component has the responsibility to keep the release process streamlined and react to integration issues.
+With many components included in the distribution each component bears responsibility to keep the release process streamlined and react to integration issues.
 
-- Components repositories must have a tag matching all manifest versions so issue can be appropriately tagged.
-- Component maintainers must be able to respond to blocking issue within 2 business days.
-- All incoming branches need continuous integration checks enabled and passing.
-  - If a component has defect that blocks the distribution, issues will be opened on that repository and depending on the circumstance the component might be rolled back
-- Automated quality checks need to be included
-  - Post build validation is executed as part of the `build.sh` script.  This validation should be performed against compiled artifacts for speed and consistency.  The branches continuous integration checks are recommended here, so long as they do not create any localhost or other network traffic.
-  - Bundle sanity checks, [see](#sanity-check-the-bundle).
-  - Integration validation is executed as part of the `run_integ_test.py` script.  These tests will be run against an OpenSearch service instance from the distribution build artifacts.  They should validation the components internal operations and there need to be tests that validate scenarios between multiple components.  Component teams will need to diagnose any failures.
-  - Backward compatibility tests are not a requirement at this time.
+1. Components repositories have a label matching all manifest versions so issue can be appropriately labeled, e.g. Add `v1.1.0` to https://github.com/opensearch-project/opensearch-build/labels.
+
+1. Ensure your repository branches have continuous integration checks enabled and passing, e.g [job-scheduler workflow](https://github.com/opensearch-project/job-scheduler/blob/main/.github/workflows/test-and-build-workflow.yml).
+
+1. Create a `scripts/build.sh` if you have specific requirements that are not covered by the [default build.sh script](/scripts/default/build.sh) and commit it to your repository.
+
+1. Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT named artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
+  1. It is recommended that unit tests without network traffic are run to ensure a baseline quality level.
+
+1. Execute `./bundle-workflow/build.sh` to ensure your component builds and all artifacts are correctly placed into ./artifacts/ with correct output names.
+
+1. Execute `./bundle-workflow/assemble.sh` to ensure the full bundle is assembled and placed in to /bundles/*.tar.gz.  Unpack the tarball to ensure all your components are placed in their correct locations.
+
+1. Update a [manifest](/manifests) for a particular release to include your plugin.  For example to be included in the 1.1.0 release, you would update [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml). We require your plugin name, repository url, and git ref that should be used. For unreleased versions this should be a branch in your repository.  Once a release is cut, these refs will be updated to build from a tag or specific commit hash.
+
+1. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
