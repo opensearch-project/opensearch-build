@@ -28,85 +28,11 @@ class TestTestArgs(unittest.TestCase):
             "6",
         ],
     )
-    def test_s3_bucket(self):
+    def test_required_arguments(self):
         self.assertEqual(TestArgs().s3_bucket, "xyz")
-
-    @patch(
-        "argparse._sys.argv",
-        [
-            ARGS_PY,
-            "--s3-bucket",
-            "xyz",
-            "--opensearch-version",
-            "1.1.0",
-            "--build-id",
-            "30",
-            "--architecture",
-            "x64",
-            "--test-run-id",
-            "6",
-        ],
-    )
-    def test_opensearch_version(self):
         self.assertEqual(TestArgs().opensearch_version, "1.1.0")
-
-    @patch(
-        "argparse._sys.argv",
-        [
-            ARGS_PY,
-            "--s3-bucket",
-            "xyz",
-            "--opensearch-version",
-            "1.1.0",
-            "--build-id",
-            "30",
-            "--architecture",
-            "x64",
-            "--test-run-id",
-            "6",
-        ],
-    )
-    def test_build_id(self):
         self.assertEqual(TestArgs().build_id, 30)
-
-    @patch(
-        "argparse._sys.argv",
-        [
-            ARGS_PY,
-            "--s3-bucket",
-            "xyz",
-            "--opensearch-version",
-            "1.1.0",
-            "--build-id",
-            "30",
-            "--architecture",
-            "x64",
-            "--test-run-id",
-            "6",
-        ],
-    )
-    def test_architecture(self):
         self.assertEqual(TestArgs().architecture, "x64")
-
-    @patch(
-        "argparse._sys.argv",
-        [
-            ARGS_PY,
-            "--s3-bucket",
-            "xyz",
-            "--opensearch-version",
-            "1.1.0",
-            "--build-id",
-            "30",
-            "--architecture",
-            "x64",
-            "--test-run-id",
-            "6",
-            "--component",
-            "xyz",
-        ],
-    )
-    def test_test_run_id(self):
         self.assertEqual(TestArgs().test_run_id, 6)
 
     @patch(
