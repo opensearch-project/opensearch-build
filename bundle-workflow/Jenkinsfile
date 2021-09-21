@@ -3,9 +3,10 @@ pipeline {
     environment {
         OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
     }
-    tools {
-        jdk "JDK14"
-        maven "maven-3.8.2"
+    triggers {
+      parameterizedCron '''
+        H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-1.1.0.yml
+      '''
     }
     stages {
         stage('parameters') {
@@ -24,24 +25,20 @@ pipeline {
             }
         }
         stage('build') {
-            agent {
-                node {
-                    label 'Jenkins-Agent-al2-x64-m5xlarge'
-                }
-            }
-            stages {
+            parallel {
                 stage('build-snapshots') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            sh "rm -rf ~/.m2/"
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST --snapshot"
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
@@ -52,14 +49,15 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
                 stage('build-x86') {
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            alwaysPull true
                         }
                     }
                     steps {
@@ -70,14 +68,15 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
                 stage('build-arm64') {
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-arm64-m6gxlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            alwaysPull true
                         }
                     }
                     steps {
@@ -88,17 +87,16 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
             }
             post() {
                 success {
-                    publishNotification(":white_check_mark:", "Successful Build")
+                    publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
                 }
                 failure {
-                    publishNotification(":warning:", "Failed Build")
+                    publishNotification(":warning:", "Failed Build", "")
                 }
             }
         }
@@ -107,19 +105,47 @@ pipeline {
 
 void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
+    // psutil does not support arm64 yet, and it is not needed for build and assamble on Jenkins
+    // https://github.com/giampaolo/psutil/issues/1966
+    sh "sed -i '/psutil/d' bundle-workflow/Pipfile"
+
     sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST"
     sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
+    def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
-        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${artifactPath}")
+    }
+
+    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/${artifactPath}/manifest.yml\n" +
+                      "${PUBLIC_ARTIFACT_URL}/bundles/${artifactPath}/manifest.yml")
+}
+
+/** Publishes a notification to a slack instance*/
+void publishNotification(icon, msg, extra) {
+    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
+        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' $TOKEN"""
     }
 }
 
-void publishNotification(icon, msg) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST}"}' $TOKEN"""
+/** Add a message to the jenkins queue */
+void addJenkinsMessage(message) {
+    writeFile(file: "notifications/${System.currentTimeMillis()}.msg", text: message)
+    stash(includes: "notifications/*" , name: "notifications")
+}
+
+/** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
+String getAllJenkinsMessages() {
+    script {
+        unstash 'notifications'
+        def files = findFiles(excludes: '', glob: 'notifications/*')
+        def data = ""
+        for (file in files) {
+            data = data + "\n" + readFile (file: file.path)
+        }
     }
 }

@@ -4,9 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# This is a docker image specifically for standardize the test environment
-# for both developers and ci/cd tools in OpenSearch
-# Please read the README.md file for all the requirements before using this dockerfile
+# This is a docker image specifically for standardize the ci/cd environment
+# for both developers and ci/cd tools in OpenSearch / OpenSearch-Dashboards
+# Please read the README.md file for all the information before using this dockerfile
 
 
 FROM amazonlinux:2
@@ -15,8 +15,10 @@ FROM amazonlinux:2
 RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" > /etc/yum.repos.d/adoptopenjdk.repo
 
 # Add normal dependencies
-RUN yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng
+RUN yum clean all && \
+    yum update -y && \
+    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng cmake python3 python3-pip && \
+    ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
 
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -26,6 +28,12 @@ RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x1
 
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
+
+# Install higher version of maven 3.8.x
+RUN (curl -s https://dlcdn.apache.org/maven/maven-3/3.8.2/binaries/apache-maven-3.8.2-bin.tar.gz | tar xzf - -C /usr/local/) && \
+    echo "export M2_HOME=/usr/local/apache-maven-3.8.2" > /etc/profile.d/maven_path.sh && \
+    echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
+    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
@@ -50,8 +58,7 @@ ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 10.24.1
 # install nvm
 # https://github.com/creationix/nvm#install-script
-COPY nvm_install.sh .
-RUN bash nvm_install.sh
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 # install node and npm
 RUN source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
@@ -62,8 +69,8 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
-# install cypress
-RUN npm install -g cypress@^6.9.1 && npm cache verify
+# install cypress last known version that works for all existing opensearch-dashboards plugin integtests
+RUN npm install -g cypress@^5.6.0 && npm cache verify
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist

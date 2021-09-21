@@ -81,12 +81,20 @@ Installing dependencies from Pipfile.lock (41aca1)…
  🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
 To activate this project's virtualenv, run the following:
  $ pipenv shell
-Running ./src/build.py ...
-usage: build.py [-h] [-s] [-c COMPONENT] [--keep] manifest
-build.py: error: the following arguments are required: manifest
+Running ./src/run_build.py ...
+usage: build.sh [-h] [-s] [-c COMPONENT] [--keep] manifest
+build.sh: error: the following arguments are required: manifest
 ```
 
 ### Code Linting
+
+This project uses a [pre-commit hook](https://pre-commit.com/) for linting python code. Make sure to activate pipenv shell.
+
+```
+$ pre-commit install
+$ pre-commit run --all-files
+```
+Pre-commit hook will run isort, flake8, mypy and pytest before making a commit.
 
 This project uses [isort](https://github.com/PyCQA/isort) to ensure that imports are sorted, and [flake8](https://flake8.pycqa.org/en/latest/) to enforce code style. 
 
@@ -139,10 +147,17 @@ Run from `bundle-workflow` before making pull requests.
 
 ```
 cd bundle-workflow
+```
 
+The pre-commit hook checks for imports, type, style and test.
+
+```
+pre-commit run --all-files
+```
+
+Auto-fix format and sort imports by running.
+
+```
 git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
 pipenv run isort .
-pipenv run flake8
-pipenv run pytest
-pipenv run mypy .
 ```
