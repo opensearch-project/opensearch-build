@@ -9,7 +9,7 @@
 
 import argparse
 import logging
-
+import semantic_version
 
 class TestArgs:
     s3_bucket: str
@@ -57,6 +57,12 @@ class TestArgs:
             dest="logging_level",
         )
         args = parser.parse_args()
+
+        if not semantic_version.validate(args.opensearch_version):
+            raise ValueError("Invalid version number")
+        if args.architecture not in ['x64', 'arm64']:
+            raise ValueError("Architecture is not supported. Supported architectures are arm64 and x64")
+        
         self.s3_bucket = args.s3_bucket
         self.opensearch_version = args.opensearch_version
         self.build_id = args.build_id
