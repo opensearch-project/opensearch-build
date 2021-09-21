@@ -6,7 +6,7 @@ labels: untriaged, release
 
 ## Release OpenSearch and OpenSearch Dashboards {{ env.VERSION }}
 
-I've noticed that a manifest was automatically created in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}). Please follow the following checklist to make a release.
+I noticed that a manifest was automatically created in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}). Please follow the following checklist to make a release.
 
 ### Preparation
 
