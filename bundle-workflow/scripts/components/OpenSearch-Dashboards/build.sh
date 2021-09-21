@@ -89,14 +89,17 @@ ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$IDENTIFIER-$QUALIFIER.ta
 mkdir -p "${OUTPUT}/bundle"
 mkdir -p "${OUTPUT}/plugins"
 
+# TODO: Move to bundle.py, copy OSD to a local directory there and build
+# Or should we have it in the default script.
+#
 # Release gets built to /target, regular non-tarball gets built to /build
-cp target/$ARTIFACT_BUILD_NAME $OUTPUT/bundle/$ARTIFACT_TARGET_NAME
-cp -r ~/"${OUTPUT}"/plugins/. ./plugins
-yarn osd bootstrap
-for plugin in ./plugins/*; do
-    PLUGIN_NAME="$(basename "${plugin}")"
-    cd plugins/$PLUGIN_NAME
-    yarn plugin-helpers build
-    cd ../..
-    cp ./plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins
-done
+# cp target/$ARTIFACT_BUILD_NAME $OUTPUT/bundle/$ARTIFACT_TARGET_NAME
+# cp -r ~/"${OUTPUT}"/plugins/. ./plugins
+# yarn osd bootstrap
+# for plugin in ./plugins/*; do
+#     PLUGIN_NAME="$(basename "${plugin}")"
+#     cd plugins/$PLUGIN_NAME
+#     yarn plugin-helpers build
+#     cd ../..
+#     cp ./plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins
+# done
