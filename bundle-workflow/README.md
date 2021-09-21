@@ -240,11 +240,11 @@ The following options are available.
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
 
-### Onboarding Requirements
+### Component Onboarding
 
 With many components included in the distribution each component bears responsibility to keep the release process streamlined and react to integration issues.
 
-1. Components repositories have a label matching all manifest versions so issue can be appropriately labeled, e.g. Add `v1.1.0` to https://github.com/opensearch-project/opensearch-build/labels.
+1. Components repositories have a label matching the manifest versions so incoming issue can be appropriately labeled, e.g. Add `v1.1.0` to https://github.com/opensearch-project/opensearch-build/labels.
 
 1. Ensure your repository branches have continuous integration checks enabled and passing, e.g [job-scheduler workflow](https://github.com/opensearch-project/job-scheduler/blob/main/.github/workflows/test-and-build-workflow.yml).
 
