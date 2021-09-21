@@ -9,7 +9,16 @@
 
 import argparse
 import logging
-import semantic_version
+
+import semantic_version  # type:ignore
+
+
+class CheckOpenSearchVersion(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not semantic_version.validate(values):
+            raise ValueError(f"Invalid version number: {values}")
+        setattr(namespace, self.dest, values)
+
 
 class TestArgs:
     s3_bucket: str
@@ -27,13 +36,13 @@ class TestArgs:
             "--s3-bucket", type=str, help="S3 bucket name", required=True
         )
         parser.add_argument(
-            "--opensearch-version", type=str, help="OpenSearch version to test", required=True
+            "--opensearch-version", type=str, action=CheckOpenSearchVersion, help="OpenSearch version to test", required=True
         )
         parser.add_argument(
             "--build-id", type=int, help="The build id for the built artifact", required=True
         )
         parser.add_argument(
-            "--architecture", type=str, help="The os architecture e.g. x64, arm64", required=True
+            "--architecture", type=str, choices=["x64", "arm64"], help="The os architecture e.g. x64, arm64", required=True
         )
         parser.add_argument(
             "--test-run-id", type=int, help="The unique execution id for the test", required=True
@@ -57,12 +66,6 @@ class TestArgs:
             dest="logging_level",
         )
         args = parser.parse_args()
-
-        if not semantic_version.validate(args.opensearch_version):
-            raise ValueError("Invalid version number")
-        if args.architecture not in ['x64', 'arm64']:
-            raise ValueError("Architecture is not supported. Supported architectures are arm64 and x64")
-        
         self.s3_bucket = args.s3_bucket
         self.opensearch_version = args.opensearch_version
         self.build_id = args.build_id
