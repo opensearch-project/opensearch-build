@@ -46,6 +46,47 @@ class TestTestArgs(unittest.TestCase):
             "--build-id",
             "30",
             "--architecture",
+            "xyz",
+            "--test-run-id",
+            "6",
+        ],
+    )
+    def test_invalid_architecture(self):
+        with self.assertRaises(SystemExit):
+            self.assertEqual(TestArgs().architecture, "invalid")
+
+    @patch(
+        "argparse._sys.argv",
+        [
+            ARGS_PY,
+            "--s3-bucket",
+            "xyz",
+            "--opensearch-version",
+            "1111",
+            "--build-id",
+            "30",
+            "--architecture",
+            "x64",
+            "--test-run-id",
+            "6",
+        ],
+    )
+    def test_invalid_version(self):
+        with self.assertRaises(ValueError) as context:
+            TestArgs().CheckSemanticVersion
+        self.assertEqual("Invalid version number: 1111", str(context.exception))
+
+    @patch(
+        "argparse._sys.argv",
+        [
+            ARGS_PY,
+            "--s3-bucket",
+            "xyz",
+            "--opensearch-version",
+            "1.1.0",
+            "--build-id",
+            "30",
+            "--architecture",
             "x64",
             "--test-run-id",
             "6",
@@ -91,7 +132,7 @@ class TestTestArgs(unittest.TestCase):
         ],
     )
     def test_verbose_default(self):
-        self.assertTrue(TestArgs().logging_level, logging.INFO)
+        self.assertEqual(TestArgs().logging_level, logging.INFO)
 
     @patch(
         "argparse._sys.argv",
