@@ -148,5 +148,14 @@ Run from `bundle-workflow` before making pull requests.
 ```
 cd bundle-workflow
 
+The pre-commit hook checks for imports, type, style and test
 pre-commit run --all-files
+
+Auto-fix format and sort imports by running
+
+git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
+pipenv run isort .
+pipenv run flake8
+pipenv run pytest
+pipenv run mypy . 
 ```
