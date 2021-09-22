@@ -10,8 +10,16 @@
 import argparse
 import logging
 
+import semantic_version  # type:ignore
+
 
 class TestArgs:
+    class CheckSemanticVersion(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            if not semantic_version.validate(values):
+                raise ValueError(f"Invalid version number: {values}")
+            setattr(namespace, self.dest, values)
+
     s3_bucket: str
     opensearch_version: str
     build_id: int
@@ -27,20 +35,32 @@ class TestArgs:
             "--s3-bucket", type=str, help="S3 bucket name", required=True
         )
         parser.add_argument(
-            "--opensearch-version", type=str, help="OpenSearch version to test", required=True
+            "--opensearch-version",
+            type=str,
+            action=self.CheckSemanticVersion,
+            help="OpenSearch version to test",
+            required=True,
         )
         parser.add_argument(
-            "--build-id", type=int, help="The build id for the built artifact", required=True
+            "--build-id",
+            type=int,
+            help="The build id for the built artifact",
+            required=True,
         )
         parser.add_argument(
-            "--architecture", type=str, help="The os architecture e.g. x64, arm64", required=True
+            "--architecture",
+            type=str,
+            choices=["x64", "arm64"],
+            help="The os architecture e.g. x64, arm64",
+            required=True,
         )
         parser.add_argument(
-            "--test-run-id", type=int, help="The unique execution id for the test", required=True
+            "--test-run-id",
+            type=int,
+            help="The unique execution id for the test",
+            required=True,
         )
-        parser.add_argument(
-            "--component", type=str, help="Test a specific component"
-        )
+        parser.add_argument("--component", type=str, help="Test a specific component")
         parser.add_argument(
             "--keep",
             dest="keep",
