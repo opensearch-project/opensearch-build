@@ -8,6 +8,7 @@
   - [Creating a New Version](#creating-a-new-version)
   - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
   - [Making a Release](#making-a-release)
+    - [Releasing for FreeBSD](#releasing-for-freebsd)
   - [Deploying infrastructure](#deploying-infrastructure)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
@@ -29,6 +30,10 @@ OpenSearch and its components are built from source, assembled, signed and teste
 ### Making a Release
 
 The release process for OpenSearch and OpenSearch Dashboards follows [this release template](.github/ISSUE_TEMPLATE/release_template.md).
+
+#### Releasing for FreeBSD
+
+The FreeBSD ports and packages for OpenSearch are managed by a community *[OpenSearch Team](https://wiki.freebsd.org/OpenSearch)* at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
 
 ### Deploying infrastructure
 
