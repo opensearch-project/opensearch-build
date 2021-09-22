@@ -9,17 +9,31 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, call, patch
 
+import pytest
+
 from run_ci import main
 
 
-class TestCi(unittest.TestCase):
+class TestRunCi(unittest.TestCase):
+    @pytest.fixture(autouse=True)
+    def capfd(self, capfd):
+        self.capfd = capfd
+
+    @patch("argparse._sys.argv", ["run_ci.py", "--help"])
+    def test_usage(self):
+        with self.assertRaises(SystemExit):
+            main()
+
+        out, _ = self.capfd.readouterr()
+        self.assertTrue(out.startswith("usage:"))
+
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
             os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"
         )
     )
 
-    @patch("argparse._sys.argv", ["ci.py", OPENSEARCH_MANIFEST])
+    @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_MANIFEST])
     @patch("run_ci.Ci", return_value=MagicMock())
     @patch("run_ci.GitRepository", return_value=MagicMock(working_directory="dummy"))
     @patch("run_ci.TemporaryDirectory")

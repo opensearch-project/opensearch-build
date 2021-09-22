@@ -10,6 +10,7 @@ import argparse
 import logging
 import os
 import shutil
+import sys
 import tempfile
 
 from assemble_workflow.bundle import Bundle
@@ -17,58 +18,68 @@ from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
 from system import console
 
-parser = argparse.ArgumentParser(description="Assemble an OpenSearch Bundle")
-parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
-parser.add_argument(
-    "-v",
-    "--verbose",
-    help="Show more verbose output.",
-    action="store_const",
-    default=logging.INFO,
-    const=logging.DEBUG,
-    dest="logging_level",
-)
-args = parser.parse_args()
 
-console.configure(level=args.logging_level)
-
-tarball_installation_script = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "../../release/tar/linux/opensearch-tar-install.sh",
-)
-if not os.path.isfile(tarball_installation_script):
-    logging.info(f"No installation script found at path: {tarball_installation_script}")
-    exit(1)
-
-build_manifest = BuildManifest.from_file(args.manifest)
-build = build_manifest.build
-artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
-output_dir = os.path.join(os.getcwd(), "bundle")
-os.makedirs(output_dir, exist_ok=True)
-
-with tempfile.TemporaryDirectory() as work_dir:
-    logging.info(f"Bundling {build.name} ({build.architecture}) into {output_dir} ...")
-
-    os.chdir(work_dir)
-
-    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
-    bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
-
-    bundle.install_plugins()
-    logging.info(f"Installed plugins: {bundle.installed_plugins}")
-
-    # Copy the tar installation script into the bundle
-    shutil.copy2(
-        tarball_installation_script,
-        os.path.join(
-            bundle.archive_path, os.path.basename(tarball_installation_script)
-        ),
+def main():
+    parser = argparse.ArgumentParser(description="Assemble an OpenSearch Bundle")
+    parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Show more verbose output.",
+        action="store_const",
+        default=logging.INFO,
+        const=logging.DEBUG,
+        dest="logging_level",
     )
+    args = parser.parse_args()
 
-    #  Save a copy of the manifest inside of the tar
-    bundle_recorder.write_manifest(bundle.archive_path)
-    bundle.build_tar(output_dir)
+    console.configure(level=args.logging_level)
 
-    bundle_recorder.write_manifest(output_dir)
+    tarball_installation_script = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "../../release/tar/linux/opensearch-tar-install.sh",
+    )
+    if not os.path.isfile(tarball_installation_script):
+        logging.info(
+            f"No installation script found at path: {tarball_installation_script}"
+        )
+        exit(1)
 
-logging.info("Done.")
+    build_manifest = BuildManifest.from_file(args.manifest)
+    build = build_manifest.build
+    artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
+    output_dir = os.path.join(os.getcwd(), "bundle")
+    os.makedirs(output_dir, exist_ok=True)
+
+    with tempfile.TemporaryDirectory() as work_dir:
+        logging.info(
+            f"Bundling {build.name} ({build.architecture}) into {output_dir} ..."
+        )
+
+        os.chdir(work_dir)
+
+        bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
+        bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
+
+        bundle.install_plugins()
+        logging.info(f"Installed plugins: {bundle.installed_plugins}")
+
+        # Copy the tar installation script into the bundle
+        shutil.copy2(
+            tarball_installation_script,
+            os.path.join(
+                bundle.archive_path, os.path.basename(tarball_installation_script)
+            ),
+        )
+
+        #  Save a copy of the manifest inside of the tar
+        bundle_recorder.write_manifest(bundle.archive_path)
+        bundle.build_tar(output_dir)
+
+        bundle_recorder.write_manifest(output_dir)
+
+    logging.info("Done.")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

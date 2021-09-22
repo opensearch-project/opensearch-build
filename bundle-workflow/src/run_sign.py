@@ -9,46 +9,53 @@
 import argparse
 import logging
 import os
+import sys
 
 from manifests.build_manifest import BuildManifest
 from sign_workflow.signer import Signer
 from system import console
 
-parser = argparse.ArgumentParser(description="Sign artifacts")
-parser.add_argument(
-    "manifest", type=argparse.FileType("r"), help="Path to local manifest file."
-)
-parser.add_argument("--component", nargs="?", help="Component name")
-parser.add_argument("--type", nargs="?", help="Artifact type")
-parser.add_argument(
-    "-v",
-    "--verbose",
-    help="Show more verbose output.",
-    action="store_const",
-    default=logging.INFO,
-    const=logging.DEBUG,
-    dest="logging_level",
-)
-args = parser.parse_args()
 
-console.configure(level=args.logging_level)
+def main():
+    parser = argparse.ArgumentParser(description="Sign artifacts")
+    parser.add_argument(
+        "manifest", type=argparse.FileType("r"), help="Path to local manifest file."
+    )
+    parser.add_argument("--component", nargs="?", help="Component name")
+    parser.add_argument("--type", nargs="?", help="Artifact type")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Show more verbose output.",
+        action="store_const",
+        default=logging.INFO,
+        const=logging.DEBUG,
+        dest="logging_level",
+    )
+    args = parser.parse_args()
 
-manifest = BuildManifest.from_file(args.manifest)
-basepath = os.path.dirname(os.path.abspath(args.manifest.name))
-signer = Signer()
+    console.configure(level=args.logging_level)
 
-for component in manifest.components:
+    manifest = BuildManifest.from_file(args.manifest)
+    basepath = os.path.dirname(os.path.abspath(args.manifest.name))
+    signer = Signer()
 
-    if args.component and args.component != component.name:
-        logging.info(f"Skipping {component.name}")
-        continue
+    for component in manifest.components:
 
-    logging.info(f"Signing {component.name}")
-    for artifact_type in component.artifacts:
-
-        if args.type and args.type != artifact_type:
+        if args.component and args.component != component.name:
+            logging.info(f"Skipping {component.name}")
             continue
 
-        signer.sign_artifacts(component.artifacts[artifact_type], basepath)
+        logging.info(f"Signing {component.name}")
+        for artifact_type in component.artifacts:
 
-logging.info("Done.")
+            if args.type and args.type != artifact_type:
+                continue
+
+            signer.sign_artifacts(component.artifacts[artifact_type], basepath)
+
+    logging.info("Done.")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
