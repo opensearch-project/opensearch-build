@@ -47,6 +47,8 @@ def main():
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
+        failed_components = dict()
+        passed_components = dict()
         for component in bundle_manifest.components:
             if component.name in integ_test_config.keys():
                 test_suite = IntegTestSuite(
@@ -57,12 +59,23 @@ def main():
                     work_dir,
                     args.s3_bucket
                 )
-                test_suite.execute()
+                status = test_suite.execute()
+                if status != 0:
+                    failed_components[component.name] = status
+                else:
+                    passed_components[component.name] = status
             else:
                 logging.info(
                     "Skipping tests for %s, as it is currently not supported"
                     % component.name
                 )
+
+        if failed_components:
+            for component, status in failed_components.items():
+                logging.error(f'FAIL: Integration Test for {component} with status code {status}')
+        if passed_components:
+            for component, status in passed_components.items():
+                logging.info(f'PASS: Integration Test for {component} with status code {status}')
 
 
 if __name__ == "__main__":
