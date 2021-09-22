@@ -12,7 +12,14 @@ from system.execute import execute
 
 
 class TestExecute(unittest.TestCase):
-    def test_current_arch(self):
-        results = execute("uname -m", "/")  # (0, 'x86_64\n', '')
-        self.assertTrue(results[0] in [0, 1])
-        self.assertTrue(results[1].strip() in ["x86_64", "aarch64", "arm64"])
+    def test_execute_stdout(self):
+        (status, stdout, stderr) = execute("echo success", "/")  # (0, 'success\n', '')
+        self.assertEqual(status, 0)
+        self.assertEqual(stdout.strip(), "success")
+        self.assertEqual(stderr.strip(), "")
+
+    def test_execute_stderr(self):
+        (status, stdout, stderr) = execute(">&2 echo error", "/")  # (0, '', 'error\n')
+        self.assertEqual(status, 0)
+        self.assertEqual(stdout.strip(), "")
+        self.assertEqual(stderr.strip(), "error")
