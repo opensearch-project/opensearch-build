@@ -1,0 +1,27 @@
+default_stages: [commit]
+default_language_version:
+  python: python3.7
+repos:
+- repo: local
+  hooks:
+  - id: isort
+    stages: [commit]
+    name: isort
+    entry: bash -c 'cd bundle-workflow && pipenv run isort --check .'
+    language: system
+    types: [python]
+  - id: flake8
+    stages: [commit]
+    name: flake8
+    entry: bash -c 'cd bundle-workflow && pipenv run flake8 .'
+    language: system
+  - id: mypy
+    stages: [commit]
+    name: mypy
+    entry: bash -c 'cd bundle-workflow && pipenv run mypy .'
+    language: system
+  - id: pytest
+    stages: [commit]
+    name: pytest
+    entry: bash -c 'cd bundle-workflow && pipenv run pytest'
+    language: system
