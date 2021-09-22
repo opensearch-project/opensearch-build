@@ -6,6 +6,7 @@
 
 - [Releasing OpenSearch](#releasing-opensearch)
   - [Creating a New Version](#creating-a-new-version)
+  - [Onboarding a New Plugin](#onboarding-a-new-plugin)
   - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
   - [Making a Release](#making-a-release)
   - [Deploying infrastructure](#deploying-infrastructure)
@@ -21,6 +22,10 @@
 ### Creating a New Version
 
 OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). [Another workflow](.github/workflows/releases.yml) will open an issue for this new release. A job is then (manually) added to the OpenSearch Jenkins CI to start building this new version.
+
+### Onboarding a new plugin
+
+Plugin owners can follow the [Onboarding document](ONBOARDING.md) to onboard their plugins to the release process. 
 
 ### Building and Testing an OpenSearch Distribution
 
