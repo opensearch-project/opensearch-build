@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import call, patch
 
 from git.git_repository import GitRepository
-from manifests.build_manifest import BuildManifest, ComponentNotFoundError
+from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from test_workflow.integ_test.integ_test_suite import (DependencyInstaller,
@@ -150,7 +150,7 @@ class TestIntegSuite(unittest.TestCase):
             "/tmpdir",
             "s3_bucket_name",
         )
-        with self.assertRaises(ComponentNotFoundError):
+        with self.assertRaises(BuildManifest.ComponentNotFoundError):
             integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
 

@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 from pathlib import Path
 from urllib.parse import urlparse
@@ -107,6 +108,7 @@ class S3Bucket:
         try:
             bucket.download_file(key, path)
         except ClientError as e:
+            logging.error(f"Failed to download s3 key: {key} from path: {path}")
             raise S3DownloadError(e)
 
     def upload_file(self, key, source):
@@ -119,6 +121,7 @@ class S3Bucket:
         try:
             self.__s3_client.upload_file(source, self.bucket_name, key)
         except ClientError as e:
+            logging.error(f"Failed to upload s3 key: {key} from local source: {source}")
             raise S3UploadError(e)
 
 

@@ -45,9 +45,9 @@ class DependencyInstaller:
     def install_build_dependencies(self, dependency_dict, custom_local_path):
         """
         Downloads the build dependencies from S3 and puts them on the given custom path
-        for each dependency in the dependency_list.
+        for each dependency in the dependencies.
 
-        :param dependency_dict: list of dependency names with version for which the build artifacts need to be downloaded.
+        :param dependencies: dictionary of dependency names with version for which the build artifacts need to be downloaded.
         Example: {'opensearch-job-scheduler':'1.1.0.0'}
         """
         os.makedirs(custom_local_path, exist_ok=True)

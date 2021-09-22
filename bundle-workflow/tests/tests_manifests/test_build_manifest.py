@@ -10,7 +10,7 @@ from unittest.mock import mock_open, patch
 
 import yaml
 
-from manifests.build_manifest import BuildManifest, ComponentNotFoundError
+from manifests.build_manifest import BuildManifest
 
 
 class TestBuildManifest(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestBuildManifest(unittest.TestCase):
             output.name, component_name
         )
         component_name = 'invalid-component'
-        with self.assertRaises(ComponentNotFoundError):
+        with self.assertRaises(BuildManifest.ComponentNotFoundError):
             self.manifest.get_component(component_name)
 
     @patch("manifests.build_manifest.S3Bucket")
