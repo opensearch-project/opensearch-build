@@ -1,0 +1,11 @@
+default_stages: [commit]
+default_language_version:
+  python: python3.6
+repos:
+- repo: local
+  hooks:
+  - id: isort
+    stages: [commit,push]
+    name: isort
+    entry: pipenv run isort --check .
+    language: system
