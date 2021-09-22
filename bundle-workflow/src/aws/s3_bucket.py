@@ -99,6 +99,7 @@ class S3Bucket:
         local_dir = Path(dest)
         file_name = key.split("/")[-1]
         target = Path(local_dir) / Path(file_name)
+        target.parent.mkdir(parents=True, exist_ok=True)
         return self.__download(bucket, key, str(target))
 
     @staticmethod
