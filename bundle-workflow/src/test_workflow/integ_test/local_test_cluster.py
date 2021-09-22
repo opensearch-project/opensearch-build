@@ -11,6 +11,7 @@ import time
 
 import psutil  # type: ignore
 import requests
+import yaml
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
@@ -27,8 +28,6 @@ class LocalTestCluster(TestCluster):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
-        # Required by IM plugin as an additional config
-        os.makedirs("/tmp/tmp_dir", exist_ok=True)
         self.component_name = component_name
         self.security_enabled = security_enabled
         self.bucket_name = s3_bucket_name
@@ -92,10 +91,9 @@ class LocalTestCluster(TestCluster):
             shell=True,
         )
 
-    def __add_plugin_specific_config(self, additional_config, file):
-        with open(file, "a") as f:
-            for config in additional_config:
-                f.write(f"\n{config}")
+    def __add_plugin_specific_config(self, additional_config: dict, file):
+        with open(file, "a") as yamlfile:
+            yamlfile.write(yaml.dump(additional_config))
 
     def wait_for_service(self):
         logging.info("Waiting for service to become available")

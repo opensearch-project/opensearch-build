@@ -79,7 +79,7 @@ class IntegTestSuite:
     def _setup_cluster_and_execute_test_config(self, config):
         security = self._is_security_enabled(config)
         if "additional-cluster-configs" in self.test_config.integ_test.keys():
-            self.additional_cluster_config = self.test_config.integ_test["additional-cluster-configs"]
+            self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
         with LocalTestCluster.create(self.work_dir, self.component.name, self.additional_cluster_config,
                                      self.bundle_manifest, security, self.s3_bucket_name) as (test_cluster_endpoint,

@@ -22,7 +22,7 @@ class TestManifest(Manifest):
                 - without-security
                 - with-less-security
               additional-cluster-configs:
-                - "path.repo : /tmp/tmp_dir"
+                - key : value
             bwc-test:
               test-configs:
                 - with-security
@@ -50,7 +50,7 @@ class TestManifest(Manifest):
                                 ],
                             },
                             "additional-cluster-configs": {
-                                "type": "list",
+                                "type": "dict",
                             },
                         },
                     },

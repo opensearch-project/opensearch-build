@@ -4,8 +4,6 @@ components:
       test-configs:
         - with-security
         - without-security
-      additional-cluster-configs:
-        - "path.repo: /tmp/tmp_dir"
     bwc-test:
       test-configs:
         - with-security
@@ -34,7 +32,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        - "plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]"
+        plugins.destination.host.deny_list : [10.0.0.0/8, 127.0.0.1]
     bwc-test:
       test-configs:
         - with-security
@@ -45,7 +43,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        - "script.context.field.max_compilations_rate: 1000/1m"
+        script.context.field.max_compilations_rate: 1000/1m
     bwc-test:
       test-configs:
         - with-security
