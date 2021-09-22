@@ -20,7 +20,7 @@
 
 ### Creating a New Version
 
-OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). A job is then added to start building this new version.  
+OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). [Another workflow](.github/workflows/releases.yml) will open an issue for this new release. A job is then (manually) added to the OpenSearch Jenkins CI to start building this new version.
 
 ### Building and Testing an OpenSearch Distribution
 
@@ -28,7 +28,7 @@ OpenSearch and its components are built from source, assembled, signed and teste
 
 ### Making a Release
 
-TODO
+The release process for OpenSearch and OpenSearch Dashboards follows [this release template](.github/ISSUE_TEMPLATE/release_template.md).
 
 ### Deploying infrastructure
 
