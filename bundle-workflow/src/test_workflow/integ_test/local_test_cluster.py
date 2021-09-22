@@ -11,6 +11,7 @@ import time
 
 import psutil  # type: ignore
 import requests
+import yaml
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
@@ -22,12 +23,15 @@ class LocalTestCluster(TestCluster):
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
 
-    def __init__(self, work_dir, bundle_manifest, security_enabled, s3_bucket_name):
+    def __init__(self, work_dir, component_name, additional_cluster_config, bundle_manifest, security_enabled,
+                 s3_bucket_name=None):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
+        self.component_name = component_name
         self.security_enabled = security_enabled
         self.bucket_name = s3_bucket_name
+        self.additional_cluster_config = additional_cluster_config
         self.process = None
 
     def create_cluster(self):
@@ -37,6 +41,9 @@ class LocalTestCluster(TestCluster):
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
+        if self.additional_cluster_config is not None:
+            self.__add_plugin_specific_config(self.additional_cluster_config,
+                                              os.path.join(self.install_dir, "config", "opensearch.yml"))
         self.process = subprocess.Popen(
             "./opensearch-tar-install.sh",
             cwd=self.install_dir,
@@ -83,6 +90,10 @@ class LocalTestCluster(TestCluster):
             f'echo "plugins.security.disabled: true" >> {os.path.join(dir, "config", "opensearch.yml")}',
             shell=True,
         )
+
+    def __add_plugin_specific_config(self, additional_config: dict, file):
+        with open(file, "a") as yamlfile:
+            yamlfile.write(yaml.dump(additional_config))
 
     def wait_for_service(self):
         logging.info("Waiting for service to become available")

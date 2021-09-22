@@ -27,6 +27,7 @@ class IntegTestSuite:
         self.test_config = test_config
         self.s3_bucket_name = s3_bucket_name
         self.script_finder = ScriptFinder()
+        self.additional_cluster_config = None
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
@@ -77,7 +78,12 @@ class IntegTestSuite:
 
     def _setup_cluster_and_execute_test_config(self, config):
         security = self._is_security_enabled(config)
-        with LocalTestCluster.create(self.work_dir, self.bundle_manifest, security, self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
+        if "additional-cluster-configs" in self.test_config.integ_test.keys():
+            self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
+            logging.info(f"Additional config found: {self.additional_cluster_config}")
+        with LocalTestCluster.create(self.work_dir, self.component.name, self.additional_cluster_config,
+                                     self.bundle_manifest, security, self.s3_bucket_name) as (test_cluster_endpoint,
+                                                                                              test_cluster_port):
             logging.info("component name: " + self.component.name)
             os.chdir(self.work_dir)
             # TODO: (Create issue) Since plugins don't have integtest.sh in version branch, hardcoded it to main
