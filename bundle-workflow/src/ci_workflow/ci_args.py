@@ -51,7 +51,7 @@ class CiArgs:
         self.component = args.component
         self.keep = args.keep
         self.logging_level = args.logging_level
-        self.script_path = sys.argv[0].replace("/src/ci.py", "/ci.sh")
+        self.script_path = sys.argv[0].replace("/src/run_ci.py", "/ci.sh")
 
     def component_command(self, name):
         return " ".join(

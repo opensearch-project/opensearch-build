@@ -9,4 +9,4 @@
 set -e
 
 DIR="$(dirname "$0")"
-"$DIR/run.sh" "$DIR/src/manifests.py" $@
+"$DIR/run.sh" "$DIR/src/run_manifests.py" $@

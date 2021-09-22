@@ -52,7 +52,7 @@ class BuildArgs:
         self.snapshot = args.snapshot
         self.component = args.component
         self.keep = args.keep
-        self.script_path = sys.argv[0].replace("/src/build.py", "/build.sh")
+        self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
 
     def component_command(self, name):
         return " ".join(
