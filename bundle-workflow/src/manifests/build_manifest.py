@@ -96,6 +96,12 @@ class BuildManifest(Manifest):
             ),
         }
 
+    def get_component(self, component_name):
+        for component in self.components:
+            if component.name == component_name:
+                return component
+        raise ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
+
     @staticmethod
     def get_build_manifest_relative_location(
         build_id, opensearch_version, architecture
@@ -147,3 +153,7 @@ class BuildManifest(Manifest):
                 "artifacts": self.artifacts,
                 "version": self.version,
             }
+
+
+class ComponentNotFoundError(Exception):
+    pass

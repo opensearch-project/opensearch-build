@@ -22,7 +22,6 @@ from test_workflow.test_args import TestArgs
 
 def pull_build_repo(work_dir):
     logging.info("Pulling opensearch-build")
-    os.chdir(work_dir)
     GitRepository(
         "https://github.com/opensearch-project/opensearch-build.git",
         "main",
@@ -46,7 +45,7 @@ def main():
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         build_manifest = BuildManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
-        pull_build_repo(work_dir, build_manifest)
+        pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         for component in bundle_manifest.components:
             if component.name in integ_test_config.keys():

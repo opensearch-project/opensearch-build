@@ -32,8 +32,8 @@ class DependencyInstallerTests(unittest.TestCase):
             ]
         )
 
-    @patch("test_workflow.dependency_installer.S3Bucket")
-    def test_install_build_dependencies(self, mock_s3_bucket):
+    @patch("os.makedirs")
+    def test_install_build_dependencies(self, mock_os_makedirs):
         s3_bucket = self.mock_s3_bucket.return_value
         dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
         self.dependency_installer.install_build_dependencies(
@@ -47,4 +47,7 @@ class DependencyInstallerTests(unittest.TestCase):
                     os.path.dirname(__file__),
                 )
             ]
+        )
+        mock_os_makedirs.assert_called_once_with(
+            os.path.dirname(__file__), exist_ok=True
         )

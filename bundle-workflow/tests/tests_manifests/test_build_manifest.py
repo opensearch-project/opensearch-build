@@ -10,7 +10,7 @@ from unittest.mock import mock_open, patch
 
 import yaml
 
-from manifests.build_manifest import BuildManifest
+from manifests.build_manifest import BuildManifest, ComponentNotFoundError
 
 
 class TestBuildManifest(unittest.TestCase):
@@ -58,6 +58,16 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(
             actual, expected, "the manifest relative location is not as expected"
         )
+
+    def test_get_component(self):
+        component_name = 'index-management'
+        output = self.manifest.get_component(component_name)
+        self.assertEqual(
+            output.name, component_name
+        )
+        component_name = 'invalid-component'
+        with self.assertRaises(ComponentNotFoundError):
+            self.manifest.get_component(component_name)
 
     @patch("manifests.build_manifest.S3Bucket")
     def test_from_s3(self, mock_s3_bucket):

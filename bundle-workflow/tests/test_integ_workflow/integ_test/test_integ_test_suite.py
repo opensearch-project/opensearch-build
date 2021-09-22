@@ -9,13 +9,12 @@ import unittest
 from unittest.mock import call, patch
 
 from git.git_repository import GitRepository
-from manifests.build_manifest import BuildManifest
+from manifests.build_manifest import BuildManifest, ComponentNotFoundError
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestManifest
 from test_workflow.integ_test.integ_test_suite import (DependencyInstaller,
                                                        IntegTestSuite,
                                                        InvalidTestConfigError,
-                                                       MissingArtifactError,
                                                        ScriptFinder)
 
 
@@ -25,12 +24,9 @@ from test_workflow.integ_test.integ_test_suite import (DependencyInstaller,
 class TestIntegSuite(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
-        with open("data/bundle_manifest.yml", "r") as file:
-            self.bundle_manifest = BundleManifest.from_file(file)
-        with open("data/build_manifest.yml", "r") as file:
-            self.build_manifest = BuildManifest.from_file(file)
-        with open("data/test_manifest.yml", "r") as file:
-            self.test_manifest = TestManifest.from_file(file)
+        self.bundle_manifest = BundleManifest.from_path("data/bundle_manifest.yml")
+        self.build_manifest = BuildManifest.from_path("data/build_manifest.yml")
+        self.test_manifest = TestManifest.from_path("data/test_manifest.yml")
 
     @patch.object(DependencyInstaller, "install_build_dependencies")
     @patch("os.path.exists", return_value=True)
@@ -154,7 +150,7 @@ class TestIntegSuite(unittest.TestCase):
             "/tmpdir",
             "s3_bucket_name",
         )
-        with self.assertRaises(MissingArtifactError):
+        with self.assertRaises(ComponentNotFoundError):
             integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
 

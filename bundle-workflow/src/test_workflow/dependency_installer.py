@@ -50,6 +50,7 @@ class DependencyInstaller:
         :param dependency_dict: list of dependency names with version for which the build artifacts need to be downloaded.
         Example: {'opensearch-job-scheduler':'1.1.0.0'}
         """
+        os.makedirs(custom_local_path, exist_ok=True)
         for dependency, version in dependency_dict.items():
             s3_path = f"{self.s3_build_location}/{dependency}-{version}.zip"
             self.s3_bucket.download_file(s3_path, custom_local_path)

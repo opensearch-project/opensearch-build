@@ -54,16 +54,9 @@ class IntegTestSuite:
         custom_local_path = os.path.join(self.repo.dir, 'src/test/resources/job-scheduler')
         for file in glob.glob(custom_local_path + '/opensearch-job-scheduler-*.zip'):
             os.unlink(file)
-        version = None
-        for component in self.build_manifest.components:
-            if component.name == 'job-scheduler':
-                version = component.version
-                break
-        if version:
-            DependencyInstaller(self.build_manifest.build).install_build_dependencies(
-                {'opensearch-job-scheduler': version}, custom_local_path)
-        else:
-            raise MissingArtifactError('job-scheduler not found in build manifest.yml')
+        job_scheduler = self.build_manifest.get_component('job-scheduler')
+        DependencyInstaller(self.build_manifest.build).install_build_dependencies(
+            {'opensearch-job-scheduler': job_scheduler.version}, custom_local_path)
 
     @staticmethod
     def __is_security_enabled(config):
@@ -100,10 +93,6 @@ class IntegTestSuite:
         logging.info("===============================================")
         logging.info(message)
         logging.info("===============================================")
-
-
-class MissingArtifactError(Exception):
-    pass
 
 
 class InvalidTestConfigError(Exception):
