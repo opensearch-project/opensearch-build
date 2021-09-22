@@ -9,10 +9,24 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, call, patch
 
+import pytest
+
 from run_build import main
 
 
-class TestBuild(unittest.TestCase):
+class TestRunBuild(unittest.TestCase):
+    @pytest.fixture(autouse=True)
+    def capfd(self, capfd):
+        self.capfd = capfd
+
+    @patch("argparse._sys.argv", ["run_build.py", "--help"])
+    def test_usage(self):
+        with self.assertRaises(SystemExit):
+            main()
+
+        out, _ = self.capfd.readouterr()
+        self.assertTrue(out.startswith("usage:"))
+
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
             os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"
