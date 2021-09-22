@@ -41,12 +41,14 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
                                     "with-security",
                                     "without-security",
-                                    "with-less-security",
                                 ],
                             },
                             "additional-cluster-configs": {
@@ -57,6 +59,9 @@ class TestManifest(Manifest):
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [

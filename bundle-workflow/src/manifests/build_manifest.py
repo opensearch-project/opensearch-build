@@ -96,6 +96,17 @@ class BuildManifest(Manifest):
             ),
         }
 
+    def get_component(self, component_name):
+        component = next(
+            iter(filter(lambda comp: comp.name == component_name, self.components)),
+            None,
+        )
+        if component is None:
+            raise BuildManifest.ComponentNotFoundError(
+                f"{component_name} not found in build manifest.yml"
+            )
+        return component
+
     @staticmethod
     def get_build_manifest_relative_location(
         build_id, opensearch_version, architecture
@@ -113,6 +124,9 @@ class BuildManifest(Manifest):
             build_manifest = BuildManifest.from_file(file)
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
         return build_manifest
+
+    class ComponentNotFoundError(Exception):
+        pass
 
     class Build:
         def __init__(self, data):

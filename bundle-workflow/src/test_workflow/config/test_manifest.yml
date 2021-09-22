@@ -1,6 +1,8 @@
 components:
   - name: index-management
     integ-test:
+      build-dependencies:
+        - job-scheduler
       test-configs:
         - with-security
         - without-security
@@ -8,8 +10,11 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: anomaly-detection
     integ-test:
+      build-dependencies:
+        - job-scheduler
       test-configs:
         - with-security
         - without-security
@@ -17,6 +22,7 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: asynchronous-search
     integ-test:
       test-configs:
@@ -26,6 +32,7 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: alerting
     integ-test:
       test-configs:
@@ -37,6 +44,7 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: sql
     integ-test:
       test-configs:
@@ -48,6 +56,7 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: k-NN
     integ-test:
       test-configs:
@@ -57,6 +66,7 @@ components:
       test-configs:
         - with-security
         - without-security
+
   - name: dashboards-reports
     working-directory: reports-scheduler
     integ-test:
@@ -65,6 +75,7 @@ components:
     bwc-test:
       test-configs:
         - without-security
+
   - name: dashboards-notebooks
     working-directory: opensearch-notebooks
     integ-test:
