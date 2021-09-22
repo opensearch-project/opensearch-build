@@ -21,6 +21,8 @@ class TestManifest(Manifest):
                 - with-security
                 - without-security
                 - with-less-security
+              additional-cluster-configs:
+                - key : value
             bwc-test:
               test-configs:
                 - with-security
@@ -48,6 +50,9 @@ class TestManifest(Manifest):
                                     "with-security",
                                     "without-security",
                                 ],
+                            },
+                            "additional-cluster-configs": {
+                                "type": "dict",
                             },
                         },
                     },

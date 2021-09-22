@@ -81,9 +81,9 @@ Installing dependencies from Pipfile.lock (41aca1)…
  🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
 To activate this project's virtualenv, run the following:
  $ pipenv shell
-Running ./src/build.py ...
-usage: build.py [-h] [-s] [-c COMPONENT] [--keep] manifest
-build.py: error: the following arguments are required: manifest
+Running ./src/run_build.py ...
+usage: build.sh [-h] [-s] [-c COMPONENT] [--keep] manifest
+build.sh: error: the following arguments are required: manifest
 ```
 
 ### Code Linting
