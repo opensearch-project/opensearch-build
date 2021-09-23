@@ -100,10 +100,10 @@ pipeline {
             }
             post() {
                 success {
-                    publishNotification(":white_check_mark:", "Successful Build")
+                    publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
                 }
                 failure {
-                    publishNotification(":warning:", "Failed Build")
+                    publishNotification(":warning:", "Failed Build", "")
                 }
             }
         }
@@ -116,15 +116,38 @@ void build() {
     sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
+    def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
-        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}")
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${artifactPath}")
+    }
+
+    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/${artifactPath}/manifest.yml\n" +
+                      "${PUBLIC_ARTIFACT_URL}/bundles/${artifactPath}/manifest.yml")
+}
+
+/** Publishes a notification to a slack instance*/
+void publishNotification(icon, msg, extra) {
+    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
+        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' $TOKEN"""
     }
 }
 
-void publishNotification(icon, msg) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST}"}' $TOKEN"""
+/** Add a message to the jenkins queue */
+void addJenkinsMessage(message) {
+    writeFile(file: "notifications/${System.currentTimeMillis()}.msg", text: message)
+    stash(includes: "notifications/" , name: "notifications")
+}
+
+/** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
+String getAllJenkinsMessages() {
+    script {
+        unstash 'notifications'
+        def files = findFiles(excludes: '', glob: 'notifications/*')
+        def data = ""
+        for (file in files) {
+            data = data + "\n" + readFile (file: file.path)
+        }
     }
 }
