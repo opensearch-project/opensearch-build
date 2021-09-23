@@ -1,5 +1,6 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
   - [How it works](#how-it-works)
+  - [Check Out Source](#check-out-source)
   - [Build from Source](#build-from-source)
     - [Custom Build Scripts](#custom-build-scripts)
   - [Assemble the Bundle](#assemble-the-bundle)
@@ -36,6 +37,21 @@ Within each build script components have the option to place artifacts in a set 
 The build order allows us to first publish `OpenSearch` followed by `common-utils` and publish these artifacts to maven local so that
 they are available for each component.  In order to ensure that the same versions are used, a `-Dopensearch.version` flag is passed to
 each component's build script that defines which version the component should build against.
+
+### Check Out Source
+
+The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
+
+```bash
+./bundle-workflow/checkout.sh manfiests/1.1.0/opensearch-1.1.0.yml
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| -v, --verbose      | Show more verbose output.                                               |
+
 
 ### Build from Source
 
@@ -218,7 +234,7 @@ The following options are available.
 
 ### Auto-Generate Manifests
 
-The [manifests workflow](src/manifests) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. Currently OpenSearch `main`, and `x.y` branches are checked out one-by-one, published to local maven, and their versions extracted using `./gradlew properties`. When a new version is found, a new input manifest is added to [manifests](../manifests), and [a pull request is opened](../.github/workflows/manifests.yml) (e.g. [opensearch-build#491](https://github.com/opensearch-project/opensearch-build/pull/491)).
+The [manifests workflow](src/manifests_workflow) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. Currently OpenSearch `main`, and `x.y` branches are checked out one-by-one, published to local maven, and their versions extracted using `./gradlew properties`. When a new version is found, a new input manifest is added to [manifests](../manifests), and [a pull request is opened](../.github/workflows/manifests.yml) (e.g. [opensearch-build#491](https://github.com/opensearch-project/opensearch-build/pull/491)).
 
 Show information about existing manifests. 
 
