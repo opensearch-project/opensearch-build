@@ -48,7 +48,8 @@ class IntegTestSuite:
         self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
             security = self.__is_security_enabled(config)
-            return self.__setup_cluster_and_execute_test_config(security)
+            status = self.__setup_cluster_and_execute_test_config(security)
+            return status, config
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
@@ -117,7 +118,7 @@ class IntegTestSuite:
                     "Integration test run failed for component " + self.component.name
                 )
                 logging.info(stderr)
-            return (status, stdout, stderr)
+            return status
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.name}"

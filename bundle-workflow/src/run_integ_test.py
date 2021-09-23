@@ -59,11 +59,11 @@ def main():
                     work_dir,
                     args.s3_bucket
                 )
-                result = test_suite.execute()
-                if result[0] != 0:
-                    failed_components[component.name] = result
+                status, security = test_suite.execute()
+                if status != 0:
+                    failed_components[component.name] = [status, security]
                 else:
-                    passed_components[component.name] = result
+                    passed_components[component.name] = [status, security]
             else:
                 logging.info(
                     "Skipping tests for %s, as it is currently not supported"
@@ -72,14 +72,12 @@ def main():
 
         if passed_components:
             for component, result in passed_components.items():
-                logging.info(f'PASS: Integration Test for {component} with status code {result[0]}')
-                logging.info(result[1])
+                logging.info(f'PASS: Integration Test for {component} {result[1]} with status code {result[0]}')
 
         if failed_components:
             for component, result in failed_components.items():
-                logging.error(f'FAIL: Integration Test for {component} with status code {result[0]}')
-                logging.info(result[2])
-                sys.exit(1)
+                logging.error(f'FAIL: Integration Test for {component} {result[1]} with status code {result[0]}')
+            sys.exit(1)
 
 
 if __name__ == "__main__":
