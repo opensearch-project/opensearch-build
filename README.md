@@ -8,6 +8,7 @@
   - [Creating a New Version](#creating-a-new-version)
   - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
   - [Making a Release](#making-a-release)
+    - [Releasing for Linux](#releasing-for-linux)
     - [Releasing for FreeBSD](#releasing-for-freebsd)
   - [Deploying infrastructure](#deploying-infrastructure)
 - [Contributing](#contributing)
@@ -21,7 +22,7 @@
 
 ### Creating a New Version
 
-OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [automation process in this repo](.github/workflows/manifests.yml) will notice this change and create a new manifest in [manifests](./manifests). [Another workflow](.github/workflows/releases.yml) will open an issue for this new release. A job is then (manually) added to the OpenSearch Jenkins CI to start building this new version.
+OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [manifest automation workflow](.github/workflows/manifests.yml) will notice this change, and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.0.0.yml](manifests/2.0.0/opensearch-2.0.0.yml). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Building and Testing an OpenSearch Distribution
 
@@ -29,11 +30,13 @@ OpenSearch and its components are built from source, assembled, signed and teste
 
 ### Making a Release
 
-The release process for OpenSearch and OpenSearch Dashboards follows [this release template](.github/ISSUE_TEMPLATE/release_template.md).
+#### Releasing for Linux
+
+The Linux release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)).
 
 #### Releasing for FreeBSD
 
-The FreeBSD ports and packages for OpenSearch are managed by a community *[OpenSearch Team](https://wiki.freebsd.org/OpenSearch)* at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
+The FreeBSD ports and packages for OpenSearch are managed by a community [OpenSearch Team](https://wiki.freebsd.org/OpenSearch) at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
 
 ### Deploying infrastructure
 
