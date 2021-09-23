@@ -117,7 +117,7 @@ class IntegTestSuite:
                     "Integration test run failed for component " + self.component.name
                 )
                 logging.info(stderr)
-            return status
+            return (status, stdout, stderr)
         else:
             logging.info(
                 f"{script} does not exist. Skipping integ tests for {self.name}"
