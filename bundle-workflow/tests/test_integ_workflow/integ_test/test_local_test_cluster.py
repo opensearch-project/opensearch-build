@@ -123,10 +123,14 @@ class LocalTestClusterTests(unittest.TestCase):
             False,
             "dummy-bucket",
         )
-        with self.assertRaises(ClusterCreationException):
+        with self.assertRaises(ClusterCreationException) as err:
             local_test_cluster.wait_for_service()
             requests.get.assert_called_once_with(
                 "http://localhost:9200/_cluster/health",
                 verify=False,
                 auth=("admin", "admin"),
             )
+        self.assertEqual(
+            str(err.exception),
+            "Cluster is not available after 10 attempts",
+        )
