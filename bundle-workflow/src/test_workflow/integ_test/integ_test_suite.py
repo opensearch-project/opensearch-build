@@ -13,7 +13,9 @@ from paths.script_finder import ScriptFinder
 from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
-
+from test_workflow.test_recorder.test_recorder_builder import TestRecorderBuilder
+from test_workflow.test_recorder.test_recorder import TestRecorder
+from paths.tree_walker import walk
 
 class IntegTestSuite:
     """
@@ -28,7 +30,7 @@ class IntegTestSuite:
         bundle_manifest,
         build_manifest,
         work_dir,
-        s3_bucket_name,
+        s3_bucket_name
     ):
         self.component = component
         self.bundle_manifest = bundle_manifest
@@ -38,6 +40,7 @@ class IntegTestSuite:
         self.s3_bucket_name = s3_bucket_name
         self.script_finder = ScriptFinder()
         self.additional_cluster_config = None
+        self.test_recorder = TestRecorder()
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
@@ -48,7 +51,7 @@ class IntegTestSuite:
         self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
             security = self.__is_security_enabled(config)
-            self.__setup_cluster_and_execute_test_config(security)
+            self.__setup_cluster_and_execute_test_config(security, config)
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
@@ -78,7 +81,7 @@ class IntegTestSuite:
         else:
             raise InvalidTestConfigError("Unsupported test config: " + config)
 
-    def __setup_cluster_and_execute_test_config(self, security):
+    def __setup_cluster_and_execute_test_config(self, security, config):
         if "additional-cluster-configs" in self.test_config.integ_test.keys():
             self.additional_cluster_config = self.test_config.integ_test.get(
                 "additional-cluster-configs"
@@ -90,17 +93,18 @@ class IntegTestSuite:
             self.additional_cluster_config,
             self.bundle_manifest,
             security,
-            self.s3_bucket_name,
+            config,
+            self.s3_bucket_name
         ) as (test_cluster_endpoint, test_cluster_port):
             self.__pretty_print_message(
                 "Running integration tests for " + self.component.name
             )
             os.chdir(self.work_dir)
             self.__execute_integtest_sh(
-                test_cluster_endpoint, test_cluster_port, security
+                test_cluster_endpoint, test_cluster_port, security, config
             )
 
-    def __execute_integtest_sh(self, endpoint, port, security):
+    def __execute_integtest_sh(self, endpoint, port, security, test_config):
         script = self.script_finder.find_integ_test_script(
             self.component.name, self.repo.dir
         )
@@ -112,6 +116,11 @@ class IntegTestSuite:
                 else self.repo.dir
             )
             (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+            results_dir = os.path.join(
+                work_dir, "build", "reports", "tests", "integTest"
+            )
+            test_recorder_builder = TestRecorderBuilder(self.component.name, test_config, status, stdout, stderr, walk(results_dir), "S3")
+            self.test_recorder.record_test_outcome(test_recorder_builder)
             if stderr:
                 logging.info(
                     "Integration test run failed for component " + self.component.name

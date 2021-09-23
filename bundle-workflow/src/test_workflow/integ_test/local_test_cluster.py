@@ -8,7 +8,7 @@ import logging
 import os
 import subprocess
 import time
-
+from paths.tree_walker import walk
 import psutil  # type: ignore
 import requests
 import yaml
@@ -16,6 +16,8 @@ import yaml
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
+from test_workflow.test_recorder.test_recorder_builder import TestRecorderBuilder
+from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
 class LocalTestCluster(TestCluster):
@@ -24,14 +26,17 @@ class LocalTestCluster(TestCluster):
     """
 
     def __init__(self, work_dir, component_name, additional_cluster_config, bundle_manifest, security_enabled,
+                 component_test_config,
                  s3_bucket_name=None):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
         self.component_name = component_name
         self.security_enabled = security_enabled
+        self.component_test_config = component_test_config
         self.bucket_name = s3_bucket_name
         self.additional_cluster_config = additional_cluster_config
+        self.test_recorder = TestRecorder()
         self.process = None
 
     def create_cluster(self):
@@ -65,6 +70,11 @@ class LocalTestCluster(TestCluster):
             logging.info("Local test cluster is not started")
             return
         self.terminate_process()
+        log_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
+        test_recorder_builder = TestRecorderBuilder(self.component_name, self.component_test_config, 0,
+                                                    self.local_cluster_stdout, self.local_cluster_stderr, log_files,
+                                                    "S3")
+        self.test_recorder.record_cluster_logs("local", test_recorder_builder)
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
@@ -137,6 +147,10 @@ class LocalTestCluster(TestCluster):
                 raise
         finally:
             logging.info(f"Process terminated with exit code {self.process.returncode}")
+            with open(os.path.join(os.path.realpath(self.work_dir), self.stdout.name), "r") as stdout:
+                self.local_cluster_stdout = stdout.read()
+            with open(os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r") as stderr:
+                self.local_cluster_stderr = stderr.read()
             self.stdout.close()
             self.stderr.close()
             self.process = None

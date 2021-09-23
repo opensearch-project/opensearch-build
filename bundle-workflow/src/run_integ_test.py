@@ -18,7 +18,7 @@ from system.temporary_directory import TemporaryDirectory
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.test_args import TestArgs
-
+from test_workflow.test_recorder.test_recorder import TestRecorder
 
 def pull_build_repo(work_dir):
     logging.info("Pulling opensearch-build")
@@ -40,6 +40,7 @@ def main():
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
+        TestRecorder(args.test_run_id, "integ-test", work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
