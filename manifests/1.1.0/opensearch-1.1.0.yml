@@ -36,7 +36,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: main
+    ref: "1.1"
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
     ref: "1.1"
