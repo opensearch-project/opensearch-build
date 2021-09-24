@@ -62,7 +62,7 @@ We provide docker files in `dockerfiles/` folder, and images on [staging docker 
 
   * You should be able to see similar output in `docker ps` like this:
     ```
-    5907dc6dc16b moby/buildkit:buildx-stable-1 "buildkitd" 11 minutes ago Up 11 minutes buildx_buildkit_multiarch0
+    123456789012 moby/buildkit:buildx-stable-1 "buildkitd" 11 minutes ago Up 11 minutes buildx_buildkit_multiarch0
     ```
 
   * Docker buildx is using a container to build multi-arch images and combine all the layers together, so you can only upload it to Docker Hub,
