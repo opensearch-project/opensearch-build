@@ -15,12 +15,10 @@ from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 class TestBwcSuite(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
-        manifest_file_handle = open("data/test_manifest.yaml", "r")
-        self.manifest = BundleManifest.from_file(manifest_file_handle)
+        self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
         self.bwc_test_suite = BwcTestSuite(
             manifest=self.manifest, work_dir=".", component=None, keep=False
         )
-        manifest_file_handle.close()
 
     def test_execute(self):
         expected = []
@@ -41,7 +39,12 @@ class TestBwcSuite(unittest.TestCase):
     def test_component_bwctest(self, test_component_mock):
         component = self.manifest.components[1]
         self.bwc_test_suite.run_tests = MagicMock()
-        expected = [call("./" + self.manifest.components[1].name, self.manifest.components[1].name)]
+        expected = [
+            call(
+                "./" + self.manifest.components[1].name,
+                self.manifest.components[1].name,
+            )
+        ]
 
         self.bwc_test_suite.component_bwc_tests(component)
         test_component_mock.return_value.checkout.assert_called_with(

@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import patch
 
 import yaml
 
@@ -76,24 +76,24 @@ class TestBundleManifest(unittest.TestCase):
         expected = "opensearch-1.1.0-linux-x64.tar.gz"
         self.assertEqual(actual, expected, "the tarball name is not as expected")
 
+    @patch("os.remove")
+    @patch("builtins.open")
+    @patch("manifests.bundle_manifest.BundleManifest.from_path")
     @patch("manifests.bundle_manifest.S3Bucket")
-    def test_from_s3(self, mock_s3_bucket):
+    def test_from_s3(self, mock_s3_bucket, *mocks):
         s3_bucket = mock_s3_bucket.return_value
-        with patch("os.remove"):
-            with patch("builtins.open", mock_open()):
-                s3_download_path = BundleManifest.get_bundle_manifest_relative_location(
-                    self.manifest.build.id,
-                    self.manifest.build.version,
-                    self.manifest.build.architecture,
-                )
-                with patch("manifests.bundle_manifest.BundleManifest.from_file"):
-                    BundleManifest.from_s3(
-                        "bucket_name",
-                        self.manifest.build.id,
-                        self.manifest.build.version,
-                        self.manifest.build.architecture,
-                        "/xyz",
-                    )
-                    self.assertEqual(s3_bucket.download_file.call_count, 1)
-                    s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
-                    os.remove.assert_called_with("/xyz/manifest.yml")
+        s3_download_path = BundleManifest.get_bundle_manifest_relative_location(
+            self.manifest.build.id,
+            self.manifest.build.version,
+            self.manifest.build.architecture,
+        )
+        BundleManifest.from_s3(
+            "bucket_name",
+            self.manifest.build.id,
+            self.manifest.build.version,
+            self.manifest.build.architecture,
+            "/xyz",
+        )
+        self.assertEqual(s3_bucket.download_file.call_count, 1)
+        s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
+        os.remove.assert_called_with("/xyz/manifest.yml")
