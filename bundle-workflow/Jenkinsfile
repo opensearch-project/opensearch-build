@@ -3,10 +3,6 @@ pipeline {
     environment {
         OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
     }
-    tools {
-        jdk "JDK14"
-        maven "maven-3.8.2"
-    }
     triggers {
       parameterizedCron '''
         H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-1.1.0.yml
@@ -29,24 +25,23 @@ pipeline {
             }
         }
         stage('build') {
-            agent {
-                node {
-                    label 'Jenkins-Agent-al2-x64-m5xlarge'
-                }
-            }
-            stages {
+            parallel {
                 stage('build-snapshots') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            sh "rm -rf ~/.m2/"
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST --snapshot"
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
@@ -57,14 +52,18 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
                 stage('build-x86') {
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-x64-m5xlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
                         }
                     }
                     steps {
@@ -75,14 +74,18 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
                 stage('build-arm64') {
                     agent {
-                        node {
-                            label 'Jenkins-Agent-al2-arm64-m6gxlarge'
+                        docker {
+                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:al2-x64-arm64-jdk14-node10.24.1-20210924'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
                         }
                     }
                     steps {
@@ -93,7 +96,6 @@ pipeline {
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                            sh "rm -rf ~/.m2/"
                         }
                     }
                 }
@@ -112,6 +114,7 @@ pipeline {
 
 void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
     sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST"
     sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
 
