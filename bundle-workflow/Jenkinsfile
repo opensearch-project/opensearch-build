@@ -137,7 +137,7 @@ void publishNotification(icon, msg, extra) {
 /** Add a message to the jenkins queue */
 void addJenkinsMessage(message) {
     writeFile(file: "notifications/${System.currentTimeMillis()}.msg", text: message)
-    stash(includes: "notifications/" , name: "notifications")
+    stash(includes: "notifications/*" , name: "notifications")
 }
 
 /** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
