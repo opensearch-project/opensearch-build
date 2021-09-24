@@ -8,6 +8,11 @@ pipeline {
         H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-1.1.0.yml
       '''
     }
+    triggers {
+      parameterizedCron '''
+        H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-1.1.0.yml
+      '''
+    }
     stages {
         stage('parameters') {
             steps {

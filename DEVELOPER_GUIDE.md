@@ -88,11 +88,11 @@ build.sh: error: the following arguments are required: manifest
 
 ### Code Linting
 
-This project uses a [pre-commit hook](https://pre-commit.com/) for linting python code. Make sure to activate pipenv shell.
+This project uses a [pre-commit hook](https://pre-commit.com/) for linting python code.
 
 ```
-$ pre-commit install
-$ pre-commit run --all-files
+$ pipenv run pre-commit install
+$ pipenv run pre-commit run --all-files
 ```
 Pre-commit hook will run isort, flake8, mypy and pytest before making a commit.
 
@@ -152,7 +152,7 @@ cd bundle-workflow
 The pre-commit hook checks for imports, type, style and test.
 
 ```
-pre-commit run --all-files
+pipenv run pre-commit run --all-files
 ```
 
 Auto-fix format and sort imports by running.
@@ -161,3 +161,4 @@ Auto-fix format and sort imports by running.
 git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
 pipenv run isort .
 ```
+
