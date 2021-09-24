@@ -60,13 +60,7 @@ class TestIntegSuite(unittest.TestCase):
                     "/tmpdir/job-scheduler",
                     True,
                     False,
-                ),
-                call(
-                    "integtest.sh -b localhost -p 9200 -s false -v 1.1.0",
-                    "/tmpdir/job-scheduler",
-                    True,
-                    False,
-                ),
+                )
             ]
         )
 

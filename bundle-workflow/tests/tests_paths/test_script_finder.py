@@ -92,7 +92,6 @@ class TestScriptFinder(unittest.TestCase):
             msg="A component without scripts resolves to a component override.",
         )
 
-    @unittest.skip('See https://github.com/opensearch-project/opensearch-build/issues/497')
     def test_find_integ_test_script_component_script(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts, "integtest.sh"),
@@ -102,7 +101,6 @@ class TestScriptFinder(unittest.TestCase):
             msg="A component with a script resolves to the script at the root.",
         )
 
-    @unittest.skip('See https://github.com/opensearch-project/opensearch-build/issues/497')
     def test_find_integ_test_script_component_script_in_folder(self):
         self.assertEqual(
             os.path.join(self.component_with_scripts_folder, "scripts/integtest.sh"),
