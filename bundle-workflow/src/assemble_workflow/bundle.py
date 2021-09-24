@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+from abc import ABC, abstractmethod
 
 from paths.script_finder import ScriptFinder
 
@@ -21,12 +22,7 @@ plugins can be found.
 """
 
 
-class Bundle:
-
-    # TODO: [CLEANUP] For constants to compare can be cleaners
-    OPENSEARCH = "OpenSearch"
-    OPENSEARCH_DASHBOARDS = "OpenSearch Dashboards"
-
+class Bundle(ABC):
     def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
         """
         Construct a new Bundle instance.
@@ -34,14 +30,13 @@ class Bundle:
         :param artifacts_dir: Dir location where build artifacts can be found locally
         :param bundle_recorder: The bundle recorder that will capture and build a BundleManifest
         """
-        self.name = build_manifest.build.name
         self.min_tarball = self.__get_min_bundle(build_manifest.components)
         self.plugins = self.__get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.installed_plugins = []
-        self.min_tarball_path = self.__copy_component(self.min_tarball, "bundle")
+        self.min_tarball_path = self._copy_component(self.min_tarball, "bundle")
         self.__unpack_min_tarball(self.tmp_dir.name)
 
     def install_plugins(self):
@@ -52,18 +47,10 @@ class Bundle:
         if os.path.isdir(plugins_path):
             self.installed_plugins = os.listdir(plugins_path)
 
+    @abstractmethod
     def install_plugin(self, plugin):
-        tmp_path = self.__copy_component(plugin, "plugins")
-        if self.name == self.OPENSEARCH:
-            cli_path = os.path.join(self.archive_path, "bin/opensearch-plugin")
-            self.__execute(f"{cli_path} install --batch file:{tmp_path}")
-        elif self.name == self.OPENSEARCH_DASHBOARDS:
-            cli_path = os.path.join(self.archive_path, "bin/opensearch-dashboards-plugin")
-            self.__execute(f"{cli_path} --allow-root install file:{tmp_path}")
-        else:
-            raise ValueError(f"Unsupported build: {self.name}")
         post_install_script = ScriptFinder.find_install_script(plugin.name)
-        self.__execute(
+        self._execute(
             f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
         )
 
@@ -73,11 +60,11 @@ class Bundle:
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
         shutil.copyfile(tar_name, os.path.join(dest, tar_name))
 
-    def __execute(self, command):
+    def _execute(self, command):
         logging.info(f'Executing "{command}" in {self.archive_path}')
         subprocess.check_call(command, cwd=self.archive_path, shell=True)
 
-    def __copy_component(self, component, component_type):
+    def _copy_component(self, component, component_type):
         rel_path = self.__get_rel_path(component, component_type)
         tmp_path = self.__copy_component_files(rel_path, self.tmp_dir.name)
         self.bundle_recorder.record_component(component, rel_path)
