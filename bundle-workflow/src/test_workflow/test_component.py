@@ -19,3 +19,6 @@ class TestComponent:
 
     def checkout(self, directory):
         return GitRepository(self.repository, self.commit_id, directory)
+
+
+TestComponent.__test__ = False  # type:ignore

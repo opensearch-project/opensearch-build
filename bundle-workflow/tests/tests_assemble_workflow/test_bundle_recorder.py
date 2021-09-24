@@ -18,13 +18,13 @@ from manifests.bundle_manifest import BundleManifest
 class TestBundleRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        with open(
-            os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
-        ) as f:
-            manifest = BuildManifest.from_file(f)
-            self.bundle_recorder = BundleRecorder(
-                manifest.build, "output_dir", "artifacts_dir"
-            )
+        manifest_path = os.path.join(
+            os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"
+        )
+        manifest = BuildManifest.from_path(manifest_path)
+        self.bundle_recorder = BundleRecorder(
+            manifest.build, "output_dir", "artifacts_dir"
+        )
 
     def test_record_component(self):
         component = BuildManifest.Component(
