@@ -12,17 +12,13 @@ Deployment configuration for artifacts associated with the build, bundle, and te
 
 While creating an OpenSearch distribution all of the OpenSearch components are built, then bundled together, and finally tested. The intermediate components should always be available for repeatability and to make sure that a build node death is recoverable.
 
-![System Diagram](./img/system-diagram.png)
-
-[Diagram Uml](https://gist.github.com/peternied/439c693273de71216e7ec135dbcb03cd)
+![System Diagram, see ./diagrams/system-diagram.puml for source](./diagrams/system-diagram.svg)
 
 ### Overall System
 
 Artifacts should all be available via ci.opensearch.org to connect them via a single domain a CI instance specific identifier added to the url and traffic directed from the central CDN.
 
-![CDN Diagram](./img/cdn.png)
-
-[Diagram Uml](https://gist.github.com/peternied/e0f9eca659a4af460ae8119adf9e1c69)
+![CDN Diagram, see ./diagrams/cdn.puml for source](./diagrams/cdn.svg)
 
 ## Getting Started
 

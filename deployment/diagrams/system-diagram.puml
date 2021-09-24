@@ -1,0 +1,34 @@
+@startuml
+skinparam backgroundColor lightgrey
+title
+Build Artifact System
+endtitle
+
+cloud S3 {
+  [./build/*] as builds
+  [./bundles/*] as bundles
+  [./bundles/*/tests/*] as tests
+}
+
+cloud "CloudFront CDN" as cdn
+
+rectangle "CI Node" as n {
+  (Node Build)
+  (Node Bundle)
+  (Node Test)
+}
+
+:User: -down-> n: [1] Create update
+n -down-> (Node Build): [3] Trigger Build
+(Node Build) -down-> builds: [4] Build and store
+(Node Build) -> (Node Bundle): [5] Start Bundle
+(Node Bundle) -> builds: [6] Download build
+(Node Bundle) -> bundles: [7] Bundle and store
+(Node Bundle) -> (Node Test): [8] Start validation
+(Node Test) -> bundles: [9] Download bundle
+(Node Test) -> tests: [10] Run tests &\nStore results
+n -up-> :User:: [12] Send noficiation
+:User: -> cdn: [13] Inspect results
+cdn -> S3: [14] Retrieve from S3
+
+@enduml

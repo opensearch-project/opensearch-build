@@ -1,0 +1,27 @@
+@startuml
+skinparam backgroundColor lightgrey
+title
+Continuous Integration Artifact Access
+ci.opensearch.org
+endtitle
+
+cloud "ci.opensearch.org" as cdn {
+  [./CI/1/*] as c1link
+  [./CI/2/*] as c2link
+}
+
+cloud "CI 1 Artifacts" as ci1 {
+	(S3)
+}
+cloud "CI 2 Artifacts" as ci2 {
+	(S3 )
+}
+
+
+:User 1: -down-> c1link: GET .../CI/2123/logs/build
+c1link -down-> ci1: Lookup ./logs/build
+
+:User 2: -down-> c2link: GET .../CI/8781/artifact
+c2link -down-> ci2: Lookup ./artifact
+
+@enduml

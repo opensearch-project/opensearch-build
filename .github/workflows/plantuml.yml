@@ -1,0 +1,18 @@
+name: Generate Plantuml
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  generate-plantuml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Plantuml
+        uses: grassedge/generate-plantuml-action@v1.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Make *.svg files next to the *.puml files
+          path: .
