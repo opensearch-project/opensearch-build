@@ -120,8 +120,7 @@ class BuildManifest(Manifest):
             build_id, opensearch_version, architecture
         )
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
-        with open("manifest.yml", "r") as file:
-            build_manifest = BuildManifest.from_file(file)
+        build_manifest = BuildManifest.from_path("manifest.yml")
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
         return build_manifest
 
