@@ -6,7 +6,6 @@
 
 import subprocess
 import unittest
-from unittest.mock import patch
 
 from system.execute import execute
 
