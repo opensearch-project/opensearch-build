@@ -44,7 +44,7 @@ each component's build script that defines which version the component should bu
 
 #### OpenSearch Dashboards
 
-The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components. Be sure to pass `-d true` flag to build the plugin for `OpenSearch Dashboards`.
+The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components.
 *NOTE*: Building plugins requires having the core repository pulled down so it has access to bootstrap and build the modules utilized by plugins.
 
 ### Check Out Source

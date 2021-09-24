@@ -49,14 +49,20 @@ class ScriptFinder:
         return script
 
     @classmethod
-    def find_build_script(cls, component_name, git_dir):
+    def find_build_script(cls, project, component_name, git_dir):
         paths = [
             os.path.realpath(os.path.join(git_dir, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts/build.sh")),
             os.path.realpath(
                 os.path.join(cls.component_scripts_path, component_name, "build.sh")
             ),
-            os.path.realpath(os.path.join(cls.default_scripts_path, "build.sh")),
+            os.path.realpath(
+                os.path.join(
+                    cls.default_scripts_path,
+                    project.replace(" ", "-").lower(),
+                    "build.sh",
+                )
+            ),
         ]
 
         return cls.__find_script("build.sh", paths)

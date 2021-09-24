@@ -28,22 +28,23 @@ class Builder:
         self.git_repo = git_repo
         self.build_recorder = build_recorder
         self.output_path = "artifacts"
-        self.artifacts_path = os.path.join(self.git_repo.working_directory, self.output_path)
+        self.artifacts_path = os.path.join(
+            self.git_repo.working_directory, self.output_path
+        )
 
     def build(self, target):
         build_script = ScriptFinder.find_build_script(
-            self.component_name, self.git_repo.working_directory
+            target.name, self.component_name, self.git_repo.working_directory
         )
         build_command = f"{build_script} -v {target.version} -a {target.arch} -s {str(target.snapshot).lower()} -o {self.output_path}"
-        # TODO: [CLEANUP] If statement to pass flag to tell scripts to build dashboards
-        if self.build_recorder.name == "OpenSearch Dashboards":
-            build_command += " -d true"
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 
     def export_artifacts(self):
         for artifact_type in ["maven", "bundle", "plugins", "libs", "core-plugins"]:
-            for dir, dirs, files in os.walk(os.path.join(self.artifacts_path, artifact_type)):
+            for dir, dirs, files in os.walk(
+                os.path.join(self.artifacts_path, artifact_type)
+            ):
                 for file_name in files:
                     absolute_path = os.path.join(dir, file_name)
                     relative_path = os.path.relpath(absolute_path, self.artifacts_path)
