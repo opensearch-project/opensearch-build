@@ -17,6 +17,7 @@ class BuildRecorder:
     def __init__(self, target):
         self.build_manifest = self.BuildManifestBuilder(target)
         self.target = target
+        self.name = target.name
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(
@@ -55,7 +56,7 @@ class BuildRecorder:
         logging.info(f"Created build manifest {manifest_path}")
 
     def __check_artifact(self, artifact_type, artifact_file):
-        if artifact_type == "plugins":
+        if artifact_type == "plugins" and self.name != "OpenSearch Dashboards":
             BuildArtifactCheckPlugin(self.target).check(artifact_file)
         elif artifact_type == "maven":
             BuildArtifactCheckMaven(self.target).check(artifact_file)

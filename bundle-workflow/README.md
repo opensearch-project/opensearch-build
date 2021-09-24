@@ -1,5 +1,7 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
   - [How it works](#how-it-works)
+    - [OpenSearch](#opensearch)
+    - [OpenSearch Dashboards](#opensearch-dashboards)
   - [Check Out Source](#check-out-source)
   - [Build from Source](#build-from-source)
     - [Custom Build Scripts](#custom-build-scripts)
@@ -15,11 +17,11 @@
 
 ## OpenSearch Bundle Workflow
 
-The bundle workflow builds a complete OpenSearch distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
+The bundle workflow builds a complete OpenSearch and OpenSearch Dashboards distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
 
 ### How it works
 
-This system performs a top-down build of all components required for a specific OpenSearch bundle release. 
+This system performs a top-down build of all components required for a specific OpenSearch and OpenSearch Dashboards bundle release. 
 The input to the system is a manifest that defines the order in which components should be built. 
 All manifests for our current releases are [here](/manifests).
  
@@ -34,9 +36,16 @@ Within each build script components have the option to place artifacts in a set 
 | /bundle       | Where the min bundle should be placed when built from `https://github.com/opensearch-project/OpenSearch`|
 | /libs         | Where any additional libs should be placed that are required during bundle assembly                     |
 
+#### OpenSearch
+
 The build order allows us to first publish `OpenSearch` followed by `common-utils` and publish these artifacts to maven local so that
 they are available for each component.  In order to ensure that the same versions are used, a `-Dopensearch.version` flag is passed to
 each component's build script that defines which version the component should build against.
+
+#### OpenSearch Dashboards
+
+The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components. Be sure to pass `-d true` flag to build the plugin for `OpenSearch Dashboards`.
+*NOTE*: Building plugins requires having the core repository pulled down so it has access to bootstrap and build the modules utilized by plugins.
 
 ### Check Out Source
 
@@ -64,20 +73,31 @@ Each build requires a manifest to be passed as input. We currently have the foll
 | [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest for 1.1.0, the next version.                         |
 | [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)               | Manifest for 1.2.0, the following version.                    |
 | [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)               | Manifest for 2.0.0, the next major version of OpenSearch.     |
+| [opensearch-dashboards-1.1.0.yml](/manifests/1.1.0/opensearch-dashboards-1.1.0.yml)               | Manifest for 1.1.0, the next version.    
 
-The following example builds a shapshot version of OpenSearch 1.1.0.
+The following example builds a snapshot version of OpenSearch 1.1.0.
 
 ```bash
 ./bundle-workflow/build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
 ```
 
-The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
+While the following builds a snapshot version of OpenSearch-Dashboards 1.1.0.
+
+```bash
+./bundle-workflow/build.sh manifests/1.1.0/opensearch-dashboards-1.1.0.yml --snapshot
+```
+
+The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. 
+
+The [OpenSearch Dashboards repo](https://github.com/opensearch-project/OpenSearch-Dashboards) is built first, followed by all declared plugin repositories. 
+
+All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
 
 Artifacts will contain the following folders.
 
 ```
 /artifacts
-  bundle/ <- contains opensearch min tarball 
+  bundle/ <- contains opensearch or opensearch-dashboards min tarball 
   maven/ <- all built maven artifacts
   plugins/ <- all built plugin zips
   core-plugins/ <- all built core plugins zip

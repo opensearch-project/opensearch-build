@@ -35,6 +35,9 @@ class Builder:
             self.component_name, self.git_repo.working_directory
         )
         build_command = f"{build_script} -v {target.version} -a {target.arch} -s {str(target.snapshot).lower()} -o {self.output_path}"
+        # TODO: [CLEANUP] If statement to pass flag to tell scripts to build dashboards
+        if self.build_recorder.name == "OpenSearch Dashboards":
+            build_command += " -d true"
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 
