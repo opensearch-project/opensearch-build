@@ -8,16 +8,18 @@ import logging
 import os
 import subprocess
 import time
-from paths.tree_walker import walk
+
 import psutil  # type: ignore
 import requests
 import yaml
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
+from paths.tree_walker import walk
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
-from test_workflow.test_recorder.test_recorder_builder import TestRecorderBuilder
 from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_recorder.test_recorder_builder import \
+    TestRecorderBuilder
 
 
 class LocalTestCluster(TestCluster):

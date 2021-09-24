@@ -20,6 +20,7 @@ from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
 
+
 def pull_build_repo(work_dir):
     logging.info("Pulling opensearch-build")
     GitRepository(

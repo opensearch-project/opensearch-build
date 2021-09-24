@@ -7,15 +7,17 @@
 import logging
 import os
 import shutil
+from typing import Dict
 
 import yaml
 
-from test_workflow.test_recorder.test_recorder_builder import TestRecorderBuilder
+from test_workflow.test_recorder.test_recorder_builder import \
+    TestRecorderBuilder
 
 
 class Singleton(type):
     """Metaclass."""
-    _instances = {}
+    _instances: Dict[type, object] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

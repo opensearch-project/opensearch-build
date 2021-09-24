@@ -5,6 +5,7 @@
 # compatible open source license.
 
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass
@@ -25,6 +26,5 @@ class TestRecorderBuilder:
     exit_code: int
     stdout: str
     stderr: str
-    log_files: tuple = None
-    log_file_location: str = None
-
+    log_files: tuple
+    log_file_location: Union[int, None]
