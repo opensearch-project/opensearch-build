@@ -106,10 +106,6 @@ pipeline {
 void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    // psutil does not support arm64 yet, and it is not needed for build and assamble on Jenkins
-    // https://github.com/giampaolo/psutil/issues/1966
-    sh "sed -i '/psutil/d' bundle-workflow/Pipfile"
-
     sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST"
     sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
 
