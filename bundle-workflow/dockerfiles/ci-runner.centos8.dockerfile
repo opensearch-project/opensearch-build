@@ -17,7 +17,7 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-pip && \
+    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-pip python3-devel && \
     ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
 
 # Add Dashboards dependencies
