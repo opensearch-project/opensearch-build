@@ -74,6 +74,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Support multiple category fields ([#66](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/66))
 
 
+### Opensearch Cross Cluster Replication
+- Initial commit to support replication
+- Porting replication plugin to OpenSearch
+- Pause and Resume API (#10)
+- Leader Stats API (#122)
+- Follower stats API (#126)
+- AutoFollow Stats API Addition (#131)
+
+
 ### Opensearch Index Management
 * Storing user information as part of the job when security plugin is installed ([#113](https://github.com/opensearch-project/index-management/pull/113))
 * Storing user object in all APIs and enabling filter of response based on user ([#115](https://github.com/opensearch-project/index-management/pull/115))
@@ -161,6 +170,77 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Tune wording on category field callouts ([#83](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/83))
 
 
+### Opensearch Cross Cluster Replication
+- Configure the threadpool for leader cluster
+- Renew retention lease with the last known synced checkpoint
+- Handling node disconnections and shard movement
+- Enforce metadata write block on follower indices
+- System index support for replication metadata Added replication manager, Support for storing security metadata and Integration with security plugin 
+- Fix for race condition with snapshot restore
+- Status api changes.
+- Changed names for assume roles to remote and local from leader and follower Added preference to fetch the metdata from the primary shard Additional logging for the metadata store
+- Handling leader cluster disconnection failure scenarios during bootstrap (#17)
+- Support for translog fetch at the leader(remote) cluster and enable translog pruning during replication setup
+- Added random active shard selector for the getchanges operations
+- Settings and Alias replication (#22)
+- Rename opendistro endpoints
+- Added connections alias and doc count in status api.
+- Bug fixes related to security roles
+- Bootstrapping bug fix and few integ tests.
+- Adding validation on index settings (#37)
+- Renamed connection alias and changed exception handling.
+- Added non verbose version of status api.
+- Added replication specific settings for recovery
+- Add support for parallel reader and writer for ShardReplicationTask
+- Changes to fail chain replication.
+- Using non null RestoreInProgress value in case of no restore in progress (#54)
+- Not allowing index starting with . for replication
+- Changing the default recovery chunk size to 10MB
+- Added reason to the replication metadata store
+- Propagate shard failures to index task and auto-pause on failures.
+- Propgate 4xx failures from ShardReplicationTask.
+- Bug fixes and autofollow task resiliency (#59)
+- Added permission validation steps at user level and role level
+- Async metadata update. Separated metadata reader and updater (#52)
+- Validate analyzer path when starting/resuming replication
+- Prevent starting replication directly on the leader index alias. (#66)
+- Change to stop showing replication related metrics in case of non running (syncing and bootstrap) state.
+- Integ test for follower index deletion
+- Adding `reason` while serializing PauseReplication Request (#71)
+- Add integ test to verify mapping propagation
+- Integ test to verify that delete/index operation are blocked on follower
+- Changes to support security plugin integ tests
+- Integ test: Verify that replication is paused when remote index is deleted
+- added few integ tests when open and close is triggered on leader index (#77)
+- Integ test : Stop replication when remote cluster is unreachable
+- Moved validation checks after setup checks
+- Modified tests to use custom roles for default tests
+- Replication engine tests: Index operations on leader
+- Add Handling of IndexReplicationTask cancellation and corresponding ITs (#87)
+- Updated security plugin with latest changes
+- Integ test: forcemerge and snapshot on leader during bootstrap (#76)
+- Validate that soft delete settings is enabled at leader
+- Adding Security for replication APIs and IT for DLS, FLS or FieldMasking … (#90)
+- changed few naming conventions. 1. remote to leader, 2. local to follower, etc
+- Gradle changes for OpenSearch
+- Refactor code for OpenSearch
+- Port terminology from OpenDistroForElasticsearch to OpenSearch. (#98)
+- Changed the dependency to OS 1.1
+- Rename the replication settings (#103)
+- Support for mapping update for the replication store system index
+- Adding UTs for IndexReplicationTask (#109)
+- OS - Integ tests for reroutes
+- Added additional comments for the node-level events
+- Adding exp backoff for replay and get changes (#135)
+- Rename to useroles in all the request payloads instead of assumeroles
+- Initializing shard metric for UT (#141)
+- Changing the log level to debug as this information is surfaced in stats
+- Pause API should allow reason to be specified in the REST call. (#151)
+- Verifying shard tasks are up in autofollow test (#153)
+- Correcting param name for leader API (#163)
+- Populate "AutoPaused: " prefix in the pause-reason while auto-pausing. (#170)
+
+
 ### Opensearch Dashboards Notebooks
 * Improve wording for sample notebooks ([#57](https://github.com/opensearch-project/dashboards-notebooks/pull/57))
 
@@ -184,40 +264,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Adding the default role for IM plugin ([#1427](https://github.com/opensearch-project/security/pull/1427))
 
 
-### Opensearch Sql
+### Opensearch SQL
 * Support implicit type conversion from string to boolean ([#166](https://github.com/opensearch-project/sql/pull/166))
 * Support distinct count aggregation ([#167](https://github.com/opensearch-project/sql/pull/167))
 * Support implicit type conversion from string to temporal ([#171](https://github.com/opensearch-project/sql/pull/171))
 * Workbench: auto dump cypress test data, support security ([#199](https://github.com/opensearch-project/sql/pull/199))
-
-
-### Opensearch Sql
-* Support implicit type conversion from string to boolean ([#166](https://github.com/opensearch-project/sql/pull/166))
-* Support distinct count aggregation ([#167](https://github.com/opensearch-project/sql/pull/167))
-* Support implicit type conversion from string to temporal ([#171](https://github.com/opensearch-project/sql/pull/171))
-* Workbench: auto dump cypress test data, support security ([#199](https://github.com/opensearch-project/sql/pull/199))
-
-
-### Opensearch Sql
-* Support implicit type conversion from string to boolean ([#166](https://github.com/opensearch-project/sql/pull/166))
-* Support distinct count aggregation ([#167](https://github.com/opensearch-project/sql/pull/167))
-* Support implicit type conversion from string to temporal ([#171](https://github.com/opensearch-project/sql/pull/171))
-* Workbench: auto dump cypress test data, support security ([#199](https://github.com/opensearch-project/sql/pull/199))
-
-
-### Opensearch Sql
-* Support implicit type conversion from string to boolean ([#166](https://github.com/opensearch-project/sql/pull/166))
-* Support distinct count aggregation ([#167](https://github.com/opensearch-project/sql/pull/167))
-* Support implicit type conversion from string to temporal ([#171](https://github.com/opensearch-project/sql/pull/171))
-* Workbench: auto dump cypress test data, support security ([#199](https://github.com/opensearch-project/sql/pull/199))
-
-
-### Opensearch Sql
-* Support implicit type conversion from string to boolean ([#166](https://github.com/opensearch-project/sql/pull/166))
-* Support distinct count aggregation ([#167](https://github.com/opensearch-project/sql/pull/167))
-* Support implicit type conversion from string to temporal ([#171](https://github.com/opensearch-project/sql/pull/171))
-* Workbench: auto dump cypress test data, support security ([#199](https://github.com/opensearch-project/sql/pull/199))
-
 
 ## BUG FIXES
 
@@ -241,6 +292,31 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### Opensearch Asynchronous Search
 * Fix: typo in flag name. ([#32](https://github.com/opensearch-project/asynchronous-search/pull/32))
+
+
+### Opensearch Cross Cluster Replication
+- Fix submitClusterStateUpdateTask source
+- Throw exception if replication is not enabled on the remote domain (#86)
+- Increase wait time for snapshot/forcemerge integ tests
+- Add validation on index name (#92)
+- Remove opendistro security zip (#95)
+- Handled all related exceptions for translog fetch
+- Bugfix: Changes to restore default threadcontext after co-routine is suspended
+- Remove packaged example as replication plugin will ship with OpenSearch. (#107)
+- Bugfix: Handled errors during test role update (#112)
+- Ignore forbidden APIs to access private members of ES datastructure (#120)
+- [Bug] Starting missing shard tasks
+- BugFix: Act on index remove events based index state for index replication task
+- Bugfix: Modified index block before creation of shard tasks to avoid race conditions
+- Bugfix: Rebase issue - Test clusters to default to 2 nodes
+- Fix for RetentionLeaseInvalidRetainingSeqNoException while adding retention lease (#128)
+- Fixing IT Test (#137)
+- Fix RetentionLeaseNotFoundException during shard reroute on follower (#138)
+- Fix Flaky integ test (#140)
+- Bugfix: Handled rename change for useroles in tests
+- Remove the flaky assert in StartReplicationIT (#144)
+- Blocked k-NN index for replication (#158)
+- Gracefully fail replication on bootstrap failure. (#166)
 
 
 ### Opensearch Dashboards Reports
@@ -282,27 +358,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix deleting files within 60sec interval ([#62](https://github.com/opensearch-project/performance-analyzer/pull/62))
 
 
-### Opensearch Sql
-* Fix for SQL-ODBC AWS Init and Shutdown Behaviour ([#163](https://github.com/opensearch-project/sql/pull/163))
-* Fix import path for cypress constant ([#201](https://github.com/opensearch-project/sql/pull/201))
-
-
-### Opensearch Sql
-* Fix for SQL-ODBC AWS Init and Shutdown Behaviour ([#163](https://github.com/opensearch-project/sql/pull/163))
-* Fix import path for cypress constant ([#201](https://github.com/opensearch-project/sql/pull/201))
-
-
-### Opensearch Sql
-* Fix for SQL-ODBC AWS Init and Shutdown Behaviour ([#163](https://github.com/opensearch-project/sql/pull/163))
-* Fix import path for cypress constant ([#201](https://github.com/opensearch-project/sql/pull/201))
-
-
-### Opensearch Sql
-* Fix for SQL-ODBC AWS Init and Shutdown Behaviour ([#163](https://github.com/opensearch-project/sql/pull/163))
-* Fix import path for cypress constant ([#201](https://github.com/opensearch-project/sql/pull/201))
-
-
-### Opensearch Sql
+### Opensearch SQL
 * Fix for SQL-ODBC AWS Init and Shutdown Behaviour ([#163](https://github.com/opensearch-project/sql/pull/163))
 * Fix import path for cypress constant ([#201](https://github.com/opensearch-project/sql/pull/201))
 
@@ -327,18 +383,31 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix snapshot build and increment to 1.1.0 ([#31](https://github.com/opensearch-project/asynchronous-search/pull/31))
 
 
+### Opensearch Cross Cluster Replication
+- Add OpenSearch build script (#119)
+- Add basic github workflow for build and test (#123)
+- Modified github workflow to pick the latest changes (#173)
+
+
 ### Opensearch Dashboards Notebooks
 * Fix snapshot build and depend on OpenSearch 1.1. ([#62](https://github.com/opensearch-project/dashboards-notebooks/pull/62))
+* Bump opensearch ref to 1.1 in CI ([#73](https://github.com/opensearch-project/dashboards-reports/pull/73))
 
 
 ### Opensearch Dashboards Reports
-* Fix snapshot build and upgrade to OpenSearch 1.1 ([#140](https://github.com/opensearch-project/dashboards-reports/pull/140))
-* Bump version for Opensearch 1.1.0 release ([#149](https://github.com/opensearch-project/dashboards-reports/pull/149))
+* Bump opensearch ref to 1.1 in CI ([#155](https://github.com/opensearch-project/dashboards-reports/pull/155))
 
 
 ### Opensearch Dashboards Reports
-* Fix snapshot build and upgrade to OpenSearch 1.1 ([#140](https://github.com/opensearch-project/dashboards-reports/pull/140))
-* Bump version for Opensearch 1.1.0 release ([#149](https://github.com/opensearch-project/dashboards-reports/pull/149))
+* Bump opensearch ref to 1.1 in CI ([#155](https://github.com/opensearch-project/dashboards-reports/pull/155))
+
+
+### Opensearch Dashboards Reports
+* Bump opensearch ref to 1.1 in CI ([#155](https://github.com/opensearch-project/dashboards-reports/pull/155))
+
+
+### Opensearch Dashboards Reports
+* Bump opensearch ref to 1.1 in CI ([#155](https://github.com/opensearch-project/dashboards-reports/pull/155))
 
 
 ### Opensearch Dashboards Visualizations
@@ -347,6 +416,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### Opensearch Index Management
 * Upgrade dependencies to 1.1 and build snapshot by default. ([#121](https://github.com/opensearch-project/index-management/pull/121))
+* Update workflow to point to 1.1 ([#146](https://github.com/opensearch-project/index-management/pull/146))
 
 
 ### Opensearch
@@ -362,44 +432,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update version to 1.1 and add release notes ([#17](https://github.com/opensearch-project/perftop/pull/17))
 
 
-### Opensearch Sql
+### Opensearch SQL
 * Add Integtest.sh for OpenSearch integtest setups (workbench) ([#157](https://github.com/opensearch-project/sql/pull/157))
 * Bump path-parse from 1.0.6 to 1.0.7 in /workbench ([#178](https://github.com/opensearch-project/sql/pull/178))
 * Use externally-defined OpenSearch version when specified. ([#179](https://github.com/opensearch-project/sql/pull/179))
 * Use OpenSearch 1.1 and build snapshot by default in CI. ([#181](https://github.com/opensearch-project/sql/pull/181))
 * Workbench: remove curl commands in integtest.sh ([#200](https://github.com/opensearch-project/sql/pull/200))
-
-
-### Opensearch Sql
-* Add Integtest.sh for OpenSearch integtest setups (workbench) ([#157](https://github.com/opensearch-project/sql/pull/157))
-* Bump path-parse from 1.0.6 to 1.0.7 in /workbench ([#178](https://github.com/opensearch-project/sql/pull/178))
-* Use externally-defined OpenSearch version when specified. ([#179](https://github.com/opensearch-project/sql/pull/179))
-* Use OpenSearch 1.1 and build snapshot by default in CI. ([#181](https://github.com/opensearch-project/sql/pull/181))
-* Workbench: remove curl commands in integtest.sh ([#200](https://github.com/opensearch-project/sql/pull/200))
-
-
-### Opensearch Sql
-* Add Integtest.sh for OpenSearch integtest setups (workbench) ([#157](https://github.com/opensearch-project/sql/pull/157))
-* Bump path-parse from 1.0.6 to 1.0.7 in /workbench ([#178](https://github.com/opensearch-project/sql/pull/178))
-* Use externally-defined OpenSearch version when specified. ([#179](https://github.com/opensearch-project/sql/pull/179))
-* Use OpenSearch 1.1 and build snapshot by default in CI. ([#181](https://github.com/opensearch-project/sql/pull/181))
-* Workbench: remove curl commands in integtest.sh ([#200](https://github.com/opensearch-project/sql/pull/200))
-
-
-### Opensearch Sql
-* Add Integtest.sh for OpenSearch integtest setups (workbench) ([#157](https://github.com/opensearch-project/sql/pull/157))
-* Bump path-parse from 1.0.6 to 1.0.7 in /workbench ([#178](https://github.com/opensearch-project/sql/pull/178))
-* Use externally-defined OpenSearch version when specified. ([#179](https://github.com/opensearch-project/sql/pull/179))
-* Use OpenSearch 1.1 and build snapshot by default in CI. ([#181](https://github.com/opensearch-project/sql/pull/181))
-* Workbench: remove curl commands in integtest.sh ([#200](https://github.com/opensearch-project/sql/pull/200))
-
-
-### Opensearch Sql
-* Add Integtest.sh for OpenSearch integtest setups (workbench) ([#157](https://github.com/opensearch-project/sql/pull/157))
-* Bump path-parse from 1.0.6 to 1.0.7 in /workbench ([#178](https://github.com/opensearch-project/sql/pull/178))
-* Use externally-defined OpenSearch version when specified. ([#179](https://github.com/opensearch-project/sql/pull/179))
-* Use OpenSearch 1.1 and build snapshot by default in CI. ([#181](https://github.com/opensearch-project/sql/pull/181))
-* Workbench: remove curl commands in integtest.sh ([#200](https://github.com/opensearch-project/sql/pull/200))
+* Bump opensearch ref to 1.1 in CI ([#205](https://github.com/opensearch-project/dashboards-reports/pull/205))
 
 
 ### Opensearch Trace Analytics
@@ -418,6 +457,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### Opensearch Anomaly Detection Dashboards
 * Add themed logo ([#54](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/54))
+
+
+### Opensearch Cross Cluster Replication
+- Changed the arch diagram.
+- Add OpenSearch Copyright
+- Update documentation for OpenSearch
+- Added cross cluster replication maintainers
+- Add copyright to readme; Update notice (#106)
+- Add documentation and templates
 
 
 ### Opensearch Dashboards Notebooks
@@ -457,6 +505,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update cypress-workflow.yml to use environment variable for OS and OS dashboard versions ([#96](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/96))
 * Create opensearch-alerting-dashboards-plugin.release-notes-1.1.0.0.md ([#101](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/101))
 * Update version in package.json ([#102](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/102)) 
+* Update jest unit tests ([#112](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/112))
 
 
 ### Opensearch Dashboards Notebooks
@@ -495,10 +544,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Remove alerting and ism indices from protected indices usage in sample configuration ([#1416](https://github.com/opensearch-project/security/pull/1416))
 * Build against OpenSearch 1.1.0-SNAPSHOT. ([#1430](https://github.com/opensearch-project/security/pull/1430))
 * Create release notes 1.1.0.0 ([#1440](https://github.com/opensearch-project/security/pull/1440))
+* Switch opensearch from 1.x to 1.1 ([#1445](https://github.com/opensearch-project/security/pull/1445))
 
 
 ### Opensearch Security Dashboards Plugin
 * Bump version to 1.1.0.0 ([#823](https://github.com/opensearch-project/security-dashboards-plugin/pull/823))
+* Build OpenSearch 1.1 branch in CI ([#827](https://github.com/opensearch-project/security-dashboards-plugin/pull/827))
 
 
 ### Opensearch Trace Analytics
