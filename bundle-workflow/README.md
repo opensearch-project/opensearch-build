@@ -72,6 +72,7 @@ We provide docker files in `dockerfiles/` folder, and images on [staging docker 
     ```
     docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> -f <Docker File Path> --push .
     ```
+
 ### Check Out Source
 
 The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
@@ -85,6 +86,7 @@ The following options are available.
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
 | -v, --verbose      | Show more verbose output.                                               |
+
 
 ### Build from Source
 
