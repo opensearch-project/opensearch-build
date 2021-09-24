@@ -33,7 +33,8 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 RUN (curl -s https://dlcdn.apache.org/maven/maven-3/3.8.2/binaries/apache-maven-3.8.2-bin.tar.gz | tar xzf - -C /usr/local/) && \
     echo "export M2_HOME=/usr/local/apache-maven-3.8.2" > /etc/profile.d/maven_path.sh && \
     echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
-    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh
+    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh && \
+    ln -sfn /usr/local/apache-maven-3.8.2/bin/mvn /usr/local/bin/mvn
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm

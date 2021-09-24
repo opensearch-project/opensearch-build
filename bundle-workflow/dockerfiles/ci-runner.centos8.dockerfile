@@ -17,14 +17,14 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng cmake python3 python3-pip && \
+    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-pip && \
     ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
 
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Notebook dependencies
-RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
+RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
 
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
@@ -33,7 +33,8 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 RUN (curl -s https://dlcdn.apache.org/maven/maven-3/3.8.2/binaries/apache-maven-3.8.2-bin.tar.gz | tar xzf - -C /usr/local/) && \
     echo "export M2_HOME=/usr/local/apache-maven-3.8.2" > /etc/profile.d/maven_path.sh && \
     echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
-    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh
+    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh && \
+    ln -sfn /usr/local/apache-maven-3.8.2/bin/mvn /usr/local/bin/mvn
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
