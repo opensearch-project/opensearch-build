@@ -161,4 +161,3 @@ Auto-fix format and sort imports by running.
 git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
 pipenv run isort .
 ```
-
