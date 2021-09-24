@@ -1,9 +1,9 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
   - [How it works](#how-it-works)
-  - [CI CD Environment](#ci-cd-environment)
-    - [Build CI Runner Docker Image from Dockerfile](#build-ci-runner-docker-image-from-dockerfile)
     - [OpenSearch](#opensearch)
     - [OpenSearch Dashboards](#opensearch-dashboards)
+  - [CI CD Environment](#ci-cd-environment)
+    - [Build CI Runner Docker Image from Dockerfile](#build-ci-runner-docker-image-from-dockerfile)
   - [Check Out Source](#check-out-source)
   - [Build from Source](#build-from-source)
     - [Custom Build Scripts](#custom-build-scripts)
@@ -44,6 +44,11 @@ The build order allows us to first publish `OpenSearch` followed by `common-util
 they are available for each component.  In order to ensure that the same versions are used, a `-Dopensearch.version` flag is passed to
 each component's build script that defines which version the component should build against.
 
+#### OpenSearch Dashboards
+
+The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components. Be sure to pass `-d true` flag to build the plugin for `OpenSearch Dashboards`.
+*NOTE*: Building plugins requires having the core repository pulled down so it has access to bootstrap and build the modules utilized by plugins.
+
 ### CI CD Environment
 
 We build, assemble, and test our artifacts on docker containers. All of our pipelines are using the same docker image for consistency.
@@ -76,10 +81,6 @@ We provide docker files in `dockerfiles/` folder, and images on [staging docker 
     ```
     docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> -f <Docker File Path> --push .
     ```
-#### OpenSearch Dashboards
-
-The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components. Be sure to pass `-d true` flag to build the plugin for `OpenSearch Dashboards`.
-*NOTE*: Building plugins requires having the core repository pulled down so it has access to bootstrap and build the modules utilized by plugins.
 
 ### Check Out Source
 
