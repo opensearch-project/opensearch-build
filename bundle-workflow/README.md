@@ -287,7 +287,6 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
-<<<<<<< HEAD
 
 ### Component Onboarding
 
