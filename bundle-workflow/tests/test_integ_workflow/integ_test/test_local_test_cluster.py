@@ -113,8 +113,9 @@ class LocalTestClusterTests(unittest.TestCase):
             auth=("admin", "admin"),
         )
 
+    @patch("time.sleep")
     @patch("requests.get", side_effect=__mock_response)
-    def test_wait_for_service_cluster_unavailable(self, mock_requests):
+    def test_wait_for_service_cluster_unavailable(self, *mocks):
         local_test_cluster = LocalTestCluster(
             self.work_dir.name,
             "index-management",
