@@ -38,7 +38,7 @@ class LocalTestCluster(TestCluster):
         self.component_test_config = component_test_config
         self.bucket_name = s3_bucket_name
         self.additional_cluster_config = additional_cluster_config
-        self.test_recorder = TestRecorder()
+        self.test_recorder = TestRecorder.get_instance()
         self.process = None
 
     def create_cluster(self):

@@ -26,6 +26,10 @@ class Singleton(type):
             logging.info("TestRecorder is a singleton class, retrieving existing instance")
         return cls._instances[cls]
 
+    def get_instance(cls):
+        if cls._instances is not None:
+            return cls._instances[cls]
+
 
 class TestRecorder(object, metaclass=Singleton):
     ACCEPTABLE_TEST_TYPES = ["integ-test", "bwc-test", "perf-test"]

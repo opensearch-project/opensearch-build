@@ -16,11 +16,13 @@ from test_workflow.integ_test.integ_test_suite import (DependencyInstaller,
                                                        IntegTestSuite,
                                                        InvalidTestConfigError,
                                                        ScriptFinder)
+from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
 @patch("os.makedirs")
 @patch("os.chdir")
 @patch.object(GitRepository, "__checkout__")
+@patch.object(TestRecorder(20, "integ-test", "/tmp/dir"), "record_test_outcome")
 class TestIntegSuite(unittest.TestCase):
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
@@ -34,7 +36,7 @@ class TestIntegSuite(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.execute")
     @patch("test_workflow.integ_test.integ_test_suite.LocalTestCluster")
     def test_execute_with_multiple_test_configs(
-        self, mock_local_test_cluster, mock_system_execute, mock_script_finder, *mock
+            self, mock_local_test_cluster, mock_system_execute, mock_script_finder, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "job-scheduler"
@@ -95,7 +97,7 @@ class TestIntegSuite(unittest.TestCase):
     )
     @patch.object(DependencyInstaller, "install_build_dependencies")
     def test_execute_without_build_dependencies(
-        self, mock_install_build_dependencies, *mock
+            self, mock_install_build_dependencies, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "job-scheduler"
@@ -116,7 +118,7 @@ class TestIntegSuite(unittest.TestCase):
     )
     @patch.object(DependencyInstaller, "install_build_dependencies")
     def test_execute_with_unsupported_build_dependencies(
-        self, mock_install_build_dependencies, *mock
+            self, mock_install_build_dependencies, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "anomaly-detection"
@@ -135,7 +137,7 @@ class TestIntegSuite(unittest.TestCase):
 
     @patch.object(DependencyInstaller, "install_build_dependencies")
     def test_execute_with_missing_job_scheduler(
-        self, mock_install_build_dependencies, *mock
+            self, mock_install_build_dependencies, *mock
     ):
         with open("data/build_manifest_missing_components.yml", "r") as file:
             invalid_build_manifest = BuildManifest.from_file(file)

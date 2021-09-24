@@ -27,4 +27,4 @@ class TestRecorderBuilder:
     stdout: str
     stderr: str
     log_files: tuple
-    log_file_location: Union[int, None]
+    log_file_location: Union[str, None]

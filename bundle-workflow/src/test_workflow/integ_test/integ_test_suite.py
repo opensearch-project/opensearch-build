@@ -26,13 +26,13 @@ class IntegTestSuite:
     """
 
     def __init__(
-        self,
-        component,
-        test_config,
-        bundle_manifest,
-        build_manifest,
-        work_dir,
-        s3_bucket_name
+            self,
+            component,
+            test_config,
+            bundle_manifest,
+            build_manifest,
+            work_dir,
+            s3_bucket_name
     ):
         self.component = component
         self.bundle_manifest = bundle_manifest
@@ -42,7 +42,7 @@ class IntegTestSuite:
         self.s3_bucket_name = s3_bucket_name
         self.script_finder = ScriptFinder()
         self.additional_cluster_config = None
-        self.test_recorder = TestRecorder()
+        self.test_recorder = TestRecorder.get_instance()
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
@@ -90,14 +90,13 @@ class IntegTestSuite:
             )
             logging.info(f"Additional config found: {self.additional_cluster_config}")
         with LocalTestCluster.create(
-            self.work_dir,
-            self.component.name,
-            self.additional_cluster_config,
-            self.bundle_manifest,
-            security,
-            config,
-            self.s3_bucket_name
-        ) as (test_cluster_endpoint, test_cluster_port):
+                self.work_dir,
+                self.component.name,
+                self.additional_cluster_config,
+                self.bundle_manifest,
+                security,
+                config,
+                self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
             self.__pretty_print_message(
                 "Running integration tests for " + self.component.name
             )
@@ -121,7 +120,8 @@ class IntegTestSuite:
             results_dir = os.path.join(
                 work_dir, "build", "reports", "tests", "integTest"
             )
-            test_recorder_builder = TestRecorderBuilder(self.component.name, test_config, status, stdout, stderr, walk(results_dir), "S3")
+            test_recorder_builder = TestRecorderBuilder(self.component.name, test_config, status, stdout, stderr,
+                                                        walk(results_dir), "S3")
             self.test_recorder.record_test_outcome(test_recorder_builder)
             if stderr:
                 logging.info(
