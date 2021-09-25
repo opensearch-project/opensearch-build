@@ -1,6 +1,5 @@
 import argparse
 import os
-import subprocess
 import sys
 
 import yaml
@@ -17,26 +16,24 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
     rally test and the stack name for the cluster. Will call out in test.sh with perf as argument
 """
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-    parser.add_argument(
-        "--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file."
-    )
-    parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
-    parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
-    parser.add_argument(
-        "--keep",
-        dest="keep",
-        action="store_true",
-        help="Do not delete the working temporary directory.",
-    )
-    args = parser.parse_args()
 
-    manifest = BundleManifest.from_path(args.bundle_manifest)
+parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
+parser.add_argument(
+    "--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file."
+)
+parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
+parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
+parser.add_argument(
+    "--keep",
+    dest="keep",
+    action="store_true",
+    help="Do not delete the working temporary directory.",
+)
+args = parser.parse_args()
 
-    config = yaml.safe_load(args.config)
+manifest = BundleManifest.from_file(args.bundle_manifest)
 
-    return args, manifest, config
+config = yaml.safe_load(args.config)
 
 
 def get_infra_repo_url():
@@ -46,7 +43,6 @@ def get_infra_repo_url():
 
 
 def main():
-    args, manifest, config = parse_arguments()
     with TemporaryDirectory(keep=args.keep) as work_dir:
         os.chdir(work_dir)
         current_workspace = os.path.join(work_dir, 'infra')
@@ -56,7 +52,7 @@ def main():
             if component.name == "security":
                 security = True
 
-        with WorkingDirectory(current_workspace) as curdir:
+        with WorkingDirectory(current_workspace):
             with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (
                 test_cluster_endpoint,
                 test_cluster_port,
