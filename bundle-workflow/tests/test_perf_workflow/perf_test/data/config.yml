@@ -1,0 +1,7 @@
+Constants:
+  Repository: https://github.com/opensearch-project/opensearch
+  SecurityGroupId: sg-12345
+  VpcId: vpc-12345
+  AccountId: 12345
+  Region: eu-west-1
+  Role: xyz
