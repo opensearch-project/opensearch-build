@@ -60,33 +60,31 @@ class TestBuildManifest(unittest.TestCase):
         )
 
     def test_get_component(self):
-        component_name = 'index-management'
+        component_name = "index-management"
         output = self.manifest.get_component(component_name)
-        self.assertEqual(
-            output.name, component_name
-        )
-        component_name = 'invalid-component'
+        self.assertEqual(output.name, component_name)
+        component_name = "invalid-component"
         with self.assertRaises(BuildManifest.ComponentNotFoundError):
             self.manifest.get_component(component_name)
 
+    @patch("os.remove")
+    @patch("builtins.open", mock_open())
+    @patch("manifests.build_manifest.BuildManifest.from_path")
     @patch("manifests.build_manifest.S3Bucket")
-    def test_from_s3(self, mock_s3_bucket):
+    def test_from_s3(self, mock_s3_bucket, *mocks):
         s3_bucket = mock_s3_bucket.return_value
-        with patch("os.remove"):
-            with patch("builtins.open", mock_open()):
-                s3_download_path = BuildManifest.get_build_manifest_relative_location(
-                    self.manifest.build.id,
-                    self.manifest.build.version,
-                    self.manifest.build.architecture,
-                )
-                with patch("manifests.build_manifest.BuildManifest.from_file"):
-                    BuildManifest.from_s3(
-                        "bucket_name",
-                        self.manifest.build.id,
-                        self.manifest.build.version,
-                        self.manifest.build.architecture,
-                        "/xyz",
-                    )
-                    self.assertEqual(s3_bucket.download_file.call_count, 1)
-                    s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
-                    os.remove.assert_called_with("/xyz/manifest.yml")
+        s3_download_path = BuildManifest.get_build_manifest_relative_location(
+            self.manifest.build.id,
+            self.manifest.build.version,
+            self.manifest.build.architecture,
+        )
+        BuildManifest.from_s3(
+            "bucket_name",
+            self.manifest.build.id,
+            self.manifest.build.version,
+            self.manifest.build.architecture,
+            "/xyz",
+        )
+        self.assertEqual(s3_bucket.download_file.call_count, 1)
+        s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
+        os.remove.assert_called_with("/xyz/manifest.yml")

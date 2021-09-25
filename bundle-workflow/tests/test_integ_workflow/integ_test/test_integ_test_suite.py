@@ -131,8 +131,9 @@ class TestIntegSuite(unittest.TestCase):
     def test_execute_with_missing_job_scheduler(
         self, mock_install_build_dependencies, *mock
     ):
-        with open("data/build_manifest_missing_components.yml", "r") as file:
-            invalid_build_manifest = BuildManifest.from_file(file)
+        invalid_build_manifest = BuildManifest.from_path(
+            "data/build_manifest_missing_components.yml"
+        )
         test_config, component = self.__get_test_config_and_bundle_component(
             "index-management"
         )
@@ -144,8 +145,11 @@ class TestIntegSuite(unittest.TestCase):
             "/tmpdir",
             "s3_bucket_name",
         )
-        with self.assertRaises(BuildManifest.ComponentNotFoundError):
+        with self.assertRaises(BuildManifest.ComponentNotFoundError) as context:
             integ_test_suite.execute()
+        self.assertEqual(
+            str(context.exception), "job-scheduler not found in build manifest.yml"
+        )
         mock_install_build_dependencies.assert_not_called()
 
     def __get_test_config_and_bundle_component(self, component_name):

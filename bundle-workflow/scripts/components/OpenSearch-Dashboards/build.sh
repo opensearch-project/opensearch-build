@@ -13,11 +13,10 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
-    echo -e "-d DASHBOARDS\t[Optional] Build OpenSearch Dashboards, default is 'false'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:d:" arg; do
+while getopts ":h:v:s:o:a:" arg; do
     case $arg in
         h)
             usage
@@ -34,9 +33,6 @@ while getopts ":h:v:s:o:a:d:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
-            ;;
-        d)
-            DASHBOARDS=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
