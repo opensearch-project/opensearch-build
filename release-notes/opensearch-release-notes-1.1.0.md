@@ -143,7 +143,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Anomaly Detection Dashboards
-* Fix BWC for custom \## ENHANCEMENTS
+* Fix BWC for custom & simple filters ([#68](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/68))
+* Fix BWC for legacy detectors ([#69](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/69))
+* Enable shingle in HCAD ([#71](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/71))
+* Change single size description and fix related places ([#76](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/76))
+* Enable zooming in HC entity charts ([#78](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/78))
+* Add callouts and make category fields readonly after creation ([#79](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/79))
+* Tune wording on category field callouts ([#83](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/83))
+
+
 
 ### OpenSearch Alerting Dashboards Plugin
 * Show Error Toast Message whenever action execution fails from backend due to incorrect configurations ([#22](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/22))
@@ -161,7 +169,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * support backward compatibility of historical analysis and realtime task ([#195](https://github.com/opensearch-project/anomaly-detection/pull/195))
 
 
-### OpenSearch Anomaly Detection Dashboards simple filters ([#68](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/68))
+### OpenSearch Anomaly Detection Dashboards 
+* Fix BWC for custom & simple filters ([#68](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/68))
 * Fix BWC for legacy detectors ([#69](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/69))
 * Enable shingle in HCAD ([#71](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/71))
 * Change single size description and fix related places ([#76](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/76))
