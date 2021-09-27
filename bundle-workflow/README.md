@@ -196,7 +196,9 @@ The following command signs all artifacts.
 
 Tests the OpenSearch bundle.
 
-This workflow contains integration, backwards compatibility and performance tests.
+This workflow contains integration, backwards compatibility and performance tests. 
+
+More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/docs/README.md).
 
 Usage:
 ```bash
