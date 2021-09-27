@@ -68,7 +68,7 @@ class TestRunBuild(unittest.TestCase):
             any_order=True,
         )
 
-        self.assertEqual(mock_repo.call_count, 14)
+        self.assertEqual(mock_repo.call_count, 15)
 
         # each component is built and its artifacts exported
         mock_builder.assert_has_calls(
@@ -86,9 +86,9 @@ class TestRunBuild(unittest.TestCase):
             any_order=True,
         )
 
-        self.assertEqual(mock_builder.call_count, 14)
-        self.assertEqual(mock_builder.return_value.build.call_count, 14)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 14)
+        self.assertEqual(mock_builder.call_count, 15)
+        self.assertEqual(mock_builder.return_value.build.call_count, 15)
+        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
 
         # the output manifest is written
         mock_recorder.return_value.write_manifest.assert_called()
