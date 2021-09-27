@@ -102,10 +102,14 @@ pipeline {
             }
             post() {
                 success {
-                    publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
+                    }
                 }
                 failure {
-                    publishNotification(":warning:", "Failed Build", "")
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        publishNotification(":warning:", "Failed Build", "")
+                    }
                 }
             }
         }
@@ -133,24 +137,36 @@ void build() {
 /** Publishes a notification to a slack instance*/
 void publishNotification(icon, msg, extra) {
     withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' $TOKEN"""
+        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
     }
 }
 
 /** Add a message to the jenkins queue */
 void addJenkinsMessage(message) {
-    writeFile(file: "notifications/${System.currentTimeMillis()}.msg", text: message)
-    stash(includes: "notifications/*" , name: "notifications")
+    writeFile(file: "notifications/${STAGE_NAME}.msg", text: message)
+    stash(includes: "notifications/*" , name: "notifications-${STAGE_NAME}")
 }
 
 /** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
 String getAllJenkinsMessages() {
     script {
-        unstash 'notifications'
+        // Stages must be explicitly added to prevent overwriting
+        // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
+        def stages = ['build-x86', 'build-arm64']
+        for (stage in stages) {
+            unstash "notifications-${stage}"
+        }
+
         def files = findFiles(excludes: '', glob: 'notifications/*')
         def data = ""
         for (file in files) {
             data = data + "\n" + readFile (file: file.path)
         }
+
+        // Delete all the notifications from the workspace
+        dir('notifications') {
+            deleteDir()
+        }
+        return data
     }
 }
