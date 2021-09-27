@@ -12,7 +12,7 @@ from build_workflow.build_artifact_check import BuildArtifactCheck
 from system.properties_file import PropertiesFile
 
 
-class BuildArtifactCheckPlugin(BuildArtifactCheck):
+class BuildArtifactOpenSearchCheckPlugin(BuildArtifactCheck):
     def check(self, path):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")

@@ -11,10 +11,12 @@ from unittest.mock import MagicMock, patch
 
 import yaml
 
-from build_workflow.build_artifact_check_maven import BuildArtifactCheckMaven
-from build_workflow.build_artifact_check_plugin import BuildArtifactCheckPlugin
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
+from build_workflow.opensearch.build_artifact_check_maven import \
+    BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_plugin import \
+    BuildArtifactOpenSearchCheckPlugin
 from manifests.build_manifest import BuildManifest
 
 
@@ -101,7 +103,7 @@ class TestBuildRecorder(unittest.TestCase):
 
         recorder.record_component("security", MagicMock())
 
-        with patch.object(BuildArtifactCheckPlugin, "check") as mock_check:
+        with patch.object(BuildArtifactOpenSearchCheckPlugin, "check") as mock_check:
             recorder.record_artifact(
                 "security", "plugins", "../file1.zip", "invalid.file"
             )
@@ -115,7 +117,7 @@ class TestBuildRecorder(unittest.TestCase):
 
         recorder.record_component("security", MagicMock())
 
-        with patch.object(BuildArtifactCheckMaven, "check") as mock_check:
+        with patch.object(BuildArtifactOpenSearchCheckMaven, "check") as mock_check:
             recorder.record_artifact("security", "maven", "../file1.zip", "valid.jar")
 
         mock_check.assert_called_with("valid.jar")
@@ -149,7 +151,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    @patch.object(BuildArtifactCheckPlugin, "check")
+    @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
     def test_record_artifact_check_plugin_version_properties(self, *mocks):
         mock = self.__mock(snapshot=False)
         mock.record_component(
@@ -167,7 +169,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    @patch.object(BuildArtifactCheckPlugin, "check")
+    @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
     def test_record_artifact_check_plugin_version_properties_snapshot(self, *mocks):
         mock = self.__mock(snapshot=True)
         mock.record_component(
