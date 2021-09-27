@@ -198,7 +198,7 @@ Tests the OpenSearch bundle.
 
 This workflow contains integration, backwards compatibility and performance tests. 
 
-More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/docs/README.md).
+More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/README.md).
 
 Usage:
 ```bash
