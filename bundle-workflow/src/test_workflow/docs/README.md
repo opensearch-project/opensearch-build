@@ -2,21 +2,21 @@
 
 This document covers test workflow from design perspective and how it works as part of CI CD.
 
-The overall CICD infrastructure is divided into two main workflows - `build` and `test`. The `build` workflow automates the process to generate all kinds of OpenSearch artifacts and provide them as bundles to the `test` workflow. Once the artifacts are built, the `build` workflow kicks off the `test` workflow, which runs exhaustive testing on the artifact based on the artifact type. For more details on build workflow, please refer to this [README](https://github.com/opensearch-project/opensearch-build/blob/main/bundle-workflow/README.md). The next section talks in detail about the test workflow.
+The overall CICD infrastructure is divided into two main workflows - `build` and `test`. The `build` workflow automates the process to generate all OpenSearch artifacts and provide them as bundles to the `test` workflow, which runs exhaustive testing on the artifacts based on the artifact type. The next section talks in detail about the test workflow.
 
 # `test` workflow
 
 ## How it works
 
-Once a new bundle is ready, the `build-job` kicks off the `test-orchestrator pipeline` with input parameters `(build_id, architecture, opensearch_version)` that uniquely identify the bundle. The test orchestrator-pipeline generate a unique `test_run_id`, that uniquely identifies the test execution and invokes all three test jobs - `integ-test, bwc-test, perf-test` in parallel. 
+Once a new bundle is ready, the `build-job` kicks off the [test-orchestrator-pipeline](../../../jenkins_workflow/test/orchestrator/Jenkinsfile) with input parameters `(build_id, architecture, opensearch_version)` that uniquely identify the bundle. The test orchestrator-pipeline generate a unique `test_run_id`, that uniquely identifies the test execution and invokes all three test jobs - `integ-test, bwc-test, perf-test` in parallel. 
 
-The `integ-test` job starts by pulling the manifest files and installing the required dependencies for running plugin integration tests. It then kicks off the integration test for each plugin based on the `test-configs` defined in `test-manifest.yml`. It executes each configuration separately from others by spinning up a dedicated local test cluster. It uses `integtest.sh` script to run the integration test. There is a default version of this script present in opensearch-build repo and also allows plugins to override the default by having a custom integtest.sh in plugin repo. 
+The [integ-test job](../../../jenkins_workflow/test/testsuite/Jenkinsfile) starts by pulling the manifest files and installing the required dependencies for running plugin integration tests. It then kicks off the integration test for each plugin based on the `test-configs` defined in [test-manifest.yml](../config/test_manifest.yml). It executes each configuration separately from others by spinning up a dedicated local test cluster. It uses `integtest.sh` script to run the integration test. There is a [default](../../../scripts/default/integtest.sh) version of this script present in opensearch-build repo and also allows plugins to override the default by having a custom integtest.sh in plugin repo. 
 
-Once all tests complete, the notifications job can send out the notifications to the subscribed channels. Below ** figure illustrates how different components of the test workflow would interact with each other. 
+Once all tests complete, the notifications job can send out the notifications to the subscribed channels. Below figure illustrates how different components of the test workflow would interact with each other. 
 
 
-![Image: Jenkins_v2.png](images/Jenkins_v2.png)
-**Figure 1** Concept diagram for Automated test infrastructure
+![Image: test_workflow.png](images/test_workflow.png)
+**Figure 1**: `test_workflow` components and request flow explained  
 
 ## Component level details
 
@@ -58,7 +58,7 @@ The development is tracked by [meta issue #126](https://github.com/opensearch-pr
 
 Manifest files are configurations for a particular bundle. `test-workflow` uses three types of manifest files to run test suites. 
 
-1. `test-manifest.yml` provides a list of test configurations to run against a given component in the bundle. An example of a configuration would be, integration test `index-management` plugin `with-security` and `without-security`. This manifest file serves as a support matrix config for the testing and should be updated by plugins if new components or test suites are to be added as part of the release workflow.
+1. `test-manifest.yml` provides a list of test configurations to run against a given component in the bundle. An example of a configuration would be, integration test `index-management` plugin `with-security` and `without-security`. This manifest file serves as a support matrix config for the testing and should be updated by plugins if new components or test suites are to be added as part of the release workflow. See [here](../config/test_manifest.yml)
 2. `build-manifest.yml` created by the build-workflow and provides a list of artifacts built as part of the build-workflow. It assists `test-workflow` pull the maven and build dependencies to run the test suites.
 3. `bundle-manfest.yml` created by the build-workflow and provides a list of components packaged in a given bundle.  It assists `test-workflow` to identify what components should be tested for a given bundle.
 
@@ -79,7 +79,7 @@ Similarly, some plugins have dependency on other plugins and require their zip a
 
 This section defines how the permissions are configured for reading bundle, tarball, maven dependencies etc. from S3 and writing the results log back to s3 once the tests complete.
 
-The Jenkins infrastructure is setup in an AWS account via cdk. The account provides a `test-orchestrator-role` with permission policy to read and write from s3, see [[1] test-orchestrator-role policy](https://quip-amazon.com/vKtJAqgnZVkz#temp:C:JMIcb303e6ee8cb4369b3ec1a910) . The `instance-profile` role has `assume-role` permissions on this `test-orchestrator role` which allows the jenkins instance to read and write from required s3 locations.
+The Jenkins infrastructure is setup in an AWS account via cdk. The account provides a `test-orchestrator-role` with permission policy to read and write from s3, see [[1] test-orchestrator-role policy](#appendix) . The `instance-profile` role has `assume-role` permissions on this `test-orchestrator role` which allows the jenkins instance to read and write from required s3 locations.
 
 # Appendix
 
