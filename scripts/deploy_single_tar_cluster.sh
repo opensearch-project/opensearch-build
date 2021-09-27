@@ -11,8 +11,8 @@
 set -e
 
 # Source lib
-. ../../lib/shell/file_management.sh
-. ../../lib/shell/process_control.sh
+. ../lib/shell/file_management.sh
+. ../lib/shell/process_control.sh
 
 
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
