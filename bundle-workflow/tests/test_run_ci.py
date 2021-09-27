@@ -61,5 +61,5 @@ class TestRunCi(unittest.TestCase):
         )
 
         # each component gets checked out and checked
-        self.assertEqual(mock_repo.call_count, 14)
-        self.assertEqual(mock_ci.return_value.check.call_count, 14)
+        self.assertEqual(mock_repo.call_count, 15)
+        self.assertEqual(mock_ci.return_value.check.call_count, 15)
