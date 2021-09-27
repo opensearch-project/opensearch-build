@@ -77,10 +77,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Cross Cluster Replication
 - Initial commit to support replication
 - Porting replication plugin to OpenSearch
-- Pause and Resume API (#10)
-- Leader Stats API (#122)
-- Follower stats API (#126)
-- AutoFollow Stats API Addition (#131)
+- Pause and Resume API ([#10](https://github.com/opensearch-project/cross-cluster-replication/pull/10))
+- Leader Stats API ([#122](https://github.com/opensearch-project/cross-cluster-replication/pull/122))
+- Follower stats API ([#126](https://github.com/opensearch-project/cross-cluster-replication/pull/126))
+- AutoFollow Stats API Addition ([#131](https://github.com/opensearch-project/cross-cluster-replication/pull/131))
 
 
 ### OpenSearch Index Management
