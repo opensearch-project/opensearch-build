@@ -1,0 +1,45 @@
+name: versions
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: 3.7
+      JDK_VERSION: 14
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up JDK ${{ env.JDK_VERSION }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Pipenv and Dependencies
+        run: |
+          python -m pip install --upgrade pipenv wheel
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-cache-maven-local
+      - name: Update OpenSearch Manifests
+        run: |
+          ./bundle-workflow/manifests.sh update
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Updated manifests.
+          delete-branch: true
+          title: '[AUTO] Updated input manifests.'
+          body: |
+            I've noticed that a repo has incremented a version and have made some updates to input manifests.
+      - name: Check outputs
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"

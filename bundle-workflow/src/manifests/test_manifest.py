@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import yaml
+from manifests.manifest import Manifest
 
 
-class TestManifest:
+class TestManifest(Manifest):
     """
     TestManifest contains the test support matrix for any component.
 
@@ -15,29 +15,70 @@ class TestManifest:
         schema-version: '1.0'
         components:
           - name: index-management
+            working-directory: optional relative directory to run commands in
             integ-test:
-              dependencies:
-                - job-scheduler
-                - alerting
               test-configs:
                 - with-security
                 - without-security
                 - with-less-security
+              additional-cluster-configs:
+                - key : value
             bwc-test:
-              dependencies:
               test-configs:
                 - with-security
                 - without-security
     """
 
-    @staticmethod
-    def from_file(file):
-        return TestManifest(yaml.safe_load(file))
+    SCHEMA = {
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "components": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"required": True, "type": "string"},
+                    "working-directory": {"type": "string"},
+                    "integ-test": {
+                        "type": "dict",
+                        "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
+                            "test-configs": {
+                                "type": "list",
+                                "allowed": [
+                                    "with-security",
+                                    "without-security",
+                                ],
+                            },
+                            "additional-cluster-configs": {
+                                "type": "dict",
+                            },
+                        },
+                    },
+                    "bwc-test": {
+                        "type": "dict",
+                        "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
+                            "test-configs": {
+                                "type": "list",
+                                "allowed": [
+                                    "with-security",
+                                    "without-security",
+                                    "with-less-security",
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
 
     def __init__(self, data):
-        self.version = str(data["schema-version"])
-        if self.version != "1.0":
-            raise ValueError(f"Unsupported schema version: {self.version}")
+        super().__init__(data)
         self.components = list(
             map(lambda entry: self.Component(entry), data["components"])
         )
@@ -53,12 +94,19 @@ class TestManifest:
     class Component:
         def __init__(self, data):
             self.name = data["name"]
+            self.working_directory = data.get("working-directory", None)
             self.integ_test = data["integ-test"]
             self.bwc_test = data["bwc-test"]
 
         def __to_dict__(self):
-            return {
-                "name": self.name,
-                "integ-test": self.integ_test,
-                "bwc-test": self.bwc_test,
-            }
+            return Manifest.compact(
+                {
+                    "name": self.name,
+                    "working-directory": self.working_directory,
+                    "integ-test": self.integ_test,
+                    "bwc-test": self.bwc_test,
+                }
+            )
+
+
+TestManifest.__test__ = False  # type:ignore

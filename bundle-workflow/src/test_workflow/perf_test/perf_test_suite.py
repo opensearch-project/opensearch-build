@@ -11,12 +11,12 @@ class PerfTestSuite:
 
     def __init__(self, bundle_manifest, endpoint, security, current_workspace):
         self.manifest = bundle_manifest
-        self.work_dir = 'tools/cdk/mensor/mensor_tests'
+        self.work_dir = 'mensor/'
         self.endpoint = endpoint
         self.security = security
         self.current_workspace = current_workspace
         self.command = f'pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}'\
-                       f' -a {self.manifest.build.architecture} '
+                       f' -a {self.manifest.build.architecture} -p {self.current_workspace}'
 
     def execute(self):
         try:

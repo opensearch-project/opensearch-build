@@ -39,7 +39,8 @@ class TestManifest(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             TestManifest.SampleManifest.from_path(manifest_path)
         self.assertEqual(
-            "Unsupported schema version: invalid", context.exception.__str__()
+            "Invalid manifest schema: {'schema-version': ['unallowed value invalid']}",
+            context.exception.__str__(),
         )
 
     def test_compact(self):
@@ -50,7 +51,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(Manifest.compact({"x": "y", "z": {"t": None}}), {"x": "y"})
 
     def test_to_file(self):
-        manifest_path = os.path.join(self.data_path, "opensearch-build-1.1.0.yml")
+        manifest_path = os.path.join(self.data_path, "min.yml")
         manifest = TestManifest.SampleManifest.from_path(manifest_path)
 
         with tempfile.TemporaryDirectory() as path:

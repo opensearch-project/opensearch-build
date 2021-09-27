@@ -12,9 +12,9 @@ from system.properties_file import PropertiesFile
 
 
 class CiCheckGradleDependencies(CiCheck):
-    def __init__(self, component, git_repo, target, gradle_project=None):
-        super().__init__(component, git_repo, target)
-        self.gradle_project = gradle_project
+    def __init__(self, component, git_repo, target, args):
+        super().__init__(component, git_repo, target, args)
+        self.gradle_project = args if args else None
         self.dependencies = self.__get_dependencies()
 
     def __get_dependencies(self):
@@ -23,6 +23,7 @@ class CiCheckGradleDependencies(CiCheck):
                 f"./gradlew {self.gradle_project or ''}:dependencies",
                 f"-Dopensearch.version={self.target.opensearch_version}",
                 f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
+                "--configuration compileOnly",
                 '| grep -e "---"',
             ]
         )

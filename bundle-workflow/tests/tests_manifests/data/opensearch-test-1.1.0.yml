@@ -1,0 +1,19 @@
+components:
+  - name: index-management
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
+schema-version: '1.0'

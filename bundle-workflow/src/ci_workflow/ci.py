@@ -4,9 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from ci_workflow.ci_check_gradle_dependencies_opensearch import (
-    CiCheckGradleDependenciesOpenSearchVersion,
-    CiCheckGradlePluginDependenciesOpenSearchVersion)
+from ci_workflow.ci_check_gradle_dependencies_opensearch import \
+    CiCheckGradleDependenciesOpenSearchVersion
 from ci_workflow.ci_check_gradle_properties_version import \
     CiCheckGradlePropertiesVersion
 from ci_workflow.ci_check_gradle_publish_to_maven_local import \
@@ -21,7 +20,6 @@ class Ci:
     CHECKS = {
         "gradle:properties:version": CiCheckGradlePropertiesVersion,
         "gradle:dependencies:opensearch.version": CiCheckGradleDependenciesOpenSearchVersion,
-        "gradle:plugin.dependencies:opensearch.version": CiCheckGradlePluginDependenciesOpenSearchVersion,
         "gradle:publish": CiCheckGradlePublishToMavenLocal,
     }
 
@@ -46,8 +44,8 @@ class Ci:
 
     def check(self):
         for check in self.component.checks:
-            klass = Ci.CHECKS[check]
+            klass = Ci.CHECKS[check.name]
             if klass is None:
                 raise Ci.InvalidCheckError(check)
-            instance = klass(self.component, self.git_repo, self.target)
+            instance = klass(self.component, self.git_repo, self.target, check.args)
             instance.check()

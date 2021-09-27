@@ -1,0 +1,11 @@
+build:
+  name: OpenSearch
+  version: 1.2.0
+components:
+- name: OpenSearch
+  ref: 1.x
+  repository: https://github.com/opensearch-project/OpenSearch.git
+  checks:
+    - gradle:publish
+    - gradle:properties:version
+schema-version: '1.0'

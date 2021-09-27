@@ -8,10 +8,13 @@ import logging
 import os
 import subprocess
 import time
-import urllib.request
 
+import psutil  # type: ignore
 import requests
+import yaml
 
+from aws.s3_bucket import S3Bucket
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 
 
@@ -20,11 +23,15 @@ class LocalTestCluster(TestCluster):
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
 
-    def __init__(self, work_dir, bundle_manifest, security_enabled):
+    def __init__(self, work_dir, component_name, additional_cluster_config, bundle_manifest, security_enabled,
+                 s3_bucket_name=None):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         os.makedirs(self.work_dir, exist_ok=True)
+        self.component_name = component_name
         self.security_enabled = security_enabled
+        self.bucket_name = s3_bucket_name
+        self.additional_cluster_config = additional_cluster_config
         self.process = None
 
     def create_cluster(self):
@@ -34,6 +41,9 @@ class LocalTestCluster(TestCluster):
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
+        if self.additional_cluster_config is not None:
+            self.__add_plugin_specific_config(self.additional_cluster_config,
+                                              os.path.join(self.install_dir, "config", "opensearch.yml"))
         self.process = subprocess.Popen(
             "./opensearch-tar-install.sh",
             cwd=self.install_dir,
@@ -59,15 +69,20 @@ class LocalTestCluster(TestCluster):
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
+    def __download_tarball_from_s3(self):
+        s3_path = BundleManifest.get_tarball_relative_location(
+            self.manifest.build.id, self.manifest.build.version, self.manifest.build.architecture)
+        S3Bucket(self.bucket_name).download_file(s3_path, self.work_dir)
+        return BundleManifest.get_tarball_name(self.manifest.build.version, self.manifest.build.architecture)
+
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")
         os.chdir(self.work_dir)
-        logging.info(f"Downloading bundle from {self.manifest.build.location}")
-        urllib.request.urlretrieve(self.manifest.build.location, "bundle.tgz")
-        logging.info(f'Downloaded bundle to {os.path.realpath("bundle.tgz")}')
-
+        logging.info("Downloading bundle from s3")
+        bundle_name = self.__download_tarball_from_s3()
+        logging.info(f'Downloaded bundle to {os.path.realpath(bundle_name)}')
         logging.info("Unpacking")
-        subprocess.check_call("tar -xzf bundle.tgz", shell=True)
+        subprocess.check_call(f"tar -xzf {bundle_name}", shell=True)
         logging.info("Unpacked")
 
     def disable_security(self, dir):
@@ -75,6 +90,10 @@ class LocalTestCluster(TestCluster):
             f'echo "plugins.security.disabled: true" >> {os.path.join(dir, "config", "opensearch.yml")}',
             shell=True,
         )
+
+    def __add_plugin_specific_config(self, additional_config: dict, file):
+        with open(file, "a") as yamlfile:
+            yamlfile.write(yaml.dump(additional_config))
 
     def wait_for_service(self):
         logging.info("Waiting for service to become available")
@@ -85,15 +104,23 @@ class LocalTestCluster(TestCluster):
                 logging.info(f"Pinging {url} attempt {attempt}")
                 response = requests.get(url, verify=False, auth=("admin", "admin"))
                 logging.info(f"{response.status_code}: {response.text}")
-                if response.status_code == 200 and '"status":"green"' in response.text:
-                    logging.info("Cluster is green")
+                if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
+                    logging.info("Service is available")
                     return
             except requests.exceptions.ConnectionError:
                 logging.info("Service not available yet")
             time.sleep(10)
-        raise ClusterCreationException("Cluster is not green after 10 attempts")
+        raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
+        parent = psutil.Process(self.process.pid)
+        logging.debug("Checking for child processes")
+        child_processes = parent.children(recursive=True)
+        for child in child_processes:
+            logging.debug(f"Found child process with pid {child.pid}")
+            if child.pid != self.process.pid:
+                logging.debug(f"Sending SIGKILL to {child.pid} ")
+                child.kill()
         logging.info(f"Sending SIGTERM to PID {self.process.pid}")
         self.process.terminate()
         try:

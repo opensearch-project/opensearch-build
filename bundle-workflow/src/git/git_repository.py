@@ -29,8 +29,11 @@ class GitRepository:
             self.dir = directory
             os.makedirs(self.dir, exist_ok=False)
 
-        # Check out the repository
         self.working_subdirectory = working_subdirectory
+        self.__checkout__()
+
+    def __checkout__(self):
+        # Check out the repository
         self.execute_silent("git init", self.dir)
         self.execute_silent(f"git remote add origin {self.url}", self.dir)
         self.execute_silent(f"git fetch --depth 1 origin {self.ref}", self.dir)

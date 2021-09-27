@@ -4,6 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
+
+from aws.s3_bucket import S3Bucket
 from manifests.manifest import Manifest
 
 """
@@ -37,12 +40,51 @@ components:
 
 
 class BuildManifest(Manifest):
+    components: list
+
+    SCHEMA = {
+        "build": {
+            "required": True,
+            "type": "dict",
+            "schema": {
+                "architecture": {"required": True, "type": "string"},
+                "id": {"required": True, "type": "string"},
+                "name": {"required": True, "type": "string"},
+                "version": {"required": True, "type": "string"},
+            },
+        },
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "components": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "artifacts": {
+                        "type": "dict",
+                        "schema": {
+                            "maven": {"type": "list"},
+                            "plugins": {"type": "list"},
+                            "bundle": {"type": "list"},
+                            "core-plugins": {"type": "list"},
+                            "libs": {"type": "list"},
+                        },
+                    },
+                    "commit_id": {"required": True, "type": "string"},
+                    "name": {"required": True, "type": "string"},
+                    "ref": {"required": True, "type": "string"},
+                    "repository": {"required": True, "type": "string"},
+                    "version": {"required": True, "type": "string"},
+                },
+            },
+        },
+    }
+
     def __init__(self, data):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
         self.components = list(
-            map(lambda entry: self.Component(entry), data["components"])
+            map(lambda entry: self.Component(entry), data.get("components", []))
         )
 
     def __to_dict__(self):
@@ -53,6 +95,37 @@ class BuildManifest(Manifest):
                 map(lambda component: component.__to_dict__(), self.components)
             ),
         }
+
+    def get_component(self, component_name):
+        component = next(
+            iter(filter(lambda comp: comp.name == component_name, self.components)),
+            None,
+        )
+        if component is None:
+            raise BuildManifest.ComponentNotFoundError(
+                f"{component_name} not found in build manifest.yml"
+            )
+        return component
+
+    @staticmethod
+    def get_build_manifest_relative_location(
+        build_id, opensearch_version, architecture
+    ):
+        return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
+
+    @staticmethod
+    def from_s3(bucket_name, build_id, opensearch_version, architecture, work_dir=None):
+        work_dir = work_dir if not None else str(os.getcwd())
+        manifest_s3_path = BuildManifest.get_build_manifest_relative_location(
+            build_id, opensearch_version, architecture
+        )
+        S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
+        build_manifest = BuildManifest.from_path("manifest.yml")
+        os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
+        return build_manifest
+
+    class ComponentNotFoundError(Exception):
+        pass
 
     class Build:
         def __init__(self, data):
@@ -75,7 +148,7 @@ class BuildManifest(Manifest):
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
-            self.artifacts = data["artifacts"]
+            self.artifacts = data.get("artifacts", [])
             self.version = data["version"]
 
         def __to_dict__(self):
