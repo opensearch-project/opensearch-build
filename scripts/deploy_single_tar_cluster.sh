@@ -84,7 +84,7 @@ echo New workspace $DIR
 
 # Create subfolders for both opensearch and dashboards
 mkdir -p $DIR/opensearch $DIR/opensearch-dashboards
-cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/opensearch
+cp -v opensearch-onetime-setup.sh $DIR/opensearch
 cd $DIR
 
 # Download Artifacts
