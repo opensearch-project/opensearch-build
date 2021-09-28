@@ -5,26 +5,24 @@
 # compatible open source license.
 
 from dataclasses import dataclass
-from typing import Union
+from typing import Iterator
 
 
 @dataclass
-class TestRecorderBuilder:
+class TestResultData:
     """
     Class that will hold all the required params for test_recorder module
     Record the test cluster logs.
-    component_name: component that is under test right now.
+    component_name: Name of the component that is being tested.
     component_test_config: component_config under consideration for test eg: with/without-security.
-    exit_code: int
+    exit_code: An exit code in the form of an integer
     stdout: A string containing the stdout stream from the test process.
     stderr: A string containing the stderr stream from the test process.
     log_files: A generator that yields tuples containing test cluster log files, in the form (absolute_path, relative_path).
-    log_file_location: str = None
     """
     component_name: str
     component_test_config: str
     exit_code: int
     stdout: str
     stderr: str
-    log_files: tuple
-    log_file_location: Union[str, None]
+    log_files: Iterator[str]
