@@ -13,8 +13,8 @@ import shutil
 import sys
 import tempfile
 
-from assemble_workflow.bundle import Bundle
 from assemble_workflow.bundle_recorder import BundleRecorder
+from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
 from system import console
 
@@ -59,7 +59,8 @@ def main():
         os.chdir(work_dir)
 
         bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
-        bundle = Bundle(build_manifest, artifacts_dir, bundle_recorder)
+
+        bundle = Bundles.create(build_manifest, artifacts_dir, bundle_recorder)
 
         bundle.install_plugins()
         logging.info(f"Installed plugins: {bundle.installed_plugins}")

@@ -85,3 +85,6 @@ class TestArgs:
         self.component = args.component
         self.keep = args.keep
         self.logging_level = args.logging_level
+
+
+TestArgs.__test__ = False  # type:ignore

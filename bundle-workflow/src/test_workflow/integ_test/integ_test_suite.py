@@ -15,8 +15,7 @@ from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_recorder.test_recorder_builder import \
-    TestRecorderBuilder
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class IntegTestSuite:
@@ -51,10 +50,12 @@ class IntegTestSuite:
 
     def execute(self):
         self.__install_build_dependencies()
+        test_configs = dict()
         for config in self.test_config.integ_test["test-configs"]:
             security = self.__is_security_enabled(config)
             status = self.__setup_cluster_and_execute_test_config(security, config)
-            return status, config
+            test_configs[config] = status
+        return test_configs
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
@@ -70,7 +71,9 @@ class IntegTestSuite:
         custom_local_path = os.path.join(
             self.repo.dir, "src/test/resources/job-scheduler"
         )
-        for file in glob.glob(custom_local_path + "/opensearch-job-scheduler-*.zip"):
+        for file in glob.glob(
+                os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")
+        ):
             os.unlink(file)
         job_scheduler = self.build_manifest.get_component("job-scheduler")
         DependencyInstaller(self.build_manifest.build).install_build_dependencies(
@@ -121,8 +124,8 @@ class IntegTestSuite:
             results_dir = os.path.join(
                 work_dir, "build", "reports", "tests", "integTest"
             )
-            test_recorder_builder = TestRecorderBuilder(self.component.name, test_config, status, stdout, stderr,
-                                                        walk(results_dir), "S3")
+            test_recorder_builder = TestResultData(self.component.name, test_config, status, stdout, stderr,
+                                                   walk(results_dir), "S3")
             self.test_recorder.record_test_outcome(test_recorder_builder)
             if stderr:
                 logging.info(

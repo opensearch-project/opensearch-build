@@ -52,7 +52,7 @@ class TestIntegSuite(unittest.TestCase):
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
-        integ_test_suite.execute()
+        test_configs = integ_test_suite.execute()
         mock_system_execute.assert_has_calls(
             [
                 call(
@@ -60,9 +60,16 @@ class TestIntegSuite(unittest.TestCase):
                     "/tmpdir/job-scheduler",
                     True,
                     False,
+                ),
+                call(
+                    "integtest.sh -b localhost -p 9200 -s false -v 1.1.0",
+                    "/tmpdir/job-scheduler",
+                    True,
+                    False,
                 )
             ]
         )
+        self.assertEqual(test_configs, {'with-security': 200, 'without-security': 200})
 
     @patch.object(
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
@@ -133,8 +140,9 @@ class TestIntegSuite(unittest.TestCase):
     def test_execute_with_missing_job_scheduler(
             self, mock_install_build_dependencies, *mock
     ):
-        with open("data/build_manifest_missing_components.yml", "r") as file:
-            invalid_build_manifest = BuildManifest.from_file(file)
+        invalid_build_manifest = BuildManifest.from_path(
+            "data/build_manifest_missing_components.yml"
+        )
         test_config, component = self.__get_test_config_and_bundle_component(
             "index-management"
         )
@@ -146,8 +154,11 @@ class TestIntegSuite(unittest.TestCase):
             "/tmpdir",
             "s3_bucket_name",
         )
-        with self.assertRaises(BuildManifest.ComponentNotFoundError):
+        with self.assertRaises(BuildManifest.ComponentNotFoundError) as context:
             integ_test_suite.execute()
+        self.assertEqual(
+            str(context.exception), "job-scheduler not found in build manifest.yml"
+        )
         mock_install_build_dependencies.assert_not_called()
 
     def __get_test_config_and_bundle_component(self, component_name):

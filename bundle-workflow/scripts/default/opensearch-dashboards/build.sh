@@ -19,7 +19,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -50,20 +50,21 @@ while getopts ":h:v:s:o:a:" arg; do
 done
 
 if [ -z "$VERSION" ]; then
-    echo "Error: You must specify the OpenSearch version"
+    echo "Error: You must specify the OpenSearch Dashboards version"
     usage
     exit 1
 fi
 
-[[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-mkdir -p $OUTPUT
-./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-
-zipPath=$(find . -path \*build/distributions/*.zip)
-distributions="$(dirname "${zipPath}")"
-
-echo "COPY ${distributions}/*.zip"
 mkdir -p $OUTPUT/plugins
-cp ${distributions}/*.zip ./$OUTPUT/plugins
+PLUGIN_NAME=$(basename "$PWD")
+# TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
+# This makes it so there is a dependency on having Dashboards pulled already.
+cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
+echo "BUILD MODULES FOR $PLUGIN_NAME"
+(cd ../OpenSearch-Dashboards && yarn osd bootstrap)
+echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
+(cd ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME && yarn plugin-helpers build)
+echo "COPY $PLUGIN_NAME.zip"
+cp -r ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/

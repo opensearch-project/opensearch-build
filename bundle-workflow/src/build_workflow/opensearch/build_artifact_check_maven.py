@@ -12,7 +12,7 @@ from build_workflow.build_artifact_check import BuildArtifactCheck
 from system.properties_file import PropertiesFile
 
 
-class BuildArtifactCheckMaven(BuildArtifactCheck):
+class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
     def check(self, path):
         ext = os.path.splitext(path)[1]
         if ext not in [
