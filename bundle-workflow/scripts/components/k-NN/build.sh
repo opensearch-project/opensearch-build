@@ -74,6 +74,11 @@ if [ "$ARCHITECTURE" = "x64" ]; then
     sed -i -e 's/-march=native/-march=x86-64/g' external/nmslib/similarity_search/CMakeLists.txt
 fi
 
+# For arm, march=native is broken in centos 7. Manually override to lowest version of armv8.
+if [ "$ARCHITECTURE" = "arm64" ]; then
+    sed -i -e 's/-march=native/-march=armv8-a/g' external/nmslib/similarity_search/CMakeLists.txt
+fi
+
 cmake .
 make
 
