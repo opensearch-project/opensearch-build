@@ -9,18 +9,21 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
-from build_workflow.build_artifact_check_maven import BuildArtifactCheckMaven
 from build_workflow.build_target import BuildTarget
+from build_workflow.opensearch.build_artifact_check_maven import \
+    BuildArtifactOpenSearchCheckMaven
 
 
-class TestBuildArtifactCheckMaven(unittest.TestCase):
+class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
     @contextmanager
     def __mock(self, props="", snapshot=True):
-        with patch("build_workflow.build_artifact_check_maven.ZipFile") as mock_zipfile:
+        with patch(
+            "build_workflow.opensearch.build_artifact_check_maven.ZipFile"
+        ) as mock_zipfile:
             mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
                 props
             )
-            yield BuildArtifactCheckMaven(
+            yield BuildArtifactOpenSearchCheckMaven(
                 BuildTarget(
                     build_id="1",
                     output_dir="output_dir",
