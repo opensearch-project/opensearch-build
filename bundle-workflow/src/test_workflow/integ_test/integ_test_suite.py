@@ -49,13 +49,12 @@ class IntegTestSuite:
         )
         self.save_logs = test_recorder.test_results_logs
 
-    def execute(self):
+    def execute(self, test_result):
         self.__install_build_dependencies()
-        test_configs = dict()
         for config in self.test_config.integ_test["test-configs"]:
-            status = self.__setup_cluster_and_execute_test_config(config)
-            test_configs[config] = status
-        return test_configs
+            security = self.__is_security_enabled(config)
+            status = self.__setup_cluster_and_execute_test_config(security)
+            test_result.append_result(self.component.name, config, status)
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
