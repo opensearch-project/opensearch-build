@@ -50,7 +50,7 @@ class TestIntegSuite(unittest.TestCase):
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
-        integ_test_suite.execute()
+        test_configs = integ_test_suite.execute()
         mock_system_execute.assert_has_calls(
             [
                 call(
@@ -58,9 +58,16 @@ class TestIntegSuite(unittest.TestCase):
                     "/tmpdir/job-scheduler",
                     True,
                     False,
+                ),
+                call(
+                    "integtest.sh -b localhost -p 9200 -s false -v 1.1.0",
+                    "/tmpdir/job-scheduler",
+                    True,
+                    False,
                 )
             ]
         )
+        self.assertEqual(test_configs, {'with-security': 200, 'without-security': 200})
 
     @patch.object(
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
