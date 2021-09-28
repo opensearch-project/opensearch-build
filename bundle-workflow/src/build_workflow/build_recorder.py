@@ -8,8 +8,7 @@ import logging
 import os
 import shutil
 
-from build_workflow.build_artifact_check_maven import BuildArtifactCheckMaven
-from build_workflow.build_artifact_check_plugin import BuildArtifactCheckPlugin
+from build_workflow.build_artifact_checks import BuildArtifactChecks
 from manifests.build_manifest import BuildManifest
 
 
@@ -17,6 +16,7 @@ class BuildRecorder:
     def __init__(self, target):
         self.build_manifest = self.BuildManifestBuilder(target)
         self.target = target
+        self.name = target.name
 
     def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(
@@ -38,7 +38,7 @@ class BuildRecorder:
         dest_dir = os.path.dirname(dest_file)
         os.makedirs(dest_dir, exist_ok=True)
         # Check artifact
-        self.__check_artifact(artifact_type, artifact_file)
+        BuildArtifactChecks.check(self.target, artifact_type, artifact_file)
         # Copy the file
         shutil.copyfile(artifact_file, dest_file)
         # Notify the recorder
@@ -53,12 +53,6 @@ class BuildRecorder:
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
         self.get_manifest().to_file(manifest_path)
         logging.info(f"Created build manifest {manifest_path}")
-
-    def __check_artifact(self, artifact_type, artifact_file):
-        if artifact_type == "plugins":
-            BuildArtifactCheckPlugin(self.target).check(artifact_file)
-        elif artifact_type == "maven":
-            BuildArtifactCheckMaven(self.target).check(artifact_file)
 
     class BuildManifestBuilder:
         def __init__(self, target):

@@ -1,5 +1,10 @@
 - [OpenSearch Bundle Workflow](#opensearch-bundle-workflow)
   - [How it works](#how-it-works)
+    - [OpenSearch](#opensearch)
+    - [OpenSearch Dashboards](#opensearch-dashboards)
+  - [CI CD Environment](#ci-cd-environment)
+    - [Build CI Runner Docker Image from Dockerfile](#build-ci-runner-docker-image-from-dockerfile)
+  - [Check Out Source](#check-out-source)
   - [Build from Source](#build-from-source)
     - [Custom Build Scripts](#custom-build-scripts)
   - [Assemble the Bundle](#assemble-the-bundle)
@@ -11,15 +16,14 @@
     - [Performance Tests](#performance-tests)
   - [Sanity Check the Bundle](#sanity-check-the-bundle)
   - [Auto-Generate Manifests](#auto-generate-manifests)
-  - [Component Onboarding](#component-onboarding)
 
 ## OpenSearch Bundle Workflow
 
-The bundle workflow builds a complete OpenSearch distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
+The bundle workflow builds a complete OpenSearch and OpenSearch Dashboards distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT.
 
 ### How it works
 
-This system performs a top-down build of all components required for a specific OpenSearch bundle release. 
+This system performs a top-down build of all components required for a specific OpenSearch and OpenSearch Dashboards bundle release. 
 The input to the system is a manifest that defines the order in which components should be built. 
 All manifests for our current releases are [here](/manifests).
  
@@ -34,9 +38,64 @@ Within each build script components have the option to place artifacts in a set 
 | /bundle       | Where the min bundle should be placed when built from `https://github.com/opensearch-project/OpenSearch`|
 | /libs         | Where any additional libs should be placed that are required during bundle assembly                     |
 
+#### OpenSearch
+
 The build order allows us to first publish `OpenSearch` followed by `common-utils` and publish these artifacts to maven local so that
 they are available for each component.  In order to ensure that the same versions are used, a `-Dopensearch.version` flag is passed to
 each component's build script that defines which version the component should build against.
+
+#### OpenSearch Dashboards
+
+The build order allows us first pull down `OpenSearch Dashboards` and then utilize it to build other components.
+*NOTE*: Building plugins requires having the core repository pulled down so it has access to bootstrap and build the modules utilized by plugins.
+
+### CI CD Environment
+
+We build, assemble, and test our artifacts on docker containers. All of our pipelines are using the same docker image for consistency.
+We provide docker files in `dockerfiles/` folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/).
+
+#### Build CI Runner Docker Image from Dockerfile
+
+* If you only want to build the docker image for either x64 or arm64, run this on a x64 or arm64 host respectively:
+  ```
+  docker build -f ./dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
+  ```
+
+* If you want to build multi-arch docker image for both x64 and arm64, make sure you are using Docker Desktop:
+  * Run these commands to setup the multi-arch builder, you can re-use this build later on, just need to re-bootstrap again if you restart Docker Desktop:
+    ```
+    docker buildx create --name multiarch
+    docker buildx use multiarch
+    docker buildx inspect --bootstrap
+    ```
+
+  * You should be able to see similar output in `docker ps` like this:
+    ```
+    123456789012 moby/buildkit:buildx-stable-1 "buildkitd" 11 minutes ago Up 11 minutes buildx_buildkit_multiarch0
+    ```
+
+  * Docker buildx is using a container to build multi-arch images and combine all the layers together, so you can only upload it to Docker Hub,
+    or save it locally as cache, means `docker images` will not show the image due to your host cannot have more than one CPU architecture.
+
+  * Run these commands to actually build the docker image in multi-arch and push to Docker Hub (est. 1hr time depend on your host hardware specifications and network bandwidth):
+    ```
+    docker buildx build --platform linux/amd64,linux/arm64 -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name> -f <Docker File Path> --push .
+    ```
+
+### Check Out Source
+
+The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
+
+```bash
+./bundle-workflow/checkout.sh manfiests/1.1.0/opensearch-1.1.0.yml
+```
+
+The following options are available.
+
+| name               | description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| -v, --verbose      | Show more verbose output.                                               |
+
 
 ### Build from Source
 
@@ -49,20 +108,31 @@ Each build requires a manifest to be passed as input. We currently have the foll
 | [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest for 1.1.0, the next version.                         |
 | [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)               | Manifest for 1.2.0, the following version.                    |
 | [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)               | Manifest for 2.0.0, the next major version of OpenSearch.     |
+| [opensearch-dashboards-1.1.0.yml](/manifests/1.1.0/opensearch-dashboards-1.1.0.yml)               | Manifest for 1.1.0, the next version.    
 
-The following example builds a shapshot version of OpenSearch 1.1.0.
+The following example builds a snapshot version of OpenSearch 1.1.0.
 
 ```bash
 ./bundle-workflow/build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
 ```
 
-The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
+While the following builds a snapshot version of OpenSearch-Dashboards 1.1.0.
+
+```bash
+./bundle-workflow/build.sh manifests/1.1.0/opensearch-dashboards-1.1.0.yml --snapshot
+```
+
+The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. 
+
+The [OpenSearch Dashboards repo](https://github.com/opensearch-project/OpenSearch-Dashboards) is built first, followed by all declared plugin repositories. 
+
+All final output is placed into an `artifacts` folder along with a build output `manifest.yml` that contains output details.
 
 Artifacts will contain the following folders.
 
 ```
 /artifacts
-  bundle/ <- contains opensearch min tarball 
+  bundle/ <- contains opensearch or opensearch-dashboards min tarball 
   maven/ <- all built maven artifacts
   plugins/ <- all built plugin zips
   core-plugins/ <- all built core plugins zip
@@ -126,7 +196,9 @@ The following command signs all artifacts.
 
 Tests the OpenSearch bundle.
 
-This workflow contains integration, backwards compatibility and performance tests.
+This workflow contains integration, backwards compatibility and performance tests. 
+
+More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/README.md).
 
 Usage:
 ```bash
@@ -219,7 +291,7 @@ The following options are available.
 
 ### Auto-Generate Manifests
 
-The [manifests workflow](src/manifests) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. Currently OpenSearch `main`, and `x.y` branches are checked out one-by-one, published to local maven, and their versions extracted using `./gradlew properties`. When a new version is found, a new input manifest is added to [manifests](../manifests), and [a pull request is opened](../.github/workflows/manifests.yml) (e.g. [opensearch-build#491](https://github.com/opensearch-project/opensearch-build/pull/491)).
+The [manifests workflow](src/manifests_workflow) reacts to version increments in OpenSearch and its components by extracting Gradle properties from project branches. Currently OpenSearch `main`, and `x.y` branches are checked out one-by-one, published to local maven, and their versions extracted using `./gradlew properties`. When a new version is found, a new input manifest is added to [manifests](../manifests), and [a pull request is opened](../.github/workflows/manifests.yml) (e.g. [opensearch-build#491](https://github.com/opensearch-project/opensearch-build/pull/491)).
 
 Show information about existing manifests. 
 
@@ -239,6 +311,7 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
+<<<<<<< HEAD
 
 ### Component Onboarding
 
@@ -260,3 +333,5 @@ With many components included in the distribution each component bears responsib
 1. Update a [manifest](/manifests) for a particular release to include your plugin.  For example to be included in the 1.1.0 release, you would update [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml). We require your plugin name, repository url, and git ref that should be used. For unreleased versions this should be a branch in your repository.  Once a release is cut, these refs will be updated to build from a tag or specific commit hash.
 
 1. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
+=======
+>>>>>>> origin/main

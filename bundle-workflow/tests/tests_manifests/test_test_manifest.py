@@ -32,7 +32,6 @@ class TestTestManifest(unittest.TestCase):
                 "test-configs": [
                     "with-security",
                     "without-security",
-                    "with-less-security",
                 ],
             },
         )

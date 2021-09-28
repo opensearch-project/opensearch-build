@@ -21,6 +21,8 @@ class TestManifest(Manifest):
                 - with-security
                 - without-security
                 - with-less-security
+              additional-cluster-configs:
+                - key : value
             bwc-test:
               test-configs:
                 - with-security
@@ -39,19 +41,27 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
                                     "with-security",
                                     "without-security",
-                                    "with-less-security",
                                 ],
+                            },
+                            "additional-cluster-configs": {
+                                "type": "dict",
                             },
                         },
                     },
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
+                            "build-dependencies": {
+                                "type": "list"
+                            },
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [

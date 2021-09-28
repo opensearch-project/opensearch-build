@@ -13,7 +13,9 @@ from ci_workflow.ci_args import CiArgs
 
 class TestCiArgs(unittest.TestCase):
 
-    CI_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/ci.py"))
+    CI_PY = os.path.realpath(
+        os.path.join(os.path.dirname(__file__), "../../src/run_ci.py")
+    )
 
     CI_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../ci.sh"))
 
