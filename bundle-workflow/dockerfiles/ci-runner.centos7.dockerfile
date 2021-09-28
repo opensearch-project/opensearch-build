@@ -9,16 +9,22 @@
 # Please read the README.md file for all the information before using this dockerfile
 
 
-FROM centos:8
+FROM centos:7
 
 # Add AdoptOpenJDK Repo
 RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" > /etc/yum.repos.d/adoptopenjdk.repo
 
+# Setup ENV to prevent ASCII data issues with Python3
+RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
+    echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh
+
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-pip python3-devel && \
-    ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
+    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-devel python3-pip
+
+# Install Python37 dependencies
+RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -48,6 +54,20 @@ RUN groupadd -g 1000 opensearch && \
 # Set JAVA_HOME
 # AdoptOpenJDK apparently does not add JAVA_HOME after installation
 RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
+
+# Install Python37 binary
+RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
+    cd Python-3.7.7 && \
+    ./configure --enable-optimizations && \
+    make altinstall
+
+# Setup Python37 links
+RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
+    pip3 install pipenv && pipenv --version
+
 
 # Change User
 USER 1000
