@@ -311,13 +311,10 @@ The following options are available.
 |--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose      | Show more verbose output.                                               |
-<<<<<<< HEAD
 
 ### Component Onboarding
 
 With many components included in the distribution each component bears responsibility to keep the release process streamlined and react to integration issues.
-
-1. Components repositories have a label matching the manifest versions so incoming issues can be appropriately labeled, e.g. Add `v1.1.0` to https://github.com/opensearch-project/opensearch-build/labels.
 
 1. Ensure your repository branches have continuous integration checks enabled and passing, e.g [job-scheduler workflow](https://github.com/opensearch-project/job-scheduler/blob/main/.github/workflows/test-and-build-workflow.yml).
 
@@ -333,5 +330,3 @@ With many components included in the distribution each component bears responsib
 1. Update a [manifest](/manifests) for a particular release to include your plugin.  For example to be included in the 1.1.0 release, you would update [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml). We require your plugin name, repository url, and git ref that should be used. For unreleased versions this should be a branch in your repository.  Once a release is cut, these refs will be updated to build from a tag or specific commit hash.
 
 1. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
-=======
->>>>>>> origin/main
