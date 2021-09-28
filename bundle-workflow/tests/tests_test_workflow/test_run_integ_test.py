@@ -7,7 +7,6 @@ from run_integ_test import BuildManifest, BundleManifest, main
 
 class TestRunIntegTest(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(__file__))
         self.bundle_manifest = BundleManifest.from_path("data/bundle_manifest.yml")
         self.build_manifest = BuildManifest.from_path("data/build_manifest.yml")
 
@@ -42,6 +41,3 @@ class TestRunIntegTest(unittest.TestCase):
         self.assertEqual(mock_bundle_from_s3.call_count, 1)
         self.assertEqual(mock_integ_test_suite.return_value.execute.call_count, 8)
 
-
-if __name__ == '__main__':
-    unittest.main()

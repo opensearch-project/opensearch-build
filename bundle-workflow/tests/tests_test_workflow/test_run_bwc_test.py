@@ -7,7 +7,6 @@ from run_bwc_test import BundleManifest, main
 
 class TestRunBwcTest(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.dirname(__file__))
         self.bundle_manifest = BundleManifest.from_path("data/bundle_manifest.yml")
 
     @staticmethod
@@ -29,6 +28,3 @@ class TestRunBwcTest(unittest.TestCase):
         main()
         self.assertEqual(mock_bwc_suite.return_value.execute.call_count, 1)
 
-
-if __name__ == '__main__':
-    unittest.main()
