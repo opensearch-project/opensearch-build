@@ -332,4 +332,4 @@ With many components included in the distribution each component bears responsib
 
 5. Update a [manifest](/manifests) for a particular release to include your plugin.  For example to be included in the 1.1.0 release, you would update [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml). We require your plugin name, repository url, and git ref that should be used. For unreleased versions this should be a branch in your repository.  Once a release is cut, these refs will be updated to build from a tag or specific commit hash.
 
-6. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
+6. Publish a PR to this repo including the updated manifest and the names of the artifacts being added, e.g. [Adding CCR to 1.1.0](https://github.com/opensearch-project/opensearch-build/commit/d459fa0afc0911e5681ed50523f377f21a335345#diff-656c5394aae52314d937774c774709941c4cb93c3fa9a079a8ac6ff9c38bd7d7).
