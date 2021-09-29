@@ -174,24 +174,23 @@ class LocalTestClusterTests(unittest.TestCase):
     def test_terminate_process(
         self, mock_logging, mock_terminate, mock_wait, mock_process
     ):
-        with open("stdout-tmp.txt", "w") as self.local_test_cluster.stdout, open(
-            "stderr-tmp.txt", "w"
-        ) as self.local_test_cluster.stderr:
-            self.local_test_cluster.process = self.process
-            self.local_test_cluster.terminate_process()
-            mock_process.assert_called_once_with(self.process.pid)
-            mock_terminate.assert_called_once()
-            mock_wait.assert_called_once_with(10)
-            mock_logging.info.assert_has_calls(
-                [
-                    call(f"Sending SIGTERM to PID {self.process.pid}"),
-                    call("Waiting for process to terminate"),
-                    call(
-                        f"Process terminated with exit code {self.process.returncode}"
-                    ),
-                ]
-            )
-            mock_logging.debug.assert_has_calls([call("Checking for child processes")])
+        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        self.local_test_cluster.process = self.process
+        self.local_test_cluster.terminate_process()
+        mock_process.assert_called_once_with(self.process.pid)
+        mock_terminate.assert_called_once()
+        mock_wait.assert_called_once_with(10)
+        mock_logging.info.assert_has_calls(
+            [
+                call(f"Sending SIGTERM to PID {self.process.pid}"),
+                call("Waiting for process to terminate"),
+                call(
+                    f"Process terminated with exit code {self.process.returncode}"
+                ),
+            ]
+        )
+        mock_logging.debug.assert_has_calls([call("Checking for child processes")])
 
     @patch(
         "test_workflow.integ_test.local_test_cluster.psutil.Process",
@@ -205,27 +204,26 @@ class LocalTestClusterTests(unittest.TestCase):
     def test_terminate_process_timeout(
         self, mock_logging, mock_terminate, mock_wait, mock_process
     ):
-        with open("stdout-tmp.txt", "w") as self.local_test_cluster.stdout, open(
-            "stderr-tmp.txt", "w"
-        ) as self.local_test_cluster.stderr:
-            mock_wait.side_effect = subprocess.TimeoutExpired(cmd="pass", timeout=1)
-            with self.assertRaises(subprocess.TimeoutExpired):
-                self.local_test_cluster.process = self.process
-                self.local_test_cluster.terminate_process()
-                mock_process.assert_called_once_with(self.process.pid)
-                mock_terminate.assert_called_once()
-                mock_wait.assert_called_with(10)
-                mock_logging.info.assert_has_calls(
-                    [
-                        call(f"Sending SIGTERM to PID {self.process.pid}"),
-                        call("Waiting for process to terminate"),
-                        call(
-                            "Process did not terminate after 10 seconds. Sending SIGKILL"
-                        ),
-                        call("Waiting for process to terminate"),
-                        call("Process failed to terminate even after SIGKILL"),
-                        call(
-                            f"Process terminated with exit code {self.process.returncode}"
-                        ),
-                    ]
-                )
+        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        mock_wait.side_effect = subprocess.TimeoutExpired(cmd="pass", timeout=1)
+        with self.assertRaises(subprocess.TimeoutExpired):
+            self.local_test_cluster.process = self.process
+            self.local_test_cluster.terminate_process()
+            mock_process.assert_called_once_with(self.process.pid)
+            mock_terminate.assert_called_once()
+            mock_wait.assert_called_with(10)
+            mock_logging.info.assert_has_calls(
+                [
+                    call(f"Sending SIGTERM to PID {self.process.pid}"),
+                    call("Waiting for process to terminate"),
+                    call(
+                        "Process did not terminate after 10 seconds. Sending SIGKILL"
+                    ),
+                    call("Waiting for process to terminate"),
+                    call("Process failed to terminate even after SIGKILL"),
+                    call(
+                        f"Process terminated with exit code {self.process.returncode}"
+                    ),
+                ]
+            )
