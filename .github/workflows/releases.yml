@@ -23,11 +23,11 @@ jobs:
         version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
-      - uses: JasonEtco/create-an-issue@v2.6
+      - uses: dblock/create-an-issue@v2.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ matrix.version }}
         with:
-          search_existing: all
+          search_existing: open, closed
           update_existing: false
           filename: .github/ISSUE_TEMPLATE/release_template.md
