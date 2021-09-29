@@ -32,7 +32,9 @@ def pull_build_repo(work_dir):
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
+    test_manifest_path = os.path.join(
+        os.path.dirname(__file__), "test_workflow/config/test_manifest.yml"
+    )
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
@@ -42,9 +44,19 @@ def main():
         logging.info("Switching to temporary work_dir: " + work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.architecture,
+            work_dir,
+        )
         build_manifest = BuildManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.architecture,
+            work_dir,
+        )
         pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         failed_components = dict()
@@ -57,7 +69,7 @@ def main():
                     bundle_manifest,
                     build_manifest,
                     work_dir,
-                    args.s3_bucket
+                    args.s3_bucket,
                 )
                 status, security = test_suite.execute()
                 if status != 0:
@@ -72,11 +84,15 @@ def main():
 
         if passed_components:
             for component, result in passed_components.items():
-                logging.info(f'PASS: Integration Test for {component} {result[1]} with status code {result[0]}')
+                logging.info(
+                    f"PASS: Integration Test for {component} {result[1]} with status code {result[0]}"
+                )
 
         if failed_components:
             for component, result in failed_components.items():
-                logging.error(f'FAIL: Integration Test for {component} {result[1]} with status code {result[0]}')
+                logging.error(
+                    f"FAIL: Integration Test for {component} {result[1]} with status code {result[0]}"
+                )
             sys.exit(1)
 
 

@@ -43,12 +43,8 @@ class TestTestManifest(unittest.TestCase):
         component = self.manifest.components[1]
         self.assertEqual(component.name, "dashboards-reports")
         self.assertEqual(component.working_directory, "reports-scheduler")
-        self.assertEqual(
-            component.integ_test, {"test-configs": ["without-security"]}
-        )
-        self.assertEqual(
-            component.bwc_test, {"test-configs": ["without-security"]}
-        )
+        self.assertEqual(component.integ_test, {"test-configs": ["without-security"]})
+        self.assertEqual(component.bwc_test, {"test-configs": ["without-security"]})
 
     def test_to_dict(self):
         data = self.manifest.to_dict()

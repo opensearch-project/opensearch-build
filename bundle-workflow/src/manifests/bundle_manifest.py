@@ -83,7 +83,9 @@ class BundleManifest(Manifest):
             build_id, opensearch_version, architecture
         )
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
-        bundle_manifest = BundleManifest.from_path(os.path.join(work_dir, 'manifest.yml'))
+        bundle_manifest = BundleManifest.from_path(
+            os.path.join(work_dir, "manifest.yml")
+        )
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
         return bundle_manifest
 

@@ -9,8 +9,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from assemble_workflow.bundle_opensearch import BundleOpenSearch
-from assemble_workflow.bundle_opensearch_dashboards import \
-    BundleOpenSearchDashboards
+from assemble_workflow.bundle_opensearch_dashboards import BundleOpenSearchDashboards
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
 

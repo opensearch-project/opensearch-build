@@ -38,14 +38,16 @@ config = yaml.safe_load(args.config)
 
 def get_infra_repo_url():
     if "GITHUB_TOKEN" in os.environ:
-        return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
+        return (
+            "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
+        )
     return "https://github.com/opensearch-project/opensearch-infra.git"
 
 
 def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
         os.chdir(work_dir)
-        current_workspace = os.path.join(work_dir, 'infra')
+        current_workspace = os.path.join(work_dir, "infra")
         GitRepository(get_infra_repo_url(), "main", current_workspace)
         security = False
         for component in manifest.components:
@@ -53,7 +55,9 @@ def main():
                 security = True
 
         with WorkingDirectory(current_workspace):
-            with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (
+            with PerfTestCluster.create(
+                manifest, config, args.stack, security, current_workspace
+            ) as (
                 test_cluster_endpoint,
                 test_cluster_port,
             ):

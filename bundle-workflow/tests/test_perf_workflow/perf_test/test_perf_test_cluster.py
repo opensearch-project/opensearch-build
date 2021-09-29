@@ -60,5 +60,7 @@ class TestPerfTestCluster(unittest.TestCase):
         with patch("test_workflow.perf_test.perf_test_cluster.os.chdir") as mock_chdir:
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_cluster.destroy()
-                mock_chdir.assert_called_once_with("current_workspace/opensearch-cluster/cdk/single-node/")
+                mock_chdir.assert_called_once_with(
+                    "current_workspace/opensearch-cluster/cdk/single-node/"
+                )
                 self.assertEqual(mock_check_call.call_count, 1)

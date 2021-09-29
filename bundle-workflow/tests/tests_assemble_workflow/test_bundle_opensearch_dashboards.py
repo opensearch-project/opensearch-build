@@ -8,8 +8,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from assemble_workflow.bundle_opensearch_dashboards import \
-    BundleOpenSearchDashboards
+from assemble_workflow.bundle_opensearch_dashboards import BundleOpenSearchDashboards
 from manifests.build_manifest import BuildManifest
 from paths.script_finder import ScriptFinder
 

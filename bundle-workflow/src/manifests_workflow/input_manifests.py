@@ -112,6 +112,8 @@ class InputManifests(Manifests):
                 manifest = InputManifest(data)
                 manifest_dir = os.path.join(self.manifests_path(), release_version)
                 os.makedirs(manifest_dir, exist_ok=True)
-                manifest_path = os.path.join(manifest_dir, f"opensearch-{release_version}.yml")
+                manifest_path = os.path.join(
+                    manifest_dir, f"opensearch-{release_version}.yml"
+                )
                 manifest.to_file(manifest_path)
                 logging.info(f"Wrote {manifest_path}")

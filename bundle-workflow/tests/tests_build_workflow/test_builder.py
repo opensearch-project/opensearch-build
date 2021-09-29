@@ -25,12 +25,16 @@ class TestBuilder(unittest.TestCase):
         self.assertEqual(self.builder.component_name, "component")
 
     def test_build(self):
-        self.builder.build(BuildTarget(name="OpenSearch", version="1.0.0", arch="x64", snapshot=False))
+        self.builder.build(
+            BuildTarget(name="OpenSearch", version="1.0.0", arch="x64", snapshot=False)
+        )
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
                     os.path.realpath(
-                        os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")
+                        os.path.join(
+                            ScriptFinder.default_scripts_path, "opensearch", "build.sh"
+                        )
                     ),
                     "-v 1.0.0",
                     "-a x64",
@@ -44,12 +48,16 @@ class TestBuilder(unittest.TestCase):
         )
 
     def test_build_snapshot(self):
-        self.builder.build(BuildTarget(name="OpenSearch", version="1.0.0", arch="x64", snapshot=True))
+        self.builder.build(
+            BuildTarget(name="OpenSearch", version="1.0.0", arch="x64", snapshot=True)
+        )
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
                     os.path.realpath(
-                        os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")
+                        os.path.join(
+                            ScriptFinder.default_scripts_path, "opensearch", "build.sh"
+                        )
                     ),
                     "-v 1.0.0",
                     "-a x64",
@@ -75,17 +83,23 @@ class TestBuilder(unittest.TestCase):
         mock_walk.side_effect = self.mock_os_walk
         self.builder.export_artifacts()
         self.assertEqual(self.builder.build_recorder.record_artifact.call_count, 2)
-        self.builder.build_recorder.record_artifact.assert_has_calls([
-            call(
-                "component",
-                "maven",
-                os.path.relpath("/maven/artifact1.jar", self.builder.artifacts_path),
-                "/maven/artifact1.jar",
-            ),
-            call(
-                "component",
-                "core-plugins",
-                os.path.relpath("/core-plugins/plugin1.zip", self.builder.artifacts_path),
-                "/core-plugins/plugin1.zip",
-            ),
-        ])
+        self.builder.build_recorder.record_artifact.assert_has_calls(
+            [
+                call(
+                    "component",
+                    "maven",
+                    os.path.relpath(
+                        "/maven/artifact1.jar", self.builder.artifacts_path
+                    ),
+                    "/maven/artifact1.jar",
+                ),
+                call(
+                    "component",
+                    "core-plugins",
+                    os.path.relpath(
+                        "/core-plugins/plugin1.zip", self.builder.artifacts_path
+                    ),
+                    "/core-plugins/plugin1.zip",
+                ),
+            ]
+        )

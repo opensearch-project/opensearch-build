@@ -41,9 +41,7 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
-                            "build-dependencies": {
-                                "type": "list"
-                            },
+                            "build-dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -59,9 +57,7 @@ class TestManifest(Manifest):
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
-                            "build-dependencies": {
-                                "type": "list"
-                            },
+                            "build-dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [

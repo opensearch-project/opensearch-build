@@ -92,7 +92,9 @@ class TestGitRepositoryWithWorkingDir(unittest.TestCase):
             working_subdirectory="ISSUE_TEMPLATE",
         )
 
-        self.assertEqual(repo.working_directory, os.path.join(repo.dir, "ISSUE_TEMPLATE"))
+        self.assertEqual(
+            repo.working_directory, os.path.join(repo.dir, "ISSUE_TEMPLATE")
+        )
 
         pwd = repo.output("pwd")
         self.assertEqual(pwd, os.path.join(repo.dir, "ISSUE_TEMPLATE"))

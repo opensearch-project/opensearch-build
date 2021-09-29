@@ -40,7 +40,7 @@ class TestBuildArtifactCheckMaven(unittest.TestCase):
             mock.check("valid.jar")
 
     def test_record_maven_artifact_after_checking_maven_version_properties_snapshot(
-        self
+        self,
     ):
         with self.__mock("Implementation-Version: 1.1.0.0-SNAPSHOT") as mock:
             mock.check("valid.jar")

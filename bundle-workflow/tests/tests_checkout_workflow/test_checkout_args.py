@@ -26,7 +26,9 @@ class TestCheckoutArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [CHECKOUT_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self):
-        self.assertEqual(CheckoutArgs().manifest.name, TestCheckoutArgs.OPENSEARCH_MANIFEST)
+        self.assertEqual(
+            CheckoutArgs().manifest.name, TestCheckoutArgs.OPENSEARCH_MANIFEST
+        )
 
     @patch("argparse._sys.argv", [CHECKOUT_PY, OPENSEARCH_MANIFEST, "--verbose"])
     def test_verbose_true(self):

@@ -7,8 +7,9 @@
 import unittest
 from unittest.mock import MagicMock
 
-from ci_workflow.ci_check_gradle_publish_to_maven_local import \
-    CiCheckGradlePublishToMavenLocal
+from ci_workflow.ci_check_gradle_publish_to_maven_local import (
+    CiCheckGradlePublishToMavenLocal,
+)
 from ci_workflow.ci_target import CiTarget
 
 

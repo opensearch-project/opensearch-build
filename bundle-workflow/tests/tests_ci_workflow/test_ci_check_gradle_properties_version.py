@@ -7,8 +7,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.ci_check_gradle_properties_version import \
-    CiCheckGradlePropertiesVersion
+from ci_workflow.ci_check_gradle_properties_version import (
+    CiCheckGradlePropertiesVersion,
+)
 from ci_workflow.ci_target import CiTarget
 from manifests.input_manifest import InputManifest
 from system.properties_file import PropertiesFile
