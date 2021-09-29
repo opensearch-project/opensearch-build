@@ -11,9 +11,6 @@ import os
 import pathlib
 
 from git.git_repository import GitRepository
-#
-#GitRepository = __import__(".opensearch-build.bundle-workflow.src.git.git_repository.GitRepository")
-# from "opensearch-build.bundle-workflow.src.git.git_repository" import GitRepository
 
 """
 This class is responsible for signing an artifact using the OpenSearch-signer-client and verifying its signature.
