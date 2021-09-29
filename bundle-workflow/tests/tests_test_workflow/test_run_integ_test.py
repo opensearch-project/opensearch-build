@@ -1,4 +1,9 @@
-import os
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
 import unittest
 from unittest.mock import patch
 
@@ -40,4 +45,3 @@ class TestRunIntegTest(unittest.TestCase):
         main()
         self.assertEqual(mock_bundle_from_s3.call_count, 1)
         self.assertEqual(mock_integ_test_suite.return_value.execute.call_count, 8)
-

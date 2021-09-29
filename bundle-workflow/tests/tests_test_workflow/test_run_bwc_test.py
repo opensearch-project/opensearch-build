@@ -1,4 +1,9 @@
-import os
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
 import unittest
 from unittest.mock import patch
 
@@ -27,4 +32,3 @@ class TestRunBwcTest(unittest.TestCase):
         self.mock_args(mock_test_args)
         main()
         self.assertEqual(mock_bwc_suite.return_value.execute.call_count, 1)
-
