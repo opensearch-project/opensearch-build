@@ -326,7 +326,7 @@ With many components included in the distribution each component bears responsib
 
 3. Execute `./bundle-workflow/build.sh` to ensure your component builds and all artifacts are correctly placed into ./artifacts/ with correct output names.
 
-  - (Only OpenSearch components) Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT named artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
+   - (Only OpenSearch components) Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT named artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
 
 4. Execute `./bundle-workflow/assemble.sh` to ensure the full bundle is assembled and placed in to /bundles/*.tar.gz.  Unpack the tarball to ensure all your components are placed in their correct locations.
 
