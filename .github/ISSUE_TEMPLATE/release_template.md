@@ -1,7 +1,7 @@
 ---
 name: Release
 title: "[RELEASE] Release version {{ env.VERSION }}"
-labels: untriaged, release
+labels: untriaged, release, v{{ env.VERSION }}
 ---
 
 ## Release OpenSearch and OpenSearch Dashboards {{ env.VERSION }}
