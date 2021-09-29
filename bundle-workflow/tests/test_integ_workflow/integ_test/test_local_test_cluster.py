@@ -32,6 +32,7 @@ class LocalTestClusterTests(unittest.TestCase):
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.work_dir = tempfile.TemporaryDirectory()
         self.process = self.__get_process()
+        self.process.returncode = 0
         self.local_test_cluster = LocalTestCluster(
             self.work_dir.name,
             "sql",
@@ -77,22 +78,21 @@ class LocalTestClusterTests(unittest.TestCase):
 
     @patch("subprocess.Popen")
     @patch("yaml.dump")
+    @patch("builtins.open", mock_open())
     def test_create_cluster(self, *mocks):
         self.local_test_cluster.download = MagicMock()
         self.local_test_cluster.wait_for_service = MagicMock()
-        with patch("builtins.open", mock_open()):
-            with open("stdout.txt", "w") as stdout, open("stderr.txt", "w") as stderr:
-                self.local_test_cluster.create_cluster()
-                subprocess.Popen.assert_called_with(
-                    "./opensearch-tar-install.sh",
-                    cwd=f"opensearch-{self.manifest.build.version}",
-                    shell=True,
-                    stdout=stdout,
-                    stderr=stderr,
-                )
-                yaml.dump.assert_called_once_with(
-                    {"script.context.field.max_compilations_rate": "1000/1m"}
-                )
+        self.local_test_cluster.create_cluster()
+        subprocess.Popen.assert_called_with(
+            "./opensearch-tar-install.sh",
+            cwd=f"opensearch-{self.manifest.build.version}",
+            shell=True,
+            stdout=self.local_test_cluster.stdout,
+            stderr=self.local_test_cluster.stderr,
+        )
+        yaml.dump.assert_called_once_with(
+            {"script.context.field.max_compilations_rate": "1000/1m"}
+        )
 
     def test_endpoint(self):
         self.assertEqual(self.local_test_cluster.endpoint(), "localhost")
@@ -162,18 +162,11 @@ class LocalTestClusterTests(unittest.TestCase):
             "Cluster is not available after 10 attempts",
         )
 
-    @patch(
-        "test_workflow.integ_test.local_test_cluster.psutil.Process",
-        side_effect=__mock_process,
-    )
+    @patch("test_workflow.integ_test.local_test_cluster.psutil.Process", side_effect=__mock_process)
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.wait")
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
-    @patch(
-        "test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock()
-    )
-    def test_terminate_process(
-        self, mock_logging, mock_terminate, mock_wait, mock_process
-    ):
+    @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
+    def test_terminate_process(self, mock_logging, mock_terminate, mock_wait, mock_process):
         self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
         self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
         self.local_test_cluster.process = self.process
@@ -185,45 +178,32 @@ class LocalTestClusterTests(unittest.TestCase):
             [
                 call(f"Sending SIGTERM to PID {self.process.pid}"),
                 call("Waiting for process to terminate"),
-                call(
-                    f"Process terminated with exit code {self.process.returncode}"
-                ),
+                call("Process terminated with exit code 0"),
             ]
         )
         mock_logging.debug.assert_has_calls([call("Checking for child processes")])
 
-    @patch(
-        "test_workflow.integ_test.local_test_cluster.psutil.Process",
-        side_effect=__mock_process,
-    )
+    @patch("test_workflow.integ_test.local_test_cluster.psutil.Process", side_effect=__mock_process)
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.wait")
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
-    @patch(
-        "test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock()
-    )
-    def test_terminate_process_timeout(
-        self, mock_logging, mock_terminate, mock_wait, mock_process
-    ):
+    @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
+    def test_terminate_process_timeout(self, mock_logging, mock_terminate, mock_wait, mock_process):
         self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
         self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
         mock_wait.side_effect = subprocess.TimeoutExpired(cmd="pass", timeout=1)
         with self.assertRaises(subprocess.TimeoutExpired):
             self.local_test_cluster.process = self.process
             self.local_test_cluster.terminate_process()
-            mock_process.assert_called_once_with(self.process.pid)
-            mock_terminate.assert_called_once()
-            mock_wait.assert_called_with(10)
-            mock_logging.info.assert_has_calls(
-                [
-                    call(f"Sending SIGTERM to PID {self.process.pid}"),
-                    call("Waiting for process to terminate"),
-                    call(
-                        "Process did not terminate after 10 seconds. Sending SIGKILL"
-                    ),
-                    call("Waiting for process to terminate"),
-                    call("Process failed to terminate even after SIGKILL"),
-                    call(
-                        f"Process terminated with exit code {self.process.returncode}"
-                    ),
-                ]
-            )
+        mock_process.assert_called_once_with(self.process.pid)
+        mock_terminate.assert_called_once()
+        mock_wait.assert_called_with(10)
+        mock_logging.info.assert_has_calls(
+            [
+                call(f"Sending SIGTERM to PID {self.process.pid}"),
+                call("Waiting for process to terminate"),
+                call("Process did not terminate after 10 seconds. Sending SIGKILL"),
+                call("Waiting for process to terminate"),
+                call("Process failed to terminate even after SIGKILL"),
+                call("Process terminated with exit code 0"),
+            ]
+        )
