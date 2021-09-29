@@ -46,10 +46,12 @@ class IntegTestSuite:
 
     def execute(self):
         self.__install_build_dependencies()
+        test_configs = dict()
         for config in self.test_config.integ_test["test-configs"]:
             security = self.__is_security_enabled(config)
             status = self.__setup_cluster_and_execute_test_config(security)
-            return status, config
+            test_configs[config] = status
+        return test_configs
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
