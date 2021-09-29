@@ -19,7 +19,8 @@ from test_workflow.test_cluster import ClusterCreationException
 
 
 class LocalTestClusterTests(unittest.TestCase):
-    def setUp(self):
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
+    def setUp(self, mock_test_recorder):
         self.maxDiff = None
         self.data_path = os.path.realpath(
             os.path.join(os.path.dirname(__file__), "../../tests_manifests/data")
@@ -35,7 +36,9 @@ class LocalTestClusterTests(unittest.TestCase):
             {"script.context.field.max_compilations_rate": "1000/1m"},
             self.manifest,
             True,
-            "dummy-bucket",
+            "with-security",
+            mock_test_recorder,
+            "dummy-bucket"
         )
 
     def tearDown(self):
@@ -115,14 +118,17 @@ class LocalTestClusterTests(unittest.TestCase):
 
     @patch("time.sleep")
     @patch("requests.get", side_effect=__mock_response)
-    def test_wait_for_service_cluster_unavailable(self, *mocks):
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
+    def test_wait_for_service_cluster_unavailable(self, mock_test_recorder, *mocks):
         local_test_cluster = LocalTestCluster(
             self.work_dir.name,
             "index-management",
             "",
             self.manifest,
             False,
-            "dummy-bucket",
+            "without-security",
+            mock_test_recorder,
+            "dummy-bucket"
         )
         with self.assertRaises(ClusterCreationException) as err:
             local_test_cluster.wait_for_service()

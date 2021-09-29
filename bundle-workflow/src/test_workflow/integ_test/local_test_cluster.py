@@ -18,8 +18,7 @@ from manifests.bundle_manifest import BundleManifest
 from paths.tree_walker import walk
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_recorder.test_recorder_builder import \
-    TestRecorderBuilder
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class LocalTestCluster(TestCluster):
@@ -29,6 +28,7 @@ class LocalTestCluster(TestCluster):
 
     def __init__(self, work_dir, component_name, additional_cluster_config, bundle_manifest, security_enabled,
                  component_test_config,
+                 test_recorder: TestRecorder,
                  s3_bucket_name=None):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
@@ -38,8 +38,8 @@ class LocalTestCluster(TestCluster):
         self.component_test_config = component_test_config
         self.bucket_name = s3_bucket_name
         self.additional_cluster_config = additional_cluster_config
-        self.test_recorder = TestRecorder.get_instance()
         self.process = None
+        self.save_logs = test_recorder.local_cluster_logs
 
     def create_cluster(self):
         self.download()
@@ -73,10 +73,9 @@ class LocalTestCluster(TestCluster):
             return
         self.terminate_process()
         log_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
-        test_recorder_builder = TestRecorderBuilder(self.component_name, self.component_test_config, 0,
-                                                    self.local_cluster_stdout, self.local_cluster_stderr, log_files,
-                                                    "S3")
-        self.test_recorder.record_cluster_logs("local", test_recorder_builder)
+        test_result_data = TestResultData(self.component_name, self.component_test_config, self.return_code,
+                                          self.local_cluster_stdout, self.local_cluster_stderr, log_files)
+        self.save_logs.save_test_result_data(test_result_data)
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
@@ -153,6 +152,7 @@ class LocalTestCluster(TestCluster):
                 self.local_cluster_stdout = stdout.read()
             with open(os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r") as stderr:
                 self.local_cluster_stderr = stderr.read()
+            self.return_code = self.process.returncode
             self.stdout.close()
             self.stderr.close()
             self.process = None

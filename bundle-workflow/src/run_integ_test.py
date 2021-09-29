@@ -41,7 +41,7 @@ def main():
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
-        TestRecorder(args.test_run_id, "integ-test", work_dir)
+        test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
@@ -59,7 +59,8 @@ def main():
                     bundle_manifest,
                     build_manifest,
                     work_dir,
-                    args.s3_bucket
+                    args.s3_bucket,
+                    test_recorder
                 )
                 test_configs = test_suite.execute()
                 for security, status in test_configs.items():
