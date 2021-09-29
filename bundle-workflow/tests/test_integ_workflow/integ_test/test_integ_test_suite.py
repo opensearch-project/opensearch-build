@@ -33,8 +33,9 @@ class TestIntegSuite(unittest.TestCase):
     @patch.object(ScriptFinder, "find_integ_test_script")
     @patch("test_workflow.integ_test.integ_test_suite.execute")
     @patch("test_workflow.integ_test.integ_test_suite.LocalTestCluster")
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_with_multiple_test_configs(
-        self, mock_local_test_cluster, mock_system_execute, mock_script_finder, *mock
+            self, mock_test_recorder, mock_local_test_cluster, mock_system_execute, mock_script_finder, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "job-scheduler"
@@ -46,6 +47,7 @@ class TestIntegSuite(unittest.TestCase):
             self.build_manifest,
             "/tmpdir",
             "s3_bucket_name",
+            mock_test_recorder
         )
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
@@ -73,7 +75,8 @@ class TestIntegSuite(unittest.TestCase):
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
     )
     @patch("test_workflow.integ_test.integ_test_suite.DependencyInstaller")
-    def test_execute_with_build_dependencies(self, mock_dependency_installer, *mock):
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
+    def test_execute_with_build_dependencies(self, mock_test_recorder, mock_dependency_installer, *mock):
         test_config, component = self.__get_test_config_and_bundle_component(
             "index-management"
         )
@@ -84,6 +87,7 @@ class TestIntegSuite(unittest.TestCase):
             self.build_manifest,
             "/tmpdir",
             "s3_bucket_name",
+            mock_test_recorder
         )
         integ_test_suite.execute()
         mock_dependency_installer.return_value.install_build_dependencies.assert_called_with(
@@ -95,8 +99,9 @@ class TestIntegSuite(unittest.TestCase):
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
     )
     @patch.object(DependencyInstaller, "install_build_dependencies")
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_without_build_dependencies(
-        self, mock_install_build_dependencies, *mock
+            self, mock_test_recorder, mock_install_build_dependencies, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "job-scheduler"
@@ -108,6 +113,7 @@ class TestIntegSuite(unittest.TestCase):
             self.build_manifest,
             "/tmpdir",
             "s3_bucket_name",
+            mock_test_recorder
         )
         integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
@@ -116,8 +122,9 @@ class TestIntegSuite(unittest.TestCase):
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
     )
     @patch.object(DependencyInstaller, "install_build_dependencies")
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_with_unsupported_build_dependencies(
-        self, mock_install_build_dependencies, *mock
+            self, mock_test_recorder, mock_install_build_dependencies, *mock
     ):
         test_config, component = self.__get_test_config_and_bundle_component(
             "anomaly-detection"
@@ -129,14 +136,16 @@ class TestIntegSuite(unittest.TestCase):
             self.build_manifest,
             "/tmpdir",
             "s3_bucket_name",
+            mock_test_recorder
         )
         with self.assertRaises(InvalidTestConfigError):
             integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
 
     @patch.object(DependencyInstaller, "install_build_dependencies")
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_with_missing_job_scheduler(
-        self, mock_install_build_dependencies, *mock
+            self, mock_test_recorder, mock_install_build_dependencies, *mock
     ):
         invalid_build_manifest = BuildManifest.from_path(
             "data/build_manifest_missing_components.yml"
@@ -151,6 +160,7 @@ class TestIntegSuite(unittest.TestCase):
             invalid_build_manifest,
             "/tmpdir",
             "s3_bucket_name",
+            mock_test_recorder
         )
         with self.assertRaises(BuildManifest.ComponentNotFoundError) as context:
             integ_test_suite.execute()
