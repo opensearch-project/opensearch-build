@@ -13,6 +13,8 @@ from paths.script_finder import ScriptFinder
 from paths.tree_walker import walk
 from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
+from test_workflow.test_result.test_result import TestResult
+from test_workflow.test_result.test_result_component import TestResultsComponent
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -49,12 +51,17 @@ class IntegTestSuite:
         )
         self.save_logs = test_recorder.test_results_logs
 
-    def execute(self, test_result):
+    def execute(self):
+        test_results = TestResultsComponent(self.component.name)
         self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
+            print(config)
             security = self.__is_security_enabled(config)
+            print(security)
             status = self.__setup_cluster_and_execute_test_config(security)
-            test_result.append_result(self.component.name, config, status)
+            print(status)
+            test_results[self.component.name].append(TestResult(self.component.name, config, status).log())
+        return test_results
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
