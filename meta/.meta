@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "OpenSearch": "git@github.com:opensearch-project/OpenSearch.git",
+    "OpenSearch-Dashboards": "git@github.com:opensearch-project/OpenSearch-Dashboards.git",
+    "alerting": "git@github.com:opensearch-project/alerting.git",
+    "anomaly-detection": "git@github.com:opensearch-project/anomaly-detection.git",
+    "asynchronous-search": "git@github.com:opensearch-project/asynchronous-search.git",
+    "dashboards-notebooks": "git@github.com:opensearch-project/dashboards-notebooks",
+    "dashboards-reports": "git@github.com:opensearch-project/dashboards-reports.git",
+    "dashboards-visualizations": "git@github.com:opensearch-project/dashboards-visualizations.git",
+    "index-management": "git@github.com:opensearch-project/index-management.git",
+    "job-scheduler": "git@github.com:opensearch-project/job-scheduler.git",
+    "k-nn": "git@github.com:opensearch-project/k-nn.git",
+    "performance-analyzer": "git@github.com:opensearch-project/performance-analyzer.git",
+    "security-dashboards-plugin": "git@github.com:opensearch-project/security-dashboards-plugin.git",
+    "security": "git@github.com:opensearch-project/security.git",
+    "sql": "git@github.com:opensearch-project/sql.git",
+    "trace-analytics": "git@github.com:opensearch-project/trace-analytics.git",
+    "alerting-dashboards-plugin": "git@github.com:opensearch-project/alerting-dashboards-plugin.git",
+    "notifications": "git@github.com:opensearch-project/notifications.git",
+    "index-management-dashboards-plugin": "git@github.com:opensearch-project/index-management-dashboards-plugin.git",
+    "anomaly-detection-dashboards-plugin": "git@github.com:opensearch-project/anomaly-detection-dashboards-plugin.git"
+  }
+}
