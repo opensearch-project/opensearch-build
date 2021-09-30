@@ -18,6 +18,7 @@ from system.temporary_directory import TemporaryDirectory
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.test_args import TestArgs
+from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
 def pull_build_repo(work_dir):
@@ -40,6 +41,7 @@ def main():
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
+        test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
@@ -57,13 +59,15 @@ def main():
                     bundle_manifest,
                     build_manifest,
                     work_dir,
-                    args.s3_bucket
+                    args.s3_bucket,
+                    test_recorder
                 )
-                status, security = test_suite.execute()
-                if status != 0:
-                    failed_components[component.name] = [status, security]
-                else:
-                    passed_components[component.name] = [status, security]
+                test_configs = test_suite.execute()
+                for security, status in test_configs.items():
+                    if status != 0:
+                        failed_components[(component.name, security)] = status
+                    else:
+                        passed_components[(component.name, security)] = status
             else:
                 logging.info(
                     "Skipping tests for %s, as it is currently not supported"
@@ -72,11 +76,11 @@ def main():
 
         if passed_components:
             for component, result in passed_components.items():
-                logging.info(f'PASS: Integration Test for {component} {result[1]} with status code {result[0]}')
+                logging.info(f'PASS: Integration Test for {component[0]} {component[1]} with status code {result}')
 
         if failed_components:
             for component, result in failed_components.items():
-                logging.error(f'FAIL: Integration Test for {component} {result[1]} with status code {result[0]}')
+                logging.error(f'FAIL: Integration Test for {component[0]} {component[1]} with status code {result}')
             sys.exit(1)
 
 

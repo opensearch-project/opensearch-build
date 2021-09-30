@@ -10,9 +10,11 @@ import os
 
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
+from paths.tree_walker import walk
 from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class IntegTestSuite:
@@ -22,13 +24,14 @@ class IntegTestSuite:
     """
 
     def __init__(
-        self,
-        component,
-        test_config,
-        bundle_manifest,
-        build_manifest,
-        work_dir,
-        s3_bucket_name,
+            self,
+            component,
+            test_config,
+            bundle_manifest,
+            build_manifest,
+            work_dir,
+            s3_bucket_name,
+            test_recorder
     ):
         self.component = component
         self.bundle_manifest = bundle_manifest
@@ -38,18 +41,21 @@ class IntegTestSuite:
         self.s3_bucket_name = s3_bucket_name
         self.script_finder = ScriptFinder()
         self.additional_cluster_config = None
+        self.test_recorder = test_recorder
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
             os.path.join(self.work_dir, self.component.name),
         )
+        self.save_logs = test_recorder.test_results_logs
 
     def execute(self):
         self.__install_build_dependencies()
+        test_configs = dict()
         for config in self.test_config.integ_test["test-configs"]:
-            security = self.__is_security_enabled(config)
-            status = self.__setup_cluster_and_execute_test_config(security)
-            return status, config
+            status = self.__setup_cluster_and_execute_test_config(config)
+            test_configs[config] = status
+        return test_configs
 
     def __install_build_dependencies(self):
         if "build-dependencies" in self.test_config.integ_test:
@@ -66,7 +72,7 @@ class IntegTestSuite:
             self.repo.dir, "src/test/resources/job-scheduler"
         )
         for file in glob.glob(
-            os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")
+                os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")
         ):
             os.unlink(file)
         job_scheduler = self.build_manifest.get_component("job-scheduler")
@@ -81,29 +87,31 @@ class IntegTestSuite:
         else:
             raise InvalidTestConfigError("Unsupported test config: " + config)
 
-    def __setup_cluster_and_execute_test_config(self, security):
+    def __setup_cluster_and_execute_test_config(self, config):
+        security = self.__is_security_enabled(config)
         if "additional-cluster-configs" in self.test_config.integ_test.keys():
             self.additional_cluster_config = self.test_config.integ_test.get(
                 "additional-cluster-configs"
             )
             logging.info(f"Additional config found: {self.additional_cluster_config}")
         with LocalTestCluster.create(
-            self.work_dir,
-            self.component.name,
-            self.additional_cluster_config,
-            self.bundle_manifest,
-            security,
-            self.s3_bucket_name,
-        ) as (test_cluster_endpoint, test_cluster_port):
+                self.work_dir,
+                self.component.name,
+                self.additional_cluster_config,
+                self.bundle_manifest,
+                security,
+                config,
+                self.test_recorder,
+                self.s3_bucket_name) as (test_cluster_endpoint, test_cluster_port):
             self.__pretty_print_message(
                 "Running integration tests for " + self.component.name
             )
             os.chdir(self.work_dir)
             return self.__execute_integtest_sh(
-                test_cluster_endpoint, test_cluster_port, security
+                test_cluster_endpoint, test_cluster_port, security, config
             )
 
-    def __execute_integtest_sh(self, endpoint, port, security):
+    def __execute_integtest_sh(self, endpoint, port, security, test_config):
         script = self.script_finder.find_integ_test_script(
             self.component.name, self.repo.dir
         )
@@ -115,6 +123,12 @@ class IntegTestSuite:
                 else self.repo.dir
             )
             (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+            results_dir = os.path.join(
+                work_dir, "build", "reports", "tests", "integTest"
+            )
+            test_result_data = TestResultData(self.component.name, test_config, status, stdout, stderr,
+                                              walk(results_dir))
+            self.save_logs.save_test_result_data(test_result_data)
             if stderr:
                 logging.info(
                     "Integration test run failed for component " + self.component.name

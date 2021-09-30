@@ -35,9 +35,11 @@ def main():
 
     console.configure(level=args.logging_level)
 
-    tarball_installation_script = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "../../release/tar/linux/opensearch-tar-install.sh",
+    tarball_installation_script = os.path.realpath(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../../release/tar/linux/opensearch-tar-install.sh",
+        )
     )
     if not os.path.isfile(tarball_installation_script):
         logging.info(

@@ -12,6 +12,7 @@ class TestCluster(abc.ABC):
     """
     Abstract base class for all types of test clusters.
     """
+
     @classmethod
     @contextmanager
     def create(cls, *args):
