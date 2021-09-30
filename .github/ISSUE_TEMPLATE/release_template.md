@@ -15,7 +15,7 @@ I noticed that a manifest was automatically created in [manifests/{{ env.VERSION
 - [ ] Declare a pencils down date for new features to be merged.
 - [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
 - [ ] [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos) in each component repo.
-- [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) that links back to this issue.
+- [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-build/blob/main/meta/README.md#create-a-release-issue) that links back to this issue.
 - [ ] Ensure that all release issues created above are assigned to an owner in the component team.
 
 ### CI/CD
