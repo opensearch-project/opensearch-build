@@ -19,7 +19,7 @@ from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_result.test_result_suite import TestResultsSuite
+from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 
 def pull_build_repo(work_dir):
@@ -50,7 +50,7 @@ def main():
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
-        all_results = TestResultsSuite()
+        all_results = TestSuiteResults()
         for component in bundle_manifest.components:
             if component.name in integ_test_config.keys():
                 test_suite = IntegTestSuite(

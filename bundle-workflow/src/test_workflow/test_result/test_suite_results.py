@@ -1,9 +1,9 @@
 from sortedcontainers import SortedDict  # type: ignore
 
 
-class TestResultsSuite(SortedDict):
+class TestSuiteResults(SortedDict):
     def __init__(self):
-        super(TestResultsSuite, self).__init__()
+        super(TestSuiteResults, self).__init__()
 
     def __append__(self, component, test_result_component):
         self.__setitem__(component, test_result_component)
@@ -16,7 +16,11 @@ class TestResultsSuite(SortedDict):
             result.log()
 
     def status(self):
-        test_failed = False
         for result in self.values():
-            test_failed = result.test_status()
-        return test_failed
+            test_failed = result.failed
+            if test_failed:
+                return True
+        return False
+
+
+TestSuiteResults.__test__ = False  # type:ignore

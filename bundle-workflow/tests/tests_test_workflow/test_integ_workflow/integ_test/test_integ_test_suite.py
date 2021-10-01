@@ -52,7 +52,9 @@ class TestIntegSuite(unittest.TestCase):
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
-        integ_test_suite.execute()
+        test_results = integ_test_suite.execute()
+        self.assertEqual(len(test_results), 2)
+        self.assertEqual(test_results.failed, True)
         mock_system_execute.assert_has_calls(
             [
                 call(

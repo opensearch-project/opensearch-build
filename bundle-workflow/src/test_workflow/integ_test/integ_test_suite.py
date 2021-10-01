@@ -15,9 +15,9 @@ from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder.test_result_data import TestResultData
+from test_workflow.test_result.test_component_results import \
+    TestComponentResults
 from test_workflow.test_result.test_result import TestResult
-from test_workflow.test_result.test_result_component import \
-    TestResultsComponent
 
 
 class IntegTestSuite:
@@ -53,7 +53,7 @@ class IntegTestSuite:
         self.save_logs = test_recorder.test_results_logs
 
     def execute(self):
-        test_results = TestResultsComponent()
+        test_results = TestComponentResults()
         self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
             status = self.__setup_cluster_and_execute_test_config(config)
