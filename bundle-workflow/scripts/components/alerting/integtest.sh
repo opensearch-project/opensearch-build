@@ -82,8 +82,9 @@ fi
 if [ -z "$CREDENTIAL" ]
 then
   CREDENTIAL="admin:admin"
-  USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`
-  PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 fi
+
+USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`
+PASSWORD=`echo $CREDENTIAL | awk -F ':' '{print $2}'`
 
 ./gradlew integTest -Dopensearch.version=$OPENSEARCH_VERSION -Dbuild.snapshot=$SNAPSHOT -Dtests.rest.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.cluster="$BIND_ADDRESS:$BIND_PORT" -Dtests.clustername="opensearch-integrationtest" -Dhttps=$SECURITY_ENABLED -Dsecurity=$SECURITY_ENABLED -Duser=$USERNAME -Dpassword=$PASSWORD --console=plain
