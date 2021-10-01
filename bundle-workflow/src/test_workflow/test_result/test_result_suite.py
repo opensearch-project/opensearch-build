@@ -1,17 +1,22 @@
-class TestResultsSuite():
+from sortedcontainers import SortedDict  # type: ignore
 
+
+class TestResultsSuite(SortedDict):
     def __init__(self):
-        self.all_results = list()
+        super(TestResultsSuite, self).__init__()
 
-    def append(self, test_result):
-        self.all_results.append(test_result)
-    
+    def __append__(self, component, test_result_component):
+        self.__setitem__(component, test_result_component)
+
+    def append(self, component, test_result_component):
+        self.__append__(component, test_result_component)
+
     def log(self):
-        for result in self.all_results:
-            for component, logs in result.items():
-                for log in logs:
-                    print(log)
+        for result in self.values():
+            result.log()
 
-
-    #def status()        
-
+    def status(self):
+        test_failed = False
+        for result in self.values():
+            test_failed = result.test_status()
+        return test_failed

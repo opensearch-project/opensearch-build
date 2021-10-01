@@ -5,7 +5,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from argparse import _AppendAction
 import logging
 import os
 import sys
@@ -37,7 +36,6 @@ def main():
     console.configure(level=args.logging_level)
     test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
     test_manifest = TestManifest.from_path(test_manifest_path)
-    #test_result = TestResult()
     integ_test_config = dict()
     for component in test_manifest.components:
         if component.integ_test is not None:
@@ -51,7 +49,7 @@ def main():
         build_manifest = BuildManifest.from_s3(
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_build_repo(work_dir)
-        #DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
+        DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         all_results = TestResultsSuite()
         for component in bundle_manifest.components:
             if component.name in integ_test_config.keys():
@@ -65,8 +63,7 @@ def main():
                     test_recorder
                 )
                 test_results = test_suite.execute()
-                print(test_results)
-                all_results.append(test_results)
+                all_results.append(component.name, test_results)
 
             else:
                 logging.info(
@@ -75,8 +72,9 @@ def main():
                 )
 
         all_results.log()
-        if test_failed:
-            sys.exit(all_results.status)
+
+        if all_results.status():
+            sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
 
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
@@ -52,8 +52,7 @@ class TestIntegSuite(unittest.TestCase):
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
-        test_results = MagicMock()
-        integ_test_suite.execute(test_results)
+        integ_test_suite.execute()
         mock_system_execute.assert_has_calls(
             [
                 call(
@@ -89,8 +88,7 @@ class TestIntegSuite(unittest.TestCase):
             "s3_bucket_name",
             mock_test_recorder
         )
-        test_results = MagicMock()
-        integ_test_suite.execute(test_results)
+        integ_test_suite.execute()
         mock_dependency_installer.return_value.install_build_dependencies.assert_called_with(
             {"opensearch-job-scheduler": "1.1.0.0"},
             "/tmpdir/index-management/src/test/resources/job-scheduler",
@@ -116,8 +114,7 @@ class TestIntegSuite(unittest.TestCase):
             "s3_bucket_name",
             mock_test_recorder
         )
-        test_results = MagicMock()
-        integ_test_suite.execute(test_results)
+        integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
 
     @patch.object(
@@ -141,8 +138,7 @@ class TestIntegSuite(unittest.TestCase):
             mock_test_recorder
         )
         with self.assertRaises(InvalidTestConfigError):
-            test_results = MagicMock()
-            integ_test_suite.execute(test_results)
+            integ_test_suite.execute()
         mock_install_build_dependencies.assert_not_called()
 
     @patch.object(DependencyInstaller, "install_build_dependencies")
@@ -166,8 +162,7 @@ class TestIntegSuite(unittest.TestCase):
             mock_test_recorder
         )
         with self.assertRaises(BuildManifest.ComponentNotFoundError) as context:
-            test_results = MagicMock()
-            integ_test_suite.execute(test_results)
+            integ_test_suite.execute()
         self.assertEqual(
             str(context.exception), "job-scheduler not found in build manifest.yml"
         )
