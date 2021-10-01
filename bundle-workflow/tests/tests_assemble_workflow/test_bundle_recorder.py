@@ -87,3 +87,60 @@ class TestBundleRecorder(unittest.TestCase):
             data = self.bundle_recorder.get_manifest().to_dict()
             with open(manifest_path) as f:
                 self.assertEqual(yaml.safe_load(f), data)
+
+    def test_record_component_public(self):
+        self.bundle_recorder.public_url = 'https://ci.opensearch.org/ci/xyz'
+        component = BuildManifest.Component(
+            {
+                "name": "job_scheduler",
+                "repository": "https://github.com/opensearch-project/job_scheduler",
+                "ref": "main",
+                "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
+                "artifacts": [],
+                "version": "1.0",
+            }
+        )
+        self.bundle_recorder.record_component(component, "plugins")
+
+        self.assertEqual(
+            self.bundle_recorder.get_manifest().to_dict(),
+            {
+                "build": {
+                    "architecture": "x64",
+                    "id": "c3ff7a232d25403fa8cc14c97799c323",
+                    "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
+                    "name": "OpenSearch",
+                    "version": "1.1.0",
+                },
+                "components": [
+                    {
+                        "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
+                        "location": "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/plugins",
+                        "name": component.name,
+                        "ref": "main",
+                        "repository": "https://github.com/opensearch-project/job_scheduler",
+                    }
+                ],
+                "schema-version": "1.0",
+            },
+        )
+
+    def test_get_location_scenarios(self):
+        def get_location(public_url):
+            self.bundle_recorder.public_url = public_url
+            return self.bundle_recorder._BundleRecorder__get_location("builds", "dir1/dir2/file", "/tmp/builds/foo/dir1/dir2/file")
+
+        # No public URL - Fallback to ABS Path
+        self.assertEqual(get_location(None), "/tmp/builds/foo/dir1/dir2/file")
+
+        # Public URL - No trailing slash
+        self.assertEqual(
+            get_location("https://ci.opensearch.org/ci/xyz"),
+            "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+        )
+
+        # Public URL - Trailing slash
+        self.assertEqual(
+            get_location("https://ci.opensearch.org/ci/xyz/"),
+            "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+        )
