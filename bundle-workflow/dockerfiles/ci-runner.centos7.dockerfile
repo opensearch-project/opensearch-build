@@ -16,7 +16,8 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 
 # Setup ENV to prevent ASCII data issues with Python3
 RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
-    echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh
+    echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
+    localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || echo set locale
 
 # Add normal dependencies
 RUN yum clean all && \
