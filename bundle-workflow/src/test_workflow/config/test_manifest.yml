@@ -6,6 +6,8 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        path.repo: ["/tmp"]
     bwc-test:
       test-configs:
         - with-security
