@@ -54,7 +54,7 @@ class TestIntegSuite(unittest.TestCase):
         mock_script_finder.return_value = "integtest.sh"
         test_results = integ_test_suite.execute()
         self.assertEqual(len(test_results), 2)
-        self.assertEqual(test_results.failed, True)
+        self.assertTrue(test_results.failed)
         mock_system_execute.assert_has_calls(
             [
                 call(

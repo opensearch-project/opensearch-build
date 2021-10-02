@@ -15,12 +15,8 @@ class TestSuiteResults(SortedDict):
         for result in self.values():
             result.log()
 
-    def status(self):
-        for result in self.values():
-            test_failed = result.failed
-            if test_failed:
-                return True
-        return False
+    def failed(self):
+        return any(result.failed for result in self.values())
 
 
 TestSuiteResults.__test__ = False  # type:ignore

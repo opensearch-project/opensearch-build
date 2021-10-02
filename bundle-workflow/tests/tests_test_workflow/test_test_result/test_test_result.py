@@ -10,7 +10,7 @@ class TestTestResult(unittest.TestCase):
 
     def test_failed(self):
         failed = self.test_result.failed
-        self.assertEqual(failed, False)
+        self.assertFalse(failed)
 
     def test_log(self):
         result = MagicMock()

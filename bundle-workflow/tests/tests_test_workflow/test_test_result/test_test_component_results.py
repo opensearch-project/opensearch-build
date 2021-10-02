@@ -11,4 +11,4 @@ class TestTestResultsComponent(unittest.TestCase):
 
     def test_test_status(self):
         test_failed = self.test_test_results_component.failed
-        self.assertEqual(test_failed, False)
+        self.assertFalse(test_failed)

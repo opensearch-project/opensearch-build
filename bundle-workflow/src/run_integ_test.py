@@ -73,7 +73,7 @@ def main():
 
         all_results.log()
 
-        if all_results.status():
+        if all_results.failed():
             sys.exit(1)
 
 

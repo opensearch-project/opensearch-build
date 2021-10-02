@@ -8,5 +8,5 @@ class TestTestResultsSuite(unittest.TestCase):
         self.test_test_results_suite = TestSuiteResults()
 
     def test_status(self):
-        test_failed = self.test_test_results_suite.status()
-        self.assertEqual(test_failed, False)
+        test_failed = self.test_test_results_suite.failed()
+        self.assertFalse(test_failed)
