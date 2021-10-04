@@ -51,7 +51,9 @@ RUN groupadd -g $GID opensearch && \
 
 # Prepare working directory
 COPY opensearch-*.tgz /tmp/opensearch/
-RUN tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch && chmod 750 $OPENSEARCH_HOME/plugins/opensearch-security/tools/*
+RUN tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch && \
+    chmod 750 $OPENSEARCH_HOME/plugins/opensearch-security/tools/* && \
+    mkdir -p $OPENSEARCH_HOME/data && chown -R $UID:$GID $OPENSEARCH_HOME/data
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
 COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
