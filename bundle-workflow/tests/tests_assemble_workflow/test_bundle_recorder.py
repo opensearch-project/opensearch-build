@@ -89,7 +89,7 @@ class TestBundleRecorder(unittest.TestCase):
                 self.assertEqual(yaml.safe_load(f), data)
 
     def test_record_component_public(self):
-        self.bundle_recorder.public_url = 'https://ci.opensearch.org/ci/xyz'
+        self.bundle_recorder.public_url = 'https://ci.opensearch.org/ci/os-distro-prod'
         component = BuildManifest.Component(
             {
                 "name": "job_scheduler",
@@ -115,7 +115,7 @@ class TestBundleRecorder(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location": "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/plugins",
+                        "location": "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -135,12 +135,12 @@ class TestBundleRecorder(unittest.TestCase):
 
         # Public URL - No trailing slash
         self.assertEqual(
-            get_location("https://ci.opensearch.org/ci/xyz"),
-            "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+            get_location('https://ci.opensearch.org/ci/os-distro-prod'),
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
-            get_location("https://ci.opensearch.org/ci/xyz/"),
-            "https://ci.opensearch.org/ci/xyz/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+            get_location('https://ci.opensearch.org/ci/os-distro-prod/'),
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
         )

@@ -31,7 +31,7 @@ class BundleRecorder:
         return "-".join(parts) + ".tar.gz"
 
     def __get_public_url_path(self, folder, rel_path):
-        path = "{}/{}/{}/{}".format(folder, self.version, self.build_id, rel_path)
+        path = "/".join((folder, self.version, self.build_id, rel_path))
         return urljoin(self.public_url + "/", path)
 
     def __get_location(self, folder_name, rel_path, abs_path):
