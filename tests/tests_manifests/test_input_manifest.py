@@ -16,7 +16,7 @@ class TestInputManifest(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.manifests_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../../manifests")
+            os.path.join(os.path.dirname(__file__), "../../manifests")
         )
 
     def test_1_0(self):

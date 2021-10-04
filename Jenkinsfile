@@ -44,7 +44,7 @@ pipeline {
                     steps {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                            sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                 sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
                             }
@@ -120,8 +120,8 @@ pipeline {
 void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    sh "./bundle-workflow/build.sh manifests/$INPUT_MANIFEST"
-    sh './bundle-workflow/assemble.sh artifacts/manifest.yml'
+    sh "./build.sh manifests/$INPUT_MANIFEST"
+    sh './assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
     def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";

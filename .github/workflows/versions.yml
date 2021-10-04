@@ -30,7 +30,7 @@ jobs:
           key: ${{ runner.os }}-build-cache-maven-local
       - name: Update OpenSearch Manifests
         run: |
-          ./bundle-workflow/manifests.sh update
+          ./manifests.sh update
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:

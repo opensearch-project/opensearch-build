@@ -37,28 +37,28 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
 * Build single-arch image with these command:
   * OpenSearch 1.0.0 x64:
     ```
-    ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a x64
+    ./build-image-single-arch.sh -v 1.0.0 -f ./docker/opensearch.al2.dockerfile -p opensearch -a x64
     ```
   * OpenSearch 1.0.0 arm64 with local tarball:
     ```
-    ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a arm64 -t opensearch-1.0.0.tar.gz
+    ./build-image-single-arch.sh -v 1.0.0 -f ./docker/opensearch.al2.dockerfile -p opensearch -a arm64 -t opensearch-1.0.0.tar.gz
     ```
   * OpenSearch-Dashboards 1.0.0 x64:
     ```
-    ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a x64
+    ./build-image-single-arch.sh -v 1.0.0 -f ./docker/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a x64
     ```
   * OpenSearch-Dashboards 1.0.0 arm64 with local tarball:
     ```
-    ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a arm64 -t opensearch-dashboards-1.0.0.tar.gz
+    ./build-image-single-arch.sh -v 1.0.0 -f ./docker/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a arm64 -t opensearch-dashboards-1.0.0.tar.gz
     ```
 * Build multi-arch image with this commands (only support x64 + arm64 in one image for now), the image will immediately uploaded to a docker registry so you need to provide docker repo name:
   * OpenSearch 1.0.0:
   ```
-  ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>"
+  ./build-image-multi-arch.sh -v 1.0.0 -f ./docker/opensearch.al2.dockerfile -p opensearch -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>"
   ```
   * OpenSearch-Dashboards 1.0.0 with local tarball(s):
   ```
-  ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>" -t "opensearch-1.0.0.tar.gz,opensearch-dashboards-1.0.0.tar.gz"
+  ./build-image-multi-arch.sh -v 1.0.0 -f ./docker/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>" -t "opensearch-1.0.0.tar.gz,opensearch-dashboards-1.0.0.tar.gz"
   ```
 
 ### Disable Security Plugin, Security Dashboards Plugin, Security Demo Configurations and Related Configurations
