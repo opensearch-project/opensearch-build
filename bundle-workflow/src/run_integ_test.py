@@ -19,6 +19,7 @@ from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 
 def pull_build_repo(work_dir):
@@ -49,8 +50,7 @@ def main():
             args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
         pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
-        failed_components = dict()
-        passed_components = dict()
+        all_results = TestSuiteResults()
         for component in bundle_manifest.components:
             if component.name in integ_test_config.keys():
                 test_suite = IntegTestSuite(
@@ -62,25 +62,18 @@ def main():
                     args.s3_bucket,
                     test_recorder
                 )
-                test_configs = test_suite.execute()
-                for security, status in test_configs.items():
-                    if status != 0:
-                        failed_components[(component.name, security)] = status
-                    else:
-                        passed_components[(component.name, security)] = status
+                test_results = test_suite.execute()
+                all_results.append(component.name, test_results)
+
             else:
                 logging.info(
                     "Skipping tests for %s, as it is currently not supported"
                     % component.name
                 )
 
-        if passed_components:
-            for component, result in passed_components.items():
-                logging.info(f'PASS: Integration Test for {component[0]} {component[1]} with status code {result}')
+        all_results.log()
 
-        if failed_components:
-            for component, result in failed_components.items():
-                logging.error(f'FAIL: Integration Test for {component[0]} {component[1]} with status code {result}')
+        if all_results.failed():
             sys.exit(1)
 
 

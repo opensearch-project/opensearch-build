@@ -24,7 +24,7 @@ class LocalTestClusterTests(unittest.TestCase):
     def setUp(self, mock_test_recorder):
         self.maxDiff = None
         self.data_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../tests_manifests/data")
+            os.path.join(os.path.dirname(__file__), "../../../tests_manifests/data")
         )
         self.manifest_filename = os.path.join(
             self.data_path, "opensearch-bundle-1.1.0.yml"

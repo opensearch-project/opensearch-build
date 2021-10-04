@@ -52,7 +52,9 @@ class TestIntegSuite(unittest.TestCase):
         mock_system_execute.return_value = 200, "success", "failure"
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
-        test_configs = integ_test_suite.execute()
+        test_results = integ_test_suite.execute()
+        self.assertEqual(len(test_results), 2)
+        self.assertTrue(test_results.failed)
         mock_system_execute.assert_has_calls(
             [
                 call(
@@ -69,7 +71,6 @@ class TestIntegSuite(unittest.TestCase):
                 )
             ]
         )
-        self.assertEqual(test_configs, {'with-security': 200, 'without-security': 200})
 
     @patch.object(
         IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config"
