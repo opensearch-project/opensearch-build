@@ -24,9 +24,9 @@ components:
   # - name: indexManagementDashboards
   #   repository: https://github.com/opensearch-project/index-management-dashboards-plugin
   #   ref: main
-  # - name: anomalyDetectionDashboards
-  #   repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-  #   ref: main
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: main
   # # hybrid repo (dashboards-reports)
   # - name: reportsDashboards
   #   repository: https://github.com/opensearch-project/dashboards-reports.git
