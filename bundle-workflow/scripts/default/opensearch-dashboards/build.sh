@@ -68,3 +68,4 @@ echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME && yarn plugin-helpers build)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
+rm -rf ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME
