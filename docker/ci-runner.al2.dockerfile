@@ -11,6 +11,8 @@
 
 FROM amazonlinux:2
 
+ARG MAVEN_DIR=/usr/local/apache-maven
+
 # Add AdoptOpenJDK Repo
 RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" > /etc/yum.repos.d/adoptopenjdk.repo
 
@@ -30,11 +32,12 @@ RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x1
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Install higher version of maven 3.8.x
-RUN (curl -s https://dlcdn.apache.org/maven/maven-3/3.8.2/binaries/apache-maven-3.8.2-bin.tar.gz | tar xzf - -C /usr/local/) && \
-    echo "export M2_HOME=/usr/local/apache-maven-3.8.2" > /etc/profile.d/maven_path.sh && \
+RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
+    mkdir -p $MAVEN_DIR && (curl -s $MAVEN_URL | tar xzf - --strip-components=1 -C $MAVEN_DIR) && \
+    echo "export M2_HOME=/usr/local/$MAVEN_DIR" > /etc/profile.d/maven_path.sh && \
     echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
     echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh && \
-    ln -sfn /usr/local/apache-maven-3.8.2/bin/mvn /usr/local/bin/mvn
+    ln -sfn $MAVEN_DIR/bin/mvn /usr/local/bin/mvn
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
