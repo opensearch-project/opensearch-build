@@ -30,7 +30,7 @@ class Manifests(SortedDict):
     @property
     def manifests_path(self):
         return os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../../manifests")
+            os.path.join(os.path.dirname(__file__), "../../manifests")
         )
 
     @property

@@ -70,8 +70,7 @@ npm install -g yarn
 Install dependencies. 
 
 ```
-cd bundle-workflow
-~/.../bundle-workflow $ pipenv install
+$ pipenv install
 Installing dependencies from Pipfile.lock (1f4869)...
  🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 0/0 — 00:00:00
 To activate this project's virtualenv, run pipenv shell.
@@ -80,16 +79,16 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 ### Run Tests
 
-This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure code quality. See [bundle-workflow/tests](bundle-workflow).
+This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure code quality. See [tests](tests).
 
 ```
-~/.../bundle-workflow $ pipenv run pytest
+$ pipenv run pytest
 2 passed in 02s
 ```
 
 ### Run bundle-workflow
 
-Try running `./build.sh` from [bundle-workflow](./bundle-workflow). It should complete and show usage.
+Try running `./build.sh`. It should complete and show usage.
 
 ```
 $ ./build.sh 
@@ -124,7 +123,7 @@ Use `isort .` to fix any sorting order.
 
 ```
 $ pipenv run isort .
-Fixing bundle-workflow/tests/system/test_arch.py
+Fixing tests/system/test_arch.py
 ```
 
 Use [black](https://black.readthedocs.io/en/stable/) to auto-format your code.
@@ -143,7 +142,7 @@ This project uses [mypy](https://github.com/python/mypy) as an optional static t
 
 ```
 pipenv run mypy .
-bundle-workflow/src/assemble.py:14: error: Cannot find implementation or library stub for module named "assemble_workflow.bundle"
+src/assemble.py:14: error: Cannot find implementation or library stub for module named "assemble_workflow.bundle"
 ```
 
 ### Code Coverage
@@ -159,12 +158,6 @@ TOTAL 23491 12295 48%
 ```
 
 ### Pre-Commit Cheatsheet
-
-Run from `bundle-workflow` before making pull requests.
-
-```
-cd bundle-workflow
-```
 
 The pre-commit hook checks for imports, type, style and test.
 
