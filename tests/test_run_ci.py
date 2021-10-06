@@ -29,7 +29,7 @@ class TestRunCi(unittest.TestCase):
 
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
-            os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"
+            os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"
         )
     )
 

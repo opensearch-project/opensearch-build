@@ -18,14 +18,14 @@ class TestInputManifests(unittest.TestCase):
         self.assertTrue(len(files) >= 2)
         manifest = os.path.realpath(
             os.path.join(
-                os.path.dirname(__file__), "../../../manifests/1.1.0/opensearch-1.1.0.yml"
+                os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"
             )
         )
         self.assertTrue(manifest in files)
 
     def test_manifests_path(self):
         path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../../manifests/")
+            os.path.join(os.path.dirname(__file__), "../../manifests/")
         )
         self.assertEqual(path, InputManifests.manifests_path())
 
