@@ -115,7 +115,7 @@ class TestBundleRecorder(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location": "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/plugins",
+                        "location": "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/x64/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -136,13 +136,13 @@ class TestBundleRecorder(unittest.TestCase):
         # Public URL - No trailing slash
         self.assertEqual(
             get_location('https://ci.opensearch.org/ci/os-distro-prod'),
-            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/x64/dir1/dir2/file"
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location('https://ci.opensearch.org/ci/os-distro-prod/'),
-            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/dir1/dir2/file"
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c3ff7a232d25403fa8cc14c97799c323/x64/dir1/dir2/file"
         )
 
     def test_tar_name(self):
@@ -248,7 +248,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "ae789280740d7000d1f13245019414abeedfc286",
-                        "location": "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/plugins",
+                        "location": "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/x64/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
@@ -269,13 +269,13 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         # Public URL - No trailing slash
         self.assertEqual(
             get_location('https://ci.opensearch.org/ci/os-distro-prod'),
-            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/dir1/dir2/file"
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/x64/dir1/dir2/file"
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location('https://ci.opensearch.org/ci/os-distro-prod/'),
-            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/dir1/dir2/file"
+            "https://ci.opensearch.org/ci/os-distro-prod/builds/1.1.0/c94ebec444a94ada86a230c9297b1d73/x64/dir1/dir2/file"
         )
 
     def test_tar_name(self):
