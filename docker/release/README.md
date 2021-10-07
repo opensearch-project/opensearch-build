@@ -64,11 +64,11 @@ You need to run both script within the `opensearch-build/release/docker` folder.
 There are 3 environment variables available for users to disable security related settings during docker container startup:
 
 * 2 for OpenSearch:
-  * `DISABLE_INSTALL_DEMO_CONFIG`: Default to `null`, set to `true` disables running of [install_demo_configuration.sh](https://github.com/opensearch-project/security/blame/main/tools/install_demo_configuration.sh) bundled with Security Plugin, which installs demo certificates and security configurations to OpenSearch.
-  * `DISABLE_SECURITY_PLUGIN`: Default to `null`, set to `true` disables Security Plugin entirely in OpenSearch by setting `plugins.security.disabled: true` in opensearch.yml.
+  * __DISABLE_INSTALL_DEMO_CONFIG__: Default to `null`, set to `true` disables running of [install_demo_configuration.sh](https://github.com/opensearch-project/security/blame/main/tools/install_demo_configuration.sh) bundled with Security Plugin, which installs demo certificates and security configurations to OpenSearch.
+  * __DISABLE_SECURITY_PLUGIN__: Default to `null`, set to `true` disables Security Plugin entirely in OpenSearch by setting `plugins.security.disabled: true` in opensearch.yml.
 
 * 1 for Dashboards:
-  * `DISABLE_SECURITY_DASHBOARDS_PLUGIN`: Default to `null`, set to `true` disables Security Dashboards Plugin in OpenSearch-Dashboards by removing securityDashboards plugin folder, remove all related settings in opensearch_dashboards.yml, and set `opensearch.hosts` entry protocol from HTTPS to HTTP. This step is not reversible as the Security Dashboards Plugin is removed in the process. If you want to re-enable security for OpenSearch-Dashboards, you need to start a new container with `DISABLE_SECURITY_DASHBOARDS_PLUGIN` unset, or false.
+  * __DISABLE_SECURITY_DASHBOARDS_PLUGIN__: Default to `null`, set to `true` disables Security Dashboards Plugin in OpenSearch-Dashboards by removing securityDashboards plugin folder, remove all related settings in opensearch_dashboards.yml, and set `opensearch.hosts` entry protocol from HTTPS to HTTP. This step is not reversible as the Security Dashboards Plugin is removed in the process. If you want to re-enable security for OpenSearch-Dashboards, you need to start a new container with `DISABLE_SECURITY_DASHBOARDS_PLUGIN` unset, or false.
 
 
 Here are three example scenarios of using above variables:
