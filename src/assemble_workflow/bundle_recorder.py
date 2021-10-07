@@ -18,6 +18,7 @@ class BundleRecorder:
         self.version = build.version
         self.tar_name = self.__get_tar_name(build)
         self.artifacts_dir = artifacts_dir
+        self.arch = build.architecture
         self.bundle_manifest = self.BundleManifestBuilder(
             build.id,
             build.name,
@@ -31,7 +32,7 @@ class BundleRecorder:
         return "-".join(parts) + ".tar.gz"
 
     def __get_public_url_path(self, folder, rel_path):
-        path = "/".join((folder, self.version, self.build_id, rel_path))
+        path = "/".join((folder, self.version, self.build_id, self.arch, rel_path))
         return urljoin(self.public_url + "/", path)
 
     def __get_location(self, folder_name, rel_path, abs_path):

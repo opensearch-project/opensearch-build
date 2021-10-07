@@ -42,7 +42,7 @@ def main():
         )
     )
     if not os.path.isfile(tarball_installation_script):
-        logging.info(
+        logging.error(
             f"No installation script found at path: {tarball_installation_script}"
         )
         exit(1)
