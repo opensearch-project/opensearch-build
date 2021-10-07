@@ -59,7 +59,3 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
 ./gradlew build -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -x test
-
-mkdir -p $OUTPUT/maven/org/opensearch
-./gradlew publishToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-cp -r ~/.m2/repository/org/opensearch/performanceanalyzer-rca $OUTPUT/maven/org/opensearch
