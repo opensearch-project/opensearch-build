@@ -15,9 +15,7 @@ docker pull opensearchproject/opensearch-dashboards:latest
 ```
 
 ### Building Docker Images
-We provide two scripts to build docker images.
-For single-arch image you need to install just the Docker Engine on your host machine.
-For multi-arch image (currently support x64/arm64) you need to install Docker Desktop.
+#### We provide two scripts to build docker images. For single-arch image you need to install just the Docker Engine on your host machine. For multi-arch image (currently support x64/arm64) you need to install Docker Desktop (macOS/Windows) or Docker Buildx (LINUX).
 
 * Install Docker through the official docker webpage: https://docs.docker.com/get-docker/
 
@@ -26,7 +24,7 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
   docker build --help
   ```
 
-* Verify if you have Docker Desktop by running:
+* Verify if you have Docker Desktop or Docker Buildx Standalone by running:
   ```
   docker buildx --help
   ```
