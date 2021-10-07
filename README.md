@@ -77,13 +77,13 @@ The build order first pulls down `OpenSearch-Dashboards` and then utilizes it to
 
 #### CI CD Environment
 
-We build, assemble, and test our artifacts on docker containers. All of our pipelines are using the same docker image for consistency. We provide docker files in [docker](docker) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/).
+We build, assemble, and test our artifacts on docker containers. All of our pipelines are using the same docker image for consistency. We provide docker files in [docker/ci](docker/ci) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/).
 
 ##### Build CI Runner Docker Image from Dockerfile
 
 * If you only want to build the docker image for either x64 or arm64, run this on a x64 or arm64 host respectively:
   ```
-  docker build -f ./docker/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
+  docker build -f ./docker/ci/dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
   ```
 
 * If you want to build multi-arch docker image for both x64 and arm64, make sure you are using Docker Desktop:
