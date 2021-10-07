@@ -27,7 +27,7 @@ class BundleRecorder:
         )
 
     def __get_tar_name(self, build):
-        parts = [build.name.lower(), build.version, "linux", build.architecture]
+        parts = [build.name.lower().replace(" ", "-"), build.version, "linux", build.architecture]
         return "-".join(parts) + ".tar.gz"
 
     def __get_public_url_path(self, folder, rel_path):
