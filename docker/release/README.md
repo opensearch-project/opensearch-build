@@ -34,7 +34,7 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
 * You need to run both script within the `opensearch-build/release/docker` folder. Running them
   within other path would cause the scripts to fail.
 
-* Build single-arch image with these command:
+#### Build single-arch image with these command:
   * OpenSearch 1.0.0 x64:
     ```
     ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a x64
@@ -51,7 +51,7 @@ For multi-arch image (currently support x64/arm64) you need to install Docker De
     ```
     ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a arm64 -t opensearch-dashboards-1.0.0.tar.gz
     ```
-* Build multi-arch image with this commands (only support x64 + arm64 in one image for now), the image will immediately uploaded to a docker registry so you need to provide docker repo name:
+#### Build multi-arch image with this commands (only support x64 + arm64 in one image for now), the image will immediately uploaded to a docker registry so you need to provide docker repo name:
   * OpenSearch 1.0.0:
   ```
   ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>"
@@ -75,7 +75,7 @@ There are 3 environment variables available for users to disable security relate
 
 Here are three example scenarios of using above variables:
 
-* Scenario 1: Original behavior, install demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards:
+#### Scenario 1: Original behavior, install demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards:
   * OpenSearch:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.1.0
@@ -85,7 +85,7 @@ Here are three example scenarios of using above variables:
      $ docker run -it --network="host" opensearchproject/opensearch-dashboards:1.1.0
      ```
 
-* Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
+#### Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
   * OpenSearch:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
@@ -95,7 +95,7 @@ Here are three example scenarios of using above variables:
      $ docker run -it --network="host" -e "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true" opensearchproject/opensearch-dashboards:1.1.0
      ```
 
-* Scenario 3: No demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards (cluster exit with errors due to demo install script is not run. Therefore, no certs/configs are available for Security Plugin. Useful if you want to setup your own certs/configs):
+#### Scenario 3: No demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards (cluster exit with errors due to demo install script is not run. Therefore, no certs/configs are available for Security Plugin. Useful if you want to setup your own certs/configs):
   * OpenSearch:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" opensearchproject/opensearch:1.1.0
