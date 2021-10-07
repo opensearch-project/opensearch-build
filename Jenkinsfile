@@ -34,7 +34,7 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-20210924'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
                             args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
@@ -60,7 +60,7 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-20210924'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
                             args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
@@ -82,7 +82,7 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-20210924'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
                             args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'

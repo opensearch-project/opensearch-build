@@ -22,7 +22,7 @@ function usage() {
     echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. dockerfile/opensearch.al2.dockerfile."
     echo -e "-p PRODUCT\tSpecify the product, e.g. opensearch or opensearch-dashboards, make sure this is the name of your config folder and the name of your .tgz defined in dockerfile."
     echo -e "-a ARCHITECTURE\tSpecify the multiple architecture you want to add to the multi-arch image, separate by comma, e.g. 'x64,arm64'."
-    echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>', due to multi-arch image either save in cache or directly upload to Docker Hub Repo, no local copies."
+    echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>', due to multi-arch image either save in cache or directly upload to Docker Hub Repo, no local copies. The tag name will be pointed to `-v` value and `latest`"
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
@@ -151,5 +151,5 @@ fi
 
 # Build multi-arch images
 PLATFORMS=`echo "${ARCHITECTURE_ARRAY[@]/#/linux/}" | sed 's/x64/amd64/g;s/ /,/g'` && echo PLATFORMS $PLATFORMS
-docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -t $REPOSITORY -f $DOCKERFILE --push $DIR
+docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -t ${REPOSITORY}:${VERSION} -t ${REPOSITORY}:latest -f $DOCKERFILE --push $DIR
 
