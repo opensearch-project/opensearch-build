@@ -6,6 +6,8 @@
   - [Add a New Component](#add-a-new-component)
   - [Create or Update Release Labels](#create-or-update-release-labels)
   - [Create a Release Issue](#create-a-release-issue)
+  - [Check for Release Tags](#check-for-release-tags)
+  - [Check for Versions and Releases](#check-for-versions-and-releases)
 
 ## Managing OpenSearch Components
 
@@ -56,3 +58,21 @@ We create release issues in all component repos that link back to a parent relea
 1. Locate the parent issue, e.g. [opensearch-build#567](https://github.com/opensearch-project/opensearch-build/issues/567) for version 1.2.
 2. Clone the last template in [templates/releases/](templates/releases), and update version numbers and links, e.g. [release-1.2.0.md](templates/releases/release-1.2.0.md).
 3. From [components](components), run `meta exec "gh issue create --label v1.2.0 --title 'Release version 1.2' --body-file ../../templates/releases/release-1.2.0.md"`.
+
+### Check for Release Tags
+
+Check whether a tag for version `1.1.0` exists.
+
+```
+meta exec "git ls-remote | grep -E 'refs/tags/1.1.0$'"
+```
+
+The command will fail and show in red for every repository without a tag.
+
+### Check for Versions and Releases
+
+Check whether a version or a release exists.
+
+```
+meta exec "gh release list | grep -E '(1.1.0.*)$'"
+```
