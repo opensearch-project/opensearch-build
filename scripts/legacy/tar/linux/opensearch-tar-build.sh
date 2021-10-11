@@ -153,7 +153,7 @@ mkdir -p $WORKING_DIR/data
 chmod 755 $WORKING_DIR/data/
 
 # Copy the tarball installation script 
-cp $REPO_ROOT/release/tar/linux/opensearch-tar-install.sh $WORKING_DIR/
+cp $REPO_ROOT/scripts/legacy/tar/linux/opensearch-tar-install.sh $WORKING_DIR/
 
 # Setup k-NN-library
 mkdir -p $WORKING_DIR/plugins/opensearch-knn/knnlib
