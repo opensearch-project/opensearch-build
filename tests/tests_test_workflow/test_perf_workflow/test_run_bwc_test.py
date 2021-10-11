@@ -11,9 +11,6 @@ from run_bwc_test import BundleManifest, main
 
 
 class TestRunBwcTest(unittest.TestCase):
-    def setUp(self):
-        self.bundle_manifest = BundleManifest.from_path("data/bundle_manifest.yml")
-
     @staticmethod
     def mock_args(mock_test_args):
         mock_test_args.s3_bucket = 's3bucket'

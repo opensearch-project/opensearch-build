@@ -29,11 +29,12 @@ class TestRunIntegTest(unittest.TestCase):
     @patch("run_integ_test.GitRepository")
     @patch("run_integ_test.DependencyInstaller")
     @patch("os.chdir")
+    @patch("run_integ_test.TestSuiteResults")
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")
     @patch("run_integ_test.TestArgs")
     @patch("run_integ_test.IntegTestSuite")
-    def test_run_integ_test(self, mock_integ_test_suite, mock_test_args, mock_bundle_from_s3, mock_build_from_s3, mock_os_chdir, *mock):
+    def test_run_integ_test(self, mock_integ_test_suite, mock_test_args, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
         """
         test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
         as part of integration test job.
@@ -42,6 +43,33 @@ class TestRunIntegTest(unittest.TestCase):
         mock_bundle_from_s3.return_value = self.bundle_manifest
         mock_build_from_s3.return_value = self.build_manifest
         mock_integ_test_suite.return_value.execute.return_value = 0, True
+        mock_results.return_value.failed.return_value = False
         main()
         self.assertEqual(mock_bundle_from_s3.call_count, 1)
         self.assertEqual(mock_integ_test_suite.return_value.execute.call_count, 8)
+        self.assertEqual(mock_results.return_value.log.call_count, 1)
+
+    @patch("run_integ_test.console")
+    @patch("run_integ_test.GitRepository")
+    @patch("run_integ_test.DependencyInstaller")
+    @patch("os.chdir")
+    @patch("run_integ_test.TestSuiteResults")
+    @patch.object(BundleManifest, "from_s3")
+    @patch.object(BuildManifest, "from_s3")
+    @patch("run_integ_test.TestArgs")
+    @patch("run_integ_test.IntegTestSuite")
+    def test_run_integ_test_failure(self, mock_integ_test_suite, mock_test_args, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
+        """
+        test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
+        as part of integration test job.
+        """
+        self.mock_args(mock_test_args)
+        mock_bundle_from_s3.return_value = self.bundle_manifest
+        mock_build_from_s3.return_value = self.build_manifest
+        mock_integ_test_suite.return_value.execute.return_value = 0, True
+        mock_results.return_value.failed.return_value = True
+        with self.assertRaises(SystemExit):
+            main()
+        self.assertEqual(mock_bundle_from_s3.call_count, 1)
+        self.assertEqual(mock_integ_test_suite.return_value.execute.call_count, 8)
+        self.assertEqual(mock_results.return_value.log.call_count, 1)
