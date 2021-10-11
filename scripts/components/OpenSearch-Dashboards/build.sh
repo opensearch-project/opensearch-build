@@ -80,8 +80,8 @@ echo "Building artifact"
 
 yarn build-platform $TARGET --skip-os-packages $RELEASE
 
-mkdir -p "${OUTPUT}/bundle"
-# Copy artifact to bundle output with -min in the name
+mkdir -p "${OUTPUT}/dist"
+# Copy artifact to dist folder in bundle build output
 ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
 ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
-cp target/$ARTIFACT_BUILD_NAME $OUTPUT/bundle/$ARTIFACT_TARGET_NAME
+cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME

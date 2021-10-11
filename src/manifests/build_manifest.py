@@ -64,7 +64,7 @@ class BuildManifest(Manifest):
                         "schema": {
                             "maven": {"type": "list"},
                             "plugins": {"type": "list"},
-                            "bundle": {"type": "list"},
+                            "dist": {"type": "list"},
                             "core-plugins": {"type": "list"},
                             "libs": {"type": "list"},
                         },
