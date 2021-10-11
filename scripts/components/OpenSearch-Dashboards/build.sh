@@ -58,11 +58,11 @@ fi
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
     x64)
-        TARGET="linux-tar"
+        TARGET="--linux"
         QUALIFIER="linux-x64"
         ;;
     arm64)
-        TARGET="linux-arm64-tar"
+        TARGET="--linux-arm"
         QUALIFIER="linux-arm64"
         ;;
     *)
@@ -75,13 +75,10 @@ echo "Building node modules for core"
 yarn osd bootstrap
 
 echo "Building artifact"
-if [ "$SNAPSHOT" = "true" ]
-then
-    IDENTIFIER="-SNAPSHOT"
-    yarn build --skip-os-packages
-else
-    yarn build --skip-os-packages --release
-fi
+[[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
+[[ "$SNAPSHOT" != "true" ]] && RELEASE="--release"
+
+yarn build-platform $TARGET --skip-os-packages $RELEASE
 
 mkdir -p "${OUTPUT}/bundle"
 # Copy artifact to bundle output with -min in the name

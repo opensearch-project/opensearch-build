@@ -38,11 +38,11 @@ def main():
     tarball_installation_script = os.path.realpath(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../release/tar/linux/opensearch-tar-install.sh",
+            "../scripts/legacy/tar/linux/opensearch-tar-install.sh",
         )
     )
     if not os.path.isfile(tarball_installation_script):
-        logging.info(
+        logging.error(
             f"No installation script found at path: {tarball_installation_script}"
         )
         exit(1)
