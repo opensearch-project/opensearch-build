@@ -1,4 +1,4 @@
-name: bundle-workflow
+name: tests
 
 on:
   push:

@@ -8,7 +8,7 @@
     - [Yarn](#yarn)
   - [Install Dependencies](#install-dependencies)
   - [Run Tests](#run-tests)
-  - [Run bundle-workflow](#run-bundle-workflow)
+  - [Build OpenSearch](#build-opensearch)
   - [Code Linting](#code-linting)
   - [Type Checking](#type-checking)
   - [Code Coverage](#code-coverage)
@@ -24,11 +24,15 @@ Fork this repository on GitHub, and clone locally with `git clone`.
 
 #### Pyenv
 
-Use pyenv to manage multiple versions of Python. This can be easily installed with [pyenv-installer](https://github.com/pyenv/pyenv-installer).
+Use pyenv to manage multiple versions of Python. This can be installed with [pyenv-installer](https://github.com/pyenv/pyenv-installer).
+
+```
+curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+```
 
 #### Python 3.7
 
-Python projects in this repository, including the [bundle-workflow](./bundle-workflow) project, use Python 3.7. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language. 
+Python projects in this repository use Python 3.7. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language.
 
 ```
 $ python3 --version
@@ -38,7 +42,8 @@ Python 3.7.11
 If you are using pyenv.
 
 ```
-$ pyenv install 3.7.11
+pyenv install 3.7.12
+pyenv global 3.7.12
 ```
 
 #### Pipenv
@@ -46,6 +51,8 @@ $ pyenv install 3.7.11
 This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typically installed with `pip install --user pipenv`. Pipenv automatically creates and manages a virtualenv for your projects, as well as adds/removes packages from your `Pipfile` as you install/uninstall packages. It also generates the ever-important `Pipfile.lock`, which is used to produce deterministic builds.
 
 ```
+$ pip install pipenv
+
 $ pipenv --version
 pipenv, version 19.0
 ```
@@ -86,7 +93,7 @@ $ pipenv run pytest
 2 passed in 02s
 ```
 
-### Run bundle-workflow
+### Build OpenSearch
 
 Try running `./build.sh`. It should complete and show usage.
 
@@ -134,7 +141,7 @@ All done! ✨ 🍰 ✨
 23 files left unchanged.
 ```
 
-If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/bundle-workflow.yml) will make sure to remind you. 
+If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/tests.yml) will make sure to remind you. 
 
 ### Type Checking
 

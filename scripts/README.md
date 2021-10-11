@@ -1,19 +1,11 @@
 - [Scripts](#scripts)
-  - [Bundle Workflow](#bundle-workflow)
-  - [Legacy Scripts](#legacy-scripts)
     - [Run Deployment Script](#run-deployment-script)
       - [Requirements](#requirements)
       - [Usage](#usage)
   
 ## Scripts
 
-### Bundle Workflow
-
-This folder contains default and custom scripts located by [src/paths/script_finder.py](ScriptFinder).
-
-### Legacy Scripts
-
-This folder contains the following scripts which are used in either tar/docker or legacy github actions.
+This folder contains default and custom scripts located by [src/paths/script_finder.py](ScriptFinder), and the following scripts which are used in either tar/docker or legacy github actions.
 
 #### Run Deployment Script
 

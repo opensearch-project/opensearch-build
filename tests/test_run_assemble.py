@@ -52,7 +52,7 @@ class TestRunAssemble(unittest.TestCase):
             os.path.realpath(
                 os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
-                    "../release/tar/linux/opensearch-tar-install.sh",
+                    "../scripts/legacy/tar/linux/opensearch-tar-install.sh",
                 )
             ),
             "path/opensearch-tar-install.sh",
