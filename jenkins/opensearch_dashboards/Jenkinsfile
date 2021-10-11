@@ -1,0 +1,143 @@
+pipeline {
+    agent none
+    environment {
+        OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
+    }
+    triggers {
+      parameterizedCron '''
+        H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-dashboards-1.1.0.yml
+      '''
+    }
+    stages {
+        stage('parameters') {
+            steps {
+                script {
+                    properties([
+                            parameters([
+                                    string(
+                                            defaultValue: '',
+                                            name: 'INPUT_MANIFEST',
+                                            trim: true
+                                    )
+                            ])
+                    ])
+                }
+            }
+        }
+        stage('build') {
+            parallel {
+                stage('build-x86') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            build()
+                        }
+                    }
+                    post() {
+                        always {
+                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        }
+                    }
+                }
+                stage('build-arm64') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            build()
+                        }
+                    }
+                    post() {
+                        always {
+                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        }
+                    }
+                }
+            }
+            post() {
+                success {
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
+                    }
+                }
+                failure {
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        publishNotification(":warning:", "Failed Build", "")
+                    }
+                }
+            }
+        }
+    }
+}
+
+void build() {
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
+    sh "./build.sh manifests/$INPUT_MANIFEST"
+    sh './assemble.sh artifacts/manifest.yml'
+
+    script { manifest = readYaml(file: 'artifacts/manifest.yml') }
+    def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
+
+    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/dashboards/${artifactPath}")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/dashboards/${artifactPath}")
+    }
+
+    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/dashboards/${artifactPath}/manifest.yml\n" +
+                      "${PUBLIC_ARTIFACT_URL}/bundles/dashboards/${artifactPath}/manifest.yml")
+}
+
+/** Publishes a notification to a slack instance*/
+void publishNotification(icon, msg, extra) {
+    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
+        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
+    }
+}
+
+/** Add a message to the jenkins queue */
+void addJenkinsMessage(message) {
+    writeFile(file: "notifications/${STAGE_NAME}.msg", text: message)
+    stash(includes: "notifications/*" , name: "notifications-${STAGE_NAME}")
+}
+
+/** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
+String getAllJenkinsMessages() {
+    script {
+        // Stages must be explicitly added to prevent overwriting
+        // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
+        def stages = ['build-x86', 'build-arm64']
+        for (stage in stages) {
+            unstash "notifications-${stage}"
+        }
+
+        def files = findFiles(excludes: '', glob: 'notifications/*')
+        def data = ""
+        for (file in files) {
+            data = data + "\n" + readFile (file: file.path)
+        }
+
+        // Delete all the notifications from the workspace
+        dir('notifications') {
+            deleteDir()
+        }
+        return data
+    }
+}
