@@ -43,4 +43,4 @@ jobs:
           python -m pip install --upgrade pipenv wheel
       - name: OpenSearch Manifests
         run: |
-          ./bundle-workflow/ci.sh ${{ matrix.manifest }} --snapshot
+          ./ci.sh ${{ matrix.manifest }} --snapshot

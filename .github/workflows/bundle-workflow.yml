@@ -3,10 +3,12 @@ name: bundle-workflow
 on:
   push:
     paths:
-      - bundle-workflow/**
+      - src/**
+      - tests/**
   pull_request:
     paths:
-      - bundle-workflow/**
+      - src/**
+      - tests/**
 
 jobs:
   test:
@@ -18,9 +20,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PYTHON_VERSION: 3.7
-    defaults:
-      run:
-        working-directory: ./bundle-workflow
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ env.PYTHON_VERSION }}
@@ -46,4 +45,4 @@ jobs:
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v2
         with:
-          files: ./bundle-workflow/coverage.xml
+          files: ./coverage.xml

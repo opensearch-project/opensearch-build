@@ -1,10 +1,26 @@
+- [Scripts](#scripts)
+  - [Bundle Workflow](#bundle-workflow)
+  - [Legacy Scripts](#legacy-scripts)
+    - [Run Deployment Script](#run-deployment-script)
+      - [Requirements](#requirements)
+      - [Usage](#usage)
+  
 ## Scripts
-This folder contains several scripts which are used in either tar/docker or legacy github actions.
 
-### Run deployment script
+### Bundle Workflow
+
+This folder contains default and custom scripts located by [src/paths/script_finder.py](ScriptFinder).
+
+### Legacy Scripts
+
+This folder contains the following scripts which are used in either tar/docker or legacy github actions.
+
+#### Run Deployment Script
+
 This is a script to deploy a single node OpenSearch + OpenSearch-Dashboards cluster to a x64 or arm64 host.
 
-#### Requirements
+##### Requirements
+
 * If you are using LINUX host to run dockerd, provision container based on the dockerfile, and execute integTest:
   * You must run these commands on the LINUX host for OpenSearch process to run:
     ```
@@ -41,7 +57,7 @@ This is a script to deploy a single node OpenSearch + OpenSearch-Dashboards clus
       sudo systemctl start docker
       ```
 
-#### Usages
+##### Usage
 
 * If you are using macOS host to run Docker Desktop, provision container based on the dockerfile, and execute integTest:
   * You must change docker memory/RAM utilization in resources settings if you use Docker Desktop on macOS.
