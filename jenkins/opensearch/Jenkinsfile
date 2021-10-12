@@ -1,11 +1,7 @@
 pipeline {
     agent none
-    environment {
-        OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
-    }
     triggers {
       parameterizedCron '''
-        H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-1.1.0.yml
         H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
       '''
     }
@@ -56,7 +52,7 @@ pipeline {
                         }
                     }
                 }
-                stage('build-x86') {
+                stage('build-x64') {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -124,7 +120,7 @@ void build() {
     sh './assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
-    def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
+    def artifactPath = "${manifest.build.version}/${BUILD_NUMBER}/${manifest.build.architecture}";
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
@@ -153,7 +149,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x86', 'build-arm64']
+        def stages = ['build-x64', 'build-arm64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
