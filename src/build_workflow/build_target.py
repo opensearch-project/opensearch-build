@@ -27,7 +27,7 @@ class BuildTarget:
         build_id=None,
         output_dir="artifacts",
     ):
-        self.build_id = os.getenv("OPENSEARCH_BUILD_ID") or build_id or uuid.uuid4().hex
+        self.build_id = os.getenv("OPENSEARCH_BUILD_ID") or os.getenv("OPENSEARCH_DASHBOARDS_BUILD_ID") or build_id or uuid.uuid4().hex
         self.name = name
         self.version = version
         self.snapshot = snapshot
