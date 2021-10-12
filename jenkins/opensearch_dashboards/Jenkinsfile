@@ -26,14 +26,11 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-x86') {
+                stage('build-x64') {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
                             image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
                             alwaysPull true
                         }
                     }
@@ -53,9 +50,6 @@ pipeline {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
                             image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
                             alwaysPull true
                         }
                     }
@@ -97,12 +91,12 @@ void build() {
     def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/dashboards/${artifactPath}")
-        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/dashboards/${artifactPath}")
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/opensearch-dashboards/${artifactPath}")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/opensearch-dashboards/${artifactPath}")
     }
 
-    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/dashboards/${artifactPath}/manifest.yml\n" +
-                      "${PUBLIC_ARTIFACT_URL}/bundles/dashboards/${artifactPath}/manifest.yml")
+    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/opensearch-dashboards/${artifactPath}/manifest.yml\n" +
+                      "${PUBLIC_ARTIFACT_URL}/bundles/opensearch-dashboards/${artifactPath}/manifest.yml")
 }
 
 /** Publishes a notification to a slack instance*/
@@ -123,7 +117,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x86', 'build-arm64']
+        def stages = ['build-x64', 'build-arm64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
