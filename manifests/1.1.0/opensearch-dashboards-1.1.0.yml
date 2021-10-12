@@ -7,26 +7,27 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: "1.1"
-  # hybrid repo (workbench)
-  # - name: queryWorkbench
-  #   repository: https://github.com/opensearch-project/sql.git
-  #   ref: main
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-    ref: main
+    ref: "1.1"
+  # hybrid repo (workbench)
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: "1.1"
   # hybrid repo (dashboards-notifications)
   # - name: notificationsDashboards
   #   repository: https://github.com/opensearch-project/notifications.git
   #   ref: main
-  # - name: securityDashboards
-  #   repository: https://github.com/opensearch-project/security-dashboards-plugin
-  #   ref: main
-  # - name: indexManagementDashboards
-  #   repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-  #   ref: main
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin
+    ref: "1.1"
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: "1.1"
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: main
+    ref: "1.1"
   # # hybrid repo (dashboards-reports)
   # - name: reportsDashboards
   #   repository: https://github.com/opensearch-project/dashboards-reports.git
@@ -35,9 +36,9 @@ components:
   # - name: notebooksDashboards
   #   repository: https://github.com/opensearch-project/dashboards-notebooks.git
   #   ref: main
-  # - name: traceAnalyticsDashboards
-  #   repository: https://github.com/opensearch-project/trace-analytics.git
-  #   ref: main
+  - name: traceAnalyticsDashboards
+    repository: https://github.com/opensearch-project/trace-analytics.git
+    ref: "1.1"
   # - name: ganttChartDashboards
   #   repository: ????????
   #   ref: main
