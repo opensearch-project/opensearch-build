@@ -359,7 +359,7 @@ The Windows release are based on the LINUX tarball. Here are the steps to produc
    They currently do not support Windows Platform.
 6. Remove knn and performance analyzer related configurations from `opensearch-tar-install.sh`, but it is optional, as it will not stop OpenSearch from launching on Windows.
 7. You can start OpenSearch on Windows either by running `opensearch-tar-install.sh` or by running `bin/opensearch` from Shell.
-8. If you want to start OpenSearch by running .bat files, you need to make some tweaks based on the OpenDistro for Elasticsearch Windows Zip [here](https://opendistro.github.io/for-elasticsearch/downloads.html#develop)
+8. If you want to start OpenSearch by running .bat files, you need to make some tweaks based on the OpenDistro for Elasticsearch Windows Zip [here](https://opendistro.github.io/for-elasticsearch/downloads.html#develop).
    You can unzip the archive, copy all the .bat files from ODFE bin folder to OpenSearch bin folder. Make corresponding tweaks, and make them run for OpenSearch.
    TODO: Needs to maintain these .bat files in opensearch-build repository.
 
