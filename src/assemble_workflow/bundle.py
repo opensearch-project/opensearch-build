@@ -36,7 +36,7 @@ class Bundle(ABC):
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.installed_plugins = []
-        self.min_tarball_path = self._copy_component(self.min_tarball, "bundle")
+        self.min_tarball_path = self._copy_component(self.min_tarball, "dist")
         self.__unpack_min_tarball(self.tmp_dir.name)
 
     def install_plugins(self):
@@ -104,7 +104,7 @@ class Bundle(ABC):
 
     def __get_min_bundle(self, build_components):
         min_bundle = next(
-            iter([c for c in build_components if "bundle" in c.artifacts]), None
+            iter([c for c in build_components if "dist" in c.artifacts]), None
         )
         if min_bundle is None:
             raise ValueError('Missing min "bundle" in input artifacts.')
