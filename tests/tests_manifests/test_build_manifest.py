@@ -42,7 +42,7 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(opensearch_component.ref, "1.x")
         self.assertEqual(
             sorted(opensearch_component.artifacts.keys()),
-            ["core-plugins","dist", "maven"],
+            ["core-plugins", "dist", "maven"],
         )
 
     def test_to_dict(self):
