@@ -345,6 +345,26 @@ The Linux release is managed by a team at Amazon following [this release templat
 
 The FreeBSD ports and packages for OpenSearch are managed by a community [OpenSearch Team](https://wiki.freebsd.org/OpenSearch) at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
 
+#### Releasing for Windows
+
+##### OpenSearch
+
+The Windows release are based on the LINUX tarball. Here are the steps to produce a OpenSearch Windows Zip.
+
+1. Download the latest tarball from opensearch.org [downloads page](https://opensearch.org/downloads.html).
+2. Untar the tarball.
+3. Download the latest release of Windows JDK14 from AdoptOpenJDK [here](https://adoptopenjdk.net/installation.html?variant=openjdk14&jvmVariant=hotspot#x64_win-jdk)
+4. Extract the archive, rename the folder to `jdk` and replace it with the bundled `jdk` folder from the OpenSearch LINUX tarball.
+5. Go into the bin folder, and run `./opensearch-plugin remove <Plugin Folder Name>` to remove `opensearch-knn` and `opensearch-performance-analyzer`.
+   They currently do not support Windows Platform.
+6. Remove knn and performance analyzer related configurations from `opensearch-tar-install.sh`, but it is optional, as it will not stop OpenSearch from launching on Windows.
+7. You can start OpenSearch on Windows either by running `opensearch-tar-install.sh` or by running `bin/opensearch` from Shell.
+8. If you want to start OpenSearch by running .bat files, you need to make some tweaks based on the OpenDistro for Elasticsearch Windows Zip [here](https://opendistro.github.io/for-elasticsearch/downloads.html#develop)
+   You can unzip the archive, copy all the .bat files from ODFE bin folder to OpenSearch bin folder. Make corresponding tweaks, and make them run for OpenSearch.
+   TODO: Needs to maintain these .bat files in opensearch-build repository.
+
+##### OpenSearch-Dashboards: Need more researching and testing.
+
 ### Deploying infrastructure
 
 Storage and access roles for the OpenSearch release process are codified in a [CDK project](deployment/README.md).
