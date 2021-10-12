@@ -4,11 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import re
-import subprocess
-
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
+from manifests_workflow.component_opensearch import ComponentOpenSearch
 from system.properties_file import PropertiesFile
 
 
@@ -22,19 +20,18 @@ class ComponentOpenSearchMin(Component):
         )
 
     @classmethod
-    def get_branches(self):
-        branches = ["main"]
-        remote_branches = (
-            subprocess.check_output(
-                "git ls-remote https://github.com/opensearch-project/OpenSearch.git refs/heads/* | cut -f2 | cut -d/ -f3",
-                shell=True,
-            )
-            .decode()
-            .split("\n")
+    def branches(self):
+        return Component.branches(
+            "https://github.com/opensearch-project/OpenSearch.git"
         )
-        # return "main" and "x.y" branches only
-        branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
-        return branches
+
+    @classmethod
+    def versions(self, work_dir=None):
+        return Component.versions(
+            "OpenSearch",
+            "https://github.com/opensearch-project/OpenSearch.git",
+            work_dir,
+        )
 
     @classmethod
     def checkout(self, path, branch="main", snapshot=False):
@@ -46,14 +43,14 @@ class ComponentOpenSearchMin(Component):
         )
 
     def publish_to_maven_local(self):
-        cmd = Component.gradle_cmd(
+        cmd = ComponentOpenSearch.gradle_cmd(
             "publishToMavenLocal", {"build.snapshot": str(self.snapshot).lower()}
         )
         self.git_repo.execute_silent(cmd)
 
     @property
     def properties(self):
-        cmd = Component.gradle_cmd(
+        cmd = ComponentOpenSearch.gradle_cmd(
             "properties", {"build.snapshot": str(self.snapshot).lower()}
         )
         return PropertiesFile(self.git_repo.output(cmd))

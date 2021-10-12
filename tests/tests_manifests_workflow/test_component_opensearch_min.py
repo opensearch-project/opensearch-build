@@ -13,12 +13,12 @@ from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
 
 class TestComponentOpenSearchMin(unittest.TestCase):
     @patch("subprocess.check_output")
-    def test_get_branches(self, mock):
+    def test_branches(self, mock):
         mock.return_value = "\n".join(
             ["main", "1.x", "1.21", "20.1", "something", "else"]
         ).encode()
         self.assertEqual(
-            ComponentOpenSearchMin.get_branches(), ["main", "1.x", "1.21", "20.1"]
+            ComponentOpenSearchMin.branches(), ["main", "1.x", "1.21", "20.1"]
         )
         mock.assert_called_with(
             "git ls-remote https://github.com/opensearch-project/OpenSearch.git refs/heads/* | cut -f2 | cut -d/ -f3",

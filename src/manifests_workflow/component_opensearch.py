@@ -38,7 +38,7 @@ class ComponentOpenSearch(Component):
 
     @property
     def properties(self):
-        cmd = Component.gradle_cmd(
+        cmd = ComponentOpenSearch.gradle_cmd(
             "properties",
             {
                 "opensearch.version": self.opensearch_version,
@@ -50,3 +50,9 @@ class ComponentOpenSearch(Component):
     @property
     def version(self):
         return self.properties.get_value("version")
+
+    @classmethod
+    def gradle_cmd(self, target, props={}):
+        cmd = [f"./gradlew {target}"]
+        cmd.extend([f"-D{k}={v}" for k, v in props.items()])
+        return " ".join(cmd)

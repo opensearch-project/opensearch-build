@@ -9,7 +9,6 @@
 import logging
 import sys
 
-from manifests_workflow.input_manifests import InputManifests
 from manifests_workflow.manifests_args import ManifestsArgs
 from system import console
 
@@ -17,13 +16,14 @@ from system import console
 def main():
     args = ManifestsArgs()
     console.configure(level=args.logging_level)
-    manifests = InputManifests()
 
     if args.action == "list":
-        for manifest in manifests.values():
-            logging.info(f"{manifest.build.name} {manifest.build.version}")
+        for klass in args.manifests:
+            for manifest in klass().values():
+                logging.info(f"{manifest.build.name} {manifest.build.version}")
     elif args.action == "update":
-        manifests.update(keep=args.keep)
+        for klass in args.manifests:
+            klass().update(keep=args.keep)
 
     logging.info("Done.")
 
