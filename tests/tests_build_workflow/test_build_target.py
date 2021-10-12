@@ -24,6 +24,10 @@ class TestBuildTarget(unittest.TestCase):
     def test_build_id_from_env(self):
         self.assertEqual(BuildTarget(version="1.1.0", arch="x86").build_id, "id")
 
+    @patch.dict(os.environ, {"OPENSEARCH_DASHBOARDS_BUILD_ID": "id"})
+    def test_build_id_from_dashboards_env(self):
+        self.assertEqual(BuildTarget(version="1.1.0", arch="x86").build_id, "id")
+
     def test_build_id_from_arg(self):
         self.assertEqual(
             BuildTarget(version="1.1.0", arch="x86", build_id="id").build_id, "id"

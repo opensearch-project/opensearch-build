@@ -1,7 +1,7 @@
 pipeline {
     agent none
     environment {
-        OPENSEARCH_BUILD_ID = "${BUILD_NUMBER}"
+        OPENSEARCH_DASHBOARDS_BUILD_ID = "${BUILD_NUMBER}"
     }
     triggers {
       parameterizedCron '''
@@ -88,7 +88,7 @@ void build() {
     sh './assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
-    def artifactPath = "${manifest.build.version}/${OPENSEARCH_BUILD_ID}/${manifest.build.architecture}";
+    def artifactPath = "${manifest.build.version}/${OPENSEARCH_DASHBOARDS_BUILD_ID}/${manifest.build.architecture}";
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/opensearch-dashboards/${artifactPath}")
