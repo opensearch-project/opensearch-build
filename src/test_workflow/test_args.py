@@ -10,7 +10,7 @@
 import argparse
 import logging
 
-import semantic_version     # type:ignore
+import semantic_version  # type:ignore
 
 
 class TestArgs:
