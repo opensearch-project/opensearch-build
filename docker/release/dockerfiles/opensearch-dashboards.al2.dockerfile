@@ -62,9 +62,6 @@ ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 
-# Setup OpenSearch-dashboards
-WORKDIR $OPENSEARCH_DASHBOARDS_HOME
-
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
@@ -78,6 +75,9 @@ RUN groupadd -g $GID opensearch-dashboards && \
     adduser -u $UID -g $GID -d $OPENSEARCH_DASHBOARDS_HOME opensearch-dashboards
 
 COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_DASHBOARDS_HOME $OPENSEARCH_DASHBOARDS_HOME
+
+# Setup OpenSearch-dashboards
+WORKDIR $OPENSEARCH_DASHBOARDS_HOME
 
 # Change user
 USER $UID
