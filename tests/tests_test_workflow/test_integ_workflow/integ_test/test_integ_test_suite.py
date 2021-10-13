@@ -179,3 +179,37 @@ class TestIntegSuite(unittest.TestCase):
             if component.name == component_name:
                 break
         return test_config, component
+
+    @patch.object(DependencyInstaller, "install_build_dependencies")
+    @patch("os.path.exists", return_value=True)
+    @patch.object(ScriptFinder, "find_integ_test_script")
+    @patch("test_workflow.integ_test.integ_test_suite.execute")
+    @patch("test_workflow.integ_test.integ_test_suite.LocalTestCluster")
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
+    def test_execute_with_working_directory(
+            self, mock_test_recorder, mock_local_test_cluster, mock_system_execute, mock_script_finder, *mock
+    ):
+        test_config, component = self.__get_test_config_and_bundle_component(
+            "dashboards-reports"
+        )
+        integ_test_suite = IntegTestSuite(
+            component,
+            test_config,
+            self.bundle_manifest,
+            self.build_manifest,
+            "/tmpdir",
+            "s3_bucket_name",
+            mock_test_recorder
+        )
+        mock_system_execute.return_value = 200, "success", "failure"
+        mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
+        mock_script_finder.return_value = "integtest.sh"
+        integ_test_suite.execute()
+        mock_script_finder.assert_has_calls(
+            [
+                call(
+                    'dashboards-reports',
+                    '/tmpdir/dashboards-reports/reports-scheduler'
+                )
+            ]
+        )
