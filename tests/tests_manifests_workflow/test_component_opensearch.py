@@ -39,3 +39,22 @@ class TestComponentOpenSearch(unittest.TestCase):
             component.to_dict(),
             {"name": "common-utils", "ref": "ref", "repository": "repo"},
         )
+
+    def test_gradle_cmd_target(self):
+        self.assertEqual(
+            ComponentOpenSearch.gradle_cmd("properties"), "./gradlew properties"
+        )
+
+    def test_gradle_cmd_prop(self):
+        self.assertEqual(
+            ComponentOpenSearch.gradle_cmd("properties", {"build.snapshot": "false"}),
+            "./gradlew properties -Dbuild.snapshot=false",
+        )
+
+    def test_gradle_cmd_props(self):
+        self.assertEqual(
+            ComponentOpenSearch.gradle_cmd(
+                "properties", {"build.snapshot": "false", "opensearch.version": "1.0"}
+            ),
+            "./gradlew properties -Dbuild.snapshot=false -Dopensearch.version=1.0",
+        )

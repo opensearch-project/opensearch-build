@@ -43,7 +43,17 @@ class TestRunManifests(unittest.TestCase):
         mock_logging.info.assert_has_calls([call("Done.")])
 
     @patch("argparse._sys.argv", ["run_manifests.py", "update"])
-    @patch("run_manifests.InputManifests", return_value=MagicMock())
-    def test_main_update(self, mock_manifests, *mocks):
+    @patch(
+        "manifests_workflow.manifests_args.InputManifestsOpenSearch",
+        return_value=MagicMock(),
+    )
+    @patch(
+        "manifests_workflow.manifests_args.InputManifestsOpenSearchDashboards",
+        return_value=MagicMock(),
+    )
+    def test_main_update(
+        self, mock_manifests_opensearch_dashboards, mock_manifests_opensearch, *mocks
+    ):
         main()
-        mock_manifests.return_value.update.assert_called()
+        mock_manifests_opensearch_dashboards.return_value.update.assert_called()
+        mock_manifests_opensearch.return_value.update.assert_called()

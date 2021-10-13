@@ -42,13 +42,13 @@ class IntegTestSuite:
         self.work_dir = work_dir
         self.test_config = test_config
         self.s3_bucket_name = s3_bucket_name
-        self.script_finder = ScriptFinder()
         self.additional_cluster_config = None
         self.test_recorder = test_recorder
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
             os.path.join(self.work_dir, self.component.name),
+            test_config.working_directory
         )
         self.save_logs = test_recorder.test_results_logs
 
@@ -115,8 +115,8 @@ class IntegTestSuite:
             )
 
     def __execute_integtest_sh(self, endpoint, port, security, test_config):
-        script = self.script_finder.find_integ_test_script(
-            self.component.name, self.repo.dir
+        script = ScriptFinder.find_integ_test_script(
+            self.component.name, self.repo.working_directory
         )
         if os.path.exists(script):
             cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"

@@ -4,6 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import re
+import subprocess
+
 from manifests.manifest import Manifest
 
 
@@ -15,10 +18,18 @@ class Component:
         self.checks = checks
 
     @classmethod
-    def gradle_cmd(self, target, props={}):
-        cmd = [f"./gradlew {target}"]
-        cmd.extend([f"-D{k}={v}" for k, v in props.items()])
-        return " ".join(cmd)
+    def branches(self, uri):
+        """Return main or any x.y branches."""
+        branches = ["main"]
+        remote_branches = (
+            subprocess.check_output(
+                f"git ls-remote {uri} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True
+            )
+            .decode()
+            .split("\n")
+        )
+        branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
+        return branches
 
     def to_dict(self):
         return Manifest.compact(

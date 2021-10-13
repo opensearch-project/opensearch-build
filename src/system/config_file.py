@@ -31,6 +31,11 @@ class ConfigFile:
     def data(self):
         return self.__data
 
+    @classmethod
+    def from_file(cls, path):
+        with open(path, "r") as f:
+            return cls(json.load(f))
+
     def __init__(self, data=None):
         if type(data) is str:
             self.__data = json.loads(data)

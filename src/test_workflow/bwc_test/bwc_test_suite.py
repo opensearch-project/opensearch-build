@@ -24,12 +24,11 @@ class BwcTestSuite:
     def __init__(self, manifest, work_dir, component=None, keep=False):
         self.manifest = manifest
         self.work_dir = work_dir
-        self.script_finder = ScriptFinder()
         self.component = component
         self.keep = keep
 
     def run_tests(self, work_dir, component_name):
-        script = self.script_finder.find_bwc_test_script(
+        script = ScriptFinder.find_bwc_test_script(
             component_name, work_dir
         )
         cmd = f"{script}"
