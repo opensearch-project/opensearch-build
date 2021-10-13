@@ -16,4 +16,4 @@ components:
     bwc-test:
       test-configs:
         - without-security
-schema-version: '1.0'
+schema-version: '1.1'

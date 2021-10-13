@@ -14,8 +14,8 @@ A BuildManifest is an immutable view of the outputs from a build step
 The manifest contains information about the product that was built (in the `build` section),
 and the components that made up the build in the `components` section.
 
-The format for schema version 1.0 is:
-schema-version: "1.0"
+The format for schema version 1.1 is:
+schema-version: "1.1"
 build:
   name: string
   version: string
@@ -53,7 +53,7 @@ class BuildManifest(Manifest):
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "type": "list",
             "schema": {
@@ -89,7 +89,7 @@ class BuildManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)

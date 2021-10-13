@@ -62,7 +62,7 @@ class BuildRecorder:
             self.data["build"]["name"] = target.name
             self.data["build"]["version"] = target.opensearch_version
             self.data["build"]["architecture"] = target.arch
-            self.data["schema-version"] = "1.0"
+            self.data["schema-version"] = "1.1"
             self.components_hash = {}
 
         def append_component(self, name, version, repository_url, ref, commit_id):

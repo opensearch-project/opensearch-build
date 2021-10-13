@@ -24,7 +24,7 @@ class TestBundleManifest(unittest.TestCase):
         self.manifest = BundleManifest.from_path(self.manifest_filename)
 
     def test_build(self):
-        self.assertEqual(self.manifest.version, "1.0")
+        self.assertEqual(self.manifest.version, "1.1")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(
@@ -38,7 +38,7 @@ class TestBundleManifest(unittest.TestCase):
         self.assertEqual(opensearch_min_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_min_component.location,
-            "artifacts/bundle/opensearch-min-1.1.0-linux-x64.tar.gz",
+            "artifacts/dist/opensearch-min-1.1.0-linux-x64.tar.gz",
         )
         self.assertEqual(
             opensearch_min_component.repository,

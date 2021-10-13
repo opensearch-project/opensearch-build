@@ -24,7 +24,7 @@ class TestBuildManifest(unittest.TestCase):
         self.manifest = BuildManifest.from_path(self.manifest_filename)
 
     def test_build(self):
-        self.assertEqual(self.manifest.version, "1.0")
+        self.assertEqual(self.manifest.version, "1.1")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 15)

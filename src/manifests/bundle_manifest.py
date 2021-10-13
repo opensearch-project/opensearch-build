@@ -43,7 +43,7 @@ class BundleManifest(Manifest):
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "required": True,
             "type": "list",
@@ -69,7 +69,7 @@ class BundleManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)

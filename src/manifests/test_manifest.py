@@ -11,8 +11,8 @@ class TestManifest(Manifest):
     """
     TestManifest contains the test support matrix for any component.
 
-    The format for schema version 1.0 is:
-        schema-version: '1.0'
+    The format for schema version 1.1 is:
+        schema-version: '1.1'
         components:
           - name: index-management
             working-directory: optional relative directory to run commands in
@@ -30,7 +30,7 @@ class TestManifest(Manifest):
     """
 
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "type": "list",
             "schema": {
@@ -85,7 +85,7 @@ class TestManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)
             ),

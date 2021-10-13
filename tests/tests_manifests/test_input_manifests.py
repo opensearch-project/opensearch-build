@@ -19,7 +19,7 @@ class TestInputManifests(unittest.TestCase):
     def test_1_1_0(self):
         manifest = self.manifests["1.1.0"]
         self.assertIsNotNone(manifest)
-        self.assertEqual(manifest.version, "1.0")
+        self.assertEqual(manifest.version, "1.1")
         self.assertEqual(manifest.build.version, "1.1.0")
 
     def test_latest(self):

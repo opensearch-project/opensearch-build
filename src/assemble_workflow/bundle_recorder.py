@@ -78,7 +78,7 @@ class BundleRecorder:
             self.data["build"]["version"] = str(version)
             self.data["build"]["architecture"] = arch
             self.data["build"]["location"] = location
-            self.data["schema-version"] = "1.0"
+            self.data["schema-version"] = "1.1"
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []
