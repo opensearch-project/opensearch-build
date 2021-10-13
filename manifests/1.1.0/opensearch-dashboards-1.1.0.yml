@@ -16,10 +16,10 @@ components:
     working_directory: workbench
     ref: "1.1"
   # hybrid repo (dashboards-notifications)
-  - name: notificationsDashboards
-    repository: https://github.com/opensearch-project/notifications.git
-    working_directory: dashboards-notifications
-    ref: main
+  # - name: notificationsDashboards
+  #   repository: https://github.com/opensearch-project/notifications.git
+  #   working_directory: dashboards-notifications
+  #   ref: main
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin
     ref: "1.1"
