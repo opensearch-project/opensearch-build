@@ -68,16 +68,18 @@ mkdir -p $OUTPUT/maven/org/opensearch
 # Copy maven publications to be promoted
 cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
+OS=`uname -s | awk '{print tolower($0)}'`
+
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
     x64)
-        TARGET="linux-tar"
-        QUALIFIER="linux-x64"
+        TARGET="$OS-tar"
+        QUALIFIER="$OS-x64"
         ;;
     arm64)
-        TARGET="linux-arm64-tar"
-        QUALIFIER="linux-arm64"
+        TARGET="$OS-arm64-tar"
+        QUALIFIER="$OS-arm64"
         ;;
     *)
         echo "Unsupported architecture: ${ARCHITECTURE}"

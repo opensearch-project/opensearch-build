@@ -54,16 +54,18 @@ fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
+OS=`uname -s | awk '{print tolower($0)}'`
+
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
     x64)
-        TARGET="--linux"
-        QUALIFIER="linux-x64"
+        TARGET="--$OS"
+        QUALIFIER="$OS-x64"
         ;;
     arm64)
-        TARGET="--linux-arm"
-        QUALIFIER="linux-arm64"
+        TARGET="--$OS-arm"
+        QUALIFIER="$OS-arm64"
         ;;
     *)
         echo "Unsupported architecture: ${ARCHITECTURE}"
