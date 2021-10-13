@@ -14,8 +14,8 @@ A BuildManifest is an immutable view of the outputs from a build step
 The manifest contains information about the product that was built (in the `build` section),
 and the components that made up the build in the `components` section.
 
-The format for schema version 1.1 is:
-schema-version: "1.1"
+The format for schema version 1.0 is:
+schema-version: "1.0"
 build:
   name: string
   version: string

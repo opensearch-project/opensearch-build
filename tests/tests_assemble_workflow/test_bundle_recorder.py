@@ -58,7 +58,7 @@ class TestBundleRecorder(unittest.TestCase):
                         "repository": "https://github.com/opensearch-project/job_scheduler",
                     }
                 ],
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 
@@ -75,7 +75,7 @@ class TestBundleRecorder(unittest.TestCase):
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 
@@ -121,7 +121,7 @@ class TestBundleRecorder(unittest.TestCase):
                         "repository": "https://github.com/opensearch-project/job_scheduler",
                     }
                 ],
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 
@@ -191,7 +191,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
                     }
                 ],
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 
@@ -208,7 +208,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                     "name": "OpenSearch Dashboards",
                     "version": "1.1.0",
                 },
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 
@@ -254,7 +254,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
                     }
                 ],
-                "schema-version": "1.1",
+                "schema-version": "1.0",
             },
         )
 

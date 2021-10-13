@@ -22,7 +22,7 @@ class TestInputManifest(unittest.TestCase):
     def test_1_0(self):
         path = os.path.join(self.manifests_path, "1.0.0/opensearch-1.0.0.yml")
         manifest = InputManifest.from_path(path)
-        self.assertEqual(manifest.version, "1.1")
+        self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.0.0")
         self.assertEqual(len(manifest.components), 12)
@@ -39,7 +39,7 @@ class TestInputManifest(unittest.TestCase):
     def test_1_1(self):
         path = os.path.join(self.manifests_path, "1.1.0/opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path)
-        self.assertEqual(manifest.version, "1.1")
+        self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(manifest.components), 15)

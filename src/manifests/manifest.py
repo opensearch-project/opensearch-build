@@ -12,7 +12,7 @@ from cerberus import Validator  # type:ignore
 
 class Manifest(ABC):
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]}
+        "schema-version": {"required": True, "type": "string", "allowed": [""]}
     }
 
     @classmethod

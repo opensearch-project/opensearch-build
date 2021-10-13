@@ -9,8 +9,8 @@ An InputManifest is an immutable view of the input manifest for the build system
 The manifest contains information about the product that is being built (in the `build` section),
 and the components that make up the product in the `components` section.
 
-The format for schema version 1.1 is:
-schema-version: "1.1"
+The format for schema version 1.0 is:
+schema-version: "1.0"
 build:
   name: string
   version: string
@@ -38,7 +38,7 @@ class InputManifest(Manifest):
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "components": {
             "type": "list",
             "schema": {
@@ -67,7 +67,7 @@ class InputManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.1",
+            "schema-version": "1.0",
             "build": self.build.__to_dict__(),
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)
