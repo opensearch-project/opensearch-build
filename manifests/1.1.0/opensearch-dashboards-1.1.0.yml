@@ -42,6 +42,8 @@ components:
   - name: traceAnalyticsDashboards
     repository: https://github.com/opensearch-project/trace-analytics.git
     ref: "1.1"
-  # - name: ganttChartDashboards
-  #   repository: ????????
-  #   ref: main
+    # hybrid repo (gantt-chart)
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations
+    working_directory: gantt-chart
+    ref: "1.1"
