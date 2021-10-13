@@ -57,4 +57,5 @@ class ComponentOpenSearchMin(Component):
 
     @property
     def version(self):
+        self.publish_to_maven_local()
         return self.properties.get_value("version")

@@ -4,6 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
+import subprocess
+
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
 from system.properties_file import PropertiesFile
@@ -49,7 +52,11 @@ class ComponentOpenSearch(Component):
 
     @property
     def version(self):
-        return self.properties.get_value("version")
+        try:
+            return self.properties.get_value("version")
+        except subprocess.CalledProcessError as err:
+            logging.warn(f"Error getting version of {self.name}: {str(err)}, ignored")
+            return None
 
     @classmethod
     def gradle_cmd(self, target, props={}):
