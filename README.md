@@ -333,6 +333,7 @@ The following options are available.
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
 | --keep             | Do not delete the temporary working directory on both success or error. |
+| --type             | Only list manifests of a specific type).                                |
 | -v, --verbose      | Show more verbose output.                                               |
 
 ### Making a Release

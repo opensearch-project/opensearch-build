@@ -7,12 +7,23 @@
 import argparse
 import logging
 
+from manifests_workflow.input_manifests_opensearch import \
+    InputManifestsOpenSearch
+from manifests_workflow.input_manifests_opensearch_dashboards import \
+    InputManifestsOpenSearchDashboards
+
 
 class ManifestsArgs:
     def __init__(self):
         parser = argparse.ArgumentParser(description="Manifest management")
         parser.add_argument(
             "action", choices=["list", "update"], help="Operation to perform."
+        )
+        parser.add_argument(
+            "--type",
+            dest="type",
+            choices=["opensearch", "opensearch-dashboards"],
+            help="Only list manifests of a specific type.",
         )
         parser.add_argument(
             "--keep",
@@ -33,3 +44,15 @@ class ManifestsArgs:
         self.logging_level = args.logging_level
         self.action = args.action
         self.keep = args.keep
+        self.manifests = ManifestsArgs.__get_manifests(args.type)
+
+    @classmethod
+    def __get_manifests(self, type):
+        if type == "opensearch":
+            return [InputManifestsOpenSearch]
+        elif type == "opensearch-dashboards":
+            return [InputManifestsOpenSearchDashboards]
+        elif type is None:
+            return [InputManifestsOpenSearch, InputManifestsOpenSearchDashboards]
+        else:
+            raise ValueError(type)
