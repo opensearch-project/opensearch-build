@@ -19,6 +19,7 @@ class Component:
 
     @classmethod
     def branches(self, uri):
+        """Return main or any x.y branches."""
         branches = ["main"]
         remote_branches = (
             subprocess.check_output(
@@ -27,7 +28,6 @@ class Component:
             .decode()
             .split("\n")
         )
-        # return "main" and "x.y" branches only
         branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
         return branches
 

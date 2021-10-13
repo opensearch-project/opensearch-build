@@ -30,7 +30,7 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
     @patch("system.temporary_directory.TemporaryDirectory")
-    @patch("manifests_workflow.input_manifests_opensearch.InputManifest")
+    @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(
         self,
         mock_input_manifest,

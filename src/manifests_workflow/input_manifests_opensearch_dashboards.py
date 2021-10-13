@@ -7,7 +7,6 @@
 import logging
 import os
 
-from manifests.input_manifest import InputManifest
 from manifests_workflow.component_opensearch_dashboards_min import \
     ComponentOpenSearchDashboardsMin
 from manifests_workflow.input_manifests import InputManifests
@@ -15,6 +14,9 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifestsOpenSearchDashboards(InputManifests):
+    def __init__(self):
+        super().__init__("OpenSearch Dashboards")
+
     @classmethod
     def files(self):
         return InputManifests.files("opensearch-dashboards")
@@ -48,24 +50,4 @@ class InputManifestsOpenSearchDashboards(InputManifests):
 
             # generate new manifests
             for release_version in sorted(main_versions.keys() - known_versions):
-                logging.info(f"Creating new version: {release_version}")
-                data = {
-                    "schema-version": "1.0",
-                    "build": {
-                        "name": "OpenSearch Dashboards",
-                        "version": release_version,
-                    },
-                    "components": [],
-                }
-                for component in main_versions[release_version]:
-                    logging.info(f" Adding {component.name}")
-                    data["components"].append(component.to_dict())
-
-                manifest = InputManifest(data)
-                manifest_dir = os.path.join(self.manifests_path(), release_version)
-                os.makedirs(manifest_dir, exist_ok=True)
-                manifest_path = os.path.join(
-                    manifest_dir, f"opensearch-dashboards-{release_version}.yml"
-                )
-                manifest.to_file(manifest_path)
-                logging.info(f"Wrote {manifest_path}")
+                self.write_manifest(release_version, main_versions[release_version])

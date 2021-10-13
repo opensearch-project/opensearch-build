@@ -27,13 +27,13 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
     @patch("os.makedirs")
     @patch("os.chdir")
     @patch(
-        "manifests_workflow.input_manifests_opensearch_dashboards.InputManifest.from_path"
+        "manifests_workflow.input_manifests.InputManifest.from_path"
     )
     @patch(
         "manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin"
     )
     @patch("system.temporary_directory.TemporaryDirectory")
-    @patch("manifests_workflow.input_manifests_opensearch_dashboards.InputManifest")
+    @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(
         self,
         mock_input_manifest,
