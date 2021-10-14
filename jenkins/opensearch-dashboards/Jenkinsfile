@@ -42,25 +42,6 @@ pipeline {
                         }
                     }
                 }
-                stage('build-arm64') {
-                    agent {
-                        docker {
-                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            build()
-                        }
-                    }
-                    post() {
-                        always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
-                        }
-                    }
-                }
             }
             post() {
                 success {
