@@ -107,5 +107,5 @@ class Bundle(ABC):
             iter([c for c in build_components if "dist" in c.artifacts]), None
         )
         if min_bundle is None:
-            raise ValueError('Missing min "bundle" in input artifacts.')
+            raise ValueError('Missing min "dist" in input artifacts.')
         return min_bundle
