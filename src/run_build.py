@@ -37,6 +37,7 @@ def main():
             version=manifest.build.version,
             snapshot=args.snapshot,
             output_dir=output_dir,
+            arch=args.arch,
         )
 
         os.makedirs(target.output_dir, exist_ok=True)

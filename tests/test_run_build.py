@@ -7,7 +7,7 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import ANY, MagicMock, call, patch
 
 import pytest
 
@@ -34,11 +34,12 @@ class TestRunBuild(unittest.TestCase):
     )
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST])
+    @patch("run_build.BuildTarget", return_value=MagicMock(output_dir="artifacts"))
     @patch("run_build.Builder", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.GitRepository", return_value=MagicMock(working_directory="dummy"))
     @patch("run_build.TemporaryDirectory")
-    def test_main(self, mock_temp, mock_repo, mock_recorder, mock_builder, *mocks):
+    def test_main(self, mock_temp, mock_repo, mock_recorder, mock_builder, mock_target, *mocks):
         mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
 
         main()
@@ -68,6 +69,14 @@ class TestRunBuild(unittest.TestCase):
             any_order=True,
         )
 
+        mock_target.assert_called_once_with(
+            name="OpenSearch",
+            version="1.1.0",
+            snapshot=False,
+            arch=None,
+            output_dir=ANY
+        )
+
         self.assertEqual(mock_repo.call_count, 15)
 
         # each component is built and its artifacts exported
@@ -89,6 +98,55 @@ class TestRunBuild(unittest.TestCase):
         self.assertEqual(mock_builder.call_count, 15)
         self.assertEqual(mock_builder.return_value.build.call_count, 15)
         self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
+
+        # the output manifest is written
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    OPENSEARCH_DASHBOARDS_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__), "../manifests/1.1.0/opensearch-dashboards-1.1.0.yml"
+        )
+    )
+    
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_DASHBOARDS_MANIFEST, "-a", "testarch"])
+    @patch("run_build.BuildTarget", return_value=MagicMock(output_dir="artifacts"))
+    @patch("run_build.Builder", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.GitRepository", return_value=MagicMock(working_directory="dummy"))
+    @patch("run_build.TemporaryDirectory")
+    def test_main_with_arch(self, mock_temp, mock_repo, mock_recorder, mock_builder, mock_target, *mocks):
+        mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
+
+        main()
+
+        # each repository is checked out locally
+        mock_repo.assert_has_calls(
+            [
+                call(
+                    "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
+                    "1.1",
+                    os.path.join(tempfile.gettempdir(), "OpenSearch-Dashboards"),
+                    None,
+                ),
+            ],
+            any_order=True,
+        )
+
+        mock_target.assert_called_once_with(
+            name="OpenSearch Dashboards",
+            version="1.1.0",
+            snapshot=False,
+            arch="testarch",
+            output_dir=ANY
+        )
+
+        # each component is built and its artifacts exported
+        mock_builder.assert_has_calls(
+            [
+                call("OpenSearch-Dashboards", mock_repo.return_value, mock_recorder.return_value),
+            ],
+            any_order=True,
+        )
 
         # the output manifest is written
         mock_recorder.return_value.write_manifest.assert_called()

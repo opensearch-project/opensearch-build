@@ -63,6 +63,14 @@ class TestBuildArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_component(self):
         self.assertEqual(BuildArgs().component, "xyz")
+    
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_arch_default(self):
+        self.assertIsNone(BuildArgs().arch)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--arch", "xyz"])
+    def test_arch(self):
+        self.assertEqual(BuildArgs().arch, "xyz")
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_script_path(self):

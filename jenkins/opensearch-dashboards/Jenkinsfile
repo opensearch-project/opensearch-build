@@ -33,7 +33,9 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            build("x64")
+                            assemble()
+                            publish()
                         }
                     }
                     post() {
@@ -59,12 +61,19 @@ pipeline {
     }
 }
 
-void build() {
+void build(target) {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    sh "./build.sh manifests/$INPUT_MANIFEST"
-    sh './assemble.sh artifacts/manifest.yml'
+    sh "./build.sh manifests/$INPUT_MANIFEST -a $target"
+}
 
+void assemble() {
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
+    sh './assemble.sh artifacts/manifest.yml'
+}
+
+void publish() {
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
     def artifactPath = "${manifest.build.version}/${BUILD_NUMBER}/${manifest.build.architecture}";
 

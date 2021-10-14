@@ -14,6 +14,7 @@ class BuildArgs:
     snapshot: bool
     component: str
     keep: bool
+    arch: str
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Build an OpenSearch Bundle")
@@ -37,6 +38,9 @@ class BuildArgs:
             help="Do not delete the working temporary directory.",
         )
         parser.add_argument(
+            "-a", "--arch", type=str, help="Architecture to build."
+        )
+        parser.add_argument(
             "-v",
             "--verbose",
             help="Show more verbose output.",
@@ -52,6 +56,7 @@ class BuildArgs:
         self.snapshot = args.snapshot
         self.component = args.component
         self.keep = args.keep
+        self.arch = args.arch
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
 
     def component_command(self, name):
