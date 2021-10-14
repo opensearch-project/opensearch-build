@@ -34,12 +34,21 @@ class TestManifest(unittest.TestCase):
         )
 
     def test_invalid_version(self):
-        manifest_path = os.path.join(self.data_path, "invalid-schema-version.yml")
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-emptyString.yml")
 
         with self.assertRaises(ValueError) as context:
             TestManifest.SampleManifest.from_path(manifest_path)
         self.assertEqual(
-            "Invalid manifest schema: {'schema-version': ['unallowed value invalid']}",
+            "Invalid manifest schema: {'schema-version': ['empty values not allowed']}",
+            context.exception.__str__(),
+        )
+
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-noValue.yml")
+
+        with self.assertRaises(ValueError) as context:
+            TestManifest.SampleManifest.from_path(manifest_path)
+        self.assertEqual(
+            "Invalid manifest schema: {'schema-version': ['null value not allowed']}",
             context.exception.__str__(),
         )
 
