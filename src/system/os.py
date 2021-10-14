@@ -15,3 +15,7 @@ def current_arch():
         return "arm64"
     else:
         raise ValueError(f"Unsupported architecture: {arch}")
+
+
+def current_platform():
+    return subprocess.check_output(["uname", "-s"]).decode().strip().lower()

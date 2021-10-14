@@ -36,7 +36,21 @@ class Builder:
         build_script = ScriptFinder.find_build_script(
             target.name, self.component_name, self.git_repo.working_directory
         )
-        build_command = f"{build_script} -v {target.version} -a {target.arch} -s {str(target.snapshot).lower()} -o {self.output_path}"
+        build_command = " ".join(
+            [
+                build_script,
+                "-v",
+                target.version,
+                "-p",
+                target.platform,
+                "-a",
+                target.arch,
+                "-s",
+                str(target.snapshot).lower(),
+                "-o",
+                self.output_path,
+            ]
+        )
         self.git_repo.execute(build_command)
         self.build_recorder.record_component(self.component_name, self.git_repo)
 

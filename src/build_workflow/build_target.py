@@ -7,13 +7,14 @@
 import os
 import uuid
 
-from system.arch import current_arch
+from system.os import current_arch, current_platform
 
 
 class BuildTarget:
     build_id: str
     name: str
     version: str
+    platform: str
     arch: str
     snapshot: bool
     output_dir: str
@@ -21,17 +22,19 @@ class BuildTarget:
     def __init__(
         self,
         version,
+        platform=None,
         arch=None,
         name=None,
         snapshot=True,
         build_id=None,
         output_dir="artifacts",
     ):
-        self.build_id = os.getenv("OPENSEARCH_BUILD_ID") or os.getenv("OPENSEARCH_DASHBOARDS_BUILD_ID") or build_id or uuid.uuid4().hex
+        self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
         self.version = version
         self.snapshot = snapshot
         self.arch = arch or current_arch()
+        self.platform = platform or current_platform()
         self.output_dir = output_dir
 
     @property

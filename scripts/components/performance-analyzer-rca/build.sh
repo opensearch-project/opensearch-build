@@ -14,12 +14,13 @@ function usage() {
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
+    echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -33,6 +34,9 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
+            ;;
+        p)
+            PLATFORM=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG

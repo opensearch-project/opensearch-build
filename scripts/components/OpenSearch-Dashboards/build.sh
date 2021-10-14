@@ -11,12 +11,13 @@ function usage() {
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch Dashboards version."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
-    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
+    echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -30,6 +31,9 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
+            ;;
+        p)
+            PLATFORM=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG
@@ -53,17 +57,19 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
+[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
     x64)
-        TARGET="--linux"
-        QUALIFIER="linux-x64"
+        TARGET="--$PLATFORM"
+        QUALIFIER="$PLATFORM-x64"
         ;;
     arm64)
-        TARGET="--linux-arm"
-        QUALIFIER="linux-arm64"
+        TARGET="--$PLATFORM-arm"
+        QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
         echo "Unsupported architecture: ${ARCHITECTURE}"
