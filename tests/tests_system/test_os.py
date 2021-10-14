@@ -8,10 +8,11 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from system.arch import current_arch
+from system.os import current_arch, current_platform
 
 
-class TestArch(unittest.TestCase):
+class TestOs(unittest.TestCase):
+    # current_arch
     def test_current_arch(self):
         self.assertTrue(current_arch() in ["x64", "arm64"])
 
@@ -37,3 +38,11 @@ class TestArch(unittest.TestCase):
     def test_subprocess_call(self, mock_subprocess):
         current_arch()
         subprocess.check_output.assert_called_with(["uname", "-m"])
+
+    # current_platform
+    def test_current_platform(self):
+        self.assertTrue(current_platform() in ["linux", "darwin"])
+
+    @patch("subprocess.check_output", return_value="Xyz".encode())
+    def test_current_platform_lowercase(self, mock_subprocess):
+        self.assertTrue(current_platform() == "xyz")

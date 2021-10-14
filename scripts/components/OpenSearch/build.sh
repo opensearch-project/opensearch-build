@@ -14,12 +14,13 @@ function usage() {
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
-    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
+    echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -33,6 +34,9 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
+            ;;
+        p)
+            PLATFORM=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG
@@ -68,16 +72,19 @@ mkdir -p $OUTPUT/maven/org/opensearch
 # Copy maven publications to be promoted
 cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
+[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 case $ARCHITECTURE in
     x64)
-        TARGET="linux-tar"
-        QUALIFIER="linux-x64"
+        TARGET="$PLATFORM-tar"
+        QUALIFIER="$PLATFORM-x64"
         ;;
     arm64)
-        TARGET="linux-arm64-tar"
-        QUALIFIER="linux-arm64"
+        TARGET="$PLATFORM-arm64-tar"
+        QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
         echo "Unsupported architecture: ${ARCHITECTURE}"

@@ -14,12 +14,13 @@ function usage() {
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
+    echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:a:" arg; do
+while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -33,6 +34,9 @@ while getopts ":h:v:s:o:a:" arg; do
             ;;
         o)
             OUTPUT=$OPTARG
+            ;;
+        p)
+            PLATFORM=$OPTARG
             ;;
         a)
             ARCHITECTURE=$OPTARG
@@ -77,6 +81,11 @@ fi
 # For arm, march=native is broken in centos 7. Manually override to lowest version of armv8.
 if [ "$ARCHITECTURE" = "arm64" ]; then
     sed -i -e 's/-march=native/-march=armv8-a/g' external/nmslib/similarity_search/CMakeLists.txt
+fi
+
+if [ "$JAVA_HOME" = "" ]; then
+    export JAVA_HOME=`/usr/libexec/java_home`
+    echo "SET JAVA_HOME=$JAVA_HOME"
 fi
 
 cmake .
