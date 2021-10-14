@@ -41,7 +41,7 @@ class TestBundle(unittest.TestCase):
         )
         with self.assertRaisesRegex(
             FileNotFoundError,
-            "does-not-exist/bundle/opensearch-min-1.1.0-linux-x64.tar.gz",
+            "does-not-exist/dist/opensearch-min-1.1.0-linux-x64.tar.gz",
         ):
             self.DummyBundle(
                 BuildManifest.from_path(manifest_path),

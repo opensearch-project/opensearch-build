@@ -53,7 +53,7 @@ class BuildManifest(Manifest):
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "type": "list",
             "schema": {
@@ -64,7 +64,7 @@ class BuildManifest(Manifest):
                         "schema": {
                             "maven": {"type": "list"},
                             "plugins": {"type": "list"},
-                            "bundle": {"type": "list"},
+                            "dist": {"type": "list"},
                             "core-plugins": {"type": "list"},
                             "libs": {"type": "list"},
                         },
@@ -89,7 +89,7 @@ class BuildManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)

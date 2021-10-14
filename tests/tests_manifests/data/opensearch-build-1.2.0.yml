@@ -5,8 +5,8 @@ build:
   version: 1.2.0
 components:
 - artifacts:
-    bundle:
-    - bundle/opensearch-min-1.2.0-linux-x64.tar.gz
+    dist:
+    - dist/opensearch-min-1.2.0-linux-x64.tar.gz
     core-plugins:
     - core-plugins/discovery-ec2-1.2.0.zip
     - core-plugins/transport-nio-1.2.0.zip
@@ -2480,4 +2480,4 @@ components:
   ref: main
   repository: https://github.com/opensearch-project/dashboards-notebooks.git
   version: 1.2.0.0
-schema-version: '1.0'
+schema-version: '1.1'

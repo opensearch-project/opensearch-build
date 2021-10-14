@@ -38,7 +38,7 @@ class TestBundleManifest(unittest.TestCase):
         self.assertEqual(opensearch_min_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_min_component.location,
-            "artifacts/bundle/opensearch-min-1.1.0-linux-x64.tar.gz",
+            "artifacts/dist/opensearch-min-1.1.0-linux-x64.tar.gz",
         )
         self.assertEqual(
             opensearch_min_component.repository,

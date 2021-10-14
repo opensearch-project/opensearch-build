@@ -87,11 +87,11 @@ esac
 
 ./gradlew :distribution:archives:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
 
-# Copy artifact to bundle output
+# Copy artifact to dist folder in bundle build output
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
 ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.tar.gz"`
-mkdir -p "${OUTPUT}/bundle"
-cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/bundle/$ARTIFACT_BUILD_NAME
+mkdir -p "${OUTPUT}/dist"
+cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
 
 echo "Building core plugins..."
 mkdir -p "${OUTPUT}/core-plugins"
