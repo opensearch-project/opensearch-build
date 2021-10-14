@@ -83,6 +83,11 @@ if [ "$ARCHITECTURE" = "arm64" ]; then
     sed -i -e 's/-march=native/-march=armv8-a/g' external/nmslib/similarity_search/CMakeLists.txt
 fi
 
+if [ "$JAVA_HOME" = "" ]; then
+    export JAVA_HOME=`/usr/libexec/java_home`
+    echo "SET JAVA_HOME=$JAVA_HOME"
+fi
+
 cmake .
 make
 
