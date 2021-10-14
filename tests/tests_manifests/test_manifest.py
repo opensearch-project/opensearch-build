@@ -33,8 +33,8 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-    def test_invalid_version(self):
-        manifest_path = os.path.join(self.data_path, "invalid-schema-version-emptyString.yml")
+    def test_invalid_version_empty(self):
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-empty.yml")
 
         with self.assertRaises(ValueError) as context:
             TestManifest.SampleManifest.from_path(manifest_path)
@@ -43,7 +43,8 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-        manifest_path = os.path.join(self.data_path, "invalid-schema-version-noValue.yml")
+    def test_invalid_version_no_value(self):
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-no-value.yml")
 
         with self.assertRaises(ValueError) as context:
             TestManifest.SampleManifest.from_path(manifest_path)
