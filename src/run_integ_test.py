@@ -34,7 +34,9 @@ def pull_build_repo(work_dir):
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(os.path.dirname(__file__), 'test_workflow/config/test_manifest.yml')
+    test_manifest_path = os.path.join(
+        os.path.dirname(__file__), "test_workflow/config/test_manifest.yml"
+    )
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
@@ -45,9 +47,21 @@ def main():
         test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir)
         os.chdir(work_dir)
         bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.platform,
+            args.architecture,
+            work_dir,
+        )
         build_manifest = BuildManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.platform,
+            args.architecture,
+            work_dir,
+        )
         pull_build_repo(work_dir)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         all_results = TestSuiteResults()
@@ -60,7 +74,7 @@ def main():
                     build_manifest,
                     work_dir,
                     args.s3_bucket,
-                    test_recorder
+                    test_recorder,
                 )
                 test_results = test_suite.execute()
                 all_results.append(component.name, test_results)

@@ -24,7 +24,7 @@ class TestBuildManifest(unittest.TestCase):
         self.manifest = BuildManifest.from_path(self.manifest_filename)
 
     def test_build(self):
-        self.assertEqual(self.manifest.version, "1.1")
+        self.assertEqual(self.manifest.version, "1.2")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 15)
@@ -52,8 +52,9 @@ class TestBuildManifest(unittest.TestCase):
 
     def test_get_manifest_relative_location(self):
         actual = BuildManifest.get_build_manifest_relative_location(
-            "25", "1.1.0", "x64"
+            "25", "1.1.0", "linux", "x64"
         )
+        # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         expected = "builds/1.1.0/25/x64/manifest.yml"
         self.assertEqual(
             actual, expected, "the manifest relative location is not as expected"
@@ -76,12 +77,14 @@ class TestBuildManifest(unittest.TestCase):
         s3_download_path = BuildManifest.get_build_manifest_relative_location(
             self.manifest.build.id,
             self.manifest.build.version,
+            self.manifest.build.platform,
             self.manifest.build.architecture,
         )
         BuildManifest.from_s3(
             "bucket_name",
             self.manifest.build.id,
             self.manifest.build.version,
+            self.manifest.build.platform,
             self.manifest.build.architecture,
             "/xyz",
         )

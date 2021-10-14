@@ -41,7 +41,7 @@ class LocalTestClusterTests(unittest.TestCase):
             True,
             "with-security",
             mock_test_recorder,
-            "dummy-bucket"
+            "dummy-bucket",
         )
 
     def tearDown(self):
@@ -114,11 +114,14 @@ class LocalTestClusterTests(unittest.TestCase):
         s3_path = BundleManifest.get_tarball_relative_location(
             self.manifest.build.id,
             self.manifest.build.version,
+            self.manifest.build.platform,
             self.manifest.build.architecture,
         )
         work_dir_path = os.path.join(self.work_dir.name, "local-test-cluster")
         bundle_name = BundleManifest.get_tarball_name(
-            self.manifest.build.version, self.manifest.build.architecture
+            self.manifest.build.version,
+            self.manifest.build.platform,
+            self.manifest.build.architecture,
         )
         self.local_test_cluster.download()
         os.chdir.assert_called_once_with(work_dir_path)
@@ -148,7 +151,7 @@ class LocalTestClusterTests(unittest.TestCase):
             False,
             "without-security",
             mock_test_recorder,
-            "dummy-bucket"
+            "dummy-bucket",
         )
         with self.assertRaises(ClusterCreationException) as err:
             local_test_cluster.wait_for_service()
@@ -158,17 +161,27 @@ class LocalTestClusterTests(unittest.TestCase):
                 auth=("admin", "admin"),
             )
         self.assertEqual(
-            str(err.exception),
-            "Cluster is not available after 10 attempts",
+            str(err.exception), "Cluster is not available after 10 attempts"
         )
 
-    @patch("test_workflow.integ_test.local_test_cluster.psutil.Process", side_effect=__mock_process)
+    @patch(
+        "test_workflow.integ_test.local_test_cluster.psutil.Process",
+        side_effect=__mock_process,
+    )
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.wait")
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
-    @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
-    def test_terminate_process(self, mock_logging, mock_terminate, mock_wait, mock_process):
-        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
-        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+    @patch(
+        "test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock()
+    )
+    def test_terminate_process(
+        self, mock_logging, mock_terminate, mock_wait, mock_process
+    ):
+        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(
+            dir=self.local_test_cluster.work_dir
+        )
+        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(
+            dir=self.local_test_cluster.work_dir
+        )
         self.local_test_cluster.process = self.process
         self.local_test_cluster.terminate_process()
         mock_process.assert_called_once_with(self.process.pid)
@@ -183,13 +196,24 @@ class LocalTestClusterTests(unittest.TestCase):
         )
         mock_logging.debug.assert_has_calls([call("Checking for child processes")])
 
-    @patch("test_workflow.integ_test.local_test_cluster.psutil.Process", side_effect=__mock_process)
+    @patch(
+        "test_workflow.integ_test.local_test_cluster.psutil.Process",
+        side_effect=__mock_process,
+    )
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.wait")
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
-    @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
-    def test_terminate_process_timeout(self, mock_logging, mock_terminate, mock_wait, mock_process):
-        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
-        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+    @patch(
+        "test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock()
+    )
+    def test_terminate_process_timeout(
+        self, mock_logging, mock_terminate, mock_wait, mock_process
+    ):
+        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(
+            dir=self.local_test_cluster.work_dir
+        )
+        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(
+            dir=self.local_test_cluster.work_dir
+        )
         mock_wait.side_effect = subprocess.TimeoutExpired(cmd="pass", timeout=1)
         with self.assertRaises(subprocess.TimeoutExpired):
             self.local_test_cluster.process = self.process

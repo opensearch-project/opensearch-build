@@ -23,12 +23,18 @@ class BundleRecorder:
             build.id,
             build.name,
             build.version,
+            build.platform,
             build.architecture,
             self.__get_tar_location(),
         )
 
     def __get_tar_name(self, build):
-        parts = [build.name.lower().replace(" ", "-"), build.version, "linux", build.architecture]
+        parts = [
+            build.name.lower().replace(" ", "-"),
+            build.version,
+            build.platform,
+            build.architecture,
+        ]
         return "-".join(parts) + ".tar.gz"
 
     def __get_public_url_path(self, folder, rel_path):
@@ -70,15 +76,16 @@ class BundleRecorder:
         self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
-        def __init__(self, build_id, name, version, arch, location):
+        def __init__(self, build_id, name, version, platform, arch, location):
             self.data = {}
             self.data["build"] = {}
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
             self.data["build"]["version"] = str(version)
+            self.data["build"]["platform"] = platform
             self.data["build"]["architecture"] = arch
             self.data["build"]["location"] = location
-            self.data["schema-version"] = "1.0"
+            self.data["schema-version"] = "1.1"
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []

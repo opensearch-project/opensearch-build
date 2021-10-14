@@ -39,9 +39,10 @@ class TestBundles(unittest.TestCase):
     def test_bundle_opensearch_invalid(self):
         manifest = BuildManifest(
             {
-                "schema-version": "1.1",
+                "schema-version": "1.2",
                 "build": {
                     "name": "invalid",
+                    "platform": "linux",
                     "architecture": "x86",
                     "id": "id",
                     "version": "1.0.0",

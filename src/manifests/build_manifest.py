@@ -14,11 +14,12 @@ A BuildManifest is an immutable view of the outputs from a build step
 The manifest contains information about the product that was built (in the `build` section),
 and the components that made up the build in the `components` section.
 
-The format for schema version 1.0 is:
-schema-version: "1.0"
+The format for schema version 1.2 is:
+schema-version: "1.2"
 build:
   name: string
   version: string
+  platform: linux or darwin
   architecture: x64 or arm64
 components:
   - name: string
@@ -47,13 +48,14 @@ class BuildManifest(Manifest):
             "required": True,
             "type": "dict",
             "schema": {
+                "platform": {"required": True, "type": "string"},
                 "architecture": {"required": True, "type": "string"},
                 "id": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.2"]},
         "components": {
             "type": "list",
             "schema": {
@@ -89,7 +91,7 @@ class BuildManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.1",
+            "schema-version": "1.2",
             "build": self.build.__to_dict__(),
             "components": list(
                 map(lambda component: component.__to_dict__(), self.components)
@@ -109,15 +111,16 @@ class BuildManifest(Manifest):
 
     @staticmethod
     def get_build_manifest_relative_location(
-        build_id, opensearch_version, architecture
+        build_id, opensearch_version, platform, architecture
     ):
+        # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
     @staticmethod
-    def from_s3(bucket_name, build_id, opensearch_version, architecture, work_dir=None):
+    def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
         work_dir = work_dir if not None else str(os.getcwd())
         manifest_s3_path = BuildManifest.get_build_manifest_relative_location(
-            build_id, opensearch_version, architecture
+            build_id, opensearch_version, platform, architecture
         )
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
         build_manifest = BuildManifest.from_path("manifest.yml")
@@ -131,6 +134,7 @@ class BuildManifest(Manifest):
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
+            self.platform = data["platform"]
             self.architecture = data["architecture"]
             self.id = data["id"]
 
@@ -138,6 +142,7 @@ class BuildManifest(Manifest):
             return {
                 "name": self.name,
                 "version": self.version,
+                "platform": self.platform,
                 "architecture": self.architecture,
                 "id": self.id,
             }

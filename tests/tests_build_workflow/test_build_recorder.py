@@ -28,6 +28,7 @@ class TestBuildRecorder(unittest.TestCase):
                 output_dir="output_dir",
                 name="OpenSearch",
                 version="1.1.0",
+                platform="linux",
                 arch="x64",
                 snapshot=snapshot,
             )
@@ -55,6 +56,7 @@ class TestBuildRecorder(unittest.TestCase):
             recorder.get_manifest().to_dict(),
             {
                 "build": {
+                    "platform": "linux",
                     "architecture": "x64",
                     "id": "1",
                     "name": "OpenSearch",
@@ -70,7 +72,7 @@ class TestBuildRecorder(unittest.TestCase):
                         "version": "1.1.0.0",
                     }
                 ],
-                "schema-version": "1.1",
+                "schema-version": "1.2",
             },
         )
 
@@ -129,12 +131,13 @@ class TestBuildRecorder(unittest.TestCase):
             manifest.to_dict(),
             {
                 "build": {
+                    "platform": "linux",
                     "architecture": "x64",
                     "id": "1",
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
-                "schema-version": "1.1",
+                "schema-version": "1.2",
             },
         )
 
