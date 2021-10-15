@@ -22,43 +22,43 @@ function usage() {
 
 function load_dashboard_from_cache() {
     if [ ! -d ../OpenSearch-Dashboards ]; then
-        if [ -d ~/.cache/opensearch/OpenSearch-Dashboards/ ]; then
+        if [ -d ~/.cache/opensearch-project/OpenSearch-Dashboards/ ]; then
             echo "Copy OpenSearch-Dashboards from .cache"
-            cp -r ~/.cache/opensearch/OpenSearch-Dashboards/ ../
+            cp -r ~/.cache/opensearch-project/OpenSearch-Dashboards/ ../
         fi
     fi
 }
 
 while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
-    h)
-        usage
-        exit 1
-        ;;
-    v)
-        VERSION=$OPTARG
-        ;;
-    s)
-        SNAPSHOT=$OPTARG
-        ;;
-    o)
-        OUTPUT=$OPTARG
-        ;;
-    p)
-        PLATFORM=$OPTARG
-        ;;
-    a)
-        ARCHITECTURE=$OPTARG
-        ;;
-    :)
-        echo "Error: -${OPTARG} requires an argument"
-        usage
-        exit 1
-        ;;
-    ?)
-        echo "Invalid option: -${arg}"
-        exit 1
-        ;;
+        h)
+            usage
+            exit 1
+            ;;
+        v)
+            VERSION=$OPTARG
+            ;;
+        s)
+            SNAPSHOT=$OPTARG
+            ;;
+        o)
+            OUTPUT=$OPTARG
+            ;;
+        p)
+            PLATFORM=$OPTARG
+            ;;
+        a)
+            ARCHITECTURE=$OPTARG
+            ;;
+        :)
+            echo "Error: -${OPTARG} requires an argument"
+            usage
+            exit 1
+            ;;
+        ?)
+            echo "Invalid option: -${arg}"
+            exit 1
+            ;;
     esac
 done
 
