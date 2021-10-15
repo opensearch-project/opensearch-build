@@ -20,36 +20,45 @@ function usage() {
     echo -e "-h help"
 }
 
+function load_dashboard_from_cache() {
+    if [ ! -d ../OpenSearch-Dashboards ]; then
+        if [ -d ~/.cache/opensearch/OpenSearch-Dashboards/ ]; then
+            echo "Copy OpenSearch-Dashboards from .cache"
+            cp -r ~/.cache/opensearch/OpenSearch-Dashboards/ ../
+        fi
+    fi
+}
+
 while getopts ":h:v:s:o:p:a:" arg; do
     case $arg in
-        h)
-            usage
-            exit 1
-            ;;
-        v)
-            VERSION=$OPTARG
-            ;;
-        s)
-            SNAPSHOT=$OPTARG
-            ;;
-        o)
-            OUTPUT=$OPTARG
-            ;;
-        p)
-            PLATFORM=$OPTARG
-            ;;
-        a)
-            ARCHITECTURE=$OPTARG
-            ;;
-        :)
-            echo "Error: -${OPTARG} requires an argument"
-            usage
-            exit 1
-            ;;
-        ?)
-            echo "Invalid option: -${arg}"
-            exit 1
-            ;;
+    h)
+        usage
+        exit 1
+        ;;
+    v)
+        VERSION=$OPTARG
+        ;;
+    s)
+        SNAPSHOT=$OPTARG
+        ;;
+    o)
+        OUTPUT=$OPTARG
+        ;;
+    p)
+        PLATFORM=$OPTARG
+        ;;
+    a)
+        ARCHITECTURE=$OPTARG
+        ;;
+    :)
+        echo "Error: -${OPTARG} requires an argument"
+        usage
+        exit 1
+        ;;
+    ?)
+        echo "Invalid option: -${arg}"
+        exit 1
+        ;;
     esac
 done
 
@@ -65,6 +74,7 @@ mkdir -p $OUTPUT/plugins
 PLUGIN_NAME=$(basename "$PWD")
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
+load_dashboard_from_cache
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../OpenSearch-Dashboards && yarn osd bootstrap)
