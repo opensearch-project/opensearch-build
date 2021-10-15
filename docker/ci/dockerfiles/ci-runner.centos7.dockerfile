@@ -68,12 +68,12 @@ RUN set -eux; \
         regex="temurin([0-9]+)[-]"; \
         if [[ $jdk =~ $regex ]]; then \
             MAJOR=${BASH_REMATCH[1]}; \
-            curl -LfsSo /tmp/openjdk.tar.gz ${BINARY_URL}; \
-            echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
+            curl -LfsSo /tmp/openjdk-${MAJOR}.tar.gz ${BINARY_URL}; \
+            echo "${ESUM} */tmp/openjdk-${MAJOR}.tar.gz" | sha256sum -c -; \
             mkdir -p /opt/java/openjdk-${MAJOR}; \
             cd /opt/java/openjdk-${MAJOR}; \
-            tar -xf /tmp/openjdk.tar.gz --strip-components=1; \
-            rm -rf /tmp/openjdk.tar.gz; \
+            tar -xf /tmp/openjdk-${MAJOR}.tar.gz --strip-components=1; \
+            rm -rf /tmp/openjdk-${MAJOR}.tar.gz; \
             echo "export JAVA${MAJOR}_HOME=/opt/java/openjdk-${MAJOR}" >> /etc/profile.d/java_home.sh; \
         fi; \
     done;
