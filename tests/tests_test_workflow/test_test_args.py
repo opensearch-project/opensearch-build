@@ -22,6 +22,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",
@@ -32,6 +34,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(TestArgs().s3_bucket, "xyz")
         self.assertEqual(TestArgs().opensearch_version, "1.1.0")
         self.assertEqual(TestArgs().build_id, 30)
+        self.assertEqual(TestArgs().platform, "linux")
         self.assertEqual(TestArgs().architecture, "x64")
         self.assertEqual(TestArgs().test_run_id, 6)
 
@@ -45,6 +48,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "xyz",
             "--test-run-id",
@@ -62,9 +67,33 @@ class TestTestArgs(unittest.TestCase):
             "--s3-bucket",
             "xyz",
             "--opensearch-version",
+            "1.1.0",
+            "--build-id",
+            "30",
+            "--platform",
+            "xyz",
+            "--architecture",
+            "x64",
+            "--test-run-id",
+            "6",
+        ],
+    )
+    def test_invalid_platform(self):
+        with self.assertRaises(SystemExit):
+            self.assertEqual(TestArgs().platform, "invalid")
+
+    @patch(
+        "argparse._sys.argv",
+        [
+            ARGS_PY,
+            "--s3-bucket",
+            "xyz",
+            "--opensearch-version",
             "1111",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",
@@ -86,6 +115,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",
@@ -105,6 +136,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",
@@ -125,6 +158,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",
@@ -144,6 +179,8 @@ class TestTestArgs(unittest.TestCase):
             "1.1.0",
             "--build-id",
             "30",
+            "--platform",
+            "linux",
             "--architecture",
             "x64",
             "--test-run-id",

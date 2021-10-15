@@ -55,7 +55,7 @@ def main():
 
     with tempfile.TemporaryDirectory() as work_dir:
         logging.info(
-            f"Bundling {build.name} ({build.architecture}) into {output_dir} ..."
+            f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ..."
         )
 
         os.chdir(work_dir)

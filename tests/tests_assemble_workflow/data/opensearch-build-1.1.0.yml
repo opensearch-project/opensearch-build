@@ -1,4 +1,5 @@
 build:
+  platform: linux
   architecture: x64
   id: c3ff7a232d25403fa8cc14c97799c323
   name: OpenSearch
@@ -2480,4 +2481,4 @@ components:
   ref: main
   repository: https://github.com/opensearch-project/dashboards-notebooks.git
   version: 1.1.0.0
-schema-version: '1.1'
+schema-version: '1.2'

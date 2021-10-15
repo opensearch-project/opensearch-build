@@ -23,6 +23,7 @@ class TestArgs:
     s3_bucket: str
     opensearch_version: str
     build_id: int
+    platform: str
     architecture: str
     test_run_id: int
     component: str
@@ -45,6 +46,13 @@ class TestArgs:
             "--build-id",
             type=int,
             help="The build id for the built artifact",
+            required=True,
+        )
+        parser.add_argument(
+            "--platform",
+            type=str,
+            choices=["linux", "darwin"],
+            help="The os name e.g. linux, darwin",
             required=True,
         )
         parser.add_argument(
@@ -80,6 +88,7 @@ class TestArgs:
         self.s3_bucket = args.s3_bucket
         self.opensearch_version = args.opensearch_version
         self.build_id = args.build_id
+        self.platform = args.platform
         self.architecture = args.architecture
         self.test_run_id = args.test_run_id
         self.component = args.component

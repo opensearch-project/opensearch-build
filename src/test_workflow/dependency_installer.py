@@ -20,14 +20,11 @@ class DependencyInstaller:
     def __init__(self, build):
         self.build_id = build.id
         self.version = build.version
-        self.arch = build.architecture
+        self.platform = build.platform
+        self.architecture = build.architecture
         self.s3_bucket = S3Bucket(self.ARTIFACT_S3_BUCKET)
-        self.s3_maven_location = (
-            f"builds/{self.version}/{self.build_id}/{self.arch}/maven/org/opensearch"
-        )
-        self.s3_build_location = (
-            f"builds/{self.version}/{self.build_id}/{self.arch}/plugins"
-        )
+        self.s3_maven_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/maven/org/opensearch"
+        self.s3_build_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/plugins"
         self.maven_local_path = os.path.join(
             os.path.expanduser("~"), ".m2/repository/org/opensearch/"
         )

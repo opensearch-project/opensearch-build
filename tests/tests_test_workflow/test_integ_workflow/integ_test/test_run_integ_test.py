@@ -21,13 +21,14 @@ class TestRunIntegTest(unittest.TestCase):
     @contextmanager
     def __mock_args(self):
         with patch("run_integ_test.TestArgs") as mock_test_args:
-            mock_test_args.s3_bucket = 's3bucket'
-            mock_test_args.architecture = 'x64'
-            mock_test_args.opensearch_version = '1.1.0'
+            mock_test_args.s3_bucket = "s3bucket"
+            mock_test_args.platform = "linux"
+            mock_test_args.architecture = "x64"
+            mock_test_args.opensearch_version = "1.1.0"
             mock_test_args.build_id = 100
             mock_test_args.test_run_id = 1
             mock_test_args.keep = False
-            mock_test_args.logging_level = 'INFO'
+            mock_test_args.logging_level = "INFO"
             yield mock_test_args
 
     @patch("run_integ_test.console")
@@ -38,7 +39,14 @@ class TestRunIntegTest(unittest.TestCase):
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")
     @patch("run_integ_test.IntegTestSuite")
-    def test_run_integ_test(self, mock_integ_test_suite, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
+    def test_run_integ_test(
+        self,
+        mock_integ_test_suite,
+        mock_build_from_s3,
+        mock_bundle_from_s3,
+        mock_results,
+        *mock
+    ):
         """
         test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
         as part of integration test job.
@@ -61,7 +69,14 @@ class TestRunIntegTest(unittest.TestCase):
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")
     @patch("run_integ_test.IntegTestSuite")
-    def test_run_integ_test_failure(self, mock_integ_test_suite, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
+    def test_run_integ_test_failure(
+        self,
+        mock_integ_test_suite,
+        mock_build_from_s3,
+        mock_bundle_from_s3,
+        mock_results,
+        *mock
+    ):
         """
         test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
         as part of integration test job.
