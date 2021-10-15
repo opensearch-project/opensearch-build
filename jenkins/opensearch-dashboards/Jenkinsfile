@@ -95,7 +95,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x64', 'build-arm64']
+        def stages = ['build-x64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
