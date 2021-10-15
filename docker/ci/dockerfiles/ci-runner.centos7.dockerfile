@@ -42,7 +42,7 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 # The distributions are extracted to /opt/java/ folder with environment variables JAVA8_HOME,
 # JAVA11_HOME and JAVA17_HOME exported and pointing at respective ones.
 RUN set -eux; \
-    ARCH="$(objdump="$(command -v objdump)" && objdump --file-headers "$objdump" | awk -F '[:,]+[[:space:]]+' '$1 == "architecture" { print $2 }')"; \
+    ARCH="$(uname -m)"; \
     JDKS=""; \
     case "${ARCH}" in \
        aarch64|arm64) \
@@ -51,7 +51,7 @@ RUN set -eux; \
          JDKS+="105bdc12fcd54c551e8e8ac96bc82412467244c32063689c41cee29ceb7452a2@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.12_7.tar.gz "; \
          JDKS+="e08e6d8c84da28a2c49ccd511f8835c329fbdd8e4faff662c58fa24cca74021d@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_aarch64_linux_hotspot_17_35.tar.gz "; \
          ;; \
-       amd64|i386:x86-64) \
+       amd64|x86_64) \
          # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
          JDKS+="cc13f274becf9dd5517b6be583632819dfd4dd81e524b5c1b4f406bdaf0e063a@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u302b08.tar.gz "; \
          JDKS+="8770f600fc3b89bf331213c7aa21f8eedd9ca5d96036d1cd48cb2748a3dbefd2@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.12_7.tar.gz "; \
