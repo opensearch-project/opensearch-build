@@ -71,3 +71,24 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
                         ),
                     ]
                 )
+
+    @patch("shutil.copy2")
+    def test_bundle_copy_default_files(self, mock_copy, *mocks):
+        manifest_path = os.path.join(
+            os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml"
+        )
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data/artifacts")
+        bundle = BundleOpenSearchDashboards(
+            BuildManifest.from_path(manifest_path), artifacts_path, MagicMock()
+        )
+        bundle.copy_default_files()
+
+        mock_copy.assert_called_with(
+            os.path.realpath(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "../../config/opensearch_dashboards.yml",
+                )
+            ),
+            f'{bundle.archive_path}/config/opensearch_dashboards.yml',
+        )

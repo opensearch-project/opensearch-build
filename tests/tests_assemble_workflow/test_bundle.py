@@ -17,6 +17,9 @@ class TestBundle(unittest.TestCase):
         def install_plugin(self, plugin):
             pass
 
+        def copy_default_files(self):
+            pass
+
     def test_bundle(self):
         manifest_path = os.path.join(
             os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"

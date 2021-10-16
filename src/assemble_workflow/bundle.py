@@ -54,6 +54,10 @@ class Bundle(ABC):
             f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
         )
 
+    @abstractmethod
+    def copy_default_files(self):
+        logging.info('Copied default files')
+
     def build_tar(self, dest):
         tar_name = self.bundle_recorder.tar_name
         with tarfile.open(tar_name, "w:gz") as tar:
@@ -109,3 +113,23 @@ class Bundle(ABC):
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
         return min_bundle
+
+    def copy_file(self, source, dest):
+        file = os.path.realpath(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                source,
+            )
+        )
+        if not os.path.isfile(file):
+            logging.error(
+                f"No file found at path: {file}"
+            )
+            exit(1)
+
+        shutil.copy2(
+            file,
+            os.path.join(
+                dest, os.path.basename(file)
+            ),
+        )

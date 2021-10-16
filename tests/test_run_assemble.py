@@ -38,8 +38,7 @@ class TestRunAssemble(unittest.TestCase):
     @patch("run_assemble.Bundles", return_value=MagicMock())
     @patch("run_assemble.BundleRecorder", return_value=MagicMock())
     @patch("tempfile.TemporaryDirectory")
-    @patch("shutil.copy2")
-    def test_main(self, mock_copy, mock_temp, mock_recorder, mock_bundles, *mocks):
+    def test_main(self, mock_temp, mock_recorder, mock_bundles, *mocks):
         mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
         mock_bundle = MagicMock(archive_path="path")
         mock_bundles.create.return_value = mock_bundle
@@ -48,15 +47,7 @@ class TestRunAssemble(unittest.TestCase):
 
         mock_bundle.install_plugins.assert_called()
 
-        mock_copy.assert_called_with(
-            os.path.realpath(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../scripts/legacy/tar/linux/opensearch-tar-install.sh",
-                )
-            ),
-            "path/opensearch-tar-install.sh",
-        )
+        mock_bundle.copy_default_files.assert_called()
 
         mock_bundle.build_tar.assert_called_with("curdir/bundle")
 

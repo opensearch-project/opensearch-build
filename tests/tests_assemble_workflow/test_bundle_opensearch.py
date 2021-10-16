@@ -104,3 +104,24 @@ class TestBundleOpenSearch(unittest.TestCase):
                     os.path.join(bundle.tmp_dir.name, "bundle"), arcname="bundle"
                 )
                 self.assertEqual(mock_copyfile.call_count, 1)
+
+    @patch("shutil.copy2")
+    def test_bundle_copy_default_files(self, mock_copy, *mocks):
+        manifest_path = os.path.join(
+            os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"
+        )
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data/artifacts")
+        bundle = BundleOpenSearch(
+            BuildManifest.from_path(manifest_path), artifacts_path, MagicMock()
+        )
+        bundle.copy_default_files()
+
+        mock_copy.assert_called_with(
+            os.path.realpath(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "../../scripts/legacy/tar/linux/opensearch-tar-install.sh",
+                )
+            ),
+            f'{bundle.archive_path}/opensearch-tar-install.sh',
+        )
