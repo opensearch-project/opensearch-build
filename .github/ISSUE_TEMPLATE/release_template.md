@@ -26,12 +26,12 @@ I noticed that a manifest was automatically created in [manifests/{{ env.VERSION
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 
 ### Campaigns
-_OpenSearch wide initiatives to improve quailty and consistancy_
+_OpenSearch wide initiatives to improve quality and consistency._
 
 ### Release testing - _Ends TDB_
 
-- [ ] Code complete phase (RELEASE-minus-14-days - RELEASE-minus-11-days): Teams test their component within the distribution, ensuring integration, backwards compat and perf tests pass.
-- [ ] Final sanity testing phase (RELEASE-minus-8-days - RELEASE-minus-6-days): Final sanity testing *and* fixing of any issues found by teams.
+- [ ] Code Complete (RELEASE-minus-14-days - RELEASE-minus-11-days): Teams test their component within the distribution, ensuring integration, backwards compatibility and perf tests pass.
+- [ ] Sanity Testing (RELEASE-minus-8-days - RELEASE-minus-6-days): Sanity testing *and* fixing of any issues found by teams.
 
 ### Release - _Ends TDB_
 
