@@ -14,5 +14,5 @@ coverage.xml
 .settings/
 out.txt
 
-/artifacts/
-/bundle/
+/builds/
+/dist/
