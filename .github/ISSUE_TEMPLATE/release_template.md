@@ -28,12 +28,12 @@ I noticed that a manifest was automatically created in [manifests/{{ env.VERSION
 ### Campaigns
 _OpenSearch wide initiatives to improve quality and consistency._
 
-### Release testing - _Ends TDB_
+### Release testing - _Ends RELEASE-minus-6-days_
 
 - [ ] Code Complete (RELEASE-minus-14-days - RELEASE-minus-11-days): Teams test their component within the distribution, ensuring integration, backwards compatibility and perf tests pass.
 - [ ] Sanity Testing (RELEASE-minus-8-days - RELEASE-minus-6-days): Sanity testing *and* fixing of any issues found by teams.
 
-### Release - _Ends TDB_
+### Release - _Ends RELEASE-day_
 
 - [ ] Declare a release candidate build, and publish all test results.
 - [ ] Verify all issued labeled `v{{ env.VERSION }}` in all projects have been resolved.
