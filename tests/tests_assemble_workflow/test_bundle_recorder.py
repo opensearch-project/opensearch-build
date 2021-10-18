@@ -118,7 +118,7 @@ class TestBundleRecorder(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location": "https://ci.opensearch.org/ci/os-distro-prod/artifact/plugins",
+                        "location": "https://ci.opensearch.org/ci/os-distro-prod/artifacts/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -132,22 +132,22 @@ class TestBundleRecorder(unittest.TestCase):
         def get_location(public_url):
             self.bundle_recorder.public_url = public_url
             return self.bundle_recorder._BundleRecorder__get_location(
-                "artifact", "dir1/dir2/file", "/tmp/artifact/foo/dir1/dir2/file"
+                "artifacts", "dir1/dir2/file", "/tmp/artifacts/foo/dir1/dir2/file"
             )
 
         # No public URL - Fallback to ABS Path
-        self.assertEqual(get_location(None), "/tmp/artifact/foo/dir1/dir2/file")
+        self.assertEqual(get_location(None), "/tmp/artifacts/foo/dir1/dir2/file")
 
         # Public URL - No trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/os-distro-prod"),
-            "https://ci.opensearch.org/ci/os-distro-prod/artifact/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/os-distro-prod/artifacts/dir1/dir2/file",
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/os-distro-prod/"),
-            "https://ci.opensearch.org/ci/os-distro-prod/artifact/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/os-distro-prod/artifacts/dir1/dir2/file",
         )
 
     def test_tar_name(self):
@@ -258,7 +258,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "ae789280740d7000d1f13245019414abeedfc286",
-                        "location": "https://ci.opensearch.org/ci/os-distro-prod/artifact/plugins",
+                        "location": "https://ci.opensearch.org/ci/os-distro-prod/artifacts/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
@@ -272,22 +272,22 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         def get_location(public_url):
             self.bundle_recorder.public_url = public_url
             return self.bundle_recorder._BundleRecorder__get_location(
-                "artifact", "dir1/dir2/file", "/tmp/artifact/foo/dir1/dir2/file"
+                "artifacts", "dir1/dir2/file", "/tmp/artifacts/foo/dir1/dir2/file"
             )
 
         # No public URL - Fallback to ABS Path
-        self.assertEqual(get_location(None), "/tmp/artifact/foo/dir1/dir2/file")
+        self.assertEqual(get_location(None), "/tmp/artifacts/foo/dir1/dir2/file")
 
         # Public URL - No trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/os-distro-prod"),
-            "https://ci.opensearch.org/ci/os-distro-prod/artifact/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/os-distro-prod/artifacts/dir1/dir2/file",
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/os-distro-prod/"),
-            "https://ci.opensearch.org/ci/os-distro-prod/artifact/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/os-distro-prod/artifacts/dir1/dir2/file",
         )
 
     def test_tar_name(self):

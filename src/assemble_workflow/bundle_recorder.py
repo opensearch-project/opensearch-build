@@ -57,7 +57,7 @@ class BundleRecorder:
     # Example: https://artifacts.opensearch.org/builds/1.0.0/<build-id>
     def __get_component_location(self, component_rel_path):
         abs_path = os.path.join(self.artifacts_dir, component_rel_path)
-        return self.__get_location("artifact", component_rel_path, abs_path)
+        return self.__get_location("artifacts", component_rel_path, abs_path)
 
     def record_component(self, component, rel_path):
         self.bundle_manifest.append_component(
