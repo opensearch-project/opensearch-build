@@ -6,7 +6,7 @@ Coming from [opensearch-build#567](https://github.com/opensearch-project/opensea
 - [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
 - [ ] Create, update, triage and label all features and issues targeted for this release with `v1.2.0`.
 
-### CI/CD
+### CI/CD - _Ends Nov 2nd_
 
 - [ ] Increment version on main to `1.2.0.0`.
 - [ ] Ensure working and passing CI.
@@ -18,6 +18,10 @@ Coming from [opensearch-build#567](https://github.com/opensearch-project/opensea
 - [ ] Update your branch in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.2.0).
 - [ ] Feature complete, pencils down.
 - [ ] Fix bugs that target this release.
+
+### Release testing
+- [ ] Code complete phase (Nov 2 - Nov 5): Test your component within the distribution, ensuring integration, backwards compat and perf tests pass.
+- [ ] Final sanity testing phase (Nov 8 - Nov 10): Final sanity testing *and* fixing of any issues you find.
 
 ### Release
 
