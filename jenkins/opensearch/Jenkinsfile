@@ -117,18 +117,24 @@ void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
     sh "./build.sh manifests/$INPUT_MANIFEST"
-    sh './assemble.sh artifacts/manifest.yml'
-
+    
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
-    def artifactPath = "${manifest.build.version}/${BUILD_NUMBER}/${manifest.build.architecture}";
+    
+    def PUBLIC_ARTIFACT_URL = "https://ci.opensearch.org/ci/dbc/";
+    
+    def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/
+                    ${BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
+    def BASE_URL = PUBLIC_ARTIFACT_URL + artifactPath;
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
-        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${artifactPath}")
+        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/artifacts")
+        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/bundle")
     }
 
-    addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/${artifactPath}/manifest.yml\n" +
-                      "${PUBLIC_ARTIFACT_URL}/bundles/${artifactPath}/manifest.yml")
+    addJenkinsMessage("${BASE_URL}/artifacts/manifest.yml\n" +
+                      "${BASE_URL}/bundle/manifest.yml")
+
+    sh './assemble.sh artifacts/manifest.yml --path BASE_URL'
 }
 
 /** Publishes a notification to a slack instance*/
