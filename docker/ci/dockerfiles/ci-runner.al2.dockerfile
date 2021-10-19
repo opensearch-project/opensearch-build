@@ -31,6 +31,46 @@ RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x1
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
+# Downloads JDK-8, JDK-11 and JDK-17 distributions using Eclipse Adoptium project.
+# The distributions are extracted to /opt/java/ folder with environment variables JAVA8_HOME,
+# JAVA11_HOME and JAVA17_HOME exported and pointing at respective ones.
+RUN set -eux; \
+    ARCH="$(uname -m)"; \
+    JDKS=""; \
+    case "${ARCH}" in \
+       aarch64|arm64) \
+         # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
+         JDKS+="f287cdc2a688c2df247ea0d8bfe2863645b73848e4e5c35b02a8a3d2d6b69551@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u302b08.tar.gz "; \
+         JDKS+="105bdc12fcd54c551e8e8ac96bc82412467244c32063689c41cee29ceb7452a2@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.12_7.tar.gz "; \
+         JDKS+="e08e6d8c84da28a2c49ccd511f8835c329fbdd8e4faff662c58fa24cca74021d@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_aarch64_linux_hotspot_17_35.tar.gz "; \
+         ;; \
+       amd64|x86_64) \
+         # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
+         JDKS+="cc13f274becf9dd5517b6be583632819dfd4dd81e524b5c1b4f406bdaf0e063a@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u302b08.tar.gz "; \
+         JDKS+="8770f600fc3b89bf331213c7aa21f8eedd9ca5d96036d1cd48cb2748a3dbefd2@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.12_7.tar.gz "; \
+         JDKS+="6f1335d9a7855159f982dac557420397be9aa85f3f7bc84e111d25871c02c0c7@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz "; \
+         ;; \
+       *) \
+         echo "Unsupported arch: ${ARCH}"; \
+         exit 1; \
+         ;; \
+    esac; \
+    for jdk in ${JDKS}; do \
+        ESUM=$(echo ${jdk} | cut -d '@' -f1); \
+        BINARY_URL=$(echo ${jdk} | cut -d '@' -f2); \
+        regex="temurin([0-9]+)[-]"; \
+        if [[ $jdk =~ $regex ]]; then \
+            MAJOR=${BASH_REMATCH[1]}; \
+            curl -LfsSo /tmp/openjdk-${MAJOR}.tar.gz ${BINARY_URL}; \
+            echo "${ESUM} */tmp/openjdk-${MAJOR}.tar.gz" | sha256sum -c -; \
+            mkdir -p /opt/java/openjdk-${MAJOR}; \
+            cd /opt/java/openjdk-${MAJOR}; \
+            tar -xf /tmp/openjdk-${MAJOR}.tar.gz --strip-components=1; \
+            rm -rf /tmp/openjdk-${MAJOR}.tar.gz; \
+            echo "export JAVA${MAJOR}_HOME=/opt/java/openjdk-${MAJOR}" >> /etc/profile.d/java_home.sh; \
+        fi; \
+    done;
+
 # Install higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
     mkdir -p $MAVEN_DIR && (curl -s $MAVEN_URL | tar xzf - --strip-components=1 -C $MAVEN_DIR) && \
@@ -48,10 +88,10 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
-# Set JAVA_HOME
+# Set JAVA_HOME and JAVA14_HOME
 # AdoptOpenJDK apparently does not add JAVA_HOME after installation
-RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
-
+RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh && \
+    echo "export JAVA14_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
