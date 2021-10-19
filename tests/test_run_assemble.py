@@ -46,17 +46,8 @@ class TestRunAssemble(unittest.TestCase):
 
         main()
 
+        mock_bundle.install_min.assert_called()
         mock_bundle.install_plugins.assert_called()
-
-        mock_copy.assert_called_with(
-            os.path.realpath(
-                os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "../scripts/legacy/tar/linux/opensearch-tar-install.sh",
-                )
-            ),
-            "path/opensearch-tar-install.sh",
-        )
 
         mock_bundle.build_tar.assert_called_with("curdir/bundle")
 

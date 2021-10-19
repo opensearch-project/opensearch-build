@@ -9,7 +9,6 @@
 import argparse
 import logging
 import os
-import shutil
 import sys
 import tempfile
 
@@ -35,18 +34,6 @@ def main():
 
     console.configure(level=args.logging_level)
 
-    tarball_installation_script = os.path.realpath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "../scripts/legacy/tar/linux/opensearch-tar-install.sh",
-        )
-    )
-    if not os.path.isfile(tarball_installation_script):
-        logging.error(
-            f"No installation script found at path: {tarball_installation_script}"
-        )
-        exit(1)
-
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
@@ -64,16 +51,9 @@ def main():
 
         bundle = Bundles.create(build_manifest, artifacts_dir, bundle_recorder)
 
+        bundle.install_min()
         bundle.install_plugins()
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
-
-        # Copy the tar installation script into the bundle
-        shutil.copy2(
-            tarball_installation_script,
-            os.path.join(
-                bundle.archive_path, os.path.basename(tarball_installation_script)
-            ),
-        )
 
         #  Save a copy of the manifest inside of the tar
         bundle_recorder.write_manifest(bundle.archive_path)
