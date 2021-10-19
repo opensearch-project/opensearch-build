@@ -35,6 +35,30 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
         )
         self.assertIsNotNone(bundle.archive_path)
 
+    def test_bundle_install_min(self):
+        manifest_path = os.path.join(
+            os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml"
+        )
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data/artifacts")
+        bundle = BundleOpenSearchDashboards(
+            BuildManifest.from_path(manifest_path), artifacts_path, MagicMock()
+        )
+
+        with patch("subprocess.check_call") as mock_check_call:
+            bundle.install_min()
+
+            self.assertEqual(mock_check_call.call_count, 1)
+
+            mock_check_call.assert_has_calls(
+                [
+                    call(
+                        f'{ScriptFinder.find_install_script("OpenSearch-Dashboards")} -a "{artifacts_path}" -o "{bundle.archive_path}"',
+                        cwd=bundle.archive_path,
+                        shell=True,
+                    ),
+                ]
+            )
+
     @patch("os.path.isfile", return_value=True)
     def test_bundle_install_plugin(self, *mocks):
         manifest_path = os.path.join(
