@@ -62,7 +62,7 @@ class BuildRecorder:
             self.data["build"]["name"] = target.name
             self.data["build"]["version"] = target.opensearch_version
             self.data["build"]["platform"] = target.platform
-            self.data["build"]["architecture"] = target.arch
+            self.data["build"]["architecture"] = target.architecture
             self.data["schema-version"] = "1.2"
             self.components_hash = {}
 

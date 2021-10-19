@@ -30,7 +30,7 @@ class TestBuilder(unittest.TestCase):
                 name="OpenSearch",
                 version="1.0.0",
                 platform="linux",
-                arch="x64",
+                architecture="x64",
                 snapshot=False,
             )
         )
@@ -60,7 +60,7 @@ class TestBuilder(unittest.TestCase):
                 name="OpenSearch",
                 version="1.0.0",
                 platform="darwin",
-                arch="x64",
+                architecture="x64",
                 snapshot=True,
             )
         )

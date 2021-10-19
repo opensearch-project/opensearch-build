@@ -29,7 +29,7 @@ class TestBuildRecorder(unittest.TestCase):
                 name="OpenSearch",
                 version="1.1.0",
                 platform="linux",
-                arch="x64",
+                architecture="x64",
                 snapshot=snapshot,
             )
         )
