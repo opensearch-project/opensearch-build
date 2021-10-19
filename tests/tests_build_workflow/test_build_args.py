@@ -64,6 +64,22 @@ class TestBuildArgs(unittest.TestCase):
     def test_component(self):
         self.assertEqual(BuildArgs().component, "xyz")
 
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_platform_default(self):
+        self.assertIsNone(BuildArgs().platform)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--platform", "xyz"])
+    def test_platform(self):
+        self.assertEqual(BuildArgs().platform, "xyz")
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_arch_default(self):
+        self.assertIsNone(BuildArgs().arch)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--arch", "xyz"])
+    def test_arch(self):
+        self.assertEqual(BuildArgs().arch, "xyz")
+
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_script_path(self):
         self.assertTrue(os.path.isfile(self.BUILD_PY))
