@@ -73,7 +73,7 @@ The build order first publishes `OpenSearch` followed by `common-utils`, and pub
 
 ##### OpenSearch Dashboards
 
-The build order first pulls down `OpenSearch-Dashboards` and then utilizes it to build other components. Currently, building plugins requires having the core repository built firstt to bootstrap and build the modules utilized by plugins.
+The build order first pulls down `OpenSearch-Dashboards` and then utilizes it to build other components. Currently, building plugins requires having the core repository built first to bootstrap and build the modules utilized by plugins.
 
 #### CI CD Environment
 

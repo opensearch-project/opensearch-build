@@ -39,6 +39,12 @@ class Bundle(ABC):
         self.min_tarball_path = self._copy_component(self.min_tarball, "dist")
         self.__unpack_min_tarball(self.tmp_dir.name)
 
+    def install_min(self):
+        post_install_script = ScriptFinder.find_install_script(self.min_tarball.name)
+        self._execute(
+            f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
+        )
+
     def install_plugins(self):
         for plugin in self.plugins:
             logging.info(f"Installing {plugin.name}")
