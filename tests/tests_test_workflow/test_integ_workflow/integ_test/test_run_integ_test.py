@@ -35,6 +35,7 @@ class TestRunIntegTest(unittest.TestCase):
     @patch("run_integ_test.GitRepository")
     @patch("run_integ_test.DependencyInstaller")
     @patch("os.chdir")
+    @patch("os.makedirs")
     @patch("run_integ_test.TestSuiteResults")
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")

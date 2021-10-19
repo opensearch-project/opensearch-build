@@ -4,9 +4,21 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import errno
 import logging
+import os
 import shutil
+import stat
 import tempfile
+
+
+def g__handleRemoveReadonly(func, path, exc):
+    excvalue = exc[1]
+    if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
+        func(path)
+    else:
+        raise
 
 
 class TemporaryDirectory:
@@ -22,4 +34,4 @@ class TemporaryDirectory:
             logging.info(f"Keeping {self.name}")
         else:
             logging.debug(f"Removing {self.name}")
-            shutil.rmtree(self.name)
+            shutil.rmtree(self.name, ignore_errors=False, onerror=g__handleRemoveReadonly)

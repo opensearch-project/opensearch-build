@@ -8,7 +8,7 @@ from test_workflow.test_args import TestArgs
 
 class TestTestArgs(unittest.TestCase):
 
-    ARGS_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/run_bwc_test.py"))
+    ARGS_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "src", "run_bwc_test.py"))
 
     @patch(
         "argparse._sys.argv",

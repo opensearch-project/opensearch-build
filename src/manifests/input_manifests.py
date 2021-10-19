@@ -16,5 +16,5 @@ class InputManifests(Manifests):
     def __init__(self):
         files = glob.glob(os.path.join(self.manifests_path, "**/opensearch-*.yml"))
         # there's an opensearch-1.0.0-maven.yml that we want to skip
-        files = [f for f in files if re.search(r"/opensearch-([0-9.]*)\.yml$", f)]
+        files = [f for f in files if re.search(r"[\\/]opensearch-([0-9.]*)\.yml$", f)]
         super().__init__(InputManifest, files)

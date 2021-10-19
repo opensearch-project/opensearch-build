@@ -11,7 +11,10 @@ class DependencyInstallerTests(unittest.TestCase):
         self.maxDiff = None
         self.manifest_filename = os.path.join(
             os.path.dirname(__file__),
-            "../tests_assemble_workflow/data/opensearch-build-1.1.0.yml",
+            "..",
+            "tests_assemble_workflow",
+            "data",
+            "opensearch-build-1.1.0.yml",
         )
         self.manifest = BuildManifest.from_path(self.manifest_filename)
         with patch("test_workflow.dependency_installer.S3Bucket") as mock_s3_bucket:

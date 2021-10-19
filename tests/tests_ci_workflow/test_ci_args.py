@@ -13,11 +13,20 @@ from ci_workflow.ci_args import CiArgs
 
 class TestCiArgs(unittest.TestCase):
 
-    CI_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/run_ci.py"))
+    CI_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "src", "run_ci.py"))
 
-    CI_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../ci.sh"))
+    CI_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "ci.sh"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "manifests",
+            "1.1.0",
+            "opensearch-1.1.0.yml",
+        )
+    )
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self):

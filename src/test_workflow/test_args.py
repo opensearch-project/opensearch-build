@@ -49,8 +49,8 @@ class TestArgs:
         parser.add_argument(
             "--platform",
             type=str,
-            choices=["linux", "darwin"],
-            help="The os name e.g. linux, darwin",
+            choices=["linux", "darwin", "windows"],
+            help="The os name e.g. linux, darwin, windows",
             required=True,
         )
         parser.add_argument(

@@ -24,17 +24,18 @@ from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 def pull_build_repo(work_dir):
     logging.info("Pulling opensearch-build")
-    GitRepository(
+    with GitRepository(
         "https://github.com/opensearch-project/opensearch-build.git",
         "main",
         os.path.join(work_dir, "opensearch-build"),
-    )
+    ) as repo:
+        logging.info(f"Checked out opensearch-build into {repo.dir}")
 
 
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow/config/test_manifest.yml")
+    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "test_manifest.yml")
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:

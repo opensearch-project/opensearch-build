@@ -6,6 +6,7 @@
 
 import argparse
 import logging
+import os
 import sys
 
 
@@ -45,7 +46,7 @@ class CiArgs:
         self.component = args.component
         self.keep = args.keep
         self.logging_level = args.logging_level
-        self.script_path = sys.argv[0].replace("/src/run_ci.py", "/ci.sh")
+        self.script_path = sys.argv[0].replace(os.path.sep + os.path.join("src", "run_ci.py"), f"{os.path.sep}ci.sh")
 
     def component_command(self, name):
         return " ".join(

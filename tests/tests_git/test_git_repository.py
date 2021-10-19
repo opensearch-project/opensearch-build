@@ -37,7 +37,7 @@ class TestGitRepository(unittest.TestCase):
     def test_execute_in_dir(self):
         self.repo.execute("echo $PWD > created.txt", os.path.join(self.repo.dir, "ISSUE_TEMPLATE"))
         self.assertFalse(os.path.isfile(os.path.join(self.repo.dir, "created.txt")))
-        self.assertTrue(os.path.isfile(os.path.join(self.repo.dir, "ISSUE_TEMPLATE/created.txt")))
+        self.assertTrue(os.path.isfile(os.path.join(self.repo.dir, "ISSUE_TEMPLATE", "created.txt")))
 
     @patch("subprocess.check_call")
     def test_execute_silent(self, mock_subprocess):
@@ -76,13 +76,12 @@ class TestGitRepositoryDir(unittest.TestCase):
 
 class TestGitRepositoryWithWorkingDir(unittest.TestCase):
     def test_checkout_into_dir(self):
-        repo = GitRepository(
+        with GitRepository(
             url="https://github.com/opensearch-project/.github",
             ref="163b5acaf6c7d220f800684801bbf2e12f99c797",
             working_subdirectory="ISSUE_TEMPLATE",
-        )
-
-        self.assertEqual(repo.working_directory, os.path.join(repo.dir, "ISSUE_TEMPLATE"))
-
-        pwd = repo.output("pwd")
-        self.assertEqual(pwd, os.path.join(repo.dir, "ISSUE_TEMPLATE"))
+        ) as repo:
+            working_directory = os.path.join(repo.dir, "ISSUE_TEMPLATE")
+            self.assertEqual(repo.working_directory, working_directory)
+            self.assertTrue("ISSUE_TEMPLATE" in repo.output("pwd"))
+        self.assertFalse(os.path.exists(repo.dir))
