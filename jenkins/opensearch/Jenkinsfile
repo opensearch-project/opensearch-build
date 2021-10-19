@@ -123,7 +123,7 @@ void build() {
     def PUBLIC_ARTIFACT_URL = "https://ci.opensearch.org/ci/dbc/";
     
     def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/
-                    ${BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
+                    ${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
     def BASE_URL = PUBLIC_ARTIFACT_URL + artifactPath;
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
@@ -134,7 +134,7 @@ void build() {
     addJenkinsMessage("${BASE_URL}/artifacts/manifest.yml\n" +
                       "${BASE_URL}/bundle/manifest.yml")
 
-    sh './assemble.sh artifacts/manifest.yml --path BASE_URL'
+    sh "./assemble.sh artifacts/manifest.yml --path ${BASE_URL}"
 }
 
 /** Publishes a notification to a slack instance*/
