@@ -26,7 +26,7 @@ def main():
     manifest = InputManifest.from_file(args.manifest)
 
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        output_dir = os.path.join(os.getcwd(), "artifacts")
+        output_dir = os.path.join(os.getcwd(), "builds")
 
         logging.info(f"Building in {work_dir}")
 
