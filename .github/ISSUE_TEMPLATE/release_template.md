@@ -54,4 +54,4 @@ __Replace with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Components
 
-__Replace with links to all component tracking issues__
+__Replace with links to all component tracking issues.__
