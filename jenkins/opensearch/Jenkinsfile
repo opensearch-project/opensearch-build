@@ -87,7 +87,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            build("arm64")
                         }
                     }
                     post() {
