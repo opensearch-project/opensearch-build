@@ -36,6 +36,7 @@ class InputManifest(Manifest):
             "schema": {
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
+                "jdk": {"required": False, "type": "string"},
             },
         },
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
@@ -74,9 +75,10 @@ class InputManifest(Manifest):
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
+            self.jdk = data.get("jdk", None)
 
         def __to_dict__(self):
-            return {"name": self.name, "version": self.version}
+            return {"name": self.name, "version": self.version, "jdk": self.jdk}
 
     class Component:
         def __init__(self, data):

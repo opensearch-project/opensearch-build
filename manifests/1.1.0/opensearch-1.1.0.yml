@@ -3,6 +3,7 @@ schema-version: "1.0"
 build:
   name: OpenSearch
   version: 1.1.0
+  jdk: "14"
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
