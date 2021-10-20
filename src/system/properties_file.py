@@ -14,9 +14,7 @@ class PropertiesFile(Properties):
     class UnexpectedKeyValueError(CheckError):
         def __init__(self, key, expected, current=None):
             super().__init__(
-                f"Expected to have {key}='{expected}', but was '{current}'."
-                if current
-                else f"Expected to have {key}='{expected}', but none was found."
+                f"Expected to have {key}='{expected}', but was '{current}'." if current else f"Expected to have {key}='{expected}', but none was found."
             )
 
     class UnexpectedKeyValuesError(CheckError):

@@ -17,9 +17,7 @@ class BuildArtifactOpenSearchCheckPlugin(BuildArtifactCheck):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
         if not path.endswith(f"-{self.target.component_version}.zip"):
-            raise BuildArtifactCheck.BuildArtifactInvalidError(
-                path, f"Expected filename to include {self.target.component_version}."
-            )
+            raise BuildArtifactCheck.BuildArtifactInvalidError(path, f"Expected filename to include {self.target.component_version}.")
         with ZipFile(path, "r") as zip:
             data = zip.read("plugin-descriptor.properties").decode("UTF-8")
             properties = PropertiesFile(data)

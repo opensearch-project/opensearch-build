@@ -65,38 +65,26 @@ class BundleManifest(Manifest):
     def __init__(self, data):
         super().__init__(data)
         self.build = self.Build(data["build"])
-        self.components = list(
-            map(lambda entry: self.Component(entry), data["components"])
-        )
+        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.1",
             "build": self.build.__to_dict__(),
-            "components": list(
-                map(lambda component: component.__to_dict__(), self.components)
-            ),
+            "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
 
     @staticmethod
-    def from_s3(
-        bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None
-    ):
+    def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
         work_dir = work_dir if not None else str(os.getcwd())
-        manifest_s3_path = BundleManifest.get_bundle_manifest_relative_location(
-            build_id, opensearch_version, platform, architecture
-        )
+        manifest_s3_path = BundleManifest.get_bundle_manifest_relative_location(build_id, opensearch_version, platform, architecture)
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
-        bundle_manifest = BundleManifest.from_path(
-            os.path.join(work_dir, "manifest.yml")
-        )
+        bundle_manifest = BundleManifest.from_path(os.path.join(work_dir, "manifest.yml"))
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
         return bundle_manifest
 
     @staticmethod
-    def get_tarball_relative_location(
-        build_id, opensearch_version, platform, architecture
-    ):
+    def get_tarball_relative_location(build_id, opensearch_version, platform, architecture):
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         return f"bundles/{opensearch_version}/{build_id}/{architecture}/opensearch-{opensearch_version}-{platform}-{architecture}.tar.gz"
 
@@ -105,9 +93,7 @@ class BundleManifest(Manifest):
         return f"opensearch-{opensearch_version}-{platform}-{architecture}.tar.gz"
 
     @staticmethod
-    def get_bundle_manifest_relative_location(
-        build_id, opensearch_version, platform, architecture
-    ):
+    def get_bundle_manifest_relative_location(build_id, opensearch_version, platform, architecture):
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         return f"bundles/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 

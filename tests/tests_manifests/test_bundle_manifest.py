@@ -15,21 +15,15 @@ from manifests.bundle_manifest import BundleManifest
 
 class TestBundleManifest(unittest.TestCase):
     def setUp(self):
-        self.data_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "data")
-        )
-        self.manifest_filename = os.path.join(
-            self.data_path, "opensearch-bundle-1.1.0.yml"
-        )
+        self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
+        self.manifest_filename = os.path.join(self.data_path, "opensearch-bundle-1.1.0.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
 
     def test_build(self):
         self.assertEqual(self.manifest.version, "1.1")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
-        self.assertEqual(
-            self.manifest.build.location, "bundle/opensearch-1.1.0-linux-x64.tar.gz"
-        )
+        self.assertEqual(self.manifest.build.location, "bundle/opensearch-1.1.0-linux-x64.tar.gz")
         self.assertEqual(self.manifest.build.platform, "linux")
         self.assertEqual(self.manifest.build.architecture, "x64")
         self.assertEqual(len(self.manifest.components), 13)
@@ -57,22 +51,16 @@ class TestBundleManifest(unittest.TestCase):
             self.assertEqual(yaml.safe_load(f), data)
 
     def test_get_manifest_relative_location(self):
-        actual = BundleManifest.get_bundle_manifest_relative_location(
-            "25", "1.1.0", "linux", "x64"
-        )
+        actual = BundleManifest.get_bundle_manifest_relative_location("25", "1.1.0", "linux", "x64")
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         expected = "bundles/1.1.0/25/x64/manifest.yml"
-        self.assertEqual(
-            actual, expected, "the manifest relative location is not as expected"
-        )
+        self.assertEqual(actual, expected, "the manifest relative location is not as expected")
 
     def test_get_tarball_relative_location(self):
         actual = BundleManifest.get_tarball_relative_location("25", "1.1.0", "darwin", "x64")
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         expected = "bundles/1.1.0/25/x64/opensearch-1.1.0-darwin-x64.tar.gz"
-        self.assertEqual(
-            actual, expected, "the tarball relative location is not as expected"
-        )
+        self.assertEqual(actual, expected, "the tarball relative location is not as expected")
 
     def test_get_tarball_name(self):
         actual = BundleManifest.get_tarball_name("1.1.0", "darwin", "x64")

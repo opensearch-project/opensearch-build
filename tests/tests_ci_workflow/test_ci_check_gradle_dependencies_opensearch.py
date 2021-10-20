@@ -7,8 +7,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.ci_check_gradle_dependencies_opensearch import \
-    CiCheckGradleDependenciesOpenSearchVersion
+from ci_workflow.ci_check_gradle_dependencies_opensearch import CiCheckGradleDependenciesOpenSearchVersion
 from ci_workflow.ci_target import CiTarget
 from system.properties_file import PropertiesFile
 

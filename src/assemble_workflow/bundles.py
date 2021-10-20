@@ -5,8 +5,7 @@
 # compatible open source license.
 
 from assemble_workflow.bundle_opensearch import BundleOpenSearch
-from assemble_workflow.bundle_opensearch_dashboards import \
-    BundleOpenSearchDashboards
+from assemble_workflow.bundle_opensearch_dashboards import BundleOpenSearchDashboards
 
 
 class Bundles:

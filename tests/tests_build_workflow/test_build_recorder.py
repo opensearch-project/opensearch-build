@@ -13,10 +13,8 @@ import yaml
 
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
-from build_workflow.opensearch.build_artifact_check_maven import \
-    BuildArtifactOpenSearchCheckMaven
-from build_workflow.opensearch.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchCheckPlugin
+from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_plugin import BuildArtifactOpenSearchCheckPlugin
 from manifests.build_manifest import BuildManifest
 
 
@@ -106,9 +104,7 @@ class TestBuildRecorder(unittest.TestCase):
         recorder.record_component("security", MagicMock())
 
         with patch.object(BuildArtifactOpenSearchCheckPlugin, "check") as mock_check:
-            recorder.record_artifact(
-                "security", "plugins", "../file1.zip", "invalid.file"
-            )
+            recorder.record_artifact("security", "plugins", "../file1.zip", "invalid.file")
 
         mock_check.assert_called_with("invalid.file")
 
@@ -183,9 +179,7 @@ class TestBuildRecorder(unittest.TestCase):
                 sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
             ),
         )
-        mock.record_artifact(
-            "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
-        )
+        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip")
         manifest_dict = mock.get_manifest().to_dict()
         self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
         self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")

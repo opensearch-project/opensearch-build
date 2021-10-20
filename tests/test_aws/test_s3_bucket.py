@@ -29,12 +29,8 @@ class MockS3Response:
             MockS3Response.ObjectSummary(bucket_name, "tests/"),
             MockS3Response.ObjectSummary(bucket_name, "tests/1.1.0/"),
             MockS3Response.ObjectSummary(bucket_name, "tests/1.1.0/x64/"),
-            MockS3Response.ObjectSummary(
-                bucket_name, "tests/1.1.0/x64/opensearch-1.1.0-linux-x64.tar.gz"
-            ),
-            MockS3Response.ObjectSummary(
-                bucket_name, "maven/org/opensearch/xyz-1.1.0.tar.gz"
-            ),
+            MockS3Response.ObjectSummary(bucket_name, "tests/1.1.0/x64/opensearch-1.1.0-linux-x64.tar.gz"),
+            MockS3Response.ObjectSummary(bucket_name, "maven/org/opensearch/xyz-1.1.0.tar.gz"),
         ]
         mock_s3_resource.Bucket(bucket_name).objects.filter.return_value = response
         return mock_s3_resource
@@ -91,9 +87,7 @@ class TestS3Bucket(unittest.TestCase):
             call(
                 "s3",
                 aws_access_key_id=expected_sts_response["Credentials"]["AccessKeyId"],
-                aws_secret_access_key=expected_sts_response["Credentials"][
-                    "SecretAccessKey"
-                ],
+                aws_secret_access_key=expected_sts_response["Credentials"]["SecretAccessKey"],
                 aws_session_token=expected_sts_response["Credentials"]["SessionToken"],
             ),
         ]
@@ -101,18 +95,14 @@ class TestS3Bucket(unittest.TestCase):
         mock_boto_resource.assert_called_once_with(
             "s3",
             aws_access_key_id=expected_sts_response["Credentials"]["AccessKeyId"],
-            aws_secret_access_key=expected_sts_response["Credentials"][
-                "SecretAccessKey"
-            ],
+            aws_secret_access_key=expected_sts_response["Credentials"]["SecretAccessKey"],
             aws_session_token=expected_sts_response["Credentials"]["SessionToken"],
         )
 
     @patch("boto3.client")
     def test_s3_bucket_obj_sts_error(self, mock_boto_client):
         expected_sts_response = MockSTSResponse.successful_response()
-        mock_boto_client("sts").assume_role.side_effect = ClientError(
-            error_response={"Error": {"Code": "403"}}, operation_name="AssumeRole"
-        )
+        mock_boto_client("sts").assume_role.side_effect = ClientError(error_response={"Error": {"Code": "403"}}, operation_name="AssumeRole")
         mock_boto_client("sts").assume_role.return_value = expected_sts_response
         with self.assertRaises(STSError):
             S3Bucket(bucket_name)
@@ -152,9 +142,7 @@ class TestS3Bucket(unittest.TestCase):
             ),
         ]
         mock_s3_resource.Bucket(bucket_name).download_file.assert_has_calls(calls)
-        self.assertTrue(
-            mock_s3_resource.Bucket(bucket_name).download_file.call_count, 2
-        )
+        self.assertTrue(mock_s3_resource.Bucket(bucket_name).download_file.call_count, 2)
 
     @patch("boto3.client")
     @patch("boto3.resource", side_effect=MockS3Response.mock_list_objects_response)
@@ -168,20 +156,14 @@ class TestS3Bucket(unittest.TestCase):
             call(file_path, "/tmp/opensearch-1.1.0-linux-x64.tar.gz"),
         ]
         mock_s3_resource.Bucket(bucket_name).download_file.assert_has_calls(calls)
-        self.assertTrue(
-            mock_s3_resource.Bucket(bucket_name).download_file.call_count, 1
-        )
+        self.assertTrue(mock_s3_resource.Bucket(bucket_name).download_file.call_count, 1)
 
     @patch("boto3.client")
     @patch("boto3.resource")
     def test_download_file_failure(self, mock_boto_resource, mock_boto_client):
-        mock_boto_client(
-            "sts"
-        ).assume_role.return_value = MockSTSResponse.successful_response()
+        mock_boto_client("sts").assume_role.return_value = MockSTSResponse.successful_response()
         file_path = "tests/1.1.0/x64/opensearch-1.1.0-linux-x64.tar.gz"
-        mock_boto_resource("s3").Bucket(
-            bucket_name
-        ).download_file.side_effect = ClientError(
+        mock_boto_resource("s3").Bucket(bucket_name).download_file.side_effect = ClientError(
             error_response={"Error": {"Code": "403"}}, operation_name="GetObject"
         )
         s3bucket = S3Bucket(bucket_name)

@@ -18,13 +18,9 @@ from manifests.bundle_manifest import BundleManifest
 class TestBundleRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        manifest_path = os.path.join(
-            os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"
-        )
+        manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
-        self.bundle_recorder = BundleRecorder(
-            manifest.build, "output_dir", "artifacts_dir"
-        )
+        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir")
 
     def test_record_component(self):
         component = BuildManifest.Component(
@@ -131,9 +127,7 @@ class TestBundleRecorder(unittest.TestCase):
     def test_get_location_scenarios(self):
         def get_location(public_url):
             self.bundle_recorder.public_url = public_url
-            return self.bundle_recorder._BundleRecorder__get_location(
-                "builds", "dir1/dir2/file", "/tmp/builds/foo/dir1/dir2/file"
-            )
+            return self.bundle_recorder._BundleRecorder__get_location("builds", "dir1/dir2/file", "/tmp/builds/foo/dir1/dir2/file")
 
         # No public URL - Fallback to ABS Path
         self.assertEqual(get_location(None), "/tmp/builds/foo/dir1/dir2/file")
@@ -151,20 +145,14 @@ class TestBundleRecorder(unittest.TestCase):
         )
 
     def test_tar_name(self):
-        self.assertEqual(
-            self.bundle_recorder.tar_name, "opensearch-1.1.0-linux-x64.tar.gz"
-        )
+        self.assertEqual(self.bundle_recorder.tar_name, "opensearch-1.1.0-linux-x64.tar.gz")
 
 
 class TestBundleRecorderDashboards(unittest.TestCase):
     def setUp(self):
-        manifest_path = os.path.join(
-            os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml"
-        )
+        manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
-        self.bundle_recorder = BundleRecorder(
-            manifest.build, "output_dir", "artifacts_dir"
-        )
+        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir")
 
     def test_record_component(self):
         component = BuildManifest.Component(
@@ -271,9 +259,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
     def test_get_location_scenarios(self):
         def get_location(public_url):
             self.bundle_recorder.public_url = public_url
-            return self.bundle_recorder._BundleRecorder__get_location(
-                "builds", "dir1/dir2/file", "/tmp/builds/foo/dir1/dir2/file"
-            )
+            return self.bundle_recorder._BundleRecorder__get_location("builds", "dir1/dir2/file", "/tmp/builds/foo/dir1/dir2/file")
 
         # No public URL - Fallback to ABS Path
         self.assertEqual(get_location(None), "/tmp/builds/foo/dir1/dir2/file")

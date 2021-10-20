@@ -1,7 +1,6 @@
 import unittest
 
-from test_workflow.test_result.test_component_results import \
-    TestComponentResults
+from test_workflow.test_result.test_component_results import TestComponentResults
 
 
 class TestTestResultsComponent(unittest.TestCase):

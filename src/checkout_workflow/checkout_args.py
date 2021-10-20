@@ -13,9 +13,7 @@ class CheckoutArgs:
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle")
-        parser.add_argument(
-            "manifest", type=argparse.FileType("r"), help="Manifest file."
-        )
+        parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
             "-v",
             "--verbose",

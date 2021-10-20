@@ -49,9 +49,7 @@ class BundleRecorder:
     # Assembled bundles are expected to be served from a separate "bundles" folder
     # Example: https://artifacts.opensearch.org/bundles/1.0.0/<build-id
     def __get_tar_location(self):
-        return self.__get_location(
-            "bundles", self.tar_name, os.path.join(self.output_dir, self.tar_name)
-        )
+        return self.__get_location("bundles", self.tar_name, os.path.join(self.output_dir, self.tar_name))
 
     # Build artifacts are expected to be served from a "builds" folder
     # Example: https://artifacts.opensearch.org/builds/1.0.0/<build-id>

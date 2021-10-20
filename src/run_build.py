@@ -43,9 +43,7 @@ def main():
 
         build_recorder = BuildRecorder(target)
 
-        logging.info(
-            f"Building {manifest.build.name} ({target.arch}) into {target.output_dir}"
-        )
+        logging.info(f"Building {manifest.build.name} ({target.arch}) into {target.output_dir}")
 
         for component in manifest.components:
 
@@ -66,9 +64,7 @@ def main():
                 builder.build(target)
                 builder.export_artifacts()
             except:
-                logging.error(
-                    f"Error building {component.name}, retry with: {args.component_command(component.name)}"
-                )
+                logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
                 raise
 
         build_recorder.write_manifest()

@@ -39,14 +39,7 @@ class TestRunIntegTest(unittest.TestCase):
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")
     @patch("run_integ_test.IntegTestSuite")
-    def test_run_integ_test(
-        self,
-        mock_integ_test_suite,
-        mock_build_from_s3,
-        mock_bundle_from_s3,
-        mock_results,
-        *mock
-    ):
+    def test_run_integ_test(self, mock_integ_test_suite, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
         """
         test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
         as part of integration test job.
@@ -69,14 +62,7 @@ class TestRunIntegTest(unittest.TestCase):
     @patch.object(BundleManifest, "from_s3")
     @patch.object(BuildManifest, "from_s3")
     @patch("run_integ_test.IntegTestSuite")
-    def test_run_integ_test_failure(
-        self,
-        mock_integ_test_suite,
-        mock_build_from_s3,
-        mock_bundle_from_s3,
-        mock_results,
-        *mock
-    ):
+    def test_run_integ_test_failure(self, mock_integ_test_suite, mock_build_from_s3, mock_bundle_from_s3, mock_results, *mock):
         """
         test_manifest.yml has 8 plugin components listed for integration tests. This test ensures all get executed
         as part of integration test job.

@@ -41,9 +41,7 @@ class Bundle(ABC):
 
     def install_min(self):
         post_install_script = ScriptFinder.find_install_script(self.min_tarball.name)
-        self._execute(
-            f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
-        )
+        self._execute(f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"')
 
     def install_plugins(self):
         for plugin in self.plugins:
@@ -56,9 +54,7 @@ class Bundle(ABC):
     @abstractmethod
     def install_plugin(self, plugin):
         post_install_script = ScriptFinder.find_install_script(plugin.name)
-        self._execute(
-            f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"'
-        )
+        self._execute(f'{post_install_script} -a "{self.artifacts_dir}" -o "{self.archive_path}"')
 
     def build_tar(self, dest):
         tar_name = self.bundle_recorder.tar_name
@@ -88,9 +84,7 @@ class Bundle(ABC):
             if file.is_dir():
                 return file.path
 
-        raise FileNotFoundError(
-            errno.ENOENT, os.strerror(errno.ENOENT), os.path.join(dest, "*")
-        )
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.join(dest, "*"))
 
     def __get_rel_path(self, component, component_type):
         return next(iter(component.artifacts.get(component_type, [])), None)
@@ -109,9 +103,7 @@ class Bundle(ABC):
         return [c for c in build_components if "plugins" in c.artifacts]
 
     def __get_min_bundle(self, build_components):
-        min_bundle = next(
-            iter([c for c in build_components if "dist" in c.artifacts]), None
-        )
+        min_bundle = next(iter([c for c in build_components if "dist" in c.artifacts]), None)
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
         return min_bundle

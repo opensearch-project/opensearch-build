@@ -10,19 +10,14 @@ from unittest.mock import patch
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
 from build_workflow.build_target import BuildTarget
-from build_workflow.opensearch_dashboards.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchDashboardsCheckPlugin
+from build_workflow.opensearch_dashboards.build_artifact_check_plugin import BuildArtifactOpenSearchDashboardsCheckPlugin
 
 
 class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
     @contextmanager
     def __mock(self, props={}, snapshot=True):
-        with patch(
-            "build_workflow.opensearch_dashboards.build_artifact_check_plugin.ZipFile"
-        ) as mock_zipfile:
-            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
-                props
-            )
+        with patch("build_workflow.opensearch_dashboards.build_artifact_check_plugin.ZipFile") as mock_zipfile:
+            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = props
             yield BuildArtifactOpenSearchDashboardsCheckPlugin(
                 BuildTarget(
                     build_id="1",
@@ -71,7 +66,5 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             )
 
     def test_check_plugin_version_properties(self, *mocks):
-        with self.__mock(
-            {"opensearchDashboardsVersion": "1.1.0", "version": "1.1.0.0"}
-        ) as mock:
+        with self.__mock({"opensearchDashboardsVersion": "1.1.0", "version": "1.1.0.0"}) as mock:
             mock.check("valid-1.1.0.zip")
