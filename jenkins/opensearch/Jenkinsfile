@@ -23,35 +23,35 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshots') {
-                    environment {
-                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
-                    }
-                    agent {
-                        docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
-                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
-                            }
-                        }
-                    }
-                    post() {
-                        always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
-                        }
-                    }
-                }
+                // stage('build-snapshots') {
+                //     environment {
+                //         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
+                //     }
+                //     agent {
+                //         docker {
+                //             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                //             image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                //             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                //             // It use executes which does not source the docker container internal ENV VAR
+                //             args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                //             alwaysPull true
+                //         }
+                //     }
+                //     steps {
+                //         script {
+                //             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                //             sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                //             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                //                 sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
+                //             }
+                //         }
+                //     }
+                //     post() {
+                //         always {
+                //             cleanWs disableDeferredWipeout: true, deleteDirs: true
+                //         }
+                //     }
+                // }
                 stage('build-x64') {
                     agent {
                         docker {
@@ -74,29 +74,29 @@ pipeline {
                         }
                     }
                 }
-                stage('build-arm64') {
-                    agent {
-                        docker {
-                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            build()
-                        }
-                    }
-                    post() {
-                        always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
-                        }
-                    }
-                }
-            }
+            //     stage('build-arm64') {
+            //         agent {
+            //             docker {
+            //                 label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+            //                 image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+            //                 // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+            //                 // It use executes which does not source the docker container internal ENV VAR
+            //                 args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+            //                 alwaysPull true
+            //             }
+            //         }
+            //         steps {
+            //             script {
+            //                 build()
+            //             }
+            //         }
+            //         post() {
+            //             always {
+            //                 cleanWs disableDeferredWipeout: true, deleteDirs: true
+            //             }
+            //         }
+            //     }
+            // }
             post() {
                 success {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
@@ -114,7 +114,7 @@ pipeline {
 }
 
 void build() {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+    git url: 'https://github.com/kavilla/opensearch-build.git', branch: 'avillk/archarg'
 
     sh "./build.sh manifests/$INPUT_MANIFEST"
     sh './assemble.sh artifacts/manifest.yml'
@@ -122,10 +122,10 @@ void build() {
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }
     def artifactPath = "${manifest.build.version}/${BUILD_NUMBER}/${manifest.build.architecture}";
 
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
-        s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${artifactPath}")
-    }
+    // withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+    //     s3Upload(file: 'artifacts', bucket: "${ARTIFACT_BUCKET_NAME}", path: "builds/${artifactPath}")
+    //     s3Upload(file: "bundle", bucket: "${ARTIFACT_BUCKET_NAME}", path: "bundles/${artifactPath}")
+    // }
 
     addJenkinsMessage("${PUBLIC_ARTIFACT_URL}/builds/${artifactPath}/manifest.yml\n" +
                       "${PUBLIC_ARTIFACT_URL}/bundles/${artifactPath}/manifest.yml")
@@ -133,9 +133,9 @@ void build() {
 
 /** Publishes a notification to a slack instance*/
 void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
-    }
+    // withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
+    //     sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
+    // }
 }
 
 /** Add a message to the jenkins queue */
@@ -149,7 +149,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x64', 'build-arm64']
+        def stages = ['build-x64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
