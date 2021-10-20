@@ -36,8 +36,21 @@ class InputManifest(Manifest):
             "schema": {
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
-                "jdk": {"required": False, "type": "string"},
             },
+        },
+        "ci": {
+            "required": False,
+            "type": "dict",
+            "schema": {
+                "image": {
+                    "required": False,
+                    "type": "dict",
+                    "schema": {
+                        "name": {"required": True, "type": "string"},
+                        "args": {"required": False, "type": "string"}
+                    }
+                }
+            }
         },
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "components": {
@@ -62,23 +75,39 @@ class InputManifest(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
+        self.ci = self.Ci(data.get("ci", None))
         self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
+            "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
+
+    class Ci:
+        def __init__(self, data):
+            self.image = None if data is None else self.Image(data.get("image", None))
+
+        def __to_dict__(self):
+            return None if self.image is None else {"image": self.image.__to_dict__()}
+
+        class Image:
+            def __init__(self, data):
+                self.name = data["name"]
+                self.args = data.get("args", None)
+
+            def __to_dict__(self):
+                return {"name": self.name, "args": self.args}
 
     class Build:
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
-            self.jdk = data.get("jdk", None)
 
         def __to_dict__(self):
-            return {"name": self.name, "version": self.version, "jdk": self.jdk}
+            return {"name": self.name, "version": self.version}
 
     class Component:
         def __init__(self, data):

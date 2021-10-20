@@ -21,19 +21,25 @@ pipeline {
                 }
             }
         }
-        stage('detect JDK version to build') {
+        stage('detect Docker image + args to use for the build') {
             steps {
                 script { 
                     manifest = readYaml(file: "manifests/$INPUT_MANIFEST") 
                     
-                    jdk = "${manifest.build.jdk}" 
-                    // If the 'jdk' key is not present, it is populated with "null" string 
-                    if (jdk == null || jdk == "null") {
-                        // If JDK is not set, use 14
-                        jdk = "14"
+                    dockerImage = "${manifest.ci?.image?.name}" 
+                    // If the 'image' key is not present, it is populated with "null" string 
+                    if (dockerImage == null || dockerImage == "null") {
+                        error("The Docker image for the build is required but was not provided in the manifest")
                     }
 
-                    echo "Using JDK version: " + jdk
+                    dockerArgs = "${manifest.ci?.image?.args}" 
+                    // If the 'args' key is not present, it is populated with "null" string 
+                    if (dockerArgs == null || dockerArgs == "null") {
+                        dockerArgs = '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                    }
+
+                    echo "Using Docker image: " + dockerImage
+                    echo "Using Docker container args: " + dockerArgs
                 }
             }
         }
@@ -46,21 +52,19 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019'
+                            image dockerImage
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=$JAVA' + jdk + '_HOME'
+                            args dockerArgs
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            withEnv(['JAVA_HOME=$JAVA' + jdk + '_HOME']) {
-                                git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                                sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
-                                }
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven')
                             }
                         }
                     }
@@ -74,18 +78,16 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019'
+                            image dockerImage
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            args dockerArgs
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            withEnv(['JAVA_HOME=$JAVA' + jdk + '_HOME']) {
-                                build()
-                            }
+                            build()
                         }
                     }
                     post() {
@@ -98,18 +100,16 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019'
+                            image dockerImage
                             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
                             // It use executes which does not source the docker container internal ENV VAR
-                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            args dockerArgs
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            withEnv(['JAVA_HOME=$JAVA' + jdk + '_HOME']) {
-                                build()
-                            }
+                            build()
                         }
                     }
                     post() {
