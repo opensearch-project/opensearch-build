@@ -7,8 +7,9 @@
 import logging
 import os
 import subprocess
-import tempfile
 from pathlib import Path
+
+from system.temporary_directory import TemporaryDirectory
 
 
 class GitRepository:
@@ -22,7 +23,7 @@ class GitRepository:
         self.url = url
         self.ref = ref
         if directory is None:
-            self.temp_dir = tempfile.TemporaryDirectory()
+            self.temp_dir = TemporaryDirectory()
             self.dir = os.path.realpath(self.temp_dir.name)
         else:
             self.temp_dir = None
@@ -40,6 +41,13 @@ class GitRepository:
         self.execute_silent("git checkout FETCH_HEAD", self.dir)
         self.sha = self.output("git rev-parse HEAD", self.dir)
         logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.temp_dir:
+            self.temp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
     @property
     def working_directory(self):

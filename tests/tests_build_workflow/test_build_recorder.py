@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import os
-import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -16,6 +15,7 @@ from build_workflow.build_target import BuildTarget
 from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
 from build_workflow.opensearch.build_artifact_check_plugin import BuildArtifactOpenSearchCheckPlugin
 from manifests.build_manifest import BuildManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestBuildRecorder(unittest.TestCase):
@@ -138,11 +138,11 @@ class TestBuildRecorder(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with tempfile.TemporaryDirectory() as dest_dir:
+        with TemporaryDirectory.mkdtemp() as dest_dir:
             mock = self.__mock(snapshot=False)
-            mock.target.output_dir = dest_dir
+            mock.target.output_dir = dest_dir.name
             mock.write_manifest()
-            manifest_path = os.path.join(dest_dir, "manifest.yml")
+            manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = mock.get_manifest().to_dict()
             with open(manifest_path) as f:

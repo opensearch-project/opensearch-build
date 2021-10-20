@@ -32,10 +32,12 @@ class TestRunBuild(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST])
     @patch("run_build.Builder", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
-    @patch("run_build.GitRepository", return_value=MagicMock(working_directory="dummy"))
-    @patch("run_build.TemporaryDirectory")
+    @patch("run_build.GitRepository")
+    @patch("run_build.TemporaryDirectory.mkdtemp")
     def test_main(self, mock_temp, mock_repo, mock_recorder, mock_builder, *mocks):
-        mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        repo = MagicMock(name="dummy")
+        mock_repo.return_value.__enter__.return_value = repo
 
         main()
 
@@ -69,11 +71,11 @@ class TestRunBuild(unittest.TestCase):
         # each component is built and its artifacts exported
         mock_builder.assert_has_calls(
             [
-                call("OpenSearch", mock_repo.return_value, mock_recorder.return_value),
-                call("common-utils", mock_repo.return_value, mock_recorder.return_value),
+                call("OpenSearch", repo, mock_recorder.return_value),
+                call("common-utils", repo, mock_recorder.return_value),
                 call(
                     "dashboards-reports",
-                    mock_repo.return_value,
+                    repo,
                     mock_recorder.return_value,
                 ),
             ],

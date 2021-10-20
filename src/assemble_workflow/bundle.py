@@ -10,10 +10,10 @@ import os
 import shutil
 import subprocess
 import tarfile
-import tempfile
 from abc import ABC, abstractmethod
 
 from paths.script_finder import ScriptFinder
+from system.temporary_directory import TemporaryDirectory
 
 """
 This class is responsible for executing the build of the full bundle and passing results to a bundle recorder.
@@ -34,7 +34,7 @@ class Bundle(ABC):
         self.plugins = self.__get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
-        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.tmp_dir = TemporaryDirectory()
         self.installed_plugins = []
         self.min_tarball_path = self._copy_component(self.min_tarball, "dist")
         self.__unpack_min_tarball(self.tmp_dir.name)

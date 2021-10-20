@@ -15,6 +15,7 @@ import requests
 import yaml
 
 from manifests.bundle_manifest import BundleManifest
+from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_cluster import ClusterCreationException
 
@@ -26,7 +27,7 @@ class LocalTestClusterTests(unittest.TestCase):
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../tests_manifests/data"))
         self.manifest_filename = os.path.join(self.data_path, "opensearch-bundle-1.1.0.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
-        self.work_dir = tempfile.TemporaryDirectory()
+        self.work_dir = TemporaryDirectory()
         self.process = self.__get_process()
         self.process.returncode = 0
         self.local_test_cluster = LocalTestCluster(
@@ -39,9 +40,6 @@ class LocalTestClusterTests(unittest.TestCase):
             mock_test_recorder,
             "dummy-bucket",
         )
-
-    def tearDown(self):
-        self.work_dir.cleanup()
 
     class MockResponse:
         def __init__(self, text, status_code):

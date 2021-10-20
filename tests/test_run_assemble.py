@@ -35,7 +35,7 @@ class TestRunAssemble(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST])
     @patch("run_assemble.Bundles", return_value=MagicMock())
     @patch("run_assemble.BundleRecorder", return_value=MagicMock())
-    @patch("tempfile.TemporaryDirectory")
+    @patch("run_assemble.TemporaryDirectory")
     @patch("shutil.copy2")
     def test_main(self, mock_copy, mock_temp, mock_recorder, mock_bundles, *mocks):
         mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
