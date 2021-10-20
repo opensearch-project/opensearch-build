@@ -65,7 +65,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            build("x64")
                         }
                     }
                     post() {
@@ -113,10 +113,10 @@ pipeline {
     }
 }
 
-void build() {
+void build(architecture) {
     git url: 'https://github.com/kavilla/opensearch-build.git', branch: 'avillk/archarg'
 
-    sh "./build.sh manifests/$INPUT_MANIFEST"
+    sh "./build.sh manifests/$INPUT_MANIFEST -a $architecture"
     sh './assemble.sh artifacts/manifest.yml'
 
     script { manifest = readYaml(file: 'artifacts/manifest.yml') }

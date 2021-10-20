@@ -15,7 +15,7 @@ class BuildArgs:
     ]
     SUPPORTED_ARCHITECTURES = [
         "x64",
-        "x86-64",
+        "x86_64",
         "arm64",
         "aarch64",
     ]
