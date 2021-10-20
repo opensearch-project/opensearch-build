@@ -12,26 +12,20 @@ from system.execute import execute
 
 class TestExecute(unittest.TestCase):
     def test_execute_status_capture_true_raise_false(self):
-        (status, stdout, stderr) = execute(
-            "echo output && exit 128", "/", capture=True, raise_on_failure=False
-        )  # (128, 'output', '')
+        (status, stdout, stderr) = execute("echo output && exit 128", "/", capture=True, raise_on_failure=False)  # (128, 'output', '')
         self.assertEqual(status, 128)
         self.assertEqual(stdout.strip(), "output")
         self.assertEqual(stderr.strip(), "")
 
     def test_execute_status_capture_false_raise_false(self):
-        (status, stdout, stderr) = execute(
-            "echo output && exit 128", "/", capture=False, raise_on_failure=False
-        )  # (128, None, None)
+        (status, stdout, stderr) = execute("echo output && exit 128", "/", capture=False, raise_on_failure=False)  # (128, None, None)
         self.assertEqual(status, 128)
         self.assertEqual(stdout, None)
         self.assertEqual(stderr, None)
 
     def test_execute_status_capture_true_raise_True(self):
         with self.assertRaises(subprocess.CalledProcessError) as context:
-            (status, stdout, stderr) = execute(
-                "echo output && exit 128", "/", capture=True, raise_on_failure=True
-            )  # (128, 'error', '')
+            (status, stdout, stderr) = execute("echo output && exit 128", "/", capture=True, raise_on_failure=True)  # (128, 'error', '')
         self.assertEqual(
             "Command 'echo output && exit 128' returned non-zero exit status 128.",
             str(context.exception),

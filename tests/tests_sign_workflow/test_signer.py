@@ -46,18 +46,10 @@ class TestSigner(unittest.TestCase):
     def test_signer_verify(self, mock_repo):
         signer = Signer()
         signer.verify("/path/the-jar.jar.asc")
-        mock_repo.assert_has_calls(
-            [call().execute("gpg --verify-files /path/the-jar.jar.asc")]
-        )
+        mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.asc")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar")
-        mock_repo.assert_has_calls(
-            [
-                call().execute(
-                    "./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp"
-                )
-            ]
-        )
+        mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])

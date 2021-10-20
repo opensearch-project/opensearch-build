@@ -61,17 +61,13 @@ class InputManifest(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
-        self.components = list(
-            map(lambda entry: self.Component(entry), data["components"])
-        )
+        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
-            "components": list(
-                map(lambda component: component.__to_dict__(), self.components)
-            ),
+            "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
 
     class Build:
@@ -88,9 +84,7 @@ class InputManifest(Manifest):
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
-            self.checks = list(
-                map(lambda entry: InputManifest.Check(entry), data.get("checks", []))
-            )
+            self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
         def __to_dict__(self):
             return Manifest.compact(

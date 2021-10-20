@@ -23,16 +23,12 @@ class InputManifests(Manifests):
 
     @classmethod
     def manifests_path(self):
-        return os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../manifests")
-        )
+        return os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests"))
 
     @classmethod
     def files(self, name):
         results = []
-        for filename in glob.glob(
-            os.path.join(self.manifests_path(), f"**/{name}-*.yml")
-        ):
+        for filename in glob.glob(os.path.join(self.manifests_path(), f"**/{name}-*.yml")):
             # avoids the -maven manifest
             match = re.search(rf"^{name}-([0-9.]*).yml$", os.path.basename(filename))
             if match:
@@ -53,9 +49,7 @@ class InputManifests(Manifests):
             logging.info(f"Checking {self.name} {branches} branches")
             for branch in branches:
                 c = min_klass.checkout(
-                    path=os.path.join(
-                        work_dir, f"{self.name.replace(' ', '')}/{branch}"
-                    ),
+                    path=os.path.join(work_dir, f"{self.name.replace(' ', '')}/{branch}"),
                     branch=branch,
                 )
                 version = c.version
@@ -84,9 +78,7 @@ class InputManifests(Manifests):
                         if release_version not in main_versions.keys():
                             main_versions[release_version] = []
                         main_versions[release_version].append(component)
-                        logging.info(
-                            f"{component.name}#main is version {release_version} (from {component_version})"
-                        )
+                        logging.info(f"{component.name}#main is version {release_version} (from {component_version})")
 
             # summarize
             logging.info("Found versions on main:")

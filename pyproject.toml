@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 160
+target-version = ['py37']
+
+[tool.isort]
+profile = "black"
+line_length = 160

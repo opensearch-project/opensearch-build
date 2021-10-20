@@ -13,9 +13,7 @@ from build_workflow.build_target import BuildTarget
 
 class TestBuildTarget(unittest.TestCase):
     def test_output_dir(self):
-        self.assertEqual(
-            BuildTarget(version="1.1.0", arch="x86").output_dir, "artifacts"
-        )
+        self.assertEqual(BuildTarget(version="1.1.0", arch="x86").output_dir, "artifacts")
 
     def test_build_id_hex(self):
         self.assertEqual(len(BuildTarget(version="1.1.0", arch="x86").build_id), 32)
@@ -25,9 +23,7 @@ class TestBuildTarget(unittest.TestCase):
         self.assertEqual(BuildTarget(version="1.1.0", arch="x86").build_id, "id")
 
     def test_build_id_from_arg(self):
-        self.assertEqual(
-            BuildTarget(version="1.1.0", arch="x86", build_id="id").build_id, "id"
-        )
+        self.assertEqual(BuildTarget(version="1.1.0", arch="x86", build_id="id").build_id, "id")
 
     def test_opensearch_version(self):
         self.assertEqual(
@@ -58,6 +54,4 @@ class TestBuildTarget(unittest.TestCase):
         self.assertEqual(BuildTarget(version="1.1.0", snapshot=False).arch, "value")
 
     def test_arch_value(self):
-        self.assertEqual(
-            BuildTarget(version="1.1.0", arch="value", snapshot=False).arch, "value"
-        )
+        self.assertEqual(BuildTarget(version="1.1.0", arch="value", snapshot=False).arch, "value")

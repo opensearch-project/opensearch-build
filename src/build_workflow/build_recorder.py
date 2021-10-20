@@ -27,12 +27,8 @@ class BuildRecorder:
             git_repo.sha,
         )
 
-    def record_artifact(
-        self, component_name, artifact_type, artifact_path, artifact_file
-    ):
-        logging.info(
-            f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})"
-        )
+    def record_artifact(self, component_name, artifact_type, artifact_path, artifact_file):
+        logging.info(f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})")
         # Ensure the target directory exists
         dest_file = os.path.join(self.target.output_dir, artifact_path)
         dest_dir = os.path.dirname(dest_file)
@@ -42,9 +38,7 @@ class BuildRecorder:
         # Copy the file
         shutil.copyfile(artifact_file, dest_file)
         # Notify the recorder
-        self.build_manifest.append_artifact(
-            component_name, artifact_type, artifact_path
-        )
+        self.build_manifest.append_artifact(component_name, artifact_type, artifact_path)
 
     def get_manifest(self):
         return self.build_manifest.to_manifest()

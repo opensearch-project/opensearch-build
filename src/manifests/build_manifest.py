@@ -85,17 +85,13 @@ class BuildManifest(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
-        self.components = list(
-            map(lambda entry: self.Component(entry), data.get("components", []))
-        )
+        self.components = list(map(lambda entry: self.Component(entry), data.get("components", [])))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.2",
             "build": self.build.__to_dict__(),
-            "components": list(
-                map(lambda component: component.__to_dict__(), self.components)
-            ),
+            "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
 
     def get_component(self, component_name):
@@ -104,24 +100,18 @@ class BuildManifest(Manifest):
             None,
         )
         if component is None:
-            raise BuildManifest.ComponentNotFoundError(
-                f"{component_name} not found in build manifest.yml"
-            )
+            raise BuildManifest.ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
         return component
 
     @staticmethod
-    def get_build_manifest_relative_location(
-        build_id, opensearch_version, platform, architecture
-    ):
+    def get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture):
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
     @staticmethod
     def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
         work_dir = work_dir if not None else str(os.getcwd())
-        manifest_s3_path = BuildManifest.get_build_manifest_relative_location(
-            build_id, opensearch_version, platform, architecture
-        )
+        manifest_s3_path = BuildManifest.get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture)
         S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
         build_manifest = BuildManifest.from_path("manifest.yml")
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))

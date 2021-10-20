@@ -11,9 +11,7 @@ class PerfTestCluster(TestCluster):
     Represents a performance test cluster. This class deploys the opensearch bundle with CDK and returns the private IP.
     """
 
-    def __init__(
-        self, bundle_manifest, config, stack_name, security, current_workspace
-    ):
+    def __init__(self, bundle_manifest, config, stack_name, security, current_workspace):
         self.manifest = bundle_manifest
         self.work_dir = "opensearch-cluster/cdk/single-node/"
         self.current_workspace = current_workspace

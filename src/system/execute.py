@@ -16,9 +16,7 @@ def execute(command, dir, capture=True, raise_on_failure=True):
     :returns a tuple containing the exit code, stdout, and stderr.
     """
     logging.info(f'Executing "{command}" in {dir}')
-    result = subprocess.run(
-        command, cwd=dir, shell=True, capture_output=capture, text=True
-    )
+    result = subprocess.run(command, cwd=dir, shell=True, capture_output=capture, text=True)
     if raise_on_failure:
         result.check_returncode()
     return (result.returncode, result.stdout, result.stderr)

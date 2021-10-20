@@ -15,7 +15,6 @@ from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class TestRecorder:
-
     def __init__(self, test_run_id, test_type, location):
         self.test_run_id = test_run_id
         self.test_type = test_type
@@ -27,9 +26,7 @@ class TestRecorder:
         self.test_results_logs = self.TestResultsLogs(self)
 
     def _create_base_folder_structure(self, component_name, component_test_config):
-        dest_directory = os.path.join(self.location,
-                                      str(component_name),
-                                      str(component_test_config))
+        dest_directory = os.path.join(self.location, str(component_name), str(component_test_config))
         os.makedirs(dest_directory, exist_ok=True)
         return os.path.realpath(dest_directory)
 
@@ -45,60 +42,57 @@ class TestRecorder:
             "test_run_id": self.test_run_id,
             "component_name": test_result_data.component_name,
             "test_config": test_result_data.component_test_config,
-            "exit_code": test_result_data.exit_code
+            "exit_code": test_result_data.exit_code,
         }
         with open(os.path.join(output_path, "%s.yml" % test_result_data.component_name), "w") as file:
             yaml.dump(outcome, file)
         return os.path.realpath("%s.yml" % test_result_data.component_name)
 
     class LocalClusterLogs(LogRecorder):
-
         def __init__(self, parent_class):
             self.parent_class = parent_class
 
         def save_test_result_data(self, test_result_data: TestResultData):
-            base = self.parent_class._create_base_folder_structure(test_result_data.component_name,
-                                                                   test_result_data.component_test_config)
+            base = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
             dest_directory = os.path.join(base, "local-cluster-logs")
             os.makedirs(dest_directory, exist_ok=True)
             log_files = list(test_result_data.log_files)
             logging.info(
                 f"Recording local cluster logs for {test_result_data.component_name} with test configuration as "
-                f"{test_result_data.component_test_config} at {os.path.realpath(dest_directory)}")
-            self.parent_class._generate_std_files(test_result_data.stdout, test_result_data.stderr,
-                                                  os.path.realpath(dest_directory))
+                f"{test_result_data.component_test_config} at {os.path.realpath(dest_directory)}"
+            )
+            self.parent_class._generate_std_files(
+                test_result_data.stdout,
+                test_result_data.stderr,
+                os.path.realpath(dest_directory),
+            )
             for log_file in log_files:
                 dest_file = os.path.join(dest_directory, os.path.basename(log_file[0]))
                 shutil.copyfile(log_file[0], dest_file)
 
     class RemoteClusterLogs(LogRecorder):
-
         def __init__(self, parent_class):
             self.parent_class = parent_class
 
         def save_test_result_data(self, test_result_data: TestResultData):
-            base = self.parent_class._create_base_folder_structure(test_result_data.component_name,
-                                                                   test_result_data.component_test_config)
+            base = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
             dest_directory = os.path.join(base, "remote-cluster-logs")
             os.makedirs(dest_directory, exist_ok=True)
             logging.info(
                 f"Recording remote cluster logs for {test_result_data.component_name} with test configuration as "
-                f"{test_result_data.component_test_config} at {os.path.realpath(dest_directory)}")
+                f"{test_result_data.component_test_config} at {os.path.realpath(dest_directory)}"
+            )
             self.parent_class._generate_yml(test_result_data, dest_directory)
 
     class TestResultsLogs(LogRecorder):
-
         def __init__(self, parent_class):
             self.parent_class = parent_class
 
         def save_test_result_data(self, test_result_data: TestResultData):
-            base = self.parent_class._create_base_folder_structure(test_result_data.component_name,
-                                                                   test_result_data.component_test_config)
+            base = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
             dest_directory = os.path.join(base, "test-results")
             os.makedirs(dest_directory, exist_ok=False)
-            logging.info(
-                f"Recording component test results for {test_result_data.component_name} at "
-                f"{os.path.realpath(dest_directory)}")
+            logging.info(f"Recording component test results for {test_result_data.component_name} at " f"{os.path.realpath(dest_directory)}")
             self.parent_class._generate_std_files(test_result_data.stdout, test_result_data.stderr, dest_directory)
             if test_result_data.log_files is not None:
                 results_dir = list(test_result_data.log_files)

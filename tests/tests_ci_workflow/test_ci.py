@@ -12,9 +12,7 @@ from ci_workflow.ci import Ci
 
 class TestCi(unittest.TestCase):
     def setUp(self):
-        self.ci = Ci(
-            "component", MagicMock(dir="/tmp/checked-out-component"), MagicMock()
-        )
+        self.ci = Ci("component", MagicMock(dir="/tmp/checked-out-component"), MagicMock())
 
     def test_ci(self):
         self.assertEqual(self.ci.component, "component")

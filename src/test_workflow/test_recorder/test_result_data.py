@@ -20,6 +20,7 @@ class TestResultData:
     stderr: A string containing the stderr stream from the test process.
     log_files: A generator that yields tuples containing test cluster log files, in the form (absolute_path, relative_path).
     """
+
     component_name: str
     component_test_config: str
     exit_code: int

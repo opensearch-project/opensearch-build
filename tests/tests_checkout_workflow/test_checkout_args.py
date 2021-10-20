@@ -14,15 +14,9 @@ from checkout_workflow.checkout_args import CheckoutArgs
 
 class TestCheckoutArgs(unittest.TestCase):
 
-    CHECKOUT_PY = os.path.realpath(
-        os.path.join(os.path.dirname(__file__), "../../src/run_checkout.py")
-    )
+    CHECKOUT_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/run_checkout.py"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(
-        os.path.join(
-            os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"
-        )
-    )
+    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"))
 
     @patch("argparse._sys.argv", [CHECKOUT_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self):

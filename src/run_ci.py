@@ -51,9 +51,7 @@ def main():
                 ci = Ci(component, repo, target)
                 ci.check()
             except:
-                logging.error(
-                    f"Error checking {component.name}, retry with: {args.component_command(component.name)}"
-                )
+                logging.error(f"Error checking {component.name}, retry with: {args.component_command(component.name)}")
                 raise
 
     logging.info("Done.")

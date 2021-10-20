@@ -37,11 +37,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
-                    os.path.realpath(
-                        os.path.join(
-                            ScriptFinder.default_scripts_path, "opensearch", "build.sh"
-                        )
-                    ),
+                    os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p linux",
                     "-a x64",
@@ -50,9 +46,7 @@ class TestBuilder(unittest.TestCase):
                 ]
             )
         )
-        self.builder.build_recorder.record_component.assert_called_with(
-            "component", self.builder.git_repo
-        )
+        self.builder.build_recorder.record_component.assert_called_with("component", self.builder.git_repo)
 
     def test_build_snapshot(self):
         self.builder.build(
@@ -67,11 +61,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
-                    os.path.realpath(
-                        os.path.join(
-                            ScriptFinder.default_scripts_path, "opensearch", "build.sh"
-                        )
-                    ),
+                    os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p darwin",
                     "-a x64",
@@ -80,9 +70,7 @@ class TestBuilder(unittest.TestCase):
                 ]
             )
         )
-        self.builder.build_recorder.record_component.assert_called_with(
-            "component", self.builder.git_repo
-        )
+        self.builder.build_recorder.record_component.assert_called_with("component", self.builder.git_repo)
 
     def mock_os_walk(self, artifact_path):
         if artifact_path.endswith("/checked-out-component/artifacts/core-plugins"):
@@ -102,17 +90,13 @@ class TestBuilder(unittest.TestCase):
                 call(
                     "component",
                     "maven",
-                    os.path.relpath(
-                        "/maven/artifact1.jar", self.builder.artifacts_path
-                    ),
+                    os.path.relpath("/maven/artifact1.jar", self.builder.artifacts_path),
                     "/maven/artifact1.jar",
                 ),
                 call(
                     "component",
                     "core-plugins",
-                    os.path.relpath(
-                        "/core-plugins/plugin1.zip", self.builder.artifacts_path
-                    ),
+                    os.path.relpath("/core-plugins/plugin1.zip", self.builder.artifacts_path),
                     "/core-plugins/plugin1.zip",
                 ),
             ]

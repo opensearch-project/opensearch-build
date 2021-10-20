@@ -47,9 +47,7 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
         )
 
     def test_loads_tree(self):
-        data_path = os.path.join(
-            os.path.dirname(__file__), "data/job_scheduler_dependencies.txt"
-        )
+        data_path = os.path.join(os.path.dirname(__file__), "data/job_scheduler_dependencies.txt")
         with open(data_path) as f:
             check = self.__mock_dependencies(props=f.read())
             self.assertEqual(
@@ -57,23 +55,15 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
                 "1.1.0-SNAPSHOT",
             )
             self.assertEqual(
-                check.dependencies.get_value(
-                    "org.opensearch:opensearch/org.opensearch:opensearch-core"
-                ),
+                check.dependencies.get_value("org.opensearch:opensearch/org.opensearch:opensearch-core"),
                 "1.1.0-SNAPSHOT",
             )
+            self.assertEqual(check.dependencies.get_value("com.puppycrawl.tools:checkstyle"), "8.29")
             self.assertEqual(
-                check.dependencies.get_value("com.puppycrawl.tools:checkstyle"), "8.29"
-            )
-            self.assertEqual(
-                check.dependencies.get_value(
-                    "com.puppycrawl.tools:checkstyle/antlr:antlr"
-                ),
+                check.dependencies.get_value("com.puppycrawl.tools:checkstyle/antlr:antlr"),
                 "2.7.7",
             )
             self.assertEqual(
-                check.dependencies.get_value(
-                    "com.puppycrawl.tools:checkstyle/commons-beanutils:commons-beanutils/commons-collections:commons-collections"
-                ),
+                check.dependencies.get_value("com.puppycrawl.tools:checkstyle/commons-beanutils:commons-beanutils/commons-collections:commons-collections"),
                 "3.2.2",
             )

@@ -28,9 +28,7 @@ class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
             ".xml",
             ".zip",
         ]:
-            raise BuildArtifactCheck.BuildArtifactInvalidError(
-                path, f"{ext} is not a valid extension for a maven file"
-            )
+            raise BuildArtifactCheck.BuildArtifactInvalidError(path, f"{ext} is not a valid extension for a maven file")
         if os.path.splitext(path)[1] == ".jar":
             with ZipFile(path, "r") as zip:
                 data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
@@ -46,6 +44,4 @@ class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
                     )
                 except PropertiesFile.CheckError as e:
                     raise BuildArtifactCheck.BuildArtifactInvalidError(path, str(e))
-                logging.info(
-                    f'Checked {path} ({properties.get_value("Implementation-Version", "N/A")})'
-                )
+                logging.info(f'Checked {path} ({properties.get_value("Implementation-Version", "N/A")})')

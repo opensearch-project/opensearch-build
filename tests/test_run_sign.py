@@ -51,6 +51,4 @@ class TestRunSign(unittest.TestCase):
                 )
             ]
         )
-        mock_signer.return_value.sign_artifacts.assert_has_calls(
-            [call(["plugins/opensearch-index-management-1.1.0.0.zip"], self.DATA_PATH)]
-        )
+        mock_signer.return_value.sign_artifacts.assert_has_calls([call(["plugins/opensearch-index-management-1.1.0.0.zip"], self.DATA_PATH)])

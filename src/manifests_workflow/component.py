@@ -21,13 +21,7 @@ class Component:
     def branches(self, uri):
         """Return main or any x.y branches."""
         branches = ["main"]
-        remote_branches = (
-            subprocess.check_output(
-                f"git ls-remote {uri} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True
-            )
-            .decode()
-            .split("\n")
-        )
+        remote_branches = subprocess.check_output(f"git ls-remote {uri} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True).decode().split("\n")
         branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
         return branches
 

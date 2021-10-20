@@ -9,12 +9,9 @@ from unittest.mock import patch
 
 from build_workflow.build_artifact_checks import BuildArtifactChecks
 from build_workflow.build_target import BuildTarget
-from build_workflow.opensearch.build_artifact_check_maven import \
-    BuildArtifactOpenSearchCheckMaven
-from build_workflow.opensearch.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchCheckPlugin
-from build_workflow.opensearch_dashboards.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchDashboardsCheckPlugin
+from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_plugin import BuildArtifactOpenSearchCheckPlugin
+from build_workflow.opensearch_dashboards.build_artifact_check_plugin import BuildArtifactOpenSearchDashboardsCheckPlugin
 
 
 class TestBuildArtifactChecks(unittest.TestCase):

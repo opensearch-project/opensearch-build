@@ -21,7 +21,12 @@ def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info("Switching to temporary work_dir: " + work_dir)
         bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.architecture,
+            work_dir,
+        )
         BwcTestSuite(bundle_manifest, work_dir, args.component, args.keep).execute()
 
 

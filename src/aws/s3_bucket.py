@@ -26,19 +26,11 @@ class S3Bucket:
         :param role_session_name: the aws role session name
         """
         self.bucket_name = bucket_name
-        self.role_arn = (
-            role_arn if role_arn is not None else os.environ.get(S3Bucket.AWS_ROLE_ARN)
-        )
-        self.role_session_name = (
-            role_session_name
-            if role_session_name is not None
-            else os.environ.get(S3Bucket.AWS_ROLE_SESSION_NAME)
-        )
+        self.role_arn = role_arn if role_arn is not None else os.environ.get(S3Bucket.AWS_ROLE_ARN)
+        self.role_session_name = role_session_name if role_session_name is not None else os.environ.get(S3Bucket.AWS_ROLE_SESSION_NAME)
         # TODO: later use for credential refereshing
         assumed_role_creds = self.__sts_assume_role()
-        self.__s3_client, self.__s3_resource = self.__create_s3_clients(
-            assumed_role_creds
-        )
+        self.__s3_client, self.__s3_resource = self.__create_s3_clients(assumed_role_creds)
 
     def __sts_assume_role(self):
         try:
@@ -79,11 +71,7 @@ class S3Bucket:
         local_dir = Path(dest)
         s3_response = bucket.objects.filter(Prefix=s3_path)
         for obj in s3_response:
-            target = (
-                obj.key
-                if local_dir is None
-                else local_dir / Path(obj.key).relative_to(s3_path)
-            )
+            target = obj.key if local_dir is None else local_dir / Path(obj.key).relative_to(s3_path)
             target.parent.mkdir(parents=True, exist_ok=True)
             if obj.key[-1] == "/":
                 continue
