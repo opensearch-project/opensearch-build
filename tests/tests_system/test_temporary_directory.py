@@ -12,11 +12,11 @@ from system.temporary_directory import TemporaryDirectory
 
 class TestTemporaryDirectory(unittest.TestCase):
     def test_mkdtemp_keep_true(self):
-        with TemporaryDirectory.mkdtemp(keep=True) as work_dir:
+        with TemporaryDirectory(keep=True) as work_dir:
             self.assertTrue(os.path.exists(work_dir.name))
         self.assertTrue(os.path.exists(work_dir.name))
 
     def test_mkdtemp_keep_false(self):
-        with TemporaryDirectory.mkdtemp() as work_dir:
+        with TemporaryDirectory() as work_dir:
             self.assertTrue(os.path.exists(work_dir.name))
         self.assertFalse(os.path.exists(work_dir.name))

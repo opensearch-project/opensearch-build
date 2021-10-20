@@ -138,7 +138,7 @@ class TestBuildRecorder(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with TemporaryDirectory.mkdtemp() as dest_dir:
+        with TemporaryDirectory() as dest_dir:
             mock = self.__mock(snapshot=False)
             mock.target.output_dir = dest_dir.name
             mock.write_manifest()

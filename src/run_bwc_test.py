@@ -18,8 +18,8 @@ from test_workflow.test_args import TestArgs
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    with TemporaryDirectory.mkdtemp(keep=args.keep) as work_dir:
-        logging.info("Switching to temporary work_dir: f{work_dir.name}")
+    with TemporaryDirectory(keep=args.keep) as work_dir:
+        logging.info(f"Switching to temporary work_dir: {work_dir.name}")
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket,
             args.build_id,

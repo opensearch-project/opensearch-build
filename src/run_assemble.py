@@ -40,7 +40,7 @@ def main():
     output_dir = os.path.join(os.getcwd(), "bundle")
     os.makedirs(output_dir, exist_ok=True)
 
-    with TemporaryDirectory.mkdtemp() as work_dir:
+    with TemporaryDirectory() as work_dir:
         logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
         os.chdir(work_dir.name)

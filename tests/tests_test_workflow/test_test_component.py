@@ -13,7 +13,7 @@ class TestTestComponent(unittest.TestCase):
         )
 
     def test_checkout(self):
-        with TemporaryDirectory.mkdtemp() as tmpdir:
+        with TemporaryDirectory() as tmpdir:
             subdir = os.path.join(tmpdir.name, ".github")
             repo = self.test_component.checkout(subdir)
             self.assertEqual(repo.url, "https://github.com/opensearch-project/.github")

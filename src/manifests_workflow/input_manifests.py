@@ -40,7 +40,7 @@ class InputManifests(Manifests):
         known_versions = self.versions
         logging.info(f"Known versions: {known_versions}")
         main_versions = {}
-        with TemporaryDirectory.mkdtemp(keep=keep) as work_dir:
+        with TemporaryDirectory(keep=keep) as work_dir:
             logging.info(f"Checking out components into {work_dir.name}")
             os.chdir(work_dir.name)
 

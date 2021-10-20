@@ -26,7 +26,7 @@ def main():
 
     target = CiTarget(version=manifest.build.version, snapshot=args.snapshot)
 
-    with TemporaryDirectory.mkdtemp(keep=args.keep) as work_dir:
+    with TemporaryDirectory(keep=args.keep) as work_dir:
         logging.info(f"Sanity-testing in {work_dir.name}")
 
         os.chdir(work_dir.name)

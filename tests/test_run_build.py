@@ -33,7 +33,7 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.Builder", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.GitRepository")
-    @patch("run_build.TemporaryDirectory.mkdtemp")
+    @patch("run_build.TemporaryDirectory")
     def test_main(self, mock_temp, mock_repo, mock_recorder, mock_builder, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         repo = MagicMock(name="dummy")

@@ -31,7 +31,7 @@ class TestRunCheckout(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_checkout.py", OPENSEARCH_MANIFEST])
     @patch("run_checkout.GitRepository")
-    @patch("run_checkout.TemporaryDirectory.mkdtemp")
+    @patch("run_checkout.TemporaryDirectory")
     def test_main(self, mock_temp, mock_repo):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_repo.return_value.__enter__.return_value = MagicMock(working_directory="dummy")

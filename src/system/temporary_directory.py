@@ -23,7 +23,3 @@ class TemporaryDirectory:
         else:
             logging.debug(f"Removing {self.name}")
             shutil.rmtree(self.name)
-
-    @classmethod
-    def mkdtemp(cls, keep=False):
-        return cls(keep)

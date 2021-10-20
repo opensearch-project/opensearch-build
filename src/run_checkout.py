@@ -22,7 +22,7 @@ def main():
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
 
-    with TemporaryDirectory(keep=True).mkdtemp() as work_dir:
+    with TemporaryDirectory(keep=True) as work_dir:
         logging.info(f"Checking out into {work_dir.name}")
 
         os.chdir(work_dir.name)

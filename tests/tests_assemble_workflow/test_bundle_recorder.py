@@ -78,7 +78,7 @@ class TestBundleRecorder(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with TemporaryDirectory.mkdtemp() as dest_dir:
+        with TemporaryDirectory() as dest_dir:
             self.bundle_recorder.write_manifest(dest_dir.name)
             manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
@@ -210,7 +210,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with TemporaryDirectory.mkdtemp() as dest_dir:
+        with TemporaryDirectory() as dest_dir:
             self.bundle_recorder.write_manifest(dest_dir.name)
             manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
