@@ -25,7 +25,7 @@ def main():
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
 
-    with TemporaryDirectory(keep=args.keep) as work_dir:
+    with TemporaryDirectory.mkdtemp(keep=args.keep) as work_dir:
         output_dir = os.path.join(os.getcwd(), "artifacts")
 
         logging.info(f"Building in {work_dir.name}")
