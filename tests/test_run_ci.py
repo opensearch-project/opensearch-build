@@ -34,7 +34,7 @@ class TestRunCi(unittest.TestCase):
     @patch("run_ci.GitRepository", return_value=MagicMock(working_directory="dummy"))
     @patch("run_ci.TemporaryDirectory")
     def test_main(self, mock_temp, mock_repo, mock_ci, *mocks):
-        mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
 
         main()
 

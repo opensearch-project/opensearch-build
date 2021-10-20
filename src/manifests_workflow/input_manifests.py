@@ -41,15 +41,15 @@ class InputManifests(Manifests):
         logging.info(f"Known versions: {known_versions}")
         main_versions = {}
         with TemporaryDirectory(keep=keep) as work_dir:
-            logging.info(f"Checking out components into {work_dir}")
-            os.chdir(work_dir)
+            logging.info(f"Checking out components into {work_dir.name}")
+            os.chdir(work_dir.name)
 
             # check out and build #main, 1.x, etc.
             branches = min_klass.branches()
             logging.info(f"Checking {self.name} {branches} branches")
             for branch in branches:
                 c = min_klass.checkout(
-                    path=os.path.join(work_dir, f"{self.name.replace(' ', '')}/{branch}"),
+                    path=os.path.join(work_dir.name, f"{self.name.replace(' ', '')}/{branch}"),
                     branch=branch,
                 )
                 version = c.version
@@ -67,7 +67,7 @@ class InputManifests(Manifests):
                     logging.info(f"Checking out {component.name}#main")
                     component = component_klass.checkout(
                         name=component.name,
-                        path=os.path.join(work_dir, component.name),
+                        path=os.path.join(work_dir.name, component.name),
                         version=manifest.build.version,
                         branch="main",
                     )

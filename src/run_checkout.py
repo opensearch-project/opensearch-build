@@ -23,9 +23,9 @@ def main():
     manifest = InputManifest.from_file(args.manifest)
 
     with TemporaryDirectory(keep=True) as work_dir:
-        logging.info(f"Checking out into {work_dir}")
+        logging.info(f"Checking out into {work_dir.name}")
 
-        os.chdir(work_dir)
+        os.chdir(work_dir.name)
 
         for component in manifest.components:
 
@@ -33,11 +33,11 @@ def main():
             GitRepository(
                 component.repository,
                 component.ref,
-                os.path.join(work_dir, component.name),
+                os.path.join(work_dir.name, component.name),
                 component.working_directory,
             )
 
-    logging.info(f"Done, checked out into {work_dir}.")
+    logging.info(f"Done, checked out into {work_dir.name}.")
 
 
 if __name__ == "__main__":

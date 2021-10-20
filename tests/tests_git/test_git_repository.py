@@ -6,11 +6,11 @@
 
 import os
 import subprocess
-import tempfile
 import unittest
 from unittest.mock import patch
 
 from git.git_repository import GitRepository
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestGitRepository(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestGitRepository(unittest.TestCase):
         self.assertEqual(self.repo.url, "https://github.com/opensearch-project/.github")
         self.assertEqual(self.repo.ref, "8ac515431bf24caf92fea9d9b0af3b8f10b88453")
         self.assertEqual(self.repo.sha, "8ac515431bf24caf92fea9d9b0af3b8f10b88453")
-        self.assertIs(type(self.repo.temp_dir), tempfile.TemporaryDirectory)
+        self.assertIs(type(self.repo.temp_dir), TemporaryDirectory)
         self.assertEqual(self.repo.dir, os.path.realpath(self.repo.temp_dir.name))
         self.assertTrue(os.path.isfile(os.path.join(self.repo.dir, "CODE_OF_CONDUCT.md")))
         # was added in the next commit
@@ -58,8 +58,8 @@ class TestGitRepository(unittest.TestCase):
 
 class TestGitRepositoryDir(unittest.TestCase):
     def test_checkout_into_dir(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            subdir = os.path.join(tmpdir, ".github")
+        with TemporaryDirectory() as tmpdir:
+            subdir = os.path.join(tmpdir.name, ".github")
             repo = GitRepository(
                 url="https://github.com/opensearch-project/.github",
                 ref="8ac515431bf24caf92fea9d9b0af3b8f10b88453",

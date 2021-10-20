@@ -7,16 +7,19 @@
 import logging
 import shutil
 import tempfile
-from contextlib import contextmanager
 
 
-@contextmanager
-def TemporaryDirectory(keep=False):
-    name = tempfile.mkdtemp()
-    try:
-        yield name
-    finally:
-        if keep:
-            logging.info(f"Keeping {name}")
+class TemporaryDirectory:
+    def __init__(self, keep=False):
+        self.keep = keep
+        self.name = tempfile.mkdtemp()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.keep:
+            logging.info(f"Keeping {self.name}")
         else:
-            shutil.rmtree(name)
+            logging.debug(f"Removing {self.name}")
+            shutil.rmtree(self.name)

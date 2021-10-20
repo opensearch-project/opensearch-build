@@ -5,12 +5,12 @@
 # compatible open source license.
 
 import os
-import tempfile
 import unittest
 
 import yaml
 
 from manifests.manifest import Manifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestManifest(unittest.TestCase):
@@ -64,8 +64,8 @@ class TestManifest(unittest.TestCase):
         manifest_path = os.path.join(self.data_path, "min.yml")
         manifest = TestManifest.SampleManifest.from_path(manifest_path)
 
-        with tempfile.TemporaryDirectory() as path:
-            output_path = os.path.join(path, "manifest.yml")
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "manifest.yml")
             manifest.to_file(output_path)
             self.assertTrue(os.path.isfile(manifest_path))
             with open(output_path) as f:

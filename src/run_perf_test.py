@@ -42,8 +42,8 @@ def get_infra_repo_url():
 
 def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        os.chdir(work_dir)
-        current_workspace = os.path.join(work_dir, "infra")
+        os.chdir(work_dir.name)
+        current_workspace = os.path.join(work_dir.name, "infra")
         GitRepository(get_infra_repo_url(), "main", current_workspace)
         security = False
         for component in manifest.components:

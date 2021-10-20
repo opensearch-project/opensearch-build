@@ -23,17 +23,18 @@ class ComponentOpenSearch(Component):
         snapshot=False,
         working_directory=None,
     ):
-        return ComponentOpenSearch(
-            name,
-            GitRepository(
-                f"https://github.com/opensearch-project/{name}.git",
-                branch,
-                path,
-                working_directory,
-            ),
-            opensearch_version,
-            snapshot,
-        )
+        with GitRepository(
+            f"https://github.com/opensearch-project/{name}.git",
+            branch,
+            path,
+            working_directory,
+        ) as repo:
+            return ComponentOpenSearch(
+                name,
+                repo,
+                opensearch_version,
+                snapshot,
+            )
 
     def __init__(self, name, repo, opensearch_version, snapshot=False):
         super().__init__(name, repo, snapshot)

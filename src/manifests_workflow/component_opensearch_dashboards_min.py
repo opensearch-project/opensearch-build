@@ -21,14 +21,15 @@ class ComponentOpenSearchDashboardsMin(Component):
 
     @classmethod
     def checkout(self, path, branch="main", snapshot=False):
-        return ComponentOpenSearchDashboardsMin(
-            GitRepository(
-                "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
-                branch,
-                path,
-            ),
-            snapshot,
-        )
+        with GitRepository(
+            "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
+            branch,
+            path,
+        ) as repo:
+            return ComponentOpenSearchDashboardsMin(
+                repo,
+                snapshot,
+            )
 
     @property
     def properties(self):

@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import os
-import tempfile
 import unittest
 
 import yaml
@@ -13,6 +12,7 @@ import yaml
 from assemble_workflow.bundle_recorder import BundleRecorder
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestBundleRecorder(unittest.TestCase):
@@ -78,9 +78,9 @@ class TestBundleRecorder(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with tempfile.TemporaryDirectory() as dest_dir:
-            self.bundle_recorder.write_manifest(dest_dir)
-            manifest_path = os.path.join(dest_dir, "manifest.yml")
+        with TemporaryDirectory() as dest_dir:
+            self.bundle_recorder.write_manifest(dest_dir.name)
+            manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = self.bundle_recorder.get_manifest().to_dict()
             with open(manifest_path) as f:
@@ -210,9 +210,9 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with tempfile.TemporaryDirectory() as dest_dir:
-            self.bundle_recorder.write_manifest(dest_dir)
-            manifest_path = os.path.join(dest_dir, "manifest.yml")
+        with TemporaryDirectory() as dest_dir:
+            self.bundle_recorder.write_manifest(dest_dir.name)
+            manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = self.bundle_recorder.get_manifest().to_dict()
             with open(manifest_path) as f:
