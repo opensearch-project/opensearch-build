@@ -52,28 +52,28 @@ pipeline {
                 //         }
                 //     }
                 // }
-                // stage('build-x64') {
-                //     agent {
-                //         docker {
-                //             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                //             image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
-                //             // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                //             // It use executes which does not source the docker container internal ENV VAR
-                //             args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                //             alwaysPull true
-                //         }
-                //     }
-                //     steps {
-                //         script {
-                //             build()
-                //         }
-                //     }
-                //     post() {
-                //         always {
-                //             cleanWs disableDeferredWipeout: true, deleteDirs: true
-                //         }
-                //     }
-                // }
+                stage('build-x64') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
+                            // It use executes which does not source the docker container internal ENV VAR
+                            args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            build()
+                        }
+                    }
+                    post() {
+                        always {
+                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        }
+                    }
+                }
                 stage('build-arm64') {
                     agent {
                         docker {
@@ -149,7 +149,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-arm64']
+        def stages = ['build-x64', 'build-arm64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
