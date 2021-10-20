@@ -37,6 +37,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
+                    "bash",
                     os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p linux",
@@ -61,6 +62,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
+                    "bash",
                     os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p darwin",

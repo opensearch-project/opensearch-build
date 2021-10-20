@@ -38,6 +38,7 @@ class ScriptFinder:
         script = next(filter(lambda path: os.path.exists(path), paths), None)
         if script is None:
             raise ScriptFinder.ScriptNotFoundError(name, paths)
+
         return script
 
     @classmethod
