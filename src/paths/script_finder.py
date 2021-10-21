@@ -14,17 +14,9 @@ class ScriptFinder:
             self.paths = paths
             super().__init__(f"Could not find {kind} script. Looked in {paths}.")
 
-    component_scripts_path = os.path.realpath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../scripts/components"
-        )
-    )
+    component_scripts_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../scripts/components"))
 
-    default_scripts_path = os.path.realpath(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../scripts/default"
-        )
-    )
+    default_scripts_path = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../scripts/default"))
 
     """
     ScriptFinder is a helper that abstracts away the details of where to look for build, test and install scripts.
@@ -51,9 +43,7 @@ class ScriptFinder:
     @classmethod
     def find_build_script(cls, project, component_name, git_dir):
         paths = [
-            os.path.realpath(
-                os.path.join(cls.component_scripts_path, component_name, "build.sh")
-            ),
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts/build.sh")),
             os.path.realpath(
@@ -70,9 +60,7 @@ class ScriptFinder:
     @classmethod
     def find_integ_test_script(cls, component_name, git_dir):
         paths = [
-            os.path.realpath(
-                os.path.join(cls.component_scripts_path, component_name, "integtest.sh")
-            ),
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "integtest.sh")),
             os.path.realpath(os.path.join(git_dir, "integtest.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts/integtest.sh")),
             os.path.realpath(os.path.join(cls.default_scripts_path, "integtest.sh")),
@@ -83,9 +71,7 @@ class ScriptFinder:
     @classmethod
     def find_install_script(cls, component_name):
         paths = [
-            os.path.realpath(
-                os.path.join(cls.component_scripts_path, component_name, "install.sh")
-            ),
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "install.sh")),
             os.path.realpath(os.path.join(cls.default_scripts_path, "install.sh")),
         ]
 
@@ -96,9 +82,7 @@ class ScriptFinder:
         paths = [
             os.path.realpath(os.path.join(git_dir, "bwctest.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts/bwctest.sh")),
-            os.path.realpath(
-                os.path.join(cls.component_scripts_path, component_name, "bwctest.sh")
-            ),
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "bwctest.sh")),
             os.path.realpath(os.path.join(cls.default_scripts_path, "bwctest.sh")),
         ]
 

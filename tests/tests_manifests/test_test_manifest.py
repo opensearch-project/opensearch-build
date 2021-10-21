@@ -15,12 +15,8 @@ from manifests.test_manifest import TestManifest
 class TestTestManifest(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.data_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "data")
-        )
-        self.manifest_filename = os.path.join(
-            self.data_path, "opensearch-test-1.1.0.yml"
-        )
+        self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
+        self.manifest_filename = os.path.join(self.data_path, "opensearch-test-1.1.0.yml")
         self.manifest = TestManifest.from_path(self.manifest_filename)
 
     def test_component(self):
@@ -35,20 +31,14 @@ class TestTestManifest(unittest.TestCase):
                 ],
             },
         )
-        self.assertEqual(
-            component.bwc_test, {"test-configs": ["with-security", "without-security"]}
-        )
+        self.assertEqual(component.bwc_test, {"test-configs": ["with-security", "without-security"]})
 
     def test_component_with_working_directory(self):
         component = self.manifest.components[1]
         self.assertEqual(component.name, "dashboards-reports")
         self.assertEqual(component.working_directory, "reports-scheduler")
-        self.assertEqual(
-            component.integ_test, {"test-configs": ["without-security"]}
-        )
-        self.assertEqual(
-            component.bwc_test, {"test-configs": ["without-security"]}
-        )
+        self.assertEqual(component.integ_test, {"test-configs": ["without-security"]})
+        self.assertEqual(component.bwc_test, {"test-configs": ["without-security"]})
 
     def test_to_dict(self):
         data = self.manifest.to_dict()

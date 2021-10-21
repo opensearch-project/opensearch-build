@@ -41,9 +41,7 @@ class TestManifest(Manifest):
                     "integ-test": {
                         "type": "dict",
                         "schema": {
-                            "build-dependencies": {
-                                "type": "list"
-                            },
+                            "build-dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -59,9 +57,7 @@ class TestManifest(Manifest):
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
-                            "build-dependencies": {
-                                "type": "list"
-                            },
+                            "build-dependencies": {"type": "list"},
                             "test-configs": {
                                 "type": "list",
                                 "allowed": [
@@ -79,16 +75,12 @@ class TestManifest(Manifest):
 
     def __init__(self, data):
         super().__init__(data)
-        self.components = list(
-            map(lambda entry: self.Component(entry), data["components"])
-        )
+        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "components": list(
-                map(lambda component: component.__to_dict__(), self.components)
-            ),
+            "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
 
     class Component:

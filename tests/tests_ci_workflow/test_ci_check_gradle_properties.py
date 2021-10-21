@@ -26,9 +26,7 @@ class TestCiCheckGradleProperties(unittest.TestCase):
             target=CiTarget(version="1.1.0", snapshot=False),
         )
 
-        git_repo.output.assert_called_once_with(
-            "./gradlew properties -Dopensearch.version=1.1.0 -Dbuild.snapshot=false"
-        )
+        git_repo.output.assert_called_once_with("./gradlew properties -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
 
     def test_executes_gradle_properties_snapshot(self):
         git_repo = MagicMock()
@@ -40,6 +38,4 @@ class TestCiCheckGradleProperties(unittest.TestCase):
             target=CiTarget(version="1.1.0", snapshot=True),
         )
 
-        git_repo.output.assert_called_once_with(
-            "./gradlew properties -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true"
-        )
+        git_repo.output.assert_called_once_with("./gradlew properties -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")

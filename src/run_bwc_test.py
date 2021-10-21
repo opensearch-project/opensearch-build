@@ -19,10 +19,15 @@ def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        logging.info("Switching to temporary work_dir: " + work_dir)
+        logging.info(f"Switching to temporary work_dir: {work_dir.name}")
         bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket, args.build_id, args.opensearch_version, args.architecture, work_dir)
-        BwcTestSuite(bundle_manifest, work_dir, args.component, args.keep).execute()
+            args.s3_bucket,
+            args.build_id,
+            args.opensearch_version,
+            args.architecture,
+            work_dir.name,
+        )
+        BwcTestSuite(bundle_manifest, work_dir.name, args.component, args.keep).execute()
 
 
 if __name__ == "__main__":

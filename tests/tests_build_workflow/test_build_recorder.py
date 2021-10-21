@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import os
-import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -13,11 +12,10 @@ import yaml
 
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
-from build_workflow.opensearch.build_artifact_check_maven import \
-    BuildArtifactOpenSearchCheckMaven
-from build_workflow.opensearch.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchCheckPlugin
+from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_plugin import BuildArtifactOpenSearchCheckPlugin
 from manifests.build_manifest import BuildManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestBuildRecorder(unittest.TestCase):
@@ -106,9 +104,7 @@ class TestBuildRecorder(unittest.TestCase):
         recorder.record_component("security", MagicMock())
 
         with patch.object(BuildArtifactOpenSearchCheckPlugin, "check") as mock_check:
-            recorder.record_artifact(
-                "security", "plugins", "../file1.zip", "invalid.file"
-            )
+            recorder.record_artifact("security", "plugins", "../file1.zip", "invalid.file")
 
         mock_check.assert_called_with("invalid.file")
 
@@ -142,11 +138,11 @@ class TestBuildRecorder(unittest.TestCase):
         )
 
     def test_write_manifest(self):
-        with tempfile.TemporaryDirectory() as dest_dir:
+        with TemporaryDirectory() as dest_dir:
             mock = self.__mock(snapshot=False)
-            mock.target.output_dir = dest_dir
+            mock.target.output_dir = dest_dir.name
             mock.write_manifest()
-            manifest_path = os.path.join(dest_dir, "manifest.yml")
+            manifest_path = os.path.join(dest_dir.name, "manifest.yml")
             self.assertTrue(os.path.isfile(manifest_path))
             data = mock.get_manifest().to_dict()
             with open(manifest_path) as f:
@@ -183,9 +179,7 @@ class TestBuildRecorder(unittest.TestCase):
                 sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
             ),
         )
-        mock.record_artifact(
-            "security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip"
-        )
+        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip")
         manifest_dict = mock.get_manifest().to_dict()
         self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
         self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")

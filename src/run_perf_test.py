@@ -18,9 +18,7 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 
 parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-parser.add_argument(
-    "--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file."
-)
+parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
 parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
 parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
 parser.add_argument(
@@ -44,8 +42,8 @@ def get_infra_repo_url():
 
 def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        os.chdir(work_dir)
-        current_workspace = os.path.join(work_dir, 'infra')
+        os.chdir(work_dir.name)
+        current_workspace = os.path.join(work_dir.name, "infra")
         GitRepository(get_infra_repo_url(), "main", current_workspace)
         security = False
         for component in manifest.components:
@@ -58,9 +56,7 @@ def main():
                 test_cluster_port,
             ):
                 os.chdir(current_workspace)
-                perf_test_suite = PerfTestSuite(
-                    manifest, test_cluster_endpoint, security, current_workspace
-                )
+                perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
                 perf_test_suite.execute()
 
 

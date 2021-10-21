@@ -10,12 +10,12 @@ import argparse
 import logging
 import os
 import sys
-import tempfile
 
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
 from system import console
+from system.temporary_directory import TemporaryDirectory
 
 
 def main():
@@ -41,12 +41,10 @@ def main():
     output_dir = os.path.join(os.getcwd(), "dist")
     os.makedirs(output_dir, exist_ok=True)
 
-    with tempfile.TemporaryDirectory() as work_dir:
-        logging.info(
-            f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ..."
-        )
+    with TemporaryDirectory() as work_dir:
+        logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
-        os.chdir(work_dir)
+        os.chdir(work_dir.name)
 
         bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 

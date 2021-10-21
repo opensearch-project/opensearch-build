@@ -21,9 +21,7 @@ class ComponentOpenSearchMin(Component):
 
     @classmethod
     def branches(self):
-        return Component.branches(
-            "https://github.com/opensearch-project/OpenSearch.git"
-        )
+        return Component.branches("https://github.com/opensearch-project/OpenSearch.git")
 
     @classmethod
     def versions(self, work_dir=None):
@@ -36,23 +34,17 @@ class ComponentOpenSearchMin(Component):
     @classmethod
     def checkout(self, path, branch="main", snapshot=False):
         return ComponentOpenSearchMin(
-            GitRepository(
-                "https://github.com/opensearch-project/OpenSearch.git", branch, path
-            ),
+            GitRepository("https://github.com/opensearch-project/OpenSearch.git", branch, path),
             snapshot,
         )
 
     def publish_to_maven_local(self):
-        cmd = ComponentOpenSearch.gradle_cmd(
-            "publishToMavenLocal", {"build.snapshot": str(self.snapshot).lower()}
-        )
+        cmd = ComponentOpenSearch.gradle_cmd("publishToMavenLocal", {"build.snapshot": str(self.snapshot).lower()})
         self.git_repo.execute_silent(cmd)
 
     @property
     def properties(self):
-        cmd = ComponentOpenSearch.gradle_cmd(
-            "properties", {"build.snapshot": str(self.snapshot).lower()}
-        )
+        cmd = ComponentOpenSearch.gradle_cmd("properties", {"build.snapshot": str(self.snapshot).lower()})
         return PropertiesFile(self.git_repo.output(cmd))
 
     @property

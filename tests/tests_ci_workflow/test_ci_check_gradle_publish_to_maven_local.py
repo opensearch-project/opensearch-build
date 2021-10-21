@@ -7,8 +7,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from ci_workflow.ci_check_gradle_publish_to_maven_local import \
-    CiCheckGradlePublishToMavenLocal
+from ci_workflow.ci_check_gradle_publish_to_maven_local import CiCheckGradlePublishToMavenLocal
 from ci_workflow.ci_target import CiTarget
 
 
@@ -20,9 +19,7 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
             target=CiTarget(version="1.1.0", snapshot=False),
         )
         check.check()
-        check.git_repo.execute.assert_called_once_with(
-            "./gradlew publishToMavenLocal -Dopensearch.version=1.1.0 -Dbuild.snapshot=false"
-        )
+        check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
 
     def test_executes_gradle_command_snapshot(self):
         check = CiCheckGradlePublishToMavenLocal(
@@ -31,6 +28,4 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
             target=CiTarget(version="1.1.0", snapshot=True),
         )
         check.check()
-        check.git_repo.execute.assert_called_once_with(
-            "./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true"
-        )
+        check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")

@@ -15,9 +15,7 @@ from manifests.input_manifest import InputManifest
 class TestInputManifest(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.manifests_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "../../manifests")
-        )
+        self.manifests_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests"))
 
     def test_1_0(self):
         path = os.path.join(self.manifests_path, "1.0.0/opensearch-1.0.0.yml")
@@ -55,9 +53,36 @@ class TestInputManifest(unittest.TestCase):
         for component in manifest.components:
             self.assertIsInstance(component.ref, str)
         # alerting component checks
-        alerting_component = next(
-            c for c in manifest.components if c.name == "alerting"
+        alerting_component = next(c for c in manifest.components if c.name == "alerting")
+        self.assertIsNotNone(alerting_component)
+        self.assertEqual(len(alerting_component.checks), 2)
+        for check in alerting_component.checks:
+            self.assertIsInstance(check, InputManifest.Check)
+        self.assertIsNone(alerting_component.checks[0].args)
+        self.assertEqual(alerting_component.checks[1].args, "alerting")
+
+    def test_1_2(self):
+        path = os.path.join(self.manifests_path, "1.2.0/opensearch-1.2.0.yml")
+        manifest = InputManifest.from_path(path)
+        self.assertEqual(manifest.version, "1.0")
+        self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.version, "1.2.0")
+        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019")
+        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
+        self.assertEqual(len(manifest.components), 5)
+        # opensearch component
+        opensearch_component = manifest.components[0]
+        self.assertEqual(opensearch_component.name, "OpenSearch")
+        self.assertEqual(
+            opensearch_component.repository,
+            "https://github.com/opensearch-project/OpenSearch.git",
         )
+        self.assertEqual(opensearch_component.ref, "1.x")
+        # components
+        for component in manifest.components:
+            self.assertIsInstance(component.ref, str)
+        # alerting component checks
+        alerting_component = next(c for c in manifest.components if c.name == "alerting")
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:

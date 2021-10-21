@@ -138,9 +138,7 @@ class LocalTestCluster(TestCluster):
                 logging.info(f"Pinging {url} attempt {attempt}")
                 response = requests.get(url, verify=False, auth=("admin", "admin"))
                 logging.info(f"{response.status_code}: {response.text}")
-                if response.status_code == 200 and (
-                    '"status":"green"' or '"status":"yellow"' in response.text
-                ):
+                if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
                     logging.info("Service is available")
                     return
             except requests.exceptions.ConnectionError:
@@ -173,13 +171,9 @@ class LocalTestCluster(TestCluster):
                 raise
         finally:
             logging.info(f"Process terminated with exit code {self.process.returncode}")
-            with open(
-                os.path.join(os.path.realpath(self.work_dir), self.stdout.name), "r"
-            ) as stdout:
+            with open(os.path.join(os.path.realpath(self.work_dir), self.stdout.name), "r") as stdout:
                 self.local_cluster_stdout = stdout.read()
-            with open(
-                os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r"
-            ) as stderr:
+            with open(os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r") as stderr:
                 self.local_cluster_stderr = stderr.read()
             self.return_code = self.process.returncode
             self.stdout.close()

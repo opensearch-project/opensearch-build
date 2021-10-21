@@ -4,12 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from build_workflow.opensearch.build_artifact_check_maven import \
-    BuildArtifactOpenSearchCheckMaven
-from build_workflow.opensearch.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchCheckPlugin
-from build_workflow.opensearch_dashboards.build_artifact_check_plugin import \
-    BuildArtifactOpenSearchDashboardsCheckPlugin
+from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_plugin import BuildArtifactOpenSearchCheckPlugin
+from build_workflow.opensearch_dashboards.build_artifact_check_plugin import BuildArtifactOpenSearchDashboardsCheckPlugin
 
 
 class BuildArtifactChecks:
@@ -18,9 +15,7 @@ class BuildArtifactChecks:
             "plugins": BuildArtifactOpenSearchCheckPlugin,
             "maven": BuildArtifactOpenSearchCheckMaven,
         },
-        "OpenSearch Dashboards": {
-            "plugins": BuildArtifactOpenSearchDashboardsCheckPlugin
-        },
+        "OpenSearch Dashboards": {"plugins": BuildArtifactOpenSearchDashboardsCheckPlugin},
     }
 
     @classmethod

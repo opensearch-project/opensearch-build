@@ -14,12 +14,8 @@ class CiArgs:
     snapshot: bool
 
     def __init__(self):
-        parser = argparse.ArgumentParser(
-            description="Sanity test the OpenSearch Bundle"
-        )
-        parser.add_argument(
-            "manifest", type=argparse.FileType("r"), help="Manifest file."
-        )
+        parser = argparse.ArgumentParser(description="Sanity test the OpenSearch Bundle")
+        parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
             "-s",
             "--snapshot",
@@ -27,9 +23,7 @@ class CiArgs:
             default=False,
             help="Build snapshot.",
         )
-        parser.add_argument(
-            "-c", "--component", type=str, help="Rebuild a single component."
-        )
+        parser.add_argument("-c", "--component", type=str, help="Rebuild a single component.")
         parser.add_argument(
             "--keep",
             dest="keep",

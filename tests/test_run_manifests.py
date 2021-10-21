@@ -51,9 +51,7 @@ class TestRunManifests(unittest.TestCase):
         "manifests_workflow.manifests_args.InputManifestsOpenSearchDashboards",
         return_value=MagicMock(),
     )
-    def test_main_update(
-        self, mock_manifests_opensearch_dashboards, mock_manifests_opensearch, *mocks
-    ):
+    def test_main_update(self, mock_manifests_opensearch_dashboards, mock_manifests_opensearch, *mocks):
         main()
         mock_manifests_opensearch_dashboards.return_value.update.assert_called()
         mock_manifests_opensearch.return_value.update.assert_called()

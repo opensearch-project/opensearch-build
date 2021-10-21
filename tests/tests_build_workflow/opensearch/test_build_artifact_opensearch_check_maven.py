@@ -10,19 +10,14 @@ from unittest.mock import patch
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
 from build_workflow.build_target import BuildTarget
-from build_workflow.opensearch.build_artifact_check_maven import \
-    BuildArtifactOpenSearchCheckMaven
+from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
 
 
 class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
     @contextmanager
     def __mock(self, props="", snapshot=True):
-        with patch(
-            "build_workflow.opensearch.build_artifact_check_maven.ZipFile"
-        ) as mock_zipfile:
-            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = (
-                props
-            )
+        with patch("build_workflow.opensearch.build_artifact_check_maven.ZipFile") as mock_zipfile:
+            mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = props
             yield BuildArtifactOpenSearchCheckMaven(
                 BuildTarget(
                     build_id="1",
@@ -43,7 +38,7 @@ class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
             mock.check("valid.jar")
 
     def test_record_maven_artifact_after_checking_maven_version_properties_snapshot(
-        self
+        self,
     ):
         with self.__mock("Implementation-Version: 1.1.0.0-SNAPSHOT") as mock:
             mock.check("valid.jar")

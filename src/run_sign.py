@@ -18,9 +18,7 @@ from system import console
 
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
-    parser.add_argument(
-        "manifest", type=argparse.FileType("r"), help="Path to local manifest file."
-    )
+    parser.add_argument("manifest", type=argparse.FileType("r"), help="Path to local manifest file.")
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
     parser.add_argument(

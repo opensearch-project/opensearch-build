@@ -14,12 +14,8 @@ from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
 class TestComponentOpenSearchMin(unittest.TestCase):
     @patch("subprocess.check_output")
     def test_branches(self, mock):
-        mock.return_value = "\n".join(
-            ["main", "1.x", "1.21", "20.1", "something", "else"]
-        ).encode()
-        self.assertEqual(
-            ComponentOpenSearchMin.branches(), ["main", "1.x", "1.21", "20.1"]
-        )
+        mock.return_value = "\n".join(["main", "1.x", "1.21", "20.1", "something", "else"]).encode()
+        self.assertEqual(ComponentOpenSearchMin.branches(), ["main", "1.x", "1.21", "20.1"])
         mock.assert_called_with(
             "git ls-remote https://github.com/opensearch-project/OpenSearch.git refs/heads/* | cut -f2 | cut -d/ -f3",
             shell=True,
@@ -35,9 +31,7 @@ class TestComponentOpenSearchMin(unittest.TestCase):
     def test_publish_to_maven_local(self):
         component = ComponentOpenSearchMin(MagicMock())
         component.publish_to_maven_local()
-        component.git_repo.execute_silent.assert_called_with(
-            "./gradlew publishToMavenLocal -Dbuild.snapshot=false"
-        )
+        component.git_repo.execute_silent.assert_called_with("./gradlew publishToMavenLocal -Dbuild.snapshot=false")
 
     def test_version(self):
         repo = MagicMock()

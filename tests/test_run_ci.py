@@ -27,18 +27,14 @@ class TestRunCi(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(
-        os.path.join(
-            os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"
-        )
-    )
+    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"))
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_MANIFEST])
     @patch("run_ci.Ci", return_value=MagicMock())
     @patch("run_ci.GitRepository", return_value=MagicMock(working_directory="dummy"))
     @patch("run_ci.TemporaryDirectory")
     def test_main(self, mock_temp, mock_repo, mock_ci, *mocks):
-        mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
 
         main()
 

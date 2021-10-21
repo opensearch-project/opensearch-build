@@ -25,18 +25,14 @@ class DependencyInstaller:
         self.s3_bucket = S3Bucket(self.ARTIFACT_S3_BUCKET)
         self.s3_maven_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/maven/org/opensearch"
         self.s3_build_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/plugins"
-        self.maven_local_path = os.path.join(
-            os.path.expanduser("~"), ".m2/repository/org/opensearch/"
-        )
+        self.maven_local_path = os.path.join(os.path.expanduser("~"), ".m2/repository/org/opensearch/")
 
     def install_all_maven_dependencies(self):
         """
         Downloads all pre-built maven dependencies from S3 bucket
         """
         logging.info("Downloading all pre-built maven dependencies from s3")
-        self.s3_bucket.download_folder(
-            f"{self.s3_maven_location}", self.maven_local_path
-        )
+        self.s3_bucket.download_folder(f"{self.s3_maven_location}", self.maven_local_path)
         logging.info("Successfully downloaded maven dependencies")
 
     def install_build_dependencies(self, dependency_dict, custom_local_path):

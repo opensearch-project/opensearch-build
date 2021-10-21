@@ -28,9 +28,7 @@ class BwcTestSuite:
         self.keep = keep
 
     def run_tests(self, work_dir, component_name):
-        script = ScriptFinder.find_bwc_test_script(
-            component_name, work_dir
-        )
+        script = ScriptFinder.find_bwc_test_script(component_name, work_dir)
         cmd = f"{script}"
         (status, stdout, stderr) = execute(cmd, work_dir, True, False)
         return (status, stdout, stderr)

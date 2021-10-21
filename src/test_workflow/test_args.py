@@ -32,9 +32,7 @@ class TestArgs:
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-        parser.add_argument(
-            "--s3-bucket", type=str, help="S3 bucket name", required=True
-        )
+        parser.add_argument("--s3-bucket", type=str, help="S3 bucket name", required=True)
         parser.add_argument(
             "--opensearch-version",
             type=str,

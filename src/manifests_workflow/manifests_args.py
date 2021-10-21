@@ -7,18 +7,14 @@
 import argparse
 import logging
 
-from manifests_workflow.input_manifests_opensearch import \
-    InputManifestsOpenSearch
-from manifests_workflow.input_manifests_opensearch_dashboards import \
-    InputManifestsOpenSearchDashboards
+from manifests_workflow.input_manifests_opensearch import InputManifestsOpenSearch
+from manifests_workflow.input_manifests_opensearch_dashboards import InputManifestsOpenSearchDashboards
 
 
 class ManifestsArgs:
     def __init__(self):
         parser = argparse.ArgumentParser(description="Manifest management")
-        parser.add_argument(
-            "action", choices=["list", "update"], help="Operation to perform."
-        )
+        parser.add_argument("action", choices=["list", "update"], help="Operation to perform.")
         parser.add_argument(
             "--type",
             dest="type",

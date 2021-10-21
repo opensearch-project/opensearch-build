@@ -14,9 +14,7 @@ from manifests_workflow.manifests_args import ManifestsArgs
 
 class TestManifestsArgs(unittest.TestCase):
 
-    MANIFESTS_PY = os.path.realpath(
-        os.path.join(os.path.dirname(__file__), "../../src/manifests.py")
-    )
+    MANIFESTS_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/manifests.py"))
 
     @patch("argparse._sys.argv", [MANIFESTS_PY, "list"])
     def test_action_list(self):

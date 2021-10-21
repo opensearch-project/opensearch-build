@@ -28,17 +28,13 @@ class TestPropertiesFile(unittest.TestCase):
         f = PropertiesFile({"key": "value"})
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             f.check_value("key", "invalid")
-        self.assertEqual(
-            str(err.exception), "Expected to have key='invalid', but was 'value'."
-        )
+        self.assertEqual(str(err.exception), "Expected to have key='invalid', but was 'value'.")
 
     def test_check_value_none_found(self):
         f = PropertiesFile()
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             f.check_value("invalid", "value")
-        self.assertEqual(
-            str(err.exception), "Expected to have invalid='value', but none was found."
-        )
+        self.assertEqual(str(err.exception), "Expected to have invalid='value', but none was found.")
 
     def test_check_value_in(self):
         f = PropertiesFile({"key": "value"})

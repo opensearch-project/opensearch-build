@@ -14,7 +14,7 @@ import pytest
 from run_checkout import main
 
 
-class TestRunChecout(unittest.TestCase):
+class TestRunCheckout(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def capfd(self, capfd):
         self.capfd = capfd
@@ -27,19 +27,14 @@ class TestRunChecout(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(
-        os.path.join(
-            os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"
-        )
-    )
+    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"))
 
     @patch("argparse._sys.argv", ["run_checkout.py", OPENSEARCH_MANIFEST])
-    @patch(
-        "run_checkout.GitRepository", return_value=MagicMock(working_directory="dummy")
-    )
+    @patch("run_checkout.GitRepository")
     @patch("run_checkout.TemporaryDirectory")
     def test_main(self, mock_temp, mock_repo):
-        mock_temp.return_value.__enter__.return_value = tempfile.gettempdir()
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        mock_repo.return_value.__enter__.return_value = MagicMock(working_directory="dummy")
 
         main()
 

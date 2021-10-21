@@ -34,25 +34,23 @@ def pull_build_repo(work_dir):
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(
-        os.path.dirname(__file__), "test_workflow/config/test_manifest.yml"
-    )
+    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow/config/test_manifest.yml")
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
     for component in test_manifest.components:
         if component.integ_test is not None:
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        logging.info("Switching to temporary work_dir: " + work_dir)
-        test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir)
-        os.chdir(work_dir)
+        logging.info(f"Switching to temporary work_dir: {work_dir.name}")
+        test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir.name)
+        os.chdir(work_dir.name)
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket,
             args.build_id,
             args.opensearch_version,
             args.platform,
             args.architecture,
-            work_dir,
+            work_dir.name,
         )
         build_manifest = BuildManifest.from_s3(
             args.s3_bucket,
@@ -60,9 +58,9 @@ def main():
             args.opensearch_version,
             args.platform,
             args.architecture,
-            work_dir,
+            work_dir.name,
         )
-        pull_build_repo(work_dir)
+        pull_build_repo(work_dir.name)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         all_results = TestSuiteResults()
         for component in bundle_manifest.components:
@@ -72,7 +70,7 @@ def main():
                     integ_test_config[component.name],
                     bundle_manifest,
                     build_manifest,
-                    work_dir,
+                    work_dir.name,
                     args.s3_bucket,
                     test_recorder,
                 )
@@ -80,10 +78,7 @@ def main():
                 all_results.append(component.name, test_results)
 
             else:
-                logging.info(
-                    "Skipping tests for %s, as it is currently not supported"
-                    % component.name
-                )
+                logging.info("Skipping tests for %s, as it is currently not supported" % component.name)
 
         all_results.log()
 

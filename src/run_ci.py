@@ -27,9 +27,9 @@ def main():
     target = CiTarget(version=manifest.build.version, snapshot=args.snapshot)
 
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        logging.info(f"Sanity-testing in {work_dir}")
+        logging.info(f"Sanity-testing in {work_dir.name}")
 
-        os.chdir(work_dir)
+        os.chdir(work_dir.name)
 
         logging.info(f"Sanity testing {manifest.build.name}")
 
@@ -40,21 +40,18 @@ def main():
                 continue
 
             logging.info(f"Sanity checking {component.name}")
-            repo = GitRepository(
+            with GitRepository(
                 component.repository,
                 component.ref,
-                os.path.join(work_dir, component.name),
+                os.path.join(work_dir.name, component.name),
                 component.working_directory,
-            )
-
-            try:
-                ci = Ci(component, repo, target)
-                ci.check()
-            except:
-                logging.error(
-                    f"Error checking {component.name}, retry with: {args.component_command(component.name)}"
-                )
-                raise
+            ) as repo:
+                try:
+                    ci = Ci(component, repo, target)
+                    ci.check()
+                except:
+                    logging.error(f"Error checking {component.name}, retry with: {args.component_command(component.name)}")
+                    raise
 
     logging.info("Done.")
 

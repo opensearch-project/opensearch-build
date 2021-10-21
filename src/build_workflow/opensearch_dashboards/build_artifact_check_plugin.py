@@ -17,12 +17,8 @@ class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
     def check(self, path):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
-        opensearch_dashboards_version = re.sub(
-            r"-SNAPSHOT$", "", self.target.opensearch_version
-        )
-        match = re.search(
-            rf"^(\w+)-{opensearch_dashboards_version}.zip$", os.path.basename(path)
-        )
+        opensearch_dashboards_version = re.sub(r"-SNAPSHOT$", "", self.target.opensearch_version)
+        match = re.search(rf"^(\w+)-{opensearch_dashboards_version}.zip$", os.path.basename(path))
         if not match:
             raise BuildArtifactCheck.BuildArtifactInvalidError(
                 path,
@@ -30,18 +26,12 @@ class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
             )
         plugin_name = match.group(1)
         with ZipFile(path, "r") as zip:
-            data = zip.read(
-                f"opensearch-dashboards/{plugin_name}/opensearch_dashboards.json"
-            ).decode("UTF-8")
+            data = zip.read(f"opensearch-dashboards/{plugin_name}/opensearch_dashboards.json").decode("UTF-8")
             config = ConfigFile(data)
             try:
-                component_version = re.sub(
-                    r"-SNAPSHOT$", "", self.target.component_version
-                )
+                component_version = re.sub(r"-SNAPSHOT$", "", self.target.component_version)
                 config.check_value("version", component_version)
-                config.check_value(
-                    "opensearchDashboardsVersion", opensearch_dashboards_version
-                )
+                config.check_value("opensearchDashboardsVersion", opensearch_dashboards_version)
             except ConfigFile.CheckError as e:
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
             logging.info(f'Checked {path} ({config.get_value("version", "N/A")})')
