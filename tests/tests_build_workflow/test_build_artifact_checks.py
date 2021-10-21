@@ -21,7 +21,7 @@ class TestBuildArtifactChecks(unittest.TestCase):
             output_dir="output_dir",
             name=name,
             version="1.1.0",
-            arch="x64",
+            architecture="x64",
             snapshot=True,
         )
 
