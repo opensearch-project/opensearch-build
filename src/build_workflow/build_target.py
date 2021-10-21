@@ -7,7 +7,7 @@
 import os
 import uuid
 
-from system.os import current_arch, current_platform
+from system.os import current_architecture, current_platform
 
 
 class BuildTarget:
@@ -15,7 +15,7 @@ class BuildTarget:
     name: str
     version: str
     platform: str
-    arch: str
+    architecture: str
     snapshot: bool
     output_dir: str
 
@@ -23,7 +23,7 @@ class BuildTarget:
         self,
         version,
         platform=None,
-        arch=None,
+        architecture=None,
         name=None,
         snapshot=True,
         build_id=None,
@@ -33,7 +33,7 @@ class BuildTarget:
         self.name = name
         self.version = version
         self.snapshot = snapshot
-        self.arch = arch or current_arch()
+        self.architecture = architecture or current_architecture()
         self.platform = platform or current_platform()
         self.output_dir = output_dir
 

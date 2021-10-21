@@ -40,7 +40,7 @@ class Builder:
                 "-p",
                 target.platform,
                 "-a",
-                target.arch,
+                target.architecture,
                 "-s",
                 str(target.snapshot).lower(),
                 "-o",
