@@ -11,10 +11,10 @@ from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
-    def __init__(self, build, output_dir, artifacts_dir):
+    def __init__(self, build, output_dir, artifacts_dir, base_url):
         self.output_dir = output_dir
         self.build_id = build.id
-        self.public_url = os.getenv("PUBLIC_ARTIFACT_URL", None)
+        self.base_url = base_url
         self.version = build.version
         self.tar_name = self.__get_tar_name(build)
         self.artifacts_dir = artifacts_dir
@@ -38,18 +38,18 @@ class BundleRecorder:
         return "-".join(parts) + ".tar.gz"
 
     def __get_public_url_path(self, folder, rel_path):
-        path = "/".join((folder, self.version, self.build_id, self.architecture, rel_path))
-        return urljoin(self.public_url + "/", path)
+        path = "/".join((folder, rel_path))
+        return urljoin(self.base_url + "/", path)
 
     def __get_location(self, folder_name, rel_path, abs_path):
-        if self.public_url:
+        if self.base_url:
             return self.__get_public_url_path(folder_name, rel_path)
         return abs_path
 
     # Assembled bundles are expected to be served from a separate "bundles" folder
     # Example: https://artifacts.opensearch.org/bundles/1.0.0/<build-id
     def __get_tar_location(self):
-        return self.__get_location("bundles", self.tar_name, os.path.join(self.output_dir, self.tar_name))
+        return self.__get_location("dist", self.tar_name, os.path.join(self.output_dir, self.tar_name))
 
     # Build artifacts are expected to be served from a "builds" folder
     # Example: https://artifacts.opensearch.org/builds/1.0.0/<build-id>
