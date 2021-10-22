@@ -25,6 +25,13 @@ pipeline {
             }
         }
         stage('detect Docker image + args to use for the build') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                    alwaysPull true
+                }
+            }
             steps {
                 script { 
                     manifest = readYaml(file: "manifests/$INPUT_MANIFEST") 
