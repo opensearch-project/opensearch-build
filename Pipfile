@@ -23,6 +23,7 @@ sortedcontainers = "*"
 cerberus = "~=1.3.4"
 psutil = "~=5.8"
 semantic-version = "~=2.8.5"
+atomicwrites = "*"
 
 [dev-packages]
 
