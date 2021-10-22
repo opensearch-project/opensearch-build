@@ -38,7 +38,7 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             self.build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
@@ -52,13 +52,13 @@ class TestIntegSuite(unittest.TestCase):
             [
                 call(
                     "integtest.sh -b localhost -p 9200 -s true -v 1.1.0",
-                    "/tmpdir/job-scheduler",
+                    os.path.join("tmpdir", "job-scheduler"),
                     True,
                     False,
                 ),
                 call(
                     "integtest.sh -b localhost -p 9200 -s false -v 1.1.0",
-                    "/tmpdir/job-scheduler",
+                    os.path.join("tmpdir", "job-scheduler"),
                     True,
                     False,
                 ),
@@ -75,14 +75,21 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             self.build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
         integ_test_suite.execute()
         mock_dependency_installer.return_value.install_build_dependencies.assert_called_with(
             {"opensearch-job-scheduler": "1.1.0.0"},
-            "/tmpdir/index-management/src/test/resources/job-scheduler",
+            os.path.join(
+                "tmpdir",
+                "index-management",
+                "src",
+                "test",
+                "resources",
+                "job-scheduler",
+            ),
         )
 
     @patch.object(IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config")
@@ -95,7 +102,7 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             self.build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
@@ -112,7 +119,7 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             self.build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
@@ -130,7 +137,7 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             invalid_build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
@@ -162,7 +169,7 @@ class TestIntegSuite(unittest.TestCase):
             test_config,
             self.bundle_manifest,
             self.build_manifest,
-            "/tmpdir",
+            "tmpdir",
             "s3_bucket_name",
             mock_test_recorder,
         )
@@ -170,4 +177,11 @@ class TestIntegSuite(unittest.TestCase):
         mock_local_test_cluster.create().__enter__.return_value = "localhost", "9200"
         mock_script_finder.return_value = "integtest.sh"
         integ_test_suite.execute()
-        mock_script_finder.assert_has_calls([call("dashboards-reports", "/tmpdir/dashboards-reports/reports-scheduler")])
+        mock_script_finder.assert_has_calls(
+            [
+                call(
+                    "dashboards-reports",
+                    os.path.join("tmpdir", "dashboards-reports", "reports-scheduler"),
+                )
+            ]
+        )

@@ -27,7 +27,7 @@ class TestRunAssemble(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
+    BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
 
     @patch("os.chdir")
     @patch("os.makedirs")
@@ -47,28 +47,6 @@ class TestRunAssemble(unittest.TestCase):
         mock_bundle.install_min.assert_called()
         mock_bundle.install_plugins.assert_called()
 
-        mock_bundle.build_tar.assert_called_with("curdir/dist")
+        mock_bundle.build_tar.assert_called_with(os.path.join("curdir", "dist"))
 
-        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call("curdir/dist")])  # manifest included in tar
-
-    @patch("os.chdir")
-    @patch("os.makedirs")
-    @patch("os.getcwd", return_value="curdir")
-    @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST, "--base-url", "baseurl"])
-    @patch("run_assemble.Bundles", return_value=MagicMock())
-    @patch("run_assemble.BundleRecorder", return_value=MagicMock())
-    @patch("run_assemble.TemporaryDirectory")
-    @patch("shutil.copy2")
-    def test_url(self, mock_copy, mock_temp, mock_recorder, mock_bundles, *mocks):
-        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
-        mock_bundle = MagicMock(archive_path="path")
-        mock_bundles.create.return_value = mock_bundle
-
-        main()
-
-        mock_bundle.install_min.assert_called()
-        mock_bundle.install_plugins.assert_called()
-
-        mock_bundle.build_tar.assert_called_with("curdir/dist")
-
-        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call("curdir/dist")])
+        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call(os.path.join("curdir", "dist"))])  # manifest included in tar

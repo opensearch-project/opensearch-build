@@ -19,7 +19,7 @@ schema-version: "1.2"
 build:
   name: string
   version: string
-  platform: linux or darwin
+  platform: linux, darwin or windows
   architecture: x64 or arm64
 components:
   - name: string

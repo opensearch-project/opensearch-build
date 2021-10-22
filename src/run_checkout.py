@@ -30,12 +30,13 @@ def main():
         for component in manifest.components:
 
             logging.info(f"Checking out {component.name}")
-            GitRepository(
+            with GitRepository(
                 component.repository,
                 component.ref,
                 os.path.join(work_dir.name, component.name),
                 component.working_directory,
-            )
+            ) as repo:
+                logging.debug(f"Checked out {component.name} into {repo.dir}")
 
     logging.info(f"Done, checked out into {work_dir.name}.")
 

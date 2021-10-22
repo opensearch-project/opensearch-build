@@ -29,9 +29,15 @@ class GitRepository:
             self.temp_dir = None
             self.dir = directory
             os.makedirs(self.dir, exist_ok=False)
-
         self.working_subdirectory = working_subdirectory
         self.__checkout__()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.temp_dir:
+            self.temp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
     def __checkout__(self):
         # Check out the repository
@@ -41,13 +47,6 @@ class GitRepository:
         self.execute_silent("git checkout FETCH_HEAD", self.dir)
         self.sha = self.output("git rev-parse HEAD", self.dir)
         logging.info(f"Checked out {self.url}@{self.ref} into {self.dir} at {self.sha}")
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        if self.temp_dir:
-            self.temp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
     @property
     def working_directory(self):

@@ -37,6 +37,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
+                    "bash",
                     os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p linux",
@@ -61,6 +62,7 @@ class TestBuilder(unittest.TestCase):
         self.builder.git_repo.execute.assert_called_with(
             " ".join(
                 [
+                    "bash",
                     os.path.realpath(os.path.join(ScriptFinder.default_scripts_path, "opensearch", "build.sh")),
                     "-v 1.0.0",
                     "-p darwin",
@@ -73,10 +75,10 @@ class TestBuilder(unittest.TestCase):
         self.builder.build_recorder.record_component.assert_called_with("component", self.builder.git_repo)
 
     def mock_os_walk(self, artifact_path):
-        if artifact_path.endswith("/checked-out-component/artifacts/core-plugins"):
-            return [["/core-plugins", [], ["plugin1.zip"]]]
-        if artifact_path.endswith("/checked-out-component/artifacts/maven"):
-            return [("/maven", [], ["artifact1.jar"])]
+        if artifact_path.endswith(os.path.join("checked-out-component", "artifacts", "core-plugins")):
+            return [["core-plugins", [], ["plugin1.zip"]]]
+        if artifact_path.endswith(os.path.join("checked-out-component", "artifacts", "maven")):
+            return [("maven", [], ["artifact1.jar"])]
         else:
             return []
 
@@ -90,14 +92,20 @@ class TestBuilder(unittest.TestCase):
                 call(
                     "component",
                     "maven",
-                    os.path.relpath("/maven/artifact1.jar", self.builder.artifacts_path),
-                    "/maven/artifact1.jar",
+                    os.path.relpath(
+                        os.path.join("maven", "artifact1.jar"),
+                        self.builder.artifacts_path,
+                    ),
+                    os.path.join("maven", "artifact1.jar"),
                 ),
                 call(
                     "component",
                     "core-plugins",
-                    os.path.relpath("/core-plugins/plugin1.zip", self.builder.artifacts_path),
-                    "/core-plugins/plugin1.zip",
+                    os.path.relpath(
+                        os.path.join("core-plugins", "plugin1.zip"),
+                        self.builder.artifacts_path,
+                    ),
+                    os.path.join("core-plugins", "plugin1.zip"),
                 ),
             ]
         )

@@ -6,6 +6,7 @@
 
 import argparse
 import logging
+import os
 import sys
 
 
@@ -75,7 +76,7 @@ class BuildArgs:
         self.keep = args.keep
         self.platform = args.platform
         self.architecture = args.architecture
-        self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
+        self.script_path = sys.argv[0].replace(os.path.sep + os.path.join("src", "run_build.py"), f"{os.path.sep}build.sh")
 
     def component_command(self, name):
         return " ".join(

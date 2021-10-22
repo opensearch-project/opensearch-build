@@ -68,7 +68,7 @@ class IntegTestSuite:
                 raise InvalidTestConfigError("Integration test job only supports job-scheduler build dependency at present.")
 
     def __copy_job_scheduler_artifact(self):
-        custom_local_path = os.path.join(self.repo.dir, "src/test/resources/job-scheduler")
+        custom_local_path = os.path.join(self.repo.dir, "src", "test", "resources", "job-scheduler")
         for file in glob.glob(os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")):
             os.unlink(file)
         job_scheduler = self.build_manifest.get_component("job-scheduler")

@@ -29,15 +29,14 @@ class BwcTestSuite:
 
     def run_tests(self, work_dir, component_name):
         script = ScriptFinder.find_bwc_test_script(component_name, work_dir)
-        cmd = f"{script}"
-        (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+        (status, stdout, stderr) = execute(script, work_dir, True, False)
         return (status, stdout, stderr)
 
     def component_bwc_tests(self, component):
         test_component = TestComponent(component.repository, component.commit_id)
         test_component.checkout(os.path.join(self.work_dir, component.name))
         try:
-            console_output = self.run_tests(self.work_dir + "/" + component.name, component.name)
+            console_output = self.run_tests(os.path.join(self.work_dir, component.name), component.name)
             return console_output
         except:
             # TODO: Store and report test failures for {component}

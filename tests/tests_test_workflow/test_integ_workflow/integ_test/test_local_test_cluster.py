@@ -7,7 +7,6 @@
 import os
 import subprocess
 import sys
-import tempfile
 import unittest
 from unittest.mock import MagicMock, call, mock_open, patch
 
@@ -24,7 +23,7 @@ class LocalTestClusterTests(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def setUp(self, mock_test_recorder):
         self.maxDiff = None
-        self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../tests_manifests/data"))
+        self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "tests_manifests", "data"))
         self.manifest_filename = os.path.join(self.data_path, "opensearch-bundle-1.1.0.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.work_dir = TemporaryDirectory()
@@ -160,8 +159,8 @@ class LocalTestClusterTests(unittest.TestCase):
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
     @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
     def test_terminate_process(self, mock_logging, mock_terminate, mock_wait, mock_process):
-        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
-        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        self.local_test_cluster.stdout = None
+        self.local_test_cluster.stderr = None
         self.local_test_cluster.process = self.process
         self.local_test_cluster.terminate_process()
         mock_process.assert_called_once_with(self.process.pid)
@@ -184,8 +183,8 @@ class LocalTestClusterTests(unittest.TestCase):
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
     @patch("test_workflow.integ_test.local_test_cluster.logging", return_value=MagicMock())
     def test_terminate_process_timeout(self, mock_logging, mock_terminate, mock_wait, mock_process):
-        self.local_test_cluster.stdout = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
-        self.local_test_cluster.stderr = tempfile.NamedTemporaryFile(dir=self.local_test_cluster.work_dir)
+        self.local_test_cluster.stdout = None
+        self.local_test_cluster.stderr = None
         mock_wait.side_effect = subprocess.TimeoutExpired(cmd="pass", timeout=1)
         with self.assertRaises(subprocess.TimeoutExpired):
             self.local_test_cluster.process = self.process

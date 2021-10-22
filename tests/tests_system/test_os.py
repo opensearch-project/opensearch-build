@@ -41,8 +41,8 @@ class TestOs(unittest.TestCase):
 
     # current_platform
     def test_current_platform(self):
-        self.assertTrue(current_platform() in ["linux", "darwin"])
+        self.assertTrue(current_platform() in ["linux", "darwin", "windows"])
 
-    @patch("subprocess.check_output", return_value="Xyz".encode())
+    @patch("subprocess.check_output", return_value="Windows".encode())
     def test_current_platform_lowercase(self, mock_subprocess):
-        self.assertTrue(current_platform() == "xyz")
+        self.assertTrue(current_platform() == "windows")

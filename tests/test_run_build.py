@@ -27,7 +27,15 @@ class TestRunBuild(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "manifests",
+            "1.1.0",
+            "opensearch-1.1.0.yml",
+        )
+    )
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST])
     @patch("run_build.BuildTarget", return_value=MagicMock(output_dir="artifacts"))

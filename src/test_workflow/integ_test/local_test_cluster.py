@@ -171,11 +171,15 @@ class LocalTestCluster(TestCluster):
                 raise
         finally:
             logging.info(f"Process terminated with exit code {self.process.returncode}")
-            with open(os.path.join(os.path.realpath(self.work_dir), self.stdout.name), "r") as stdout:
-                self.local_cluster_stdout = stdout.read()
-            with open(os.path.join(os.path.realpath(self.work_dir), self.stderr.name), "r") as stderr:
-                self.local_cluster_stderr = stderr.read()
+            if self.stdout:
+                with open(os.path.join(self.work_dir, self.stdout.name), "r") as stdout:
+                    self.local_cluster_stdout = stdout.read()
+                    self.stdout.close()
+                    self.stdout = None
+            if self.stderr:
+                with open(os.path.join(self.work_dir, self.stderr.name), "r") as stderr:
+                    self.local_cluster_stderr = stderr.read()
+                self.stderr.close()
+                self.stderr = None
             self.return_code = self.process.returncode
-            self.stdout.close()
-            self.stderr.close()
             self.process = None

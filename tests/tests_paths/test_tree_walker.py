@@ -19,8 +19,16 @@ class TestTreeWalker(unittest.TestCase):
     def test_walk(self):
         paths = sorted(list(itertools.chain(walk(self.data_path))), key=lambda path: path[0])
         self.assertTrue(len(paths), 7)
-        self.assertEqual(paths[0][1], "git/component-with-scripts-folder/scripts/build.sh")
+        self.assertEqual(
+            paths[0][1],
+            os.path.join("git", "component-with-scripts-folder", "scripts", "build.sh"),
+        )
         self.assertEqual(
             paths[0][0],
-            os.path.realpath(os.path.join(self.data_path, "git/component-with-scripts-folder/scripts/build.sh")),
+            os.path.realpath(
+                os.path.join(
+                    self.data_path,
+                    os.path.join("git", "component-with-scripts-folder", "scripts", "build.sh"),
+                )
+            ),
         )

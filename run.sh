@@ -20,4 +20,4 @@ export PIPENV_PIPFILE="$DIR/Pipfile"
 python3 -m pipenv install
 
 echo "Running "$1" ${@:2} ..."
-python3 -m pipenv run "$1" ${@:2}
+python3 -m pipenv run python "$1" ${@:2}
