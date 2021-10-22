@@ -152,8 +152,6 @@ void build(platform, architecture) {
 void assemble() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    sh "./build.sh manifests/$INPUT_MANIFEST"
-
     script { manifest = readYaml(file: 'builds/manifest.yml') }
 
     def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
