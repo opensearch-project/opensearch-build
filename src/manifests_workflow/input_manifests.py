@@ -23,7 +23,7 @@ class InputManifests(Manifests):
 
     @classmethod
     def manifests_path(self):
-        return os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests"))
+        return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod
     def files(self, name):
@@ -49,7 +49,7 @@ class InputManifests(Manifests):
             logging.info(f"Checking {self.name} {branches} branches")
             for branch in branches:
                 c = min_klass.checkout(
-                    path=os.path.join(work_dir.name, f"{self.name.replace(' ', '')}/{branch}"),
+                    path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),
                     branch=branch,
                 )
                 version = c.version

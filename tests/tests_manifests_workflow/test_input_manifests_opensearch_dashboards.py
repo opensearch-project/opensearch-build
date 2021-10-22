@@ -18,7 +18,11 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
         manifest = os.path.realpath(
             os.path.join(
                 os.path.dirname(__file__),
-                "../../manifests/1.1.0/opensearch-dashboards-1.1.0.yml",
+                "..",
+                "..",
+                "manifests",
+                "1.1.0",
+                "opensearch-dashboards-1.1.0.yml",
             )
         )
         self.assertTrue(manifest in files)
@@ -27,10 +31,8 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
     @patch("os.chdir")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
-    @patch("system.temporary_directory.TemporaryDirectory")
     @patch("manifests_workflow.input_manifests.InputManifest")
-    def test_update(self, mock_input_manifest, mock_tmpdir, mock_component_opensearch_min, mock_input_manifest_from_path, *mocks):
-        mock_tmpdir.__enter__.return_value = "dir"
+    def test_update(self, mock_input_manifest, mock_component_opensearch_min, mock_input_manifest_from_path, *mocks):
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
         mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
@@ -42,7 +44,8 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
             call(
                 os.path.join(
                     InputManifestsOpenSearchDashboards.manifests_path(),
-                    "0.9.0/opensearch-dashboards-0.9.0.yml",
+                    "0.9.0",
+                    "opensearch-dashboards-0.9.0.yml",
                 )
             )
         ]

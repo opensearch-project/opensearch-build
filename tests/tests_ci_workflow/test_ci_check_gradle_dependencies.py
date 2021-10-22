@@ -47,7 +47,7 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
         )
 
     def test_loads_tree(self):
-        data_path = os.path.join(os.path.dirname(__file__), "data/job_scheduler_dependencies.txt")
+        data_path = os.path.join(os.path.dirname(__file__), "data", "job_scheduler_dependencies.txt")
         with open(data_path) as f:
             check = self.__mock_dependencies(props=f.read())
             self.assertEqual(

@@ -17,6 +17,7 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
+          - windows-latest
     runs-on: ${{ matrix.os }}
     env:
       PYTHON_VERSION: 3.7

@@ -34,6 +34,7 @@ class Builder:
         build_script = ScriptFinder.find_build_script(target.name, self.component_name, self.git_repo.working_directory)
         build_command = " ".join(
             [
+                "bash",
                 build_script,
                 "-v",
                 target.version,

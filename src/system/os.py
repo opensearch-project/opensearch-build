@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import subprocess
 
 
@@ -18,4 +19,7 @@ def current_architecture():
 
 
 def current_platform():
-    return subprocess.check_output(["uname", "-s"]).decode().strip().lower()
+    if os.name == "nt":
+        return "windows"
+    else:
+        return subprocess.check_output(["uname", "-s"]).decode().strip().lower()

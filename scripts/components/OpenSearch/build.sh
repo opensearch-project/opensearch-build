@@ -72,18 +72,42 @@ mkdir -p $OUTPUT/maven/org/opensearch
 # Copy maven publications to be promoted
 cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
+# Assemble distribution artifact
+# see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
+
 [ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
-# Assemble distribution artifact
-# see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
+case "$(uname -s)" in
+    Linux*) 
+        PACKAGE="tar"
+        EXT="tar.gz"
+        ;;
+    Darwin*)
+        PACKAGE="tar"
+        EXT="tar.gz"
+        ;;
+    CYGWIN*)
+        PACKAGE="zip"
+        EXT="zip"
+        ;;
+    MINGW*)
+        PACKAGE="zip"
+        EXT="zip"
+        ;;
+    *)
+        echo "Unsupported system: $(uname -s)"
+        exit 1
+        ;;
+esac
+
 case $ARCHITECTURE in
     x64)
-        TARGET="$PLATFORM-tar"
+        TARGET="$PLATFORM-$PACKAGE"
         QUALIFIER="$PLATFORM-x64"
         ;;
     arm64)
-        TARGET="$PLATFORM-arm64-tar"
+        TARGET="$PLATFORM-arm64-$PACKAGE"
         QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
@@ -96,7 +120,7 @@ esac
 
 # Copy artifact to dist folder in bundle build output
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
-ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.tar.gz"`
+ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
 mkdir -p "${OUTPUT}/dist"
 cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
 

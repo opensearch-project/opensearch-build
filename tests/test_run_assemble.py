@@ -27,7 +27,7 @@ class TestRunAssemble(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
+    BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
 
     @patch("os.chdir")
     @patch("os.makedirs")
@@ -47,6 +47,6 @@ class TestRunAssemble(unittest.TestCase):
         mock_bundle.install_min.assert_called()
         mock_bundle.install_plugins.assert_called()
 
-        mock_bundle.build_tar.assert_called_with("curdir/bundle")
+        mock_bundle.build_tar.assert_called_with(os.path.join("curdir", "bundle"))
 
-        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call("curdir/bundle")])  # manifest included in tar
+        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call(os.path.join("curdir", "bundle"))])  # manifest included in tar

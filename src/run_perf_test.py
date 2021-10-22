@@ -44,20 +44,20 @@ def main():
     with TemporaryDirectory(keep=args.keep) as work_dir:
         os.chdir(work_dir.name)
         current_workspace = os.path.join(work_dir.name, "infra")
-        GitRepository(get_infra_repo_url(), "main", current_workspace)
-        security = False
-        for component in manifest.components:
-            if component.name == "security":
-                security = True
+        with GitRepository(get_infra_repo_url(), "main", current_workspace):
+            security = False
+            for component in manifest.components:
+                if component.name == "security":
+                    security = True
 
-        with WorkingDirectory(current_workspace):
-            with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (
-                test_cluster_endpoint,
-                test_cluster_port,
-            ):
-                os.chdir(current_workspace)
-                perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
-                perf_test_suite.execute()
+            with WorkingDirectory(current_workspace):
+                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (
+                    test_cluster_endpoint,
+                    test_cluster_port,
+                ):
+                    os.chdir(current_workspace)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+                    perf_test_suite.execute()
 
 
 if __name__ == "__main__":

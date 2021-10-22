@@ -24,7 +24,7 @@ Fork this repository on GitHub, and clone locally with `git clone`.
 
 #### Pyenv
 
-Use pyenv to manage multiple versions of Python. This can be installed with [pyenv-installer](https://github.com/pyenv/pyenv-installer).
+Use pyenv to manage multiple versions of Python. This can be installed with [pyenv-installer](https://github.com/pyenv/pyenv-installer) on Linux and MacOS, and [pyenv-win](https://github.com/pyenv-win/pyenv-win#installation) on Windows.
 
 ```
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
@@ -42,7 +42,7 @@ Python 3.7.11
 If you are using pyenv.
 
 ```
-pyenv install 3.7.12
+pyenv install 3.7.12 # use 3.7.9 on Windows, the latest at the time of writing this
 pyenv global 3.7.12
 ```
 
@@ -57,7 +57,10 @@ $ pipenv --version
 pipenv, version 19.0
 ```
 
+On Windows, run `pyenv rehash` if `pipenv` cannot be found. This rehashes pyenv shims, creating a `pipenv` file in `/.pyenv/pyenv-win/shims/`.
+
 #### NVM and Node
+
 Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node 10.24.1 version as it is required
 
 ```
@@ -66,6 +69,7 @@ nvm install v10.24.1
 ```
 
 #### Yarn
+
 [Yarn](https://classic.yarnpkg.com/en/docs/install) is required for building and running the OpenSearch Dashboards and plugins
 
 ```

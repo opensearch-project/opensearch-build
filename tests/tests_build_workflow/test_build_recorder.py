@@ -91,10 +91,11 @@ class TestBuildRecorder(unittest.TestCase):
             ),
         )
 
-        recorder.record_artifact("common-utils", "files", "../file1.jar", __file__)
+        recorder.record_artifact("common-utils", "files", os.path.join("..", "file1.jar"), __file__)
 
-        mock_makedirs.assert_called_with("output_dir/..", exist_ok=True)
-        mock_copyfile.assert_called_with(__file__, "output_dir/../file1.jar")
+        output_dir = os.path.join("output_dir", "..")
+        mock_makedirs.assert_called_with(output_dir, exist_ok=True)
+        mock_copyfile.assert_called_with(__file__, os.path.join(output_dir, "file1.jar"))
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")

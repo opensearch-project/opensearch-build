@@ -14,11 +14,20 @@ from build_workflow.build_args import BuildArgs
 
 class TestBuildArgs(unittest.TestCase):
 
-    BUILD_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../src/run_build.py"))
+    BUILD_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "src", "run_build.py"))
 
-    BUILD_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../build.sh"))
+    BUILD_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "build.sh"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../manifests/1.1.0/opensearch-1.1.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "manifests",
+            "1.1.0",
+            "opensearch-1.1.0.yml",
+        )
+    )
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self):

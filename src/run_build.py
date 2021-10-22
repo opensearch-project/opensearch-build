@@ -56,6 +56,7 @@ def main():
                 continue
 
             logging.info(f"Building {component.name}")
+
             with GitRepository(
                 component.repository,
                 component.ref,

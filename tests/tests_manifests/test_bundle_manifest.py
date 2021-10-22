@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import os
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -79,14 +80,15 @@ class TestBundleManifest(unittest.TestCase):
             self.manifest.build.platform,
             self.manifest.build.architecture,
         )
+        dest = os.path.realpath(os.path.join(tempfile.gettempdir(), "xyz"))
         BundleManifest.from_s3(
             "bucket_name",
             self.manifest.build.id,
             self.manifest.build.version,
             self.manifest.build.platform,
             self.manifest.build.architecture,
-            "/xyz",
+            dest,
         )
         self.assertEqual(s3_bucket.download_file.call_count, 1)
-        s3_bucket.download_file.assert_called_with(s3_download_path, "/xyz")
-        os.remove.assert_called_with("/xyz/manifest.yml")
+        s3_bucket.download_file.assert_called_with(s3_download_path, dest)
+        os.remove.assert_called_with(os.path.join(dest, "manifest.yml"))

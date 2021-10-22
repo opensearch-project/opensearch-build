@@ -18,7 +18,7 @@ from system.temporary_directory import TemporaryDirectory
 class TestBundleRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml")
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
         self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir")
 
@@ -42,14 +42,14 @@ class TestBundleRecorder(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c3ff7a232d25403fa8cc14c97799c323",
-                    "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location": "artifacts_dir/plugins",
+                        "location": os.path.join("artifacts_dir", "plugins"),
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -69,7 +69,7 @@ class TestBundleRecorder(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c3ff7a232d25403fa8cc14c97799c323",
-                    "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
@@ -107,7 +107,7 @@ class TestBundleRecorder(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c3ff7a232d25403fa8cc14c97799c323",
-                    "location": "output_dir/opensearch-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch",
                     "version": "1.1.0",
                 },
@@ -150,7 +150,7 @@ class TestBundleRecorder(unittest.TestCase):
 
 class TestBundleRecorderDashboards(unittest.TestCase):
     def setUp(self):
-        manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml")
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
         self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir")
 
@@ -174,14 +174,14 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c94ebec444a94ada86a230c9297b1d73",
-                    "location": "output_dir/opensearch-dashboards-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-dashboards-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch Dashboards",
                     "version": "1.1.0",
                 },
                 "components": [
                     {
                         "commit_id": "ae789280740d7000d1f13245019414abeedfc286",
-                        "location": "artifacts_dir/plugins",
+                        "location": os.path.join("artifacts_dir", "plugins"),
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
@@ -201,7 +201,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c94ebec444a94ada86a230c9297b1d73",
-                    "location": "output_dir/opensearch-dashboards-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-dashboards-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch Dashboards",
                     "version": "1.1.0",
                 },
@@ -239,7 +239,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "id": "c94ebec444a94ada86a230c9297b1d73",
-                    "location": "output_dir/opensearch-dashboards-1.1.0-linux-x64.tar.gz",
+                    "location": os.path.join("output_dir", "opensearch-dashboards-1.1.0-linux-x64.tar.gz"),
                     "name": "OpenSearch Dashboards",
                     "version": "1.1.0",
                 },
