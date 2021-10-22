@@ -101,4 +101,8 @@ class TestManifest(Manifest):
             )
 
 
+TestManifest.VERSIONS = {
+    "1.0": TestManifest
+}
+
 TestManifest.__test__ = False  # type:ignore

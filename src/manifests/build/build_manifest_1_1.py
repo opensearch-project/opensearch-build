@@ -4,11 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
-
-from aws.s3_bucket import S3Bucket
-from manifests.build.build_manifest_1_0 import BuildManifest_1_0
-from manifests.build.build_manifest_1_1 import BuildManifest_1_1
 from manifests.manifest import Manifest
 
 """
@@ -16,12 +11,11 @@ A BuildManifest is an immutable view of the outputs from a build step
 The manifest contains information about the product that was built (in the `build` section),
 and the components that made up the build in the `components` section.
 
-The format for schema version 1.2 is:
-schema-version: "1.2"
+The format for schema version 1.1 is:
+schema-version: "1.1"
 build:
   name: string
   version: string
-  platform: linux, darwin or windows
   architecture: x64 or arm64
 components:
   - name: string
@@ -42,7 +36,7 @@ components:
 """
 
 
-class BuildManifest(Manifest):
+class BuildManifest_1_1(Manifest):
     components: list
 
     SCHEMA = {
@@ -50,14 +44,13 @@ class BuildManifest(Manifest):
             "required": True,
             "type": "dict",
             "schema": {
-                "platform": {"required": True, "type": "string"},  # added in 1.2
                 "architecture": {"required": True, "type": "string"},
                 "id": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.2"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "type": "list",
             "schema": {
@@ -91,7 +84,7 @@ class BuildManifest(Manifest):
 
     def __to_dict__(self):
         return {
-            "schema-version": "1.2",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "components": list(map(lambda component: component.__to_dict__(), self.components)),
         }
@@ -102,22 +95,8 @@ class BuildManifest(Manifest):
             None,
         )
         if component is None:
-            raise BuildManifest.ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
+            raise BuildManifest_1_1.ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
         return component
-
-    @staticmethod
-    def get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture):
-        # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
-        return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
-
-    @staticmethod
-    def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
-        work_dir = work_dir if not None else str(os.getcwd())
-        manifest_s3_path = BuildManifest.get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture)
-        S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
-        build_manifest = BuildManifest.from_path("manifest.yml")
-        os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
-        return build_manifest
 
     class ComponentNotFoundError(Exception):
         pass
@@ -126,7 +105,6 @@ class BuildManifest(Manifest):
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
-            self.platform = data["platform"]
             self.architecture = data["architecture"]
             self.id = data["id"]
 
@@ -134,7 +112,6 @@ class BuildManifest(Manifest):
             return {
                 "name": self.name,
                 "version": self.version,
-                "platform": self.platform,
                 "architecture": self.architecture,
                 "id": self.id,
             }
@@ -157,10 +134,3 @@ class BuildManifest(Manifest):
                 "artifacts": self.artifacts,
                 "version": self.version,
             }
-
-
-BuildManifest.VERSIONS = {
-    "1.0": BuildManifest_1_0,
-    "1.1": BuildManifest_1_1,
-    "1.2": BuildManifest
-}

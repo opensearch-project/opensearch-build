@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from unittest.mock import MagicMock, patch
 
 import yaml
 
@@ -21,6 +22,19 @@ class TestManifest(unittest.TestCase):
 
         def __to_dict__(self):
             return self.data
+
+    class SampleManifestWithVersions(Manifest):
+        def __init__(self, data):
+            super().__init__(data)
+            self.data = data
+
+        def __to_dict__(self):
+            return self.data
+
+    SampleManifestWithVersions.VERSIONS = {
+        "3.14": SampleManifestWithVersions,
+        "6.42": SampleManifestWithVersions
+    }
 
     def setUp(self):
         self.data_path = os.path.join(os.path.dirname(__file__), "data")
@@ -70,3 +84,43 @@ class TestManifest(unittest.TestCase):
             self.assertTrue(os.path.isfile(manifest_path))
             with open(output_path) as f:
                 self.assertEqual(yaml.safe_load(f), manifest.to_dict())
+
+    def test_invalid_version_no_value_3_14(self):
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-no-value.yml")
+
+        with self.assertRaises(ValueError) as context:
+            TestManifest.SampleManifestWithVersions.from_path(manifest_path)
+        self.assertEqual(
+            "Missing manifest version, must be one of 3.14, 6.42",
+            context.exception.__str__(),
+        )
+
+    def test_invalid_version_empty_3_14(self):
+        manifest_path = os.path.join(self.data_path, "invalid-schema-version-empty.yml")
+
+        with self.assertRaises(ValueError) as context:
+            TestManifest.SampleManifestWithVersions.from_path(manifest_path)
+        self.assertEqual(
+            "Missing manifest version, must be one of 3.14, 6.42",
+            context.exception.__str__(),
+        )
+
+    def test_invalid_version_3_14(self):
+        manifest_path = os.path.join(self.data_path, "opensearch-build-1.1.0.yml")
+
+        with self.assertRaises(ValueError) as context:
+            TestManifest.SampleManifestWithVersions.from_path(manifest_path)
+        self.assertEqual(
+            "Invalid manifest version: 1.2, must be one of 3.14, 6.42",
+            context.exception.__str__(),
+        )
+
+    @patch("manifests.manifest.urllib.request.urlopen")
+    def test_from_url(self, mock_urlopen):
+        cm = MagicMock()
+        cm.read.return_value.decode.return_value = '{"schema-version":"3.14"}'
+        cm.__enter__.return_value = cm
+        mock_urlopen.return_value = cm
+        manifest = TestManifest.SampleManifest.from_url("url")
+        self.assertEqual(manifest.version, "3.14")
+        mock_urlopen.assert_called_with("url")
