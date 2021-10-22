@@ -30,6 +30,7 @@ def main():
         const=logging.DEBUG,
         dest="logging_level",
     )
+    parser.add_argument("-b", "--base-url", dest='base_url', help="The base url to download the artifacts.")
     args = parser.parse_args()
 
     console.configure(level=args.logging_level)
@@ -37,7 +38,7 @@ def main():
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
-    output_dir = os.path.join(os.getcwd(), "bundle")
+    output_dir = os.path.join(os.getcwd(), "dist")
     os.makedirs(output_dir, exist_ok=True)
 
     with TemporaryDirectory() as work_dir:
@@ -45,7 +46,7 @@ def main():
 
         os.chdir(work_dir.name)
 
-        bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir)
+        bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
         bundle = Bundles.create(build_manifest, artifacts_dir, bundle_recorder)
 
