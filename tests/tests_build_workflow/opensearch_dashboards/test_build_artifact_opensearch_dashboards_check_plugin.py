@@ -24,7 +24,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
                     output_dir="output_dir",
                     name="OpenSearch",
                     version="1.1.0",
-                    arch="x64",
+                    architecture="x64",
                     snapshot=snapshot,
                 )
             )

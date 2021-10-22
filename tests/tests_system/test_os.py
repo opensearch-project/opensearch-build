@@ -8,35 +8,35 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from system.os import current_arch, current_platform
+from system.os import current_architecture, current_platform
 
 
 class TestOs(unittest.TestCase):
-    # current_arch
-    def test_current_arch(self):
-        self.assertTrue(current_arch() in ["x64", "arm64"])
+    # current_architecture
+    def test_current_architecture(self):
+        self.assertTrue(current_architecture() in ["x64", "arm64"])
 
     @patch("subprocess.check_output", return_value="x86_64".encode())
-    def test_x86_64_return_x64_arch(self, mock_subprocess):
-        self.assertTrue(current_arch() == "x64")
+    def test_x86_64_return_x64_architecture(self, mock_subprocess):
+        self.assertTrue(current_architecture() == "x64")
 
     @patch("subprocess.check_output", return_value="aarch64".encode())
-    def test_aarch64_return_arm64_arch(self, mock_subprocess):
-        self.assertTrue(current_arch() == "arm64")
+    def test_aarch64_return_arm64_architecture(self, mock_subprocess):
+        self.assertTrue(current_architecture() == "arm64")
 
     @patch("subprocess.check_output", return_value="arm64".encode())
-    def test_arm64_return_arm64_arch(self, mock_subprocess):
-        self.assertTrue(current_arch() == "arm64")
+    def test_arm64_return_arm64_architecture(self, mock_subprocess):
+        self.assertTrue(current_architecture() == "arm64")
 
     @patch("subprocess.check_output", return_value="invalid".encode())
-    def test_invalid_arch(self, mock_subprocess):
+    def test_invalid_architecture(self, mock_subprocess):
         with self.assertRaises(ValueError) as context:
-            current_arch()
+            current_architecture()
         self.assertEqual("Unsupported architecture: invalid", str(context.exception))
 
     @patch("subprocess.check_output", return_value="x86_64".encode())
     def test_subprocess_call(self, mock_subprocess):
-        current_arch()
+        current_architecture()
         subprocess.check_output.assert_called_with(["uname", "-m"])
 
     # current_platform

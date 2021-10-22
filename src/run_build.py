@@ -37,13 +37,17 @@ def main():
             version=manifest.build.version,
             snapshot=args.snapshot,
             output_dir=output_dir,
+            platform=args.platform,
+            architecture=args.architecture,
         )
 
         os.makedirs(target.output_dir, exist_ok=True)
 
         build_recorder = BuildRecorder(target)
 
-        logging.info(f"Building {manifest.build.name} ({target.arch}) into {target.output_dir}")
+        logging.info(
+            f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}"
+        )
 
         for component in manifest.components:
 

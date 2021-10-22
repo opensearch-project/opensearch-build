@@ -5,6 +5,9 @@ pipeline {
         H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-dashboards-1.1.0.yml
       '''
     }
+    options {
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    }
     stages {
         stage('parameters') {
             steps {
@@ -45,7 +48,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-x64') {
+                stage('build-linux-x64') {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -56,12 +59,60 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            build("linux", "x64")
+                            assemble()
                         }
                     }
                     post() {
                         always {
                             cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        }
+                    }
+                }
+                stage('build-linux-arm64') {
+                    agent none
+                    stages {
+                        stage('build (linux-arm64)') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    build("linux", "arm64")
+                                    zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'artifacts'
+                                    archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
+                                }
+                            }
+                            post() {
+                                always {
+                                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                }
+                            }
+                        }
+                        stage('post-build (linux-arm64)') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdk14-node10.24.1-cypress6.9.1-20211005'
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
+                                    unzip zipFile: 'buildArtifacts.zip', dir: './artifacts'
+                                    assemble()
+                                }
+                            }
+                            post() {
+                                always {
+                                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                }
+                            }
                         }
                     }
                 }
@@ -82,7 +133,13 @@ pipeline {
     }
 }
 
-void build() {
+void build(platform, architecture) {
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
+    sh "./build.sh manifests/$INPUT_MANIFEST -p $platform -a $architecture"
+}
+
+void assemble() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
     sh "./build.sh manifests/$INPUT_MANIFEST"
@@ -121,7 +178,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x64']
+        def stages = ['build-linux-x64', 'build-linux-arm64']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }

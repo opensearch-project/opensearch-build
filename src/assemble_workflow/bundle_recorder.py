@@ -18,7 +18,7 @@ class BundleRecorder:
         self.version = build.version
         self.tar_name = self.__get_tar_name(build)
         self.artifacts_dir = artifacts_dir
-        self.arch = build.architecture
+        self.architecture = build.architecture
         self.bundle_manifest = self.BundleManifestBuilder(
             build.id,
             build.name,
@@ -74,14 +74,14 @@ class BundleRecorder:
         self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
-        def __init__(self, build_id, name, version, platform, arch, location):
+        def __init__(self, build_id, name, version, platform, architecture, location):
             self.data = {}
             self.data["build"] = {}
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
             self.data["build"]["version"] = str(version)
             self.data["build"]["platform"] = platform
-            self.data["build"]["architecture"] = arch
+            self.data["build"]["architecture"] = architecture
             self.data["build"]["location"] = location
             self.data["schema-version"] = "1.1"
             # We need to store components as a hash so that we can append artifacts by component name
