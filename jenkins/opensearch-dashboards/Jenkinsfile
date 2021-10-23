@@ -92,7 +92,7 @@ pipeline {
                             steps {
                                 script {
                                     build("linux", "arm64")
-                                    zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'artifacts'
+                                    zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'builds'
                                     archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
                                 }
                             }
@@ -114,7 +114,7 @@ pipeline {
                             steps {
                                 script {
                                     copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-                                    unzip zipFile: 'buildArtifacts.zip', dir: './artifacts'
+                                    unzip zipFile: 'buildArtifacts.zip', dir: './builds'
                                     assemble()
                                 }
                             }
@@ -186,7 +186,7 @@ String getAllJenkinsMessages() {
     script {
         // Stages must be explicitly added to prevent overwriting
         // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-linux-x64', 'build-linux-arm64']
+        def stages = ['build-linux-x64', 'post-build (linux-arm64)']
         for (stage in stages) {
             unstash "notifications-${stage}"
         }
