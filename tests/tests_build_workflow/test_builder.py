@@ -43,7 +43,7 @@ class TestBuilder(unittest.TestCase):
                     "-p linux",
                     "-a x64",
                     "-s false",
-                    "-o artifacts",
+                    "-o builds",
                 ]
             )
         )
@@ -68,16 +68,16 @@ class TestBuilder(unittest.TestCase):
                     "-p darwin",
                     "-a x64",
                     "-s true",
-                    "-o artifacts",
+                    "-o builds",
                 ]
             )
         )
         self.builder.build_recorder.record_component.assert_called_with("component", self.builder.git_repo)
 
     def mock_os_walk(self, artifact_path):
-        if artifact_path.endswith(os.path.join("checked-out-component", "artifacts", "core-plugins")):
+        if artifact_path.endswith(os.path.join("checked-out-component", "builds", "core-plugins")):
             return [["core-plugins", [], ["plugin1.zip"]]]
-        if artifact_path.endswith(os.path.join("checked-out-component", "artifacts", "maven")):
+        if artifact_path.endswith(os.path.join("checked-out-component", "builds", "maven")):
             return [("maven", [], ["artifact1.jar"])]
         else:
             return []
