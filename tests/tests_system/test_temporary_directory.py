@@ -32,3 +32,15 @@ class TestTemporaryDirectory(unittest.TestCase):
             self.assertTrue(os.path.exists(filename))
         self.assertFalse(os.path.exists(work_dir.name))
         self.assertFalse(os.path.exists(filename))
+
+    def test_chdir_true(self):
+        before_dir = os.getcwd()
+        with TemporaryDirectory(chdir=True):
+            self.assertNotEqual(before_dir, os.getcwd())
+        self.assertEqual(before_dir, os.getcwd())
+
+    def test_chdir_false(self):
+        before_dir = os.getcwd()
+        with TemporaryDirectory():
+            self.assertEqual(before_dir, os.getcwd())
+        self.assertEqual(before_dir, os.getcwd())

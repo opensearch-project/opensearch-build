@@ -41,10 +41,8 @@ def main():
     output_dir = os.path.join(os.getcwd(), "dist")
     os.makedirs(output_dir, exist_ok=True)
 
-    with TemporaryDirectory() as work_dir:
+    with TemporaryDirectory(chdir=True):
         logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
-
-        os.chdir(work_dir.name)
 
         bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
