@@ -85,7 +85,7 @@ class TestBuildManifest(unittest.TestCase):
         os.remove.assert_called_with(os.path.join(dest, "manifest.yml"))
 
     def test_versions(self):
-        self.assertTrue(len(BuildManifest.VERSIONS) > 0)
+        self.assertTrue(len(BuildManifest.VERSIONS))
         for version in BuildManifest.VERSIONS:
             manifest = BuildManifest.from_path(
                 os.path.join(

@@ -46,7 +46,7 @@ class TestTestManifest(unittest.TestCase):
             self.assertEqual(yaml.safe_load(f), data)
 
     def test_versions(self):
-        self.assertTrue(len(TestManifest.VERSIONS) > 0)
+        self.assertTrue(len(TestManifest.VERSIONS))
         for version in TestManifest.VERSIONS:
             manifest = TestManifest.from_path(
                 os.path.join(

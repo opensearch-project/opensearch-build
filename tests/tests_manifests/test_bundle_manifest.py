@@ -94,7 +94,7 @@ class TestBundleManifest(unittest.TestCase):
         os.remove.assert_called_with(os.path.join(dest, "manifest.yml"))
 
     def test_versions(self):
-        self.assertTrue(len(BundleManifest.VERSIONS) > 0)
+        self.assertTrue(len(BundleManifest.VERSIONS))
         for version in BundleManifest.VERSIONS:
             manifest = BundleManifest.from_path(
                 os.path.join(
