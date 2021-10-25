@@ -48,9 +48,9 @@ class InputManifest(Manifest):
                     "schema": {
                         "name": {"required": True, "type": "string"},
                         "args": {"required": False, "type": "string"}
-                    }
-                }
-            }
+                    },
+                },
+            },
         },
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "components": {
@@ -143,3 +143,8 @@ class InputManifest(Manifest):
                 return {self.name: self.args}
             else:
                 return self.name
+
+
+InputManifest.VERSIONS = {
+    "1.0": InputManifest
+}

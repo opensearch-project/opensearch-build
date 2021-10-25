@@ -83,3 +83,13 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(s3_bucket.download_file.call_count, 1)
         s3_bucket.download_file.assert_called_with(s3_download_path, dest)
         os.remove.assert_called_with(os.path.join(dest, "manifest.yml"))
+
+    def test_versions(self):
+        self.assertTrue(len(BuildManifest.VERSIONS))
+        for version in BuildManifest.VERSIONS:
+            manifest = BuildManifest.from_path(
+                os.path.join(
+                    self.data_path, "build", f"opensearch-build-schema-version-{version}.yml"
+                )
+            )
+            self.assertEqual(version, manifest.version)

@@ -14,7 +14,7 @@ class TestInputManifests(unittest.TestCase):
         self.manifests = InputManifests()
 
     def test_manifests(self):
-        self.assertTrue(len(self.manifests) > 0)
+        self.assertTrue(len(self.manifests))
 
     def test_1_1_0(self):
         manifest = self.manifests["1.1.0"]

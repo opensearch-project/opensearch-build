@@ -81,6 +81,6 @@ class BuildRecorder:
         def to_manifest(self):
             # The build manifest expects `components` to be a list, not a hash, so we need to munge things a bit
             components = self.components_hash.values()
-            if len(components) > 0:
+            if len(components):
                 self.data["components"] = list(components)
             return BuildManifest(self.data)

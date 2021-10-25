@@ -103,7 +103,4 @@ class TestInputManifest(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             InputManifest.from_path(manifest_path)
-        self.assertEqual(
-            "Invalid manifest schema: {'components': [{0: [{'ref': ['must be of string type']}]}]}",
-            str(context.exception),
-        )
+        self.assertTrue(str(context.exception).startswith("Invalid manifest schema: {'components': "))

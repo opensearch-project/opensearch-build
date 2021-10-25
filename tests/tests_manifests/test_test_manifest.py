@@ -44,3 +44,13 @@ class TestTestManifest(unittest.TestCase):
         data = self.manifest.to_dict()
         with open(self.manifest_filename) as f:
             self.assertEqual(yaml.safe_load(f), data)
+
+    def test_versions(self):
+        self.assertTrue(len(TestManifest.VERSIONS))
+        for version in TestManifest.VERSIONS:
+            manifest = TestManifest.from_path(
+                os.path.join(
+                    self.data_path, "test", f"opensearch-test-schema-version-{version}.yml"
+                )
+            )
+            self.assertEqual(version, manifest.version)

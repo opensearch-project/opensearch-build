@@ -4,7 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import urllib.request
 from abc import ABC, abstractmethod
+from typing import Dict, Optional
 
 import yaml
 from cerberus import Validator  # type:ignore
@@ -12,10 +14,35 @@ from cerberus import Validator  # type:ignore
 
 class Manifest(ABC):
     SCHEMA = {"schema-version": {"required": True, "type": "string", "empty": False}}
+    VERSIONS: Optional[Dict] = None
 
     @classmethod
     def from_file(cls, file):
-        return cls(yaml.safe_load(file))
+        yml = yaml.safe_load(file)
+        version = yml["schema-version"]
+        loader = cls.from_version(version)
+        return loader(yml)
+
+    @classmethod
+    def from_url(cls, url):
+        with urllib.request.urlopen(url) as f:
+            yml = yaml.safe_load(f.read().decode("utf-8"))
+            version = yml["schema-version"]
+            loader = cls.from_version(version)
+            return loader(yml)
+
+    @classmethod
+    def from_version(cls, version):
+        if cls.VERSIONS is None:
+            return cls
+
+        if version in [None, ""]:
+            raise ValueError(f"Missing manifest version, must be one of {', '.join(cls.VERSIONS.keys())}")
+
+        try:
+            return cls.VERSIONS[version]
+        except KeyError:
+            raise ValueError(f"Invalid manifest version: {version}, must be one of {', '.join(cls.VERSIONS.keys())}")
 
     @classmethod
     def from_path(cls, path):
