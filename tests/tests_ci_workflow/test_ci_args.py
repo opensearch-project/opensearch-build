@@ -13,9 +13,9 @@ from ci_workflow.ci_args import CiArgs
 
 class TestCiArgs(unittest.TestCase):
 
-    CI_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "src", "run_ci.py"))
+    CI_PY = "./src/run_ci.py"
 
-    CI_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "ci.sh"))
+    CI_SH = "./ci.sh"
 
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
@@ -58,8 +58,6 @@ class TestCiArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_script_path(self):
-        self.assertTrue(os.path.isfile(self.CI_PY))
-        self.assertTrue(os.path.isfile(self.CI_SH))
         self.assertEqual(CiArgs().script_path, self.CI_SH)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])

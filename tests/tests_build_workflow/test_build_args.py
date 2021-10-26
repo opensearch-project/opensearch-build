@@ -14,9 +14,9 @@ from build_workflow.build_args import BuildArgs
 
 class TestBuildArgs(unittest.TestCase):
 
-    BUILD_PY = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "src", "run_build.py"))
+    BUILD_PY = "./src/run_build.py"
 
-    BUILD_SH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "build.sh"))
+    BUILD_SH = "./build.sh"
 
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
@@ -83,8 +83,6 @@ class TestBuildArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_script_path(self):
-        self.assertTrue(os.path.isfile(self.BUILD_PY))
-        self.assertTrue(os.path.isfile(self.BUILD_SH))
         self.assertEqual(BuildArgs().script_path, self.BUILD_SH)
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
