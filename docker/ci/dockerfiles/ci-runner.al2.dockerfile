@@ -19,7 +19,7 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng cmake python3 python3-pip python3-devel && \
+    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng python3 python3-pip python3-devel && \
     ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
 
 # Add Dashboards dependencies
@@ -27,6 +27,10 @@ RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GC
 
 # Add Notebook dependencies
 RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
+
+# Add k-NN Library dependencies
+RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
+RUN pip3 install cmake==3.21.3
 
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*

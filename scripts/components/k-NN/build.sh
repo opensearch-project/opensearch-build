@@ -89,10 +89,10 @@ if [ "$JAVA_HOME" = "" ]; then
 fi
 
 cmake .
-make
+make opensearchknn
 
 cd $work_dir
-cp ./jni/release/libKNNIndexV2_0_11* ./$OUTPUT/libs
+cp ./jni/release/libopensearchknn* ./$OUTPUT/libs
 
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
