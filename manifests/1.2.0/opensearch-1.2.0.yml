@@ -35,6 +35,9 @@ components:
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: "main"
+    platforms:
+      - darwin
+      - linux
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version

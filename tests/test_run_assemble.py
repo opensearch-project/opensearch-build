@@ -33,20 +33,23 @@ class TestRunAssemble(unittest.TestCase):
     @patch("os.makedirs")
     @patch("os.getcwd", return_value="curdir")
     @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST])
-    @patch("run_assemble.Bundles", return_value=MagicMock())
+    @patch("run_assemble.Bundles.create")
     @patch("run_assemble.BundleRecorder", return_value=MagicMock())
     @patch("run_assemble.TemporaryDirectory")
     @patch("shutil.copy2")
     def test_main(self, mock_copy, mock_temp, mock_recorder, mock_bundles, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
-        mock_bundle = MagicMock(archive_path="path")
-        mock_bundles.create.return_value = mock_bundle
+        mock_bundle = MagicMock(min_dist=MagicMock(archive_path="path"))
+        mock_bundles.return_value.__enter__.return_value = mock_bundle
 
         main()
 
         mock_bundle.install_min.assert_called()
         mock_bundle.install_plugins.assert_called()
 
-        mock_bundle.build_tar.assert_called_with(os.path.join("curdir", "dist"))
+        mock_bundle.package.assert_called_with(os.path.join("curdir", "dist"))
 
-        mock_recorder.return_value.write_manifest.assert_has_calls([call("path"), call(os.path.join("curdir", "dist"))])  # manifest included in tar
+        mock_recorder.return_value.write_manifest.assert_has_calls([
+            call("path"),
+            call(os.path.join("curdir", "dist"))
+        ])  # manifest included in package
