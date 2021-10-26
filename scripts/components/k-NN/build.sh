@@ -69,7 +69,6 @@ mkdir -p $OUTPUT/libs
 # need to pull it before calling cmake. Also, we need to call it from the root git directory.
 # Otherwise, the submodule update call may fail on earlier versions of git.
 git submodule update --init -- jni/external/nmslib
-git submodule update --init -- jni/external/faiss
 
 # Build knnlib and copy it to libs
 cd jni
@@ -90,10 +89,10 @@ if [ "$JAVA_HOME" = "" ]; then
 fi
 
 cmake .
-make opensearchknn
+make
 
 cd $work_dir
-cp ./jni/release/libopensearchknn* ./$OUTPUT/libs
+cp ./jni/release/libKNNIndexV2_0_11* ./$OUTPUT/libs
 
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
