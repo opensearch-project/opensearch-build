@@ -5,10 +5,10 @@ import { CanonicalUserPrincipal, PolicyStatement } from '@aws-cdk/aws-iam';
 import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { CfnOutput } from '@aws-cdk/core';
-import { JenkinsArtifactStack } from './jenkins-artifact-stack';
+import { BuildArtifactStack } from './build-artifact-stack';
 
 export class ArtifactsPublicAccess {
-  constructor(stack: JenkinsArtifactStack, buildBucket: IBucket, existingBucketNeedsUpdate: boolean) {
+  constructor(stack: BuildArtifactStack, buildBucket: IBucket, existingBucketNeedsUpdate: boolean) {
     const originAccessIdentity = new OriginAccessIdentity(stack, 'cloudfront-OAI', {
       comment: `OAI for ${buildBucket.bucketName}`,
     });
