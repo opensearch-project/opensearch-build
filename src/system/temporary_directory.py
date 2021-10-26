@@ -22,14 +22,22 @@ def g__handleRemoveReadonly(func, path, exc):
 
 
 class TemporaryDirectory:
-    def __init__(self, keep=False):
+    def __init__(self, keep=False, chdir=False):
         self.keep = keep
         self.name = tempfile.mkdtemp()
+        if chdir:
+            self.curdir = os.getcwd()
+            os.chdir(self.name)
+        else:
+            self.curdir = None
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.curdir:
+            os.chdir(self.curdir)
+
         if self.keep:
             logging.info(f"Keeping {self.name}")
         else:

@@ -40,9 +40,8 @@ class InputManifests(Manifests):
         known_versions = self.versions
         logging.info(f"Known versions: {known_versions}")
         main_versions = {}
-        with TemporaryDirectory(keep=keep) as work_dir:
+        with TemporaryDirectory(keep=keep, chdir=True) as work_dir:
             logging.info(f"Checking out components into {work_dir.name}")
-            os.chdir(work_dir.name)
 
             # check out and build #main, 1.x, etc.
             branches = min_klass.branches()

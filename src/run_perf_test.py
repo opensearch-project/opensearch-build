@@ -41,8 +41,7 @@ def get_infra_repo_url():
 
 
 def main():
-    with TemporaryDirectory(keep=args.keep) as work_dir:
-        os.chdir(work_dir.name)
+    with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
             security = False
@@ -55,7 +54,6 @@ def main():
                     test_cluster_endpoint,
                     test_cluster_port,
                 ):
-                    os.chdir(current_workspace)
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
                     perf_test_suite.execute()
 

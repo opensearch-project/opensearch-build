@@ -41,10 +41,9 @@ def main():
     for component in test_manifest.components:
         if component.integ_test is not None:
             integ_test_config[component.name] = component
-    with TemporaryDirectory(keep=args.keep) as work_dir:
+    with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Switching to temporary work_dir: {work_dir.name}")
         test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir.name)
-        os.chdir(work_dir.name)
         bundle_manifest = BundleManifest.from_s3(
             args.s3_bucket,
             args.build_id,
