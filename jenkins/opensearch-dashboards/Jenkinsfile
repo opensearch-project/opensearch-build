@@ -155,7 +155,7 @@ void assemble() {
     script { manifest = readYaml(file: 'builds/manifest.yml') }
 
     def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
-    def BASE_URL = PUBLIC_ARTIFACT_URL + artifactPath;
+    def BASE_URL = "${PUBLIC_ARTIFACT_URL}/${artifactPath}";
 
     sh "./assemble.sh builds/manifest.yml --base-url ${BASE_URL}"
 
