@@ -37,13 +37,14 @@ export class Identities {
         assumedBy: props.buildAgentPrinciple,
       });
 
-    props.buildBucket.grantPut(buildRole, 'builds/*');
-    props.buildBucket.grantRead(bundleRole, 'builds/*');
+    props.buildBucket.grantPut(buildRole, '*/builds/*');
 
-    props.buildBucket.grantPut(bundleRole, 'dist/*');
-    props.buildBucket.grantRead(testRole, 'dist/*');
+    props.buildBucket.grantRead(bundleRole, '*/builds/*');
+    props.buildBucket.grantPut(bundleRole, '*/builds/*');
+    props.buildBucket.grantPut(bundleRole, '*/dist/*');
 
-    props.buildBucket.grantPut(testRole, 'dist/*/tests/*');
+    props.buildBucket.grantRead(testRole, '*/dist/*');
+    props.buildBucket.grantPut(testRole, '*/dist/*/tests/*');
   }
 
   private static roleFromName(stack: Stack, roleName: string): IRole {
