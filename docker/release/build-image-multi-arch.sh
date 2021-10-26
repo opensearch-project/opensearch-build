@@ -13,7 +13,7 @@ DIR=""
 
 function usage() {
     echo ""
-    echo "This script is used to build the OpenSearch Docker image with single architecture (x64 or arm64). It prepares the files required by the Dockerfile in a temporary directory, then builds and tags the Docker image."
+    echo "This script is used to build the OpenSearch Docker image with multi architecture (x64 + arm64). It prepares the files required by the Dockerfile in a temporary directory, then builds and tags the Docker image."
     echo "--------------------------------------------------------------------------"
     echo "Usage: $0 [args]"
     echo ""
@@ -22,7 +22,7 @@ function usage() {
     echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. dockerfile/opensearch.al2.dockerfile."
     echo -e "-p PRODUCT\tSpecify the product, e.g. opensearch or opensearch-dashboards, make sure this is the name of your config folder and the name of your .tgz defined in dockerfile."
     echo -e "-a ARCHITECTURE\tSpecify the multiple architecture you want to add to the multi-arch image, separate by comma, e.g. 'x64,arm64'."
-    echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>', due to multi-arch image either save in cache or directly upload to Docker Hub Repo, no local copies. The tag name will be pointed to `-v` value and `latest`"
+    echo -e "-r REPOSITORY\tSpecify the docker repository name in the format of '<Docker Hub RepoName>/<Docker Image Name>', due to multi-arch image either save in cache or directly upload to Docker Hub Repo, no local copies. The tag name will be pointed to '-v' value and 'latest'"
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
