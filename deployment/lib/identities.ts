@@ -40,10 +40,10 @@ export class Identities {
     props.buildBucket.grantPut(buildRole, 'builds/*');
     props.buildBucket.grantRead(bundleRole, 'builds/*');
 
-    props.buildBucket.grantPut(bundleRole, 'bundles/*');
-    props.buildBucket.grantRead(testRole, 'bundles/*');
+    props.buildBucket.grantPut(bundleRole, 'dist/*');
+    props.buildBucket.grantRead(testRole, 'dist/*');
 
-    props.buildBucket.grantPut(testRole, 'bundles/*/tests/*');
+    props.buildBucket.grantPut(testRole, 'dist/*/tests/*');
   }
 
   private static roleFromName(stack: Stack, roleName: string): IRole {

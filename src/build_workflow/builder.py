@@ -27,7 +27,7 @@ class Builder:
         self.component_name = component_name
         self.git_repo = git_repo
         self.build_recorder = build_recorder
-        self.output_path = "artifacts"
+        self.output_path = "builds"
         self.artifacts_path = os.path.join(self.git_repo.working_directory, self.output_path)
 
     def build(self, target):
