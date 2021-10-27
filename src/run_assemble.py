@@ -15,7 +15,6 @@ from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
 from system import console
-from system.temporary_directory import TemporaryDirectory
 
 
 def main():
@@ -29,21 +28,20 @@ def main():
     output_dir = os.path.join(os.getcwd(), "dist")
     os.makedirs(output_dir, exist_ok=True)
 
-    with TemporaryDirectory(chdir=True, keep=args.keep):
-        logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
+    logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
-        bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
+    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
-        with Bundles.create(build_manifest, artifacts_dir, bundle_recorder) as bundle:
-            bundle.install_min()
-            bundle.install_plugins()
-            logging.info(f"Installed plugins: {bundle.installed_plugins}")
+    with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:
+        bundle.install_min()
+        bundle.install_plugins()
+        logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
-            #  Save a copy of the manifest inside of the tar
-            bundle_recorder.write_manifest(bundle.min_dist.archive_path)
-            bundle.package(output_dir)
+        #  Save a copy of the manifest inside of the tar
+        bundle_recorder.write_manifest(bundle.min_dist.archive_path)
+        bundle.package(output_dir)
 
-            bundle_recorder.write_manifest(output_dir)
+        bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")
 
