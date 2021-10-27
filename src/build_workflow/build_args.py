@@ -10,10 +10,7 @@ import sys
 
 
 class BuildArgs:
-    SUPPORTED_PLATFORMS = [
-        "linux",
-        "darwin",
-    ]
+    SUPPORTED_PLATFORMS = ["linux", "darwin", "windows"]
     SUPPORTED_ARCHITECTURES = [
         "x64",
         "arm64",
@@ -43,20 +40,8 @@ class BuildArgs:
             action="store_true",
             help="Do not delete the working temporary directory.",
         )
-        parser.add_argument(
-            "-p",
-            "--platform",
-            type=str,
-            choices=self.SUPPORTED_PLATFORMS,
-            help="Platform to build."
-        )
-        parser.add_argument(
-            "-a",
-            "--architecture",
-            type=str,
-            choices=self.SUPPORTED_ARCHITECTURES,
-            help="Architecture to build."
-        )
+        parser.add_argument("-p", "--platform", type=str, choices=self.SUPPORTED_PLATFORMS, help="Platform to build.")
+        parser.add_argument("-a", "--architecture", type=str, choices=self.SUPPORTED_ARCHITECTURES, help="Architecture to build.")
         parser.add_argument(
             "-v",
             "--verbose",

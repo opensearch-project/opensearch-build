@@ -27,7 +27,7 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(len(self.manifest.components), 15)
 
     def test_component(self):
-        opensearch_component = self.manifest.components[0]
+        opensearch_component = self.manifest.components["OpenSearch"]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -51,13 +51,14 @@ class TestBuildManifest(unittest.TestCase):
         expected = "builds/1.1.0/25/x64/manifest.yml"
         self.assertEqual(actual, expected, "the manifest relative location is not as expected")
 
-    def test_get_component(self):
-        component_name = "index-management"
-        output = self.manifest.get_component(component_name)
-        self.assertEqual(output.name, component_name)
-        component_name = "invalid-component"
-        with self.assertRaises(BuildManifest.ComponentNotFoundError):
-            self.manifest.get_component(component_name)
+    def test_components_index(self):
+        component = self.manifest.components["index-management"]
+        self.assertEqual(component.name, "index-management")
+
+    def test_components_index_error(self):
+        with self.assertRaises(KeyError) as ctx:
+            self.manifest.components["invalid-component"]
+        self.assertEqual(str(ctx.exception), "'invalid-component'")
 
     @patch("os.remove")
     @patch("builtins.open", mock_open())
@@ -87,9 +88,27 @@ class TestBuildManifest(unittest.TestCase):
     def test_versions(self):
         self.assertTrue(len(BuildManifest.VERSIONS))
         for version in BuildManifest.VERSIONS:
-            manifest = BuildManifest.from_path(
-                os.path.join(
-                    self.data_path, "build", f"opensearch-build-schema-version-{version}.yml"
-                )
-            )
+            manifest = BuildManifest.from_path(os.path.join(self.data_path, "build", f"opensearch-build-schema-version-{version}.yml"))
             self.assertEqual(version, manifest.version)
+            self.assertIsNotNone(any(manifest.components))
+
+    def test_select(self):
+        path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
+        manifest = BuildManifest.from_path(path)
+        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+
+    def test_select_none(self):
+        path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
+        manifest = BuildManifest.from_path(path)
+        with self.assertRaises(ValueError) as ctx:
+            self.assertEqual(len(list(manifest.components.select(focus="x"))), 0)
+        self.assertEqual(str(ctx.exception), "No components matched focus=x.")
+
+    def test_component_matches(self):
+        self.assertTrue(BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).matches())
+
+    def test_component_matches_focus(self):
+        component = BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""})
+        self.assertTrue(component.matches(focus=None))
+        self.assertTrue(component.matches(focus="x"))
+        self.assertFalse(component.matches(focus="y"))

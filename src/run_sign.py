@@ -38,15 +38,10 @@ def main():
     basepath = os.path.dirname(os.path.abspath(args.manifest.name))
     signer = Signer()
 
-    for component in manifest.components:
-
-        if args.component and args.component != component.name:
-            logging.info(f"Skipping {component.name}")
-            continue
-
+    for component in manifest.components.select(focus=args.component):
         logging.info(f"Signing {component.name}")
-        for artifact_type in component.artifacts:
 
+        for artifact_type in component.artifacts:
             if args.type and args.type != artifact_type:
                 continue
 

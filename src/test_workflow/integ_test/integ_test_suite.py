@@ -71,7 +71,7 @@ class IntegTestSuite:
         custom_local_path = os.path.join(self.repo.dir, "src", "test", "resources", "job-scheduler")
         for file in glob.glob(os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")):
             os.unlink(file)
-        job_scheduler = self.build_manifest.get_component("job-scheduler")
+        job_scheduler = self.build_manifest.components["job-scheduler"]
         DependencyInstaller(self.build_manifest.build).install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
 
     @staticmethod

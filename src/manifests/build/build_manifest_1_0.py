@@ -79,26 +79,17 @@ class BuildManifest_1_0(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
-        self.components = list(map(lambda entry: self.Component(entry), data.get("components", [])))
+        self.components = BuildManifest_1_0.Components(data.get("components", []))
 
     def __to_dict__(self):
-        return {
-            "schema-version": "1.0",
-            "build": self.build.__to_dict__(),
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
-        }
+        return {"schema-version": "1.0", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
 
-    def get_component(self, component_name):
-        component = next(
-            iter(filter(lambda comp: comp.name == component_name, self.components)),
-            None,
-        )
-        if component is None:
-            raise BuildManifest_1_0.ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
-        return component
+    class Components(dict):
+        def __init__(self, data):
+            super().__init__(map(lambda component: (component["name"], BuildManifest_1_0.Component(component)), data))
 
-    class ComponentNotFoundError(Exception):
-        pass
+        def to_dict(self):
+            return list(map(lambda component: component.__to_dict__(), self.values()))
 
     class Build:
         def __init__(self, data):

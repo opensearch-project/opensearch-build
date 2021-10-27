@@ -30,8 +30,8 @@ class Bundle(ABC):
         :param artifacts_dir: Dir location where build artifacts can be found locally
         :param bundle_recorder: The bundle recorder that will capture and build a BundleManifest
         """
-        self.min_tarball = self.__get_min_bundle(build_manifest.components)
-        self.plugins = self.__get_plugins(build_manifest.components)
+        self.min_tarball = self.__get_min_bundle(build_manifest.components.values())
+        self.plugins = self.__get_plugins(build_manifest.components.values())
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory()

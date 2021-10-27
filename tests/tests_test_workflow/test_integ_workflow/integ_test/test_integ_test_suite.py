@@ -141,9 +141,10 @@ class TestIntegSuite(unittest.TestCase):
             "s3_bucket_name",
             mock_test_recorder,
         )
-        with self.assertRaises(BuildManifest.ComponentNotFoundError) as context:
+        with self.assertRaises(KeyError) as ctx:
             integ_test_suite.execute()
-        self.assertEqual(str(context.exception), "job-scheduler not found in build manifest.yml")
+
+        self.assertEqual(str(ctx.exception), "'job-scheduler'")
         mock_install_build_dependencies.assert_not_called()
 
     def __get_test_config_and_bundle_component(self, component_name):

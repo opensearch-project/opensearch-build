@@ -31,13 +31,9 @@ def main():
 
         logging.info(f"Sanity testing {manifest.build.name}")
 
-        for component in manifest.components:
+        for component in manifest.components.select(focus=args.component):
+            logging.info(f"Sanity testing {component.name}")
 
-            if args.component and args.component != component.name:
-                logging.info(f"Skipping {component.name}")
-                continue
-
-            logging.info(f"Sanity checking {component.name}")
             with GitRepository(
                 component.repository,
                 component.ref,

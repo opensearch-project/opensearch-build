@@ -14,6 +14,10 @@ schema-version: "1.0"
 build:
   name: string
   version: string
+ci:
+  image:
+    name: docker image name to pull
+    args: args to execute builds with, e.g. -e JAVA_HOME=...
 components:
   - name: string
     repository: URL of git repository
@@ -22,14 +26,21 @@ components:
     checks: CI checks
       - check1
       - ...
+    platforms: optional list of supported platforms
+      - windows
+      - darwin
+      - linux
   - ...
 """
+import itertools
+import logging
 
 from manifests.manifest import Manifest
 
 
 class InputManifest(Manifest):
     SCHEMA = {
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "build": {
             "required": True,
             "type": "dict",
@@ -45,14 +56,10 @@ class InputManifest(Manifest):
                 "image": {
                     "required": False,
                     "type": "dict",
-                    "schema": {
-                        "name": {"required": True, "type": "string"},
-                        "args": {"required": False, "type": "string"}
-                    },
+                    "schema": {"name": {"required": True, "type": "string"}, "args": {"required": False, "type": "string"}},
                 },
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "components": {
             "type": "list",
             "schema": {
@@ -66,6 +73,10 @@ class InputManifest(Manifest):
                         "type": "list",
                         "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]},
                     },
+                    "platforms": {
+                        "type": "list",
+                        "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]},
+                    },
                 },
             },
         },
@@ -76,14 +87,14 @@ class InputManifest(Manifest):
 
         self.build = self.Build(data["build"])
         self.ci = self.Ci(data.get("ci", None))
-        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
+        self.components = InputManifest.Components(data.get("components", []))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
             "ci": None if self.ci is None else self.ci.__to_dict__(),
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
+            "components": self.components.to_dict(),
         }
 
     class Ci:
@@ -109,6 +120,29 @@ class InputManifest(Manifest):
         def __to_dict__(self):
             return {"name": self.name, "version": self.version}
 
+    class Components(dict):
+        def __init__(self, data):
+            super().__init__(map(lambda component: (component["name"], InputManifest.Component(component)), data))
+
+        def select(self, focus=None, platform=None):
+            """
+            Select components.
+
+            :param str focus: Choose one component.
+            :param str platform: Only components targeting a given platform.
+            :return: Collection of components.
+            :raises ValueError: Invalid platform or component name specified.
+            """
+            selected, it = itertools.tee(filter(lambda component: component.matches(focus, platform), self.values()))
+
+            if not any(it):
+                raise ValueError(f"No components matched focus={focus}, platform={platform}.")
+
+            return selected
+
+        def to_dict(self):
+            return list(map(lambda component: component.__to_dict__(), self.values()))
+
     class Component:
         def __init__(self, data):
             self.name = data["name"]
@@ -116,6 +150,7 @@ class InputManifest(Manifest):
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
+            self.platforms = data.get("platforms", None)
 
         def __to_dict__(self):
             return Manifest.compact(
@@ -125,8 +160,17 @@ class InputManifest(Manifest):
                     "ref": self.ref,
                     "working_directory": self.working_directory,
                     "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
+                    "platforms": self.platforms,
                 }
             )
+
+        def matches(self, focus=None, platform=None):
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+
+            if not matches:
+                logging.info(f"Skipping {self.name}")
+
+            return matches
 
     class Check:
         def __init__(self, data):
@@ -145,6 +189,4 @@ class InputManifest(Manifest):
                 return self.name
 
 
-InputManifest.VERSIONS = {
-    "1.0": InputManifest
-}
+InputManifest.VERSIONS = {"1.0": InputManifest}

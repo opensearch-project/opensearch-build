@@ -4,6 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import itertools
+import logging
 import os
 
 from aws.s3_bucket import S3Bucket
@@ -87,23 +89,10 @@ class BuildManifest(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
-        self.components = list(map(lambda entry: self.Component(entry), data.get("components", [])))
+        self.components = BuildManifest.Components(data.get("components", []))
 
     def __to_dict__(self):
-        return {
-            "schema-version": "1.2",
-            "build": self.build.__to_dict__(),
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
-        }
-
-    def get_component(self, component_name):
-        component = next(
-            iter(filter(lambda comp: comp.name == component_name, self.components)),
-            None,
-        )
-        if component is None:
-            raise BuildManifest.ComponentNotFoundError(f"{component_name} not found in build manifest.yml")
-        return component
+        return {"schema-version": "1.2", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
 
     @staticmethod
     def get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture):
@@ -118,9 +107,6 @@ class BuildManifest(Manifest):
         build_manifest = BuildManifest.from_path("manifest.yml")
         os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
         return build_manifest
-
-    class ComponentNotFoundError(Exception):
-        pass
 
     class Build:
         def __init__(self, data):
@@ -139,6 +125,28 @@ class BuildManifest(Manifest):
                 "id": self.id,
             }
 
+    class Components(dict):
+        def __init__(self, data):
+            super().__init__(map(lambda component: (component["name"], BuildManifest.Component(component)), data))
+
+        def to_dict(self):
+            return list(map(lambda component: component.__to_dict__(), self.values()))
+
+        def select(self, focus=None):
+            """
+            Select components.
+
+            :param str focus: Choose one component.
+            :return: Collection of components.
+            :raises ValueError: Invalid platform or component name specified.
+            """
+            selected, it = itertools.tee(filter(lambda component: component.matches(focus), self.values()))
+
+            if not any(it):
+                raise ValueError(f"No components matched focus={focus}.")
+
+            return selected
+
     class Component:
         def __init__(self, data):
             self.name = data["name"]
@@ -147,6 +155,14 @@ class BuildManifest(Manifest):
             self.commit_id = data["commit_id"]
             self.artifacts = data.get("artifacts", [])
             self.version = data["version"]
+
+        def matches(self, focus=None, platform=None):
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+
+            if not matches:
+                logging.info(f"Skipping {self.name}")
+
+            return matches
 
         def __to_dict__(self):
             return {
@@ -159,8 +175,4 @@ class BuildManifest(Manifest):
             }
 
 
-BuildManifest.VERSIONS = {
-    "1.0": BuildManifest_1_0,
-    "1.1": BuildManifest_1_1,
-    "1.2": BuildManifest
-}
+BuildManifest.VERSIONS = {"1.0": BuildManifest_1_0, "1.1": BuildManifest_1_1, "1.2": BuildManifest}
