@@ -84,7 +84,7 @@ WORKDIR $OPENSEARCH_HOME
 RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh
 
 # Copy KNN Lib
-RUN cp -v plugins/opensearch-knn/knnlib/libKNNIndex*.so /usr/lib
+RUN cp -v plugins/opensearch-knn/knnlib/lib*.so /usr/lib
 
 # Change user
 USER $UID

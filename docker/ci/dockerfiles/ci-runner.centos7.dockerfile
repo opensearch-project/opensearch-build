@@ -24,7 +24,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng cmake python3 python3-devel python3-pip
+    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng python3 python3-devel python3-pip
 
 # Install Python37 dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
@@ -113,6 +113,9 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     pip3 install pipenv && pipenv --version
 
+# Add k-NN Library dependencies
+RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
+RUN pip3 install cmake==3.21.3
 
 # Change User
 USER 1000

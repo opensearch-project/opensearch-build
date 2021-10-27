@@ -42,7 +42,7 @@ echo "done plugins"
 
 ##Check KNN lib existence in OpenSearch TAR distribution
 echo "Checking kNN library"
-FILE=`ls $KNN_LIB_DIR/libKNNIndex*.so`
+FILE=`ls $KNN_LIB_DIR/lib*.so`
 if test -f "$FILE"; then
     echo "FILE EXISTS $FILE"
 else

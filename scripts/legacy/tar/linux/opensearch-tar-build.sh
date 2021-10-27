@@ -157,7 +157,7 @@ cp $REPO_ROOT/scripts/legacy/tar/linux/opensearch-tar-install.sh $WORKING_DIR/
 
 # Setup k-NN-library
 mkdir -p $WORKING_DIR/plugins/opensearch-knn/knnlib
-cp $PLUGINS_TEMP/opensearch-knnlib-*/libKNNIndexV*.so $WORKING_DIR/plugins/opensearch-knn/knnlib 
+cp $PLUGINS_TEMP/opensearch-knnlib-*/lib*.so $WORKING_DIR/plugins/opensearch-knn/knnlib
 
 # Tar the bundle and clean up
 rm -rf $PLUGINS_TEMP

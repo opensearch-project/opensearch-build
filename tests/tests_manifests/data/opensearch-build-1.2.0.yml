@@ -2441,7 +2441,7 @@ components:
   version: 1.2.0.0
 - artifacts:
     libs:
-    - libs/libKNNIndexV2_0_11.so
+    - libs/libopensearchknn.so
     plugins:
     - plugins/opensearch-knn-1.2.0.0.zip
   commit_id: 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6
