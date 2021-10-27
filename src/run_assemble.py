@@ -6,11 +6,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import argparse
 import logging
 import os
 import sys
 
+from assemble_workflow.assemble_args import AssembleArgs
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
@@ -19,19 +19,7 @@ from system.temporary_directory import TemporaryDirectory
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Assemble an OpenSearch Bundle")
-    parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        help="Show more verbose output.",
-        action="store_const",
-        default=logging.INFO,
-        const=logging.DEBUG,
-        dest="logging_level",
-    )
-    parser.add_argument("-b", "--base-url", dest="base_url", help="The base url to download the artifacts.")
-    args = parser.parse_args()
+    args = AssembleArgs()
 
     console.configure(level=args.logging_level)
 
@@ -41,7 +29,7 @@ def main():
     output_dir = os.path.join(os.getcwd(), "dist")
     os.makedirs(output_dir, exist_ok=True)
 
-    with TemporaryDirectory(chdir=True):
+    with TemporaryDirectory(chdir=True, keep=args.keep):
         logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
         bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
