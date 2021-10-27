@@ -19,6 +19,7 @@
     "alerting-dashboards-plugin": "git@github.com:opensearch-project/alerting-dashboards-plugin.git",
     "notifications": "git@github.com:opensearch-project/notifications.git",
     "index-management-dashboards-plugin": "git@github.com:opensearch-project/index-management-dashboards-plugin.git",
-    "anomaly-detection-dashboards-plugin": "git@github.com:opensearch-project/anomaly-detection-dashboards-plugin.git"
+    "anomaly-detection-dashboards-plugin": "git@github.com:opensearch-project/anomaly-detection-dashboards-plugin.git",
+    "cross-cluster-replication": "git@github.com:opensearch-project/cross-cluster-replication.git"
   }
 }
