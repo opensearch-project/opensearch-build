@@ -28,7 +28,9 @@
   - [Making a Release](#making-a-release)
     - [Releasing for Linux](#releasing-for-linux)
     - [Releasing for FreeBSD](#releasing-for-freebsd)
-  - [Deploying infrastructure](#deploying-infrastructure)
+    - [Releasing for Windows](#releasing-for-windows)
+    - [Releasing for MacOS](#releasing-for-macos)
+  - [Deploying Infrastructure](#deploying-infrastructure)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
 - [Code of Conduct](#code-of-conduct)
@@ -353,7 +355,15 @@ The Linux release is managed by a team at Amazon following [this release templat
 
 The FreeBSD ports and packages for OpenSearch are managed by a community [OpenSearch Team](https://wiki.freebsd.org/OpenSearch) at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
 
-### Deploying infrastructure
+#### Releasing for Windows
+
+At this moment there's no official Windows distribution. However, this project does support building and assembling OpenSearch for Windows, with some caveats. See [opensearch-build#33](https://github.com/opensearch-project/opensearch-build/issues/33) for details.
+
+#### Releasing for MacOS
+
+At this moment there's no official MacOS distribution. However, this project does support building and assembling OpenSearch for MacOS. See [opensearch-build#37](https://github.com/opensearch-project/opensearch-build/issues/37) and [#38](https://github.com/opensearch-project/opensearch-build/issues/38) for more details.
+
+### Deploying Infrastructure
 
 Storage and access roles for the OpenSearch release process are codified in a [CDK project](deployment/README.md).
 

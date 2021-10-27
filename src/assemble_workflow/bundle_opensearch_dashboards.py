@@ -12,6 +12,6 @@ from assemble_workflow.bundle import Bundle
 class BundleOpenSearchDashboards(Bundle):
     def install_plugin(self, plugin):
         tmp_path = self._copy_component(plugin, "plugins")
-        cli_path = os.path.join(self.archive_path, "bin", "opensearch-dashboards-plugin")
+        cli_path = os.path.join(self.min_dist.archive_path, "bin", "opensearch-dashboards-plugin")
         self._execute(f"{cli_path} --allow-root install file:{tmp_path}")
         super().install_plugin(plugin)

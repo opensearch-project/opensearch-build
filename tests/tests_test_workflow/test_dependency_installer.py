@@ -14,7 +14,7 @@ class DependencyInstallerTests(unittest.TestCase):
             "..",
             "tests_assemble_workflow",
             "data",
-            "opensearch-build-1.1.0.yml",
+            "opensearch-build-linux-1.1.0.yml",
         )
         self.manifest = BuildManifest.from_path(self.manifest_filename)
         with patch("test_workflow.dependency_installer.S3Bucket") as mock_s3_bucket:

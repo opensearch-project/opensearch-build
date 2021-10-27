@@ -16,7 +16,7 @@ from manifests.build_manifest import BuildManifest
 
 class TestBundles(unittest.TestCase):
     def test_bundle_opensearch(self):
-        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
         self.assertIs(type(bundle), BundleOpenSearch)

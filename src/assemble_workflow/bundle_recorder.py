@@ -16,7 +16,7 @@ class BundleRecorder:
         self.build_id = build.id
         self.base_url = base_url
         self.version = build.version
-        self.tar_name = self.__get_tar_name(build)
+        self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
         self.architecture = build.architecture
         self.bundle_manifest = self.BundleManifestBuilder(
@@ -25,17 +25,17 @@ class BundleRecorder:
             build.version,
             build.platform,
             build.architecture,
-            self.__get_tar_location(),
+            self.__get_package_location(),
         )
 
-    def __get_tar_name(self, build):
+    def __get_package_name(self, build):
         parts = [
             build.name.lower().replace(" ", "-"),
             build.version,
             build.platform,
             build.architecture,
         ]
-        return "-".join(parts) + ".tar.gz"
+        return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
 
     def __get_public_url_path(self, folder, rel_path):
         path = "/".join((folder, rel_path))
@@ -48,8 +48,8 @@ class BundleRecorder:
 
     # Assembled bundles are expected to be served from a separate "bundles" folder
     # Example: https://artifacts.opensearch.org/bundles/1.0.0/<build-id
-    def __get_tar_location(self):
-        return self.__get_location("dist", self.tar_name, os.path.join(self.output_dir, self.tar_name))
+    def __get_package_location(self):
+        return self.__get_location("dist", self.package_name, os.path.join(self.output_dir, self.package_name))
 
     # Build artifacts are expected to be served from a "builds" folder
     # Example: https://artifacts.opensearch.org/builds/1.0.0/<build-id>

@@ -18,7 +18,7 @@ from system.temporary_directory import TemporaryDirectory
 class TestBundleRecorder(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
         self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None)
 
@@ -144,8 +144,8 @@ class TestBundleRecorder(unittest.TestCase):
             "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
         )
 
-    def test_tar_name(self):
-        self.assertEqual(self.bundle_recorder.tar_name, "opensearch-1.1.0-linux-x64.tar.gz")
+    def test_package_name(self):
+        self.assertEqual(self.bundle_recorder.package_name, "opensearch-1.1.0-linux-x64.tar.gz")
 
 
 class TestBundleRecorderDashboards(unittest.TestCase):
@@ -276,8 +276,8 @@ class TestBundleRecorderDashboards(unittest.TestCase):
             "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
         )
 
-    def test_tar_name(self):
+    def test_package_name(self):
         self.assertEqual(
-            self.bundle_recorder.tar_name,
+            self.bundle_recorder.package_name,
             "opensearch-dashboards-1.1.0-linux-x64.tar.gz",
         )

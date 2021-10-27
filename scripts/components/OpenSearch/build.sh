@@ -78,25 +78,21 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 [ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
-case "$(uname -s)" in
-    Linux*) 
+case $PLATFORM in
+    linux*)
         PACKAGE="tar"
         EXT="tar.gz"
         ;;
-    Darwin*)
+    darwin*)
         PACKAGE="tar"
         EXT="tar.gz"
         ;;
-    CYGWIN*)
-        PACKAGE="zip"
-        EXT="zip"
-        ;;
-    MINGW*)
+    windows*)
         PACKAGE="zip"
         EXT="zip"
         ;;
     *)
-        echo "Unsupported system: $(uname -s)"
+        echo "Unsupported platform: $PLATFORM"
         exit 1
         ;;
 esac
@@ -111,7 +107,7 @@ case $ARCHITECTURE in
         QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
-        echo "Unsupported architecture: ${ARCHITECTURE}"
+        echo "Unsupported architecture: $ARCHITECTURE"
         exit 1
         ;;
 esac

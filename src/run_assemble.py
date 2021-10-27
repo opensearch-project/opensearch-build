@@ -30,7 +30,7 @@ def main():
         const=logging.DEBUG,
         dest="logging_level",
     )
-    parser.add_argument("-b", "--base-url", dest='base_url', help="The base url to download the artifacts.")
+    parser.add_argument("-b", "--base-url", dest="base_url", help="The base url to download the artifacts.")
     args = parser.parse_args()
 
     console.configure(level=args.logging_level)
@@ -46,17 +46,16 @@ def main():
 
         bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
-        bundle = Bundles.create(build_manifest, artifacts_dir, bundle_recorder)
+        with Bundles.create(build_manifest, artifacts_dir, bundle_recorder) as bundle:
+            bundle.install_min()
+            bundle.install_plugins()
+            logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
-        bundle.install_min()
-        bundle.install_plugins()
-        logging.info(f"Installed plugins: {bundle.installed_plugins}")
+            #  Save a copy of the manifest inside of the tar
+            bundle_recorder.write_manifest(bundle.min_dist.archive_path)
+            bundle.package(output_dir)
 
-        #  Save a copy of the manifest inside of the tar
-        bundle_recorder.write_manifest(bundle.archive_path)
-        bundle.build_tar(output_dir)
-
-        bundle_recorder.write_manifest(output_dir)
+            bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")
 
