@@ -77,6 +77,11 @@ case $ARCHITECTURE in
         ;;
 esac
 
+echo "Copying dashboard to .cache for reuse"
+rm -rf ~/.cache/opensearch-project/$VERSION/OpenSearch-Dashboards/
+mkdir -p ~/.cache/opensearch-project/$VERSION/OpenSearch-Dashboards/
+cp -r . ~/.cache/opensearch-project/$VERSION/OpenSearch-Dashboards/
+
 echo "Building node modules for core"
 yarn osd bootstrap
 

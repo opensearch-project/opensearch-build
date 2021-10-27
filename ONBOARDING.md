@@ -8,7 +8,7 @@ This document describes steps to onboard a new plugin to release workflow for co
 
 2. Create a `scripts/build.sh` if you have specific requirements that are not covered by the [default build.sh script](/scripts/default/build.sh) and commit it to your repository.
 
-3. Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT tagged artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
+3. Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT tagged artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`. If building a opensearch-dashboards plugin be sure to have the opensearch-dashboards core already in cache. 
 
 4. Execute `./build.sh` to ensure your component builds and all artifacts are correctly placed into ./artifacts/ with correct output names.
 
