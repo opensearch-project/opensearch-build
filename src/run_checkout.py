@@ -25,9 +25,9 @@ def main():
     with TemporaryDirectory(keep=True, chdir=True) as work_dir:
         logging.info(f"Checking out into {work_dir.name}")
 
-        for component in manifest.components:
-
+        for component in manifest.components.select():
             logging.info(f"Checking out {component.name}")
+
             with GitRepository(
                 component.repository,
                 component.ref,

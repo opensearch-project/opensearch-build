@@ -24,14 +24,15 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.0.0")
         self.assertEqual(len(manifest.components), 12)
-        opensearch_component = manifest.components[0]
+        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        opensearch_component = manifest.components["OpenSearch"]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
             "https://github.com/opensearch-project/OpenSearch.git",
         )
         self.assertEqual(opensearch_component.ref, "1.0")
-        for component in manifest.components:
+        for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)
 
     def test_1_1(self):
@@ -41,8 +42,9 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(manifest.components), 15)
+        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         # opensearch component
-        opensearch_component = manifest.components[0]
+        opensearch_component = manifest.components["OpenSearch"]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -50,10 +52,10 @@ class TestInputManifest(unittest.TestCase):
         )
         self.assertEqual(opensearch_component.ref, "1.1")
         # components
-        for component in manifest.components:
+        for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)
         # alerting component checks
-        alerting_component = next(c for c in manifest.components if c.name == "alerting")
+        alerting_component = manifest.components["alerting"]
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:
@@ -70,8 +72,9 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019")
         self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
         self.assertEqual(len(manifest.components), 5)
+        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         # opensearch component
-        opensearch_component = manifest.components[0]
+        opensearch_component = manifest.components["OpenSearch"]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -79,10 +82,10 @@ class TestInputManifest(unittest.TestCase):
         )
         self.assertEqual(opensearch_component.ref, "1.x")
         # components
-        for component in manifest.components:
+        for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)
         # alerting component checks
-        alerting_component = next(c for c in manifest.components if c.name == "alerting")
+        alerting_component = manifest.components["alerting"]
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:
@@ -104,3 +107,34 @@ class TestInputManifest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             InputManifest.from_path(manifest_path)
         self.assertTrue(str(context.exception).startswith("Invalid manifest schema: {'components': "))
+
+    def test_select(self):
+        path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest = InputManifest.from_path(path)
+        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(platform="windows"))), 13)
+        self.assertEqual(len(list(manifest.components.select(focus="k-NN", platform="linux"))), 1)
+
+    def test_select_none(self):
+        path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest = InputManifest.from_path(path)
+        with self.assertRaises(ValueError) as ctx:
+            self.assertEqual(len(list(manifest.components.select(focus="k-NN", platform="windows"))), 0)
+        self.assertEqual(str(ctx.exception), "No components matched focus=k-NN, platform=windows.")
+
+    def test_component_matches(self):
+        self.assertTrue(InputManifest.Component({"name": "x", "repository": "", "ref": ""}).matches())
+
+    def test_component_matches_platform(self):
+        data = {"name": "x", "repository": "", "ref": ""}
+        self.assertTrue(InputManifest.Component(data).matches(platform=None))
+        self.assertTrue(InputManifest.Component(data).matches(platform="x"))
+        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux"]}).matches(platform="linux"))
+        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux", "windows"]}).matches(platform="linux"))
+        self.assertFalse(InputManifest.Component({**data, "platforms": ["linux"]}).matches(platform="x"))
+
+    def test_component_matches_focus(self):
+        component = InputManifest.Component({"name": "x", "repository": "", "ref": ""})
+        self.assertTrue(component.matches(focus=None))
+        self.assertTrue(component.matches(focus="x"))
+        self.assertFalse(component.matches(focus="y"))

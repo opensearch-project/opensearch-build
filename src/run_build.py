@@ -42,16 +42,9 @@ def main():
 
         build_recorder = BuildRecorder(target)
 
-        logging.info(
-            f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}"
-        )
+        logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
-        for component in manifest.components:
-
-            if args.component and args.component != component.name:
-                logging.info(f"Skipping {component.name}")
-                continue
-
+        for component in manifest.components.select(focus=args.component, platform=target.platform):
             logging.info(f"Building {component.name}")
 
             with GitRepository(
