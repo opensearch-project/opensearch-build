@@ -12,6 +12,8 @@ import tarfile
 import zipfile
 from abc import ABC, abstractmethod
 
+from system.zip_file import ZipFile
+
 
 class Dist(ABC):
     def __init__(self, name, path):
@@ -53,11 +55,11 @@ class Dist(ABC):
 
 class DistZip(Dist):
     def __extract__(self, dest):
-        with zipfile.ZipFile(self.path, "r") as zip:
+        with ZipFile(self.path, "r") as zip:
             zip.extractall(dest)
 
     def __build__(self, name, dest):
-        with zipfile.ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
+        with ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
             rootlen = len(self.archive_path) + 1
             for base, dirs, files in os.walk(self.archive_path):
                 for file in files:
@@ -67,7 +69,7 @@ class DistZip(Dist):
 
 class DistTar(Dist):
     def __extract__(self, dest):
-        with tarfile.open(self.path, "r") as tar:
+        with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
     def __build__(self, name, dest):
