@@ -39,4 +39,4 @@ done
 # see https://github.com/opensearch-project/k-NN/issues/80 to make this part of the plugin installer
 echo "Copying libKNN from $ARTIFACTS to $OUTPUT ..."
 mkdir -p "$OUTPUT/plugins/opensearch-knn/knnlib"
-cp "$ARTIFACTS"/libs/libKNN* "$OUTPUT/plugins/opensearch-knn/knnlib"
+cp "$ARTIFACTS"/libs/lib*knn* "$ARTIFACTS"/libs/lib*KNN* "$OUTPUT/plugins/opensearch-knn/knnlib"
