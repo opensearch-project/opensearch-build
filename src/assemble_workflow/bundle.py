@@ -29,7 +29,7 @@ class Bundle(ABC):
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.tmp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
-    def __init__(self, build_manifest, artifacts_dir, bundle_recorder):
+    def __init__(self, build_manifest, artifacts_dir, bundle_recorder, keep=False):
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -39,7 +39,7 @@ class Bundle(ABC):
         self.plugins = self.__get_plugins(build_manifest.components.values())
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
-        self.tmp_dir = TemporaryDirectory()
+        self.tmp_dir = TemporaryDirectory(keep=keep)
         self.min_dist = self.__get_min_dist(build_manifest.components.values())
         self.installed_plugins = []
 

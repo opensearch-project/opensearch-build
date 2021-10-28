@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import os
-import tempfile
 import unittest
 from unittest.mock import MagicMock, call, patch
 
@@ -31,14 +30,12 @@ class TestRunAssemble(unittest.TestCase):
 
     @patch("os.chdir")
     @patch("os.makedirs")
+    @patch("shutil.copy2")
     @patch("os.getcwd", return_value="curdir")
     @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST])
     @patch("run_assemble.Bundles.create")
     @patch("run_assemble.BundleRecorder", return_value=MagicMock())
-    @patch("run_assemble.TemporaryDirectory")
-    @patch("shutil.copy2")
-    def test_main(self, mock_copy, mock_temp, mock_recorder, mock_bundles, *mocks):
-        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+    def test_main(self, mock_recorder, mock_bundles, *mocks):
         mock_bundle = MagicMock(min_dist=MagicMock(archive_path="path"))
         mock_bundles.return_value.__enter__.return_value = mock_bundle
 
