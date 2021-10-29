@@ -31,6 +31,7 @@ def main():
         target = BuildTarget(
             name=manifest.build.name,
             version=manifest.build.version,
+            patches=manifest.build.patches,
             snapshot=args.snapshot,
             output_dir=output_dir,
             platform=args.platform,

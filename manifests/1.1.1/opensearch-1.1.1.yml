@@ -3,6 +3,8 @@ schema-version: "1.0"
 build:
   name: OpenSearch
   version: 1.1.1
+  patches: 
+    - 1.1.0
 components:
   - name: OpenSearch
     dist: https://ci.opensearch.org/ci/dbc/builds/1.1.0/405

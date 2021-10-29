@@ -36,7 +36,7 @@ class BuilderFromDist(Builder):
             logging.info(f"Downloading into {artifact_path} ...")
             for artifact in component_manifest.artifacts[artifact_type]:
                 artifact_url = f"{self.component.dist}/{self.target.architecture}/{artifact}"
-                artifact_dest = os.path.join(self.output_path, artifact)
+                artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
                 os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
                 logging.info(f"Downloading {artifact_url} into {artifact_dest}")
                 urllib.request.urlretrieve(artifact_url, artifact_dest)

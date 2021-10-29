@@ -6,13 +6,12 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_dist import BuilderFromDist
 from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputManifest
-from paths.script_finder import ScriptFinder
 
 
 class TestBuilderFromDist(unittest.TestCase):
@@ -49,8 +48,11 @@ class TestBuilderFromDist(unittest.TestCase):
         self.builder.build_manifest = BuildManifest.from_path(manifest_path)
         self.builder.export_artifacts(build_recorder)
         build_recorder.record_component.assert_called_with("common-utils", mock_manifest_git_repository.return_value)
-        mock_makedirs.assert_called_with("builds/maven/org/opensearch/common-utils/1.1.0.0", exist_ok=True)
+        mock_makedirs.assert_called_with(
+            os.path.realpath(os.path.join("builds", "maven", "org", "opensearch", "common-utils", "1.1.0.0")),
+            exist_ok=True
+        )
         mock_urllib.assert_called_with(
             "url/x64/maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar",
-            "builds/maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar",
+            os.path.realpath(os.path.join("builds", "maven", "org", "opensearch", "common-utils", "1.1.0.0", "common-utils-1.1.0.0.jar")),
         )

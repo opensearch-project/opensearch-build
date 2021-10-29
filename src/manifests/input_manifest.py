@@ -14,6 +14,7 @@ schema-version: "1.0"
 build:
   name: string
   version: string
+  patches: optional list of compatible versions this build is patching
 ci:
   image:
     name: docker image name to pull
@@ -47,6 +48,10 @@ class InputManifest(Manifest):
             "schema": {
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
+                "patches": {
+                    "type": "list",
+                    "schema": {"type": "string"},
+                },
             },
         },
         "ci": {
@@ -131,9 +136,10 @@ class InputManifest(Manifest):
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
+            self.patches = data.get("patches", [])
 
         def __to_dict__(self):
-            return {"name": self.name, "version": self.version}
+            return Manifest.compact({"name": self.name, "version": self.version, "patches": self.patches})
 
     class Components(dict):
         def __init__(self, data):

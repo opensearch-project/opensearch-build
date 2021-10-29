@@ -34,14 +34,10 @@ class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
                 data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
                 properties = PropertiesFile(data)
                 try:
-                    properties.check_value_in(
-                        "Implementation-Version",
-                        [
-                            self.target.component_version,
-                            self.target.opensearch_version,
-                            None,
-                        ],
-                    )
+                    versions = [None]
+                    versions.extend(self.target.compatible_component_versions)
+                    versions.extend(self.target.compatible_opensearch_versions)
+                    properties.check_value_in("Implementation-Version", versions)
                 except PropertiesFile.CheckError as e:
                     raise BuildArtifactCheck.BuildArtifactInvalidError(path, str(e))
                 logging.info(f'Checked {path} ({properties.get_value("Implementation-Version", "N/A")})')
