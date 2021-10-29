@@ -13,8 +13,7 @@ import sys
 from build_workflow.build_args import BuildArgs
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
-from build_workflow.builder import Builder
-from git.git_repository import GitRepository
+from build_workflow.builders import Builders
 from manifests.input_manifest import InputManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
@@ -47,19 +46,14 @@ def main():
         for component in manifest.components.select(focus=args.component, platform=target.platform):
             logging.info(f"Building {component.name}")
 
-            with GitRepository(
-                component.repository,
-                component.ref,
-                os.path.join(work_dir.name, component.name),
-                component.working_directory,
-            ) as repo:
-                try:
-                    builder = Builder(component.name, repo, build_recorder)
-                    builder.build(target)
-                    builder.export_artifacts()
-                except:
-                    logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                    raise
+            builder = Builders.builder_from(component, target)
+            try:
+                builder.checkout(work_dir.name)
+                builder.build(build_recorder)
+                builder.export_artifacts(build_recorder)
+            except:
+                logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
+                raise
 
         build_recorder.write_manifest()
 

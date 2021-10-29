@@ -47,6 +47,12 @@ components:
 class BuildManifest(Manifest):
     components: list
 
+    VERSIONS = {
+        "1.0": BuildManifest_1_0,
+        "1.1": BuildManifest_1_1,
+        # "1.2" : current
+    }
+
     SCHEMA = {
         "build": {
             "required": True,

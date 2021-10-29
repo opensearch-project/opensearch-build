@@ -63,21 +63,36 @@ class InputManifest(Manifest):
         "components": {
             "type": "list",
             "schema": {
-                "type": "dict",
-                "schema": {
-                    "name": {"required": True, "type": "string"},
-                    "ref": {"required": True, "type": "string"},
-                    "repository": {"required": True, "type": "string"},
-                    "working_directory": {"type": "string"},
-                    "checks": {
-                        "type": "list",
-                        "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]},
+                "anyof": [
+                    {
+                        "type": "dict",
+                        "schema": {
+                            "name": {"required": True, "type": "string"},
+                            "ref": {"required": True, "type": "string"},
+                            "repository": {"required": True, "type": "string"},
+                            "working_directory": {"type": "string"},
+                            "checks": {
+                                "type": "list",
+                                "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]},
+                            },
+                            "platforms": {
+                                "type": "list",
+                                "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]},
+                            },
+                        },
                     },
-                    "platforms": {
-                        "type": "list",
-                        "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]},
+                    {
+                        "type": "dict",
+                        "schema": {
+                            "name": {"required": True, "type": "string"},
+                            "dist": {"required": True, "type": "string"},
+                            "platforms": {
+                                "type": "list",
+                                "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]},
+                            },
+                        },
                     },
-                },
+                ]
             },
         },
     }
@@ -122,7 +137,7 @@ class InputManifest(Manifest):
 
     class Components(dict):
         def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], InputManifest.Component(component)), data))
+            super().__init__(map(lambda component: (component["name"], InputManifest.Component._from(component)), data))
 
         def select(self, focus=None, platform=None):
             """
@@ -146,11 +161,35 @@ class InputManifest(Manifest):
     class Component:
         def __init__(self, data):
             self.name = data["name"]
+            self.platforms = data.get("platforms", None)
+
+        def __to_dict__(self):
+            return Manifest.compact({"name": self.name})
+
+        @classmethod
+        def _from(self, data):
+            if "repository" in data:
+                return InputManifest.ComponentFromSource(data)
+            elif "dist" in data:
+                return InputManifest.ComponentFromDist(data)
+            else:
+                raise ValueError(f"Invalid component data: {data}")
+
+        def matches(self, focus=None, platform=None):
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+
+            if not matches:
+                logging.info(f"Skipping {self.name}")
+
+            return matches
+
+    class ComponentFromSource(Component):
+        def __init__(self, data):
+            super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
-            self.platforms = data.get("platforms", None)
 
         def __to_dict__(self):
             return Manifest.compact(
@@ -164,13 +203,19 @@ class InputManifest(Manifest):
                 }
             )
 
-        def matches(self, focus=None, platform=None):
-            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+    class ComponentFromDist(Component):
+        def __init__(self, data):
+            super().__init__(data)
+            self.dist = data["dist"]
 
-            if not matches:
-                logging.info(f"Skipping {self.name}")
-
-            return matches
+        def __to_dict__(self):
+            return Manifest.compact(
+                {
+                    "name": self.name,
+                    "dist": self.dist,
+                    "platforms": self.platforms,
+                }
+            )
 
     class Check:
         def __init__(self, data):
