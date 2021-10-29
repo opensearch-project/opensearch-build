@@ -38,7 +38,19 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
             mock_check_call.assert_has_calls(
                 [
                     call(
-                        f'bash {ScriptFinder.find_install_script("OpenSearch-Dashboards")} -a "{artifacts_path}" -o "{bundle.min_dist.archive_path}"',
+                        " ".join(
+                            [
+                                "bash",
+                                ScriptFinder.find_install_script("OpenSearch-Dashboards"),
+                                "-v 1.1.0",
+                                "-p linux",
+                                "-a x64",
+                                "-f",
+                                artifacts_path,
+                                "-o",
+                                bundle.min_dist.archive_path,
+                            ]
+                        ),
                         cwd=bundle.min_dist.archive_path,
                         shell=True,
                     ),
@@ -69,8 +81,19 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
                             shell=True,
                         ),
                         call(
-                            f'bash {ScriptFinder.find_install_script("alertingDashboards-1.1.0.zip")} -a '
-                            f'"{artifacts_path}" -o "{bundle.min_dist.archive_path}"',
+                            " ".join(
+                                [
+                                    "bash",
+                                    ScriptFinder.find_install_script("alertingDashboards"),
+                                    "-v 1.1.0",
+                                    "-p linux",
+                                    "-a x64",
+                                    "-f",
+                                    artifacts_path,
+                                    "-o",
+                                    bundle.min_dist.archive_path,
+                                ]
+                            ),
                             cwd=bundle.min_dist.archive_path,
                             shell=True,
                         ),

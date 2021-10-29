@@ -42,10 +42,27 @@ class Bundle(ABC):
         self.tmp_dir = TemporaryDirectory(keep=keep)
         self.min_dist = self.__get_min_dist(build_manifest.components.values())
         self.installed_plugins = []
+        self.build = build_manifest.build
 
     def install_min(self):
-        post_install_script = ScriptFinder.find_install_script(self.min_dist.name)
-        self._execute(f'bash {post_install_script} -a "{self.artifacts_dir}" -o "{self.min_dist.archive_path}"')
+        install_script = ScriptFinder.find_install_script(self.min_dist.name)
+        install_command = " ".join(
+            [
+                "bash",
+                install_script,
+                "-v",
+                self.build.version,
+                "-p",
+                self.build.platform,
+                "-a",
+                self.build.architecture,
+                "-f",
+                self.artifacts_dir,
+                "-o",
+                self.min_dist.archive_path,
+            ]
+        )
+        self._execute(install_command)
 
     def install_plugins(self):
         for plugin in self.plugins:
@@ -57,8 +74,24 @@ class Bundle(ABC):
 
     @abstractmethod
     def install_plugin(self, plugin):
-        post_install_script = ScriptFinder.find_install_script(plugin.name)
-        self._execute(f'bash {post_install_script} -a "{self.artifacts_dir}" -o "{self.min_dist.archive_path}"')
+        install_script = ScriptFinder.find_install_script(plugin.name)
+        install_command = " ".join(
+            [
+                "bash",
+                install_script,
+                "-v",
+                self.build.version,
+                "-p",
+                self.build.platform,
+                "-a",
+                self.build.architecture,
+                "-f",
+                self.artifacts_dir,
+                "-o",
+                self.min_dist.archive_path,
+            ]
+        )
+        self._execute(install_command)
 
     def package(self, dest):
         self.min_dist.build(self.bundle_recorder.package_name, dest)
@@ -94,6 +127,9 @@ class Bundle(ABC):
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
         min_dist_path = self._copy_component(min_bundle, "dist")
+        logging.info(f"Copied min bundle to {min_dist_path}.")
         min_dist = Dist.from_path(min_bundle.name, min_dist_path)
+        logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
+        logging.info(f"Extracted dist into {self.tmp_dir.name}.")
         return min_dist
