@@ -17,6 +17,7 @@
     - [Build from Source](#build-from-source)
       - [Custom Build Scripts](#custom-build-scripts)
     - [Assemble the Bundle](#assemble-the-bundle)
+      - [Cross-Platform Builds](#cross-platform-builds)
       - [Custom Install Scripts](#custom-install-scripts)
     - [Sign Artifacts](#sign-artifacts)
     - [Test the Bundle](#test-the-bundle)
@@ -201,6 +202,18 @@ The following options are available in `assemble.sh`.
 |--------------------|-------------------------------------------------------------------------|
 | -v, --verbose      | Show more verbose output.                                               |
 | -b, --base-url     | The base url to download the artifacts.                                 |
+
+##### Cross-Platform Builds
+
+You can perform cross-platform builds. For example, build and assemble a Windows distribution on MacOS.
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plugin during assemble
+./build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot --platform windows
+./assemble.sh builds/manifest.yml
+```
+
+This will produce `dist/opensearch-1.1.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
 
 ##### Custom Install Scripts
 

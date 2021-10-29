@@ -94,6 +94,9 @@ class Bundle(ABC):
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
         min_dist_path = self._copy_component(min_bundle, "dist")
+        logging.info(f"Copied min bundle to {min_dist_path}.")
         min_dist = Dist.from_path(min_bundle.name, min_dist_path)
+        logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
+        logging.info(f"Extracted dist into {self.tmp_dir.name}.")
         return min_dist

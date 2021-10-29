@@ -119,7 +119,7 @@ class TestBundleOpenSearch(unittest.TestCase):
             MagicMock(package_name="opensearch.zip"),
         )
 
-        with patch("zipfile.ZipFile") as mock_zipfile_open:
+        with patch("assemble_workflow.dist.ZipFile") as mock_zipfile_open:
             mock_zipfile_write = MagicMock()
             mock_zipfile_open.return_value.__enter__.return_value.write = mock_zipfile_write
             with patch("shutil.copyfile") as mock_copyfile:
