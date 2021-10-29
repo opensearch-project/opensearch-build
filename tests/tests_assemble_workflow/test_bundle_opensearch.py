@@ -41,7 +41,19 @@ class TestBundleOpenSearch(unittest.TestCase):
             mock_check_call.assert_has_calls(
                 [
                     call(
-                        f'bash {ScriptFinder.find_install_script("OpenSearch")} -a "{artifacts_path}" -o "{bundle.min_dist.archive_path}"',
+                        " ".join(
+                            [
+                                "bash",
+                                ScriptFinder.find_install_script("OpenSearch"),
+                                "-v 1.1.0",
+                                "-p linux",
+                                "-a x64",
+                                "-f",
+                                artifacts_path,
+                                "-o",
+                                bundle.min_dist.archive_path,
+                            ]
+                        ),
                         cwd=bundle.min_dist.archive_path,
                         shell=True,
                     ),
@@ -85,7 +97,19 @@ class TestBundleOpenSearch(unittest.TestCase):
                             shell=True,
                         ),
                         call(
-                            f'bash {ScriptFinder.find_install_script("opensearch-job-scheduler")} -a "{artifacts_path}" -o "{bundle.min_dist.archive_path}"',
+                            " ".join(
+                                [
+                                    "bash",
+                                    ScriptFinder.find_install_script("opensearch-job-scheduler"),
+                                    "-v 1.1.0",
+                                    "-p linux",
+                                    "-a x64",
+                                    "-f",
+                                    artifacts_path,
+                                    "-o",
+                                    bundle.min_dist.archive_path,
+                                ]
+                            ),
                             cwd=bundle.min_dist.archive_path,
                             shell=True,
                         ),
