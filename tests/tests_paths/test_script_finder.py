@@ -128,8 +128,8 @@ class TestScriptFinder(unittest.TestCase):
 
     def test_find_install_script_component_override(self):
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "k-NN", "install.sh"),
-            ScriptFinder.find_install_script("k-NN"),
+            os.path.join(ScriptFinder.component_scripts_path, "performance-analyzer", "install.sh"),
+            ScriptFinder.find_install_script("performance-analyzer"),
             msg="A component without scripts resolves to a component override.",
         )
 
