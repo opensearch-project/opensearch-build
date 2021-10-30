@@ -69,7 +69,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.2.0")
-        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019")
+        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028")
         self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
         self.assertEqual(len(manifest.components), 5)
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
