@@ -15,6 +15,3 @@ components:
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: "1.1"
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version

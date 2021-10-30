@@ -7,13 +7,11 @@
 # compatible open source license.
 
 import logging
-import os
 import sys
 
-from ci_workflow.ci import Ci
 from ci_workflow.ci_args import CiArgs
+from ci_workflow.ci_check_lists import CiCheckLists
 from ci_workflow.ci_target import CiTarget
-from git.git_repository import GitRepository
 from manifests.input_manifest import InputManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
@@ -34,18 +32,13 @@ def main():
         for component in manifest.components.select(focus=args.component):
             logging.info(f"Sanity testing {component.name}")
 
-            with GitRepository(
-                component.repository,
-                component.ref,
-                os.path.join(work_dir.name, component.name),
-                component.working_directory,
-            ) as repo:
-                try:
-                    ci = Ci(component, repo, target)
-                    ci.check()
-                except:
-                    logging.error(f"Error checking {component.name}, retry with: {args.component_command(component.name)}")
-                    raise
+            try:
+                ci_check_list = CiCheckLists.from_component(component, target)
+                ci_check_list.checkout(work_dir.name)
+                ci_check_list.check()
+            except:
+                logging.error(f"Error checking {component.name}, retry with: {args.component_command(component.name)}")
+                raise
 
     logging.info("Done.")
 
