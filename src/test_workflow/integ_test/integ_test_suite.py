@@ -13,6 +13,8 @@ from paths.script_finder import ScriptFinder
 from paths.tree_walker import walk
 from system.execute import execute
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
+from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards
+from test_workflow.integ_test.local_test_cluster_opensearch import LocalTestClusterOpenSearch
 from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
@@ -85,8 +87,12 @@ class IntegTestSuite:
         if "additional-cluster-configs" in self.test_config.integ_test.keys():
             self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
+<<<<<<< HEAD
         with LocalTestCluster.create(
             self.dependency_installer,
+=======
+        with LocalTestClusterOpenSearchDashboards.create(
+>>>>>>> 3aa6338 (refactor LocalTestCluster into LocalTestClusterOpenSearch and LocalTestClusterOpenSearchDashboards)
             self.work_dir,
             self.component.name,
             self.additional_cluster_config,
