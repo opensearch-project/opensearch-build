@@ -39,7 +39,6 @@ class LocalTestClusterOpenSearch(TestCluster):
     ):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
-        # os.makedirs(self.work_dir, exist_ok=True)
         self.component_name = component_name
         self.security_enabled = security_enabled
         self.component_test_config = component_test_config
@@ -61,17 +60,6 @@ class LocalTestClusterOpenSearch(TestCluster):
 
     def create_cluster(self):
         self.opensearch.start()
-
-        # ServiceOpenSearch.start(
-        #     self.work_dir,
-        #     self.component_name,
-        #     self.additional_cluster_config,
-        #     self.manifest,
-        #     self.security_enabled,
-        #     self.component_test_config,
-        #     self.save_logs,
-        #     self.bucket_name,
-        # )
 
     def endpoint(self):
         return self.opensearch.endpoint()

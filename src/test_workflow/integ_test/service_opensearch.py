@@ -33,7 +33,6 @@ class ServiceOpenSearch:
         s3_bucket_name=None,
     ):
         self.manifest = bundle_manifest
-        # self.work_dir = os.path.join(work_dir, "local-test-cluster")
         self.work_dir = work_dir
         os.makedirs(self.work_dir, exist_ok=True)
         self.component_name = component_name
@@ -49,8 +48,8 @@ class ServiceOpenSearch:
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
         self.install_dir = f"opensearch-{self.manifest.build.version}"
-        # if not self.security_enabled:
-        #     self.disable_security(self.install_dir)
+        if not self.security_enabled:
+            self.disable_security(self.install_dir)
         if self.additional_cluster_config is not None:
             self.__add_plugin_specific_config(
                 self.additional_cluster_config,
@@ -76,7 +75,6 @@ class ServiceOpenSearch:
         logging.info("Unpacking")
         subprocess.check_call(f"tar -xzf {bundle_name}", shell=True)
         logging.info("Unpacked")
-
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'

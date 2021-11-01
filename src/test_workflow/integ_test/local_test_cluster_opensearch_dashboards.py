@@ -40,7 +40,6 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
     ):
         self.manifest = bundle_manifest
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
-        # os.makedirs(self.work_dir, exist_ok=True)
         self.component_name = component_name
         self.security_enabled = security_enabled
         self.component_test_config = component_test_config
@@ -72,7 +71,7 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
         )    
 
     def create_cluster(self):
-        # self.opensearch.start()
+        self.opensearch.start()
         self.opensearch_dashboards.start()
         
     def endpoint(self):

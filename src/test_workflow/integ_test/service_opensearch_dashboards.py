@@ -33,7 +33,6 @@ class ServiceOpenSearchDashboards:
         s3_bucket_name=None,
     ):
         self.manifest = bundle_manifest
-        # self.work_dir = os.path.join(work_dir, "local-test-cluster")
         self.work_dir = work_dir
         os.makedirs(self.work_dir, exist_ok=True)
         self.component_name = component_name
@@ -52,20 +51,21 @@ class ServiceOpenSearchDashboards:
 
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
-        # self.install_dir = f"opensearch-{self.manifest.build.version}"
         self.install_dir = BundleManifest.get_tarball_name_without_extension_for_dashboards(
             self.manifest.build.version, 
             self.manifest.build.platform, 
             self.manifest.build.architecture
 
         )
+
+        # Integ test will run against the complete bundled. Comment out this logic for now.
         # if not self.security_enabled:
         #     self.disable_security(self.install_dir)
-        # if self.additional_cluster_config is not None:
-        #     self.__add_plugin_specific_config(
-        #         self.additional_cluster_config,
-        #         os.path.join(self.install_dir, "config", "opensearch.yml"),
-        #     )
+        if self.additional_cluster_config is not None:
+            self.__add_plugin_specific_config(
+                self.additional_cluster_config,
+                os.path.join(self.install_dir, "config", "opensearch_dashboards.yml"),
+            )
         self.process = subprocess.Popen(
             "./bin/opensearch-dashboards",
             cwd=self.install_dir,
@@ -76,7 +76,6 @@ class ServiceOpenSearchDashboards:
         logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
         self.wait_for_service()
 
-
     def download(self):
         logging.info(f"Creating local test cluster for dashboards in {self.work_dir}")
         os.chdir(self.work_dir)
@@ -86,7 +85,6 @@ class ServiceOpenSearchDashboards:
         logging.info("Unpacking")
         subprocess.check_call(f"tar -xzf {bundle_name}", shell=True)
         logging.info("Unpacked")
-
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
@@ -99,14 +97,12 @@ class ServiceOpenSearchDashboards:
             self.manifest.build.architecture,
         )
 
-        logging.info(f"s3_path is {s3_path}")
         S3Bucket(self.bucket_name).download_file(s3_path, self.work_dir)
         return BundleManifest.get_tarball_name_for_dashboards(
             self.manifest.build.version,
             self.manifest.build.platform,
             self.manifest.build.architecture,
         )
-
 
     def disable_security(self, dir):
         subprocess.check_call(
@@ -126,7 +122,6 @@ class ServiceOpenSearchDashboards:
             try:
                 logging.info(f"Pinging {url} attempt {attempt}")
                 response = requests.get(url, verify=False)
-                # response = requests.get(url, verify=False, auth=("admin", "admin"))
 
                 logging.info(f"{response.status_code}: {response.text}")
                 if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
