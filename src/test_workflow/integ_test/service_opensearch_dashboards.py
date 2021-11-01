@@ -58,14 +58,6 @@ class ServiceOpenSearchDashboards:
 
         )
 
-        # Integ test will run against the complete bundled. Comment out this logic for now.
-        # if not self.security_enabled:
-        #     self.disable_security(self.install_dir)
-        if self.additional_cluster_config is not None:
-            self.__add_plugin_specific_config(
-                self.additional_cluster_config,
-                os.path.join(self.install_dir, "config", "opensearch_dashboards.yml"),
-            )
         self.process = subprocess.Popen(
             "./bin/opensearch-dashboards",
             cwd=self.install_dir,
@@ -104,16 +96,6 @@ class ServiceOpenSearchDashboards:
             self.manifest.build.architecture,
         )
 
-    def disable_security(self, dir):
-        subprocess.check_call(
-            f'echo "plugins.security.disabled: true" >> {os.path.join(dir, "config", "opensearch_dashboards.yml")}',
-            shell=True,
-        )
-
-    def __add_plugin_specific_config(self, additional_config: dict, file):
-        with open(file, "a") as yamlfile:
-            yamlfile.write(yaml.dump(additional_config))
-
     def wait_for_service(self):
         logging.info("Waiting for Dashboards service to become available")
         url = self.url("/api/status")
@@ -140,4 +122,3 @@ class ServiceOpenSearchDashboards:
 
     def port(self):
         return 5601
-        

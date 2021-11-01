@@ -25,7 +25,7 @@ class LocalTestClusterOpenSearch(TestCluster):
     """
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
-
+    
     def __init__(
         self,
         work_dir,

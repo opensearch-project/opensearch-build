@@ -18,7 +18,7 @@ from test_workflow.test_cluster import ClusterCreationException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
-
+# TODO: deprecate this class with LocalTestClusterOpenSearch https://github.com/opensearch-project/opensearch-build/issues/838
 class LocalTestCluster(TestCluster):
     """
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.

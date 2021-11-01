@@ -65,7 +65,6 @@ class ServiceOpenSearch:
         logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
         self.wait_for_service()
 
-
     def download(self):
         logging.info(f"Creating local test cluster in {self.work_dir}")
         os.chdir(self.work_dir)
@@ -92,7 +91,6 @@ class ServiceOpenSearch:
             self.manifest.build.platform,
             self.manifest.build.architecture,
         )
-
 
     def disable_security(self, dir):
         subprocess.check_call(
@@ -129,4 +127,3 @@ class ServiceOpenSearch:
 
     def port(self):
         return 9200
-        
