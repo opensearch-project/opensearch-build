@@ -45,17 +45,12 @@ class ServiceOpenSearchDashboards:
 
     def start(self):
         self.download()
-
-        os.system("pwd")
-        os.system("ls")
-
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
         self.install_dir = BundleManifest.get_tarball_name_without_extension_for_dashboards(
             self.manifest.build.version, 
             self.manifest.build.platform, 
             self.manifest.build.architecture
-
         )
 
         self.process = subprocess.Popen(
