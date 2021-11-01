@@ -6,6 +6,7 @@
 
 import logging
 import os
+
 from paths.tree_walker import walk
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
