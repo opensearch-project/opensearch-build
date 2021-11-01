@@ -92,7 +92,8 @@ class BundleManifest(ComponentManifest):
         # return f"bundles/{opensearch_version}/{build_id}/{architecture}/opensearch-{opensearch_version}-{platform}-{architecture}.tar.gz"
         # The path above has no 1.2.0 bundle. Thus use the new path and a hardcoded build ID for now.
         # https://github.com/opensearch-project/opensearch-build/issues/838
-        return f"bundle-build-dashboards/{opensearch_version}/195/{platform}/{architecture}/dist/opensearch-dashboards-{opensearch_version}-{platform}-{architecture}.tar.gz"
+        return f"bundle - build - dashboards / {opensearch_version} / 195 / {platform} / {architecture} / dist/ \
+            opensearch - dashboards - {opensearch_version} - {platform} - {architecture}.tar.gz"
 
     @staticmethod
     def get_tarball_name(opensearch_version, platform, architecture):

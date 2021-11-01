@@ -6,19 +6,10 @@
 
 import logging
 import os
-import subprocess
-import time
-
-import psutil  # type: ignore
-import requests
-import yaml
-
-from aws.s3_bucket import S3Bucket
-from manifests.bundle_manifest import BundleManifest
 from paths.tree_walker import walk
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
-from test_workflow.test_cluster import ClusterCreationException, TestCluster
+from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -69,12 +60,12 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
             self.component_test_config,
             self.save_logs,
             self.bucket_name,
-        )    
+        )
 
     def create_cluster(self):
         self.opensearch.start()
         self.opensearch_dashboards.start()
-        
+
     def endpoint(self):
         return self.opensearch_dashboards.endpoint()
 

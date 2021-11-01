@@ -3,17 +3,12 @@ import os
 import subprocess
 import time
 
-import psutil  # type: ignore
 import requests
-import yaml
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
-from paths.tree_walker import walk
 from test_workflow.integ_test.process_utils import ProcessUtils
-from test_workflow.test_cluster import ClusterCreationException, TestCluster
-from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_recorder.test_result_data import TestResultData
+from test_workflow.test_cluster import ClusterCreationException
 
 
 class ServiceOpenSearchDashboards:
@@ -49,8 +44,8 @@ class ServiceOpenSearchDashboards:
         self.stdout = open("stdout.txt", "w")
         self.stderr = open("stderr.txt", "w")
         self.install_dir = BundleManifest.get_tarball_name_without_extension_for_dashboards(
-            self.manifest.build.version, 
-            self.manifest.build.platform, 
+            self.manifest.build.version,
+            self.manifest.build.platform,
             self.manifest.build.architecture
         )
 

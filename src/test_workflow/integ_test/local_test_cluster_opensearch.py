@@ -6,18 +6,10 @@
 
 import logging
 import os
-import subprocess
-import time
 
-import psutil  # type: ignore
-import requests
-import yaml
-
-from aws.s3_bucket import S3Bucket
-from manifests.bundle_manifest import BundleManifest
 from paths.tree_walker import walk
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
-from test_workflow.test_cluster import ClusterCreationException, TestCluster
+from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -26,7 +18,7 @@ class LocalTestClusterOpenSearch(TestCluster):
     """
     Represents an on-box test cluster. This class downloads a bundle (from a BundleManifest) and runs it as a background process.
     """
-    
+
     def __init__(
         self,
         work_dir,
@@ -72,7 +64,7 @@ class LocalTestClusterOpenSearch(TestCluster):
         if self.process is None:
             logging.info("Local test cluster is not started")
             return
-        self.opensearch.terminate_process()            
+        self.opensearch.terminate_process()
         log_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
         test_result_data = TestResultData(
             self.component_name,
