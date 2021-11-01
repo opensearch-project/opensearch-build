@@ -198,7 +198,7 @@ Artifacts will be updated as follows.
 
 ```
 /dist
-  <file-name>.tar.gz <- assembled tarball
+  <file-name>.tar.gz or .zip <- assembled tarball or zip depending on platform
   manifest.yml <- bundle manifest describing versions for the min bundle and all installed plugins and their locations
 ```
 
@@ -206,8 +206,9 @@ The following options are available in `assemble.sh`.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| -v, --verbose      | Show more verbose output.                                               |
 | -b, --base-url     | The base url to download the artifacts.                                 |
+| --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
 
 ##### Cross-Platform Builds
 
