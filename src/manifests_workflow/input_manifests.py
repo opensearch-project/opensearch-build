@@ -45,6 +45,7 @@ class InputManifests(Manifests):
 
             # check out and build #main, 1.x, etc.
             branches = min_klass.branches()
+
             logging.info(f"Checking {self.name} {branches} branches")
             for branch in branches:
                 c = min_klass.checkout(
@@ -59,7 +60,8 @@ class InputManifests(Manifests):
             if component_klass is not None:
                 # components can increment their own version first without incrementing min
                 manifest = self.latest
-                for component in manifest.components:
+                logging.info(f"Examining components in the latest manifest of {manifest.build.name} ({manifest.build.version})")
+                for component in manifest.components.values():
                     if component.name == self.name:
                         continue
 
