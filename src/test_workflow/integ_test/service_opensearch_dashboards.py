@@ -10,10 +10,11 @@ import yaml
 from aws.s3_bucket import S3Bucket
 from manifests.bundle_manifest import BundleManifest
 from paths.tree_walker import walk
+from test_workflow.integ_test.process_utils import ProcessUtils
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
-from test_workflow.integ_test.process_utils import ProcessUtils
+
 
 class ServiceOpenSearchDashboards:
     """
