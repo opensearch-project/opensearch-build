@@ -8,10 +8,10 @@ import os
 
 from aws.s3_bucket import S3Bucket
 from manifests.bundle.bundle_manifest_1_0 import BundleManifest_1_0
-from manifests.manifest import Manifest
+from manifests.component_manifest import ComponentManifest
 
 
-class BundleManifest(Manifest):
+class BundleManifest(ComponentManifest):
     """
     A BundleManifest is an immutable view of the outputs from a assemble step
     The manifest contains information about the bundle that was built (in the `assemble` section),
@@ -66,14 +66,9 @@ class BundleManifest(Manifest):
     def __init__(self, data):
         super().__init__(data)
         self.build = self.Build(data["build"])
-        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
-        return {
-            "schema-version": "1.1",
-            "build": self.build.__to_dict__(),
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
-        }
+        return {"schema-version": "1.1", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
 
     @staticmethod
     def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
@@ -117,9 +112,14 @@ class BundleManifest(Manifest):
                 "id": self.id,
             }
 
-    class Component:
+    class Components(ComponentManifest.Components):
+        @classmethod
+        def __create(self, data):
+            return BundleManifest.Component(data)
+
+    class Component(ComponentManifest.Component):
         def __init__(self, data):
-            self.name = data["name"]
+            super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
@@ -131,11 +131,8 @@ class BundleManifest(Manifest):
                 "repository": self.repository,
                 "ref": self.ref,
                 "commit_id": self.commit_id,
-                "location": self.location,
+                "location": self.location
             }
 
 
-BundleManifest.VERSIONS = {
-    "1.0": BundleManifest_1_0,
-    "1.1": BundleManifest
-}
+BundleManifest.VERSIONS = {"1.0": BundleManifest_1_0, "1.1": BundleManifest}
