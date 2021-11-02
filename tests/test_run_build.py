@@ -74,7 +74,7 @@ class TestRunBuild(unittest.TestCase):
             any_order=True,
         )
 
-        self.assertEqual(mock_repo.call_count, 15)
+        self.assertNotEqual(mock_repo.call_count, 0)
 
         # each component is built and its artifacts exported
         mock_builder.assert_has_calls(
@@ -90,9 +90,9 @@ class TestRunBuild(unittest.TestCase):
             any_order=True,
         )
 
-        self.assertEqual(mock_builder.call_count, 15)
-        self.assertEqual(mock_builder.return_value.build.call_count, 15)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
+        self.assertEqual(mock_builder.call_count, mock_repo.call_count)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.call_count)
+        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, mock_builder.call_count)
 
         # the output manifest is written
         mock_recorder.return_value.write_manifest.assert_called()
@@ -106,10 +106,10 @@ class TestRunBuild(unittest.TestCase):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_repo.return_value.__enter__.return_value = MagicMock(name="dummy")
         main()
-        self.assertEqual(mock_repo.call_count, 15)
-        self.assertEqual(mock_builder.call_count, 15)
-        self.assertEqual(mock_builder.return_value.build.call_count, 15)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
+        self.assertNotEqual(mock_repo.call_count, 0)
+        self.assertEqual(mock_builder.call_count, mock_repo.call_count)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_repo.call_count)
+        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, mock_repo.call_count)
         mock_recorder.return_value.write_manifest.assert_called()
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "windows"])
@@ -123,10 +123,15 @@ class TestRunBuild(unittest.TestCase):
         mock_repo.return_value.__enter__.return_value = MagicMock(name="dummy")
         main()
         # excludes performance analyzer and k-nn
-        self.assertEqual(mock_repo.call_count, 13)
-        self.assertEqual(mock_builder.call_count, 13)
-        self.assertEqual(mock_builder.return_value.build.call_count, 13)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 13)
+        for call_args in mock_repo.call_args:
+            if len(call_args) > 1:
+                self.assertNotIn("k-nn", call_args[0].lower())
+                self.assertNotIn("analyzer", call_args[0].lower())
+
+        self.assertNotEqual(mock_repo.call_count, 0)
+        self.assertEqual(mock_builder.call_count, mock_repo.call_count)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_repo.call_count)
+        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, mock_repo.call_count)
         mock_recorder.return_value.write_manifest.assert_called()
 
     OPENSEARCH_DASHBOARDS_MANIFEST = os.path.realpath(
