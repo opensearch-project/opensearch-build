@@ -4,11 +4,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from ci_workflow.ci_check import CiCheck
+from ci_workflow.ci_check import CiCheckSource
 from system.properties_file import PropertiesFile
 
 
-class CiCheckGradleProperties(CiCheck):
+class CiCheckGradleProperties(CiCheckSource):
     def __init__(self, component, git_repo, target, args=None):
         super().__init__(component, git_repo, target, args)
         self.properties = self.__get_properties()

@@ -16,6 +16,7 @@
     - [Check Out Source](#check-out-source)
     - [Build from Source](#build-from-source)
       - [Custom Build Scripts](#custom-build-scripts)
+      - [Patch Releases](#patch-releases)
     - [Assemble the Bundle](#assemble-the-bundle)
       - [Cross-Platform Builds](#cross-platform-builds)
       - [Custom Install Scripts](#custom-install-scripts)
@@ -129,14 +130,15 @@ The following options are available.
 
 Each build requires a manifest to be passed as input. We currently have the following input manifests.
 
-| name                                                                        | description                                                   |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------|
-| [opensearch-1.0.0.yml](/manifests/1.0.0/opensearch-1.0.0.yml)               | Manifest to reproduce 1.0.0 build.                            |
-| [opensearch-1.0.0-maven.yml](/manifests/1.0.0/opensearch-1.0.0-maven.yml)   | One-time manifest to build maven artifacts for 1.0 from tags. |
-| [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)               | Manifest for 1.1.0, the next version.                         |
-| [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)               | Manifest for 1.2.0, the following version.                    |
-| [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)               | Manifest for 2.0.0, the next major version of OpenSearch.     |
-| [opensearch-dashboards-1.1.0.yml](/manifests/1.1.0/opensearch-dashboards-1.1.0.yml)               | Manifest for 1.1.0, the next version.    
+| name                                                                                 | description                                                    |
+|--------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| [opensearch-1.0.0.yml](/manifests/1.0.0/opensearch-1.0.0.yml)                        | Manifest to reproduce 1.0.0 build.                             |
+| [opensearch-1.0.0-maven.yml](/manifests/1.0.0/opensearch-1.0.0-maven.yml)            | One-time manifest to build maven artifacts for 1.0 from tags.  |
+| [opensearch-1.1.0.yml](/manifests/1.1.0/opensearch-1.1.0.yml)                        | Manifest for 1.1.0, the current version.                       |
+| [opensearch-1.1.1.yml](/manifests/1.1.1/opensearch-1.1.1.yml)                        | Manifest for 1.1.1, a patch release.                           |
+| [opensearch-1.2.0.yml](/manifests/1.2.0/opensearch-1.2.0.yml)                        | Manifest for 1.2.0, the next version.                          |
+| [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)                        | Manifest for 2.0.0, the next major version of OpenSearch.      |
+| [opensearch-dashboards-1.1.0.yml](/manifests/1.1.0/opensearch-dashboards-1.1.0.yml)  | Manifest for 1.1.0, the next version of OpenSearch Dashboards. |    
 
 The following example builds a snapshot version of OpenSearch 1.1.0.
 
@@ -180,6 +182,10 @@ The following options are available in `build.sh`.
 
 Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](scripts/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/default/build.sh](scripts/default/build.sh).
 
+##### Patch Releases
+
+A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.1.1.yml](/manifests/1.1.1/opensearch-1.1.1.yml) for an example.
+
 #### Assemble the Bundle 
 
 ```bash
@@ -192,7 +198,7 @@ Artifacts will be updated as follows.
 
 ```
 /dist
-  <file-name>.tar.gz <- assembled tarball
+  <file-name>.tar.gz or .zip <- assembled tarball or zip depending on platform
   manifest.yml <- bundle manifest describing versions for the min bundle and all installed plugins and their locations
 ```
 
@@ -200,8 +206,9 @@ The following options are available in `assemble.sh`.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| -v, --verbose      | Show more verbose output.                                               |
 | -b, --base-url     | The base url to download the artifacts.                                 |
+| --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
 
 ##### Cross-Platform Builds
 

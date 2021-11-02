@@ -7,20 +7,15 @@
 from abc import ABC, abstractmethod
 
 
-class Builder(ABC):
+class CiCheckList(ABC):
     def __init__(self, component, target):
-        self.output_path = "builds"
         self.component = component
         self.target = target
 
     @abstractmethod
-    def checkout(self):
+    def checkout(self, work_dir):
         pass
 
     @abstractmethod
-    def build(self, build_recorder):
-        pass
-
-    @abstractmethod
-    def export_artifacts(self, build_recorder):
+    def check(self):
         pass
