@@ -55,3 +55,19 @@ __Replace with OpenSearch wide initiatives to improve quality and consistency.__
 ### Components
 
 __Replace with links to all component tracking issues.__
+
+| Component | On track | Notes |
+| --------- | -------- | ----- |
+| {COMPONENT_ISSUE_LINK} | {INDICATOR}} | {STATUS} |
+
+<details><summary>Legend</summary>
+<p>
+
+| Symbol | Meaning |
+| -------- | ---------- |
+| :green_circle: | On track with overall release |
+| :yellow_circle: | Missed last milestone |
+| :red_circle: | Missed multiple milestones |
+
+</p>
+</details>
