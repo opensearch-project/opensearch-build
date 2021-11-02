@@ -24,11 +24,7 @@ from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 def pull_build_repo(work_dir):
     logging.info("Pulling opensearch-build")
-    with GitRepository(
-        "https://github.com/opensearch-project/opensearch-build.git",
-        "main",
-        os.path.join(work_dir, "opensearch-build"),
-    ) as repo:
+    with GitRepository("https://github.com/opensearch-project/opensearch-build.git", "main", os.path.join(work_dir, "opensearch-build")) as repo:
         logging.info(f"Checked out opensearch-build into {repo.dir}")
 
 
@@ -38,41 +34,21 @@ def main():
     test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "test_manifest.yml")
     test_manifest = TestManifest.from_path(test_manifest_path)
     integ_test_config = dict()
-    for component in test_manifest.components:
+    for component in test_manifest.components.values():
         if component.integ_test is not None:
             integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Switching to temporary work_dir: {work_dir.name}")
         test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir.name)
-        bundle_manifest = BundleManifest.from_s3(
-            args.s3_bucket,
-            args.build_id,
-            args.opensearch_version,
-            args.platform,
-            args.architecture,
-            work_dir.name,
-        )
-        build_manifest = BuildManifest.from_s3(
-            args.s3_bucket,
-            args.build_id,
-            args.opensearch_version,
-            args.platform,
-            args.architecture,
-            work_dir.name,
-        )
+        bundle_manifest = BundleManifest.from_s3(args.s3_bucket, args.build_id, args.opensearch_version, args.platform, args.architecture, work_dir.name)
+        build_manifest = BuildManifest.from_s3(args.s3_bucket, args.build_id, args.opensearch_version, args.platform, args.architecture, work_dir.name)
         pull_build_repo(work_dir.name)
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         all_results = TestSuiteResults()
-        for component in bundle_manifest.components:
+        for component in bundle_manifest.components.values():
             if component.name in integ_test_config.keys():
                 test_suite = IntegTestSuite(
-                    component,
-                    integ_test_config[component.name],
-                    bundle_manifest,
-                    build_manifest,
-                    work_dir.name,
-                    args.s3_bucket,
-                    test_recorder,
+                    component, integ_test_config[component.name], bundle_manifest, build_manifest, work_dir.name, args.s3_bucket, test_recorder
                 )
                 test_results = test_suite.execute()
                 all_results.append(component.name, test_results)

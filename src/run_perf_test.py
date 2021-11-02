@@ -21,12 +21,7 @@ parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
 parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
 parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
 parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
-parser.add_argument(
-    "--keep",
-    dest="keep",
-    action="store_true",
-    help="Do not delete the working temporary directory.",
-)
+parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
 args = parser.parse_args()
 
 manifest = BundleManifest.from_file(args.bundle_manifest)
@@ -45,15 +40,12 @@ def main():
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
             security = False
-            for component in manifest.components:
+            for component in manifest.components.values():
                 if component.name == "security":
                     security = True
 
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (
-                    test_cluster_endpoint,
-                    test_cluster_port,
-                ):
+                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
                     perf_test_suite.execute()
 

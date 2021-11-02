@@ -30,20 +30,11 @@ class TestBundleManifest(unittest.TestCase):
         self.assertEqual(len(self.manifest.components), 13)
 
     def test_component(self):
-        opensearch_min_component = self.manifest.components[0]
+        opensearch_min_component = self.manifest.components["OpenSearch"]
         self.assertEqual(opensearch_min_component.name, "OpenSearch")
-        self.assertEqual(
-            opensearch_min_component.location,
-            "artifacts/dist/opensearch-min-1.1.0-linux-x64.tar.gz",
-        )
-        self.assertEqual(
-            opensearch_min_component.repository,
-            "https://github.com/opensearch-project/OpenSearch.git",
-        )
-        self.assertEqual(
-            opensearch_min_component.commit_id,
-            "b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583",
-        )
+        self.assertEqual(opensearch_min_component.location, "artifacts/dist/opensearch-min-1.1.0-linux-x64.tar.gz")
+        self.assertEqual(opensearch_min_component.repository, "https://github.com/opensearch-project/OpenSearch.git")
+        self.assertEqual(opensearch_min_component.commit_id, "b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583")
         self.assertEqual(opensearch_min_component.ref, "1.1")
 
     def test_to_dict(self):
@@ -75,19 +66,11 @@ class TestBundleManifest(unittest.TestCase):
     def test_from_s3(self, mock_s3_bucket, *mocks):
         s3_bucket = mock_s3_bucket.return_value
         s3_download_path = BundleManifest.get_bundle_manifest_relative_location(
-            self.manifest.build.id,
-            self.manifest.build.version,
-            self.manifest.build.platform,
-            self.manifest.build.architecture,
+            self.manifest.build.id, self.manifest.build.version, self.manifest.build.platform, self.manifest.build.architecture
         )
         dest = os.path.realpath(os.path.join(tempfile.gettempdir(), "xyz"))
         BundleManifest.from_s3(
-            "bucket_name",
-            self.manifest.build.id,
-            self.manifest.build.version,
-            self.manifest.build.platform,
-            self.manifest.build.architecture,
-            dest,
+            "bucket_name", self.manifest.build.id, self.manifest.build.version, self.manifest.build.platform, self.manifest.build.architecture, dest
         )
         self.assertEqual(s3_bucket.download_file.call_count, 1)
         s3_bucket.download_file.assert_called_with(s3_download_path, dest)
@@ -96,9 +79,5 @@ class TestBundleManifest(unittest.TestCase):
     def test_versions(self):
         self.assertTrue(len(BundleManifest.VERSIONS))
         for version in BundleManifest.VERSIONS:
-            manifest = BundleManifest.from_path(
-                os.path.join(
-                    self.data_path, "bundle", f"opensearch-bundle-schema-version-{version}.yml"
-                )
-            )
+            manifest = BundleManifest.from_path(os.path.join(self.data_path, "bundle", f"opensearch-bundle-schema-version-{version}.yml"))
             self.assertEqual(version, manifest.version)

@@ -4,14 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import itertools
-import logging
 import os
 
 from aws.s3_bucket import S3Bucket
 from manifests.build.build_manifest_1_0 import BuildManifest_1_0
 from manifests.build.build_manifest_1_1 import BuildManifest_1_1
-from manifests.manifest import Manifest
+from manifests.component_manifest import ComponentManifest
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -44,7 +42,7 @@ components:
 """
 
 
-class BuildManifest(Manifest):
+class BuildManifest(ComponentManifest):
     components: list
 
     VERSIONS = {
@@ -95,7 +93,6 @@ class BuildManifest(Manifest):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
-        self.components = BuildManifest.Components(data.get("components", []))
 
     def __to_dict__(self):
         return {"schema-version": "1.2", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
@@ -128,47 +125,22 @@ class BuildManifest(Manifest):
                 "version": self.version,
                 "platform": self.platform,
                 "architecture": self.architecture,
-                "id": self.id,
+                "id": self.id
             }
 
-    class Components(dict):
+    class Components(ComponentManifest.Components):
+        @classmethod
+        def create(self, data):
+            return BuildManifest.Component(data)
+
+    class Component(ComponentManifest.Component):
         def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], BuildManifest.Component(component)), data))
-
-        def to_dict(self):
-            return list(map(lambda component: component.__to_dict__(), self.values()))
-
-        def select(self, focus=None):
-            """
-            Select components.
-
-            :param str focus: Choose one component.
-            :return: Collection of components.
-            :raises ValueError: Invalid platform or component name specified.
-            """
-            selected, it = itertools.tee(filter(lambda component: component.matches(focus), self.values()))
-
-            if not any(it):
-                raise ValueError(f"No components matched focus={focus}.")
-
-            return selected
-
-    class Component:
-        def __init__(self, data):
-            self.name = data["name"]
+            super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
             self.artifacts = data.get("artifacts", [])
             self.version = data["version"]
-
-        def matches(self, focus=None, platform=None):
-            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
-
-            if not matches:
-                logging.info(f"Skipping {self.name}")
-
-            return matches
 
         def __to_dict__(self):
             return {
