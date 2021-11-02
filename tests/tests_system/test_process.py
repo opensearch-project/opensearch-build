@@ -31,4 +31,3 @@ class TestProcess(unittest.TestCase):
 
         self.assertIsNone(terminated_process)
         self.assertIsNotNone(local_cluster_stdout)
-        self.assertEqual(return_code, 0)
