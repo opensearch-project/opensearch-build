@@ -27,7 +27,7 @@ class TestProcess(unittest.TestCase):
 
         self.assertIsNotNone(process)
 
-        terminated_process, local_cluster_stdout, return_code = terminate(process, work_dir, stdout, stderr)
+        terminated_process, local_cluster_stderr, local_cluster_stdout, return_code = terminate(process, work_dir, stdout, stderr)
 
         self.assertIsNone(terminated_process)
         self.assertIsNotNone(local_cluster_stdout)
