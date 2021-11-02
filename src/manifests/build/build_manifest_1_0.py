@@ -81,7 +81,7 @@ class BuildManifest_1_0(ComponentManifest):
         return {"schema-version": "1.0", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
 
     class Components(ComponentManifest.Components):
-        def create(self, data):
+        def __create(self, data):
             return BuildManifest_1_0.Component(data)
 
     class Build:

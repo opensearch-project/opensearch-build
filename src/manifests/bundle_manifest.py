@@ -114,7 +114,7 @@ class BundleManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def create(self, data):
+        def __create(self, data):
             return BundleManifest.Component(data)
 
     class Component(ComponentManifest.Component):

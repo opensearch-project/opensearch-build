@@ -82,7 +82,7 @@ class BundleManifest_1_0(ComponentManifest):
             }
 
     class Components(ComponentManifest.Components):
-        def create(self, data):
+        def __create(self, data):
             return BundleManifest_1_0.Component(data)
 
     class Component(ComponentManifest.Component):

@@ -130,7 +130,7 @@ class BuildManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def create(self, data):
+        def __create(self, data):
             return BuildManifest.Component(data)
 
     class Component(ComponentManifest.Component):

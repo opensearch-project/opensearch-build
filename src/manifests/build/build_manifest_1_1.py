@@ -97,7 +97,7 @@ class BuildManifest_1_1(ComponentManifest):
             }
 
     class Components(ComponentManifest.Components):
-        def create(self, data):
+        def __create(self, data):
             return BuildManifest_1_1.Component(data)
 
     class Component(ComponentManifest.Component):

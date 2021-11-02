@@ -138,7 +138,7 @@ class InputManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def create(self, data):
+        def __create(self, data):
             return InputManifest.Component._from(data)
 
         def select(self, focus=None, platform=None):

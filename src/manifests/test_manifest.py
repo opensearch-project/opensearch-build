@@ -66,7 +66,7 @@ class TestManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def create(self, data):
+        def __create(self, data):
             return TestManifest.Component(data)
 
     class Component(ComponentManifest.Component):

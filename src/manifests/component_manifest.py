@@ -23,7 +23,7 @@ class ComponentManifest(Manifest):
 
     class Components(dict):
         def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], self.create(component)), data))
+            super().__init__(map(lambda component: (component["name"], self.__create(component)), data))
 
         @classmethod
         def create(data):
