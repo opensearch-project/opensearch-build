@@ -35,6 +35,7 @@ class TestRunManifests(unittest.TestCase):
                 call("OpenSearch 1.0.0"),
                 call("OpenSearch 1.0.1"),
                 call("OpenSearch 1.1.0"),
+                call("OpenSearch 1.1.1"),
                 call("OpenSearch 1.2.0"),
                 call("OpenSearch 2.0.0"),
             ]

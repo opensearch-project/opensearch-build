@@ -7,5 +7,9 @@
 import unittest
 
 
-class TestBuilder(unittest.TestCase):
-    pass
+class TestCiCheckListsDist(unittest.TestCase):
+    def test_checkout(self):
+        pass
+
+    def test_check(self):
+        pass

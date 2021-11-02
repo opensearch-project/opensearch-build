@@ -4,8 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import unittest
+from ci_workflow.ci_check_list import CiCheckList
 
 
-class TestBuilder(unittest.TestCase):
-    pass
+class CiCheckListDist(CiCheckList):
+    def check(self):
+        pass
+
+    def checkout(self, path):
+        pass
