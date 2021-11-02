@@ -35,6 +35,6 @@ class TestRunCi(unittest.TestCase):
     def test_main(self, mock_lists, mock_temp, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
-        self.assertEqual(mock_lists.call_count, 4)
-        self.assertEqual(mock_lists.return_value.checkout.call_count, 4)
-        self.assertEqual(mock_lists.return_value.check.call_count, 4)
+        self.assertNotEqual(mock_lists.call_count, 0)
+        self.assertEqual(mock_lists.return_value.checkout.call_count, mock_lists.call_count)
+        self.assertEqual(mock_lists.return_value.check.call_count, mock_lists.call_count)

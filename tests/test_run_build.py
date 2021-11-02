@@ -44,8 +44,8 @@ class TestRunBuild(unittest.TestCase):
     def test_main_platform_linux(self, mock_temp, mock_recorder, mock_builder, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
-        self.assertEqual(mock_builder.return_value.build.call_count, 15)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
+        self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.return_value.export_artifacts.call_count)
         mock_recorder.return_value.write_manifest.assert_called()
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "darwin"])
@@ -55,8 +55,8 @@ class TestRunBuild(unittest.TestCase):
     def test_main_platform_darwin(self, mock_temp, mock_recorder, mock_builder, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
-        self.assertEqual(mock_builder.return_value.build.call_count, 15)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 15)
+        self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.return_value.export_artifacts.call_count)
         mock_recorder.return_value.write_manifest.assert_called()
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "windows"])
@@ -67,8 +67,15 @@ class TestRunBuild(unittest.TestCase):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         # excludes performance analyzer and k-nn
-        self.assertEqual(mock_builder.return_value.build.call_count, 13)
-        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, 13)
+        for call_args in mock_builder.call_args:
+            if len(call_args) > 1:
+                component = call_args[0]
+                self.assertNotIn("k-nn", component.name.lower())
+                self.assertNotIn("analyzer", component.name.lower())
+
+        self.assertNotEqual(mock_builder.call_count, 0)
+        self.assertEqual(mock_builder.return_value.build.call_count, mock_builder.call_count)
+        self.assertEqual(mock_builder.return_value.export_artifacts.call_count, mock_builder.call_count)
         mock_recorder.return_value.write_manifest.assert_called()
 
     OPENSEARCH_DASHBOARDS_MANIFEST = os.path.realpath(
