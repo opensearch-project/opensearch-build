@@ -13,6 +13,9 @@ FROM centos:7
 
 ARG MAVEN_DIR=/usr/local/apache-maven
 
+# Ensure localedef running correct with root permission
+USER 0
+
 # Add AdoptOpenJDK Repo
 RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfrog.io/adoptopenjdk/rpm/centos/7/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" > /etc/yum.repos.d/adoptopenjdk.repo
 
