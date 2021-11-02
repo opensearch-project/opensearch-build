@@ -2,7 +2,7 @@ pipeline {
     agent none
     triggers {
       parameterizedCron '''
-        H */2 * * * %INPUT_MANIFEST=1.1.0/opensearch-dashboards-1.1.0.yml
+        H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-dashboards-1.2.0.yml
       '''
     }
     options {
