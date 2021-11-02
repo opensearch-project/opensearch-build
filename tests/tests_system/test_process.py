@@ -6,16 +6,17 @@
 
 import subprocess
 import unittest
+import os
 
 from system.process import terminate
 
 
 class TestProcess(unittest.TestCase):
     def test_terminate(self):
-        work_dir = "/tmp"
+        work_dir = "."
 
-        stdout = open(work_dir + "/test_stdout.txt", "w+")
-        stderr = open(work_dir + "/test_stderr.txt", "w+")
+        stdout = open("unit_test_stdout.txt", "w+")
+        stderr = open("unit_test_stderr.txt", "w+")
 
         process = subprocess.Popen(
             "ls",
