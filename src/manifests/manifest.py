@@ -62,7 +62,7 @@ class Manifest(ABC):
             result = {}
             for k, v in d.items():
                 v = cls.compact(v)
-                if v and v != []:
+                if v:
                     result[k] = v
             return result
         else:
