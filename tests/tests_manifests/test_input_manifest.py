@@ -78,7 +78,7 @@ class TestInputManifest(unittest.TestCase):
             opensearch_component.repository,
             "https://github.com/opensearch-project/OpenSearch.git",
         )
-        self.assertEqual(opensearch_component.ref, "1.x")
+        self.assertEqual(opensearch_component.ref, "1.2")
         # components
         for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)
@@ -120,19 +120,19 @@ class TestInputManifest(unittest.TestCase):
             self.assertEqual(len(list(manifest.components.select(focus="k-NN", platform="windows"))), 0)
         self.assertEqual(str(ctx.exception), "No components matched focus=k-NN, platform=windows.")
 
-    def test_component_matches(self):
-        self.assertTrue(InputManifest.Component({"name": "x", "repository": "", "ref": ""}).matches())
+    def test_component___matches__(self):
+        self.assertTrue(InputManifest.Component({"name": "x", "repository": "", "ref": ""}).__matches__())
 
-    def test_component_matches_platform(self):
+    def test_component___matches_platform__(self):
         data = {"name": "x", "repository": "", "ref": ""}
-        self.assertTrue(InputManifest.Component(data).matches(platform=None))
-        self.assertTrue(InputManifest.Component(data).matches(platform="x"))
-        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux"]}).matches(platform="linux"))
-        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux", "windows"]}).matches(platform="linux"))
-        self.assertFalse(InputManifest.Component({**data, "platforms": ["linux"]}).matches(platform="x"))
+        self.assertTrue(InputManifest.Component(data).__matches__(platform=None))
+        self.assertTrue(InputManifest.Component(data).__matches__(platform="x"))
+        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux"]}).__matches__(platform="linux"))
+        self.assertTrue(InputManifest.Component({**data, "platforms": ["linux", "windows"]}).__matches__(platform="linux"))
+        self.assertFalse(InputManifest.Component({**data, "platforms": ["linux"]}).__matches__(platform="x"))
 
-    def test_component_matches_focus(self):
+    def test_component___matches_focus__(self):
         component = InputManifest.Component({"name": "x", "repository": "", "ref": ""})
-        self.assertTrue(component.matches(focus=None))
-        self.assertTrue(component.matches(focus="x"))
-        self.assertFalse(component.matches(focus="y"))
+        self.assertTrue(component.__matches__(focus=None))
+        self.assertTrue(component.__matches__(focus="x"))
+        self.assertFalse(component.__matches__(focus="y"))
