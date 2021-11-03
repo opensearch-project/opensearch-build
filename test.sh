@@ -19,7 +19,7 @@ case $1 in
   "$DIR/run.sh" "$DIR/src/run_bwc_test.py" "${@:2}"
   ;;
   *)
-  echo "Invalid Test suite"
+  echo "Invalid test suite, run ./test.sh integ-test|bwc-test."
   exit 1
   ;;
 esac

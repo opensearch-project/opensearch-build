@@ -31,12 +31,9 @@ def pull_build_repo(work_dir):
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
+
     test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "test_manifest.yml")
     test_manifest = TestManifest.from_path(test_manifest_path)
-    integ_test_config = dict()
-    for component in test_manifest.components.values():
-        if component.integ_test is not None:
-            integ_test_config[component.name] = component
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Switching to temporary work_dir: {work_dir.name}")
         test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir.name)
@@ -46,13 +43,14 @@ def main():
         DependencyInstaller(build_manifest.build).install_all_maven_dependencies()
         all_results = TestSuiteResults()
         for component in bundle_manifest.components.values():
-            if component.name in integ_test_config.keys():
-                test_suite = IntegTestSuite(
-                    component, integ_test_config[component.name], bundle_manifest, build_manifest, work_dir.name, args.s3_bucket, test_recorder
-                )
-                test_results = test_suite.execute()
-                all_results.append(component.name, test_results)
-
+            if component.name in test_manifest.components:
+                test_config = test_manifest.components[component.name]
+                if test_config.integ_test:
+                    test_suite = IntegTestSuite(
+                        component, test_config, bundle_manifest, build_manifest, work_dir.name, args.s3_bucket, test_recorder
+                    )
+                    test_results = test_suite.execute()
+                    all_results.append(component.name, test_results)
             else:
                 logging.info("Skipping tests for %s, as it is currently not supported" % component.name)
 
