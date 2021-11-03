@@ -68,7 +68,11 @@ class BundleManifest(ComponentManifest):
         self.build = self.Build(data["build"])
 
     def __to_dict__(self):
-        return {"schema-version": "1.1", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
+        return {
+            "schema-version": "1.1",
+            "build": self.build.__to_dict__(),
+            "components": self.components.__to_dict__()
+        }
 
     @staticmethod
     def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
@@ -114,7 +118,7 @@ class BundleManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create(self, data):
+        def __create__(self, data):
             return BundleManifest.Component(data)
 
     class Component(ComponentManifest.Component):
