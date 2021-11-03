@@ -62,7 +62,9 @@ class ComponentManifest(Manifest):
             self.name = data["name"]
 
         def __to_dict__(self):
-            return {"name": self.name}
+            return {
+                "name": self.name
+            }
 
         def __matches__(self, focus=None, platform=None):
             matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))

@@ -1,0 +1,6 @@
+Constants:
+  Role: 'role'
+  SecurityGroupId: 'security-group-id'
+  VpcId: 'vpc-id'
+  AccountId: 'account-id'
+  Region: 'us-west-1'

@@ -12,7 +12,6 @@ from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
 from paths.tree_walker import walk
 from system.execute import execute
-from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
@@ -27,27 +26,27 @@ class IntegTestSuite:
 
     def __init__(
         self,
+        dependency_installer,
         component,
         test_config,
         bundle_manifest,
         build_manifest,
         work_dir,
-        s3_bucket_name,
-        test_recorder,
+        test_recorder
     ):
+        self.dependency_installer = dependency_installer
         self.component = component
         self.bundle_manifest = bundle_manifest
         self.build_manifest = build_manifest
         self.work_dir = work_dir
         self.test_config = test_config
-        self.s3_bucket_name = s3_bucket_name
         self.additional_cluster_config = None
         self.test_recorder = test_recorder
         self.repo = GitRepository(
             self.component.repository,
             self.component.commit_id,
             os.path.join(self.work_dir, self.component.name),
-            test_config.working_directory,
+            test_config.working_directory
         )
         self.save_logs = test_recorder.test_results_logs
 
@@ -72,7 +71,7 @@ class IntegTestSuite:
         for file in glob.glob(os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")):
             os.unlink(file)
         job_scheduler = self.build_manifest.components["job-scheduler"]
-        DependencyInstaller(self.build_manifest.build).install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
+        self.dependency_installer.install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
 
     @staticmethod
     def __is_security_enabled(config):
@@ -87,6 +86,7 @@ class IntegTestSuite:
             self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
         with LocalTestCluster.create(
+            self.dependency_installer,
             self.work_dir,
             self.component.name,
             self.additional_cluster_config,
@@ -94,7 +94,6 @@ class IntegTestSuite:
             security,
             config,
             self.test_recorder,
-            self.s3_bucket_name,
         ) as (test_cluster_endpoint, test_cluster_port):
             self.__pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
@@ -113,7 +112,7 @@ class IntegTestSuite:
                 status,
                 stdout,
                 stderr,
-                walk(results_dir),
+                walk(results_dir)
             )
             self.save_logs.save_test_result_data(test_result_data)
             if stderr:

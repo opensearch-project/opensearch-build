@@ -6,8 +6,10 @@
 
 import logging
 import os
+import shutil
+import urllib
 
-from aws.s3_bucket import S3Bucket
+import validators  # type:ignore
 
 
 class DependencyInstaller:
@@ -15,27 +17,22 @@ class DependencyInstaller:
     Provides a dependency installer for the test suites.
     """
 
-    ARTIFACT_S3_BUCKET = "artifact-bucket-stack-buildbucket-9omh0hnpg12q"
+    def __init__(self, root_url, build_manifest, bundle_manifest):
+        self.root_url = root_url
+        self.build_manifest = build_manifest
+        self.bundle_manifest = bundle_manifest
 
-    def __init__(self, build):
-        self.build_id = build.id
-        self.version = build.version
-        self.platform = build.platform
-        self.architecture = build.architecture
-        self.s3_bucket = S3Bucket(self.ARTIFACT_S3_BUCKET)
-        self.s3_maven_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/maven/org/opensearch"
-        self.s3_build_location = f"builds/{self.version}/{self.build_id}/{self.platform}/{self.architecture}/plugins"
-        self.maven_local_path = os.path.join(os.path.expanduser("~"), ".m2/repository/org/opensearch/")
+    @property
+    def maven_local_path(self):
+        return os.path.join(os.path.expanduser("~"), ".m2", "repository")
 
-    def install_all_maven_dependencies(self):
-        """
-        Downloads all pre-built maven dependencies from S3 bucket
-        """
-        logging.info("Downloading all pre-built maven dependencies from s3")
-        self.s3_bucket.download_folder(f"{self.s3_maven_location}", self.maven_local_path)
-        logging.info("Successfully downloaded maven dependencies")
+    def install_maven_dependencies(self):
+        for component in self.build_manifest.components.values():
+            maven_artifacts = component.artifacts.get("maven", None)
+            if maven_artifacts:
+                self.download(maven_artifacts, "builds", self.maven_local_path)
 
-    def install_build_dependencies(self, dependency_dict, custom_local_path):
+    def install_build_dependencies(self, dependency_dict, dest):
         """
         Downloads the build dependencies from S3 and puts them on the given custom path
         for each dependency in the dependencies.
@@ -43,7 +40,32 @@ class DependencyInstaller:
         :param dependencies: dictionary of dependency names with version for which the build artifacts need to be downloaded.
         Example: {'opensearch-job-scheduler':'1.1.0.0'}
         """
-        os.makedirs(custom_local_path, exist_ok=True)
+        os.makedirs(dest, exist_ok=True)
         for dependency, version in dependency_dict.items():
-            s3_path = f"{self.s3_build_location}/{dependency}-{version}.zip"
-            self.s3_bucket.download_file(s3_path, custom_local_path)
+            path = f"{self.root_url}/builds/plugins/{dependency}-{version}.zip"
+            local_path = os.path.join(dest, f"{dependency}-{version}.zip")
+            self.__download_or_copy(path, local_path)
+
+    def download_dist(self, dest):
+        local_path = os.path.join(dest, os.path.basename(self.bundle_manifest.build.location))
+        return self.__download_or_copy(self.bundle_manifest.build.location, local_path)
+
+    def download(self, paths, category, dest):
+        logging.info(f"Downloading to {dest} ...")
+        for path in paths:
+            url = "/".join([self.root_url, category, path])
+            # paths are prefixed by category, remove
+            local_path = os.path.join(dest, "/".join(path.split("/")[1:]))
+            self.__download_or_copy(url, local_path)
+
+    def __download_or_copy(self, source, dest):
+        dest = os.path.realpath(dest)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        if validators.url(source):
+            logging.info(f"Downloading {source} into {dest} ...")
+            urllib.request.urlretrieve(source, dest)
+        else:
+            logging.info(f"Copying {source} into {dest} ...")
+            source = os.path.realpath(source)
+            shutil.copyfile(os.path.realpath(source), dest)
+        return dest

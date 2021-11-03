@@ -109,7 +109,7 @@ class BuildManifest_1_0(ComponentManifest):
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
-            self.artifacts = data.get("artifacts", [])
+            self.artifacts = data.get("artifacts", {})
             self.version = data["version"]
 
         def __to_dict__(self):

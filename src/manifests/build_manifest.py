@@ -4,9 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
-
-from aws.s3_bucket import S3Bucket
 from manifests.build.build_manifest_1_0 import BuildManifest_1_0
 from manifests.build.build_manifest_1_1 import BuildManifest_1_1
 from manifests.component_manifest import ComponentManifest
@@ -100,20 +97,6 @@ class BuildManifest(ComponentManifest):
             "components": self.components.__to_dict__()
         }
 
-    @staticmethod
-    def get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture):
-        # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
-        return f"builds/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
-
-    @staticmethod
-    def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
-        work_dir = work_dir if not None else str(os.getcwd())
-        manifest_s3_path = BuildManifest.get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture)
-        S3Bucket(bucket_name).download_file(manifest_s3_path, work_dir)
-        build_manifest = BuildManifest.from_path("manifest.yml")
-        os.remove(os.path.realpath(os.path.join(work_dir, "manifest.yml")))
-        return build_manifest
-
     class Build:
         def __init__(self, data):
             self.name = data["name"]
@@ -142,7 +125,7 @@ class BuildManifest(ComponentManifest):
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
-            self.artifacts = data.get("artifacts", [])
+            self.artifacts = data.get("artifacts", {})
             self.version = data["version"]
 
         def __to_dict__(self):

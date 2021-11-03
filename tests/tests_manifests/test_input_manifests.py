@@ -13,7 +13,7 @@ class TestInputManifests(unittest.TestCase):
     def setUp(self):
         self.manifests = InputManifests()
 
-    def test_manifests(self):
+    def tests_configs(self):
         self.assertTrue(len(self.manifests))
 
     def test_1_1_0(self):

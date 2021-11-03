@@ -12,22 +12,43 @@ function usage() {
     echo "Usage: $0 [args]"
     echo ""
     echo "Arguments:"
-    echo -e "-a ARTIFACTS\t[Required] Location of build artifacts."
-    echo -e "-o OUTPUT\t[Required] Output path."
+    echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
+    echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
+    echo -e "-f ARTIFACTS\t[Optional] Location of build artifacts."
+    echo -e "-o OUTPUT\t[Optional] Output path."
     echo -e "-h help"
 }
 
-while getopts ":h:a:o:" arg; do
+while getopts ":h:v:s:o:p:a:f:" arg; do
     case $arg in
         h)
             usage
             exit 1
             ;;
+        v)
+            VERSION=$OPTARG
+            ;;
+        s)
+            SNAPSHOT=$OPTARG
+            ;;
         o)
             OUTPUT=$OPTARG
             ;;
+        p)
+            PLATFORM=$OPTARG
+            ;;
         a)
-            ARTIFACTS=$OPTARG
+            ARCHITECTURE=$OPTARG
+            ;;
+        f)
+            ARTIFACTS=$ARTIFACTS
+            ;;
+        :)
+            echo "Error: -${OPTARG} requires an argument"
+            usage
+            exit 1
             ;;
         ?)
             echo "Invalid option: -${arg}"
@@ -35,6 +56,16 @@ while getopts ":h:a:o:" arg; do
             ;;
     esac
 done
+
+if [ -z "$VERSION" ]; then
+    echo "Error: missing version."
+    usage
+    exit 1
+fi
+
+[ -z "$SNAPSHOT" ] && SNAPSHOT="false"
+[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 ## Setup Performance Analyzer Agent
 cp -r $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/

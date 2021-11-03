@@ -11,11 +11,9 @@ set -e
 DIR="$(dirname "$0")"
 case $1 in
   "integ-test")
-  echo "${@:2}"
   "$DIR/run.sh" "$DIR/src/run_integ_test.py" "${@:2}"
   ;;
   "bwc-test")
-  echo "${@:2}"
   "$DIR/run.sh" "$DIR/src/run_bwc_test.py" "${@:2}"
   ;;
   *)

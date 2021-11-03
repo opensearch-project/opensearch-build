@@ -3,50 +3,102 @@ import unittest
 from unittest.mock import call, patch
 
 from manifests.build_manifest import BuildManifest
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.dependency_installer import DependencyInstaller
 
 
 class DependencyInstallerTests(unittest.TestCase):
-    def setUp(self):
-        self.maxDiff = None
-        self.manifest_filename = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "tests_assemble_workflow",
-            "data",
-            "opensearch-build-linux-1.1.0.yml",
-        )
-        self.manifest = BuildManifest.from_path(self.manifest_filename)
-        with patch("test_workflow.dependency_installer.S3Bucket") as mock_s3_bucket:
-            self.dependency_installer = DependencyInstaller(self.manifest.build)
-            self.mock_s3_bucket = mock_s3_bucket
+    DATA = os.path.join(os.path.dirname(__file__), "data")
+    BUILD_MANIFEST = os.path.join(DATA, "local", "builds", "manifest.yml")
+    DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "manifest.yml")
+    DIST_MANIFEST_REMOTE = os.path.join(DATA, "remote", "dist", "manifest.yml")
 
-    @patch("test_workflow.dependency_installer.S3Bucket")
-    def test_install_all_maven_dependencies(self, mock_s3_bucket):
-        s3_bucket = self.mock_s3_bucket.return_value
-        self.dependency_installer.install_all_maven_dependencies()
-        self.assertEqual(s3_bucket.download_folder.call_count, 1)
-        s3_bucket.download_folder.assert_has_calls(
+    @patch("os.makedirs")
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
+        dependency_installer = DependencyInstaller(
+            self.DATA,
+            BuildManifest.from_path(self.BUILD_MANIFEST),
+            BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
+        )
+        dependency_installer.install_maven_dependencies()
+        mock_makedirs.assert_called_with(
+            os.path.realpath(
+                os.path.join(
+                    dependency_installer.maven_local_path, "org", "opensearch", "notification"
+                )
+            ),
+            exist_ok=True
+        )
+        mock_request.assert_not_called()
+        mock_copyfile.assert_has_calls(
             [
                 call(
-                    f"{self.dependency_installer.s3_maven_location}",
-                    self.dependency_installer.maven_local_path,
-                ),
+                    os.path.join(self.DATA, "builds", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
+                    os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
+                )
             ]
         )
 
     @patch("os.makedirs")
-    def test_install_build_dependencies(self, mock_os_makedirs):
-        s3_bucket = self.mock_s3_bucket.return_value
-        dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
-        self.dependency_installer.install_build_dependencies(dependencies, os.path.dirname(__file__))
-        self.assertEqual(s3_bucket.download_file.call_count, 1)
-        s3_bucket.download_file.assert_has_calls(
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
+        dependency_installer = DependencyInstaller(
+            "https://ci.opensearch.org/x/y",
+            BuildManifest.from_path(self.BUILD_MANIFEST),
+            BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
+        )
+        dependency_installer.install_maven_dependencies()
+        mock_makedirs.assert_called_with(
+            os.path.realpath(
+                os.path.join(
+                    dependency_installer.maven_local_path, "org", "opensearch", "notification"
+                )
+            ),
+            exist_ok=True
+        )
+        mock_copyfile.assert_not_called()
+        mock_request.assert_has_calls(
             [
                 call(
-                    f"{self.dependency_installer.s3_build_location}/opensearch-job-scheduler-1.1.0.0.zip",
-                    os.path.dirname(__file__),
+                    "https://ci.opensearch.org/x/y/builds/maven/org/opensearch/notification/alerting-notification-1.2.0.0.jar",
+                    os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
                 )
             ]
         )
-        mock_os_makedirs.assert_called_once_with(os.path.dirname(__file__), exist_ok=True)
+
+    @patch("os.makedirs")
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_build_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
+        dependency_installer = DependencyInstaller(
+            self.DATA,
+            BuildManifest.from_path(self.BUILD_MANIFEST),
+            BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
+        )
+        dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
+        dependency_installer.install_build_dependencies(dependencies, os.path.dirname(__file__))
+        mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
+        mock_request.assert_not_called()
+        mock_copyfile.assert_called_once_with(
+            os.path.join(self.DATA, "builds", "plugins", "opensearch-job-scheduler-1.1.0.0.zip"),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
+        )
+
+    @patch("os.makedirs")
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_build_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
+        dependency_installer = DependencyInstaller(
+            "https://ci.opensearch.org/x/y", BuildManifest.from_path(self.BUILD_MANIFEST), BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
+        )
+        dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
+        dependency_installer.install_build_dependencies(dependencies, os.path.dirname(__file__))
+        mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
+        mock_copyfile.assert_not_called()
+        mock_request.assert_called_once_with(
+            "https://ci.opensearch.org/x/y/builds/plugins/opensearch-job-scheduler-1.1.0.0.zip",
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
+        )

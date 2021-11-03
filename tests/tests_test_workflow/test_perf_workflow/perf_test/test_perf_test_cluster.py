@@ -13,27 +13,16 @@ from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
 
 
 class TestPerfTestCluster(unittest.TestCase):
+    DATA = os.path.join(os.path.dirname(__file__), "data")
+    BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
+
     def setUp(self):
-        self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
-        self.manifest_filename = os.path.join(self.data_path, "bundle_manifest.yaml")
-        self.manifest = BundleManifest.from_path(self.manifest_filename)
+        self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.stack_name = "stack"
         self.security = "disable"
-        config = {
-            "Constants": {
-                "SecurityGroupId": "sg-00000000",
-                "VpcId": "vpc-12345",
-                "AccountId": "12345678",
-                "Region": "us-west-2",
-                "Role": "role-arn",
-            }
-        }
+        config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678", "Region": "us-west-2", "Role": "role-arn"}}
         self.perf_test_cluster = PerfTestCluster(
-            bundle_manifest=self.manifest,
-            config=config,
-            stack_name=self.stack_name,
-            security=self.security,
-            current_workspace="current_workspace",
+            bundle_manifest=self.manifest, config=config, stack_name=self.stack_name, security=self.security, current_workspace="current_workspace"
         )
 
     def test_create(self):
