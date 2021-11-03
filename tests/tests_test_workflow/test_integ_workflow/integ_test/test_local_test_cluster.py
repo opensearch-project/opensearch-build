@@ -15,11 +15,11 @@ import yaml
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
+from system.process import Process
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_cluster import ClusterCreationException
-from system.process import Process
 
 
 class LocalTestClusterTests(unittest.TestCase):
