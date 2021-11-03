@@ -50,3 +50,17 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: "main"
+  - name: performance-analyzer-rca
+    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux
