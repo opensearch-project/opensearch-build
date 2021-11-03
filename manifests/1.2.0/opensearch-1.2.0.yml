@@ -10,7 +10,7 @@ build:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.x"
+    ref: "1.2"
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -22,12 +22,6 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: "main"
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: asynchronous-search
-    repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: "main"
     checks:
       - gradle:properties:version
