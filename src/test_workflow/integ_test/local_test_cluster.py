@@ -43,11 +43,8 @@ class LocalTestCluster(TestCluster):
         self.component_test_config = component_test_config
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = test_recorder.local_cluster_logs
-<<<<<<< HEAD
         self.dependency_installer = dependency_installer
-=======
         self.process_handler = Process(self.work_dir)
->>>>>>> 4431b9b (address pr feedback)
 
     def create_cluster(self):
         self.download()
@@ -59,7 +56,6 @@ class LocalTestCluster(TestCluster):
                 self.additional_cluster_config,
                 os.path.join(self.install_dir, "config", "opensearch.yml")
             )
-<<<<<<< HEAD
         logging.info(f"Running {os.path.join(self.install_dir, 'opensearch-tar-install.sh')}")
         self.process = subprocess.Popen(
             "./opensearch-tar-install.sh",
@@ -69,12 +65,6 @@ class LocalTestCluster(TestCluster):
             stderr=self.stderr
         )
         logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
-=======
-
-        self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
-
-        logging.info(f"Started OpenSearch with parent PID {self.process_handler.get_pid()}")
->>>>>>> 4431b9b (address pr feedback)
         self.wait_for_service()
 
     def endpoint(self):

@@ -21,9 +21,3 @@ out.txt
 
 /.vscode/
 
-<<<<<<< HEAD
-=======
-/.vscode/
-
-unit_test*.txt
->>>>>>> 49f0a2b (fix windows)
