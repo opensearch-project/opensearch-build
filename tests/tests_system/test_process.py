@@ -4,30 +4,27 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import subprocess
+import os
 import unittest
 
-from system.process import terminate
+from system.process import Process
 
 
 class TestProcess(unittest.TestCase):
-    def test_terminate(self):
-        work_dir = "."
+    def test(self):
 
-        stdout = open("unit_test_stdout.txt", "w+")
-        stderr = open("unit_test_stderr.txt", "w+")
+        process_handler = Process(".")
 
-        process = subprocess.Popen(
-            "ls",
-            cwd=".",
-            shell=True,
-            stdout=stdout,
-            stderr=stderr,
-        )
+        process_handler.start("ls", ".")
 
-        self.assertIsNotNone(process)
+        self.assertIsNotNone(process_handler.get_pid())
 
-        terminated_process, local_cluster_stderr, local_cluster_stdout, return_code = terminate(process, work_dir, stdout, stderr)
+        process_handler.terminate()
 
-        self.assertIsNone(terminated_process)
-        self.assertIsNotNone(local_cluster_stdout)
+        self.assertIsNone(process_handler.get_pid())
+
+        # clean up
+        os.remove("stdout.txt")
+        os.remove("stderr.txt")
+
+    # TODO: add test for subprocess.TimeoutExpired

@@ -8,7 +8,7 @@ import os
 import subprocess
 import sys
 import unittest
-from unittest.mock import MagicMock, call, mock_open, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 import requests
 import yaml
@@ -19,6 +19,7 @@ from system.temporary_directory import TemporaryDirectory
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.test_cluster import ClusterCreationException
+from system.process import Process
 
 
 class LocalTestClusterTests(unittest.TestCase):
@@ -73,13 +74,14 @@ class LocalTestClusterTests(unittest.TestCase):
     def __get_process(self):
         return subprocess.Popen((sys.executable, "-c", "pass"), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    @patch("subprocess.Popen")
+    @patch.object(Process, 'start')
     @patch("yaml.dump")
     @patch("builtins.open", mock_open())
     def test_create_cluster(self, *mocks):
         self.local_test_cluster.download = MagicMock()
         self.local_test_cluster.wait_for_service = MagicMock()
         self.local_test_cluster.create_cluster()
+<<<<<<< HEAD
         subprocess.Popen.assert_called_with(
             "./opensearch-tar-install.sh",
             cwd=f"opensearch-{self.bundle_manifest.build.version}",
@@ -87,6 +89,10 @@ class LocalTestClusterTests(unittest.TestCase):
             stdout=self.local_test_cluster.stdout,
             stderr=self.local_test_cluster.stderr,
         )
+=======
+
+        Process.start.assert_called_once()
+>>>>>>> 4431b9b (address pr feedback)
         yaml.dump.assert_called_once_with({"script.context.field.max_compilations_rate": "1000/1m"})
 
     def test_endpoint(self):
@@ -115,6 +121,7 @@ class LocalTestClusterTests(unittest.TestCase):
             requests.get.assert_called_once_with("http://localhost:9200/_cluster/health", verify=False, auth=("admin", "admin"))
         self.assertEqual(str(err.exception), "Cluster is not available after 10 attempts")
 
+<<<<<<< HEAD
     @patch("test_workflow.integ_test.local_test_cluster.psutil.Process", side_effect=__mock_process)
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.wait")
     @patch("test_workflow.integ_test.local_test_cluster.subprocess.Popen.terminate")
@@ -156,3 +163,9 @@ class LocalTestClusterTests(unittest.TestCase):
                 call("Process terminated with exit code 0"),
             ]
         )
+=======
+    @patch.object(Process, 'terminate', return_value=("1", "2", "3"))
+    def test_terminate_process(self, *mocks):
+        self.local_test_cluster.terminate_process()
+        Process.terminate.assert_called_once()
+>>>>>>> 4431b9b (address pr feedback)
