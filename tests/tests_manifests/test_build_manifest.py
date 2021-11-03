@@ -105,10 +105,10 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(str(ctx.exception), "No components matched focus=x.")
 
     def test_component_matches(self):
-        self.assertTrue(BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).matches())
+        self.assertTrue(BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).__matches__())
 
     def test_component_matches_focus(self):
         component = BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""})
-        self.assertTrue(component.matches(focus=None))
-        self.assertTrue(component.matches(focus="x"))
-        self.assertFalse(component.matches(focus="y"))
+        self.assertTrue(component.__matches__(focus=None))
+        self.assertTrue(component.__matches__(focus="x"))
+        self.assertFalse(component.__matches__(focus="y"))
