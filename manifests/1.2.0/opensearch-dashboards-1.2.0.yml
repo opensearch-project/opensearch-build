@@ -16,4 +16,7 @@ components:
 - name: securityDashboards
   repository: https://github.com/opensearch-project/security-dashboards-plugin.git
   ref: "main"
+- name: indexManagementDashboards
+  repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+  ref: "1.2"
 schema-version: '1.0'
