@@ -91,11 +91,14 @@ class BuildManifest(ComponentManifest):
 
     def __init__(self, data):
         super().__init__(data)
-
         self.build = self.Build(data["build"])
 
     def __to_dict__(self):
-        return {"schema-version": "1.2", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
+        return {
+            "schema-version": "1.2",
+            "build": self.build.__to_dict__(),
+            "components": self.components.to_dict()
+        }
 
     @staticmethod
     def get_build_manifest_relative_location(build_id, opensearch_version, platform, architecture):

@@ -11,7 +11,14 @@ from manifests.manifest import Manifest
 
 
 class ComponentManifest(Manifest):
-    SCHEMA = {"schema-version": {"required": True, "type": "string", "allowed": ["1.0"]}, "components": {"type": "list"}}
+    SCHEMA = {
+        "schema-version": {
+            "required": True, "type": "string", "allowed": ["1.0"]
+        },
+        "components": {
+            "type": "list"
+        }
+    }
 
     def __init__(self, data):
         super().__init__(data)
@@ -19,7 +26,10 @@ class ComponentManifest(Manifest):
         self.components = self.Components(data.get("components", []))
 
     def __to_dict__(self):
-        return {"schema-version": "1.0", "components": self.components.to_dict()}
+        return {
+            "schema-version": "1.0",
+            "components": self.components.to_dict()
+        }
 
     class Components(dict):
         def __init__(self, data):

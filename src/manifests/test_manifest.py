@@ -62,7 +62,10 @@ class TestManifest(ComponentManifest):
         super().__init__(data)
 
     def __to_dict__(self):
-        return {"schema-version": "1.0", "components": self.components.to_dict()}
+        return {
+            "schema-version": "1.0",
+            "components": self.components.to_dict()
+        }
 
     class Components(ComponentManifest.Components):
         @classmethod
