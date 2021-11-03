@@ -28,18 +28,18 @@ class ComponentManifest(Manifest):
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "components": self.components.to_dict()
+            "components": self.components.__to_dict__()
         }
 
     class Components(dict):
         def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], self.__create(component)), data))
+            super().__init__(map(lambda component: (component["name"], self.__create__(component)), data))
 
         @classmethod
-        def create(data):
+        def __create__(data):
             ComponentManifest.Component(data)
 
-        def to_dict(self):
+        def __to_dict__(self):
             return list(map(lambda component: component.__to_dict__(), self.values()))
 
         def select(self, focus=None):
@@ -50,7 +50,7 @@ class ComponentManifest(Manifest):
             :return: Collection of components.
             :raises ValueError: Invalid platform or component name specified.
             """
-            selected, it = itertools.tee(filter(lambda component: component.matches(focus), self.values()))
+            selected, it = itertools.tee(filter(lambda component: component.__matches__(focus), self.values()))
 
             if not any(it):
                 raise ValueError(f"No components matched focus={focus}.")
@@ -64,7 +64,7 @@ class ComponentManifest(Manifest):
         def __to_dict__(self):
             return {"name": self.name}
 
-        def matches(self, focus=None, platform=None):
+        def __matches__(self, focus=None, platform=None):
             matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
 
             if not matches:

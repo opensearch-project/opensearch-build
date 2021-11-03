@@ -65,7 +65,7 @@ class BundleManifest_1_0(ComponentManifest):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
-            "components": self.components.to_dict()
+            "components": self.components.__to_dict__()
         }
 
     class Build:
@@ -86,7 +86,7 @@ class BundleManifest_1_0(ComponentManifest):
             }
 
     class Components(ComponentManifest.Components):
-        def __create(self, data):
+        def __create__(self, data):
             return BundleManifest_1_0.Component(data)
 
     class Component(ComponentManifest.Component):

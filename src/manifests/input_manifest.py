@@ -102,7 +102,7 @@ class InputManifest(ComponentManifest):
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
             "ci": None if self.ci is None else self.ci.__to_dict__(),
-            "components": self.components.to_dict(),
+            "components": self.components.__to_dict__(),
         }
 
     class Ci:
@@ -138,7 +138,7 @@ class InputManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create(self, data):
+        def __create__(self, data):
             return InputManifest.Component._from(data)
 
         def select(self, focus=None, platform=None):
@@ -150,7 +150,7 @@ class InputManifest(ComponentManifest):
             :return: Collection of components.
             :raises ValueError: Invalid platform or component name specified.
             """
-            selected, it = itertools.tee(filter(lambda component: component.matches(focus, platform), self.values()))
+            selected, it = itertools.tee(filter(lambda component: component.__matches__(focus, platform), self.values()))
 
             if not any(it):
                 raise ValueError(f"No components matched focus={focus}, platform={platform}.")
@@ -171,7 +171,7 @@ class InputManifest(ComponentManifest):
             else:
                 raise ValueError(f"Invalid component data: {data}")
 
-        def matches(self, focus=None, platform=None):
+        def __matches__(self, focus=None, platform=None):
             matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
 
             if not matches:

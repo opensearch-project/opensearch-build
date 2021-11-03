@@ -14,7 +14,7 @@ class TestComponentManifest(unittest.TestCase):
     class UnitTestManifest(ComponentManifest):
         class Components(ComponentManifest.Components):
             @abstractmethod
-            def __create(self, data):
+            def __create__(self, data):
                 return TestComponentManifest.UnitTestManifest.Component(data)
 
         class Component(ComponentManifest.Component):

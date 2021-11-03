@@ -64,12 +64,12 @@ class TestManifest(ComponentManifest):
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "components": self.components.to_dict()
+            "components": self.components.__to_dict__()
         }
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create(self, data):
+        def __create__(self, data):
             return TestManifest.Component(data)
 
     class Component(ComponentManifest.Component):
