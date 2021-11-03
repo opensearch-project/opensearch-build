@@ -7,6 +7,7 @@
 import logging
 import os
 import subprocess
+import tempfile
 
 import psutil  # type: ignore
 
@@ -16,17 +17,16 @@ class Process:
         self,
         work_dir
     ):
-        os.system("pwd")
         self.work_dir = work_dir
         self.process = None
 
-    def start(self, cmd, install_dir):
-        self.stdout = open("stdout.txt", "w")
-        self.stderr = open("stderr.txt", "w")
+    def start(self, command, cwd):
+        self.stdout = tempfile.NamedTemporaryFile()
+        self.stderr = tempfile.NamedTemporaryFile()
 
         self.process = subprocess.Popen(
-            cmd,
-            cwd=install_dir,
+            command,
+            cwd=cwd,
             shell=True,
             stdout=self.stdout,
             stderr=self.stderr,
@@ -72,5 +72,6 @@ class Process:
 
             return self.return_code, self.stdout_data, self.stderr_data
 
-    def get_pid(self):
-        return self.process.pid if self.process is not None else None
+    @property
+    def pid(self):
+        return self.process.pid if self.process else None
