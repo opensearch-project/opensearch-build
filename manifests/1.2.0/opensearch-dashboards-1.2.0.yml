@@ -16,4 +16,19 @@ components:
 - name: securityDashboards
   repository: https://github.com/opensearch-project/security-dashboards-plugin.git
   ref: "main"
+- name: queryWorkbenchDashboards
+  repository: https://github.com/opensearch-project/sql.git
+  working_directory: workbench
+  ref: "1.2"
+- name: reportsDashboards
+  repository: https://github.com/opensearch-project/dashboards-reports.git
+  working_directory: dashboards-reports
+  ref: "1.2"
+- name: traceAnalyticsDashboards
+  repository: https://github.com/opensearch-project/trace-analytics.git
+  ref: "1.2"
+- name: ganttChartDashboards
+  repository: https://github.com/opensearch-project/dashboards-visualizations
+  working_directory: gantt-chart
+  ref: "1.2"
 schema-version: '1.0'
