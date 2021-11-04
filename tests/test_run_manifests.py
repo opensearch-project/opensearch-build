@@ -32,12 +32,17 @@ class TestRunManifests(unittest.TestCase):
 
         mock_logging.info.assert_has_calls(
             [
-                call("OpenSearch 1.0.0"),
-                call("OpenSearch 1.0.1"),
-                call("OpenSearch 1.1.0"),
-                call("OpenSearch 1.1.1"),
-                call("OpenSearch 1.2.0"),
-                call("OpenSearch 2.0.0"),
+                call('OpenSearch 1.0.0'),
+                call('OpenSearch 1.0.1'),
+                call('OpenSearch 1.1.0'),
+                call('OpenSearch 1.1.1'),
+                call('OpenSearch 1.2.0'),
+                call('OpenSearch 1.3.0'),
+                call('OpenSearch 2.0.0'),
+                call('OpenSearch Dashboards 1.0.1'),
+                call('OpenSearch Dashboards 1.1.0'),
+                call('OpenSearch Dashboards 1.2.0'),
+                call('Done.'),
             ]
         )
 
