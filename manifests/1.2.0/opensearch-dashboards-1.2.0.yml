@@ -18,5 +18,5 @@ components:
   ref: "main"
 - name: indexManagementDashboards
   repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-  ref: "1.2"
+  ref: "main"
 schema-version: '1.0'
