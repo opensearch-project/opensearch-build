@@ -59,7 +59,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./test.sh ${JOB_NAME} --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
+                sh "./test.sh integ-test --s3-bucket ${ARTIFACT_BUCKET_NAME} --opensearch-version ${opensearch_version} --build-id ${build_id} --architecture ${architecture} --test-run-id ${test_run_id}"
             }
             post() {
                 always {
