@@ -22,6 +22,6 @@ class Bundles:
         return klass
 
     @classmethod
-    def create(cls, build_manifest, artifacts_dir, bundle_recorder, keep):
+    def create(cls, build_manifest, artifacts_dir, bundle_recorder, distribution, keep):
         klass = cls.from_name(build_manifest.build.name)
-        return klass(build_manifest, artifacts_dir, bundle_recorder, keep)
+        return klass(build_manifest, artifacts_dir, bundle_recorder, distribution, keep)

@@ -43,14 +43,15 @@ class Dist(ABC):
         logging.info(f"Published {path}.")
 
     @classmethod
-    def from_path(cls, name, path):
-        ext = os.path.splitext(path)[1]
-        if ext == ".gz":
+    def from_path(cls, name, path, distribution):
+        if distribution == "rpm":
+            return DistRpm(name, path)
+        elif distribution == "tar":
             return DistTar(name, path)
-        elif ext == ".zip":
+        elif distribution == "zip":
             return DistZip(name, path)
         else:
-            raise ValueError(f'Invalid min "dist" extension in input artifacts: {ext} ({path}).')
+            raise ValueError("Distribution not specified, try with ./assemble.sh --distribution")
 
 
 class DistZip(Dist):
@@ -75,3 +76,13 @@ class DistTar(Dist):
     def __build__(self, name, dest):
         with tarfile.open(name, "w:gz") as tar:
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
+
+
+class DistRpm(Dist):
+    def __extract__(self, dest):
+        with tarfile.open(self.path, "r:gz") as tar:
+            tar.extractall(dest)
+
+    def __build__(self, name, dest):
+        logging.info(f"build for rpm distribution.")
+
