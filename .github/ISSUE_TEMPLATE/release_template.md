@@ -66,6 +66,7 @@ __Replace with OpenSearch wide initiatives to improve quality and consistency.__
 ### Post Release
 
 - [ ] Create [release tags](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) for each component.
+- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags.
 - [ ] Update [this template](./release_template.md) with any new or missed steps.
 - [ ] Conduct a postmortem, and publish its results.
 
