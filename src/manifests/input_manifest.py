@@ -95,7 +95,7 @@ class InputManifest(ComponentManifest):
 
         self.build = self.Build(data["build"])
         self.ci = self.Ci(data.get("ci", None))
-        self.components = InputManifest.Components(data.get("components", []))
+        self.components = self.Components(data.get("components", []))
 
     def __to_dict__(self):
         return {

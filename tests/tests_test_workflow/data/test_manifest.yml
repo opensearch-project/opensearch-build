@@ -1,0 +1,42 @@
+components:
+  - name: job-scheduler
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: index-management
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: anomaly-detection
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+        - unittest-dependency
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - with-security
+    bwc-test:
+      test-configs:
+        - with-security
+schema-version: '1.0'

@@ -255,26 +255,18 @@ This workflow contains integration, backwards compatibility and performance test
 More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/README.md).
 
 Usage:
-```bash
-export AWS_ROLE_ARN=arn:aws:iam::<AWS_JENKINS_ACCOUNT>:role/opensearch-test
-export AWS_ROLE_SESSION_NAME=dummy-session
 
-export AWS_SESSION_TOKEN=<value>
-export AWS_ACCESS_KEY_ID=<value>
-export AWS_SECRET_ACCESS_KEY=<value>
-./test.sh <test-type>
+```bash
+./test.sh <test-type> <path>
 ```
 
 The following options are available.
 
 | name                 | description                                                             |
 |----------------------|-------------------------------------------------------------------------|
-| test-type            | Run tests of a test suite. [integ-test, bwc-test]                       |
+| test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| path                 | Location of manifest(s).                                                |
 | --test-run-id        | Unique identifier for a test run                                        |
-| --s3-bucket          | Artifact S3 bucket to pull manifests and dependencies                   |
-| --opensearch-version | OpenSearch version                                                      |
-| --build-id           | Unique identifier for a build                                           |
-| --architecture       | CPU architecture for all components                                     |
 | --component          | Test a specific component in a manifest                                 |
 | --keep               | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose        | Show more verbose output.                                               |
@@ -286,16 +278,33 @@ This step runs integration tests invoking `run_integ_test.py` in each component 
 To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3, reads all components of the bundle and runs integration tests against each component.
  
 Usage:
+
 ```bash
-./test.sh integ-test --test-run-id <execution-id> --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
+./test.sh integ-test <target>
 ```
+
+For example, build locally and run integration tests.
+
+```bash
+./build.sh manifests/1.2.0/opensearch-1.2.0.yml
+./assemble.sh builds/manifest.yml
+./test.sh integ-test . # looks for "./builds/manifest.yml" and "./dist/manifest.yml"
+```
+
+Run integration tests against an existing build.
+
+```bash
+./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/manifest.yml and https://.../dist/manifest.yml
+```
+
 ##### Backwards Compatibility Tests
 
 This step run backward compatibility invoking `run_bwc_test.py` in each component from bundle manifest.
 
 Usage:
+
 ```bash
-./test.sh bwc-test --test-run-id <execution-id> --s3-bucket <bucket_name> --opensearch-version <version> --build-id <id> --architecture <arch>
+./test.sh bwc-test <target>
 ```
 
 ##### Performance Tests
