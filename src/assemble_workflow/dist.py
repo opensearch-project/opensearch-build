@@ -83,6 +83,6 @@ class DistRpm(Dist):
         with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
-    def __build__(self, name, dest):
+    def __build__(self):
         logging.info(f"build for rpm distribution.")
 

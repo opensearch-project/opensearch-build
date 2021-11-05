@@ -38,7 +38,6 @@ def main():
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar
-        #  we don't care right now for rpm distribution
         bundle_recorder.write_manifest(bundle.min_dist.archive_path) 
         bundle.package(output_dir)
         logging.info(f"Package for {args.distribution}")

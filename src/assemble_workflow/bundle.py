@@ -38,9 +38,10 @@ class Bundle(ABC):
         """
         self.plugins = self.__get_plugins(build_manifest.components.values())
         self.artifacts_dir = artifacts_dir
+        self.distribution = distribution
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory(keep=keep)
-        self.min_dist = self.__get_min_dist(build_manifest.components.values(), distribution)
+        self.min_dist = self.__get_min_dist(build_manifest.components.values())
         self.installed_plugins = []
         self.build = build_manifest.build
 
@@ -97,7 +98,10 @@ class Bundle(ABC):
         # min_dist => DistTar | DistZip | DistRpm
         # min_dist.build => .tar | .zip => put into 'dist' folder
         # logging.info(f"{type(self.min_dist)}")
-        self.min_dist.build(self.bundle_recorder.package_name, dest)
+        if self.distribution == 'rpm':
+            self.min_dist.__build__()
+        elif self.distribution == 'zip' or self.distribution == 'tar':
+            self.min_dist.build(self.bundle_recorder.package_name, dest)
 
     def _execute(self, command):
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')
@@ -125,15 +129,13 @@ class Bundle(ABC):
     def __get_plugins(self, build_components):
         return [c for c in build_components if "plugins" in c.artifacts]
 
-    def __get_min_dist(self, build_components, distribution):
+    def __get_min_dist(self, build_components):
         min_bundle = next(iter([c for c in build_components if "dist" in c.artifacts]), None)
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
-        min_dist = Dist.from_path(min_bundle.name, min_dist_path, distribution)
-        # Add logging here
-        logging.info(f"Extracting dist for {distribution}.")
+        min_dist = Dist.from_path(min_bundle.name, min_dist_path, self.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")
