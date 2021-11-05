@@ -22,4 +22,7 @@ components:
 - name: indexManagementDashboards
   repository: https://github.com/opensearch-project/index-management-dashboards-plugin
   ref: "1.2"
+- name: anomalyDetectionDashboards
+  repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+  ref: "main"
 schema-version: '1.0'
