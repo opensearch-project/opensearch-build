@@ -64,3 +64,9 @@ components:
     platforms:
       - darwin
       - linux
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
