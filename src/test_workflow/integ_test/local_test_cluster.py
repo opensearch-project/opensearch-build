@@ -56,22 +56,10 @@ class LocalTestCluster(TestCluster):
                 self.additional_cluster_config,
                 os.path.join(self.install_dir, "config", "opensearch.yml")
             )
-<<<<<<< HEAD
-        logging.info(f"Running {os.path.join(self.install_dir, 'opensearch-tar-install.sh')}")
-        self.process = subprocess.Popen(
-            "./opensearch-tar-install.sh",
-            cwd=self.install_dir,
-            shell=True,
-            stdout=self.stdout,
-            stderr=self.stderr
-        )
-        logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
-=======
 
         self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
 
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
->>>>>>> 488ecaf (address pr feedback)
         self.wait_for_service()
 
     def endpoint(self):

@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import logging
-import os
 import subprocess
 import tempfile
 
@@ -14,10 +13,8 @@ import psutil  # type: ignore
 
 class Process:
     def __init__(
-        self,
-        work_dir
+        self
     ):
-        self.work_dir = work_dir
         self.process = None
 
     def start(self, command, cwd):
@@ -58,15 +55,15 @@ class Process:
         finally:
             logging.info(f"Process terminated with exit code {self.process.returncode}")
             if self.stdout:
-                with open(os.path.join(self.work_dir, self.stdout.name), "r") as stdout:
+                with open(self.stdout.name, "r") as stdout:
                     self.stdout_data = stdout.read()
                     self.stdout.close()
                     self.stdout = None
             if self.stderr:
-                with open(os.path.join(self.work_dir, self.stderr.name), "r") as stderr:
+                with open(self.stderr.name, "r") as stderr:
                     self.stderr_data = stderr.read()
-                self.stderr.close()
-                self.stderr = None
+                    self.stderr.close()
+                    self.stderr = None
             self.return_code = self.process.returncode
             self.process = None
 

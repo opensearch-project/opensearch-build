@@ -12,7 +12,7 @@ from system.process import Process
 class TestProcess(unittest.TestCase):
     def test(self):
 
-        process_handler = Process(".")
+        process_handler = Process()
 
         process_handler.start("ls", ".")
 
