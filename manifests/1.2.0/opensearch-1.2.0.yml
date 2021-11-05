@@ -10,7 +10,7 @@ build:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.x"
+    ref: "1.2"
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -32,6 +32,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: "main"
@@ -41,3 +47,20 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: "main"
+  - name: performance-analyzer-rca
+    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux

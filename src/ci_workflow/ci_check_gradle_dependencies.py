@@ -7,11 +7,11 @@
 import logging
 import re
 
-from ci_workflow.ci_check import CiCheck
+from ci_workflow.ci_check import CiCheckSource
 from system.properties_file import PropertiesFile
 
 
-class CiCheckGradleDependencies(CiCheck):
+class CiCheckGradleDependencies(CiCheckSource):
     def __init__(self, component, git_repo, target, args):
         super().__init__(component, git_repo, target, args)
         self.gradle_project = args if args else None

@@ -40,9 +40,9 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
         mock_component_opensearch.return_value = MagicMock(name="common-utils")
         mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
-        mock_input_manifest_from_path.return_value = MagicMock(
-            components=[InputManifest.Component({"name": "common-utils", "repository": "git", "ref": "ref"})]
-        )
+        mock_input_manifest_from_path.return_value.components = {
+            "common-utils": InputManifest.Component({"name": "common-utils", "repository": "git", "ref": "ref"})
+        }
         manifests = InputManifestsOpenSearch()
         manifests.update()
         self.assertEqual(mock_input_manifest().to_file.call_count, 2)
@@ -63,3 +63,19 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
             ),
         ]
         mock_input_manifest().to_file.assert_has_calls(calls)
+
+    @patch("os.makedirs")
+    @patch("os.chdir")
+    @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
+    @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
+    @patch("manifests_workflow.input_manifests_opensearch.InputManifestsOpenSearch.write_manifest")
+    def test_update_with_latest_manifest(self, mock_write_manifest, mock_component_opensearch, mock_component_opensearch_min, *mocks):
+        mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
+        mock_component_opensearch_min.branches.return_value = ["main"]
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
+        mock_component_opensearch.return_value = MagicMock(name="common-utils")
+        mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
+        manifests = InputManifestsOpenSearch()
+        manifests.update()
+        mock_component_opensearch_min.branches.assert_called()
+        mock_write_manifest.assert_called_with("0.9.0", [mock_component_opensearch_min.checkout.return_value])

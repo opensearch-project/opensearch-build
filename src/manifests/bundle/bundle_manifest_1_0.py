@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from manifests.manifest import Manifest
+from manifests.component_manifest import ComponentManifest
 
 
-class BundleManifest_1_0(Manifest):
+class BundleManifest_1_0(ComponentManifest):
     """
     A BundleManifest is an immutable view of the outputs from a assemble step
     The manifest contains information about the bundle that was built (in the `assemble` section),
@@ -60,13 +60,12 @@ class BundleManifest_1_0(Manifest):
     def __init__(self, data):
         super().__init__(data)
         self.build = self.Build(data["build"])
-        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
+            "components": self.components.__to_dict__()
         }
 
     class Build:
@@ -83,12 +82,16 @@ class BundleManifest_1_0(Manifest):
                 "version": self.version,
                 "architecture": self.architecture,
                 "location": self.location,
-                "id": self.id,
+                "id": self.id
             }
 
-    class Component:
+    class Components(ComponentManifest.Components):
+        def __create__(self, data):
+            return BundleManifest_1_0.Component(data)
+
+    class Component(ComponentManifest.Component):
         def __init__(self, data):
-            self.name = data["name"]
+            super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
@@ -100,5 +103,5 @@ class BundleManifest_1_0(Manifest):
                 "repository": self.repository,
                 "ref": self.ref,
                 "commit_id": self.commit_id,
-                "location": self.location,
+                "location": self.location
             }

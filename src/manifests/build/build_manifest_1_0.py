@@ -4,7 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from manifests.manifest import Manifest
+from manifests.component_manifest import ComponentManifest
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -35,9 +35,7 @@ components:
 """
 
 
-class BuildManifest_1_0(Manifest):
-    components: list
-
+class BuildManifest_1_0(ComponentManifest):
     SCHEMA = {
         "build": {
             "required": True,
@@ -77,19 +75,18 @@ class BuildManifest_1_0(Manifest):
 
     def __init__(self, data):
         super().__init__(data)
-
         self.build = self.Build(data["build"])
-        self.components = BuildManifest_1_0.Components(data.get("components", []))
 
     def __to_dict__(self):
-        return {"schema-version": "1.0", "build": self.build.__to_dict__(), "components": self.components.to_dict()}
+        return {
+            "schema-version": "1.0",
+            "build": self.build.__to_dict__(),
+            "components": self.components.__to_dict__()
+        }
 
-    class Components(dict):
-        def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], BuildManifest_1_0.Component(component)), data))
-
-        def to_dict(self):
-            return list(map(lambda component: component.__to_dict__(), self.values()))
+    class Components(ComponentManifest.Components):
+        def __create__(self, data):
+            return BuildManifest_1_0.Component(data)
 
     class Build:
         def __init__(self, data):
@@ -103,16 +100,16 @@ class BuildManifest_1_0(Manifest):
                 "name": self.name,
                 "version": self.version,
                 "architecture": self.architecture,
-                "id": self.id,
+                "id": self.id
             }
 
-    class Component:
+    class Component(ComponentManifest.Component):
         def __init__(self, data):
-            self.name = data["name"]
+            super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
-            self.artifacts = data.get("artifacts", [])
+            self.artifacts = data.get("artifacts", {})
             self.version = data["version"]
 
         def __to_dict__(self):

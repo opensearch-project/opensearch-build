@@ -44,7 +44,6 @@ class BwcTestSuite:
 
     def execute(self):
         # For each component, check out the git repo and run `bwctest.sh`
-        for component in self.manifest.components:
-            if self.component is None or self.component == component.name:
-                # TODO: Store and report test results, send notification via {console_output}
-                self.component_bwc_tests(component)
+        for component in self.manifest.components.select(focus=self.component):
+            # TODO: Store and report test results, send notification via {console_output}
+            self.component_bwc_tests(component)

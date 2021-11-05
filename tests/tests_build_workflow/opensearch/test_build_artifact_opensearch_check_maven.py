@@ -24,6 +24,7 @@ class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
                     output_dir="output_dir",
                     name="OpenSearch",
                     version="1.1.0",
+                    patches=["1.0.0"],
                     architecture="x64",
                     snapshot=snapshot,
                 )
@@ -43,12 +44,16 @@ class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
         with self.__mock("Implementation-Version: 1.1.0.0-SNAPSHOT") as mock:
             mock.check("valid.jar")
 
+    def test_record_maven_artifact_after_checking_maven_version_properties_patch(self):
+        with self.__mock("Implementation-Version: 1.0.0.0", snapshot=False) as mock:
+            mock.check("valid.jar")
+
     def test_build_artifact_check_maven_version_properties_mismatch(self):
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock("Implementation-Version: 1.2.3.4", snapshot=False) as mock:
                 mock.check("valid.jar")
 
         self.assertEqual(
-            "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of ['1.1.0.0', '1.1.0', None], but was '1.2.3.4'.",
+            "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of [None, '1.1.0.0', '1.0.0.0', '1.1.0', '1.0.0'], but was '1.2.3.4'.",
             str(context.exception),
         )

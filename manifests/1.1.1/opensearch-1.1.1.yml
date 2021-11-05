@@ -1,0 +1,17 @@
+---
+schema-version: "1.0"
+build:
+  name: OpenSearch
+  version: 1.1.1
+  patches: 
+    - 1.1.0
+components:
+  - name: OpenSearch
+    dist: https://ci.opensearch.org/ci/dbc/builds/1.1.0/405
+  - name: common-utils
+    dist: https://ci.opensearch.org/ci/dbc/builds/1.1.0/405
+  - name: job-scheduler
+    dist: https://ci.opensearch.org/ci/dbc/builds/1.1.0/405
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: "1.1"

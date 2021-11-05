@@ -8,9 +8,18 @@ build:
   version: 1.2.0
 components:
 - name: OpenSearch-Dashboards
-  ref: main
+  ref: "1.2"
   repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+- name: alertingDashboards
+  repository: https://github.com/opensearch-project/alerting-dashboards-plugin
+  ref: "main"
 - name: functionalTestDashboards
   repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+  ref: "main"
+- name: securityDashboards
+  repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+  ref: "main"
+- name: indexManagementDashboards
+  repository: https://github.com/opensearch-project/index-management-dashboards-plugin
   ref: "main"
 schema-version: '1.0'

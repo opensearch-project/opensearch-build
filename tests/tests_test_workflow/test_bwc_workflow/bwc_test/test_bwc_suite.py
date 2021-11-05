@@ -14,14 +14,18 @@ from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 
 
 class TestBwcSuite(unittest.TestCase):
+    DATA = os.path.join(os.path.dirname(__file__), "..", "..", "data")
+    MANIFEST = os.path.join(DATA, "remote", "dist", "manifest.yml")
+
     def setUp(self):
         os.chdir(os.path.dirname(__file__))
-        self.manifest = BundleManifest.from_path("data/test_manifest.yaml")
+
+        self.manifest = BundleManifest.from_path(self.MANIFEST)
         self.bwc_test_suite = BwcTestSuite(manifest=self.manifest, work_dir=".", component=None, keep=False)
 
     def test_execute(self):
         expected = []
-        for component in self.manifest.components:
+        for component in self.manifest.components.values():
             expected.append(call(component))
         self.bwc_test_suite.component_bwc_tests = MagicMock()
         self.bwc_test_suite.execute()
@@ -29,21 +33,16 @@ class TestBwcSuite(unittest.TestCase):
 
     @patch("test_workflow.bwc_test.bwc_test_suite.execute")
     def test_run_bwctest(self, mock_execute):
-        mock_execute.return_value = (0, '', '')
-        self.bwc_test_suite.run_tests(".", self.manifest.components[1].name)
-        script = os.path.join(ScriptFinder.default_scripts_path, 'bwctest.sh')
-        mock_execute.assert_called_with(script, '.', True, False)
+        mock_execute.return_value = (0, "", "")
+        self.bwc_test_suite.run_tests(".", "OpenSearch")
+        script = os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh")
+        mock_execute.assert_called_with(script, ".", True, False)
 
     @patch("test_workflow.bwc_test.bwc_test_suite.TestComponent")
     def test_component_bwctest(self, test_component_mock):
-        component = self.manifest.components[1]
+        component = self.manifest.components["OpenSearch"]
         self.bwc_test_suite.run_tests = MagicMock()
-        expected = [
-            call(
-                os.path.join(".", self.manifest.components[1].name),
-                self.manifest.components[1].name,
-            )
-        ]
+        expected = [call(os.path.join(".", component.name), component.name)]
 
         self.bwc_test_suite.component_bwc_tests(component)
         test_component_mock.return_value.checkout.assert_called_with(os.path.join(".", component.name))

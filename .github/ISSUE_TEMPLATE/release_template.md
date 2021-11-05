@@ -8,6 +8,23 @@ labels: untriaged, release, v{{ env.VERSION }}
 
 I noticed that a manifest was automatically created in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}). Please follow the following checklist to make a release.
 
+<details><summary>How to use this issue</summary>
+<p>
+
+## This Release Issue
+This issue captures the state of the OpenSearch release, its assignee is responsible for driving the release.  Please contact them or @mention them on this issue for help.  There are linked issues on components of the release where individual components can be tracked.
+
+## Release Steps
+There are several steps to the release process, these steps are completed as the whole release and components that are behind present risk to the release.  The release owner completes the tasks in this ticket, whereas component owners resolve tasks on their ticket in their repositories.
+
+Steps have completion dates for coordinating efforts between the components of a release; components can start as soon as they are ready far in advance of a future release.
+
+### Component List
+To aid in understanding the state of the release there is a table with status indicating each component state.  This is updated based on the status of the component issues.
+
+</p>
+</details>
+
 ### Preparation
 
 - [ ] Assign this issue to a release owner.
@@ -49,9 +66,26 @@ __Replace with OpenSearch wide initiatives to improve quality and consistency.__
 ### Post Release
 
 - [ ] Create [release tags](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) for each component.
+- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags.
 - [ ] Update [this template](./release_template.md) with any new or missed steps.
 - [ ] Conduct a postmortem, and publish its results.
 
 ### Components
 
 __Replace with links to all component tracking issues.__
+
+| Component | On track | Notes |
+| --------- | -------- | ----- |
+| {COMPONENT_ISSUE_LINK} | {INDICATOR}} | {STATUS} |
+
+<details><summary>Legend</summary>
+<p>
+
+| Symbol | Meaning |
+| -------- | ---------- |
+| :green_circle: | On track with overall release |
+| :yellow_circle: | Missed last milestone |
+| :red_circle: | Missed multiple milestones |
+
+</p>
+</details>

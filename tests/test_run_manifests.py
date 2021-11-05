@@ -30,27 +30,28 @@ class TestRunManifests(unittest.TestCase):
     def test_main_list(self, mock_logging, *mocks):
         main()
 
-        mock_logging.info.assert_has_calls(
-            [
-                call("OpenSearch 1.0.0"),
-                call("OpenSearch 1.0.1"),
-                call("OpenSearch 1.1.0"),
-                call("OpenSearch 1.2.0"),
-                call("OpenSearch 2.0.0"),
-            ]
-        )
+        mock_logging.info.assert_has_calls([
+            call("OpenSearch 1.0.0"),
+            call("OpenSearch 1.0.1"),
+            call("OpenSearch 1.1.0"),
+            call("OpenSearch 1.1.1")
+        ])
 
-        mock_logging.info.assert_has_calls([call("Done.")])
+        mock_logging.info.assert_has_calls([
+            call("OpenSearch 2.0.0")
+        ])
+
+        mock_logging.info.assert_has_calls([
+            call("OpenSearch Dashboards 1.1.0")
+        ])
+
+        mock_logging.info.assert_has_calls([
+            call("Done.")
+        ])
 
     @patch("argparse._sys.argv", ["run_manifests.py", "update"])
-    @patch(
-        "manifests_workflow.manifests_args.InputManifestsOpenSearch",
-        return_value=MagicMock(),
-    )
-    @patch(
-        "manifests_workflow.manifests_args.InputManifestsOpenSearchDashboards",
-        return_value=MagicMock(),
-    )
+    @patch("manifests_workflow.manifests_args.InputManifestsOpenSearch", return_value=MagicMock())
+    @patch("manifests_workflow.manifests_args.InputManifestsOpenSearchDashboards", return_value=MagicMock())
     def test_main_update(self, mock_manifests_opensearch_dashboards, mock_manifests_opensearch, *mocks):
         main()
         mock_manifests_opensearch_dashboards.return_value.update.assert_called()

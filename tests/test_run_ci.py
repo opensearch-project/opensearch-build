@@ -7,7 +7,7 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -27,35 +27,14 @@ class TestRunCi(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.0/opensearch-1.1.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.1/opensearch-1.1.1.yml"))
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_MANIFEST])
-    @patch("run_ci.Ci", return_value=MagicMock())
-    @patch("run_ci.GitRepository", return_value=MagicMock(working_directory="dummy"))
     @patch("run_ci.TemporaryDirectory")
-    def test_main(self, mock_temp, mock_repo, mock_ci, *mocks):
+    @patch("run_ci.CiCheckLists.from_component")
+    def test_main(self, mock_lists, mock_temp, *mocks):
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
-
         main()
-
-        # each repository is checked out locally
-        mock_repo.assert_has_calls(
-            [
-                call(
-                    "https://github.com/opensearch-project/OpenSearch.git",
-                    "1.1",
-                    os.path.join(tempfile.gettempdir(), "OpenSearch"),
-                    None,
-                ),
-                call(
-                    "https://github.com/opensearch-project/common-utils.git",
-                    "1.1",
-                    os.path.join(tempfile.gettempdir(), "common-utils"),
-                    None,
-                ),
-            ]
-        )
-
-        # each component gets checked out and checked
-        self.assertEqual(mock_repo.call_count, 15)
-        self.assertEqual(mock_ci.return_value.check.call_count, 15)
+        self.assertNotEqual(mock_lists.call_count, 0)
+        self.assertEqual(mock_lists.return_value.checkout.call_count, mock_lists.call_count)
+        self.assertEqual(mock_lists.return_value.check.call_count, mock_lists.call_count)

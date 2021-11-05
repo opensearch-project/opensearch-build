@@ -4,10 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from manifests.manifest import Manifest
+from manifests.component_manifest import ComponentManifest
 
 
-class TestManifest(Manifest):
+class TestManifest(ComponentManifest):
     """
     TestManifest contains the test support matrix for any component.
 
@@ -42,30 +42,15 @@ class TestManifest(Manifest):
                         "type": "dict",
                         "schema": {
                             "build-dependencies": {"type": "list"},
-                            "test-configs": {
-                                "type": "list",
-                                "allowed": [
-                                    "with-security",
-                                    "without-security",
-                                ],
-                            },
-                            "additional-cluster-configs": {
-                                "type": "dict",
-                            },
+                            "test-configs": {"type": "list", "allowed": ["with-security", "without-security"]},
+                            "additional-cluster-configs": {"type": "dict"},
                         },
                     },
                     "bwc-test": {
                         "type": "dict",
                         "schema": {
                             "build-dependencies": {"type": "list"},
-                            "test-configs": {
-                                "type": "list",
-                                "allowed": [
-                                    "with-security",
-                                    "without-security",
-                                    "with-less-security",
-                                ],
-                            },
+                            "test-configs": {"type": "list", "allowed": ["with-security", "without-security", "with-less-security"]},
                         },
                     },
                 },
@@ -75,34 +60,34 @@ class TestManifest(Manifest):
 
     def __init__(self, data):
         super().__init__(data)
-        self.components = list(map(lambda entry: self.Component(entry), data["components"]))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
-            "components": list(map(lambda component: component.__to_dict__(), self.components)),
+            "components": self.components.__to_dict__()
         }
 
-    class Component:
+    class Components(ComponentManifest.Components):
+        @classmethod
+        def __create__(self, data):
+            return TestManifest.Component(data)
+
+    class Component(ComponentManifest.Component):
         def __init__(self, data):
-            self.name = data["name"]
+            super().__init__(data)
             self.working_directory = data.get("working-directory", None)
-            self.integ_test = data["integ-test"]
-            self.bwc_test = data["bwc-test"]
+            self.integ_test = data.get("integ-test", None)
+            self.bwc_test = data.get("bwc-test", None)
 
         def __to_dict__(self):
-            return Manifest.compact(
-                {
-                    "name": self.name,
-                    "working-directory": self.working_directory,
-                    "integ-test": self.integ_test,
-                    "bwc-test": self.bwc_test,
-                }
-            )
+            return {
+                "name": self.name,
+                "working-directory": self.working_directory,
+                "integ-test": self.integ_test,
+                "bwc-test": self.bwc_test
+            }
 
 
-TestManifest.VERSIONS = {
-    "1.0": TestManifest
-}
+TestManifest.VERSIONS = {"1.0": TestManifest}
 
 TestManifest.__test__ = False  # type:ignore

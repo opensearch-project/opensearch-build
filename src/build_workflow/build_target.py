@@ -22,6 +22,7 @@ class BuildTarget:
     def __init__(
         self,
         version,
+        patches=[],
         platform=None,
         architecture=None,
         name=None,
@@ -32,6 +33,7 @@ class BuildTarget:
         self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
         self.version = version
+        self.patches = patches
         self.snapshot = snapshot
         self.architecture = architecture or current_architecture()
         self.platform = platform or current_platform()
@@ -42,6 +44,21 @@ class BuildTarget:
         return self.version + "-SNAPSHOT" if self.snapshot else self.version
 
     @property
+    def compatible_opensearch_versions(self):
+        return list(map(lambda version: version + "-SNAPSHOT" if self.snapshot else version, self.compatible_versions))
+
+    @property
     def component_version(self):
         # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
         return self.version + ".0-SNAPSHOT" if self.snapshot else f"{self.version}.0"
+
+    @property
+    def compatible_component_versions(self):
+        # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
+        return list(map(lambda version: version + ".0-SNAPSHOT" if self.snapshot else f"{version}.0", self.compatible_versions))
+
+    @property
+    def compatible_versions(self):
+        versions = [self.version]
+        versions.extend(self.patches)
+        return versions

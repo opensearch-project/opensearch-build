@@ -20,21 +20,13 @@ class TestTestManifest(unittest.TestCase):
         self.manifest = TestManifest.from_path(self.manifest_filename)
 
     def test_component(self):
-        component = self.manifest.components[0]
+        component = self.manifest.components["index-management"]
         self.assertEqual(component.name, "index-management")
-        self.assertEqual(
-            component.integ_test,
-            {
-                "test-configs": [
-                    "with-security",
-                    "without-security",
-                ],
-            },
-        )
+        self.assertEqual(component.integ_test, {"test-configs": ["with-security", "without-security"]})
         self.assertEqual(component.bwc_test, {"test-configs": ["with-security", "without-security"]})
 
     def test_component_with_working_directory(self):
-        component = self.manifest.components[1]
+        component = self.manifest.components["dashboards-reports"]
         self.assertEqual(component.name, "dashboards-reports")
         self.assertEqual(component.working_directory, "reports-scheduler")
         self.assertEqual(component.integ_test, {"test-configs": ["without-security"]})
@@ -48,9 +40,5 @@ class TestTestManifest(unittest.TestCase):
     def test_versions(self):
         self.assertTrue(len(TestManifest.VERSIONS))
         for version in TestManifest.VERSIONS:
-            manifest = TestManifest.from_path(
-                os.path.join(
-                    self.data_path, "test", f"opensearch-test-schema-version-{version}.yml"
-                )
-            )
+            manifest = TestManifest.from_path(os.path.join(self.data_path, "test", f"opensearch-test-schema-version-{version}.yml"))
             self.assertEqual(version, manifest.version)

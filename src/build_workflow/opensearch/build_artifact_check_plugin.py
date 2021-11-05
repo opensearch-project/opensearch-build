@@ -16,14 +16,17 @@ class BuildArtifactOpenSearchCheckPlugin(BuildArtifactCheck):
     def check(self, path):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
-        if not path.endswith(f"-{self.target.component_version}.zip"):
-            raise BuildArtifactCheck.BuildArtifactInvalidError(path, f"Expected filename to include {self.target.component_version}.")
+        if not self.valid_path(path):
+            raise BuildArtifactCheck.BuildArtifactInvalidError(path, f"Expected filename to include one of {self.target.compatible_component_versions}.")
         with ZipFile(path, "r") as zip:
             data = zip.read("plugin-descriptor.properties").decode("UTF-8")
             properties = PropertiesFile(data)
             try:
-                properties.check_value("version", self.target.component_version)
-                properties.check_value("opensearch.version", self.target.version)
+                properties.check_value_in("version", self.target.compatible_component_versions)
+                properties.check_value_in("opensearch.version", self.target.compatible_versions)
             except PropertiesFile.CheckError as e:
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
             logging.info(f'Checked {path} ({properties.get_value("version", "N/A")})')
+
+    def valid_path(self, path):
+        return any(map(lambda version: path.endswith(f"-{version}.zip"), self.target.compatible_component_versions))

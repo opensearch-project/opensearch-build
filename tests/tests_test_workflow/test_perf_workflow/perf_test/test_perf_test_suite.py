@@ -15,15 +15,10 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 class TestPerfTestSuite(unittest.TestCase):
     def setUp(self):
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
-        self.manifest_filename = os.path.join(self.data_path, "bundle_manifest.yaml")
+        self.manifest_filename = os.path.join(self.data_path, "bundle_manifest.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.endpoint = None
-        self.perf_test_suite = PerfTestSuite(
-            bundle_manifest=self.manifest,
-            endpoint=None,
-            security=False,
-            current_workspace="current_workspace",
-        )
+        self.perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=None, security=False, current_workspace="current_workspace")
 
     def test_execute(self):
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):

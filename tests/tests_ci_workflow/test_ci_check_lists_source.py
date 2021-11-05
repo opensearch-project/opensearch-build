@@ -4,7 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
-import sys
+import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../src"))
+
+class TestCiCheckListsSource(unittest.TestCase):
+    def test_checkout(self):
+        pass
+
+    def test_check(self):
+        pass
