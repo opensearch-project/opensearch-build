@@ -9,15 +9,15 @@ build:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: "1.1"
+    ref: tags/1.1.0
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-    ref: "1.1"
+    ref: tags/1.1.0.0
   # hybrid repo (workbench)
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/sql.git
     working_directory: workbench
-    ref: "1.1"
+    ref: tags/1.1.0.0
   # hybrid repo (dashboards-notifications)
   # - name: notificationsDashboards
   #   repository: https://github.com/opensearch-project/notifications.git
@@ -25,31 +25,31 @@ components:
   #   ref: main
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin
-    ref: "1.1"
+    ref: tags/1.1.0.0
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-    ref: "1.1"
+    ref: tags/1.1.0.0
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: "1.1"
+    ref: tags/1.1.0.0
   # hybrid repo (dashboards-reports)
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
-    ref: "1.1"
+    ref: tags/1.1.0.0
   # hybrid repo (dashboards-notebooks)
   - name: notebooksDashboards
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     working_directory: dashboards-notebooks
-    ref: "1.1"
+    ref: tags/1.1.0.0
   - name: traceAnalyticsDashboards
     repository: https://github.com/opensearch-project/trace-analytics.git
-    ref: "1.1"
+    ref: tags/1.1.0.0
     # hybrid repo (gantt-chart)
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations
     working_directory: gantt-chart
-    ref: "1.1"
+    ref: tags/1.1.0.0
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: "main"
