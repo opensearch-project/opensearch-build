@@ -31,9 +31,17 @@ class AssembleArgs:
             const=logging.DEBUG,
             dest="logging_level",
         )
+        required_args = parser.add_argument_group('required arguments')
+        required_args.add_argument(
+            "--distribution",
+            dest="distribution",
+            help="Choose distribution",
+            required=True,
+        )
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.manifest = args.manifest
         self.keep = args.keep
         self.base_url = args.base_url
+        self.distribution = args.distribution

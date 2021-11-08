@@ -32,14 +32,15 @@ def main():
 
     bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
-    with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:
+    with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.distribution, args.keep) as bundle:
         bundle.install_min()
         bundle.install_plugins()
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar
-        bundle_recorder.write_manifest(bundle.min_dist.archive_path)
+        bundle_recorder.write_manifest(bundle.min_dist.archive_path) 
         bundle.package(output_dir)
+        logging.info(f"Package for {args.distribution}")
 
         bundle_recorder.write_manifest(output_dir)
 
