@@ -6,6 +6,7 @@
 
 import logging
 
+from build_workflow.build_args import BuildArgs
 from ci_workflow.ci_check import CiCheckDist
 from manifests.build_manifest import BuildManifest
 
@@ -16,7 +17,7 @@ class CiCheckManifestComponent(CiCheckDist):
             super().__init__(f"Missing {component} in {url}.")
 
     def check(self):
-        for architecture in ["x64", "arm64"]:
+        for architecture in BuildArgs.SUPPORTED_ARCHITECTURES:
             url = "/".join([self.component.dist, architecture, "manifest.yml"])
             self.build_manifest = BuildManifest.from_url(url)
             if self.component.name in self.build_manifest.components:
