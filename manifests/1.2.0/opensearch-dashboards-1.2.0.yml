@@ -21,7 +21,7 @@ components:
   ref: "main"
 - name: indexManagementDashboards
   repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-  ref: "main"
+  ref: "1.2"
 - name: queryWorkbenchDashboards
   repository: https://github.com/opensearch-project/sql.git
   working_directory: workbench
