@@ -30,11 +30,11 @@ class CiCheckListSource(CiCheckList):
     class InvalidCheckError(Exception):
         def __init__(self, check):
             self.check = check
-            super().__init__(f"Invalid check {check}, must be one of {CiCheckListSource.CHECKS.keys()}.")
+            super().__init__(f"Invalid check: {check.name}, must be one of {CiCheckListSource.CHECKS.keys()}.")
 
     def check(self):
         for check in self.component.checks:
-            klass = CiCheckListSource.CHECKS[check.name]
+            klass = CiCheckListSource.CHECKS.get(check.name, None)
             if klass is None:
                 raise CiCheckListSource.InvalidCheckError(check)
             instance = klass(self.component, self.git_repo, self.target, check.args)

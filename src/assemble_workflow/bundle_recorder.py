@@ -46,13 +46,13 @@ class BundleRecorder:
             return self.__get_public_url_path(folder_name, rel_path)
         return abs_path
 
-    # Assembled bundles are expected to be served from a separate "bundles" folder
-    # Example: https://artifacts.opensearch.org/bundles/1.0.0/<build-id
+    # Assembled output are expected to be served from a separate "dist" folder
+    # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/dist/
     def __get_package_location(self):
         return self.__get_location("dist", self.package_name, os.path.join(self.output_dir, self.package_name))
 
     # Build artifacts are expected to be served from a "builds" folder
-    # Example: https://artifacts.opensearch.org/builds/1.0.0/<build-id>
+    # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/builds/
     def __get_component_location(self, component_rel_path):
         abs_path = os.path.join(self.artifacts_dir, component_rel_path)
         return self.__get_location("builds", component_rel_path, abs_path)

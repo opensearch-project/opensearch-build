@@ -43,19 +43,19 @@ class TestRunCheckout(unittest.TestCase):
             [
                 call(
                     "https://github.com/opensearch-project/OpenSearch.git",
-                    "1.1.0",
+                    "tags/1.1.0",
                     os.path.join(tempfile.gettempdir(), "OpenSearch"),
                     None,
                 ),
                 call(
                     "https://github.com/opensearch-project/common-utils.git",
-                    "1.1.0.0",
+                    "tags/1.1.0.0",
                     os.path.join(tempfile.gettempdir(), "common-utils"),
                     None,
                 ),
                 call(
                     "https://github.com/opensearch-project/dashboards-reports.git",
-                    "1.1.0.0",
+                    "tags/1.1.0.0",
                     os.path.join(tempfile.gettempdir(), "dashboards-reports"),
                     "reports-scheduler",
                 ),
