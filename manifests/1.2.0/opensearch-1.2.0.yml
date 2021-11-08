@@ -64,6 +64,18 @@ components:
     platforms:
       - darwin
       - linux
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: "main"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: "main"
