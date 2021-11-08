@@ -17,6 +17,7 @@
     - [Check Out Source](#check-out-source)
     - [Build from Source](#build-from-source)
       - [Custom Build Scripts](#custom-build-scripts)
+      - [Avoiding Rebuilds](#avoiding-rebuilds)
       - [Patch Releases](#patch-releases)
     - [Assemble the Bundle](#assemble-the-bundle)
       - [Cross-Platform Builds](#cross-platform-builds)
@@ -176,12 +177,17 @@ The following options are available in `build.sh`.
 |--------------------|-------------------------------------------------------------------------|
 | --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
-| --keep             | Do not delete the temporary working directory on both success or error. |
+| --keep             | Do not generate or use a stable reference manifest.                     |
+| -l, --lock         | Generate and use a stable reference manifest.                           |
 | -v, --verbose      | Show more verbose output.                                               |
 
 ##### Custom Build Scripts
 
 Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](scripts/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/default/build.sh](scripts/default/build.sh).
+
+##### Avoiding Rebuilds
+
+Builds can automatically generate `manifest.lock` files with stable git references by specifying `--lock`. If no changes on any repo in the manifest have been made since the last `.lock` file was produced, the build process will exit successfully.
 
 ##### Patch Releases
 

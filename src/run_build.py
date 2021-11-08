@@ -25,6 +25,14 @@ def main():
     manifest = InputManifest.from_file(args.manifest)
     output_dir = os.path.join(os.getcwd(), "builds")
 
+    if args.ref_manifest:
+        manifest = manifest.stable()
+        if os.path.exists(args.ref_manifest) and manifest == InputManifest.from_path(args.ref_manifest):
+            logging.info(f"No changes since {args.ref_manifest}")
+            exit(0)
+        logging.info(f"Writing {args.ref_manifest}")
+        manifest.to_file(args.ref_manifest)
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
 

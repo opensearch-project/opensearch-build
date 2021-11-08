@@ -26,3 +26,5 @@ out.txt
 .classpath
 /bin/
 
+/manifests/**/*.yml.lock
+

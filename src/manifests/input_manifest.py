@@ -33,9 +33,11 @@ components:
       - linux
   - ...
 """
+import copy
 import itertools
 import logging
 
+from git.git_repository import GitRepository
 from manifests.component_manifest import ComponentManifest
 
 
@@ -106,6 +108,11 @@ class InputManifest(ComponentManifest):
             "components": self.components.__to_dict__(),
         }
 
+    def stable(self):
+        manifest = copy.deepcopy(self)
+        manifest.components.__stabilize_refs__()
+        return manifest
+
     class Ci:
         def __init__(self, data):
             self.image = None if data is None else self.Image(data.get("image", None))
@@ -141,6 +148,10 @@ class InputManifest(ComponentManifest):
         @classmethod
         def __create__(self, data):
             return InputManifest.Component._from(data)
+
+        def __stabilize_refs__(self):
+            for component in self.values():
+                component.__stabilize_refs__()
 
         def select(self, focus=None, platform=None):
             """
@@ -180,6 +191,9 @@ class InputManifest(ComponentManifest):
 
             return matches
 
+        def __stabilize_refs__(self):
+            pass
+
     class ComponentFromSource(Component):
         def __init__(self, data):
             super().__init__(data)
@@ -187,6 +201,11 @@ class InputManifest(ComponentManifest):
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
+
+        def __stabilize_refs__(self):
+            ref, name = GitRepository.stable_ref(self.repository, self.ref)
+            logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
+            self.ref = ref
 
         def __to_dict__(self):
             return {

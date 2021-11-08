@@ -85,3 +85,10 @@ class TestGitRepositoryWithWorkingDir(unittest.TestCase):
             self.assertEqual(repo.working_directory, working_directory)
             self.assertTrue("ISSUE_TEMPLATE" in repo.output("pwd"))
         self.assertFalse(os.path.exists(repo.dir))
+
+
+class TestGitRepositoryClassMethods(unittest.TestCase):
+    @patch("subprocess.check_output")
+    def test_stable_ref(self, mock_output):
+        mock_output.return_value.decode.return_value = "546ab21989a27ae52cd557621ffac77ef4b09530\tHEAD"
+        self.assertEqual(GitRepository.stable_ref("url", "ref"), ["546ab21989a27ae52cd557621ffac77ef4b09530", "HEAD"])

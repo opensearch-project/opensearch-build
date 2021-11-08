@@ -85,6 +85,11 @@ class Manifest(ABC):
     def __to_dict(self):
         return {}
 
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.to_dict() == other.to_dict()
+        return False
+
     def to_dict(self):
         return Manifest.compact(self.__to_dict__())
 

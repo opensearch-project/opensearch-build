@@ -124,3 +124,10 @@ class TestManifest(unittest.TestCase):
         manifest = TestManifest.SampleManifest.from_url("url")
         self.assertEqual(manifest.version, "3.14")
         mock_urlopen.assert_called_with("url")
+
+    def test_eq(self):
+        manifest_path = os.path.join(self.data_path, "min.yml")
+        manifest1 = TestManifest.SampleManifest.from_path(manifest_path)
+        manifest2 = TestManifest.SampleManifest.from_path(manifest_path)
+        self.assertEqual(manifest1, manifest1)
+        self.assertEqual(manifest1, manifest2)

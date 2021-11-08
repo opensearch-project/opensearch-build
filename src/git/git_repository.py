@@ -55,6 +55,10 @@ class GitRepository:
         else:
             return self.dir
 
+    @classmethod
+    def stable_ref(self, url, ref):
+        return subprocess.check_output(f"git ls-remote {url} {ref}", shell=True).decode().strip().split("\t")
+
     def execute_silent(self, command, cwd=None):
         cwd = cwd or self.working_directory
         logging.info(f'Executing "{command}" in {cwd}')
