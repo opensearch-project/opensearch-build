@@ -49,7 +49,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: "main"
+    ref: "1.2"
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
     ref: "main"
