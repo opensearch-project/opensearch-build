@@ -5,11 +5,24 @@
 # compatible open source license.
 
 from ci_workflow.ci_check_list import CiCheckList
+from ci_workflow.ci_check_manifest_component import CiCheckManifestComponent
 
 
 class CiCheckListDist(CiCheckList):
-    def check(self):
+    def checkout(self, work_dir):
         pass
 
-    def checkout(self, path):
-        pass
+    CHECKS = {"manifest:component": CiCheckManifestComponent}
+
+    class InvalidCheckError(Exception):
+        def __init__(self, check):
+            self.check = check
+            super().__init__(f"Invalid check: {check.name}, must be one of {CiCheckListDist.CHECKS.keys()}.")
+
+    def check(self):
+        for check in self.component.checks:
+            klass = CiCheckListDist.CHECKS.get(check.name, None)
+            if klass is None:
+                raise CiCheckListDist.InvalidCheckError(check)
+            instance = klass(self.component, self.target, check.args)
+            instance.check()

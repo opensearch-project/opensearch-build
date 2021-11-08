@@ -82,6 +82,7 @@ class InputManifest(ComponentManifest):
                         "schema": {
                             "name": {"required": True, "type": "string"},
                             "dist": {"required": True, "type": "string"},
+                            "checks": {"type": "list", "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]}},
                             "platforms": {"type": "list", "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]}},
                         },
                     },
@@ -201,12 +202,14 @@ class InputManifest(ComponentManifest):
         def __init__(self, data):
             super().__init__(data)
             self.dist = data["dist"]
+            self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
         def __to_dict__(self):
             return {
                 "name": self.name,
                 "dist": self.dist,
-                "platforms": self.platforms
+                "platforms": self.platforms,
+                "checks": list(map(lambda check: check.__to_dict__(), self.checks))
             }
 
     class Check:
