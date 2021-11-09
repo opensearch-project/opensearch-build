@@ -26,6 +26,7 @@ function usage() {
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify multiple opensearch or opensearch-dashboards tarballs, use the same order as the input for '-a' param, e.g. 'opensearch-1.0.0-linux-x64.tar.gz,opensearch-1.0.0-linux-arm64.tar.gz'. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-n BUILD_NUM\tSpecify Pipeline Build Number of the run, defaults to 0."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
@@ -41,7 +42,7 @@ function cleanup_all() {
     cleanup_docker_buildx
     File_Delete $DIR
 }
-while getopts ":ht:v:f:p:a:r:" arg; do
+while getopts ":ht:n:v:f:p:a:r:" arg; do
     case $arg in
         h)
             usage
@@ -49,6 +50,9 @@ while getopts ":ht:v:f:p:a:r:" arg; do
             ;;
         t)
             TARBALL=`realpath $OPTARG`
+            ;;
+        n)
+            BUILD_NUM=$OPTARG
             ;;
         v)
             VERSION=$OPTARG
@@ -103,6 +107,11 @@ do
   fi
 done
 
+if [ -z "$BUILD_NUM" ]
+then
+    BUILD_NUM=0
+fi
+
 # Warning docker desktop
 if (! docker buildx version)
 then
@@ -151,5 +160,5 @@ fi
 
 # Build multi-arch images
 PLATFORMS=`echo "${ARCHITECTURE_ARRAY[@]/#/linux/}" | sed 's/x64/amd64/g;s/ /,/g'` && echo PLATFORMS $PLATFORMS
-docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -t ${REPOSITORY}:${VERSION} -t ${REPOSITORY}:latest -f $DOCKERFILE --push $DIR
+docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg BUILD_NUM=$BUILD_NUM -t ${REPOSITORY}:${VERSION} -t ${REPOSITORY}:latest -f $DOCKERFILE --push $DIR
 
