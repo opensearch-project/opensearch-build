@@ -52,12 +52,12 @@ components:
     ref: "1.2"
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-    ref: "1.2"
+    ref: "main"
     checks:
       - gradle:properties:version
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: "1.2"
+    ref: "main"
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
