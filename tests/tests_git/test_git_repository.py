@@ -90,5 +90,14 @@ class TestGitRepositoryWithWorkingDir(unittest.TestCase):
 class TestGitRepositoryClassMethods(unittest.TestCase):
     @patch("subprocess.check_output")
     def test_stable_ref(self, mock_output):
-        mock_output.return_value.decode.return_value = "546ab21989a27ae52cd557621ffac77ef4b09530\tHEAD"
-        self.assertEqual(GitRepository.stable_ref("url", "ref"), ["546ab21989a27ae52cd557621ffac77ef4b09530", "HEAD"])
+        mock_output.return_value.decode.return_value = "sha\tHEAD"
+        ref, name = GitRepository.stable_ref("https://github.com/opensearch-project/OpenSearch", "sha")
+        self.assertEqual(ref, "sha")
+        self.assertEqual(name, "HEAD")
+
+    @patch("subprocess.check_output")
+    def test_stable_ref_none(self, mock_output):
+        mock_output.return_value.decode.return_value = ""
+        ref, name = GitRepository.stable_ref("https://github.com/opensearch-project/OpenSearch", "sha")
+        self.assertEqual(ref, "sha")
+        self.assertEqual(name, "sha")
