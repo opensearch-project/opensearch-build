@@ -46,16 +46,14 @@ if echo "$OSTYPE" | grep -qi "darwin"; then
         echo "k-NN libraries found in JAVA_LIBRARY_PATH"
     else
         export JAVA_LIBRARY_PATH=$JAVA_LIBRARY_PATH:$KNN_LIB_DIR
-        echo "k-NN libraries not found in JAVA_LIBRARY_PATH. Updating path..."
-        echo $JAVA_LIBRARY_PATH
+        echo "k-NN libraries not found in JAVA_LIBRARY_PATH. Updating path to: $JAVA_LIBRARY_PATH." 
     fi
 else
     if echo "$LD_LIBRARY_PATH" | grep -q "$KNN_LIB_DIR"; then
         echo "k-NN libraries found in LD_LIBRARY_PATH"
     else
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$KNN_LIB_DIR
-        echo "k-NN libraries not found in LD_LIBRARY_PATH. Updating path..."
-        echo $LD_LIBRARY_PATH
+        echo "k-NN libraries not found in LD_LIBRARY_PATH. Updating path to: $LD_LIBRARY_PATH."
     fi
 fi
 
