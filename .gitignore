@@ -12,9 +12,11 @@ coverage.xml
 
 .gradle/
 .settings/
+/build/
 out.txt
 
 /builds/
 /dist/
 
 /.vscode/
+
