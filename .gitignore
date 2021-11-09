@@ -16,5 +16,6 @@ out.txt
 
 /builds/
 /dist/
+/test-results/
 
 /.vscode/

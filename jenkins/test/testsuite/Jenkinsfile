@@ -24,6 +24,7 @@ pipeline {
                                             name: 'build_id',
                                             trim: true
                                     ),
+
                                     string(
                                             defaultValue: '',
                                             name: 'architecture',
@@ -31,9 +32,9 @@ pipeline {
                                     ),
                                     string(
                                             defaultValue: '',
-                                            name: 'test_run_id',
+                                            name: 'platform',
                                             trim: true
-                                    ),
+                                    )
                             ])
                     ])
                 }
@@ -59,14 +60,28 @@ pipeline {
                 }
             }
             steps {
-                sh "pip3 install --upgrade pip"
-                sh "./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/linux/${architecture}"
+                script {
+                    basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
+                }
             }
             post() {
                 always {
+                    script {
+                        publish()
+                    }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
             }
         }
     }
+}
+
+/** Publishes test results to S3 **/
+void publish() {
+    def artifactPath = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
+    }
+    echo "Uploaded Test Results to ${artifactPath}/test-results"
 }
