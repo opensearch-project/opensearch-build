@@ -27,11 +27,16 @@ def main():
 
     if args.ref_manifest:
         manifest = manifest.stable()
-        if os.path.exists(args.ref_manifest) and manifest == InputManifest.from_path(args.ref_manifest):
-            logging.info(f"No changes since {args.ref_manifest}")
-            exit(0)
-        logging.info(f"Writing {args.ref_manifest}")
-        manifest.to_file(args.ref_manifest)
+        if os.path.exists(args.ref_manifest):
+            if manifest == InputManifest.from_path(args.ref_manifest):
+                logging.info(f"No changes since {args.ref_manifest}")
+            else:
+                logging.info(f"Updating {args.ref_manifest}")
+                manifest.to_file(args.ref_manifest)
+        else:
+            logging.info(f"Creating {args.ref_manifest}")
+            manifest.to_file(args.ref_manifest)
+        exit(0)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")

@@ -177,8 +177,8 @@ The following options are available in `build.sh`.
 |--------------------|-------------------------------------------------------------------------|
 | --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
-| --keep             | Do not generate or use a stable reference manifest.                     |
-| -l, --lock         | Generate and use a stable reference manifest.                           |
+| --keep             | DDo not delete the temporary working directory on both success or error.|
+| -l, --lock         | Generate a stable reference manifest.                                   |
 | -v, --verbose      | Show more verbose output.                                               |
 
 ##### Custom Build Scripts
@@ -187,7 +187,26 @@ Each component build relies on a `build.sh` script that is used to prepare bundl
 
 ##### Avoiding Rebuilds
 
-Builds can automatically generate `manifest.lock` files with stable git references by specifying `--lock`. If no changes on any repo in the manifest have been made since the last `.lock` file was produced, the build process will exit successfully.
+Builds can automatically generate a `manifest.lock` file with stable git references by specifying `--lock`. The output can then be reused as input manifest after checking against a collection of prior builds.
+
+```bash
+PLATFORM=linux
+ARCHITECTURE=x64
+MANIFEST=manifests/1.1.0/opensearch-1.1.0.yml
+SHAS=shas/opensearch/$PLATFORM-$ARCHITECTURE
+
+./build.sh --platform $PLATFORM --architecture $ARCHITECTURE --lock $MANIFEST # generates opensearch-1.1.0.yml.lock
+
+MANIFEST_SHA=$(sha1sum $MANIFEST.lock | cut -f1 -d' ') # generate a checksum of the stable manifest
+
+if test -f "$SHAS/$MANIFEST_SHA.lock"; then
+  echo "Skipping $MANIFEST_SHA"
+else
+  ./build.sh --platform $PLATFORM --architecture $ARCHITECTURE $MANIFEST.lock # rebuild using stable references in .lock
+  mkdir -p $SHAS
+  cp $MANIFEST.lock $SHAS/$MANIFEST_SHA.lock # save the stable reference manifest
+fi
+```
 
 ##### Patch Releases
 
