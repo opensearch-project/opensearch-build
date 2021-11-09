@@ -2,9 +2,6 @@ pipeline {
     options {
         timeout(time: 3, unit: 'HOURS') 
     }
-//    environment {
-//        CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
-//    }
     agent none
     stages {
         stage('parameters') {
