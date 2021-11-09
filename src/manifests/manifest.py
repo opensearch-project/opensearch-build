@@ -76,7 +76,7 @@ class Manifest(ABC):
             result = {}
             for k, v in d.items():
                 v = cls.compact(v)
-                if v:
+                if v or isinstance(v, bool):
                     result[k] = v
             return result
         else:

@@ -73,6 +73,8 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(Manifest.compact({"x": "y", "z": []}), {"x": "y"})
         self.assertEqual(Manifest.compact({"x": "y", "z": None}), {"x": "y"})
         self.assertEqual(Manifest.compact({"x": "y", "z": {"t": None}}), {"x": "y"})
+        self.assertEqual(Manifest.compact({"x": True}), {"x": True})
+        self.assertEqual(Manifest.compact({"x": False}), {"x": False})
 
     def test_to_file(self):
         manifest_path = os.path.join(self.data_path, "min.yml")

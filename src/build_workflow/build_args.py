@@ -32,7 +32,7 @@ class BuildArgs:
             dest="lock",
             action="store_true",
             default=False,
-            help="Generate and use a stable reference manifest."
+            help="Generate a stable reference manifest."
         )
         parser.add_argument(
             "-s",

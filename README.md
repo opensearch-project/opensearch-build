@@ -177,7 +177,7 @@ The following options are available in `build.sh`.
 |--------------------|-------------------------------------------------------------------------|
 | --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
-| --keep             | DDo not delete the temporary working directory on both success or error.|
+| --keep             | Do not delete the temporary working directory on both success or error. |
 | -l, --lock         | Generate a stable reference manifest.                                   |
 | -v, --verbose      | Show more verbose output.                                               |
 
@@ -187,22 +187,20 @@ Each component build relies on a `build.sh` script that is used to prepare bundl
 
 ##### Avoiding Rebuilds
 
-Builds can automatically generate a `manifest.lock` file with stable git references by specifying `--lock`. The output can then be reused as input manifest after checking against a collection of prior builds.
+Builds can automatically generate a `manifest.lock` file with stable git references (commit IDs) and build options (platform, architecture and snapshot) by specifying `--lock`. The output can then be reused as input manifest after checking against a collection of prior builds.
 
 ```bash
-PLATFORM=linux
-ARCHITECTURE=x64
 MANIFEST=manifests/1.1.0/opensearch-1.1.0.yml
-SHAS=shas/opensearch/$PLATFORM-$ARCHITECTURE
+SHAS=shas
 
-./build.sh --platform $PLATFORM --architecture $ARCHITECTURE --lock $MANIFEST # generates opensearch-1.1.0.yml.lock
+./build.sh --lock $MANIFEST # generates opensearch-1.1.0.yml.lock
 
 MANIFEST_SHA=$(sha1sum $MANIFEST.lock | cut -f1 -d' ') # generate a checksum of the stable manifest
 
 if test -f "$SHAS/$MANIFEST_SHA.lock"; then
   echo "Skipping $MANIFEST_SHA"
 else
-  ./build.sh --platform $PLATFORM --architecture $ARCHITECTURE $MANIFEST.lock # rebuild using stable references in .lock
+  ./build.sh $MANIFEST.lock # rebuild using stable references in .lock
   mkdir -p $SHAS
   cp $MANIFEST.lock $SHAS/$MANIFEST_SHA.lock # save the stable reference manifest
 fi

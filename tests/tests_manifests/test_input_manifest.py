@@ -147,6 +147,15 @@ class TestInputManifest(unittest.TestCase):
         opensearch = manifest.components["OpenSearch"]
         self.assertEqual(opensearch.ref, "updated")
 
+    @patch("subprocess.check_output")
+    def test_stable_override_build(self, mock_output):
+        mock_output.return_value.decode.return_value = "updated\tHEAD"
+        path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest = InputManifest.from_path(path).stable(platform="windows", architecture="arm64", snapshot=True)
+        self.assertEqual(manifest.build.platform, "windows")
+        self.assertEqual(manifest.build.architecture, "arm64")
+        self.assertTrue(manifest.build.snapshot)
+
     def test_eq(self):
         path = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")
         manifest1 = InputManifest.from_path(path)
