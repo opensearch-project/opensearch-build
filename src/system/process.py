@@ -16,6 +16,8 @@ class Process:
         self
     ):
         self.process = None
+        self.stdout = None
+        self.stderr = None
 
     def start(self, command, cwd):
         self.stdout = tempfile.NamedTemporaryFile()
@@ -38,35 +40,32 @@ class Process:
             if child.pid != self.process.pid:
                 logging.debug(f"Sending SIGKILL to {child.pid} ")
                 child.kill()
-        logging.info(f"Sending SIGTERM to PID {self.process.pid}")
-        self.process.terminate()
-        try:
-            logging.info("Waiting for process to terminate")
-            self.process.wait(10)
-        except subprocess.TimeoutExpired:
-            logging.info("Process did not terminate after 10 seconds. Sending SIGKILL")
-            self.process.kill()
-            try:
-                logging.info("Waiting for process to terminate")
-                self.process.wait(10)
-            except subprocess.TimeoutExpired:
-                logging.info("Process failed to terminate even after SIGKILL")
-                raise
-        finally:
-            logging.info(f"Process terminated with exit code {self.process.returncode}")
-            if self.stdout:
-                self.stdout_data = self.stdout.read()
-                self.stdout.close()
-                self.stdout = None
-            if self.stderr:
-                self.stderr_data = self.stderr.read()
-                self.stderr.close()
-                self.stderr = None
-            self.return_code = self.process.returncode
-            self.process = None
+        logging.info(f"Sending SIGKILL to PID {self.process.pid}")
+        
+        self.process.kill()
+    
+        logging.info(f"Process terminated with exit code {self.process.returncode}")
+        if self.stdout:
+            with open(self.stdout.name) as stdout:
+                self.stdout_data = stdout.read()
+                
+        if self.stderr:
+            with open(self.stderr.name) as stderr:
+                self.stderr_data = stderr.read()
 
-            return self.return_code, self.stdout_data, self.stderr_data
+        self.return_code = self.process.returncode
+        self.process = None
+
+        return self.return_code, self.stdout_data, self.stderr_data
 
     @property
     def pid(self):
         return self.process.pid if self.process else None
+
+    @property
+    def stdout_x(self):
+        return self.stdout
+
+    @property
+    def stderr_x(self):
+        return self.stderr
