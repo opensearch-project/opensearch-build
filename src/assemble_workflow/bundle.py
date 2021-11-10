@@ -95,13 +95,10 @@ class Bundle(ABC):
         self._execute(install_command)
 
     def package(self, dest):
-        # min_dist => DistTar | DistZip | DistRpm
-        # min_dist.build => .tar | .zip => put into 'dist' folder
-        # logging.info(f"{type(self.min_dist)}")
-        if self.distribution == 'rpm':
-            self.min_dist.__build__()
-        elif self.distribution == 'zip' or self.distribution == 'tar':
-            self.min_dist.build(self.bundle_recorder.package_name, dest)
+        try:
+            self.min_dist.build(self.bundle_recorder, dest)
+        except FileNotFoundError:
+            logging.info("TODO: Implement build process for rpm distribution")
 
     def _execute(self, command):
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')
@@ -135,7 +132,7 @@ class Bundle(ABC):
             raise ValueError('Missing min "dist" in input artifacts.')
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
-        min_dist = Dist.from_path(min_bundle.name, min_dist_path, self.distribution)
+        min_dist = Dist.create_dist(min_bundle.name, min_dist_path, self.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")

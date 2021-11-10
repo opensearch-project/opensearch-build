@@ -8,6 +8,7 @@ import errno
 import logging
 import os
 import shutil
+import subprocess
 import tarfile
 import zipfile
 from abc import ABC, abstractmethod
@@ -16,9 +17,10 @@ from system.zip_file import ZipFile
 
 
 class Dist(ABC):
-    def __init__(self, name, path):
+    def __init__(self, name, path, distribution):
         self.name = name
         self.path = path
+        self.distribution = distribution
 
     @abstractmethod
     def __extract__(self, dest):
@@ -36,20 +38,21 @@ class Dist(ABC):
 
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.join(dest, "*"))
 
-    def build(self, name, dest):
-        self.__build__(name, dest)
+    def build(self, bundle_recorder, dest):
+        name = bundle_recorder.package_name
+        self.__build__(bundle_recorder, dest)
         path = os.path.join(dest, name)
         shutil.copyfile(name, path)
         logging.info(f"Published {path}.")
 
     @classmethod
-    def from_path(cls, name, path, distribution):
+    def create_dist(cls, name, path, distribution):
         if distribution == "rpm":
-            return DistRpm(name, path)
+            return DistRpm(name, path, distribution)
         elif distribution == "tar":
-            return DistTar(name, path)
+            return DistTar(name, path, distribution)
         elif distribution == "zip":
-            return DistZip(name, path)
+            return DistZip(name, path, distribution)
         else:
             raise ValueError("Distribution not specified, try with ./assemble.sh --distribution")
 
@@ -59,8 +62,8 @@ class DistZip(Dist):
         with ZipFile(self.path, "r") as zip:
             zip.extractall(dest)
 
-    def __build__(self, name, dest):
-        with ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
+    def __build__(self, bundle_recorder, dest):
+        with ZipFile(bundle_recorder.package_name, "w", zipfile.ZIP_DEFLATED) as zip:
             rootlen = len(self.archive_path) + 1
             for base, dirs, files in os.walk(self.archive_path):
                 for file in files:
@@ -73,8 +76,8 @@ class DistTar(Dist):
         with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
-    def __build__(self, name, dest):
-        with tarfile.open(name, "w:gz") as tar:
+    def __build__(self, bundle_recorder, dest):
+        with tarfile.open(bundle_recorder.package_name, "w:gz") as tar:
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
 
 
@@ -83,6 +86,28 @@ class DistRpm(Dist):
         with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
-    def __build__(self):
-        logging.info(f"build for rpm distribution.")
+    def __build__(self, bundle_recorder, dest):
+        logging.info("build for rpm distribution.")
+        # scripts/pkg/generate_pkg.sh -v VERSION -t DISTRICUTION -p opensearch/opensearch-dashboards -a x64/arm64 -i tarball_path -d PRODUCT_DISTRICUTION_ARCH
+        manifest_data = bundle_recorder.bundle_manifest.data["build"]
+        product_name = manifest_data["name"].lower()
+        if product_name == "opensearch dashboards":
+            product_name = "_".join(product_name.split())
+        subprocess.run(
+                        [
+                            'scripts/pkg/generate_pkg.sh',
+                            "-v",
+                            manifest_data["version"],
+                            "-t",
+                            self.distribution,
+                            "-p",
+                            product_name,
+                            "-a",
+                            manifest_data["architecture"],
+                            "-i",
+                            manifest_data["location"],
+                            "-d",
+                            self.archive_path
+                        ]
+                    )
 

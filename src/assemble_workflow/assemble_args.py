@@ -31,12 +31,12 @@ class AssembleArgs:
             const=logging.DEBUG,
             dest="logging_level",
         )
-        required_args = parser.add_argument_group('required arguments')
-        required_args.add_argument(
+        parser.add_argument(
+            "-d",
             "--distribution",
             dest="distribution",
             help="Choose distribution",
-            required=True,
+            default="tar",
         )
 
         args = parser.parse_args()
