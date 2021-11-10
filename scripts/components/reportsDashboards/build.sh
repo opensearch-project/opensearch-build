@@ -60,7 +60,6 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
-
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
@@ -97,6 +96,7 @@ echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build)
+# Reporting uses headless chromium to generate reports, which needs to be included in its artifact
 echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
 mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
 curl -sLO "$CHROMIUM_URL"
