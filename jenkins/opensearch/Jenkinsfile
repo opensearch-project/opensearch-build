@@ -1,4 +1,4 @@
-def jenkins = library(identifier: "t@master", retriever: legacySCM(scm)).jenkins
+lib = library(identifier: "jenkins@current", retriever: legacySCM(scm)).jenkins
 
 pipeline {
     agent none
@@ -148,8 +148,8 @@ pipeline {
                                 ]
                             }
                             
-                            messages = jenkins.Messages.new(this).all(['build-x64', 'build-arm64'])
-                            publishNotification(":white_check_mark:", "Successful Build", "\n${messages}")
+                            def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
+                            publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                         }
                     }
                 }
@@ -180,7 +180,7 @@ void build() {
         s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
     }
 
-    jenkins.Messages.new(this).add("${STAGE_NAME}", "${BASE_URL}/builds/manifest.yml\n${BASE_URL}/dist/manifest.yml")
+    lib.Messages.new(this).add("${STAGE_NAME}", "${BASE_URL}/builds/manifest.yml\n${BASE_URL}/dist/manifest.yml")
 }
 
 /** Publishes a notification to a slack instance*/
