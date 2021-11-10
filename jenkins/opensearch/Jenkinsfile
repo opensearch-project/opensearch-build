@@ -135,7 +135,7 @@ pipeline {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         script {
                             def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
-                            sh "echo VERSION:$VERSION BUILD_NUMBER:$BUILD_NUMBER"
+                            sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
                             def URL_x64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/x64/dist/opensearch-${VERSION}-linux-x64.tar.gz"
                             def URL_arm64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/arm64/dist/opensearch-${VERSION}-linux-arm64.tar.gz"
                             dockerBuild: {
