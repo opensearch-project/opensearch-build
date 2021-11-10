@@ -68,12 +68,6 @@ case $PLATFORM in
     linux*)
         PLATFORM="linux"
         ;;
-    darwin*)
-        PLATFORM="macos"
-        ;;
-    windows*)
-        PLATFORM="windows"
-        ;;
     *)
         echo "Unsupported platform: $PLATFORM"
         exit 1
@@ -82,7 +76,7 @@ esac
 
 case $ARCHITECTURE in
     x64|arm64)
-        TARGET="chromium-$PLATFORM-$ARCHITECTURE.zip"
+        CHROMIUM_TARGET="chromium-$PLATFORM-$ARCHITECTURE.zip"
         ;;
     *)
         echo "Unsupported architecture: $ARCHITECTURE"
@@ -90,11 +84,7 @@ case $ARCHITECTURE in
         ;;
 esac
 
-CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$TARGET"
-if curl -sI "$CHROMIUM_URL" | grep -q 404; then
-    echo "Unsupported chromium build: $TARGET"
-    exit 1
-fi
+CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"
 
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'reportsDashboards/dashboards-reports'
@@ -111,7 +101,7 @@ echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
 mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
 curl -sLO "$CHROMIUM_URL"
 echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION.zip"
-unzip "$TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
+unzip "$CHROMIUM_TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION.zip opensearch-dashboards)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
