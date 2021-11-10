@@ -33,7 +33,7 @@ components:
 - name: observabilityDashboards
   repository: https://github.com/opensearch-project/trace-analytics.git
   working_directory: dashboards-observability
-  ref: "main"
+  ref: "1.2"
 - name: ganttChartDashboards
   repository: https://github.com/opensearch-project/dashboards-visualizations.git
   working_directory: gantt-chart
