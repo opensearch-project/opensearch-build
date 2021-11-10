@@ -64,7 +64,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$SNAPSHOT" ] && SNAPSHOT="false"
-[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 ## Setup Performance Analyzer Agent

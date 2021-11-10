@@ -75,7 +75,7 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
 
-[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 case $PLATFORM in
