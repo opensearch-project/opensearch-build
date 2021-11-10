@@ -132,6 +132,21 @@ pipeline {
                 success {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
+                        script {
+                            def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
+                            sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
+                            def URL_x64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/x64/dist/opensearch-${VERSION}-linux-x64.tar.gz"
+                            def URL_arm64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/arm64/dist/opensearch-${VERSION}-linux-arm64.tar.gz"
+                            dockerBuild: {
+                                build job: 'docker-build',
+                                parameters: [
+                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
+                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
+                                    string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: "id && pwd && cd docker/release && curl -sSL $URL_x64 -o opensearch-x64.tgz && curl -sSL $URL_arm64 -o opensearch-arm64.tgz && bash build-image-multi-arch.sh -v ${VERSION} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"),
+                                    booleanParam(name: 'IS_STAGING', value: true)
+                                ]
+                            }
+                        }
                     }
                 }
                 failure {
@@ -155,7 +170,7 @@ void build() {
     def BASE_URL = "${PUBLIC_ARTIFACT_URL}/${artifactPath}";
 
     sh "./assemble.sh builds/manifest.yml --base-url ${BASE_URL}"
-    
+
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
         s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
