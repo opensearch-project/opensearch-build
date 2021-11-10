@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
     compile group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
-    compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.4'
+    compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.7'
     compile group: 'com.cloudbees', name: 'groovy-cps', version: '1.12'
 }
 

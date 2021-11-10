@@ -6,27 +6,22 @@
  * compatible open source license.
  */
 
+import org.junit.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
-import org.junit.Before
-import org.junit.Test
-import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.lesfurets.jenkins.unit.LibClassLoader
+import com.lesfurets.jenkins.unit.declarative.*
 import com.lesfurets.jenkins.unit.MethodCall
 import static org.junit.Assert.*
 import static org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
 class TestMessages extends DeclarativePipelineTest {
-
-    String sharedLibs = ''
+    def jenkinsScript = "tests/jenkins/jobs/messages.groovy"
 
     @Override
     @Before
     void setUp() throws Exception {
-        scriptRoots += 'tests/jenkins/jobs'   
-
         super.setUp()
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
@@ -44,7 +39,7 @@ class TestMessages extends DeclarativePipelineTest {
 
     @Test
     void testMessages() throws Exception {
-        def script = runScript("messages.groovy")
+        runScript(jenkinsScript)
 
         assertArrayEquals(Arrays.asList(
             "{includes=messages/*, name=messages-stage1}",
