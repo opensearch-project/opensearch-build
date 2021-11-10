@@ -25,11 +25,11 @@ components:
 - name: queryWorkbenchDashboards
   repository: https://github.com/opensearch-project/sql.git
   working_directory: workbench
-  ref: "main"
+  ref: "1.2"
 - name: reportsDashboards
   repository: https://github.com/opensearch-project/dashboards-reports.git
   working_directory: dashboards-reports
-  ref: "main"
+  ref: "1.2"
 - name: observabilityDashboards
   repository: https://github.com/opensearch-project/trace-analytics.git
   working_directory: dashboards-observability
