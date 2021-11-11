@@ -17,6 +17,8 @@ import com.lesfurets.jenkins.unit.MethodCall
 import static org.assertj.core.api.Assertions.assertThat
 
 class TestParallelMessages extends DeclarativePipelineTest {
+    def jenkinsScript = "tests/jenkins/jobs/ParallelMessages_Jenkinsfile"
+
     @Override
     @Before
     void setUp() throws Exception {
@@ -46,7 +48,7 @@ class TestParallelMessages extends DeclarativePipelineTest {
             return new LibClassLoader(helper, null)
         })
 
-        runScript('tests/jenkins/jobs/ParallelMessages_Jenkinsfile')
+        runScript(jenkinsScript)
 
         assertJobStatusSuccess()
         printCallStack()

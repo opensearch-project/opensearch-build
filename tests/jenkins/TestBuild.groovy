@@ -12,6 +12,8 @@ import com.lesfurets.jenkins.unit.MethodCall
 import static org.assertj.core.api.Assertions.assertThat
 
 class TestBuild extends BasePipelineTest {
+    def jenkinsScript = "tests/jenkins/jobs/build.groovy"
+
     @Override
     @Before
     void setUp() throws Exception {
