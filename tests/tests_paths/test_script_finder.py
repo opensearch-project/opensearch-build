@@ -140,3 +140,48 @@ class TestScriptFinder(unittest.TestCase):
             "Could not find install.sh script. Looked in .*",
         ):
             ScriptFinder.find_install_script("anything")
+
+    # find_bwc_test_script
+
+    def test_find_bwc_test_script_default(self):
+        self.assertEqual(
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
+            ScriptFinder.find_bwc_test_script("invalid", self.component_without_scripts),
+            msg="A component without an override resolves to a default.",
+        )
+
+    def test_find_bwc_test_script_component_override(self):
+        self.assertEqual(
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            ScriptFinder.find_bwc_test_script("OpenSearch", self.component_without_scripts),
+            msg="A component without scripts resolves to a component override.",
+        )
+
+    def test_find_bwc_test_script_component_script(self):
+        self.assertEqual(
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            ScriptFinder.find_bwc_test_script("OpenSearch", self.component_with_scripts),
+            msg="A component with a script resolves to the script at the root.",
+        )
+
+    def test_find_bwc_test_script_component_script_in_folder(self):
+        self.assertEqual(
+            os.path.join(self.component_with_scripts_folder, "scripts", "bwctest.sh"),
+            ScriptFinder.find_bwc_test_script("foobar", self.component_with_scripts_folder),
+            msg="A component with a scripts folder resolves to an override.",
+        )
+
+    def test_find_bwc_test_script_component_script_in_folder_with_default(self):
+        self.assertEqual(
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            ScriptFinder.find_bwc_test_script("OpenSearch", self.component_with_scripts_folder),
+            msg="A component with a scripts folder resolves to a script in that folder.",
+        )
+
+    @patch("os.path.exists", return_value=False)
+    def test_find_bwc_test_script_does_not_exist(self, *mocks):
+        with self.assertRaisesRegex(
+            ScriptFinder.ScriptNotFoundError,
+            "Could not find bwctest.sh script. Looked in .*",
+        ):
+            ScriptFinder.find_bwc_test_script("anything", self.component_without_scripts)
