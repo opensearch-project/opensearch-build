@@ -12,8 +12,6 @@ import com.lesfurets.jenkins.unit.MethodCall
 import static org.assertj.core.api.Assertions.assertThat
 
 class TestHello extends BasePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/hello.groovy"
-
     @Override
     @Before
     void setUp() throws Exception {
@@ -22,7 +20,7 @@ class TestHello extends BasePipelineTest {
 
     @Test
     void testHello() {
-        runScript(jenkinsScript)
+        runScript('tests/jenkins/jobs/Hello_Jenkinsfile')
         assertJobStatusSuccess()
         assertThat(helper.callStack.stream()
             .filter { c -> c.methodName == "echo"  }

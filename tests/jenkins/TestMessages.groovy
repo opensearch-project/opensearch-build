@@ -17,8 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
 class TestMessages extends DeclarativePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/messages.groovy"
-
     @Override
     @Before
     void setUp() throws Exception {
@@ -39,7 +37,7 @@ class TestMessages extends DeclarativePipelineTest {
 
     @Test
     void testMessages() throws Exception {
-        runScript(jenkinsScript)
+        runScript('tests/jenkins/jobs/Messages_Jenkinsfile')
 
         assertArrayEquals(Arrays.asList(
             "{includes=messages/*, name=messages-stage1}",
