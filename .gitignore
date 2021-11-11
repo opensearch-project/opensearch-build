@@ -12,6 +12,7 @@ coverage.xml
 
 .gradle/
 .settings/
+/build/
 out.txt
 
 /builds/
@@ -19,3 +20,4 @@ out.txt
 /test-results/
 
 /.vscode/
+

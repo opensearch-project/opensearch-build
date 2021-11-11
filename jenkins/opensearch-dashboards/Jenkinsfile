@@ -1,3 +1,5 @@
+lib = library(identifier: "jenkins@current", retriever: legacySCM(scm)).jenkins
+
 pipeline {
     agent none
     triggers {
@@ -130,7 +132,6 @@ pipeline {
             post() {
                 success {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                        publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
                         script {
                             def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
                             sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
@@ -145,6 +146,9 @@ pipeline {
                                     booleanParam(name: 'IS_STAGING', value: true)
                                 ]
                             }
+
+                            def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
+                            publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                         }
                     }
                 }
@@ -167,7 +171,7 @@ void build(platform, architecture) {
 void assemble() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    script { manifest = readYaml(file: 'builds/manifest.yml') }
+    manifest = readYaml(file: 'builds/manifest.yml')
 
     def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
     def BASE_URL = "${PUBLIC_ARTIFACT_URL}/${artifactPath}";
@@ -179,43 +183,12 @@ void assemble() {
         s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
     }
 
-    addJenkinsMessage("${BASE_URL}/builds/manifest.yml\n" +
-                      "${BASE_URL}/dist/manifest.yml")
+    lib.Messages.new(this).add("${STAGE_NAME}", "${BASE_URL}/builds/manifest.yml\n${BASE_URL}/dist/manifest.yml")
 }
 
 /** Publishes a notification to a slack instance*/
 void publishNotification(icon, msg, extra) {
     withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
         sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
-    }
-}
-
-/** Add a message to the jenkins queue */
-void addJenkinsMessage(message) {
-    writeFile(file: "notifications/${STAGE_NAME}.msg", text: message)
-    stash(includes: "notifications/*" , name: "notifications-${STAGE_NAME}")
-}
-
-/** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
-String getAllJenkinsMessages() {
-    script {
-        // Stages must be explicitly added to prevent overwriting
-        // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-linux-x64', 'post-build (linux-arm64)']
-        for (stage in stages) {
-            unstash "notifications-${stage}"
-        }
-
-        def files = findFiles(excludes: '', glob: 'notifications/*')
-        def data = ""
-        for (file in files) {
-            data = data + "\n" + readFile (file: file.path)
-        }
-
-        // Delete all the notifications from the workspace
-        dir('notifications') {
-            deleteDir()
-        }
-        return data
     }
 }

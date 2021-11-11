@@ -1,0 +1,8 @@
+{
+    "extends": "recommended",
+    "rules": {
+        "CompileStatic": {
+            "enabled": false
+        }
+    }
+}

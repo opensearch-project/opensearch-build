@@ -6,6 +6,7 @@
     - [Pipenv](#pipenv)
     - [NVM and Node](#nvm-and-node)
     - [Yarn](#yarn)
+    - [Java](#java)
   - [Install Dependencies](#install-dependencies)
   - [Run Tests](#run-tests)
   - [Build OpenSearch](#build-opensearch)
@@ -76,6 +77,10 @@ nvm install v10.24.1
 npm install -g yarn
 ```
 
+#### Java
+
+This project recommends Java 11 for Jenkins jobs CI. This means you must have a JDK 11 installed with the environment variable `JAVA_HOME` referencing the path to Java home for your JDK installation, e.g. `JAVA_HOME=/usr/lib/jvm/jdk-11`. Download Java 11 from [here](https://adoptium.net/releases.html?variant=openjdk11).
+
 ### Install Dependencies
 
 Install dependencies. 
@@ -90,11 +95,19 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 ### Run Tests
 
-This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure code quality. See [tests](tests).
+This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure Python code quality, and [JUnit](https://junit.org/) for Groovy code. See [tests](tests).
 
 ```
 $ pipenv run pytest
 2 passed in 02s
+```
+
+```
+$ ./gradlew test
+
+> Task :test
+BUILD SUCCESSFUL in 7s
+3 actionable tasks: 1 executed, 2 up-to-date
 ```
 
 ### Build OpenSearch
@@ -115,7 +128,7 @@ build.sh: error: the following arguments are required: manifest
 
 ### Code Linting
 
-This project uses a [pre-commit hook](https://pre-commit.com/) for linting python code.
+This project uses a [pre-commit hook](https://pre-commit.com/) for linting Python code.
 
 ```
 $ pipenv run pre-commit install
