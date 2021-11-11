@@ -17,7 +17,7 @@ from paths.script_finder import ScriptFinder
 class TestBuilderFromSource(unittest.TestCase):
     def setUp(self):
         self.builder = BuilderFromSource(
-            InputManifest.ComponentFromSource({"name": "OpenSearch", "repository": "url", "ref": "ref"}),
+            InputManifest.ComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.1.0",
@@ -28,7 +28,7 @@ class TestBuilderFromSource(unittest.TestCase):
         )
 
     def test_builder(self):
-        self.assertEqual(self.builder.component.name, "OpenSearch")
+        self.assertEqual(self.builder.component.name, "common-utils")
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build(self, mock_git_repo):
@@ -40,7 +40,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
                     "-v 1.1.0",
                     "-p linux",
                     "-a x64",
@@ -49,7 +49,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("OpenSearch", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("common-utils", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot(self, mock_git_repo):
@@ -62,7 +62,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
                     "-v 1.1.0",
                     "-p linux",
                     "-a x64",
@@ -71,7 +71,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("OpenSearch", self.builder.git_repo)
+        build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
 
     def mock_os_walk(self, artifact_path):
         if artifact_path.endswith(os.path.join("dir", "builds", "core-plugins")):
@@ -93,7 +93,7 @@ class TestBuilderFromSource(unittest.TestCase):
         build_recorder.record_artifact.assert_has_calls(
             [
                 call(
-                    "OpenSearch",
+                    "common-utils",
                     "maven",
                     os.path.relpath(
                         os.path.join("maven", "artifact1.jar"),
@@ -102,7 +102,7 @@ class TestBuilderFromSource(unittest.TestCase):
                     os.path.join("maven", "artifact1.jar"),
                 ),
                 call(
-                    "OpenSearch",
+                    "common-utils",
                     "core-plugins",
                     os.path.relpath(
                         os.path.join("core-plugins", "plugin1.zip"),
