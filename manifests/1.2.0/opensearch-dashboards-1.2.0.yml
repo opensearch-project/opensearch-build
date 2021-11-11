@@ -30,6 +30,8 @@ components:
   repository: https://github.com/opensearch-project/dashboards-reports.git
   working_directory: dashboards-reports
   ref: "1.2"
+  platforms:
+    - linux
 - name: observabilityDashboards
   repository: https://github.com/opensearch-project/trace-analytics.git
   working_directory: dashboards-observability
