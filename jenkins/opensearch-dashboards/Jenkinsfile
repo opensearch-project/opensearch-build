@@ -147,7 +147,7 @@ pipeline {
                                 ]
                             }
 
-                            def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
+                            def stashed = lib.Messages.new(this).get(['build-linux-x64', 'post-build (linux-arm64)'])
                             publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                         }
                     }
