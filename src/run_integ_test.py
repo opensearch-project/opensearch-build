@@ -29,8 +29,10 @@ def main():
     bundle_manifest = BundleManifest.from_urlpath("/".join([args.path.rstrip("/"), "dist/manifest.yml"]))
     build_manifest = BuildManifest.from_urlpath("/".join([args.path.rstrip("/"), "builds/manifest.yml"]))
     dependency_installer = DependencyInstaller(args.path, build_manifest, bundle_manifest)
+    tests_dir = os.path.join(os.getcwd(), "test-results")
+    os.makedirs(tests_dir, exist_ok=True)
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
-        test_recorder = TestRecorder(args.test_run_id, "integ-test", work_dir.name)
+        test_recorder = TestRecorder(args.test_run_id, "integ-test", tests_dir)
         dependency_installer.install_maven_dependencies()
         all_results = TestSuiteResults()
         for component in bundle_manifest.components.select(focus=args.component):

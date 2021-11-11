@@ -15,10 +15,10 @@ from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class TestRecorder:
-    def __init__(self, test_run_id, test_type, location):
+    def __init__(self, test_run_id, test_type, tests_dir):
         self.test_run_id = test_run_id
         self.test_type = test_type
-        self.location = os.path.join(location, "test-recorder", "tests", str(self.test_run_id), self.test_type)
+        self.location = os.path.join(tests_dir, str(self.test_run_id), self.test_type)
         os.makedirs(self.location, exist_ok=True)
         logging.info(f"TestRecorder recording logs in {self.location}")
         self.local_cluster_logs = self.LocalClusterLogs(self)

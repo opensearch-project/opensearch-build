@@ -14,8 +14,8 @@ function usage() {
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
-    echo -e "-p PLATFORM\t[Optional] Platform, ignored."
-    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
+    echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
+    echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
@@ -60,6 +60,30 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
+[ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
+[ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+
+case $PLATFORM in
+    linux*)
+        PLATFORM="linux"
+        ;;
+    *)
+        echo "Unsupported platform: $PLATFORM"
+        exit 1
+        ;;
+esac
+
+case $ARCHITECTURE in
+    x64|arm64)
+        CHROMIUM_TARGET="chromium-$PLATFORM-$ARCHITECTURE.zip"
+        ;;
+    *)
+        echo "Unsupported architecture: $ARCHITECTURE"
+        exit 1
+        ;;
+esac
+
+CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"
 
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'reportsDashboards/dashboards-reports'
@@ -72,6 +96,13 @@ echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build)
+# Reporting uses headless chromium to generate reports, which needs to be included in its artifact
+echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
+mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
+curl -sLO "$CHROMIUM_URL"
+echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION.zip"
+unzip "$CHROMIUM_TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
+(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION.zip opensearch-dashboards)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER

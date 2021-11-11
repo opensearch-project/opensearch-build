@@ -25,20 +25,22 @@ components:
 - name: queryWorkbenchDashboards
   repository: https://github.com/opensearch-project/sql.git
   working_directory: workbench
-  ref: "main"
+  ref: "1.2"
 - name: reportsDashboards
   repository: https://github.com/opensearch-project/dashboards-reports.git
   working_directory: dashboards-reports
-  ref: "main"
+  ref: "1.2"
+  platforms:
+    - linux
 - name: observabilityDashboards
   repository: https://github.com/opensearch-project/trace-analytics.git
   working_directory: dashboards-observability
-  ref: "main"
+  ref: "1.2"
 - name: ganttChartDashboards
   repository: https://github.com/opensearch-project/dashboards-visualizations.git
   working_directory: gantt-chart
   ref: "1.2"
 - name: anomalyDetectionDashboards
   repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-  ref: "main"
+  ref: "1.2"
 schema-version: '1.0'
