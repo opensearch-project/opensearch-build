@@ -1,13 +1,9 @@
+// similar jenkins/opensearch/Jenkinsfile but echo instead of sh for testing
+
 lib = library(identifier: "jenkins@current", retriever: legacySCM(scm)).jenkins
 
 pipeline {
     agent none
-    triggers {
-      parameterizedCron '''
-        H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
-        H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
-      '''
-    }
     stages {
         stage('parameters') {
             steps {
@@ -15,7 +11,7 @@ pipeline {
                     properties([
                             parameters([
                                     string(
-                                            defaultValue: '',
+                                            defaultValue: '2.0.0/opensearch-2.0.0.yml',
                                             name: 'INPUT_MANIFEST',
                                             trim: true
                                     )
@@ -73,9 +69,9 @@ pipeline {
                     steps {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            sh "echo ./build.sh manifests/$INPUT_MANIFEST --snapshot"
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven')
+                                echo "$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven"
                             }
                         }
                     }
@@ -135,19 +131,11 @@ pipeline {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         script {
                             def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
-                            sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
+                            sh "echo VERSION:$VERSION BUILD_NUMBER:$BUILD_NUMBER"
                             def URL_x64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/x64/dist/opensearch-${VERSION}-linux-x64.tar.gz"
                             def URL_arm64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/arm64/dist/opensearch-${VERSION}-linux-arm64.tar.gz"
-                            dockerBuild: {
-                                build job: 'docker-build',
-                                parameters: [
-                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
-                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
-                                    string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: "id && pwd && cd docker/release && curl -sSL $URL_x64 -o opensearch-x64.tgz && curl -sSL $URL_arm64 -o opensearch-arm64.tgz && bash build-image-multi-arch.sh -v ${VERSION} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"),
-                                    booleanParam(name: 'IS_STAGING', value: true)
-                                ]
-                            }
-                            
+                            def s = "id && pwd && cd docker/release && curl -sSL $URL_x64 -o opensearch-x64.tgz && curl -sSL $URL_arm64 -o opensearch-arm64.tgz && bash build-image-multi-arch.sh -v ${VERSION} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"
+                            echo "dockerBuild:${s}"
                             def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
                             publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                         }
@@ -166,18 +154,18 @@ pipeline {
 void build() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
-    sh "./build.sh manifests/$INPUT_MANIFEST"
+    sh "echo ./build.sh manifests/$INPUT_MANIFEST"
     
-    manifest = readYaml(file: 'builds/manifest.yml')
+    manifest = readYaml(file: 'tests/data/opensearch-build-1.1.0.yml')
     
     def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
     def BASE_URL = "${PUBLIC_ARTIFACT_URL}/${artifactPath}";
 
-    sh "./assemble.sh builds/manifest.yml --base-url ${BASE_URL}"
+    echo "sh ./assemble.sh builds/manifest.yml --base-url ${BASE_URL}"
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-        s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
+        echo "s3Upload(file: 'builds', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/builds')"
+        echo "s3Upload(file: 'dist', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/dist')"
     }
 
     lib.Messages.new(this).add("${STAGE_NAME}", "${BASE_URL}/builds/manifest.yml\n${BASE_URL}/dist/manifest.yml")
@@ -186,6 +174,7 @@ void build() {
 /** Publishes a notification to a slack instance*/
 void publishNotification(icon, msg, extra) {
     withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
+        def cmd = """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """
+        echo cmd
     }
 }

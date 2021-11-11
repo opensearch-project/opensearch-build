@@ -57,7 +57,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
-[ -z "$PLATFORM" ] && PLATFORM=`uname -s` | awk '{print tolower($0)}'
+[ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 # Assemble distribution artifact
