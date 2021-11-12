@@ -76,4 +76,4 @@ cp ${distributions}/*.zip ./$OUTPUT/plugins
 ./gradlew publishShadowPublicationToStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
 mkdir -p $OUTPUT/maven/org/opensearch
-cp -r ./build/local-staging-repo/org/opensearch/notification $OUTPUT/maven/org/opensearch/notification
+cp -r ./build/local-staging-repo/org/opensearch/. $OUTPUT/maven/org/opensearch
