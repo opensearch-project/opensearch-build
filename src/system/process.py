@@ -18,11 +18,10 @@ class Process:
         self.process = None
         self.stdout = None
         self.stderr = None
-        self.has_started = False
 
     def start(self, command, cwd):
-        if self.has_started:
-            raise AssertionError("Cannot start a started process!")
+        if self.started:
+            raise ProcessStartedError(f"Process already started, pid: {self.pid}")
 
         self.stdout = tempfile.NamedTemporaryFile()
         self.stderr = tempfile.NamedTemporaryFile()
@@ -35,11 +34,9 @@ class Process:
             stderr=self.stderr,
         )
 
-        self.has_started = True
-
     def terminate(self):
-        if not self.has_started:
-            raise AssertionError("Cannot terminate a unstarted process!")
+        if not self.started:
+            raise AssertionError("Cannot terminate a unstarted process")
 
         parent = psutil.Process(self.process.pid)
         logging.debug("Checking for child processes")
@@ -58,20 +55,38 @@ class Process:
         if self.stdout:
             self.stdout_data = self.stdout.read()
             self.stdout.close()
+            self.stdout = None
 
         if self.stderr:
             self.stderr_data = self.stderr.read()
             self.stderr.close()
+            self.stderr = None
 
         self.return_code = self.process.returncode
         self.process = None
-        self.has_started = False
 
         return self.return_code, self.stdout_data, self.stderr_data
 
+    @property
     def started(self):
-        return self.has_started
+        return True if self.process else False
 
     @property
     def pid(self):
-        return self.process.pid if self.has_started else None
+        return self.process.pid if self.started else None
+
+    @property
+    def output(self):
+        return self.stdout
+    
+    @property
+    def error(self):
+        return self.stderr
+
+
+class ProcessStartedError(Exception):
+    """
+    Indicates that process already started.
+    """
+
+    pass

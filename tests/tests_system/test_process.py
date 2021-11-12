@@ -6,7 +6,7 @@
 
 import unittest
 
-from system.process import Process
+from system.process import Process, ProcessStartedError
 
 
 class TestProcess(unittest.TestCase):
@@ -16,8 +16,10 @@ class TestProcess(unittest.TestCase):
 
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
 
-        self.assertTrue(process_handler.started())
+        self.assertTrue(process_handler.started)
         self.assertIsNotNone(process_handler.pid)
+        self.assertIsNotNone(process_handler.output)
+        self.assertIsNotNone(process_handler.error)
 
         return_code, stdout_data, stderr_data = process_handler.terminate()
 
@@ -25,17 +27,19 @@ class TestProcess(unittest.TestCase):
         self.assertIsNotNone(stdout_data)
         self.assertIsNotNone(stderr_data)
 
-        self.assertFalse(process_handler.started())
+        self.assertFalse(process_handler.started)
         self.assertIsNone(process_handler.pid)
+        self.assertIsNone(process_handler.output)
+        self.assertIsNone(process_handler.error)
 
     def test_start_twice(self):
         process_handler = Process()
         process_handler.start("ls", ".")
 
-        with self.assertRaises(AssertionError) as ctx:
+        with self.assertRaises(ProcessStartedError) as ctx:
             process_handler.start("pwd", ".")
 
-        self.assertEqual(str(ctx.exception), "Cannot start a started process!")
+        self.assertTrue(str(ctx.exception).startswith("Process already started, pid: "))
 
     def test_terminate_unstarted_process(self):
         process_handler = Process()
@@ -43,4 +47,4 @@ class TestProcess(unittest.TestCase):
         with self.assertRaises(AssertionError) as ctx:
             process_handler.terminate()
 
-        self.assertEqual(str(ctx.exception), "Cannot terminate a unstarted process!")
+        self.assertEqual(str(ctx.exception), "Cannot terminate a unstarted process")
