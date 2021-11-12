@@ -78,7 +78,7 @@ class Process:
     @property
     def output(self):
         return self.stdout
-    
+
     @property
     def error(self):
         return self.stderr
