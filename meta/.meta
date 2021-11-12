@@ -5,7 +5,6 @@
     "alerting": "git@github.com:opensearch-project/alerting.git",
     "anomaly-detection": "git@github.com:opensearch-project/anomaly-detection.git",
     "asynchronous-search": "git@github.com:opensearch-project/asynchronous-search.git",
-    "dashboards-notebooks": "git@github.com:opensearch-project/dashboards-notebooks",
     "dashboards-reports": "git@github.com:opensearch-project/dashboards-reports.git",
     "dashboards-visualizations": "git@github.com:opensearch-project/dashboards-visualizations.git",
     "index-management": "git@github.com:opensearch-project/index-management.git",
