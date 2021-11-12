@@ -14,7 +14,7 @@ class TestProcess(unittest.TestCase):
 
         process_handler = Process()
 
-        process_handler.start("echo 'test' & read -n1 ans", ".")
+        process_handler.start("echo 'test' & read -N 1 ans", ".")
 
         self.assertTrue(process_handler.started())
         self.assertIsNotNone(process_handler.pid)
