@@ -14,12 +14,33 @@ class TestProcess(unittest.TestCase):
 
         process_handler = Process()
 
-        process_handler.start("ls", ".")
+        process_handler.start("echo 'test' & read -n1 ans", ".")
 
+        self.assertTrue(process_handler.started())
         self.assertIsNotNone(process_handler.pid)
 
-        process_handler.terminate()
+        return_code, stdout_data, stderr_data = process_handler.terminate()
 
+        self.assertIsNone(return_code)
+        self.assertTrue(stdout_data.startswith("test"))
+        self.assertEqual(stderr_data, "")
+
+        self.assertFalse(process_handler.started())
         self.assertIsNone(process_handler.pid)
 
-    # TODO: add test for subprocess.TimeoutExpired
+    def test_start_twice(self):
+        process_handler = Process()
+        process_handler.start("ls", ".")
+
+        with self.assertRaises(AssertionError) as ctx:
+            process_handler.start("pwd", ".")
+
+        self.assertEqual(str(ctx.exception), "Cannot start a started process!")
+
+    def test_terminate_unstarted_process(self):
+        process_handler = Process()
+
+        with self.assertRaises(AssertionError) as ctx:
+            process_handler.terminate()
+
+        self.assertEqual(str(ctx.exception), "Cannot terminate a unstarted process!")

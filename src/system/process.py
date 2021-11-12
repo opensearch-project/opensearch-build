@@ -18,8 +18,12 @@ class Process:
         self.process = None
         self.stdout = None
         self.stderr = None
+        self.has_started = False
 
     def start(self, command, cwd):
+        if self.has_started:
+            raise AssertionError("Cannot start a started process!")
+
         self.stdout = tempfile.NamedTemporaryFile()
         self.stderr = tempfile.NamedTemporaryFile()
 
@@ -31,7 +35,12 @@ class Process:
             stderr=self.stderr,
         )
 
+        self.has_started = True
+
     def terminate(self):
+        if not self.has_started:
+            raise AssertionError("Cannot terminate a unstarted process!")
+
         parent = psutil.Process(self.process.pid)
         logging.debug("Checking for child processes")
         child_processes = parent.children(recursive=True)
@@ -41,31 +50,28 @@ class Process:
                 logging.debug(f"Sending SIGKILL to {child.pid} ")
                 child.kill()
         logging.info(f"Sending SIGKILL to PID {self.process.pid}")
-        
+
         self.process.kill()
-    
-        logging.info(f"Process terminated with exit code {self.process.returncode}")
+
+        logging.info(f"Process killed with exit code {self.process.returncode}")
+
         if self.stdout:
             with open(self.stdout.name) as stdout:
                 self.stdout_data = stdout.read()
-                
+
         if self.stderr:
             with open(self.stderr.name) as stderr:
                 self.stderr_data = stderr.read()
 
         self.return_code = self.process.returncode
         self.process = None
+        self.has_started = False
 
         return self.return_code, self.stdout_data, self.stderr_data
 
+    def started(self):
+        return self.has_started
+
     @property
     def pid(self):
-        return self.process.pid if self.process else None
-
-    @property
-    def stdout_x(self):
-        return self.stdout
-
-    @property
-    def stderr_x(self):
-        return self.stderr
+        return self.process.pid if self.has_started else None
