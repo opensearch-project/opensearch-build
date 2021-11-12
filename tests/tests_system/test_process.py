@@ -6,7 +6,7 @@
 
 import unittest
 
-from system.process import Process, ProcessStartedError
+from system.process import Process, ProcessNotStartedError, ProcessStartedError
 
 
 class TestProcess(unittest.TestCase):
@@ -44,7 +44,7 @@ class TestProcess(unittest.TestCase):
     def test_terminate_unstarted_process(self):
         process_handler = Process()
 
-        with self.assertRaises(AssertionError) as ctx:
+        with self.assertRaises(ProcessNotStartedError) as ctx:
             process_handler.terminate()
 
-        self.assertEqual(str(ctx.exception), "Cannot terminate a unstarted process")
+        self.assertEqual(str(ctx.exception), "Process has not started")

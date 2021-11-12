@@ -21,7 +21,7 @@ class Process:
 
     def start(self, command, cwd):
         if self.started:
-            raise ProcessStartedError(f"Process already started, pid: {self.pid}")
+            raise ProcessStartedError(self.pid)
 
         self.stdout = tempfile.NamedTemporaryFile()
         self.stderr = tempfile.NamedTemporaryFile()
@@ -36,7 +36,7 @@ class Process:
 
     def terminate(self):
         if not self.started:
-            raise AssertionError("Cannot terminate a unstarted process")
+            raise ProcessNotStartedError()
 
         parent = psutil.Process(self.process.pid)
         logging.debug("Checking for child processes")
@@ -89,4 +89,15 @@ class ProcessStartedError(Exception):
     Indicates that process already started.
     """
 
-    pass
+    def __init__(self, pid):
+        self.pid = pid
+        super().__init__(f"Process already started, pid: {pid}")
+
+
+class ProcessNotStartedError(Exception):
+    """
+    Indicates that process has not started.
+    """
+
+    def __init__(self):
+        super().__init__("Process has not started")
