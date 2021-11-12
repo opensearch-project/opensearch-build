@@ -42,6 +42,17 @@ class ScriptFinder:
         return script
 
     @classmethod
+    def __find_named_script(cls, script_name, component_name, git_dir):
+        paths = [
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, script_name)),
+            os.path.realpath(os.path.join(git_dir, script_name)),
+            os.path.realpath(os.path.join(git_dir, "scripts", script_name)),
+            os.path.realpath(os.path.join(cls.default_scripts_path, script_name)),
+        ]
+
+        return cls.__find_script(script_name, paths)
+
+    @classmethod
     def find_build_script(cls, project, component_name, git_dir):
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "build.sh")),
@@ -59,17 +70,6 @@ class ScriptFinder:
         return cls.__find_script("build.sh", paths)
 
     @classmethod
-    def find_integ_test_script(cls, component_name, git_dir):
-        paths = [
-            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "integtest.sh")),
-            os.path.realpath(os.path.join(git_dir, "integtest.sh")),
-            os.path.realpath(os.path.join(git_dir, "scripts", "integtest.sh")),
-            os.path.realpath(os.path.join(cls.default_scripts_path, "integtest.sh")),
-        ]
-
-        return cls.__find_script("integtest.sh", paths)
-
-    @classmethod
     def find_install_script(cls, component_name):
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "install.sh")),
@@ -79,12 +79,9 @@ class ScriptFinder:
         return cls.__find_script("install.sh", paths)
 
     @classmethod
-    def find_bwc_test_script(cls, component_name, git_dir):
-        paths = [
-            os.path.realpath(os.path.join(git_dir, "bwctest.sh")),
-            os.path.realpath(os.path.join(git_dir, "scripts", "bwctest.sh")),
-            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "bwctest.sh")),
-            os.path.realpath(os.path.join(cls.default_scripts_path, "bwctest.sh")),
-        ]
+    def find_integ_test_script(cls, component_name, git_dir):
+        return cls.__find_named_script("integtest.sh", component_name, git_dir)
 
-        return cls.__find_script("bwctest.sh", paths)
+    @classmethod
+    def find_bwc_test_script(cls, component_name, git_dir):
+        return cls.__find_named_script("bwctest.sh", component_name, git_dir)

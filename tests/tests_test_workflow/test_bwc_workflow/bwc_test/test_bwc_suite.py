@@ -34,13 +34,13 @@ class TestBwcSuite(unittest.TestCase):
     @patch("test_workflow.bwc_test.bwc_test_suite.execute")
     def test_run_bwctest(self, mock_execute):
         mock_execute.return_value = (0, "", "")
-        self.bwc_test_suite.run_tests(".", "OpenSearch")
+        self.bwc_test_suite.run_tests(".", "job-scheduler")
         script = os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh")
         mock_execute.assert_called_with(script, ".", True, False)
 
     @patch("test_workflow.bwc_test.bwc_test_suite.TestComponent")
     def test_component_bwctest(self, test_component_mock):
-        component = self.manifest.components["OpenSearch"]
+        component = self.manifest.components["job-scheduler"]
         self.bwc_test_suite.run_tests = MagicMock()
         expected = [call(os.path.join(".", component.name), component.name)]
 
