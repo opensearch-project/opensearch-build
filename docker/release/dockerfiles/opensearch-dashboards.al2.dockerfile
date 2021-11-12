@@ -47,7 +47,7 @@ ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 # Install which to allow running of securityadmin.sh
 RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 
-# Install notebooks dependencies
+# Install Reporting dependencies
 RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
 
 # Create an opensearch-dashboards user, group
