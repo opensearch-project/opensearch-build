@@ -14,7 +14,7 @@ class TestProcess(unittest.TestCase):
 
         process_handler = Process()
 
-        process_handler.start("echo 'test' & read", ".")
+        process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
 
         self.assertTrue(process_handler.started())
         self.assertIsNotNone(process_handler.pid)
@@ -22,7 +22,7 @@ class TestProcess(unittest.TestCase):
         return_code, stdout_data, stderr_data = process_handler.terminate()
 
         self.assertIsNone(return_code)
-        self.assertTrue(stdout_data.startswith("test"))
+        self.assertEqual(stdout_data, "")
         self.assertEqual(stderr_data, "")
 
         self.assertFalse(process_handler.started())
