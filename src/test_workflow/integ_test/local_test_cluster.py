@@ -69,7 +69,7 @@ class LocalTestCluster(TestCluster):
         return 9200
 
     def destroy(self):
-        if self.process_handler.started:
+        if not self.process_handler.started:
             logging.info("Local test cluster is not started")
             return
         self.terminate_process()
