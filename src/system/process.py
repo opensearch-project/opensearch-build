@@ -56,12 +56,12 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            with open(self.stdout.name) as stdout:
-                self.stdout_data = stdout.read()
+            self.stdout_data = self.stdout.read()
+            self.stdout.close()
 
         if self.stderr:
-            with open(self.stderr.name) as stderr:
-                self.stderr_data = stderr.read()
+            self.stderr_data = self.stderr.read()
+            self.stderr.close()
 
         self.return_code = self.process.returncode
         self.process = None
