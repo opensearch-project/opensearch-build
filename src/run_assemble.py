@@ -30,7 +30,7 @@ def main():
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
-    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
+    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url, args.distribution)
 
     with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.distribution, args.keep) as bundle:
         bundle.install_min()
@@ -38,7 +38,7 @@ def main():
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar
-        bundle_recorder.write_manifest(bundle.min_dist.archive_path) 
+        bundle_recorder.write_manifest(bundle.min_dist.archive_path)
         bundle.package(output_dir)
         logging.info(f"Package for {args.distribution}")
 

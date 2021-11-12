@@ -54,7 +54,7 @@ class Dist(ABC):
         elif distribution == "zip":
             return DistZip(name, path, distribution)
         else:
-            raise ValueError("Distribution not specified, try with ./assemble.sh --distribution")
+            raise ValueError("Distribution not specified or invalid distribution")
 
 
 class DistZip(Dist):
@@ -93,6 +93,7 @@ class DistRpm(Dist):
         product_name = manifest_data["name"].lower()
         if product_name == "opensearch dashboards":
             product_name = "_".join(product_name.split())
+        cwd = os.getcwd()
         subprocess.run(
                         [
                             'scripts/pkg/generate_pkg.sh',
@@ -104,10 +105,12 @@ class DistRpm(Dist):
                             product_name,
                             "-a",
                             manifest_data["architecture"],
+                            "-o",
+                            cwd,
                             "-i",
-                            manifest_data["location"],
-                            "-d",
-                            self.archive_path
+                            self.archive_path, 
+                            "-n",
+                            bundle_recorder.package_name
                         ]
                     )
 

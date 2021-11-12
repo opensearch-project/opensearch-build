@@ -11,11 +11,12 @@ from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
-    def __init__(self, build, output_dir, artifacts_dir, base_url):
+    def __init__(self, build, output_dir, artifacts_dir, base_url, distribution):
         self.output_dir = output_dir
         self.build_id = build.id
         self.base_url = base_url
         self.version = build.version
+        self.distribution = distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
         self.architecture = build.architecture
@@ -35,7 +36,13 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
+        if self.distribution == "rpm":
+            extension = ".rpm"
+        elif self.distribution == "zip":
+            extension = ".zip"
+        else:
+            extension = ".tar.gz"
+        return "-".join(parts) + extension
 
     def __get_public_url_path(self, folder, rel_path):
         path = "/".join((folder, rel_path))
