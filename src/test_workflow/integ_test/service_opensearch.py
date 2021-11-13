@@ -5,10 +5,10 @@ import time
 
 import requests
 import yaml
-
 from aws.s3_bucket import S3Bucket
+
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.integ_test.process_utils import ProcessUtils
+from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException
 
 
@@ -39,11 +39,11 @@ class ServiceOpenSearch:
         self.additional_cluster_config = additional_cluster_config
         self.process = None
         self.save_logs = save_logs
+        self.process_handler = Process()
 
     def start(self):
         self.download()
-        self.stdout = open("stdout.txt", "w")
-        self.stderr = open("stderr.txt", "w")
+
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
@@ -52,13 +52,9 @@ class ServiceOpenSearch:
                 self.additional_cluster_config,
                 os.path.join(self.install_dir, "config", "opensearch.yml"),
             )
-        self.process = subprocess.Popen(
-            "./opensearch-tar-install.sh",
-            cwd=self.install_dir,
-            shell=True,
-            stdout=self.stdout,
-            stderr=self.stderr,
-        )
+
+        self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
+            
         logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
         self.wait_for_service()
 
@@ -117,7 +113,7 @@ class ServiceOpenSearch:
         raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
-        ProcessUtils.terminate_process(self)
+        self.return_code, self.local_cluster_stdout, self.local_cluster_stderr = self.process_handler.terminate()
 
     def endpoint(self):
         return "localhost"

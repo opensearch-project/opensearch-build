@@ -7,6 +7,7 @@
 from manifests.bundle.bundle_manifest_1_0 import BundleManifest_1_0
 from manifests.component_manifest import ComponentManifest
 
+import os
 
 class BundleManifest(ComponentManifest):
     """
@@ -71,8 +72,6 @@ class BundleManifest(ComponentManifest):
             "components": self.components.__to_dict__()
         }
 
-<<<<<<< HEAD
-=======
     @staticmethod
     def from_s3(bucket_name, build_id, opensearch_version, platform, architecture, work_dir=None):
         work_dir = work_dir if not None else str(os.getcwd())
@@ -92,8 +91,7 @@ class BundleManifest(ComponentManifest):
         # return f"bundles/{opensearch_version}/{build_id}/{architecture}/opensearch-{opensearch_version}-{platform}-{architecture}.tar.gz"
         # The path above has no 1.2.0 bundle. Thus use the new path and a hardcoded build ID for now.
         # https://github.com/opensearch-project/opensearch-build/issues/838
-        return f"bundle - build - dashboards / {opensearch_version} / 195 / {platform} / {architecture} / dist/ \
-            opensearch - dashboards - {opensearch_version} - {platform} - {architecture}.tar.gz"
+        return f"bundle-build-dashboards/{opensearch_version}/195/{platform}/{architecture}/dist/opensearch-dashboards-{opensearch_version}-{platform}-{architecture}.tar.gz"
 
     @staticmethod
     def get_tarball_name(opensearch_version, platform, architecture):
@@ -112,7 +110,6 @@ class BundleManifest(ComponentManifest):
         # TODO: use platform, https://github.com/opensearch-project/opensearch-build/issues/669
         return f"bundles/{opensearch_version}/{build_id}/{architecture}/manifest.yml"
 
->>>>>>> 3aa6338 (refactor LocalTestCluster into LocalTestClusterOpenSearch and LocalTestClusterOpenSearchDashboards)
     class Build:
         def __init__(self, data):
             self.name = data["name"]

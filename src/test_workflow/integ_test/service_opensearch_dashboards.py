@@ -4,10 +4,10 @@ import subprocess
 import time
 
 import requests
-
 from aws.s3_bucket import S3Bucket
+
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.integ_test.process_utils import ProcessUtils
+from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException
 
 
@@ -38,6 +38,7 @@ class ServiceOpenSearchDashboards:
         self.additional_cluster_config = additional_cluster_config
         self.process = None
         self.save_logs = save_logs
+        self.process_handler = Process()
 
     def start(self):
         self.download()
@@ -49,14 +50,9 @@ class ServiceOpenSearchDashboards:
             self.manifest.build.architecture
         )
 
-        self.process = subprocess.Popen(
-            "./bin/opensearch-dashboards",
-            cwd=self.install_dir,
-            shell=True,
-            stdout=self.stdout,
-            stderr=self.stderr,
-        )
-        logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
+        self.process_handler.start("./bin/opensearch-dashboards", self.install_dir)
+
+        logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
         self.wait_for_service()
 
     def download(self):
@@ -106,7 +102,7 @@ class ServiceOpenSearchDashboards:
         raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
-        ProcessUtils.terminate_process(self)
+        self.return_code, self.local_cluster_stdout, self.local_cluster_stderr = self.process_handler.terminate()
 
     def endpoint(self):
         return "localhost"
