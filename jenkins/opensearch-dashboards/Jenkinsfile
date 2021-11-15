@@ -37,22 +37,10 @@ pipeline {
             steps {
                 script { 
                     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    manifest = readYaml(file: "manifests/$INPUT_MANIFEST") 
-                    
-                    dockerImage = "${manifest.ci?.image?.name}" 
-                    // If the 'image' key is not present, it is populated with "null" string 
-                    if (dockerImage == null || dockerImage == "null") {
-                        error("The Docker image for the build is required but was not provided in the manifest")
-                    }
-
-                    dockerArgs = "${manifest.ci?.image?.args}" 
-                    // If the 'args' key is not present, it is populated with "null" string 
-                    if (dockerArgs == null || dockerArgs == "null") {
-                        dockerArgs = ''
-                    }
-
-                    echo "Using Docker image: " + dockerImage
-                    echo "Using Docker container args: " + dockerArgs
+                    def inputManifest = lib.InputManifest.new(this, readYaml(file: "manifests/$INPUT_MANIFEST"))
+                    dockerImage = inputManifest.ci.dockerImage
+                    dockerArgs = inputManifest.ci.dockerArgs
+                    echo "Using Docker image ${dockerImage} (${dockerArgs})"
                 }
             }
         }
