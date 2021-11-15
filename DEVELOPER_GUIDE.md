@@ -19,6 +19,7 @@
       - [Java](#java)
     - [Run Tests](#run-tests-1)
       - [Regression Tests](#regression-tests)
+      - [Testing in Jenkins](#testing-in-jenkins)
 
 # Developer Guide
 
@@ -226,3 +227,15 @@ BUILD SUCCESSFUL in 7s
 #### Regression Tests
 
 Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs). For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail. To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+
+#### Testing in Jenkins
+
+This repository contains a Jenkins job that looks similar to OpenSearch and OpenSearch Dashboards with actual `sh` calls replaced by `echo`. Make your code changes in a branch, e.g. `jenkins-changes`, including to this job, then create a pipeline in Jenkins.
+
+* GitHub Project: `https://github.com/[your username]/opensearch-build/`.
+* Add an input parameter: `INPUT_MANIFEST`, default to `2.0.0/opensearch-2.0.0.yml`.
+* Pipeline repository URL: `https://github.com/[your username]/opensearch-build`.
+* Branch specifier: `refs/heads/jenkins-changes`.
+* Script path: `tests/jenkins/jobs/Build_Jenkinsfile`
+
+You can iterate by running the job in Jenkins, examining outputs, and pushing updates to GitHub.
