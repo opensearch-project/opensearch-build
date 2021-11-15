@@ -12,21 +12,35 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class InputManifest extends Manifest {
-    String dockerImage
-    String dockerArgs
+    class Ci implements Serializable {
+        Map data
 
-    public String getDockerImage() {
-        def val = this.data.ci?.image?.name
+        String dockerImage
+        String dockerArgs
 
-        if (val == null) {
-            error("Missing ci.image.name in ${this.filename}")
+        Ci(Map data) {
+            this.data = data
         }
 
-        return val
+        public String getDockerImage() {
+            def val = this.data?.image?.name
+
+            if (val == null) {
+                error("Missing ci.image.name in ${this.filename}")
+            }
+
+            return val
+        }
+
+        public String getDockerArgs() {
+            return this.data?.image?.args
+        }
     }
 
-    public String getDockerArgs() {
-        return this.data.ci?.image?.args
+    Ci ci
+
+    def getCi() {
+        return new InputManifest.Ci(this.data.ci)
     }
 }
 

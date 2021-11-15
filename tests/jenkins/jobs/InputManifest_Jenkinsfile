@@ -15,8 +15,8 @@ pipeline {
             steps {
                 script {
                     def inputManifest = lib.InputManifest.new(this, readYaml(file: "manifests/1.2.0/opensearch-1.2.0.yml"))
-                    echo inputManifest.dockerImage
-                    echo inputManifest.dockerArgs
+                    echo inputManifest.ci.dockerImage
+                    echo inputManifest.ci.dockerArgs
                 }
             }
         }
