@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@current", retriever: legacySCM(scm)).jenkins
 
 pipeline {
     agent none
@@ -9,7 +9,7 @@ pipeline {
                     steps {
                         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                             script {
-                                def messages = lib.jenkins.Messages.new(this);
+                                def messages = lib.Messages.new(this);
                                 messages.add("${STAGE_NAME}", "built ${STAGE_NAME}")
                             }
                         }
@@ -62,7 +62,7 @@ pipeline {
                 success {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         script {
-                            def messages = lib.jenkins.Messages.new(this)
+                            def messages = lib.Messages.new(this)
                             def stashed = messages.get(['build-on-host', 'build-snapshots', 'build-x86', 'build-arm64'])
                             echo stashed
                         }
@@ -74,6 +74,6 @@ pipeline {
 }
 
 def build() {
-    def messages = lib.jenkins.Messages.new(this);
+    def messages = lib.Messages.new(this);
     messages.add("${STAGE_NAME}", "built ${STAGE_NAME}")
 }

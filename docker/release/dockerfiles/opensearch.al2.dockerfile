@@ -1,25 +1,5 @@
+# Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
-# 
-# The OpenSearch Contributors require contributions made to
-# this file be licensed under the Apache-2.0 license or a
-# compatible open source license.
-# 
-# Modifications Copyright OpenSearch Contributors. See
-# GitHub history for details.
- 
- 
-# Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# 
-# Licensed under the Apache License, Version 2.0 (the "License").
-# You may not use this file except in compliance with the License.
-# A copy of the License is located at
-# 
-#     http://www.apache.org/licenses/LICENSE-2.0
-# 
-# or in the "license" file accompanying this file. This file is distributed 
-# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. See the License for the specific language governing 
-# permissions and limitations under the License.
 
 
 # This dockerfile generates an AmazonLinux-based image containing an OpenSearch installation.
@@ -81,7 +61,11 @@ COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_HOME $OPENSEARCH_HOME
 WORKDIR $OPENSEARCH_HOME
 
 # Set $JAVA_HOME
-RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh
+RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh && \
+    echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile.d/java_home.sh
+
+ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
+ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Add k-NN lib directory to library loading path variable
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/knnlib"

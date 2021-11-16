@@ -67,3 +67,9 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '2.8')
     }
 }
+
+test {
+    if (project.hasProperty("pipeline.stack.write")) {
+        systemProperty "pipeline.stack.write", project.getProperty("pipeline.stack.write")
+    }
+}

@@ -1,25 +1,35 @@
 - [Developer Guide](#developer-guide)
   - [Forking and Cloning](#forking-and-cloning)
-  - [Install Prerequisites](#install-prerequisites)
-    - [Pyenv](#pyenv)
-    - [Python 3.7](#python-37)
-    - [Pipenv](#pipenv)
-    - [NVM and Node](#nvm-and-node)
-    - [Yarn](#yarn)
-    - [Java](#java)
-  - [Install Dependencies](#install-dependencies)
-  - [Run Tests](#run-tests)
-  - [Build OpenSearch](#build-opensearch)
-  - [Code Linting](#code-linting)
-  - [Type Checking](#type-checking)
-  - [Code Coverage](#code-coverage)
-  - [Pre-Commit Cheatsheet](#pre-commit-cheatsheet)
+  - [Build Tools](#build-tools)
+    - [Install Prerequisites](#install-prerequisites)
+      - [Pyenv](#pyenv)
+      - [Python 3.7](#python-37)
+      - [Pipenv](#pipenv)
+      - [NVM and Node](#nvm-and-node)
+      - [Yarn](#yarn)
+    - [Install Dependencies](#install-dependencies)
+    - [Run Tests](#run-tests)
+    - [Build OpenSearch](#build-opensearch)
+    - [Code Linting](#code-linting)
+    - [Type Checking](#type-checking)
+    - [Code Coverage](#code-coverage)
+    - [Pre-Commit Cheatsheet](#pre-commit-cheatsheet)
+  - [Jenkins Pipelines and Shared Libraries](#jenkins-pipelines-and-shared-libraries)
+    - [Install Prerequisites](#install-prerequisites-1)
+      - [Java](#java)
+    - [Run Tests](#run-tests-1)
+      - [Regression Tests](#regression-tests)
+      - [Testing in Jenkins](#testing-in-jenkins)
 
-## Developer Guide
+# Developer Guide
 
-### Forking and Cloning
+## Forking and Cloning
 
 Fork this repository on GitHub, and clone locally with `git clone`.
+
+## Build Tools
+
+This project contains a collection of tools to build, test and release OpenSearch and OpenSearch Dashboards. 
 
 ### Install Prerequisites
 
@@ -77,10 +87,6 @@ nvm install v10.24.1
 npm install -g yarn
 ```
 
-#### Java
-
-This project recommends Java 11 for Jenkins jobs CI. This means you must have a JDK 11 installed with the environment variable `JAVA_HOME` referencing the path to Java home for your JDK installation, e.g. `JAVA_HOME=/usr/lib/jvm/jdk-11`. Download Java 11 from [here](https://adoptium.net/releases.html?variant=openjdk11).
-
 ### Install Dependencies
 
 Install dependencies. 
@@ -95,7 +101,7 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 ### Run Tests
 
-This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure Python code quality, and [JUnit](https://junit.org/) for Groovy code. See [tests](tests).
+This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure Python code quality. See [tests](tests).
 
 ```
 $ pipenv run pytest
@@ -195,3 +201,41 @@ Auto-fix format and sort imports by running.
 git status -s | grep -e "[MA?]\s.*.py" | cut -c4- | xargs pipenv run black
 pipenv run isort .
 ```
+
+## Jenkins Pipelines and Shared Libraries
+
+This project contains [Jenkins pipelines](jenkins) and [Jenkins shared libraries](src/jenkins) that execute the tools that build OpenSearch and OpenSearch Dashboards.
+
+### Install Prerequisites
+
+#### Java
+
+Use Java 11 for Jenkins jobs CI. This means you must have a JDK 11 installed with the environment variable `JAVA_HOME` referencing the path to Java home for your JDK installation, e.g. `JAVA_HOME=/usr/lib/jvm/jdk-11`. Download Java 11 from [here](https://adoptium.net/releases.html?variant=openjdk11).
+
+### Run Tests
+
+This project uses [JenkinsPipelineUnit](https://github.com/jenkinsci/JenkinsPipelineUnit) to unit test Jenkins pipelines and shared libraries. See [tests/jenkins](tests/jenkins).
+
+```
+$ ./gradlew test
+
+> Task :test
+BUILD SUCCESSFUL in 7s
+3 actionable tasks: 1 executed, 2 up-to-date
+```
+
+#### Regression Tests
+
+Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs). For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail. To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+
+#### Testing in Jenkins
+
+This repository contains a Jenkins job that looks similar to OpenSearch and OpenSearch Dashboards with actual `sh` calls replaced by `echo`. Make your code changes in a branch, e.g. `jenkins-changes`, including to this job, then create a pipeline in Jenkins.
+
+* GitHub Project: `https://github.com/[your username]/opensearch-build/`.
+* Add an input parameter: `INPUT_MANIFEST`, default to `2.0.0/opensearch-2.0.0.yml`.
+* Pipeline repository URL: `https://github.com/[your username]/opensearch-build`.
+* Branch specifier: `refs/heads/jenkins-changes`.
+* Script path: `tests/jenkins/jobs/Build_Jenkinsfile`
+
+You can iterate by running the job in Jenkins, examining outputs, and pushing updates to GitHub.
