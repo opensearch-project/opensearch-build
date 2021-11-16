@@ -52,8 +52,9 @@ class InputManifest extends Manifest {
         this.ci = new InputManifest.Ci(this.data.ci)
     }
    
-    public String getPublicDistPath(String buildNumber, String platform, String architecture) {
+    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String buildNumber, String platform, String architecture) {
         return [
+            publicArtifactUrl,
             this.build.name.toLowerCase().replaceAll(' ', '-'),
             this.build.version,
             buildNumber,
@@ -62,12 +63,5 @@ class InputManifest extends Manifest {
             'dist',
             "${this.build.name.toLowerCase().replaceAll(' ', '-')}-${this.build.version}-${platform}-${architecture}.${platform == 'windows' ? 'zip' : 'tar.gz'}"
         ].join("/")
-    }
-
-    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String buildNumber, String platform, String architecture) {
-        return [
-            publicArtifactUrl,
-            this.getPublicDistPath(buildNumber, platform, architecture)
-        ].join('/')
     }
 }
