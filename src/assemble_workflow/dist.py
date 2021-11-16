@@ -88,7 +88,6 @@ class DistRpm(Dist):
 
     def __build__(self, bundle_recorder, dest):
         logging.info("build for rpm distribution.")
-        # scripts/pkg/generate_pkg.sh -v VERSION -t DISTRICUTION -p opensearch/opensearch-dashboards -a x64/arm64 -i tarball_path -d PRODUCT_DISTRICUTION_ARCH
         manifest_data = bundle_recorder.bundle_manifest.data["build"]
         product_name = manifest_data["name"].lower()
         if product_name == "opensearch dashboards":
