@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import concurrent.futures
 import logging
 import os
 import shutil
@@ -52,17 +53,19 @@ class DependencyInstaller:
 
     def download(self, paths, category, dest):
         logging.info(f"Downloading to {dest} ...")
-        for path in paths:
-            url = "/".join([self.root_url, category, path])
-            # paths are prefixed by category, remove
-            local_path = os.path.join(dest, "/".join(path.split("/")[1:]))
-            self.__download_or_copy(url, local_path)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            for path in paths:
+                url = "/".join([self.root_url, category, path])
+                # paths are prefixed by category, remove
+                local_path = os.path.join(dest, "/".join(path.split("/")[1:]))
+                executor.submit(self.__download_or_copy, url, local_path)
 
     def __download_or_copy(self, source, dest):
         dest = os.path.realpath(dest)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if validators.url(source):
             logging.info(f"Downloading {source} into {dest} ...")
+
             urllib.request.urlretrieve(source, dest)
         else:
             logging.info(f"Copying {source} into {dest} ...")
