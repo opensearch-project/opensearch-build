@@ -33,7 +33,7 @@ def main():
     os.makedirs(tests_dir, exist_ok=True)
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         test_recorder = TestRecorder(args.test_run_id, "integ-test", tests_dir)
-        # dependency_installer.install_maven_dependencies()
+        dependency_installer.install_maven_dependencies()
         all_results = TestSuiteResults()
         for component in bundle_manifest.components.select(focus=args.component):
             if component.name in test_manifest.components:

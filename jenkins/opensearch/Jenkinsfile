@@ -83,6 +83,7 @@ pipeline {
                     steps {
                         script {
                             build()
+                            test()
                         }
                     }
                     post() {
@@ -103,6 +104,7 @@ pipeline {
                     steps {
                         script {
                             build()
+                            test()
                         }
                     }
                     post() {
@@ -172,6 +174,21 @@ void build() {
     }
 
     lib.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
+}
+
+void test() {
+    def buildManifest = lib.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
+
+    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
+    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
+
+    sh "./test.sh integ-test ${baseUrl} --test-run-id ${env.BUILD_NUMBER}"
+
+    echo "Uploading Test Results to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}/test-results"
+    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
+    }
+
 }
 
 /** Publishes a notification to a slack instance*/
