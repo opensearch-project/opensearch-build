@@ -8,40 +8,66 @@
 
 package jenkins
 
-import groovy.transform.InheritConstructors
-
-@InheritConstructors
 class InputManifest extends Manifest {
     class Ci implements Serializable {
-        Map data
+        class Image implements Serializable {
+            String name
+            String args
 
-        String dockerImage
-        String dockerArgs
+            Image(Map data) {
+                this.name = data.name
+
+                if (this.name == null) {
+                    error("Missing ci.image.name")
+                }
+
+                this.args = data.args
+            }
+        }
+
+        Image image
 
         Ci(Map data) {
-            this.data = data
-        }
-
-        public String getDockerImage() {
-            def val = this.data?.image?.name
-
-            if (val == null) {
-                error("Missing ci.image.name in ${this.filename}")
-            }
-
-            return val
-        }
-
-        public String getDockerArgs() {
-            return this.data?.image?.args
+            this.image = new InputManifest.Ci.Image(data.image)
         }
     }
 
+    class Build implements Serializable {
+        String name
+        String version
+
+        Build(Map data) {
+            this.name = data.name
+            this.version = data.version
+        }
+    }
+
+    Build build
     Ci ci
 
-    def getCi() {
-        return new InputManifest.Ci(this.data.ci)
+    InputManifest(Map data) {
+        super(data)
+
+        this.build = new InputManifest.Build(this.data.build)
+        this.ci = new InputManifest.Ci(this.data.ci)
+    }
+   
+    public String getPublicDistPath(String buildNumber, String platform, String architecture) {
+        return [
+            this.build.name.toLowerCase().replaceAll(' ', '-'),
+            this.build.version,
+            buildNumber,
+            platform,
+            architecture,
+            'dist',
+            "${this.build.name.toLowerCase().replaceAll(' ', '-')}-${this.build.version}-${platform}-${architecture}.${platform == 'windows' ? 'zip' : 'tar.gz'}"
+        ].join("/")
+    }
+
+    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String buildNumber, String platform, String architecture) {
+        return [
+            publicArtifactUrl,
+            this.getPublicDistPath(buildNumber, platform, architecture)
+        ].join('/')
     }
 }
-
-

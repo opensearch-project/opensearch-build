@@ -9,12 +9,9 @@
 package jenkins
 
 class Manifest implements Serializable {
-    def steps
-    def filename
     def data
 
-    Manifest(steps, data) {
+    Manifest(Map data) {
         this.data = data
-        this.steps = steps
     }
 }
