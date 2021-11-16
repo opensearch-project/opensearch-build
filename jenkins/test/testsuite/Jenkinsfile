@@ -68,7 +68,7 @@ pipeline {
             post() {
                 always {
                     script {
-                        publish()
+                        publishResults()
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
@@ -96,7 +96,7 @@ pipeline {
 }
 
 /** Publishes test results to S3 **/
-void publish() {
+void publishResults() {
     def artifactPath = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
