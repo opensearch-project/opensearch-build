@@ -16,6 +16,7 @@ from build_workflow.build_target import BuildTarget
 from build_workflow.builders import Builders
 from manifests.input_manifest import InputManifest
 from system import console
+from system.os import current_architecture, current_platform
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -25,6 +26,23 @@ def main():
     manifest = InputManifest.from_file(args.manifest)
     output_dir = os.path.join(os.getcwd(), "builds")
 
+    if args.ref_manifest:
+        manifest = manifest.stable(
+            architecture=args.architecture or current_architecture(),
+            platform=args.platform or current_platform(),
+            snapshot=args.snapshot if args.snapshot is not None else False
+        )
+        if os.path.exists(args.ref_manifest):
+            if manifest == InputManifest.from_path(args.ref_manifest):
+                logging.info(f"No changes since {args.ref_manifest}")
+            else:
+                logging.info(f"Updating {args.ref_manifest}")
+                manifest.to_file(args.ref_manifest)
+        else:
+            logging.info(f"Creating {args.ref_manifest}")
+            manifest.to_file(args.ref_manifest)
+        exit(0)
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
 
@@ -32,10 +50,10 @@ def main():
             name=manifest.build.name,
             version=manifest.build.version,
             patches=manifest.build.patches,
-            snapshot=args.snapshot,
+            snapshot=args.snapshot if args.snapshot is not None else manifest.build.snapshot,
             output_dir=output_dir,
-            platform=args.platform,
-            architecture=args.architecture,
+            platform=args.platform or manifest.build.platform,
+            architecture=args.architecture or manifest.build.architecture,
         )
 
         os.makedirs(target.output_dir, exist_ok=True)

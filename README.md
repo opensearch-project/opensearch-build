@@ -17,6 +17,7 @@
     - [Check Out Source](#check-out-source)
     - [Build from Source](#build-from-source)
       - [Custom Build Scripts](#custom-build-scripts)
+      - [Avoiding Rebuilds](#avoiding-rebuilds)
       - [Patch Releases](#patch-releases)
     - [Assemble the Bundle](#assemble-the-bundle)
       - [Cross-Platform Builds](#cross-platform-builds)
@@ -177,11 +178,33 @@ The following options are available in `build.sh`.
 | --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
 | --keep             | Do not delete the temporary working directory on both success or error. |
+| -l, --lock         | Generate a stable reference manifest.                                   |
 | -v, --verbose      | Show more verbose output.                                               |
 
 ##### Custom Build Scripts
 
 Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](scripts/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/default/build.sh](scripts/default/build.sh).
+
+##### Avoiding Rebuilds
+
+Builds can automatically generate a `manifest.lock` file with stable git references (commit IDs) and build options (platform, architecture and snapshot) by specifying `--lock`. The output can then be reused as input manifest after checking against a collection of prior builds.
+
+```bash
+MANIFEST=manifests/1.1.0/opensearch-1.1.0.yml
+SHAS=shas
+
+./build.sh --lock $MANIFEST # generates opensearch-1.1.0.yml.lock
+
+MANIFEST_SHA=$(sha1sum $MANIFEST.lock | cut -f1 -d' ') # generate a checksum of the stable manifest
+
+if test -f "$SHAS/$MANIFEST_SHA.lock"; then
+  echo "Skipping $MANIFEST_SHA"
+else
+  ./build.sh $MANIFEST.lock # rebuild using stable references in .lock
+  mkdir -p $SHAS
+  cp $MANIFEST.lock $SHAS/$MANIFEST_SHA.lock # save the stable reference manifest
+fi
+```
 
 ##### Patch Releases
 

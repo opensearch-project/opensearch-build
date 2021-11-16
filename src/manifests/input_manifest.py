@@ -15,6 +15,9 @@ build:
   name: string
   version: string
   patches: optional list of compatible versions this build is patching
+  platform: optional default platform
+  architecture: optional default architecture
+  snapshot: optional default snapshot
 ci:
   image:
     name: docker image name to pull
@@ -33,9 +36,11 @@ components:
       - linux
   - ...
 """
+import copy
 import itertools
 import logging
 
+from git.git_repository import GitRepository
 from manifests.component_manifest import ComponentManifest
 
 
@@ -49,6 +54,9 @@ class InputManifest(ComponentManifest):
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
                 "patches": {"type": "list", "schema": {"type": "string"}},
+                "platform": {"type": "string"},
+                "architecture": {"type": "string"},
+                "snapshot": {"type": "boolean"},
             },
         },
         "ci": {
@@ -106,6 +114,16 @@ class InputManifest(ComponentManifest):
             "components": self.components.__to_dict__(),
         }
 
+    def stable(self, architecture=None, platform=None, snapshot=False):
+        manifest = copy.deepcopy(self)
+        manifest.build.__stabilize__(
+            platform=platform,
+            architecture=architecture,
+            snapshot=snapshot
+        )
+        manifest.components.__stabilize__()
+        return manifest
+
     class Ci:
         def __init__(self, data):
             self.image = None if data is None else self.Image(data.get("image", None))
@@ -128,19 +146,34 @@ class InputManifest(ComponentManifest):
         def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
+            self.platform = data.get("platform", None)
+            self.architecture = data.get("architecture", None)
+            self.snapshot = data.get("snapshot", None)
             self.patches = data.get("patches", [])
+
+        def __stabilize__(self, platform, architecture, snapshot):
+            self.architecture = architecture
+            self.platform = platform
+            self.snapshot = snapshot
 
         def __to_dict__(self):
             return {
                 "name": self.name,
                 "version": self.version,
-                "patches": self.patches
+                "patches": self.patches,
+                "platform": self.platform,
+                "architecture": self.architecture,
+                "snapshot": self.snapshot,
             }
 
     class Components(ComponentManifest.Components):
         @classmethod
         def __create__(self, data):
             return InputManifest.Component._from(data)
+
+        def __stabilize__(self):
+            for component in self.values():
+                component.__stabilize__()
 
         def select(self, focus=None, platform=None):
             """
@@ -180,6 +213,9 @@ class InputManifest(ComponentManifest):
 
             return matches
 
+        def __stabilize__(self):
+            pass
+
     class ComponentFromSource(Component):
         def __init__(self, data):
             super().__init__(data)
@@ -187,6 +223,11 @@ class InputManifest(ComponentManifest):
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
+
+        def __stabilize__(self):
+            ref, name = GitRepository.stable_ref(self.repository, self.ref)
+            logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
+            self.ref = ref
 
         def __to_dict__(self):
             return {
