@@ -20,7 +20,7 @@ class TestBundleRecorder(unittest.TestCase):
         self.maxDiff = None
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
-        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None)
+        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None, "tar")
 
     def test_record_component(self):
         component = BuildManifest.Component(
@@ -152,7 +152,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
     def setUp(self):
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-1.1.0.yml")
         manifest = BuildManifest.from_path(manifest_path)
-        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None)
+        self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None, "tar")
 
     def test_record_component(self):
         component = BuildManifest.Component(

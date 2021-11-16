@@ -6,19 +6,23 @@
 
 import unittest
 
-from assemble_workflow.dist import Dist, DistTar, DistZip
+from assemble_workflow.dist import Dist, DistRpm, DistTar, DistZip
 
 
-class TestDist(unittest.TestCase):
-    def test_from_path_tar_gz(self):
-        dist = Dist.from_path("opensearch", "filename.tar.gz")
+class TestDist(unittest.TestCase):       
+    def test_create_dist_tar_gz(self):
+        dist = Dist.create_dist("opensearch", "filename.tar.gz", "tar")
         self.assertIs(type(dist), DistTar)
 
-    def test_from_path_zip(self):
-        dist = Dist.from_path("opensearch", "filename.zip")
+    def test_create_dist_zip(self):
+        dist = Dist.create_dist("opensearch", "filename.zip", "zip")
         self.assertIs(type(dist), DistZip)
 
-    def test_from_path_invalid(self):
+    def test_create_dist_rpm(self):
+        dist = Dist.create_dist("opensearch", "filename.rpm", "rpm")
+        self.assertIs(type(dist), DistRpm)
+
+    def test_ceate_dist_invalid(self):
         with self.assertRaises(ValueError) as ctx:
-            Dist.from_path("opensearch", "filename.invalid")
-        self.assertEqual(str(ctx.exception), 'Invalid min "dist" extension in input artifacts: .invalid (filename.invalid).')
+            Dist.create_dist("opensearch", "filename.invalid", "invalid")
+        self.assertEqual(str(ctx.exception), 'Distribution not specified or invalid distribution')

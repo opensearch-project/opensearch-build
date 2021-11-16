@@ -17,7 +17,7 @@ class TestAssembleArgs(unittest.TestCase):
     ASSEMBLE_PY = "./src/run_assembly.py"
 
     OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests", "1.1.0", "opensearch-1.1.0.yml"))
-
+    
     @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self):
         self.assertEqual(AssembleArgs().manifest.name, TestAssembleArgs.OPENSEARCH_MANIFEST)
@@ -41,3 +41,12 @@ class TestAssembleArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST, "--base-url", "url"])
     def test_base_url(self):
         self.assertEqual(AssembleArgs().base_url, "url")
+
+    @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST])
+    def test_distribution_default(self):
+        self.assertEqual(AssembleArgs().distribution, "tar")
+
+    @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST, "--distribution", "rpm"])
+    def test_distribution_rpm(self):
+        self.assertEqual(AssembleArgs().distribution, "rpm")   
+
