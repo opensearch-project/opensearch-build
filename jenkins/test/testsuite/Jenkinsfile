@@ -62,7 +62,7 @@ pipeline {
             steps {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
-                    sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
+                    sh "./test.sh integ-test ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post() {
@@ -71,6 +71,24 @@ pipeline {
                         publish()
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+    post() {
+        success {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script {
+                    def stashed = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script  {
+                    def stashed = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    publishNotification(":warning:", "Failed Build", "\n${stashed}")
                 }
             }
         }
@@ -84,4 +102,11 @@ void publish() {
         s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
     }
     echo "Uploaded Test Results to ${artifactPath}/test-results"
+}
+
+/** Publishes a notification to a slack instance*/
+void publishNotification(icon, msg, extra) {
+    withCredentials([string(credentialsId: 'INTEG_TEST_WEBHOOK', variable: 'TOKEN')]) {
+        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nTest Results Location: $extra"}' """ + "$TOKEN")
+    }
 }
