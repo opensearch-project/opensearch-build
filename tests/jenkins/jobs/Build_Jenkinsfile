@@ -116,8 +116,8 @@ pipeline {
                             'id',
                             'pwd',
                             'cd docker/release',
-                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-x64.tgz",
-                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-arm64.tgz",
+                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-x64.tgz",
+                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-arm64.tgz",
                             "bash build-image-multi-arch.sh -v ${inputManifest.build.version} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"
                         ].join(" && ")
                         echo "dockerBuild:${cmd}"
@@ -148,10 +148,10 @@ void build() {
 
     def buildManifest = lib.BuildManifest.new(readYaml(file: 'tests/data/opensearch-build-1.1.0.yml'))
 
-    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER)
+    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
     echo "sh ./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
 
-    def artifactPath = buildManifest.getArtifactRoot(env.BUILD_NUMBER)
+    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         echo "s3Upload(file: 'builds', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/builds')"

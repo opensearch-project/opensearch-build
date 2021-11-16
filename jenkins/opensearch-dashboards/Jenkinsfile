@@ -132,8 +132,8 @@ pipeline {
                                         'id',
                                         'pwd',
                                         'cd docker/release',
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-dashboards-x64.tgz",
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-dashboards-arm64.tgz",
+                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-dashboards-x64.tgz",
+                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-dashboards-arm64.tgz",
                                         "bash build-image-multi-arch.sh -v ${inputManifest.build.version} -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a 'x64,arm64' -r opensearchstaging/opensearch-dashboards -t 'opensearch-dashboards-x64.tgz,opensearch-dashboards-arm64.tgz' -n ${env.BUILD_NUMBER}"
                                     ].join(" && ")),
                                 booleanParam(name: 'IS_STAGING', value: true)
@@ -168,10 +168,10 @@ void build(platform, architecture) {
 void assemble() {
     def buildManifest = lib.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
 
-    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.BUILD_NUMBER)
+    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
     sh "./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
 
-    def artifactPath = buildManifest.getArtifactRoot(env.BUILD_NUMBER)
+    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")

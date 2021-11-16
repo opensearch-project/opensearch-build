@@ -52,10 +52,10 @@ class InputManifest extends Manifest {
         this.ci = new InputManifest.Ci(this.data.ci)
     }
    
-    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String buildNumber, String platform, String architecture) {
+    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform, String architecture) {
         return [
             publicArtifactUrl,
-            this.build.name.toLowerCase().replaceAll(' ', '-'),
+            jobName,
             this.build.version,
             buildNumber,
             platform,

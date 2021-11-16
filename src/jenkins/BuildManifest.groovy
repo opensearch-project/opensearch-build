@@ -34,9 +34,9 @@ class BuildManifest extends Manifest {
         this.build = new BuildManifest.Build(data.build)
     }
 
-    public String getArtifactRoot(String buildNumber) {
+    public String getArtifactRoot(String jobName, String buildNumber) {
         return [
-            this.build.name.toLowerCase().replaceAll(' ', '-'),
+            jobName,
             this.build.version,
             buildNumber,
             this.build.platform,
@@ -44,10 +44,10 @@ class BuildManifest extends Manifest {
         ].join("/")
     }
 
-    public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String buildNumber) {
+    public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
             publicArtifactUrl,
-            this.getArtifactRoot(buildNumber)
+            this.getArtifactRoot(jobName, buildNumber)
         ].join('/')
     }
 }
