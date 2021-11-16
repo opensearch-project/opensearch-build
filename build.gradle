@@ -16,7 +16,6 @@
 
 plugins {
     id 'com.mkobit.jenkins.pipelines.shared-library' version '0.10.1'
-    id 'jacoco'
     id 'java'
     id 'groovy'
 }
@@ -33,6 +32,7 @@ dependencies {
     compile group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.7'
     compile group: 'com.cloudbees', name: 'groovy-cps', version: '1.12'
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.29'
 }
 
 sourceSets {

@@ -15,8 +15,8 @@ import com.lesfurets.jenkins.unit.declarative.*
 import static org.junit.Assert.*
 import org.yaml.snakeyaml.Yaml
 
-class TestInputManifest extends DeclarativePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/InputManifest_Jenkinsfile"
+class TestBuildManifest extends DeclarativePipelineTest {
+    def jenkinsScript = "tests/jenkins/jobs/BuildManifest_Jenkinsfile"
 
     @Override
     @Before
@@ -39,7 +39,7 @@ class TestInputManifest extends DeclarativePipelineTest {
     }
 
     @Test
-    void testInputManifest() throws Exception {
+    void testBuildManifest() throws Exception {
         runScript(jenkinsScript)
         RegressionTestHelper.testNonRegression(helper, jenkinsScript)
         assertJobStatusSuccess()
