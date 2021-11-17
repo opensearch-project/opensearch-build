@@ -74,11 +74,35 @@ test {
         systemProperty "pipeline.stack.write", project.getProperty("pipeline.stack.write")
     }
 
+    jacoco {
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+
     finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.7"
 }
 
 jacocoTestReport {
     dependsOn test
+
+    sourceSets sourceSets.main
+
+    doFirst {
+        delete fileTree(dir: "${buildDir}/jacoco/classpathdumps/jenkins", include: "Manifest.*.class")
+    }
+
+    afterEvaluate {
+        classDirectories.from = fileTree(
+            dir: "$buildDir/jacoco/classpathdumps",
+            includes: [
+                '**/*_Jenkinsfile.*',
+                '**/jenkins/*'
+            ]
+        )
+    }
 
     reports {
         xml.required = true

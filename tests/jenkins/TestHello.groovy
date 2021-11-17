@@ -6,6 +6,8 @@
  * compatible open source license.
  */
 
+package jenkins.tests
+
 import org.junit.*
 import com.lesfurets.jenkins.unit.*
 import static org.assertj.core.api.Assertions.*
