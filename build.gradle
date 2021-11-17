@@ -18,6 +18,7 @@ plugins {
     id 'com.mkobit.jenkins.pipelines.shared-library' version '0.10.1'
     id 'java'
     id 'groovy'
+    id 'jacoco'
 }
 
 repositories {
@@ -71,5 +72,15 @@ sharedLibrary {
 test {
     if (project.hasProperty("pipeline.stack.write")) {
         systemProperty "pipeline.stack.write", project.getProperty("pipeline.stack.write")
+    }
+
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
     }
 }
