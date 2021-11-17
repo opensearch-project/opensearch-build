@@ -158,7 +158,7 @@ void build() {
         echo "s3Upload(file: 'dist', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/dist')"
     }
 
-    lib.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
+    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
 }
 
 /** Publishes a notification to a slack instance*/
