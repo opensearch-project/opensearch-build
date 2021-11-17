@@ -23,8 +23,8 @@ class Process:
         if self.started:
             raise ProcessStartedError(self.pid)
 
-        self.stdout = tempfile.NamedTemporaryFile()
-        self.stderr = tempfile.NamedTemporaryFile()
+        self.stdout = tempfile.NamedTemporaryFile(mode="r+")
+        self.stderr = tempfile.NamedTemporaryFile(mode="r+")
 
         self.process = subprocess.Popen(
             command,
