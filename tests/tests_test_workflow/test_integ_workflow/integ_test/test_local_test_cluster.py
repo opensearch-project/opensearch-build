@@ -68,6 +68,9 @@ class LocalTestClusterTests(unittest.TestCase):
         else:
             return LocalTestClusterTests.MockResponse({"status": "red"}, 404)
 
+    def __mock_connection_error_response(*args, **kwargs):
+        raise requests.exceptions.ConnectionError()
+
     def __mock_process(*args, **kwargs):
         return LocalTestClusterTests.MockProcess(12)
 
@@ -110,6 +113,22 @@ class LocalTestClusterTests(unittest.TestCase):
             local_test_cluster.wait_for_service()
             requests.get.assert_called_once_with("http://localhost:9200/_cluster/health", verify=False, auth=("admin", "admin"))
         self.assertEqual(str(err.exception), "Cluster is not available after 10 attempts")
+
+    @patch("time.sleep")
+    @patch.object(Process, 'output')
+    @patch.object(Process, 'error')
+    @patch("requests.get", side_effect=__mock_connection_error_response)
+    @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
+    def test_wait_for_service_cluster_unavailable_connection_error(self, mock_test_recorder, *mocks):
+        local_test_cluster = LocalTestCluster(
+            self.dependency_installer, self.work_dir.name, "index-management", "", self.bundle_manifest, False, "without-security", mock_test_recorder
+        )
+        with self.assertRaises(ClusterCreationException) as err:
+            local_test_cluster.wait_for_service()
+            requests.get.assert_called_once_with("http://localhost:9200/_cluster/health", verify=False, auth=("admin", "admin"))
+        self.assertEqual(str(err.exception), "Cluster is not available after 10 attempts")
+        self.assertEqual(Process.output.read.call_count, 10)
+        self.assertEqual(Process.error.read.call_count, 10)
 
     @patch.object(Process, 'terminate', return_value=("1", "2", "3"))
     def test_terminate_process(self, *mocks):
