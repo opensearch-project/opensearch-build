@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@current", retriever: legacySCM(scm)).jenkins
+lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script { 
                     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    def inputManifest = lib.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
+                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
                     dockerImage = inputManifest.ci.image.name
                     dockerArgs = inputManifest.ci.image.args
                     echo "Using Docker image ${dockerImage} (${dockerArgs})"
@@ -123,7 +123,7 @@ pipeline {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
                         git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                        def inputManifest = lib.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
+                        def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
                         dockerBuild: {
                             build job: 'docker-build',
                             parameters: [
@@ -149,7 +149,7 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.Messages.new(this).get(['build-linux-x64', 'post-build (linux-arm64)'])
+                    def stashed = lib.jenkins.Messages.new(this).get(['build-linux-x64', 'post-build (linux-arm64)'])
                     publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                 }
             }
@@ -168,7 +168,7 @@ void build(platform, architecture) {
 }
 
 void assemble() {
-    def buildManifest = lib.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
 
     def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
     sh "./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
