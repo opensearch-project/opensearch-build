@@ -1,8 +1,8 @@
 void call(Map args = [:]) {
     text = ([
-        "${args.icon} ${env.JOB_NAME} [${env.BUILD_NUMBER}] ${args.message}",
-        "Build: ${env.BUILD_URL}",
-        "Manifest: ${env.INPUT_MANIFEST}",
+        "${args.icon} ${JOB_NAME} [${BUILD_NUMBER}] ${args.message}",
+        "Build: ${BUILD_URL}",
+        "Manifest: ${INPUT_MANIFEST}",
         args.extra
     ] - null).join("\n")
 
