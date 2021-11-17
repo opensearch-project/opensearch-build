@@ -6,6 +6,8 @@
  * compatible open source license.
  */
 
+package jenkins.tests
+
 import org.junit.*
 import com.lesfurets.jenkins.unit.BasePipelineTest
 import com.lesfurets.jenkins.unit.MethodCall

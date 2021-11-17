@@ -8,7 +8,7 @@
 
 package jenkins
 
-class InputManifest extends Manifest {
+class InputManifest {
     class Ci implements Serializable {
         class Image implements Serializable {
             String name
@@ -46,10 +46,8 @@ class InputManifest extends Manifest {
     Ci ci
 
     InputManifest(Map data) {
-        super(data)
-
-        this.build = new InputManifest.Build(this.data.build)
-        this.ci = new InputManifest.Ci(this.data.ci)
+        this.build = new InputManifest.Build(data.build)
+        this.ci = new InputManifest.Ci(data.ci)
     }
    
     public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform, String architecture) {

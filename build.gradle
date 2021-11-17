@@ -18,6 +18,7 @@ plugins {
     id 'com.mkobit.jenkins.pipelines.shared-library' version '0.10.1'
     id 'java'
     id 'groovy'
+    id 'jacoco'
 }
 
 repositories {
@@ -71,5 +72,38 @@ sharedLibrary {
 test {
     if (project.hasProperty("pipeline.stack.write")) {
         systemProperty "pipeline.stack.write", project.getProperty("pipeline.stack.write")
+    }
+
+    jacoco {
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    sourceSets sourceSets.main
+
+    afterEvaluate {
+        classDirectories.from = fileTree(
+            dir: "$buildDir/jacoco/classpathdumps",
+            includes: [
+                '**/*_Jenkinsfile.*',
+                '**/jenkins/*'
+            ],
+            excludes: [
+                '**/*\$_get_closure*'
+            ]
+        )
+    }
+
+    reports {
+        xml.required = true
     }
 }

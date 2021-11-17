@@ -6,6 +6,8 @@
  * compatible open source license.
  */
 
+package jenkins.tests
+
 import org.junit.*
 import java.util.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
