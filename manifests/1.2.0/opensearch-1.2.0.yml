@@ -56,11 +56,6 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: "1.2"
-  - name: performance-analyzer-rca
-    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-    ref: "1.2"
-    checks:
-      - gradle:properties:version
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
     ref: "1.2"
