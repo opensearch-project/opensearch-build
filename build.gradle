@@ -90,16 +90,15 @@ jacocoTestReport {
 
     sourceSets sourceSets.main
 
-    doFirst {
-        delete fileTree(dir: "${buildDir}/jacoco/classpathdumps/jenkins", include: "Manifest.*.class")
-    }
-
     afterEvaluate {
         classDirectories.from = fileTree(
             dir: "$buildDir/jacoco/classpathdumps",
             includes: [
                 '**/*_Jenkinsfile.*',
                 '**/jenkins/*'
+            ],
+            excludes: [
+                '**/*\$_get_closure*'
             ]
         )
     }

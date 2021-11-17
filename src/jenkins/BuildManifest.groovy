@@ -8,10 +8,7 @@
 
 package jenkins
 
-import groovy.transform.InheritConstructors
-
-@InheritConstructors
-class BuildManifest extends Manifest {
+class BuildManifest implements Serializable {
     class Build implements Serializable {
         String name
         String version
@@ -29,8 +26,6 @@ class BuildManifest extends Manifest {
     Build build
 
     BuildManifest(Map data) {
-        super(data)
-
         this.build = new BuildManifest.Build(data.build)
     }
 
