@@ -6,7 +6,7 @@
  * compatible open source license.
  */
  
-def lib = library("jenkins").jenkins
+def lib = library("jenkins")
 
 pipeline {
     agent none
@@ -14,7 +14,7 @@ pipeline {
         stage('Input Manifest Properties') {
             steps {
                 script {
-                    def inputManifest = lib.InputManifest.new(readYaml(file: "manifests/1.2.0/opensearch-1.2.0.yml"))
+                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/1.2.0/opensearch-1.2.0.yml"))
                     echo inputManifest.ci.image.name
                     echo inputManifest.ci.image.args
                     echo inputManifest.build.name

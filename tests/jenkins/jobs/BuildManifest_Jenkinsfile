@@ -6,7 +6,7 @@
  * compatible open source license.
  */
  
-def lib = library("jenkins").jenkins
+def lib = library("jenkins")
 
 pipeline {
     agent none
@@ -14,7 +14,7 @@ pipeline {
         stage('Build Manifest Properties') {
             steps {
                 script {
-                    def buildManifest = lib.BuildManifest.new(readYaml(file: "tests/data/opensearch-build-1.1.0.yml"))
+                    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "tests/data/opensearch-build-1.1.0.yml"))
                     echo buildManifest.build.name
                     echo buildManifest.build.version
                     echo buildManifest.build.platform
