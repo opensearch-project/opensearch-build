@@ -9,42 +9,10 @@
 package jenkins.tests
 
 import org.junit.*
-import java.util.*
-import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
-import com.lesfurets.jenkins.unit.*
-import com.lesfurets.jenkins.unit.declarative.*
-import static org.junit.Assert.*
-import org.yaml.snakeyaml.Yaml
 
-class TestInputManifest extends DeclarativePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/InputManifest_Jenkinsfile"
-
-    @Override
-    @Before
-    void setUp() throws Exception {
-        super.setUp()
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('<notNeeded>')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('<notNeeded>')
-                .retriever(projectSource())
-                .build()
-            )
-
-        helper.registerAllowedMethod("readYaml", [Map.class], { args ->
-            return new Yaml().load((args.file as File).text)
-        })
-    }
-
+class TestInputManifest extends BuildPipelineTest {
     @Test
-    void testInputManifest() throws Exception {
-        runScript(jenkinsScript)
-        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
-        assertJobStatusSuccess()
-        printCallStack()
+    void testInputManifest() {
+        super.testPipeline("tests/jenkins/jobs/InputManifest_Jenkinsfile")
     }
 }

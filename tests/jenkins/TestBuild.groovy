@@ -9,18 +9,11 @@
 package jenkins.tests
 
 import org.junit.*
-import com.lesfurets.jenkins.unit.BasePipelineTest
-import com.lesfurets.jenkins.unit.MethodCall
-import static org.assertj.core.api.Assertions.assertThat
 
-class TestBuild extends BasePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/build.groovy"
-
-    @Override
-    @Before
-    void setUp() throws Exception {
-        super.setUp()
+class TestBuild extends BuildPipelineTest {
+    @Test
+    @Ignore // TODO: needs fix for https://github.com/jenkinsci/JenkinsPipelineUnit/issues/419 and docker declarations
+    void testBuild() {
+        super.testPipeline("tests/jenkins/jobs/Build_Jenkinsfile")
     }
-
-    // TODO: needs fix for https://github.com/jenkinsci/JenkinsPipelineUnit/issues/419
 }

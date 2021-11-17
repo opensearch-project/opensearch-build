@@ -10,38 +10,18 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
-import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
-import com.lesfurets.jenkins.unit.*
-import com.lesfurets.jenkins.unit.declarative.*
-import static org.junit.Assert.*
 
-class TestMessages extends DeclarativePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/Messages_Jenkinsfile"
-
+class TestMessages extends BuildPipelineTest {
     @Override
     @Before
-    void setUp() throws Exception {
+    void setUp() {
         super.setUp()
 
-        helper.registerAllowedMethod('findFiles', [Map.class], null)
-        
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('<notNeeded>')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('<notNeeded>')
-                .retriever(projectSource())
-                .build()
-            )
+        helper.registerAllowedMethod('findFiles', [Map.class], null)       
     }
 
     @Test
-    void testMessages() throws Exception {
-        runScript(jenkinsScript)
-        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
-        assertJobStatusSuccess()
-        printCallStack()
+    public void testMessages() {
+        super.testPipeline("tests/jenkins/jobs/Messages_Jenkinsfile")
     }
 }

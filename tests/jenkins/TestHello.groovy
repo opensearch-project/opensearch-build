@@ -9,23 +9,10 @@
 package jenkins.tests
 
 import org.junit.*
-import com.lesfurets.jenkins.unit.*
-import static org.assertj.core.api.Assertions.*
 
-class TestHello extends BasePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/Hello_Jenkinsfile"
-
-    @Override
-    @Before
-    void setUp() throws Exception {
-        super.setUp()
-    }
-
+class TestHello extends BuildPipelineTest {
     @Test
     void testHello() {
-        runScript(jenkinsScript)
-        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
-        assertJobStatusSuccess()
-        printCallStack()
+        super.testPipeline("tests/jenkins/jobs/Hello_Jenkinsfile")
     }
 }
