@@ -95,10 +95,7 @@ class Bundle(ABC):
         self._execute(install_command)
 
     def package(self, dest):
-        try:
-            self.min_dist.build(self.bundle_recorder, dest)
-        except FileNotFoundError:
-            logging.info("TODO: Implement build process for rpm distribution")
+        self.min_dist.build(self.bundle_recorder, dest)
 
     def _execute(self, command):
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')
