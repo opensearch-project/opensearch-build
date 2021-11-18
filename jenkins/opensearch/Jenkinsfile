@@ -3,27 +3,19 @@ lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
 pipeline {
     agent none
     triggers {
-      parameterizedCron '''
-        H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
-        H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
-      '''
+        parameterizedCron '''
+            H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
+            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
+        '''
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
     }
     stages {
-        stage('parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: '',
-                                            name: 'INPUT_MANIFEST',
-                                            trim: true
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
         stage('detect Docker image + args to use for the build') {
             agent {
                 docker {
