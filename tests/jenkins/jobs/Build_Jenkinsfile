@@ -1,6 +1,6 @@
 // similar jenkins/opensearch/Jenkinsfile but echo instead of sh for testing
 
-lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -161,16 +161,30 @@ pipeline {
                         message: 'Successful Build',
                         extra: stashed
                     )
+                    
+                    cleanWs(
+                        disableDeferredWipeout: true, 
+                        deleteDirs: true
+                    )
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                publishNotification(
-                    script: 'echo curl',
-                    icon: ':warning:',
-                    message: 'Failed Build'
-                )
+                steps {
+                    script {
+                        publishNotification(
+                            script: 'echo curl',
+                            icon: ':warning:',
+                            message: 'Failed Build'
+                        )
+
+                        cleanWs(
+                            disableDeferredWipeout: true, 
+                            deleteDirs: true
+                        )
+                    }
+                }
             }
         }
     }
