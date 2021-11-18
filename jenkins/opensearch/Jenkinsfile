@@ -150,37 +150,33 @@ pipeline {
     post() {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                steps {
-                    script {
-                        def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
-                        publishNotification(
-                            icon: ':white_check_mark:',
-                            message: 'Successful Build',
-                            extra: stashed
-                        )
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed
+                    )
 
-                        cleanWs(
-                            disableDeferredWipeout: true, 
-                            deleteDirs: true
-                        )
-                    }
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                steps {
-                    script {
-                        publishNotification(
-                            icon: ':warning:',
-                            message: 'Failed Build'
-                        )
+                script {
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build'
+                    )
 
-                        cleanWs(
-                            disableDeferredWipeout: true, 
-                            deleteDirs: true
-                        )
-                    }
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
                 }
             }
         }
