@@ -4,19 +4,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
-import subprocess
-import time
 
-import requests
-import yaml
-
-from paths.tree_walker import walk
-from system.process import Process
-from test_workflow.test_cluster import ClusterCreationException, TestCluster
+from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
+from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class LocalTestCluster(TestCluster):
@@ -44,23 +36,22 @@ class LocalTestCluster(TestCluster):
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = test_recorder.local_cluster_logs
         self.dependency_installer = dependency_installer
-        self.process_handler = Process()
+        self.service_opensearch = None
 
     def create_cluster(self):
-        self.download()
-        self.install_dir = f"opensearch-{self.manifest.build.version}"
-        if not self.security_enabled:
-            self.disable_security(self.install_dir)
-        if self.additional_cluster_config is not None:
-            self.__add_plugin_specific_config(
-                self.additional_cluster_config,
-                os.path.join(self.install_dir, "config", "opensearch.yml")
-            )
+        # start
+        self.service_opensearch = ServiceOpenSearch(
+            self.manifest,
+            self.component_name,
+            self.component_test_config,
+            self.additional_cluster_config,
+            self.security_enabled,
+            self.dependency_installer,
+            self.save_logs,
+            self.work_dir)
 
-        self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
-
-        logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
-        self.wait_for_service()
+        self.service_opensearch.start()
+        self.service_opensearch.wait_for_service()
 
     def endpoint(self):
         return "localhost"
@@ -69,6 +60,7 @@ class LocalTestCluster(TestCluster):
         return 9200
 
     def destroy(self):
+<<<<<<< HEAD
         if not self.process_handler.started:
             logging.info("Local test cluster is not started")
             return
@@ -126,3 +118,6 @@ class LocalTestCluster(TestCluster):
         self.return_code = self.process_handler.terminate()
         self.local_cluster_stdout = self.process_handler.stdout_data
         self.local_cluster_stderr = self.process_handler.stderr_data
+=======
+        self.service_opensearch.terminate()
+>>>>>>> Extract OpenSearch service related logic outside of LocalTestCluster

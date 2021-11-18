@@ -28,3 +28,4 @@ out.txt
 
 /manifests/**/*.yml.lock
 
+opensearch-*.tar.gz
