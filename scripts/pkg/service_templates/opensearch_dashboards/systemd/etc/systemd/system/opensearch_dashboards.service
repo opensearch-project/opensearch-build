@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+# Description:
+# Default opensearch_dashboards.service file
+
+[Unit]
+Description="OpenSearch Dashboards"
+ 
+[Service]
+Type=simple
+User=opensearch_dashboards
+Group=opensearch_dashboards
+# Load env vars from /etc/default/ and /etc/sysconfig/ if they exist.
+# Prefixing the path with '-' makes it try to load, but if the file doesn't
+# exist, it continues onward.
+EnvironmentFile=-/etc/default/opensearch_dashboards
+EnvironmentFile=-/etc/sysconfig/opensearch_dashboards
+ExecStart=/usr/share/opensearch_dashboards/bin/opensearch_dashboards "-c /etc/opensearch_dashboards/opensearch_dashboards.yml"
+Restart=always
+WorkingDirectory=/usr/share/opensearch_dashboards
+
+[Install]
+WantedBy=multi-user.target

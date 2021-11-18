@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenSearch Performance Analyzer
+PartOf=opensearch.service
+
+[Service]
+ExecStart=/usr/share/opensearch/bin/performance-analyzer-agent-cli
+Restart=on-failure
+User=opensearch
+Group=opensearch
+Environment=OPENSEARCH_HOME=/usr/share/opensearch
+WorkingDirectory=/usr/share/opensearch
+
+[Install]
+WantedBy=opensearch.service
