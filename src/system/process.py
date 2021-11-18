@@ -53,19 +53,19 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.stdout_data = self.stdout.read()
+            self.stdout_termination_data = self.stdout.read()
             self.stdout.close()
             self.stdout = None
 
         if self.stderr:
-            self.stderr_data = self.stderr.read()
+            self.stderr_termination_data = self.stderr.read()
             self.stderr.close()
             self.stderr = None
 
         self.return_code = self.process.returncode
         self.process = None
 
-        return self.return_code, self.stdout_data, self.stderr_data
+        return self.return_code, self.stdout_termination_data, self.stderr_termination_data
 
     @property
     def started(self):
