@@ -1,3 +1,5 @@
+lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
+
 pipeline {
     agent none
     environment {
@@ -53,7 +55,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Integration Tests') {
+        stage('Integ-Test') {
             agent {
                 node {
                     label "${agentLabel}"
@@ -62,7 +64,7 @@ pipeline {
             steps {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
-                    sh "./test.sh integ-test ${basePath} --test-run-id ${env.BUILD_NUMBER}"
+                    sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post() {
@@ -79,7 +81,7 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script {
-                    def stashed = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
                     publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                 }
             }
@@ -87,7 +89,7 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script  {
-                    def stashed = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
                     publishNotification(":warning:", "Failed Build", "\n${stashed}")
                 }
             }
@@ -101,7 +103,8 @@ void publishResults() {
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
     }
-    echo "Uploaded Test Results to ${artifactPath}/test-results"
+    echo "Uploaded Test Results to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}/test-results"
+    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}/test-results")
 }
 
 /** Publishes a notification to a slack instance*/
