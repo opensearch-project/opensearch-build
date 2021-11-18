@@ -1,4 +1,26 @@
-Coming from [opensearch-build#870](https://github.com/opensearch-project/opensearch-build/issues/870), release version 1.1.1. Please follow the following checklist.
+This is a component issue for release 1.1.1.
+Coming from [release issue 1.1.1](https://github.com/opensearch-project/opensearch-build/issues/870), release version 1.1.1. Please follow the following checklist.
+
+<details><summary>How to use this component issue</summary>
+<p>
+
+## This Component Issue
+This component issue captures the state of the OpenSearch release, on component/plugin level, its assignee is responsible for driving the release of the component.  Please contact them or @mention them on this issue for help. 
+
+## Release Steps
+There are several steps to the release process, these steps are completed as the whole release and components that are behind present risk to the release.  The release owner completes the tasks in this ticket, whereas component owners resolve tasks on their ticket in their repositories.
+
+Steps have completion dates for coordinating efforts between the components of a release; components can start as soon as they are ready far in advance of a future release.
+
+You can find all the corresponding dates of each step in the release issue above.
+
+### Component List
+To aid in understanding the state of the release there is a table with status indicating each component state in the release issue.  This is updated based on the status of the component issues.
+
+</p>
+</details>
+
+
 ### You can find all the date in above issue 
 ### (We only make changes to OpenSearch-Dashboards to 1.1.1, therefore, OpenSearch stays 1.1.0.)
 
@@ -10,17 +32,18 @@ Coming from [opensearch-build#870](https://github.com/opensearch-project/opensea
 
 ### CI/CD
 
-- [ ] Increment version on main to `1.1.1.0`.
+- [ ] Increment plugin version on 1.1 branch to `1.1.1.0` (Only if you have any code changes, else, stay on 1.1.0.0 for your plugin).
+- [ ] Make necessary code change if you have any patch for 1.1.1.
 - [ ] Ensure working and passing CI.
-- [ ] Re(add) this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.1.1).
+- [ ] Re(add) this repo to the (if not exist) [opensearch-dashboards input manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.1.1/opensearch-dashboards-1.1.1.yml).
 
 ### Pre-Release
 
-- [ ] Branch and build from a `1.1` branch.
-- [ ] Update your branch in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.1.1).
-- [ ] Feature complete, pencils down.
-- [ ] Apply sanity testing, and update results in the comment, contact corresponding assigner in meta issue above if needed.
-- [ ] Fix bugs that target this release.
+- [ ] Update your branch in the [opensearch-dashboards input manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.1.1/opensearch-dashboards-1.1.1.yml).
+- [ ] Merge any changes to 1.1 you need for the patch
+- [ ] Complete integration tests, and update results in the comment, contact corresponding assigner in meta issue above if needed.
+- [ ] Fix bugs that you find during the integration test, wait for a new build and test again.
+- [ ] All intermittent test failures have issues filed
 
 ### Release
 
