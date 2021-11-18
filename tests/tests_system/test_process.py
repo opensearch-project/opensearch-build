@@ -23,11 +23,11 @@ class TestProcess(unittest.TestCase):
         self.assertIsNotNone(process_handler.error)
         self.assertEqual(process_handler.error.mode, "r+")
 
-        return_code, stdout_data, stderr_data = process_handler.terminate()
+        return_code, stdout_termination_data, stderr_termination_data = process_handler.terminate()
 
         self.assertIsNone(return_code)
-        self.assertIsNotNone(stdout_data)
-        self.assertIsNotNone(stderr_data)
+        self.assertIsNotNone(stdout_termination_data)
+        self.assertIsNotNone(stderr_termination_data)
 
         self.assertFalse(process_handler.started)
         self.assertIsNone(process_handler.pid)
