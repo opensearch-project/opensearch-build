@@ -5,23 +5,23 @@
 # compatible open source license.
 
 # Description:
-# Default opensearch_dashboards.service file
+# Default opensearch-dashboards.service file
 
 [Unit]
 Description="OpenSearch Dashboards"
  
 [Service]
 Type=simple
-User=opensearch_dashboards
-Group=opensearch_dashboards
+User=opensearch-dashboards
+Group=opensearch-dashboards
 # Load env vars from /etc/default/ and /etc/sysconfig/ if they exist.
 # Prefixing the path with '-' makes it try to load, but if the file doesn't
 # exist, it continues onward.
-EnvironmentFile=-/etc/default/opensearch_dashboards
-EnvironmentFile=-/etc/sysconfig/opensearch_dashboards
-ExecStart=/usr/share/opensearch_dashboards/bin/opensearch_dashboards "-c /etc/opensearch_dashboards/opensearch_dashboards.yml"
+EnvironmentFile=-/etc/default/opensearch-dashboards
+EnvironmentFile=-/etc/sysconfig/opensearch-dashboards
+ExecStart=/usr/share/opensearch-dashboards/bin/opensearch-dashboards "-c /etc/opensearch-dashboards/opensearch_dashboards.yml"
 Restart=always
-WorkingDirectory=/usr/share/opensearch_dashboards
+WorkingDirectory=/usr/share/opensearch-dashboards
 
 [Install]
 WantedBy=multi-user.target
