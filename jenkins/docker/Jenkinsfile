@@ -66,8 +66,10 @@ pipeline {
             }
             post() {
                 always {
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
-                    sh "docker logout && docker image prune -f --all"
+                    script {
+                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        sh "docker logout && docker image prune -f --all"
+                    }
                 }
             }
         }
