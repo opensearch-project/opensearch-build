@@ -36,10 +36,8 @@ class LocalTestCluster(TestCluster):
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = test_recorder.local_cluster_logs
         self.dependency_installer = dependency_installer
-        self.service_opensearch = None
 
     def create_cluster(self):
-        # start
         self.service_opensearch = ServiceOpenSearch(
             self.manifest,
             self.component_name,

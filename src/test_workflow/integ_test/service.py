@@ -15,37 +15,27 @@ class Service(abc.ABC):
     @abc.abstractmethod
     def start(self):
         """
-        Tear down the cluster and record server logs. If the cluster is already destroyed or has not yet been created then this is a no-op.
-        :param test_recorder: The test recorder to register server logs with.
+        Start a service.
         """
         pass
 
     @abc.abstractmethod
     def terminate(self):
         """
-        Tear down the cluster and record server logs. If the cluster is already destroyed or has not yet been created then this is a no-op.
-        :param test_recorder: The test recorder to register server logs with.
+        Terminate this service.
         """
         pass
 
     @abc.abstractmethod
     def endpoint(self):
         """
-        Get the endpoint that this cluster is listening on, e.g. 'localhost' or 'some.ip.address'.
+        Get the endpoint that this service is listening on, e.g. 'localhost' or 'some.ip.address'.
         """
         pass
 
     @abc.abstractmethod
     def port(self):
         """
-        Get the port that this cluster is listening on.
+        Get the port that this service is listening on.
         """
         pass
-
-
-class ClusterCreationException(Exception):
-    """
-    Indicates that cluster creation failed for some reason.
-    """
-
-    pass

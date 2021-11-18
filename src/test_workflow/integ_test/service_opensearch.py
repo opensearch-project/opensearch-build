@@ -53,9 +53,6 @@ class ServiceOpenSearch(Service):
                 os.path.join(self.install_dir, "config", "opensearch.yml")
             )
 
-        os.system("pwd")
-        os.system("ls")
-
         self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
@@ -68,9 +65,6 @@ class ServiceOpenSearch(Service):
         logging.info(f"Unpacking {bundle_name}")
         subprocess.check_call(f"tar -xzf {bundle_name}", shell=True)
         logging.info(f"Unpacked {bundle_name}")
-
-        os.system("pwd")
-        os.system("ls")
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
