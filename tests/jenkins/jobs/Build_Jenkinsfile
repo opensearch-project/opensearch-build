@@ -30,6 +30,7 @@ pipeline {
             }
             steps {
                 script { 
+                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
                     dockerImage = inputManifest.ci.image.name
                     dockerArgs = inputManifest.ci.image.args ?: '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
@@ -76,7 +77,18 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            buildManifest(
+                                script: 'echo ./build.sh',
+                                manifest: "manifests/${INPUT_MANIFEST}"
+                            )
+                            assembleManifest(
+                                script: 'echo ./assemble.sh',
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            )
+                            uploadArtifacts(
+                                upload: false,
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            )
                         }
                     }
                     post() {
@@ -96,7 +108,18 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            buildManifest(
+                                script: 'echo ./build.sh',
+                                manifest: "manifests/${INPUT_MANIFEST}"
+                            )
+                            assembleManifest(
+                                script: 'echo ./assemble.sh',
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            )
+                            uploadArtifacts(
+                                upload: false,
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            )
                         }
                     }
                     post() {
@@ -111,6 +134,7 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
+                        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                         def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
                         def cmd = [
                             'id',
@@ -131,40 +155,23 @@ pipeline {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
-                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+                    publishNotification(
+                        script: 'echo curl',
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed
+                    )
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                publishNotification(":warning:", "Failed Build", "")
+                publishNotification(
+                    script: 'echo curl',
+                    icon: ':warning:',
+                    message: 'Failed Build'
+                )
             }
         }
-    }
-}
-
-void build() {
-    sh "echo ./build.sh manifests/$INPUT_MANIFEST"
-
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: 'tests/data/opensearch-build-1.1.0.yml'))
-
-    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
-    echo "sh ./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
-
-    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
-    echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        echo "s3Upload(file: 'builds', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/builds')"
-        echo "s3Upload(file: 'dist', bucket: '${ARTIFACT_BUCKET_NAME}', path: '${artifactPath}/dist')"
-    }
-
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
-}
-
-/** Publishes a notification to a slack instance*/
-void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        def cmd = """curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """
-        echo cmd
     }
 }

@@ -59,7 +59,10 @@ pipeline {
                     steps {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            buildManifest(
+                                manifest: "manifests/${INPUT_MANIFEST}",
+                                snapshot: true
+                            )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                 sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven')
                             }
@@ -82,7 +85,9 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            buildManifest()
+                            assembleManifest()
+                            uploadArtifacts(upload: true)
                         }
                     }
                     post() {
@@ -102,7 +107,9 @@ pipeline {
                     }
                     steps {
                         script {
-                            build()
+                            buildManifest()
+                            assembleManifest()
+                            uploadArtifacts(upload: true)
                         }
                     }
                     post() {
@@ -145,40 +152,21 @@ pipeline {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
-                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed
+                    )
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                publishNotification(":warning:", "Failed Build", "")
+                publishNotification(
+                    icon: ':warning:',
+                    message: 'Failed Build'
+                )
             }
         }
-    }
-}
-
-void build() {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-    sh "./build.sh manifests/$INPUT_MANIFEST"
-    
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
-
-    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
-    sh "./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
-
-    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
-    echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-        s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
-    }
-
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
-}
-
-/** Publishes a notification to a slack instance*/
-void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
     }
 }

@@ -81,7 +81,10 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    build("linux", "arm64")
+                                    buildManifest(
+                                        platform: 'linux',
+                                        architecture: 'arm64'
+                                    )
                                     zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'builds'
                                     archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
                                 }
@@ -92,7 +95,7 @@ pipeline {
                                 }
                             }
                         }
-                        stage('post-build (linux-arm64)') {
+                        stage('assemble-linux-arm64') {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -105,7 +108,8 @@ pipeline {
                                 script {
                                     copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                                     unzip zipFile: 'buildArtifacts.zip', dir: './builds'
-                                    assemble()
+                                    assembleManifest()
+                                    uploadArtifacts(upload: true)
                                 }
                             }
                             post() {
@@ -149,43 +153,25 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['build-linux-x64', 'post-build (linux-arm64)'])
-                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+                    def stashed = lib.jenkins.Messages.new(this).get([
+                        'build-linux-x64',
+                        'assemble-linux-arm64'
+                    ])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed
+                    )
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                publishNotification(":warning:", "Failed Build", "")
+                publishNotification(
+                    icon: ':warning:',
+                    message: 'Failed Build'
+                )
             }
         }
-    }
-}
-
-void build(platform, architecture) {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-    sh "./build.sh manifests/$INPUT_MANIFEST -p $platform -a $architecture"
-}
-
-void assemble() {
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: 'builds/manifest.yml'))
-
-    def baseUrl = buildManifest.getArtifactRootUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER)
-    sh "./assemble.sh builds/manifest.yml --base-url ${baseUrl}"
-
-    def artifactPath = buildManifest.getArtifactRoot(env.JOB_NAME, env.BUILD_NUMBER)
-    echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-        s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
-    }
-
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/builds/manifest.yml\n${baseUrl}/dist/manifest.yml")
-}
-
-/** Publishes a notification to a slack instance*/
-void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
     }
 }

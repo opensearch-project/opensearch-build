@@ -1,0 +1,26 @@
+pipeline {
+    agent none
+    stages {
+        stage('all') {
+            steps {
+                script {
+                    buildManifest(manifest: "manifests/${INPUT_MANIFEST}")
+                    assembleManifest(manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                    uploadArtifacts(upload: true, manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                }
+            }
+        }
+        stage('notify') {
+            steps {
+                script {
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: 'extra'
+                    )
+                }
+            }
+        }
+    }
+}
+
