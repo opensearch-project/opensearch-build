@@ -9,11 +9,11 @@ import os
 import subprocess
 import time
 
-import psutil  # type: ignore
 import requests
 import yaml
 
 from paths.tree_walker import walk
+from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
@@ -42,14 +42,12 @@ class LocalTestCluster(TestCluster):
         self.security_enabled = security_enabled
         self.component_test_config = component_test_config
         self.additional_cluster_config = additional_cluster_config
-        self.process = None
         self.save_logs = test_recorder.local_cluster_logs
         self.dependency_installer = dependency_installer
+        self.process_handler = Process()
 
     def create_cluster(self):
         self.download()
-        self.stdout = open("stdout.txt", "w")
-        self.stderr = open("stderr.txt", "w")
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
@@ -58,15 +56,10 @@ class LocalTestCluster(TestCluster):
                 self.additional_cluster_config,
                 os.path.join(self.install_dir, "config", "opensearch.yml")
             )
-        logging.info(f"Running {os.path.join(self.install_dir, 'opensearch-tar-install.sh')}")
-        self.process = subprocess.Popen(
-            "./opensearch-tar-install.sh",
-            cwd=self.install_dir,
-            shell=True,
-            stdout=self.stdout,
-            stderr=self.stderr
-        )
-        logging.info(f"Started OpenSearch with parent PID {self.process.pid}")
+
+        self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
+
+        logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
         self.wait_for_service()
 
     def endpoint(self):
@@ -76,7 +69,7 @@ class LocalTestCluster(TestCluster):
         return 9200
 
     def destroy(self):
-        if self.process is None:
+        if not self.process_handler.started:
             logging.info("Local test cluster is not started")
             return
         self.terminate_process()
@@ -133,39 +126,4 @@ class LocalTestCluster(TestCluster):
         raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
-        parent = psutil.Process(self.process.pid)
-        logging.debug("Checking for child processes")
-        child_processes = parent.children(recursive=True)
-        for child in child_processes:
-            logging.debug(f"Found child process with pid {child.pid}")
-            if child.pid != self.process.pid:
-                logging.debug(f"Sending SIGKILL to {child.pid} ")
-                child.kill()
-        logging.info(f"Sending SIGTERM to PID {self.process.pid}")
-        self.process.terminate()
-        try:
-            logging.info("Waiting for process to terminate")
-            self.process.wait(10)
-        except subprocess.TimeoutExpired:
-            logging.info("Process did not terminate after 10 seconds. Sending SIGKILL")
-            self.process.kill()
-            try:
-                logging.info("Waiting for process to terminate")
-                self.process.wait(10)
-            except subprocess.TimeoutExpired:
-                logging.info("Process failed to terminate even after SIGKILL")
-                raise
-        finally:
-            logging.info(f"Process terminated with exit code {self.process.returncode}")
-            if self.stdout:
-                with open(os.path.join(self.work_dir, self.stdout.name), "r") as stdout:
-                    self.local_cluster_stdout = stdout.read()
-                    self.stdout.close()
-                    self.stdout = None
-            if self.stderr:
-                with open(os.path.join(self.work_dir, self.stderr.name), "r") as stderr:
-                    self.local_cluster_stderr = stderr.read()
-                self.stderr.close()
-                self.stderr = None
-            self.return_code = self.process.returncode
-            self.process = None
+        self.return_code, self.local_cluster_stdout, self.local_cluster_stderr = self.process_handler.terminate()

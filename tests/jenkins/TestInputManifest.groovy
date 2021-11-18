@@ -7,25 +7,21 @@
  */
 
 import org.junit.*
-import static org.junit.Assert.*
 import java.util.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
-import com.lesfurets.jenkins.unit.LibClassLoader
+import com.lesfurets.jenkins.unit.*
 import com.lesfurets.jenkins.unit.declarative.*
-import com.lesfurets.jenkins.unit.MethodCall
-import static org.assertj.core.api.Assertions.assertThat
+import static org.junit.Assert.*
 
-class TestParallelMessages extends DeclarativePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/ParallelMessages_Jenkinsfile"
+class TestInputManifest extends DeclarativePipelineTest {
+    def jenkinsScript = "tests/jenkins/jobs/InputManifest_Jenkinsfile"
 
     @Override
     @Before
     void setUp() throws Exception {
         super.setUp()
 
-        helper.registerAllowedMethod('findFiles', [Map.class], null)
-        
         helper.registerSharedLibrary(
             library().name('jenkins')
                 .defaultVersion('<notNeeded>')
@@ -35,21 +31,24 @@ class TestParallelMessages extends DeclarativePipelineTest {
                 .retriever(projectSource())
                 .build()
             )
+
+        helper.registerAllowedMethod("readYaml", [Map.class], { args ->
+            return [
+                'schema-version': "1.0",
+                ci: [
+                    image: [
+                        name: "opensearchstaging/ci-runner:centos7",
+                        args: "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot"
+                    ]
+                ]
+            ]
+        })
     }
 
     @Test
-    @Ignore // raises MissingMethodException on docker agent declaration, need to upgrade jenkins-pipeline-unit which has new problems
-    void testParallelMessages() throws Exception {
-        binding.setVariable('scm', {})
-        helper.registerAllowedMethod("legacySCM", [Closure.class], null)
-        
-        helper.registerAllowedMethod("library", [Map.class], { Map args ->
-            helper.getLibLoader().loadLibrary(args["identifier"])
-            return new LibClassLoader(helper, null)
-        })
-
+    void testInputManifest() throws Exception {
         runScript(jenkinsScript)
-
+        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
         assertJobStatusSuccess()
         printCallStack()
     }

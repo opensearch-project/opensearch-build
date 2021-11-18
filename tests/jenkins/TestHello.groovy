@@ -7,12 +7,11 @@
  */
 
 import org.junit.*
-import com.lesfurets.jenkins.unit.BasePipelineTest
-import com.lesfurets.jenkins.unit.MethodCall
-import static org.assertj.core.api.Assertions.assertThat
+import com.lesfurets.jenkins.unit.*
+import static org.assertj.core.api.Assertions.*
 
 class TestHello extends BasePipelineTest {
-    def jenkinsScript = "tests/jenkins/jobs/hello.groovy"
+    def jenkinsScript = "tests/jenkins/jobs/Hello_Jenkinsfile"
 
     @Override
     @Before
@@ -23,12 +22,8 @@ class TestHello extends BasePipelineTest {
     @Test
     void testHello() {
         runScript(jenkinsScript)
+        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
         assertJobStatusSuccess()
-        assertThat(helper.callStack.stream()
-            .filter { c -> c.methodName == "echo"  }
-            .map(MethodCall.&callArgsToString)
-            .findAll { s -> s == "Hello World!" }
-        ).hasSize(1)
         printCallStack()
     }
 }

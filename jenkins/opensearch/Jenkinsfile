@@ -35,22 +35,10 @@ pipeline {
             steps {
                 script { 
                     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    manifest = readYaml(file: "manifests/$INPUT_MANIFEST") 
-                    
-                    dockerImage = "${manifest.ci?.image?.name}" 
-                    // If the 'image' key is not present, it is populated with "null" string 
-                    if (dockerImage == null || dockerImage == "null") {
-                        error("The Docker image for the build is required but was not provided in the manifest")
-                    }
-
-                    dockerArgs = "${manifest.ci?.image?.args}" 
-                    // If the 'args' key is not present, it is populated with "null" string 
-                    if (dockerArgs == null || dockerArgs == "null") {
-                        dockerArgs = '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                    }
-
-                    echo "Using Docker image: " + dockerImage
-                    echo "Using Docker container args: " + dockerArgs
+                    def inputManifest = lib.InputManifest.new(this, readYaml(file: "manifests/$INPUT_MANIFEST"))
+                    dockerImage = inputManifest.ci.dockerImage
+                    dockerArgs = inputManifest.ci.dockerArgs ?: '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                    echo "Using Docker image ${dockerImage} (${dockerArgs})"
                 }
             }
         }
@@ -130,34 +118,41 @@ pipeline {
                     }
                 }
             }
-            post() {
-                success {
-                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                        script {
-                            def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
-                            sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
-                            def URL_x64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/x64/dist/opensearch-${VERSION}-linux-x64.tar.gz"
-                            def URL_arm64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/arm64/dist/opensearch-${VERSION}-linux-arm64.tar.gz"
-                            dockerBuild: {
-                                build job: 'docker-build',
-                                parameters: [
-                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
-                                    string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
-                                    string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: "id && pwd && cd docker/release && curl -sSL $URL_x64 -o opensearch-x64.tgz && curl -sSL $URL_arm64 -o opensearch-arm64.tgz && bash build-image-multi-arch.sh -v ${VERSION} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"),
-                                    booleanParam(name: 'IS_STAGING', value: true)
-                                ]
-                            }
-                            
-                            def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
-                            publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+        }
+        stage('docker build') {
+            steps {
+                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    script {
+                        def VERSION = sh(script: 'echo ${INPUT_MANIFEST} | grep -Po "[0-9.]+?(?=.yml)"', returnStdout: true).trim()
+                        sh "echo VERSION:${VERSION} BUILD_NUMBER:${env.BUILD_NUMBER}"
+                        def URL_x64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/x64/dist/opensearch-${VERSION}-linux-x64.tar.gz"
+                        def URL_arm64 = "${PUBLIC_ARTIFACT_URL}/${env.JOB_NAME}/${VERSION}/${env.BUILD_NUMBER}/linux/arm64/dist/opensearch-${VERSION}-linux-arm64.tar.gz"
+                        dockerBuild: {
+                            build job: 'docker-build',
+                            parameters: [
+                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
+                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
+                                string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: "id && pwd && cd docker/release && curl -sSL $URL_x64 -o opensearch-x64.tgz && curl -sSL $URL_arm64 -o opensearch-arm64.tgz && bash build-image-multi-arch.sh -v ${VERSION} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"),
+                                booleanParam(name: 'IS_STAGING', value: true)
+                            ]
                         }
                     }
                 }
-                failure {
-                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                        publishNotification(":warning:", "Failed Build", "")
-                    }
+            }
+        }
+    }
+    post() {
+        success {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    def stashed = lib.Messages.new(this).get(['build-x64', 'build-arm64'])
+                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
                 }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                publishNotification(":warning:", "Failed Build", "")
             }
         }
     }
