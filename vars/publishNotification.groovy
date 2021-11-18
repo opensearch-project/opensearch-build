@@ -6,13 +6,13 @@ void call(Map args = [:]) {
         args.extra
     ] - null).join("\n")
 
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'BUILD_NOTICE_WEBHOOK')]) {
+    withCredentials([string(credentialsId: args.credentialsId, variable: args.variable)]) {
         sh ([
             args.script ?: 'curl',
             '-XPOST',
             '--header "Content-Type: application/json"',
             "--data '{\"result_text\":\"${text}\"}'",
-            "\"${BUILD_NOTICE_WEBHOOK}\""
+            "\$" + args.variable
         ].join(' '))
     }
 }

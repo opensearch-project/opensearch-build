@@ -18,6 +18,11 @@ pipeline {
                             parameters([
                                     string(
                                             defaultValue: '',
+                                            name: 'INPUT_MANIFEST',
+                                            trim: true
+                                    ),
+                                    string(
+                                            defaultValue: '',
                                             name: 'opensearch_version',
                                             trim: true
                                     ),
@@ -70,7 +75,15 @@ pipeline {
             post() {
                 always {
                     script {
-                        publishResults()
+                        uploadArtifacts(
+                            upload: true,
+                            build_number: "${build_id}",
+                            manifest: "manifests/${INPUT_MANIFEST}",
+                            job_name: "bundle-build",
+                            dirs: ['test-results'], 
+                            paths: ['test-results'],
+                            role: 'opensearch-test'
+                        )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
@@ -82,7 +95,18 @@ pipeline {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
-                    publishNotification(":white_check_mark:", "Successful Build", "\n${stashed}")
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        variable: 'TOKEN'
+                    )
+
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
                 }
             }
         }
@@ -90,26 +114,21 @@ pipeline {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script  {
                     def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
-                    publishNotification(":warning:", "Failed Build", "\n${stashed}")
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        variable: 'TOKEN'
+                    )
+
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
                 }
             }
         }
     }
 }
 
-/** Publishes test results to S3 **/
-void publishResults() {
-    def artifactPath = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
-    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
-    }
-    echo "Uploaded Test Results to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}/test-results"
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}/test-results")
-}
-
-/** Publishes a notification to a slack instance*/
-void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'INTEG_TEST_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nTest Results Location: $extra"}' """ + "$TOKEN")
-    }
-}

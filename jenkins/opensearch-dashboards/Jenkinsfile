@@ -54,7 +54,12 @@ pipeline {
                                 architecture: "x64"
                             )
                             assembleManifest()
-                            uploadArtifacts(upload: true)
+                            uploadArtifacts(
+                                upload: true, 
+                                dirs: ['builds', 'dist'], 
+                                paths: ['builds/manifest.yml', 'dist/manifest.yml'],
+                                role: 'opensearch-bundle'
+                            )
                         }
                     }
                     post() {
@@ -105,7 +110,12 @@ pipeline {
                                     copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                                     unzip zipFile: 'buildArtifacts.zip', dir: './builds'
                                     assembleManifest()
-                                    uploadArtifacts(upload: true)
+                                    uploadArtifacts(
+                                        upload: true, 
+                                        dirs: ['builds', 'dist'], 
+                                        paths: ['builds/manifest.yml', 'dist/manifest.yml'],
+                                        role: 'opensearch-bundle'
+                                    )
                                 }
                             }
                             post() {
@@ -156,7 +166,9 @@ pipeline {
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
-                        extra: stashed
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        variable: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(
@@ -171,7 +183,9 @@ pipeline {
                 script {
                     publishNotification(
                         icon: ':warning:',
-                        message: 'Failed Build'
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        variable: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(

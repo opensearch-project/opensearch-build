@@ -4,23 +4,29 @@ void call(Map args = [:]) {
     def manifestFilename = args.manifest ?: 'builds/manifest.yml'
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))
 
-    def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
+    def buildNumber = args.build_number ?: "${BUILD_NUMBER}"
+    def jobName = args.job_name ?: "${JOB_NAME}"
+    def artifactPath = buildManifest.getArtifactRoot(jobName, buildNumber)
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+    withAWS(role: args.role, roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         if (args.upload) {
-            s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-            s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
+            for (dir in args.dirs) {
+                s3Upload(file: dir, bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/${dir}")
+            }
         } else {
-            echo "s3Upload(file: 'builds', bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/builds)"
-            echo "s3Upload(file: 'dist', bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/dist)"
+            for (dir in args.dirs) {
+                echo "s3Upload(file: ${dir}, bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/${dir})"
+            }
         }
     }
 
-    def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/manifest.yml",
-            "${baseUrl}/dist/manifest.yml"
-        ].join("\n")
-    )
+    def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", jobName, buildNumber)
+
+    def paths = []
+    for (path in args.paths) {
+        paths.add("${baseUrl}/${path}")
+    }
+    
+    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", paths.join("\n"))
 }

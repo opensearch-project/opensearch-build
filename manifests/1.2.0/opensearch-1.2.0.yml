@@ -7,6 +7,8 @@ ci:
 build:
   name: OpenSearch
   version: 1.2.0
+  platform: linux
+  architecture: x64
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
