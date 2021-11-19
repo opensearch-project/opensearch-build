@@ -4,22 +4,14 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+    }
     stages {
-        stage('parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: '2.0.0/opensearch-2.0.0.yml',
-                                            name: 'INPUT_MANIFEST',
-                                            trim: true
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
         stage('detect Docker image + args to use for the build') {
             agent {
                 docker {
