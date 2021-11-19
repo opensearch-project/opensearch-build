@@ -18,6 +18,8 @@ class Process:
         self.process = None
         self.stdout = None
         self.stderr = None
+        self.__stdout_data__ = None
+        self.__stderr_data__ = None
 
     def start(self, command, cwd):
         if self.started:
@@ -53,19 +55,19 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.stdout_data = self.stdout.read()
+            self.__stdout_data__ = self.stdout.read()
             self.stdout.close()
             self.stdout = None
 
         if self.stderr:
-            self.stderr_data = self.stderr.read()
+            self.__stderr_data__ = self.stderr.read()
             self.stderr.close()
             self.stderr = None
 
         self.return_code = self.process.returncode
         self.process = None
 
-        return self.return_code, self.stdout_data, self.stderr_data
+        return self.return_code
 
     @property
     def started(self):
@@ -76,12 +78,12 @@ class Process:
         return self.process.pid if self.started else None
 
     @property
-    def output(self):
-        return self.stdout
+    def stdout_data(self):
+        return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
-    def error(self):
-        return self.stderr
+    def stderr_data(self):
+        return self.stderr.read() if self.stderr else self.__stderr_data__
 
 
 class ProcessStartedError(Exception):

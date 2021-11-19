@@ -8,7 +8,7 @@ import os
 import subprocess
 import sys
 import unittest
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, PropertyMock, mock_open, patch
 
 import requests
 import yaml
@@ -115,11 +115,11 @@ class LocalTestClusterTests(unittest.TestCase):
         self.assertEqual(str(err.exception), "Cluster is not available after 10 attempts")
 
     @patch("time.sleep")
-    @patch.object(Process, 'output')
-    @patch.object(Process, 'error')
+    @patch('system.process.Process.stdout_data', new_callable=PropertyMock)
+    @patch('system.process.Process.stderr_data', new_callable=PropertyMock)
     @patch("requests.get", side_effect=__mock_connection_error_response)
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_wait_for_service_cluster_unavailable_connection_error(self, mock_test_recorder, *mocks):
+    def test_wait_for_service_cluster_unavailable_connection_error(self, mock_test_recorder, mock_stdout_data, mock_stderr_data, *mocks):
         local_test_cluster = LocalTestCluster(
             self.dependency_installer, self.work_dir.name, "index-management", "", self.bundle_manifest, False, "without-security", mock_test_recorder
         )
@@ -127,10 +127,10 @@ class LocalTestClusterTests(unittest.TestCase):
             local_test_cluster.wait_for_service()
             requests.get.assert_called_once_with("http://localhost:9200/_cluster/health", verify=False, auth=("admin", "admin"))
         self.assertEqual(str(err.exception), "Cluster is not available after 10 attempts")
-        self.assertEqual(Process.output.read.call_count, 10)
-        self.assertEqual(Process.error.read.call_count, 10)
+        self.assertEqual(mock_stdout_data.call_count, 10)
+        self.assertEqual(mock_stderr_data.call_count, 10)
 
-    @patch.object(Process, 'terminate', return_value=("1", "2", "3"))
+    @patch.object(Process, 'terminate', return_value=("1"))
     def test_terminate_process(self, *mocks):
         self.local_test_cluster.terminate_process()
         Process.terminate.assert_called_once()
