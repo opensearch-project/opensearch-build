@@ -113,15 +113,16 @@ class LocalTestCluster(TestCluster):
                     return
             except requests.exceptions.ConnectionError:
                 logging.info("Service not available yet")
-                if self.process_handler.output:
-                    logging.info("- stdout:")
-                    logging.info(self.process_handler.output.read())
-                if self.process_handler.error:
-                    logging.info("- stderr:")
-                    logging.info(self.process_handler.error.read())
+                logging.info("- stdout:")
+                logging.info(self.process_handler.stdout_data)
+
+                logging.info("- stderr:")
+                logging.info(self.process_handler.stderr_data)
 
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate_process(self):
-        self.return_code, self.local_cluster_stdout, self.local_cluster_stderr = self.process_handler.terminate()
+        self.return_code = self.process_handler.terminate()
+        self.local_cluster_stdout = self.process_handler.stdout_data
+        self.local_cluster_stderr = self.process_handler.stderr_data
