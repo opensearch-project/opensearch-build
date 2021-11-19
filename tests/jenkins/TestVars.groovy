@@ -22,6 +22,12 @@ class TestVars extends BuildPipelineTest {
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('STAGE_NAME', 'stage')
+
+        helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+
         binding.setVariable('BUILD_NOTICE_WEBHOOK', 'https://web/hook/url')
 
         helper.registerAllowedMethod("s3Upload", [Map])

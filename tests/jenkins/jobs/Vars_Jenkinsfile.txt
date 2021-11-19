@@ -33,7 +33,7 @@ https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml})
             Vars_Jenkinsfile.script(groovy.lang.Closure)
                Vars_Jenkinsfile.publishNotification({icon=:white_check_mark:, message=Successful Build, extra=extra})
                   publishNotification.string({credentialsId=BUILD_NOTICE_WEBHOOK, variable=BUILD_NOTICE_WEBHOOK})
-                  publishNotification.withCredentials([null], groovy.lang.Closure)
+                  publishNotification.withCredentials([BUILD_NOTICE_WEBHOOK], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark: vars-build [33] Successful Build
 Build: http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42
 Manifest: manifests/2.0.0/opensearch-2.0.0.yml
