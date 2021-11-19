@@ -47,7 +47,7 @@ class ServiceOpenSearch(Service):
         self.install_dir = f"opensearch-{self.manifest.build.version}"
         if not self.security_enabled:
             self.disable_security(self.install_dir)
-        if self.additional_cluster_config is not None:
+        if self.additional_cluster_config:
             self.__add_plugin_specific_config(
                 self.additional_cluster_config,
                 os.path.join(self.install_dir, "config", "opensearch.yml")
