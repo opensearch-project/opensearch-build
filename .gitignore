@@ -27,3 +27,4 @@ out.txt
 /bin/
 
 /manifests/**/*.yml.lock
+
