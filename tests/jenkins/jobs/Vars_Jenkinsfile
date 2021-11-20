@@ -7,6 +7,12 @@ pipeline {
                     buildManifest(manifest: "manifests/${INPUT_MANIFEST}")
                     assembleManifest(manifest: 'tests/data/opensearch-build-1.1.0.yml')
                     uploadArtifacts(upload: true, manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                    uploadTestResults(
+                        upload: true,
+                        manifest: 'tests/data/opensearch-build-1.1.0.yml',
+                        jobName: 'vars-build',
+                        buildNumber: '33'
+                    )
                 }
             }
         }
@@ -16,11 +22,11 @@ pipeline {
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
-                        extra: 'extra'
+                        extra: 'extra',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                     )
                 }
             }
         }
     }
 }
-

@@ -79,12 +79,7 @@ pipeline {
                         script {
                             buildManifest()
                             assembleManifest()
-                            uploadArtifacts(
-                                upload: true, 
-                                dirs: ['builds', 'dist'], 
-                                paths: ['builds/manifest.yml', 'dist/manifest.yml'],
-                                role: 'opensearch-bundle'
-                            )
+                            uploadArtifacts(upload: true)
                         }
                     }
                     post() {
@@ -106,12 +101,7 @@ pipeline {
                         script {
                             buildManifest()
                             assembleManifest()
-                            uploadArtifacts(
-                                upload: true, 
-                                dirs: ['builds', 'dist'], 
-                                paths: ['builds/manifest.yml', 'dist/manifest.yml'],
-                                role: 'opensearch-bundle'
-                            )
+                            uploadArtifacts(upload: true)
                         }
                     }
                     post() {
@@ -158,8 +148,7 @@ pipeline {
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        variable: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(
@@ -175,8 +164,7 @@ pipeline {
                     publishNotification(
                         icon: ':warning:',
                         message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        variable: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(

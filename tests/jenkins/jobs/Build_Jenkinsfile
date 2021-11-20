@@ -81,6 +81,12 @@ pipeline {
                                 upload: false,
                                 manifest: 'tests/data/opensearch-build-1.1.0.yml'
                             )
+                            uploadTestResults(
+                                upload: false,
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml',
+                                jobName: "vars-build",
+                                buildNumber: "33"
+                            )
                         }
                     }
                     post() {
@@ -111,6 +117,12 @@ pipeline {
                             uploadArtifacts(
                                 upload: false,
                                 manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            )
+                            uploadTestResults(
+                                upload: false,
+                                manifest: 'tests/data/opensearch-build-1.1.0.yml',
+                                jobName: "bundle_build",
+                                buildNumber: "1073"
                             )
                         }
                     }
@@ -151,6 +163,7 @@ pipeline {
                         script: 'echo curl',
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                         extra: stashed
                     )
                     
@@ -168,7 +181,8 @@ pipeline {
                         publishNotification(
                             script: 'echo curl',
                             icon: ':warning:',
-                            message: 'Failed Build'
+                            message: 'Failed Build',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK'
                         )
 
                         cleanWs(

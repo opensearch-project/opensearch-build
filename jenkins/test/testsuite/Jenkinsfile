@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -10,43 +10,33 @@ pipeline {
         jdk "JDK14"
         maven "maven-3.8.2"
     }
+    parameters {
+        string(
+            defaultValue: '',
+            name: 'opensearch_version',
+            description: 'OpenSearch version to run test on',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'build_id',
+            description: 'The build number for which tests should be run',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'architecture',
+            description: 'Architecture of the build',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'platform',
+            description: 'Platform of the build',
+            trim: true
+        )
+    }
     stages {
-        stage('Parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: '',
-                                            name: 'INPUT_MANIFEST',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
-                                            name: 'opensearch_version',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
-                                            name: 'build_id',
-                                            trim: true
-                                    ),
-
-                                    string(
-                                            defaultValue: '',
-                                            name: 'architecture',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
-                                            name: 'platform',
-                                            trim: true
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
         stage('Choose Agent Node') {
             steps {
                 script {
@@ -60,7 +50,7 @@ pipeline {
                 }
             }
         }
-        stage('Integ-Test') {
+        stage('integ-test') {
             agent {
                 node {
                     label "${agentLabel}"
@@ -69,20 +59,17 @@ pipeline {
             steps {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    sh "wget ${basePath}/builds/manifest.yml"
                     sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post() {
                 always {
                     script {
-                        uploadArtifacts(
+                        uploadTestResults(
                             upload: true,
-                            build_number: "${build_id}",
-                            manifest: "manifests/${INPUT_MANIFEST}",
-                            job_name: "bundle-build",
-                            dirs: ['test-results'], 
-                            paths: ['test-results'],
-                            role: 'opensearch-test'
+                            jobName: "bundle_build",
+                            buildNumber: "${build_id}"
                         )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
@@ -94,13 +81,12 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
                     publishNotification(
                         icon: ':white_check_mark:',
-                        message: 'Successful Build',
+                        message: 'Integration Tests Successful',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
-                        variable: 'TOKEN'
                     )
 
                     cleanWs(
@@ -113,13 +99,12 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['Integ-Test'])
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
                     publishNotification(
                         icon: ':warning:',
-                        message: 'Failed Build',
+                        message: 'Failed Integration Tests',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
-                        variable: 'TOKEN'
                     )
 
                     cleanWs(
@@ -131,4 +116,3 @@ pipeline {
         }
     }
 }
-
