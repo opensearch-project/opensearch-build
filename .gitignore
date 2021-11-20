@@ -27,5 +27,3 @@ out.txt
 /bin/
 
 /manifests/**/*.yml.lock
-
-opensearch-*.tar.gz
