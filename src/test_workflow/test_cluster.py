@@ -56,3 +56,12 @@ class ClusterCreationException(Exception):
     """
 
     pass
+
+
+class ClusterServiceNotInitializedException(Exception):
+    """
+    Indicates that the service running in the cluster is not initialized.
+    """
+
+    def __init__(self):
+        super().__init__("Service is not initialized")

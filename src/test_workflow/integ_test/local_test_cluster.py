@@ -7,7 +7,7 @@
 import os
 
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
-from test_workflow.test_cluster import TestCluster
+from test_workflow.test_cluster import ClusterServiceNotInitializedException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
@@ -59,4 +59,7 @@ class LocalTestCluster(TestCluster):
         return 9200
 
     def destroy(self):
+        if not self.service_opensearch:
+            raise ClusterServiceNotInitializedException()
+
         self.service_opensearch.terminate()
