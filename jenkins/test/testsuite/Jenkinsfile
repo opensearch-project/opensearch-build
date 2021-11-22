@@ -68,7 +68,7 @@ pipeline {
                     script {
                         uploadTestResults(
                             upload: true,
-                            jobName: "bundle_build",
+                            jobName: "bundle-build",
                             buildNumber: "${build_id}"
                         )
                     }
