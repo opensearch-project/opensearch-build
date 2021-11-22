@@ -6,9 +6,10 @@
 
 import abc
 import logging
+import time
 
 import requests
-import time
+
 from test_workflow.test_cluster import ClusterCreationException
 
 
