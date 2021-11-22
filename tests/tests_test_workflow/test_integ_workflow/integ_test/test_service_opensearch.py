@@ -113,7 +113,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
-        mock_dump.assert_has_calls([call({"plugins.security.disabled", "true"}), call(self.additional_cluster_config)])
+        mock_dump.assert_has_calls([call({"plugins.security.disabled": "true"}), call(self.additional_cluster_config)])
 
         mock_file.assert_has_calls(
             [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],

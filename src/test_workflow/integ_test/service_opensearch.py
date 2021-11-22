@@ -48,7 +48,7 @@ class ServiceOpenSearch(Service):
         self.opensearch_yml_dir = os.path.join(self.install_dir, "config", "opensearch.yml")
 
         if not self.security_enabled:
-            self.__add_plugin_specific_config({"plugins.security.disabled", "true"})
+            self.__add_plugin_specific_config({"plugins.security.disabled": "true"})
 
         if self.additional_cluster_config:
             self.__add_plugin_specific_config(self.additional_cluster_config)
