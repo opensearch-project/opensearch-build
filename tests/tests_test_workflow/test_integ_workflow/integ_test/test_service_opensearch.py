@@ -48,7 +48,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
             self.work_dir
         )
 
-        bundle_full_name = "/test/bundle_name"
+        bundle_full_name = "test_bundle_name"
         dependency_installer.download_dist.return_value = bundle_full_name
 
         mock_dump_result = MagicMock()
@@ -64,7 +64,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_dump.assert_called_once_with(self.additional_cluster_config)
 
-        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-1.1.0/config/opensearch.yml"), "a")
+        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
         dependency_installer.download_dist.assert_called_once_with(self.work_dir)
@@ -93,7 +93,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
             self.work_dir
         )
 
-        bundle_full_name = "/test/bundle_name"
+        bundle_full_name = "test_bundle_name"
         dependency_installer.download_dist.return_value = bundle_full_name
 
         mock_dump_result_for_security = MagicMock()
@@ -116,8 +116,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_dump.assert_has_calls([call({"plugins.security.disabled", "true"}), call(self.additional_cluster_config)])
 
         mock_file.assert_has_calls(
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0/config/opensearch.yml"), "a")],
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0/config/opensearch.yml"), "a")]
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
         )
         mock_file_hanlder_for_security.write.assert_called_once_with(mock_dump_result_for_security)
         mock_file_hanlder_for_additional_cluster_config.write.assert_called_once_with(mock_dump_result_for_additional_cluster_config)

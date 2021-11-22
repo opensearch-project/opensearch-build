@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -55,7 +56,7 @@ class LocalTestClusterTests(unittest.TestCase):
             self.security_enabled,
             self.dependency_installer,
             mock_local_cluster_logs,
-            self.work_dir + "/local-test-cluster"
+            os.path.join(self.work_dir, "local-test-cluster")
         )
 
         mock_service_object.start.assert_called_once()

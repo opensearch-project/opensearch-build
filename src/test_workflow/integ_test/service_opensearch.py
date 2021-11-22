@@ -39,13 +39,13 @@ class ServiceOpenSearch(Service):
         self.save_logs = save_logs
         self.work_dir = work_dir
 
-        self.install_dir = f"opensearch-{self.manifest.build.version}"
+        self.install_dir = os.path.join(self.work_dir, f"opensearch-{self.manifest.build.version}")
         self.process_handler = Process()
 
     def start(self):
         self.__download()
 
-        self.opensearch_yml_dir = os.path.join(self.work_dir, self.install_dir, "config", "opensearch.yml")
+        self.opensearch_yml_dir = os.path.join(self.install_dir, "config", "opensearch.yml")
 
         if not self.security_enabled:
             self.__add_plugin_specific_config({"plugins.security.disabled", "true"})
@@ -53,7 +53,7 @@ class ServiceOpenSearch(Service):
         if self.additional_cluster_config:
             self.__add_plugin_specific_config(self.additional_cluster_config)
 
-        self.process_handler.start("./opensearch-tar-install.sh", os.path.join(self.work_dir, self.install_dir))
+        self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
     def __download(self):
@@ -86,22 +86,13 @@ class ServiceOpenSearch(Service):
         self.__test_result_data()
 
     def __test_result_data(self):
-        logging.info("call before walk")
-        log_files = walk(os.path.join(self.work_dir, self.install_dir, "logs"))
-        logging.info("call after walk")
-
-        logging.info(log_files)
-
+        log_files = walk(os.path.join(self.install_dir, "logs"))
         test_result_data = TestResultData(
             self.component_name, self.component_test_config, self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
         )
         self.save_logs.save_test_result_data(test_result_data)
 
     def __add_plugin_specific_config(self, additional_config):
-
-        logging.info("inside __add_plugin_specific_config")
-        logging.info(additional_config)
-
         with open(self.opensearch_yml_dir, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 
