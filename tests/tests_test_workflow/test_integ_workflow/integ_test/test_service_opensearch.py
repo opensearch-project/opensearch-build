@@ -122,12 +122,12 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file_hanlder_for_security.write.assert_called_once_with(mock_dump_result_for_security)
         mock_file_hanlder_for_additional_cluster_config.write.assert_called_once_with(mock_dump_result_for_additional_cluster_config)
 
-    @ patch("test_workflow.integ_test.service_opensearch.Process.terminate", return_value=123)
-    @ patch('test_workflow.integ_test.service_opensearch.Process.started', new_callable=PropertyMock, return_value=True)
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
-    @ patch("test_workflow.integ_test.service_opensearch.walk")
-    @ patch("test_workflow.integ_test.service_opensearch.TestResultData")
+    @patch("test_workflow.integ_test.service_opensearch.Process.terminate", return_value=123)
+    @patch('test_workflow.integ_test.service_opensearch.Process.started', new_callable=PropertyMock, return_value=True)
+    @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch("test_workflow.integ_test.service_opensearch.walk")
+    @patch("test_workflow.integ_test.service_opensearch.TestResultData")
     def test_terminate(
         self,
         mock_test_result_data,
@@ -173,8 +173,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         save_logs.save_test_result_data.assert_called_once_with(mock_test_result_data_object)
 
-    @ patch("test_workflow.integ_test.service_opensearch.Process.terminate")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.started', new_callable=PropertyMock, return_value=False)
+    @patch("test_workflow.integ_test.service_opensearch.Process.terminate")
+    @patch('test_workflow.integ_test.service_opensearch.Process.started', new_callable=PropertyMock, return_value=False)
     def test_terminate_process_not_started(self, mock_process_started, mock_process_terminate):
         service = ServiceOpenSearch(
             self.bundle_manifest,
@@ -235,8 +235,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertEqual(service.url(), "http://localhost:9200")
 
-    @ patch("requests.get")
-    @ patch.object(ServiceOpenSearch, "url")
+    @patch("requests.get")
+    @patch.object(ServiceOpenSearch, "url")
     def test_get_service_response(self, mock_url, mock_requests_get):
         service = ServiceOpenSearch(
             self.bundle_manifest,
@@ -259,10 +259,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     # Below are tests against functions implemented in the base Service class
 
-    @ patch("time.sleep")
-    @ patch.object(ServiceOpenSearch, "service_alive", return_value=True)
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch("time.sleep")
+    @patch.object(ServiceOpenSearch, "service_alive", return_value=True)
+    @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data, mock_process_stdout_data, mock_service_alive, mock_time_sleep):
         service = ServiceOpenSearch(
             self.bundle_manifest,
@@ -282,10 +282,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stdout_data.assert_not_called()
         mock_process_stderr_data.assert_not_called()
 
-    @ patch("time.sleep")
-    @ patch.object(ServiceOpenSearch, "service_alive", return_value=False)
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch("time.sleep")
+    @patch.object(ServiceOpenSearch, "service_alive", return_value=False)
+    @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_always_fail_without_exception(
         self,
         mock_process_stderr_data,
@@ -314,10 +314,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stdout_data.assert_not_called()
         mock_process_stderr_data.assert_not_called()
 
-    @ patch("time.sleep")
-    @ patch.object(ServiceOpenSearch, "service_alive", side_effect=requests.exceptions.ConnectionError())
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch("time.sleep")
+    @patch.object(ServiceOpenSearch, "service_alive", side_effect=requests.exceptions.ConnectionError())
+    @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_always_fail_with_exception(
         self,
         mock_process_stderr_data,
@@ -347,13 +347,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertEqual(mock_process_stdout_data.call_count, 10)
         self.assertEqual(mock_process_stderr_data.call_count, 10)
 
-    @ patch("time.sleep")
-    @ patch.object(
+    @patch("time.sleep")
+    @patch.object(
         ServiceOpenSearch,
         "service_alive",
         side_effect=[requests.exceptions.ConnectionError(), requests.exceptions.ConnectionError(), True])
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @ patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_suceed_on_third_attempt(
         self,
         mock_process_stderr_data,
@@ -379,7 +379,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertEqual(mock_process_stdout_data.call_count, 2)
         self.assertEqual(mock_process_stderr_data.call_count, 2)
 
-    @ patch.object(ServiceOpenSearch, "get_service_response")
+    @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.bundle_manifest,
@@ -401,7 +401,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertTrue(service.service_alive())
 
-    @ patch.object(ServiceOpenSearch, "get_service_response")
+    @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.bundle_manifest,
@@ -423,7 +423,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertTrue(service.service_alive())
 
-    @ patch.object(ServiceOpenSearch, "get_service_response")
+    @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.bundle_manifest,
