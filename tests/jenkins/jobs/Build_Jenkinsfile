@@ -1,6 +1,6 @@
 // similar jenkins/opensearch/Jenkinsfile but echo instead of sh for testing
 
-lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -12,7 +12,7 @@ pipeline {
         )
     }
     stages {
-        stage('detect Docker image + args to use for the build') {
+        stage('detect docker image + args') {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -46,7 +46,10 @@ pipeline {
                     }
                     steps {
                         script {
-                            sh "echo ./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            buildManifest(
+                                dryRun: true,
+                                snapshot: true
+                            )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                 echo "$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven"
                             }
@@ -69,20 +72,13 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildManifest(
-                                script: 'echo ./build.sh',
-                                manifest: "manifests/${INPUT_MANIFEST}"
-                            )
-                            assembleManifest(
-                                script: 'echo ./assemble.sh',
-                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
-                            )
-                            uploadArtifacts(
-                                upload: false,
-                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            buildAssembleUpload(
+                                dryRun: true,
+                                platform: 'linux',
+                                architecture: 'x64'
                             )
                             uploadTestResults(
-                                upload: false,
+                                dryRun: true,
                                 manifest: 'tests/data/opensearch-build-1.1.0.yml',
                                 jobName: "vars-build",
                                 buildNumber: "33"
@@ -106,23 +102,16 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildManifest(
-                                script: 'echo ./build.sh',
-                                manifest: "manifests/${INPUT_MANIFEST}"
-                            )
-                            assembleManifest(
-                                script: 'echo ./assemble.sh',
-                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
-                            )
-                            uploadArtifacts(
-                                upload: false,
-                                manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                            buildAssembleUpload(
+                                dryRun: true,
+                                platform: 'linux',
+                                architecture: 'arm64'
                             )
                             uploadTestResults(
-                                upload: false,
+                                dryRun: true,
                                 manifest: 'tests/data/opensearch-build-1.1.0.yml',
-                                jobName: "bundle-build",
-                                buildNumber: "1073"
+                                jobName: 'bundle-build',
+                                buildNumber: '1073'
                             )
                         }
                     }
@@ -160,13 +149,13 @@ pipeline {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
                     publishNotification(
-                        script: 'echo curl',
+                        dryRun: true,
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         credentialsId: 'BUILD_NOTICE_WEBHOOK'
                         extra: stashed
                     )
-                    
+
                     cleanWs(
                         disableDeferredWipeout: true, 
                         deleteDirs: true
@@ -176,20 +165,18 @@ pipeline {
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                steps {
-                    script {
-                        publishNotification(
-                            script: 'echo curl',
-                            icon: ':warning:',
-                            message: 'Failed Build',
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK'
-                        )
+                script {
+                    publishNotification(
+                        dryRun: true,
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                    )
 
-                        cleanWs(
-                            disableDeferredWipeout: true, 
-                            deleteDirs: true
-                        )
-                    }
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
                 }
             }
         }
