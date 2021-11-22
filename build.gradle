@@ -35,6 +35,15 @@ dependencies {
     compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.12'
     compile group: 'com.cloudbees', name: 'groovy-cps', version: '1.12'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    compile group: 'junit', name: 'junit', version: '4.13.2'
+}
+
+configurations {
+    all {
+        resolutionStrategy {
+            force group: 'org.jenkins-ci.main', name: 'jenkins-core', version: '2.319'
+        }
+    }
 }
 
 sourceSets {
