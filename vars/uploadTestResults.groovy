@@ -1,5 +1,5 @@
 void call(Map args = [:]) {
-    lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+    lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
 
     def manifestFilename = args.manifest ?: "manifest.yml"
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))
@@ -8,7 +8,7 @@ void call(Map args = [:]) {
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        if (args.upload) {
+        if (! args.dryRun) {
             s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
         } else {
             echo "s3Upload(file: 'test-results', bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/test-results)"

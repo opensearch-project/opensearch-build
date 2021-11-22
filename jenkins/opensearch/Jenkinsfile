@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -16,7 +16,7 @@ pipeline {
         )
     }
     stages {
-        stage('detect Docker image + args to use for the build') {
+        stage('detect docker image + args') {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -52,7 +52,6 @@ pipeline {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
-                                manifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
                             )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
@@ -77,9 +76,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildManifest()
-                            assembleManifest()
-                            uploadArtifacts(upload: true)
+                            buildAssembleUpload()
                         }
                     }
                     post() {
@@ -99,9 +96,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildManifest()
-                            assembleManifest()
-                            uploadArtifacts(upload: true)
+                            buildAssembleUpload()
                         }
                     }
                     post() {
