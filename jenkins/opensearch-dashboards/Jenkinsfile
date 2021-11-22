@@ -156,7 +156,8 @@ pipeline {
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
-                        extra: stashed
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(
@@ -171,7 +172,8 @@ pipeline {
                 script {
                     publishNotification(
                         icon: ':warning:',
-                        message: 'Failed Build'
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
                     )
 
                     cleanWs(

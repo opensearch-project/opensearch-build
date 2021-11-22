@@ -1,18 +1,19 @@
 void call(Map args = [:]) {
+    def manifest = (args.credentialsId == 'BUILD_NOTICE_WEBHOOK') ? "Manifest: ${INPUT_MANIFEST}" : null
     text = ([
         "${args.icon} ${JOB_NAME} [${BUILD_NUMBER}] ${args.message}",
         "Build: ${BUILD_URL}",
-        "Manifest: ${INPUT_MANIFEST}",
+        manifest,
         args.extra
     ] - null).join("\n")
 
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'BUILD_NOTICE_WEBHOOK')]) {
+    withCredentials([string(credentialsId: args.credentialsId, variable: 'WEBHOOK_URL')]) {
         sh ([
             args.script ?: 'curl',
             '-XPOST',
             '--header "Content-Type: application/json"',
             "--data '{\"result_text\":\"${text}\"}'",
-            "\"${BUILD_NOTICE_WEBHOOK}\""
+            "\"${WEBHOOK_URL}\""
         ].join(' '))
     }
 }

@@ -28,7 +28,7 @@ class TestVars extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
 
-        binding.setVariable('BUILD_NOTICE_WEBHOOK', 'https://web/hook/url')
+        binding.setVariable('WEBHOOK_URL', 'https://web/hook/url')
 
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
