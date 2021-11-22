@@ -70,8 +70,8 @@ class InputManifest {
     public String getSHAsRoot(String jobName, String platform = null, String architecture = null) {
         return [
             jobName,
-            'shas',
             this.build.version,
+            'shas',
             platform ?: this.build.platform,
             architecture ?: this.build.architecture
         ].join("/")
