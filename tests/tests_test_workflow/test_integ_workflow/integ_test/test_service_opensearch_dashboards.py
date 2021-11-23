@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
 import unittest
 from unittest.mock import MagicMock, PropertyMock, mock_open, patch
@@ -75,7 +74,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("tarfile.open")
     def test_start_without_security(self, mock_tarfile_open, mock_file, mock_pid, mock_process, mock_check_call):
-        logging.info(locals())
 
         mock_dependency_installer = MagicMock()
 
