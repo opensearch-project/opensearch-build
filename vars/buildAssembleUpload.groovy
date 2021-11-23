@@ -12,7 +12,7 @@ void call(Map args = [:]) {
     manifestSHA = sha1(manifestLock)
     echo "Manifest SHA: ${manifestSHA}"
 
-    lib = library(identifier: 'jenkins@20211122', retriever: legacySCM(scm))
+    lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
     String shasRoot = inputManifest.getSHAsRoot("${JOB_NAME}", args.platform, args.architecture)
 
