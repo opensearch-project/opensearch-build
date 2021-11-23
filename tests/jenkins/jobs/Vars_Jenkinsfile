@@ -1,11 +1,25 @@
 pipeline {
     agent none
     stages {
+        stage('detect docker image + args') {
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent(
+                        manifest: 'manifests/1.2.0/opensearch-1.2.0.yml'
+                    )
+                    echo dockerAgent.image
+                    echo dockerAgent.args
+                }
+            }
+        }
         stage('all') {
             steps {
                 script {
                     buildManifest(dryRun: true)
-                    assembleManifest(dryRun: true, manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                    assembleManifest(
+                        dryRun: true, 
+                        manifest: 'tests/data/opensearch-build-1.1.0.yml'
+                    )
                     uploadArtifacts(dryRun: true)
                     uploadTestResults(
                         dryRun: true,
@@ -13,6 +27,11 @@ pipeline {
                         jobName: 'vars-build',
                         buildNumber: '33'
                     )
+                }
+            }
+            post {
+                always {
+                    postCleanup()
                 }
             }
         }
@@ -23,6 +42,21 @@ pipeline {
                         dryRun: true,
                         platform: 'linux',
                         architecture: 'x64'
+                    )
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('buildDockerImage') {
+            steps {
+                script {
+                    buildDockerImage(
+                        dryRun: true,
+                        manifest: 'manifests/1.2.0/opensearch-1.2.0.yml'
                     )
                 }
             }
