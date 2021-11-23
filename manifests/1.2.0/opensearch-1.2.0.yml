@@ -10,7 +10,7 @@ build:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.2"
+    ref: tags/1.2.0
     checks:
       - gradle:publish
       - gradle:properties:version
