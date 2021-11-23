@@ -63,8 +63,8 @@ class ServiceOpenSearch(Service):
         logging.info(f"Downloaded bundle to {os.path.realpath(bundle_name)}")
 
         logging.info(f"Unpacking {bundle_name}")
-        bundle_tar = tarfile.open(bundle_name, 'r')
-        bundle_tar.extractall(self.work_dir)
+        with tarfile.open(bundle_name, 'r') as bundle_tar:
+            bundle_tar.extractall(self.work_dir)
 
         logging.info(f"Unpacked {bundle_name}")
 
