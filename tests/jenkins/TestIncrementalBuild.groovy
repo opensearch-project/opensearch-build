@@ -54,9 +54,6 @@ class TestIncrementalBuild extends BuildPipelineTest {
             ]
         })
 
-        super.testPipeline(
-            "tests/jenkins/jobs/IncrementalBuild_Jenkinsfile",
-            "tests/jenkins/jobs/IncrementalBuild_Jenkinsfile"
-        )
+        super.testPipeline("tests/jenkins/jobs/IncrementalBuild_Jenkinsfile")
     }
 }
