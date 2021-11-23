@@ -11,7 +11,7 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestBuildAssembleUpload extends BuildPipelineTest {
+class TestIncrementalBuild extends BuildPipelineTest {
     @Before
     void setUp() {
         super.setUp()
@@ -38,17 +38,25 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
+
+        helper.registerAllowedMethod("git", [Map])
     }
 
     @Test
-    public void testShaExists() {
+    public void test() {
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return true
         })
 
+        helper.registerAllowedMethod("httpRequest", [Map], { args ->
+            return [
+                status: 404
+            ]
+        })
+
         super.testPipeline(
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile"
+            "tests/jenkins/jobs/IncrementalBuild_Jenkinsfile",
+            "tests/jenkins/jobs/IncrementalBuild_Jenkinsfile"
         )
     }
 }
