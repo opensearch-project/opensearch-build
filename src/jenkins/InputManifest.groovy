@@ -35,10 +35,14 @@ class InputManifest {
     class Build implements Serializable {
         String name
         String version
+        String platform
+        String architecture
 
         Build(Map data) {
             this.name = data.name
             this.version = data.version
+            this.platform = data.platform
+            this.architecture = data.architecture
         }
     }
 
@@ -49,17 +53,27 @@ class InputManifest {
         this.build = new InputManifest.Build(data.build)
         this.ci = new InputManifest.Ci(data.ci)
     }
-   
-    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform, String architecture) {
+
+    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
         return [
             publicArtifactUrl,
             jobName,
             this.build.version,
             buildNumber,
-            platform,
-            architecture,
+            platform ?: this.build.platform,
+            architecture ?: this.build.architecture,
             'dist',
             "${this.build.name.toLowerCase().replaceAll(' ', '-')}-${this.build.version}-${platform}-${architecture}.${platform == 'windows' ? 'zip' : 'tar.gz'}"
+        ].join("/")
+    }
+
+    public String getSHAsRoot(String jobName, String platform = null, String architecture = null) {
+        return [
+            jobName,
+            this.build.version,
+            'shas',
+            platform ?: this.build.platform,
+            architecture ?: this.build.architecture
         ].join("/")
     }
 }

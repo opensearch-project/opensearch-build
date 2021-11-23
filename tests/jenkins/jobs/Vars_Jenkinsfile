@@ -4,14 +4,25 @@ pipeline {
         stage('all') {
             steps {
                 script {
-                    buildManifest(manifest: "manifests/${INPUT_MANIFEST}")
-                    assembleManifest(manifest: 'tests/data/opensearch-build-1.1.0.yml')
-                    uploadArtifacts(upload: true, manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                    buildManifest(dryRun: true)
+                    assembleManifest(dryRun: true, manifest: 'tests/data/opensearch-build-1.1.0.yml')
+                    uploadArtifacts(dryRun: true)
                     uploadTestResults(
-                        upload: true,
+                        dryRun: true,
                         manifest: 'tests/data/opensearch-build-1.1.0.yml',
                         jobName: 'vars-build',
                         buildNumber: '33'
+                    )
+                }
+            }
+        }
+        stage('buildAssembleUpload') {
+            steps {
+                script {
+                    buildAssembleUpload(
+                        dryRun: true,
+                        platform: 'linux',
+                        architecture: 'x64'
                     )
                 }
             }
@@ -20,6 +31,7 @@ pipeline {
             steps {
                 script {
                     publishNotification(
+                        dryRun: true,
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         extra: 'extra',
