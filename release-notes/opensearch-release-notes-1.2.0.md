@@ -19,7 +19,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## FEATURES
 
 ### Opensearch Alerting Dashboards Plugin
-* support creating monitor for anomaly detector with custom result index ([#143](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/143))
+* Support creating monitor for anomaly detector with custom result index ([#143](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/143))
 
 
 ### Opensearch Anomaly Detection
