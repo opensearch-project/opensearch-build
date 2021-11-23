@@ -231,6 +231,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix bug of HC historical results not auto-refreshing ([#131](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/131))
 * Fix bug of missing annotations on feature charts ([#136](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/136))
 
+### OpenSearch Asynchronous Search
+* Add checkstyle plugin reference ([#60](https://github.com/opensearch-project/asynchronous-search/pull/60))
+* Correct copyright notices to reflect Copyright OpenSearch Contributors ([#61](https://github.com/opensearch-project/asynchronous-search/pull/61))
+
 
 ### OpenSearch Cross Cluster Replication
 * Refactored replication specific translog policy and addressed flaky tests ([#236](https://github.com/opensearch-project/cross-cluster-replication/pull/236))
@@ -338,6 +342,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Anomaly Detection Dashboards
 * Bump version to 1.2 ([#114](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/114))
 * Fix e2e ([#116](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/116))
+
+
+### OpenSearch Asynchronous Search
+* Removes default integtest.sh ([#36](https://github.com/opensearch-project/asynchronous-search/pull/36))
+* Updating CI workflows ([#41](https://github.com/opensearch-project/asynchronous-search/pull/41))
 
 
 ### OpenSearch Cross Cluster Replication
@@ -453,6 +462,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Anomaly Detection
 * Bump anomaly-detection version to 1.2 ([#286](https://github.com/opensearch-project/anomaly-detection/pull/286))
 
+
+### OpenSearch Asynchronous Search
+* Adds DCO check  ([#57](https://github.com/opensearch-project/asynchronous-search/pull/57))
+* Incremented asynchronous search version to 1.2 [#53](https://github.com/opensearch-project/asynchronous-search/pull/53)
 
 ### OpenSearch Dashboards Reports
 * Bump to version 1.2 ([#203](https://github.com/opensearch-project/dashboards-reports/pull/203))
