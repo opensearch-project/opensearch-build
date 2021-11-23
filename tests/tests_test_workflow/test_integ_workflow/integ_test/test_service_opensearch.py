@@ -126,8 +126,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service_opensearch.Process.started', new_callable=PropertyMock, return_value=True)
     @patch('test_workflow.integ_test.service_opensearch.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
     @patch('test_workflow.integ_test.service_opensearch.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
-    @patch("test_workflow.integ_test.service_opensearch.walk")
-    @patch("test_workflow.integ_test.service_opensearch.TestResultData")
+    @patch("test_workflow.integ_test.service.walk")
+    @patch("test_workflow.integ_test.service.TestResultData")
     def test_terminate(
         self,
         mock_test_result_data,
