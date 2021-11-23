@@ -404,7 +404,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update workflow to point to 1.1 ([#146](https://github.com/opensearch-project/index-management/pull/146))
 
 
-### OpenSearch Job Schedular
+### OpenSearch Job Scheduler
 * Using 1.1 snapshot version for OpenSearch ([#48](https://github.com/opensearch-project/job-scheduler/pull/48))
 * Use standard snapshot build settings and OpenSearch 1.x. ([#49](https://github.com/opensearch-project/job-scheduler/pull/49))
 
@@ -462,7 +462,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add themed logo to README ([#37](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/37))
 
 
-### OpenSearch Job Schedular
+### OpenSearch Job Scheduler
 * Add Getting Started to Readme ([#50](https://github.com/opensearch-project/job-scheduler/pull/50))
 
 
@@ -504,7 +504,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Provide host parameter in integtest.sh ([#73](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/73))
 
 
-### OpenSearch Job Schedular
+### OpenSearch Job Scheduler
 * Bumping job-scheduler to build with OpenSearch(main) 1.1.0 ([#44](https://github.com/opensearch-project/job-scheduler/pull/44))
 
 
