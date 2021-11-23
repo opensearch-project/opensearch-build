@@ -37,7 +37,7 @@ class BundleRecorder:
             build.architecture,
         ]
         if self.distribution == "rpm":
-            return "-".join(parts)
+            extension = ".rpm"
         elif self.distribution == "zip":
             extension = ".zip"
         else:
