@@ -68,6 +68,7 @@ https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/opensearch/man
                   buildAssembleUpload.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})
                   InputManifest.asBoolean()
                   InputManifest.getSHAsRoot(vars-build, linux, x64)
+                  buildAssembleUpload.withAWS({role=opensearch-bundle, roleAccount=account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                   buildAssembleUpload.buildManifest({dryRun=true, platform=linux, architecture=x64, manifest=manifests/2.0.0/opensearch-2.0.0.yml})
                      buildManifest.sh(echo ./build.sh manifests/2.0.0/opensearch-2.0.0.yml -p linux -a x64)
                   buildAssembleUpload.assembleManifest({dryRun=true, platform=linux, architecture=x64, manifest=tests/data/opensearch-build-1.1.0.yml})

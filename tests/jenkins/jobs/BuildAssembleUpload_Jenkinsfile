@@ -1,0 +1,29 @@
+pipeline {
+    agent none
+    stages {
+        stage('build and assemble, sha exists') {
+            steps {
+                script {
+                    buildAssembleUpload(
+                        dryRun: false, // will check whether SHA exists, which is stubbed to return true
+                        manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
+                        platform: 'linux',
+                        architecture: 'x64'
+                    )
+                }
+            }
+        }
+        stage('build and assemble, sha does not exist') {
+            steps {
+                script {
+                    buildAssembleUpload(
+                        dryRun: true, // will skip checking whether SHA exists or not
+                        manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
+                        platform: 'linux',
+                        architecture: 'x64'
+                    )
+                }
+            }
+        }
+    }
+}
