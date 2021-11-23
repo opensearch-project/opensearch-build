@@ -28,7 +28,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Anomaly Detection Dashboards
-* Support storing detector result to customr result index ([#110](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/110))
+* Support storing detector result to custom result index ([#110](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/110))
 * Support multi-category filtering of results ([#107](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/107))
 * Integrating Validation API On Detector Creation Process ([#106](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/106))
 
@@ -94,7 +94,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Anomaly Detection Dashboards
-* Add DCO Check Workflow ([#103](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/103))
 * Remove old copyright ([#118](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/118))
 * Search monitors using custom result index ([#125](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/125))
 * Search only custom result index on detector detail page ([#126](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/126))
@@ -338,6 +337,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Anomaly Detection Dashboards
+* Add DCO Check Workflow ([#103](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/103))
 * Bump version to 1.2 ([#114](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/114))
 * Fix e2e ([#116](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/116))
 
