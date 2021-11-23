@@ -25,7 +25,11 @@ def main():
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
-    output_dir = os.path.join(os.getcwd(), "dist")
+    output_dir = os.path.join(
+        os.getcwd(),
+        "dist",
+        "opensearch" if build.name == "OpenSearch" else "opensearch-dashboards"
+    )
     os.makedirs(output_dir, exist_ok=True)
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")

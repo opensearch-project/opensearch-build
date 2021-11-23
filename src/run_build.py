@@ -24,7 +24,6 @@ def main():
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
-    output_dir = os.path.join(os.getcwd(), "builds")
 
     if args.ref_manifest:
         manifest = manifest.stable(
@@ -42,6 +41,12 @@ def main():
             logging.info(f"Creating {args.ref_manifest}")
             manifest.to_file(args.ref_manifest)
         exit(0)
+
+    output_dir = os.path.join(
+        os.getcwd(),
+        "builds",
+        "opensearch" if manifest.build.name == "OpenSearch" else "opensearch-dashboards"
+    )
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
