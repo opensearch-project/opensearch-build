@@ -1,7 +1,5 @@
 # OpenSearch and Dashboards 1.2.0 Release Notes
 
-## Release Highlights
-
 ## Release Details
 
 OpenSearch and OpenSearch Dashboards 1.2.0 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
