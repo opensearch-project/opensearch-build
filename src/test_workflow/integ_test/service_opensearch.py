@@ -11,10 +11,8 @@ import tarfile
 import requests
 import yaml
 
-from paths.tree_walker import walk
 from system.process import Process
 from test_workflow.integ_test.service import Service
-from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class ServiceOpenSearch(Service):
@@ -75,22 +73,6 @@ class ServiceOpenSearch(Service):
         url = self.url("/_cluster/health")
         logging.info(f"Pinging {url}")
         return requests.get(url, verify=False, auth=("admin", "admin"))
-
-    def terminate(self):
-        if not self.process_handler.started:
-            logging.info("Local test cluster is not started")
-            return
-
-        self.return_code = self.process_handler.terminate()
-
-        self.__test_result_data()
-
-    def __test_result_data(self):
-        log_files = walk(os.path.join(self.install_dir, "logs"))
-        test_result_data = TestResultData(
-            self.component_name, self.component_test_config, self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
-        )
-        self.save_logs.save_test_result_data(test_result_data)
 
     def __add_plugin_specific_config(self, additional_config):
         with open(self.opensearch_yml_dir, "a") as yamlfile:

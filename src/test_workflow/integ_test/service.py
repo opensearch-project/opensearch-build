@@ -6,11 +6,14 @@
 
 import abc
 import logging
+import os
 import time
+from os import walk
 
 import requests
 
 from test_workflow.test_cluster import ClusterCreationException
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class Service(abc.ABC):
@@ -25,12 +28,21 @@ class Service(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod
     def terminate(self):
-        """
-        Terminate this service.
-        """
-        pass
+        if not self.process_handler.started:
+            logging.info("Process is not started")
+            return
+
+        self.return_code = self.process_handler.terminate()
+
+        self.__test_result_data()
+
+    def __test_result_data(self):
+        log_files = walk(os.path.join(self.install_dir, "logs"))
+        test_result_data = TestResultData(
+            self.component_name, self.component_test_config, self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
+        )
+        self.save_logs.save_test_result_data(test_result_data)
 
     @abc.abstractmethod
     def endpoint(self):
