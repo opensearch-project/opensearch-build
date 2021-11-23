@@ -55,7 +55,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_dump.return_value = mock_dump_result
 
         mock_bundle_tar = MagicMock()
-        mock_tarfile_open.return_value = mock_bundle_tar
+        mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
 
         # call test target function
         service.start()
