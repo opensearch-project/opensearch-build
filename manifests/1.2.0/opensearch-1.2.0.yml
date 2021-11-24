@@ -58,7 +58,7 @@ components:
     ref: "1.2"
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: "1.2"
+    ref: tags/1.2.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
