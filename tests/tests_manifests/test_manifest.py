@@ -73,6 +73,8 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(Manifest.compact({"x": "y", "z": []}), {"x": "y"})
         self.assertEqual(Manifest.compact({"x": "y", "z": None}), {"x": "y"})
         self.assertEqual(Manifest.compact({"x": "y", "z": {"t": None}}), {"x": "y"})
+        self.assertEqual(Manifest.compact({"x": True}), {"x": True})
+        self.assertEqual(Manifest.compact({"x": False}), {"x": False})
 
     def test_to_file(self):
         manifest_path = os.path.join(self.data_path, "min.yml")
@@ -124,3 +126,10 @@ class TestManifest(unittest.TestCase):
         manifest = TestManifest.SampleManifest.from_url("url")
         self.assertEqual(manifest.version, "3.14")
         mock_urlopen.assert_called_with("url")
+
+    def test_eq(self):
+        manifest_path = os.path.join(self.data_path, "min.yml")
+        manifest1 = TestManifest.SampleManifest.from_path(manifest_path)
+        manifest2 = TestManifest.SampleManifest.from_path(manifest_path)
+        self.assertEqual(manifest1, manifest1)
+        self.assertEqual(manifest1, manifest2)

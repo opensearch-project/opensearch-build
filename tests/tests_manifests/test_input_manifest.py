@@ -4,8 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import copy
 import os
 import unittest
+from unittest.mock import patch
 
 import yaml
 
@@ -78,7 +80,7 @@ class TestInputManifest(unittest.TestCase):
             opensearch_component.repository,
             "https://github.com/opensearch-project/OpenSearch.git",
         )
-        self.assertEqual(opensearch_component.ref, "1.2")
+        self.assertEqual(opensearch_component.ref, "tags/1.2.0")
         # components
         for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)
@@ -136,3 +138,45 @@ class TestInputManifest(unittest.TestCase):
         self.assertTrue(component.__matches__(focus=None))
         self.assertTrue(component.__matches__(focus="x"))
         self.assertFalse(component.__matches__(focus="y"))
+
+    @patch("subprocess.check_output")
+    def test_stable(self, mock_output):
+        mock_output.return_value.decode.return_value = "updated\tHEAD"
+        path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest = InputManifest.from_path(path).stable()
+        opensearch = manifest.components["OpenSearch"]
+        self.assertEqual(opensearch.ref, "updated")
+
+    @patch("subprocess.check_output")
+    def test_stable_override_build(self, mock_output):
+        mock_output.return_value.decode.return_value = "updated\tHEAD"
+        path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest = InputManifest.from_path(path).stable(platform="windows", architecture="arm64", snapshot=True)
+        self.assertEqual(manifest.build.platform, "windows")
+        self.assertEqual(manifest.build.architecture, "arm64")
+        self.assertTrue(manifest.build.snapshot)
+
+    def test_eq(self):
+        path = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")
+        manifest1 = InputManifest.from_path(path)
+        manifest2 = InputManifest.from_path(path)
+        self.assertEqual(manifest1, manifest1)
+        self.assertEqual(manifest1, manifest2)
+
+    def test_neq(self):
+        path1 = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")
+        path2 = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
+        manifest1 = InputManifest.from_path(path1)
+        manifest2 = InputManifest.from_path(path2)
+        self.assertNotEqual(manifest1, manifest2)
+
+    def test_neq_update(self):
+        path = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")
+        manifest1 = InputManifest.from_path(path)
+        manifest2 = copy.deepcopy(manifest1)
+        self.assertEqual(manifest1, manifest2)
+        manifest2.components["name"] = InputManifest.ComponentFromDist({
+            "name": "name",
+            "dist": "dist"
+        })
+        self.assertNotEqual(manifest1, manifest2)

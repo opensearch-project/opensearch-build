@@ -1,28 +1,22 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
 pipeline {
     agent none
     triggers {
-      parameterizedCron '''
-        H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
-        H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
-      '''
+        parameterizedCron '''
+            H */2 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml
+            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
+        '''
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
     }
     stages {
-        stage('parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: '',
-                                            name: 'INPUT_MANIFEST',
-                                            trim: true
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
-        stage('detect Docker image + args to use for the build') {
+        stage('detect docker image + args') {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -32,54 +26,38 @@ pipeline {
             }
             steps {
                 script { 
-                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    manifest = readYaml(file: "manifests/$INPUT_MANIFEST") 
-                    
-                    dockerImage = "${manifest.ci?.image?.name}" 
-                    // If the 'image' key is not present, it is populated with "null" string 
-                    if (dockerImage == null || dockerImage == "null") {
-                        error("The Docker image for the build is required but was not provided in the manifest")
-                    }
-
-                    dockerArgs = "${manifest.ci?.image?.args}" 
-                    // If the 'args' key is not present, it is populated with "null" string 
-                    if (dockerArgs == null || dockerArgs == "null") {
-                        dockerArgs = '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                    }
-
-                    echo "Using Docker image: " + dockerImage
-                    echo "Using Docker container args: " + dockerArgs
+                    dockerAgent = detectDockerAgent()
                 }
             }
         }
         stage('build') {
             parallel {
-                stage('build-snapshots') {
+                stage('build-snapshot') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                            sh "./build.sh manifests/$INPUT_MANIFEST --snapshot"
+                            buildManifest(
+                                snapshot: true
+                            )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/$ARTIFACT_PATH/maven')
+                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven')
                             }
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -87,21 +65,19 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            build()
+                            buildAssembleUpload()
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -109,96 +85,68 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image dockerImage
-                            // Unlike freestyle docker, pipeline docker does not login to the container and run commands
-                            // It use executes which does not source the docker container internal ENV VAR
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            build()
+                            buildAssembleUpload()
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
             }
-            post() {
-                success {
-                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                        publishNotification(":white_check_mark:", "Successful Build", "\n${getAllJenkinsMessages()}")
-                    }
-                }
-                failure {
-                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                        publishNotification(":warning:", "Failed Build", "")
+        }
+        stage('docker build') {
+            steps {
+                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    script {
+                        buildDockerImage()
                     }
                 }
             }
         }
     }
-}
+    post() {
+        success {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                    )
 
-void build() {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-
-    sh "./build.sh manifests/$INPUT_MANIFEST"
-    
-    script { manifest = readYaml(file: 'builds/manifest.yml') }
-    
-    def artifactPath = "${env.JOB_NAME}/${manifest.build.version}/${env.BUILD_NUMBER}/${manifest.build.platform}/${manifest.build.architecture}";
-    def BASE_URL = "${PUBLIC_ARTIFACT_URL}/${artifactPath}";
-
-    sh "./assemble.sh builds/manifest.yml --base-url ${BASE_URL}"
-    
-    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-        s3Upload(file: "dist", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
-    }
-
-    addJenkinsMessage("${BASE_URL}/builds/manifest.yml\n" +
-                      "${BASE_URL}/dist/manifest.yml")
-
-}
-
-/** Publishes a notification to a slack instance*/
-void publishNotification(icon, msg, extra) {
-    withCredentials([string(credentialsId: 'BUILD_NOTICE_WEBHOOK', variable: 'TOKEN')]) {
-        sh("""curl -XPOST --header "Content-Type: application/json" --data '{"result_text": "$icon ${env.JOB_NAME} [${env.BUILD_NUMBER}] $msg ${env.BUILD_URL}\nManifest: ${INPUT_MANIFEST} $extra"}' """ + "$TOKEN")
-    }
-}
-
-/** Add a message to the jenkins queue */
-void addJenkinsMessage(message) {
-    writeFile(file: "notifications/${STAGE_NAME}.msg", text: message)
-    stash(includes: "notifications/*" , name: "notifications-${STAGE_NAME}")
-}
-
-/** Load all message in the jenkins queue and append them with a leading newline into a mutli-line string */
-String getAllJenkinsMessages() {
-    script {
-        // Stages must be explicitly added to prevent overwriting
-        // See https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
-        def stages = ['build-x64', 'build-arm64']
-        for (stage in stages) {
-            unstash "notifications-${stage}"
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
         }
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                    )
 
-        def files = findFiles(excludes: '', glob: 'notifications/*')
-        def data = ""
-        for (file in files) {
-            data = data + "\n" + readFile (file: file.path)
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
         }
-
-        // Delete all the notifications from the workspace
-        dir('notifications') {
-            deleteDir()
-        }
-        return data
     }
 }

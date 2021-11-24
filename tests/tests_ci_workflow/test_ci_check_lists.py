@@ -14,11 +14,18 @@ from manifests.input_manifest import InputManifest
 
 class TestCiCheckLists(unittest.TestCase):
     def test_from_component_source(self):
-        check_list = CiCheckLists.from_component(InputManifest.ComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}), None)
+        check_list = CiCheckLists.from_component(InputManifest.ComponentFromSource({
+            "name": "common-utils",
+            "repository": "url",
+            "ref": "ref"
+        }), None)
         self.assertIs(type(check_list), CiCheckListSource)
 
     def test_from_component_dist(self):
-        check_list = CiCheckLists.from_component(InputManifest.ComponentFromDist({"name": "common-utils", "dist": "url"}), None)
+        check_list = CiCheckLists.from_component(InputManifest.ComponentFromDist({
+            "name": "common-utils",
+            "dist": "url"
+        }), None)
         self.assertIs(type(check_list), CiCheckListDist)
 
     def test_from_component_invalid(self):

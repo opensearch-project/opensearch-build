@@ -85,3 +85,19 @@ class TestGitRepositoryWithWorkingDir(unittest.TestCase):
             self.assertEqual(repo.working_directory, working_directory)
             self.assertTrue("ISSUE_TEMPLATE" in repo.output("pwd"))
         self.assertFalse(os.path.exists(repo.dir))
+
+
+class TestGitRepositoryClassMethods(unittest.TestCase):
+    @patch("subprocess.check_output")
+    def test_stable_ref(self, mock_output):
+        mock_output.return_value.decode.return_value = "sha\tHEAD"
+        ref, name = GitRepository.stable_ref("https://github.com/opensearch-project/OpenSearch", "sha")
+        self.assertEqual(ref, "sha")
+        self.assertEqual(name, "HEAD")
+
+    @patch("subprocess.check_output")
+    def test_stable_ref_none(self, mock_output):
+        mock_output.return_value.decode.return_value = ""
+        ref, name = GitRepository.stable_ref("https://github.com/opensearch-project/OpenSearch", "sha")
+        self.assertEqual(ref, "sha")
+        self.assertEqual(name, "sha")

@@ -6,15 +6,25 @@ Thumbs.db
 
 __pycache__
 .pytest_cache
+*.pyc
 
 .coverage
 coverage.xml
 
 .gradle/
 .settings/
+/build/
 out.txt
 
 /builds/
 /dist/
+/test-results/
 
 /.vscode/
+
+.project
+.classpath
+/bin/
+
+/manifests/**/*.yml.lock
+

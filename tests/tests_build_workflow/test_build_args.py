@@ -98,3 +98,11 @@ class TestBuildArgs(unittest.TestCase):
             BuildArgs().component_command("component"),
             f"{self.BUILD_SH} {self.OPENSEARCH_MANIFEST} --component component --snapshot",
         )
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--lock"])
+    def test_manifest_lock(self):
+        self.assertEqual(BuildArgs().ref_manifest, TestBuildArgs.OPENSEARCH_MANIFEST + ".lock")
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_manifest_no_lock(self):
+        self.assertIsNone(BuildArgs().ref_manifest)

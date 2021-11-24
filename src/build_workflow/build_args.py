@@ -27,6 +27,14 @@ class BuildArgs:
         parser = argparse.ArgumentParser(description="Build an OpenSearch Bundle")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
+            "-l",
+            "--lock",
+            dest="lock",
+            action="store_true",
+            default=False,
+            help="Generate a stable reference manifest."
+        )
+        parser.add_argument(
             "-s",
             "--snapshot",
             action="store_true",
@@ -55,6 +63,7 @@ class BuildArgs:
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.manifest = args.manifest
+        self.ref_manifest = args.manifest.name + ".lock" if args.lock else None
         self.snapshot = args.snapshot
         self.component = args.component
         self.keep = args.keep

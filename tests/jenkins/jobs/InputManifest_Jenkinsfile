@@ -1,0 +1,30 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+ 
+def lib = library("jenkins")
+
+pipeline {
+    agent none
+    stages {
+        stage('Input Manifest Properties') {
+            steps {
+                script {
+                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/1.2.0/opensearch-1.2.0.yml"))
+                    echo inputManifest.ci.image.name
+                    echo inputManifest.ci.image.args
+                    echo inputManifest.build.name
+                    echo inputManifest.build.version
+                    echo inputManifest.build.getFilename()
+                    echo inputManifest.build.getFilenameWithExtension('windows', 'x86')
+                    echo inputManifest.getPublicDistUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1', 'linux', 'x86')
+                    echo inputManifest.getSHAsRoot('bundle-build', 'linux', 'x86')
+                }
+            }
+        }
+    }
+}

@@ -27,11 +27,12 @@ function usage() {
     echo ""
     echo "Optional arguments:"
     echo -e "-t TARBALL\tSpecify a local opensearch or opensearch-dashboards tarball. You still need to specify the version - this tool does not attempt to parse the filename."
+    echo -e "-n NOTES\tSpecify Pipeline Notes of the run, defaults to None."
     echo -e "-h\t\tPrint this message."
     echo "--------------------------------------------------------------------------"
 }
 
-while getopts ":ht:v:f:p:a:" arg; do
+while getopts ":ht:n:v:f:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -39,6 +40,9 @@ while getopts ":ht:v:f:p:a:" arg; do
             ;;
         t)
             TARBALL=`realpath $OPTARG`
+            ;;
+        n)
+            NOTES=$OPTARG
             ;;
         v)
             VERSION=$OPTARG
@@ -85,6 +89,11 @@ then
     exit 1
 fi
 
+if [ -z "$NOTES" ]
+then
+    NOTES="None"
+fi
+
 # Create temp workdirectory
 DIR=`Temp_Folder_Create`
 Trap_File_Delete_No_Sigchld $DIR
@@ -109,6 +118,6 @@ else
 fi
 
 # Docker build
-docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
+docker build --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -f $DOCKERFILE $DIR -t opensearchproject/$PRODUCT:$VERSION
 docker tag opensearchproject/$PRODUCT:$VERSION opensearchproject/$PRODUCT:latest
 

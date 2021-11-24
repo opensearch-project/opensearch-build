@@ -41,10 +41,15 @@ export class Identities {
 
     props.buildBucket.grantRead(bundleRole, '*/builds/*');
     props.buildBucket.grantPut(bundleRole, '*/builds/*');
+
+    props.buildBucket.grantRead(bundleRole, '*/shas/*');
+    props.buildBucket.grantPut(bundleRole, '*/shas/*');
+
     props.buildBucket.grantPut(bundleRole, '*/dist/*');
 
     props.buildBucket.grantRead(testRole, '*/dist/*');
     props.buildBucket.grantPut(testRole, '*/dist/*/tests/*');
+    props.buildBucket.grantPut(testRole, '*/test-results/*');
   }
 
   private static roleFromName(stack: Stack, roleName: string): IRole {
