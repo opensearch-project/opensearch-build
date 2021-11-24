@@ -42,5 +42,5 @@ components:
   ref: "1.2.0.0"
 - name: anomalyDetectionDashboards
   repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-  ref: "1.2"
+  ref: tags/1.2.0.0
 schema-version: '1.0'
