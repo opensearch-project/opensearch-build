@@ -8,7 +8,7 @@ build:
   version: 1.2.0
 components:
 - name: OpenSearch-Dashboards
-  ref: "1.2"
+  ref: tags/1.2.0
   repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
 - name: alertingDashboards
   repository: https://github.com/opensearch-project/alerting-dashboards-plugin
