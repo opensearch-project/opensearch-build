@@ -36,13 +36,12 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        if self.distribution == "rpm":
-            extension = ".rpm"
-        elif self.distribution == "zip":
-            extension = ".zip"
-        else:
-            extension = ".tar.gz"
-        return "-".join(parts) + extension
+        EXTENSIONS = {
+            "rpm": ".rpm",
+            "zip": ".zip",
+            "tar": ".tar.gz",
+        }
+        return "-".join(parts) + EXTENSIONS[self.distribution]
 
     def __get_public_url_path(self, folder, rel_path):
         path = "/".join((folder, rel_path))
