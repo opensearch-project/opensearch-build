@@ -108,7 +108,7 @@ class DistRpm(Dist):
         systemed_entrypoint_path = real_archive_path + '/bin/systemd-entrypoint'
         os.makedirs(data_foler_path, exist_ok=True)
         shutil.copyfile("scripts/pkg/scripts/systemd-entrypoint", systemed_entrypoint_path)
-       
+        
         subprocess.run(
             [
                 "fpm",
@@ -138,11 +138,11 @@ class DistRpm(Dist):
                 pre_install_path,
                 "--before-remove",
                 pre_remove_path,
-                "--after-instal",
+                "--after-install",
                 post_install_path,
                 "--after-remove",
                 post_remove_path,
-                "--config-file",
+                "--config-files",
                 config_file_path,
                 "--template-value",
                 "product=" + product_name,
@@ -167,6 +167,6 @@ class DistRpm(Dist):
                 real_archive_path + "/=/usr/share/" + product_name + "/",
                 real_archive_path + "/config/=/etc/" + product_name + "/",
                 real_archive_path + "/data/=/var/lib" + product_name + "/",
-                scripts_path + "service_templates/" + product_name + "/systemd/etc/=/etc",
+                scripts_path + "/service_templates/" + product_name + "/systemd/etc/=/etc",
             ]
         )
