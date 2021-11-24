@@ -318,7 +318,7 @@ For example, build locally and run integration tests.
 Run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/manifest.yml and https://.../dist/manifest.yml
+./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 ##### Backwards Compatibility Tests

@@ -19,8 +19,8 @@ void call(Map args = [:]) {
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/manifest.yml",
-            "${baseUrl}/dist/manifest.yml"
+            "${baseUrl}/builds/opensearch/manifest.yml",
+            "${baseUrl}/dist/opensearch/manifest.yml"
         ].join('\n')
     )
 }
