@@ -1,7 +1,7 @@
 void call(Map args = [:]) {
     def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
-    def manifestFilename = args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/manifest.yml'
+    def manifestFilename = args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
@@ -19,8 +19,8 @@ void call(Map args = [:]) {
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/manifest.yml",
-            "${baseUrl}/dist/manifest.yml"
+            "${baseUrl}/builds/opensearch/manifest.yml",
+            "${baseUrl}/dist/opensearch/manifest.yml"
         ].join('\n')
     )
 }

@@ -213,7 +213,7 @@ A patch release contains output from previous versions mixed with new source cod
 #### Assemble the Bundle 
 
 ```bash
-./assemble.sh builds/manifest.yml
+./assemble.sh builds/opensearch/manifest.yml
 ```
 
 The bundling step takes output from the build step, installs plugins, and assembles a full bundle into a `dist` folder. The input requires a path to the build manifest and is expected to be inside the `builds` directory that contains `dist`, `maven`, `plugins` and `core-plugins` subdirectories from the build step.
@@ -241,7 +241,7 @@ You can perform cross-platform builds. For example, build and assemble a Windows
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plugin during assemble
 ./build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot --platform windows
-./assemble.sh builds/manifest.yml
+./assemble.sh builds/opensearch/manifest.yml
 ```
 
 This will produce `dist/opensearch-1.1.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
@@ -311,14 +311,14 @@ For example, build locally and run integration tests.
 
 ```bash
 ./build.sh manifests/1.2.0/opensearch-1.2.0.yml
-./assemble.sh builds/manifest.yml
-./test.sh integ-test . # looks for "./builds/manifest.yml" and "./dist/manifest.yml"
+./assemble.sh builds/opensearch/manifest.yml
+./test.sh integ-test . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
 ```
 
 Run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/manifest.yml and https://.../dist/manifest.yml
+./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 ##### Backwards Compatibility Tests
