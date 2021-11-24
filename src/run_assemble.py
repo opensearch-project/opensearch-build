@@ -15,6 +15,7 @@ from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
 from system import console
+from utils.args_utils import get_output_dir
 
 
 def main():
@@ -25,11 +26,9 @@ def main():
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
-    output_dir = os.path.join(
-        os.getcwd(),
-        "dist",
-        "opensearch" if build.name == "OpenSearch" else "opensearch-dashboards"
-    )
+
+    output_dir = get_output_dir("dist", build.name)
+
     os.makedirs(output_dir, exist_ok=True)
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")

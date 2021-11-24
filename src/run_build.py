@@ -18,6 +18,7 @@ from manifests.input_manifest import InputManifest
 from system import console
 from system.os import current_architecture, current_platform
 from system.temporary_directory import TemporaryDirectory
+from utils.args_utils import get_output_dir
 
 
 def main():
@@ -42,11 +43,7 @@ def main():
             manifest.to_file(args.ref_manifest)
         exit(0)
 
-    output_dir = os.path.join(
-        os.getcwd(),
-        "builds",
-        "opensearch" if manifest.build.name == "OpenSearch" else "opensearch-dashboards"
-    )
+    output_dir = get_output_dir("builds", manifest.build.name)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
