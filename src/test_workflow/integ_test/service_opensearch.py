@@ -11,34 +11,24 @@ import tarfile
 import requests
 import yaml
 
-from system.process import Process
 from test_workflow.integ_test.service import Service
 
 
 class ServiceOpenSearch(Service):
     def __init__(
         self,
-        manifest,
-        component_name,
-        component_test_config,
-        additional_cluster_config,
+        version,
+        additional_config,
         security_enabled,
         dependency_installer,
-        save_logs,
         work_dir
     ):
-        self.manifest = manifest
-        self.component_name = component_name
-        self.component_test_config = component_test_config
+        super().__init__(work_dir, version, security_enabled, additional_config, dependency_installer)
 
-        self.additional_cluster_config = additional_cluster_config
-        self.security_enabled = security_enabled
+        self.additional_config = additional_config
         self.dependency_installer = dependency_installer
-        self.save_logs = save_logs
-        self.work_dir = work_dir
 
-        self.install_dir = os.path.join(self.work_dir, f"opensearch-{self.manifest.build.version}")
-        self.process_handler = Process()
+        self.install_dir = os.path.join(self.work_dir, f"opensearch-{self.version}")
 
     def start(self):
         self.__download()
@@ -48,8 +38,8 @@ class ServiceOpenSearch(Service):
         if not self.security_enabled:
             self.__add_plugin_specific_config({"plugins.security.disabled": "true"})
 
-        if self.additional_cluster_config:
-            self.__add_plugin_specific_config(self.additional_cluster_config)
+        if self.additional_config:
+            self.__add_plugin_specific_config(self.additional_config)
 
         self.process_handler.start("./opensearch-tar-install.sh", self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
@@ -77,9 +67,6 @@ class ServiceOpenSearch(Service):
     def __add_plugin_specific_config(self, additional_config):
         with open(self.opensearch_yml_dir, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
-
-    def endpoint(self):
-        return "localhost"
 
     def port(self):
         return 9200
