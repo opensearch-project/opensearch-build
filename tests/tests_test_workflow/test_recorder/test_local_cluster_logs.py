@@ -18,8 +18,6 @@ class LocalClusterLogsTests(unittest.TestCase):
     @patch("shutil.copyfile")
     def test(self, mock_copyfile):
 
-        logging.info(locals())
-
         mock_parent_class = MagicMock()
 
         mock_parent_class._create_base_folder_structure.return_value = "test_base"
