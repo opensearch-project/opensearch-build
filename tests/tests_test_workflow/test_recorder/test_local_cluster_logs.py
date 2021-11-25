@@ -5,7 +5,6 @@
 # compatible open source license.
 
 
-import logging
 import os
 import unittest
 from unittest.mock import MagicMock, call, patch
