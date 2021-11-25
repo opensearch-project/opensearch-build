@@ -32,7 +32,7 @@ class LocalTestClusterTests(unittest.TestCase):
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
         mock_manifest = MagicMock()
-        mock_manifest.build.name = "1.1.0"
+        mock_manifest.build.version = "1.1.0"
 
         cluster = LocalTestCluster(
             self.dependency_installer,
