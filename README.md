@@ -54,7 +54,7 @@ Plugin owners can follow the [Onboarding Process](ONBOARDING.md) to onboard thei
 
 ### Building and Testing an OpenSearch Distribution
 
-The bundle workflow builds a complete OpenSearch and OpenSearch Dashboards distribution from source. You can currently build 1.0, 1.1 and 1.1-SNAPSHOT versions.
+The bundle workflow builds a complete OpenSearch and OpenSearch Dashboards distribution from source. You can currently build 1.0, 1.1, 1.1-SNAPSHOT and 1.2 versions.
 
 #### How it works
 
@@ -118,7 +118,7 @@ We build, assemble, and test our artifacts on docker containers. All of our pipe
 The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
 
 ```bash
-./checkout.sh manfiests/1.1.0/opensearch-1.1.0.yml
+./checkout.sh manfiests/1.2.0/opensearch-1.2.0.yml
 ```
 
 The following options are available.
@@ -142,16 +142,16 @@ Each build requires a manifest to be passed as input. We currently have the foll
 | [opensearch-2.0.0.yml](/manifests/2.0.0/opensearch-2.0.0.yml)                        | Manifest for 2.0.0, the next major version of OpenSearch.      |
 | [opensearch-dashboards-1.1.0.yml](/manifests/1.1.0/opensearch-dashboards-1.1.0.yml)  | Manifest for 1.1.0, the next version of OpenSearch Dashboards. |    
 
-The following example builds a snapshot version of OpenSearch 1.1.0.
+The following example builds a snapshot version of OpenSearch 1.2.0.
 
 ```bash
-./build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
+./build.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
 ```
 
-While the following builds a snapshot version of OpenSearch-Dashboards 1.1.0.
+While the following builds a snapshot version of OpenSearch-Dashboards 1.2.0.
 
 ```bash
-./build.sh manifests/1.1.0/opensearch-dashboards-1.1.0.yml --snapshot
+./build.sh manifests/1.2.0/opensearch-dashboards-1.2.0.yml --snapshot
 ```
 
 The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. 
@@ -190,10 +190,10 @@ Each component build relies on a `build.sh` script that is used to prepare bundl
 Builds can automatically generate a `manifest.lock` file with stable git references (commit IDs) and build options (platform, architecture and snapshot) by specifying `--lock`. The output can then be reused as input manifest after checking against a collection of prior builds.
 
 ```bash
-MANIFEST=manifests/1.1.0/opensearch-1.1.0.yml
+MANIFEST=manifests/1.2.0/opensearch-1.2.0.yml
 SHAS=shas
 
-./build.sh --lock $MANIFEST # generates opensearch-1.1.0.yml.lock
+./build.sh --lock $MANIFEST # generates opensearch-1.2.0.yml.lock
 
 MANIFEST_SHA=$(sha1sum $MANIFEST.lock | cut -f1 -d' ') # generate a checksum of the stable manifest
 
@@ -240,11 +240,11 @@ You can perform cross-platform builds. For example, build and assemble a Windows
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plugin during assemble
-./build.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot --platform windows
+./build.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot --platform windows
 ./assemble.sh builds/opensearch/manifest.yml
 ```
 
-This will produce `dist/opensearch-1.1.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
+This will produce `dist/opensearch-1.2.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
 
 ##### Custom Install Scripts
 
@@ -360,10 +360,10 @@ The following checks are available.
 | gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch.        |
 | gradle:publish                                | Check that publishing to Maven local works, and publish.      |
 
-The following example sanity-checks components in the the OpenSearch 1.1.0 manifest.
+The following example sanity-checks components in the the OpenSearch 1.2.0 manifest.
 
 ```bash
-./ci.sh manifests/1.1.0/opensearch-1.1.0.yml --snapshot
+./ci.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
 ```
 
 The following options are available.
