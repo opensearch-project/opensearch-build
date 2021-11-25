@@ -25,7 +25,6 @@ class ServiceOpenSearch(Service):
     ):
         super().__init__(work_dir, version, security_enabled, additional_config, dependency_installer)
 
-        self.additional_config = additional_config
         self.dependency_installer = dependency_installer
 
         self.install_dir = os.path.join(self.work_dir, f"opensearch-{self.version}")

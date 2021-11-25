@@ -96,7 +96,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file_hanlder_for_additional_config = mock_open().return_value
 
         # open() will be called twice, one for disabling security, second for additional_config
-        mock_file.side_effect = [mock_file_hanlder_for_security, mock_file_hanlder_for_additional_config]\
+        mock_file.side_effect = [mock_file_hanlder_for_security, mock_file_hanlder_for_additional_config]
 
         # call test target function
         service.start()
