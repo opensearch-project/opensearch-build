@@ -41,7 +41,7 @@ class LocalTestCluster(TestCluster):
 
     def create_cluster(self):
         self.service_opensearch = ServiceOpenSearch(
-            self.manifest.build.name,
+            self.manifest.build.version,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,
