@@ -12,14 +12,23 @@ from os import walk
 
 import requests
 
+from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException
-from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class Service(abc.ABC):
     """
     Abstract base class for all types of test clusters.
     """
+
+    def __init__(self, work_dir, version, security_enabled, additional_config, dependency_installer):
+        self.work_dir = work_dir
+        self.version = version
+        self.security_enabled = security_enabled
+        self.additional_config = additional_config
+        self.dependency_installer = dependency_installer
+
+        self.process_handler = Process()
 
     @abc.abstractmethod
     def start(self):
@@ -35,21 +44,12 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
-        self.__test_result_data()
-
-    def __test_result_data(self):
         log_files = walk(os.path.join(self.install_dir, "logs"))
-        test_result_data = TestResultData(
-            self.component_name, self.component_test_config, self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
-        )
-        self.save_logs.save_test_result_data(test_result_data)
 
-    @abc.abstractmethod
+        return self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
+
     def endpoint(self):
-        """
-        Get the endpoint that this service is listening on, e.g. 'localhost' or 'some.ip.address'.
-        """
-        pass
+        return "localhost"
 
     @abc.abstractmethod
     def port(self):

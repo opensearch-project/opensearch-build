@@ -9,6 +9,7 @@ import os
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.test_cluster import ClusterServiceNotInitializedException, TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class LocalTestCluster(TestCluster):
@@ -40,13 +41,10 @@ class LocalTestCluster(TestCluster):
 
     def create_cluster(self):
         self.service_opensearch = ServiceOpenSearch(
-            self.manifest,
-            self.component_name,
-            self.component_test_config,
+            self.manifest.build.version,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,
-            self.save_logs,
             self.work_dir)
 
         self.service_opensearch.start()
@@ -62,4 +60,12 @@ class LocalTestCluster(TestCluster):
         if not self.service_opensearch:
             raise ClusterServiceNotInitializedException()
 
-        self.service_opensearch.terminate()
+        self.return_code, self.stdout_data, self.stderr_data, self.log_files = self.service_opensearch.terminate()
+
+        self.__save_test_result_data()
+
+    def __save_test_result_data(self):
+        test_result_data = TestResultData(
+            self.component_name, self.component_test_config, self.return_code, self.stdout_data, self.stderr_data, self.log_files
+        )
+        self.save_logs.save_test_result_data(test_result_data)
