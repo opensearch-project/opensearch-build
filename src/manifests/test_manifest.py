@@ -62,6 +62,7 @@ class TestManifest(ComponentManifest):
 
     def __init__(self, data):
         super().__init__(data)
+        self.name = str(data["name"])
 
     def __to_dict__(self):
         return {
