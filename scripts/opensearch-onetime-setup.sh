@@ -33,8 +33,11 @@ fi
 
 ##Perf Plugin
 PA_PLUGIN="opensearch-performance-analyzer"
-chmod 755 $OPENSEARCH_HOME/plugins/$PA_PLUGIN/pa_bin/performance-analyzer-agent
-chmod 755 $OPENSEARCH_HOME/bin/performance-analyzer-agent-cli
+
+if [ -d $OPENSEARCH_HOME/plugins/$PA_PLUGIN ]; then
+    chmod 755 $OPENSEARCH_HOME/plugins/$PA_PLUGIN/pa_bin/performance-analyzer-agent
+    chmod 755 $OPENSEARCH_HOME/bin/performance-analyzer-agent-cli
+fi
 
 if ! grep -q '## OpenDistro Performance Analyzer' $OPENSEARCH_HOME/config/jvm.options; then
    CLK_TCK=`/usr/bin/getconf CLK_TCK`

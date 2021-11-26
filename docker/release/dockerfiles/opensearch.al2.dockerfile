@@ -30,13 +30,17 @@ RUN groupadd -g $GID opensearch && \
     mkdir /tmp/opensearch
 
 # Prepare working directory
+
+ARG SECURITY_PLUGIN_DIR=$OPENSEARCH_HOME/plugins/opensearch-security
+ARG PERFORMANCE_ANALYZER_PLUGIN_DIR=$OPENSEARCH_HOME/plugins/opensearch-performance-analyzer
+
 COPY opensearch-*.tgz /tmp/opensearch/
 RUN tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && rm -rf /tmp/opensearch && \
-    chmod 750 $OPENSEARCH_HOME/plugins/opensearch-security/tools/* && \
     mkdir -p $OPENSEARCH_HOME/data && chown -R $UID:$GID $OPENSEARCH_HOME/data
+RUN if [[ -d $SECURITY_PLUGIN_DIR ]] ; then chmod 750 $SECURITY_PLUGIN_DIR/tools/* ; fi
 COPY opensearch-docker-entrypoint.sh opensearch-onetime-setup.sh $OPENSEARCH_HOME/
 COPY log4j2.properties opensearch.yml $OPENSEARCH_HOME/config/
-COPY performance-analyzer.properties $OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/
+RUN if [[ -d $PERFORMANCE_ANALYZER_PLUGIN_DIR ]] ; then cp performance-analyzer.properties $PERFORMANCE_ANALYZER_PLUGIN_DIR/pa_config/; fi
 
 
 ########################### Stage 1 ########################
@@ -89,14 +93,14 @@ ARG NOTES
 
 # Label
 LABEL org.label-schema.schema-version="1.0" \
-  org.label-schema.name="opensearch" \
-  org.label-schema.version="$VERSION" \
-  org.label-schema.url="https://opensearch.org" \
-  org.label-schema.vcs-url="https://github.com/OpenSearch" \
-  org.label-schema.license="Apache-2.0" \
-  org.label-schema.vendor="OpenSearch" \
-  org.label-schema.description="$NOTES" \
-  org.label-schema.build-date="$BUILD_DATE"
+    org.label-schema.name="opensearch" \
+    org.label-schema.version="$VERSION" \
+    org.label-schema.url="https://opensearch.org" \
+    org.label-schema.vcs-url="https://github.com/OpenSearch" \
+    org.label-schema.license="Apache-2.0" \
+    org.label-schema.vendor="OpenSearch" \
+    org.label-schema.description="$NOTES" \
+    org.label-schema.build-date="$BUILD_DATE"
 
 # CMD to run
 CMD ["./opensearch-docker-entrypoint.sh"]
