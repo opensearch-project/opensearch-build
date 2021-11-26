@@ -101,6 +101,7 @@ class Manifest(ABC):
     def __init__(self, data):
         self.validate(data)
         self.version = str(data["schema-version"])
+        self.name = str(data["name"]) if "name" in data else ""
 
     @property
     def schema(self):

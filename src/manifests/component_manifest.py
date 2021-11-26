@@ -15,6 +15,9 @@ class ComponentManifest(Manifest):
         "schema-version": {
             "required": True, "type": "string", "allowed": ["1.0"]
         },
+        "name": {
+            "type": "string"
+        },
         "components": {
             "type": "list"
         }
@@ -22,12 +25,12 @@ class ComponentManifest(Manifest):
 
     def __init__(self, data):
         super().__init__(data)
-
         self.components = self.Components(data.get("components", []))
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
+            "name": self.name,
             "components": self.components.__to_dict__()
         }
 
