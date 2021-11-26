@@ -35,10 +35,10 @@
                      uploadArtifacts.echo(s3Upload(file: 'dist', bucket: artifact-bucket, path: vars-build/1.1.0/33/linux/x64/dist))
                   BuildManifest.getArtifactRootUrl(https://ci.opensearch.org/dbc/, vars-build, 33)
                   Messages.asBoolean()
-                  Messages.add(stage, https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/manifest.yml
-https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml)
-                     uploadArtifacts.writeFile({file=messages/stage.msg, text=https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/manifest.yml
-https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml})
+                  Messages.add(stage, https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/opensearch/manifest.yml
+https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/opensearch/manifest.yml)
+                     uploadArtifacts.writeFile({file=messages/stage.msg, text=https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/opensearch/manifest.yml
+https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/opensearch/manifest.yml})
                      uploadArtifacts.stash({includes=messages/*, name=messages-stage})
                Vars_Jenkinsfile.uploadTestResults({dryRun=true, manifest=tests/data/opensearch-build-1.1.0.yml, jobName=vars-build, buildNumber=33})
                   uploadTestResults.legacySCM(groovy.lang.Closure)
@@ -89,10 +89,10 @@ https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml})
                         uploadArtifacts.echo(s3Upload(file: 'dist', bucket: artifact-bucket, path: vars-build/1.1.0/33/linux/x64/dist))
                      BuildManifest.getArtifactRootUrl(https://ci.opensearch.org/dbc/, vars-build, 33)
                      Messages.asBoolean()
-                     Messages.add(stage, https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/manifest.yml
-https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml)
-                        uploadArtifacts.writeFile({file=messages/stage.msg, text=https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/manifest.yml
-https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/manifest.yml})
+                     Messages.add(stage, https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/opensearch/manifest.yml
+https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/opensearch/manifest.yml)
+                        uploadArtifacts.writeFile({file=messages/stage.msg, text=https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/builds/opensearch/manifest.yml
+https://ci.opensearch.org/dbc//vars-build/1.1.0/33/linux/x64/dist/opensearch/manifest.yml})
                         uploadArtifacts.stash({includes=messages/*, name=messages-stage})
                   buildAssembleUpload.withAWS({role=opensearch-bundle, roleAccount=account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      buildAssembleUpload.echo(s3Upload(bucket: artifact-bucket, file: manifests/2.0.0/opensearch-2.0.0.yml, path: vars-build/2.0.0/shas/linux/x64/sha1.yml))

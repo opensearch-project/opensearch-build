@@ -24,7 +24,7 @@ void call(Map args = [:]) {
 
     assembleManifest(
         args + [
-            manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/manifest.yml'
+            manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
         ]
     )
 
