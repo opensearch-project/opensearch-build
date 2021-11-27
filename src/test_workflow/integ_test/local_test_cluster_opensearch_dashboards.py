@@ -4,14 +4,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
-import os
-
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
-from test_workflow.test_cluster import ClusterServiceNotInitializedException, TestCluster
+from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class LocalTestClusterOpenSearchDashboards(TestCluster):
@@ -43,7 +39,6 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
         self.manifest_opensearch = bundle_manifest_opensearch
         self.manifest_opensearch_dashboards = bundle_manifest_opensearch_dashboards
 
-        self.additional_cluster_config = additional_cluster_config
         self.dependency_installer = dependency_installer
 
         self.service_opensearch = ServiceOpenSearch(
@@ -67,9 +62,12 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
     def port(self):
         return 5601
 
-    def services(self):
-        # Put the target service as the first element so that the test result will be correctly constructed in save_test_result_data().
+    def service(self):
         return [
             self.service_opensearch_dashboards,
-            self. service_opensearch,
+        ]
+
+    def dependencies(self):
+        return [
+            self.service_opensearch,
         ]

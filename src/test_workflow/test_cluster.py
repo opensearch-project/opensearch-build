@@ -32,6 +32,8 @@ class TestCluster(abc.ABC):
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = save_logs
 
+        self.all_services = [self.service] + self.dependencies
+
     @classmethod
     @contextmanager
     def create(cls, *args):
@@ -46,19 +48,19 @@ class TestCluster(abc.ABC):
         finally:
             cluster.destroy()
 
-    def start():
+    def start(self):
         os.makedirs(self.work_dir, exist_ok=True)
 
-        for service in self.services:
+        for service in self.all_services:
             service.start()
 
-        for service in self.services:
+        for service in self.all_services:
             service.wait_for_service()
 
     def terminate(self):
         self.termination_results = []
 
-        for service in self.services:
+        for service in self.all_services:
             self.termination_results.append(service.terminate())
 
         self.__save_test_result_data()
@@ -83,9 +85,16 @@ class TestCluster(abc.ABC):
         pass
 
     @abc.abstractproperty
-    def services(self):
+    def service(self):
         """
-        The services running in this cluster.
+        The main service running in this cluster.
+        """
+        pass
+
+    @abc.abstractproperty
+    def dependencies(self):
+        """
+        The dependencies running in this cluster.
         """
         pass
 
