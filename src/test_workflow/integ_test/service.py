@@ -69,7 +69,7 @@ class Service(abc.ABC):
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
-        if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
+        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
             logging.info("Service is available")
             return True
         else:
