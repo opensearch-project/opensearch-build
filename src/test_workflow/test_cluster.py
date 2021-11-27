@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import abc
-import logging
 import os
 from contextlib import contextmanager
 
@@ -54,8 +53,6 @@ class TestCluster(abc.ABC):
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.all_services = [self.service] + self.dependencies
-
-        logging.info(f"self.all_services is {self.all_services}")
 
         for service in self.all_services:
             service.start()

@@ -12,7 +12,6 @@ class PerfTestCluster(TestCluster):
     """
 
     def __init__(self, bundle_manifest, config, stack_name, security, current_workspace):
-
         self.manifest = bundle_manifest
         self.work_dir = os.path.join("opensearch-cluster", "cdk", "single-node")
         self.current_workspace = current_workspace

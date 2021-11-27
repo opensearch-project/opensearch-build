@@ -5,8 +5,6 @@
 # compatible open source license.
 
 
-import logging
-
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
@@ -47,8 +45,6 @@ class LocalTestCluster(TestCluster):
             self.dependency_installer,
             self.work_dir
         )
-
-        logging.info(f"self.service_opensearch is {self.service_opensearch}")
 
     @property
     def service(self):
