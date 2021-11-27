@@ -336,7 +336,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_response = MagicMock()
 
         mock_response.status_code = 200
-        mock_response.text = '"status": "green"'
+        mock_response.text = '"status":"green"'
 
         mock_get_service_response.return_value = mock_response
 
@@ -355,11 +355,30 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_response = MagicMock()
 
         mock_response.status_code = 200
-        mock_response.text = '"status": "yellow"'
+        mock_response.text = '"status":"yellow"'
 
         mock_get_service_response.return_value = mock_response
 
         self.assertTrue(service.service_alive())
+
+    @patch.object(ServiceOpenSearch, "get_service_response")
+    def test_service_alive_red_unavailable(self, mock_get_service_response):
+        service = ServiceOpenSearch(
+            self.version,
+            self.additional_config,
+            True,
+            self.dependency_installer,
+            self.work_dir
+        )
+
+        mock_response = MagicMock()
+
+        mock_response.status_code = 200
+        mock_response.text = '"status":"red"'
+
+        mock_get_service_response.return_value = mock_response
+
+        self.assertFalse(service.service_alive())        
 
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_unavailable(self, mock_get_service_response):
