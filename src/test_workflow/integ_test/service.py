@@ -29,6 +29,7 @@ class Service(abc.ABC):
         self.dependency_installer = dependency_installer
 
         self.process_handler = Process()
+        self.install_dir = ""
 
     @abc.abstractmethod
     def start(self):
@@ -46,7 +47,7 @@ class Service(abc.ABC):
 
         log_files = walk(os.path.join(self.install_dir, "logs"))
 
-        return self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files
+        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
 
     def endpoint(self):
         return "localhost"
@@ -92,3 +93,11 @@ class Service(abc.ABC):
 
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
+
+
+class ServiceTerminationResult:
+    def __init__(self, return_code, stdout_data, stderr_data, log_files):
+        self.return_code = return_code
+        self.stdout_data = stdout_data
+        self.stderr_data = stderr_data
+        self.log_files = log_files

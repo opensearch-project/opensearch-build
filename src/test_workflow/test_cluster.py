@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import abc
+import logging
 import os
 from contextlib import contextmanager
 
@@ -32,7 +33,8 @@ class TestCluster(abc.ABC):
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = save_logs
 
-        self.all_services = [self.service] + self.dependencies
+        self.all_services = []
+        self.termination_result = None
 
     @classmethod
     @contextmanager
@@ -51,6 +53,10 @@ class TestCluster(abc.ABC):
     def start(self):
         os.makedirs(self.work_dir, exist_ok=True)
 
+        self.all_services = [self.service] + self.dependencies
+
+        logging.info(f"self.all_services is {self.all_services}")
+
         for service in self.all_services:
             service.start()
 
@@ -58,18 +64,26 @@ class TestCluster(abc.ABC):
             service.wait_for_service()
 
     def terminate(self):
-        self.termination_results = []
+        if self.service:
+            self.termination_result = self.service.terminate()
 
-        for service in self.all_services:
-            self.termination_results.append(service.terminate())
+        for service in self.dependencies:
+            service.terminate()
+
+        if not self.termination_result:
+            raise ClusterServiceNotInitializedException()
 
         self.__save_test_result_data()
 
     def __save_test_result_data(self):
-        result = self.termination_results[0]
 
         test_result_data = TestResultData(
-            self.component_name, self.component_test_config, result.return_code, result.stdout_data, result.stderr_data, result.log_files
+            self.component_name,
+            self.component_test_config,
+            self.termination_result.return_code,
+            self.termination_result.stdout_data,
+            self.termination_result.stderr_data,
+            self.termination_result.log_files
         )
 
         self.save_logs.save_test_result_data(test_result_data)
@@ -112,6 +126,5 @@ class ClusterServiceNotInitializedException(Exception):
     Indicates that the service running in the cluster is not initialized.
     """
 
-    def __init__(self, message):
-        self.message = message
-        super().__init__(message)
+    def __init__(self):
+        super().__init__("Service is not initialized")

@@ -5,6 +5,8 @@
 # compatible open source license.
 
 
+import logging
+
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
@@ -46,13 +48,18 @@ class LocalTestCluster(TestCluster):
             self.work_dir
         )
 
-    def service(self):
-        return [
-            self.service_opensearch,
-        ]
+        logging.info(f"self.service_opensearch is {self.service_opensearch}")
 
+    @property
+    def service(self):
+        return self.service_opensearch
+
+    @property
     def dependencies(self):
         return []
+
+    def endpoint(self):
+        return "localhost"
 
     def port(self):
         return 9200

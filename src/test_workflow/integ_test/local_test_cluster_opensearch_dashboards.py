@@ -17,7 +17,8 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
 
     def __init__(
         self,
-        dependency_installer,
+        dependency_installer_opensearch,
+        dependency_installer_opensearch_dashboards,
         work_dir,
         component_name,
         additional_cluster_config,
@@ -39,13 +40,14 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
         self.manifest_opensearch = bundle_manifest_opensearch
         self.manifest_opensearch_dashboards = bundle_manifest_opensearch_dashboards
 
-        self.dependency_installer = dependency_installer
+        self.dependency_installer_opensearch = dependency_installer_opensearch
+        self.dependency_installer_opensearch_dashboards = dependency_installer_opensearch_dashboards
 
         self.service_opensearch = ServiceOpenSearch(
             self.manifest_opensearch.build.version,
             {},
             self.security_enabled,
-            self.dependency_installer,
+            self.dependency_installer_opensearch,
             self.work_dir)
 
         build = self.manifest_opensearch_dashboards.build
@@ -56,18 +58,21 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
             build.architecture,
             self.additional_cluster_config,
             self.security_enabled,
-            self.dependency_installer,
+            self.dependency_installer_opensearch_dashboards,
             self.work_dir)
+
+    def endpoint(self):
+        return "localhost"
 
     def port(self):
         return 5601
 
+    @property
     def service(self):
-        return [
-            self.service_opensearch_dashboards,
-        ]
+        return self.service_opensearch_dashboards
 
+    @property
     def dependencies(self):
         return [
-            self.service_opensearch,
+            self.service_opensearch
         ]
