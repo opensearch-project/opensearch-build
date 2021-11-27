@@ -94,7 +94,7 @@ class DependencyInstallerTests(unittest.TestCase):
         mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
         mock_request.assert_not_called()
         mock_copyfile.assert_called_once_with(
-            os.path.join(self.DATA, "builds", "plugins", "opensearch-job-scheduler-1.1.0.0.zip"),
+            os.path.join(self.DATA, "builds", "opensearch", "plugins", "opensearch-job-scheduler-1.1.0.0.zip"),
             os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
         )
 
@@ -110,6 +110,6 @@ class DependencyInstallerTests(unittest.TestCase):
         mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
         mock_copyfile.assert_not_called()
         mock_request.assert_called_once_with(
-            "https://ci.opensearch.org/x/y/builds/plugins/opensearch-job-scheduler-1.1.0.0.zip",
+            "https://ci.opensearch.org/x/y/builds/opensearch/plugins/opensearch-job-scheduler-1.1.0.0.zip",
             os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
         )
