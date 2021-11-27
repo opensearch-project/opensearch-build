@@ -9,13 +9,17 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
+from test_workflow.integ_test.service import ServiceTerminationResult
 from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 
 class LocalTestClusterTests(unittest.TestCase):
 
     def setUp(self):
-        self.manifest = ""
+        mock_manifest = MagicMock()
+        mock_manifest.build.version = "1.1.0"
+        self.manifest = mock_manifest
+
         self.work_dir = "test_work_dir"
 
         self.component_name = "sql"
@@ -27,28 +31,26 @@ class LocalTestClusterTests(unittest.TestCase):
         self.test_recorder = ""
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_create_cluster(self, mock_service):
+    def test_start(self, mock_service):
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
-        mock_manifest = MagicMock()
-        mock_manifest.build.version = "1.1.0"
+
+        mock_service_object = MagicMock()
+        mock_service.return_value = mock_service_object
 
         cluster = LocalTestCluster(
             self.dependency_installer,
             self.work_dir,
             self.component_name,
             self.additional_cluster_config,
-            mock_manifest,
+            self.manifest,
             self.security_enabled,
             self.component_test_config,
             mock_test_recorder
         )
 
-        mock_service_object = MagicMock()
-        mock_service.return_value = mock_service_object
-
-        cluster.create_cluster()
+        cluster.start()
 
         mock_service.assert_called_once_with(
             "1.1.0",
@@ -61,11 +63,15 @@ class LocalTestClusterTests(unittest.TestCase):
         mock_service_object.start.assert_called_once()
         mock_service_object.wait_for_service.assert_called_once()
 
-    @patch("test_workflow.integ_test.local_test_cluster.TestResultData")
-    def test_destroy(self, mock_test_result_data):
+    @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
+    @patch("test_workflow.test_cluster.TestResultData")
+    def test_terminate(self, mock_test_result_data, mock_service):
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
+
+        mock_service_object = MagicMock()
+        mock_service.return_value = mock_service_object
 
         cluster = LocalTestCluster(
             self.dependency_installer,
@@ -77,17 +83,15 @@ class LocalTestClusterTests(unittest.TestCase):
             self.component_test_config,
             mock_test_recorder
         )
-        mock_service_object = MagicMock()
-        cluster.service_opensearch = mock_service_object
 
         mock_log_files = MagicMock()
 
-        mock_service_object.terminate.return_value = (123, "test stdout_data", "test stderr_data", mock_log_files)
+        mock_service_object.terminate.return_value = ServiceTerminationResult(123, "test stdout_data", "test stderr_data", mock_log_files)
 
         mock_test_result_data_object = MagicMock()
         mock_test_result_data.return_value = mock_test_result_data_object
 
-        cluster.destroy()
+        cluster.terminate()
 
         mock_service_object.terminate.assert_called_once()
 
@@ -103,10 +107,12 @@ class LocalTestClusterTests(unittest.TestCase):
         mock_local_cluster_logs.save_test_result_data.assert_called_once_with(mock_test_result_data_object)
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_destroy_service_not_initialized(self, mock_service):
+    def test_terminate_service_not_initialized(self, mock_service):
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
+
+        mock_service.return_value = None
 
         cluster = LocalTestCluster(
             self.dependency_installer,
@@ -120,15 +126,18 @@ class LocalTestClusterTests(unittest.TestCase):
         )
 
         with self.assertRaises(ClusterServiceNotInitializedException) as ctx:
-            cluster.destroy()
+            cluster.terminate()
 
         self.assertEqual(str(ctx.exception), "Service is not initialized")
-        mock_service.terminate.assert_not_called()
 
-    def test_endpoint_port(self):
+    @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
+    def test_endpoint_port(self, mock_service):
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
+
+        mock_service_object = MagicMock()
+        mock_service.return_value = mock_service_object
 
         cluster = LocalTestCluster(
             self.dependency_installer,

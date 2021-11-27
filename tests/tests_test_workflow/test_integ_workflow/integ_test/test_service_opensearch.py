@@ -134,15 +134,15 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_log_files = MagicMock()
         mock_walk.return_value = mock_log_files
 
-        actual_return_code, actual_stdout_data, actual_stderr_data, actual_log_files = service.terminate()
+        termination_result = service.terminate()
 
         mock_process_terminate.assert_called_once()
         mock_walk.assert_called_once()
 
-        self.assertEqual(actual_return_code, 123)
-        self.assertEqual(actual_stdout_data, "test stdout_data")
-        self.assertEqual(actual_stderr_data, "test stderr_data")
-        self.assertEqual(actual_log_files, mock_log_files)
+        self.assertEqual(termination_result.return_code, 123)
+        self.assertEqual(termination_result.stdout_data, "test stdout_data")
+        self.assertEqual(termination_result.stderr_data, "test stderr_data")
+        self.assertEqual(termination_result.log_files, mock_log_files)
 
     @patch("test_workflow.integ_test.service.Process.terminate")
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=False)
