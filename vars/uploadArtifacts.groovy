@@ -1,7 +1,7 @@
 void call(Map args = [:]) {
     def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
-    def manifestFilename = args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/manifest.yml'
+    def manifestFilename = args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
