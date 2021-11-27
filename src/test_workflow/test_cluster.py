@@ -47,7 +47,7 @@ class TestCluster(abc.ABC):
             cluster.start()
             yield cluster.endpoint(), cluster.port()
         finally:
-            cluster.destroy()
+            cluster.terminate()
 
     def start(self):
         os.makedirs(self.work_dir, exist_ok=True)
