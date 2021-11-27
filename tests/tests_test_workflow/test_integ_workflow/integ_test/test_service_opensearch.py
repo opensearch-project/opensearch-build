@@ -378,7 +378,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_get_service_response.return_value = mock_response
 
-        self.assertFalse(service.service_alive())        
+        self.assertFalse(service.service_alive())
 
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_unavailable(self, mock_get_service_response):
