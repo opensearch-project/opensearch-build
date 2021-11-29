@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, PropertyMock, mock_open, patch
+from unittest.mock import MagicMock, PropertyMock, call, mock_open, patch
 
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
 
@@ -57,7 +57,12 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_bundle_tar.extractall.assert_called_once_with(self.work_dir)
 
         mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "a")
-        mock_dump.assert_called_once_with(self.additional_config)
+        mock_dump.assert_called_once_with(
+            {
+                "script.context.field.max_compilations_rate": "1000/1m",
+                "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")
+            }
+        )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
         mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "bin"))
@@ -67,8 +72,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security(self, mock_tarfile_open, mock_file, mock_pid, mock_process, mock_check_call):
+    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call):
 
         mock_dependency_installer = MagicMock()
 
@@ -88,8 +94,22 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_bundle_tar = MagicMock()
         mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
 
+        mock_file_hanlder_for_security = mock_open().return_value
+        mock_file_hanlder_for_additional_config = mock_open().return_value
+
+        # open() will be called twice, one for disabling security, second for additional_config
+        mock_file.side_effect = [mock_file_hanlder_for_security, mock_file_hanlder_for_additional_config]
+
+        mock_dump_result = MagicMock()
+        mock_dump.return_value = mock_dump_result
+
         # call the target test function
         service.start()
+
+        mock_file.assert_has_calls(
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "w")],
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "a")],
+        )
 
         mock_check_call.assert_called_once_with(
             "./opensearch-dashboards-plugin remove securityDashboards",
@@ -97,8 +117,11 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             shell=True
         )
 
-        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "w")
-        mock_file.return_value.close.assert_called_once()
+        mock_dump.assert_called_once_with({"logging.dest": os.path.join(
+            self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")})
+
+        mock_file_hanlder_for_security.close.assert_called_once()
+        mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result)
 
     def test_endpoint_port_url(self):
         service = ServiceOpenSearchDashboards(
