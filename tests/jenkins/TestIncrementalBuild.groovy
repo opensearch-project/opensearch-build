@@ -18,7 +18,7 @@ class TestIncrementalBuild extends BuildPipelineTest {
 
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('BUILD_NUMBER', '33')
-        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc/')
+        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
         binding.setVariable('JOB_NAME', 'vars-build')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')

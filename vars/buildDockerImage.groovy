@@ -43,7 +43,7 @@ void call(Map args = [:]) {
             booleanParam(name: 'IS_STAGING', value: true)
         ]
 
-        if (! args.dryRun) {
+        if (!args.dryRun) {
             dockerBuild: {
                 build job: 'docker-build',
                 parameters: parameters
