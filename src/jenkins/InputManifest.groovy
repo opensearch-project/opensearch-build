@@ -73,6 +73,7 @@ class InputManifest {
             platform ?: this.build.platform,
             architecture ?: this.build.architecture,
             'dist',
+            this.build.getFilename(),
             this.build.getFilenameWithExtension(platform, architecture)
         ].join("/")
     }
