@@ -83,8 +83,6 @@ class ServiceOpenSearchDashboards(Service):
         return requests.get(url, verify=False, auth=("kibanaserver", "kibanaserver") if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config):
-        logging.info("inside __add_plugin_specific_config")
-        logging.info(f"{additional_config}")
         with open(self.opensearch_dashboards_yml_dir, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 

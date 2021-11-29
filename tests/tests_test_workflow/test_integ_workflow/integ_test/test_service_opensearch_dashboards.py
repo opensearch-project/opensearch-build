@@ -60,7 +60,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump.assert_called_once_with(
             {
                 "script.context.field.max_compilations_rate": "1000/1m",
-                "logging.dest": "test_work_dir/opensearch-dashboards-1.1.0-linux-x64/logs/opensearch_dashboards.log"
+                "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")
             }
         )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
@@ -117,7 +117,8 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             shell=True
         )
 
-        mock_dump.assert_called_once_with({"logging.dest": "test_work_dir/opensearch-dashboards-1.1.0-linux-x64/logs/opensearch_dashboards.log"})
+        mock_dump.assert_called_once_with({"logging.dest": os.path.join(
+            self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")})
 
         mock_file_hanlder_for_security.close.assert_called_once()
         mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result)
@@ -137,8 +138,8 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         self.assertEqual(service.port(), 5601)
         self.assertEqual(service.url(), "http://localhost:5601")
 
-    @ patch("requests.get")
-    @ patch.object(ServiceOpenSearchDashboards, "url")
+    @patch("requests.get")
+    @patch.object(ServiceOpenSearchDashboards, "url")
     def test_get_service_response_with_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
@@ -158,8 +159,8 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_url.assert_called_once_with("/api/status")
         mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("kibanaserver", "kibanaserver"))
 
-    @ patch("requests.get")
-    @ patch.object(ServiceOpenSearchDashboards, "url")
+    @patch("requests.get")
+    @patch.object(ServiceOpenSearchDashboards, "url")
     def test_get_service_response_without_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
