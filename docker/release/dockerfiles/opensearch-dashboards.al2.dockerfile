@@ -34,7 +34,8 @@ COPY * $TEMP_DIR
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
     cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/ && \
     cp -v $TEMP_DIR/opensearch_dashboards.yml $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
-    ls -l $OPENSEARCH_DASHBOARDS_HOME && rm -rf $TEMP_DIR
+    ls -l $OPENSEARCH_DASHBOARDS_HOME && \
+    rm -rf $TEMP_DIR
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images

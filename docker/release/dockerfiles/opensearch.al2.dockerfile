@@ -42,7 +42,8 @@ RUN ls -l $TEMP_DIR && \
     if [[ -d $PERFORMANCE_ANALYZER_PLUGIN_DIR ]] ; then cp -v $TEMP_DIR/performance-analyzer.properties $PERFORMANCE_ANALYZER_PLUGIN_DIR/pa_config/; fi && \
     cp -v $TEMP_DIR/opensearch-docker-entrypoint.sh $TEMP_DIR/opensearch-onetime-setup.sh $OPENSEARCH_HOME/ && \
     cp -v $TEMP_DIR/log4j2.properties $TEMP_DIR/opensearch.yml $OPENSEARCH_HOME/config/ && \
-    ls -l $OPENSEARCH_HOME && rm -rf $TEMP_DIR
+    ls -l $OPENSEARCH_HOME && \
+    rm -rf $TEMP_DIR
 
 
 ########################### Stage 1 ########################
