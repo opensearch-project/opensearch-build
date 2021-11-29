@@ -44,11 +44,18 @@ class ServiceOpenSearchDashboards(Service):
         if not self.security_enabled:
             self.__remove_security()
 
+        self.__set_logging_dest()
+
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
         self.process_handler.start("./opensearch-dashboards", self.executable_dir)
         logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
+
+    def __set_logging_dest(self):
+        self.log_dir = os.path.join(self.install_dir, "logs")
+        os.makedirs(self.log_dir, exist_ok=True)
+        self.additional_config["logging.dest"] = os.path.join(self.log_dir, "opensearch_dashboards.log")
 
     def __remove_security(self):
         subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
@@ -76,6 +83,8 @@ class ServiceOpenSearchDashboards(Service):
         return requests.get(url, verify=False, auth=("kibanaserver", "kibanaserver") if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config):
+        logging.info("inside __add_plugin_specific_config")
+        logging.info(f"{additional_config}")
         with open(self.opensearch_dashboards_yml_dir, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 
