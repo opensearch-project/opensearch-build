@@ -25,7 +25,7 @@ void call(Map args = [:]) {
                     "-f ./dockerfiles/${filename}.al2.dockerfile",
                     "-p ${filename}",
                     "-a 'x64,arm64'",
-                    "-r ${filename}staging/${filename}",
+                    "-r opensearchstaging/${filename}",
                     "-t '${filename}-x64.tgz,${filename}-arm64.tgz'",
                     "-n ${BUILD_NUMBER}"
                 ].join(' ')
