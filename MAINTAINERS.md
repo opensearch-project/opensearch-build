@@ -5,7 +5,7 @@
   - [What is Zenhub](#what-is-zenhubhttpswwwzenhubcom)
   - [Dev Deployment](#dev-deployment)
   - [Setting up Zenhub](#setting-up-zenhub)
-  - [Sprint Board aka Zenhub board aka Kanban board](#sprint-board-aka-zenhub-board-aka-kanban-board)
+  - [Sprint Board](#sprint-board-aka-zenhub-board-aka-kanban-board)
     - [Pipelines](#pipelines)
   - [Creating Issues](#creating-issues)
   - [Managing issues/stories](#managing-issuesstories)
@@ -24,25 +24,29 @@
 | Sayali Gaikawad | [gaiksaya](https://github.com/gaiksaya) | Amazon |
 | Abhinav Gupta | [abhinavGupta16](https://github.com/abhinavGupta16) | Amazon |
 | Zelin Hao | [zelinh](https://github.com/zelinh) | Amazon |
-| Elaine | [zylzulu](https://github.com/zylzulu) | Amazon |
+| Yilin Zhang | [zylzulu](https://github.com/zylzulu) | Amazon |
 
 [This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Zenhub Process Workflow
-We follow agile methodologies for our development and release process. We use zenhub to manage and track our stories and issues to effectively manage them over the sprint.
+We follow agile methodologies for our development and release process. We use GitHub issues with annotations via ZenHub to manage and track our stories and issues to effectively manage them over the sprint.
 
 ### What is [Zenhub](https://www.zenhub.com/)?
 
 ZenHub is an agile project management and product roadmaps solution, natively integrated into GitHub. It is free to use for opensource repository and comes with a paid membership to manage private repositories. 
-We currently use zenhub only with our public and opensource repositories.
+We currently use Zenhub only with our public and opensource repositories.
 
 ### Setting up Zenhub
 
-Zenhub can be easily added as an [extension]((https://www.zenhub.com/extension)) to chrome and firefox which can be downloaded for free from the zenhub website. 
-Alternatively, we can use a the zenhub [webapp link](https://app.zenhub.com/workspaces/engineering-effectiveness-614cf4272a385f0015d2b48f/board?repos=357723952,406037663) to view the board.
+Zenhub can be easily added as an [extension]((https://www.zenhub.com/extension)) to chrome and firefox which can be downloaded for free from the Zenhub website. 
+Alternatively, we can use a the Zenhub [webapp link](https://app.zenhub.com/workspaces/engineering-effectiveness-614cf4272a385f0015d2b48f/board?repos=357723952,406037663) to view the board.
 
-### Sprint Board aka Zenhub board aka Kanban board
-Once the zenhub extension is installed, zenhub board can be accessed using the Zenhub tab on github.
+### Sprint Board
+Once the Zenhub extension is installed, Zenhub board can be accessed using the Zenhub tab on github.
+
+![img.png](zenhub_tab_image.png)
+
+If you are using the webapp - here is the [link](https://app.zenhub.com/workspaces/engineering-effectiveness-614cf4272a385f0015d2b48f/board?repos=357723952,406037663)
 
 #### Pipelines
 
@@ -61,10 +65,11 @@ Description for each pipeline can also be found on the sprint board by clicking 
 
 Follow the steps below to create issues on Zenhub workflow -
 
-1. Create the issue for the desired repository following the required guidelines for mandatory fields on github.
-2. Add relevant tags to the issue. This would help us to track and filter issues.
-3. Select the correct pipeline for the issue (defaults to New Issues )
-4. Mark the issue for a sprint (if known)
+1. Create the issue for the desired repository following the required guidelines for mandatory and optional fields on github.
+2. Add an acceptance criteria for the issue
+3. Add relevant tags to the issue. This would help us to track and filter issues.
+4. Select the correct pipeline for the issue (defaults to New Issues )
+5. Mark the issue for a sprint (if known)
 
 ### Managing issues/stories
 
