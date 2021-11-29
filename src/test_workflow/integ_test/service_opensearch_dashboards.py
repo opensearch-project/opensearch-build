@@ -44,6 +44,12 @@ class ServiceOpenSearchDashboards(Service):
         if not self.security_enabled:
             self.__remove_security()
 
+        self.log_dir = os.path.join(self.install_dir, "logs")
+
+        os.makedirs(self.log_dir, exist_ok=True)
+
+        self.additional_config["logging.dest"] = os.path.join(self.log_dir, "opensearch_dashboards.log")
+
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 

@@ -45,7 +45,18 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
+        logging.info(f"inside service {self.port()}")
+        logging.info(f"self.install_dir {self.install_dir}")
+
         log_files = walk(os.path.join(self.install_dir, "logs"))
+
+        os.system("pwd")
+
+        os.system(f'ls {os.path.join(self.install_dir, "logs")}')
+
+        os.system(f'ls {self.install_dir}')
+
+        logging.info(f"log_files is {log_files}")
 
         return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
 
@@ -69,7 +80,7 @@ class Service(abc.ABC):
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
-        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
+        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text) or ('"state":"green"' in response.text)):
             logging.info("Service is available")
             return True
         else:
@@ -78,7 +89,7 @@ class Service(abc.ABC):
     def wait_for_service(self):
         logging.info("Waiting for service to become available")
 
-        for attempt in range(10):
+        for attempt in range(20):
             try:
                 logging.info(f"Pinging service attempt {attempt}")
                 if self.service_alive():

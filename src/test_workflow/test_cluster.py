@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import abc
+import logging
 import os
 from contextlib import contextmanager
 
@@ -63,14 +64,16 @@ class TestCluster(abc.ABC):
     def terminate(self):
         if self.service:
             self.termination_result = self.service.terminate()
+            self.__save_test_result_data()
 
         for service in self.dependencies:
-            service.terminate()
+            self.termination_result = service.terminate()
+            self.__save_test_result_data()
 
         if not self.termination_result:
             raise ClusterServiceNotInitializedException()
 
-        self.__save_test_result_data()
+        # self.__save_test_result_data()
 
     def __save_test_result_data(self):
 

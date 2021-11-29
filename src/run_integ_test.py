@@ -24,27 +24,38 @@ from test_workflow.test_result.test_suite_results import TestSuiteResults
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "opensearch", "test_manifest.yml")
+    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "opensearch-dashboards", "test_manifest.yml")
+    # test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "opensearch", "test_manifest.yml")
     test_manifest = TestManifest.from_path(test_manifest_path)
     bundle_manifest = BundleManifest.from_urlpath("/".join([args.path.rstrip("/"), "dist/opensearch/manifest.yml"]))
     build_manifest = BuildManifest.from_urlpath("/".join([args.path.rstrip("/"), "builds/opensearch/manifest.yml"]))
+
+    bundle_manifest_dashboards = BundleManifest.from_urlpath("/".join([args.path.rstrip("/"), "dist/opensearch-dashboards/manifest.yml"]))
+    build_manifest_dashboards = BuildManifest.from_urlpath("/".join([args.path.rstrip("/"), "builds/opensearch-dashboards/manifest.yml"]))
+
     dependency_installer = DependencyInstaller(args.path, build_manifest, bundle_manifest)
+
+    dependency_installer_dashboards = DependencyInstaller(args.path, build_manifest_dashboards, bundle_manifest_dashboards)
+
     tests_dir = os.path.join(os.getcwd(), "test-results")
     os.makedirs(tests_dir, exist_ok=True)
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         test_recorder = TestRecorder(args.test_run_id, "integ-test", tests_dir)
-        dependency_installer.install_maven_dependencies()
+        # dependency_installer.install_maven_dependencies()
         all_results = TestSuiteResults()
-        for component in bundle_manifest.components.select(focus=args.component):
+        for component in build_manifest_dashboards.components.select(focus=args.component):
             if component.name in test_manifest.components:
                 test_config = test_manifest.components[component.name]
                 if test_config.integ_test:
                     test_suite = IntegTestSuite(
                         dependency_installer,
+                        dependency_installer_dashboards,
                         component,
                         test_config,
                         bundle_manifest,
+                        bundle_manifest_dashboards,
                         build_manifest,
+                        build_manifest_dashboards,
                         work_dir.name,
                         test_recorder
                     )
