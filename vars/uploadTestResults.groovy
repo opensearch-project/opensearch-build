@@ -1,5 +1,5 @@
 void call(Map args = [:]) {
-    lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
+    def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
     def manifestFilename = args.manifest ?: "manifest.yml"
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))

@@ -40,6 +40,9 @@ class TestVars extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
 
+        helper.registerAllowedMethod("git", [Map])
+        helper.registerAllowedMethod("cleanWs", [Map])
+
         super.testPipeline("tests/jenkins/jobs/Vars_Jenkinsfile")
     }
 }

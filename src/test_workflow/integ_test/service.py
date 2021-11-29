@@ -6,10 +6,13 @@
 
 import abc
 import logging
+import os
 import time
+from os import walk
 
 import requests
 
+from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException
 
 
@@ -18,6 +21,16 @@ class Service(abc.ABC):
     Abstract base class for all types of test clusters.
     """
 
+    def __init__(self, work_dir, version, security_enabled, additional_config, dependency_installer):
+        self.work_dir = work_dir
+        self.version = version
+        self.security_enabled = security_enabled
+        self.additional_config = additional_config
+        self.dependency_installer = dependency_installer
+
+        self.process_handler = Process()
+        self.install_dir = ""
+
     @abc.abstractmethod
     def start(self):
         """
@@ -25,19 +38,19 @@ class Service(abc.ABC):
         """
         pass
 
-    @abc.abstractmethod
     def terminate(self):
-        """
-        Terminate this service.
-        """
-        pass
+        if not self.process_handler.started:
+            logging.info("Process is not started")
+            return
 
-    @abc.abstractmethod
+        self.return_code = self.process_handler.terminate()
+
+        log_files = walk(os.path.join(self.install_dir, "logs"))
+
+        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
+
     def endpoint(self):
-        """
-        Get the endpoint that this service is listening on, e.g. 'localhost' or 'some.ip.address'.
-        """
-        pass
+        return "localhost"
 
     @abc.abstractmethod
     def port(self):
@@ -56,7 +69,7 @@ class Service(abc.ABC):
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
-        if response.status_code == 200 and ('"status":"green"' or '"status":"yellow"' in response.text):
+        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
             logging.info("Service is available")
             return True
         else:
@@ -80,3 +93,11 @@ class Service(abc.ABC):
 
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
+
+
+class ServiceTerminationResult:
+    def __init__(self, return_code, stdout_data, stderr_data, log_files):
+        self.return_code = return_code
+        self.stdout_data = stdout_data
+        self.stderr_data = stderr_data
+        self.log_files = log_files

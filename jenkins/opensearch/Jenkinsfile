@@ -1,10 +1,10 @@
-lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
     triggers {
         parameterizedCron '''
-            H */2 * * * %INPUT_MANIFEST=1.2.0/opensearch-1.2.0.yml
+            H */2 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml
             H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
         '''
     }
@@ -26,25 +26,21 @@ pipeline {
             }
             steps {
                 script { 
-                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                    dockerImage = inputManifest.ci.image.name
-                    dockerArgs = inputManifest.ci.image.args ?: '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                    echo "Using Docker image ${dockerImage} (${dockerArgs})"
+                    dockerAgent = detectDockerAgent()
                 }
             }
         }
         stage('build') {
             parallel {
-                stage('build-snapshots') {
+                stage('build-snapshot') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -55,13 +51,13 @@ pipeline {
                                 snapshot: true
                             )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven')
+                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
                             }
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -69,8 +65,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -79,9 +75,9 @@ pipeline {
                             buildAssembleUpload()
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -89,8 +85,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -99,9 +95,9 @@ pipeline {
                             buildAssembleUpload()
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -111,24 +107,7 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
-                        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                        def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                        dockerBuild: {
-                            build job: 'docker-build',
-                            parameters: [
-                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
-                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
-                                string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: [
-                                        'id',
-                                        'pwd',
-                                        'cd docker/release',
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-x64.tgz",
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-arm64.tgz",
-                                        "bash build-image-multi-arch.sh -v ${inputManifest.build.version} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"
-                                    ].join(" && ")),
-                                booleanParam(name: 'IS_STAGING', value: true)
-                            ]
-                        }
+                        buildDockerImage()
                     }
                 }
             }

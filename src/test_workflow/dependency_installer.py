@@ -43,7 +43,7 @@ class DependencyInstaller:
         """
         os.makedirs(dest, exist_ok=True)
         for dependency, version in dependency_dict.items():
-            path = f"{self.root_url}/builds/plugins/{dependency}-{version}.zip"
+            path = f"{self.root_url}/builds/opensearch/plugins/{dependency}-{version}.zip"
             local_path = os.path.join(dest, f"{dependency}-{version}.zip")
             self.__download_or_copy(path, local_path)
 

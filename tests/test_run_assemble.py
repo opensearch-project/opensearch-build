@@ -44,9 +44,9 @@ class TestRunAssemble(unittest.TestCase):
         mock_bundle.install_min.assert_called()
         mock_bundle.install_plugins.assert_called()
 
-        mock_bundle.package.assert_called_with(os.path.join("curdir", "dist"))
+        mock_bundle.package.assert_called_with(os.path.join("curdir", "dist", "opensearch"))
 
         mock_recorder.return_value.write_manifest.assert_has_calls([
             call("path"),
-            call(os.path.join("curdir", "dist"))
+            call(os.path.join("curdir", "dist", "opensearch"))
         ])  # manifest included in package

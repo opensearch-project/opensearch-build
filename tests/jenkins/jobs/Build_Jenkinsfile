@@ -1,12 +1,11 @@
-// similar jenkins/opensearch/Jenkinsfile but echo instead of sh for testing
-
-lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
     parameters {
         string(
             name: 'INPUT_MANIFEST',
+            defaultValue: '2.0.0/opensearch-2.0.0.yml',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
@@ -21,12 +20,8 @@ pipeline {
                 }
             }
             steps {
-                script { 
-                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                    dockerImage = inputManifest.ci.image.name
-                    dockerArgs = inputManifest.ci.image.args ?: '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
-                    echo "Using Docker image ${dockerImage} (${dockerArgs})"
+                script {
+                    dockerAgent = detectDockerAgent()
                 }
             }
         }
@@ -39,8 +34,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -51,7 +46,7 @@ pipeline {
                                 snapshot: true
                             )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                echo "$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/maven"
+                                echo "$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven"
                             }
                         }
                     }
@@ -65,8 +60,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -85,9 +80,9 @@ pipeline {
                             )
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -95,8 +90,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -115,9 +110,9 @@ pipeline {
                             )
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -127,23 +122,13 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
-                        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                        def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                        def cmd = [
-                            'id',
-                            'pwd',
-                            'cd docker/release',
-                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-x64.tgz",
-                            "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-arm64.tgz",
-                            "bash build-image-multi-arch.sh -v ${inputManifest.build.version} -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a 'x64,arm64' -r opensearchstaging/opensearch -t 'opensearch-x64.tgz,opensearch-arm64.tgz' -n ${env.BUILD_NUMBER}"
-                        ].join(" && ")
-                        echo "dockerBuild:${cmd}"
+                        buildDockerImage(dryRun: true)
                     }
                 }
             }
         }
     }
-    post() {
+    post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
@@ -152,12 +137,12 @@ pipeline {
                         dryRun: true,
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
                         extra: stashed
                     )
 
                     cleanWs(
-                        disableDeferredWipeout: true, 
+                        disableDeferredWipeout: true,
                         deleteDirs: true
                     )
                 }

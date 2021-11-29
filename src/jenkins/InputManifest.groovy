@@ -44,6 +44,16 @@ class InputManifest {
             this.platform = data.platform
             this.architecture = data.architecture
         }
+
+        String getFilename() {
+            return this.name.toLowerCase().replaceAll(' ', '-')
+        }
+
+        String getFilenameWithExtension(String platform = null, String architecture = null) {
+            String resolvedPlatform = platform ?: this.platform
+            String resolvedArchitecture = architecture ?: this.architecture
+            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${resolvedPlatform == 'windows' ? 'zip' : 'tar.gz'}"
+        }
     }
 
     Build build
@@ -54,7 +64,7 @@ class InputManifest {
         this.ci = new InputManifest.Ci(data.ci)
     }
 
-    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
+    String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
         return [
             publicArtifactUrl,
             jobName,
@@ -63,11 +73,11 @@ class InputManifest {
             platform ?: this.build.platform,
             architecture ?: this.build.architecture,
             'dist',
-            "${this.build.name.toLowerCase().replaceAll(' ', '-')}-${this.build.version}-${platform}-${architecture}.${platform == 'windows' ? 'zip' : 'tar.gz'}"
+            this.build.getFilenameWithExtension(platform, architecture)
         ].join("/")
     }
 
-    public String getSHAsRoot(String jobName, String platform = null, String architecture = null) {
+    String getSHAsRoot(String jobName, String platform = null, String architecture = null) {
         return [
             jobName,
             this.build.version,

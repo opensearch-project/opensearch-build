@@ -4,10 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
 
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
-from test_workflow.test_cluster import ClusterServiceNotInitializedException, TestCluster
+from test_workflow.test_cluster import TestCluster
 from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
@@ -27,39 +26,36 @@ class LocalTestCluster(TestCluster):
         component_test_config,
         test_recorder: TestRecorder,
     ):
-        self.manifest = bundle_manifest
-        self.work_dir = os.path.join(work_dir, "local-test-cluster")
-        os.makedirs(self.work_dir, exist_ok=True)
-        self.component_name = component_name
-        self.security_enabled = security_enabled
-        self.component_test_config = component_test_config
-        self.additional_cluster_config = additional_cluster_config
-        self.save_logs = test_recorder.local_cluster_logs
-        self.dependency_installer = dependency_installer
-        self.service_opensearch = None
+        super().__init__(
+            work_dir,
+            component_name,
+            component_test_config,
+            security_enabled,
+            additional_cluster_config,
+            test_recorder.local_cluster_logs
+        )
 
-    def create_cluster(self):
+        self.manifest = bundle_manifest
+        self.dependency_installer = dependency_installer
+
         self.service_opensearch = ServiceOpenSearch(
-            self.manifest,
-            self.component_name,
-            self.component_test_config,
+            self.manifest.build.version,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,
-            self.save_logs,
-            self.work_dir)
+            self.work_dir
+        )
 
-        self.service_opensearch.start()
-        self.service_opensearch.wait_for_service()
+    @property
+    def service(self):
+        return self.service_opensearch
+
+    @property
+    def dependencies(self):
+        return []
 
     def endpoint(self):
         return "localhost"
 
     def port(self):
         return 9200
-
-    def destroy(self):
-        if not self.service_opensearch:
-            raise ClusterServiceNotInitializedException()
-
-        self.service_opensearch.terminate()

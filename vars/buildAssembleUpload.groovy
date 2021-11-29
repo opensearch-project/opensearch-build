@@ -12,7 +12,7 @@ void call(Map args = [:]) {
     manifestSHA = sha1(manifestLock)
     echo "Manifest SHA: ${manifestSHA}"
 
-    lib = library(identifier: 'jenkins@20211122', retriever: legacySCM(scm))
+    lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
     String shasRoot = inputManifest.getSHAsRoot("${JOB_NAME}", args.platform, args.architecture)
 
@@ -24,7 +24,7 @@ void call(Map args = [:]) {
 
     assembleManifest(
         args + [
-            manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/manifest.yml'
+            manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
         ]
     )
 

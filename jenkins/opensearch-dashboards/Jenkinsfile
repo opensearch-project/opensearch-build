@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@20211122", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -28,11 +28,7 @@ pipeline {
             }
             steps {
                 script { 
-                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                    dockerImage = inputManifest.ci.image.name
-                    dockerArgs = inputManifest.ci.image.args
-                    echo "Using Docker image ${dockerImage} (${dockerArgs})"
+                    dockerAgent = detectDockerAgent()
                 }
             }
         }
@@ -42,8 +38,8 @@ pipeline {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerImage
-                            args dockerArgs
+                            image dockerAgent.image
+                            args dockerAgent.args
                             alwaysPull true
                         }
                     }
@@ -57,9 +53,9 @@ pipeline {
                             uploadArtifacts()
                         }
                     }
-                    post() {
+                    post {
                         always {
-                            cleanWs disableDeferredWipeout: true, deleteDirs: true
+                            postCleanup()
                         }
                     }
                 }
@@ -70,8 +66,8 @@ pipeline {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                                    image dockerImage
-                                    args dockerArgs
+                                    image dockerAgent.image
+                                    args dockerAgent.args
                                     alwaysPull true
                                 }
                             }
@@ -85,9 +81,9 @@ pipeline {
                                     archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
                                 }
                             }
-                            post() {
+                            post {
                                 always {
-                                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                    postCleanup()
                                 }
                             }
                         }
@@ -95,8 +91,8 @@ pipeline {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-                                    image dockerImage
-                                    args dockerArgs
+                                    image dockerAgent.image
+                                    args dockerAgent.args
                                     alwaysPull true
                                 }
                             }
@@ -108,9 +104,9 @@ pipeline {
                                     uploadArtifacts(upload: true)
                                 }
                             }
-                            post() {
+                            post {
                                 always {
-                                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                                    postCleanup()
                                 }
                             }
                         }
@@ -122,24 +118,7 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
-                        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                        def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/$INPUT_MANIFEST"))
-                        dockerBuild: {
-                            build job: 'docker-build',
-                            parameters: [
-                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
-                                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
-                                string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: [
-                                        'id',
-                                        'pwd',
-                                        'cd docker/release',
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','x64')} -o opensearch-dashboards-x64.tgz",
-                                        "curl -sSL ${inputManifest.getPublicDistUrl(env.PUBLIC_ARTIFACT_URL, env.JOB_NAME, env.BUILD_NUMBER, 'linux','arm64')} -o opensearch-dashboards-arm64.tgz",
-                                        "bash build-image-multi-arch.sh -v ${inputManifest.build.version} -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a 'x64,arm64' -r opensearchstaging/opensearch-dashboards -t 'opensearch-dashboards-x64.tgz,opensearch-dashboards-arm64.tgz' -n ${env.BUILD_NUMBER}"
-                                    ].join(" && ")),
-                                booleanParam(name: 'IS_STAGING', value: true)
-                            ]
-                        }
+                        buildDockerImage()
                     }
                 }
             }

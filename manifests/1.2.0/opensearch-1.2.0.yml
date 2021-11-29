@@ -10,7 +10,7 @@ build:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.2"
+    ref: tags/1.2.0
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -40,13 +40,13 @@ components:
       - gradle:dependencies:opensearch.version
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: "1.2"
+    ref: tags/1.2.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: "1.2"
+    ref: tags/1.2.0.0
     platforms:
       - darwin
       - linux
@@ -58,7 +58,7 @@ components:
     ref: "1.2"
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: "1.2"
+    ref: tags/1.2.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -67,7 +67,7 @@ components:
       - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: "1.2"
+    ref: tags/1.2.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -79,20 +79,20 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: "1.2"
+    ref: "1.2.0.0"
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: "1.2"
+    ref: "1.2.0.0"
     working_directory: "reports-scheduler"
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/trace-analytics.git
-    ref: "1.2"
+    ref: "1.2.0.0"
     working_directory: "opensearch-observability"
     checks:
       - gradle:properties:version

@@ -42,7 +42,7 @@ class PerfTestCluster(TestCluster):
         )
         self.params = "".join(params_list) + role_params
 
-    def create_cluster(self):
+    def start(self):
         os.chdir(self.work_dir)
         command = f"cdk deploy {self.params} --outputs-file {self.output_file}"
         logging.info(f'Executing "{command}" in {os.getcwd()}')
@@ -50,7 +50,7 @@ class PerfTestCluster(TestCluster):
         with open(self.output_file, "r") as read_file:
             load_output = json.load(read_file)
         self.ip_address = load_output[self.stack_name]["PrivateIp"]
-        logging.info("Private IP:", self.ip_address)
+        logging.info(f"Private IP: {self.ip_address}")
 
     def endpoint(self):
         self.cluster_endpoint = self.ip_address
@@ -60,8 +60,14 @@ class PerfTestCluster(TestCluster):
         self.cluster_port = 443 if self.security == "enable" else 9200
         return self.cluster_port
 
-    def destroy(self):
+    def terminate(self):
         os.chdir(os.path.join(self.current_workspace, self.work_dir))
         command = f"cdk destroy {self.params} --force"
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+
+    def service(self):
+        return []
+
+    def dependencies(self):
+        return []

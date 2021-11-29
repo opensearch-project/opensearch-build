@@ -80,7 +80,7 @@ class TestInputManifest(unittest.TestCase):
             opensearch_component.repository,
             "https://github.com/opensearch-project/OpenSearch.git",
         )
-        self.assertEqual(opensearch_component.ref, "1.2")
+        self.assertEqual(opensearch_component.ref, "tags/1.2.0")
         # components
         for component in manifest.components.values():
             self.assertIsInstance(component.ref, str)

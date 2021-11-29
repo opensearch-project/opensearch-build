@@ -66,9 +66,30 @@ class TestRecorder:
                 test_result_data.stderr,
                 os.path.realpath(dest_directory),
             )
-            for log_file in log_files:
-                dest_file = os.path.join(dest_directory, os.path.basename(log_file[0]))
-                shutil.copyfile(log_file[0], dest_file)
+
+            # This is a sample log_files
+            # [
+            #     (
+            #         '/tmp/tmpux1u0r47/local-test-cluster/opensearch-1.2.0/logs',
+            #         [],
+            #         [
+            #             'opensearch_index_indexing_slowlog.log',
+            #             'opensearch_deprecation.json',
+            #             'opensearch.log',
+            #             'gc.log',
+            #             'opensearch_index_search_slowlog.json',
+            #             'gc.log.00',
+            #             'opensearch_index_search_slowlog.log',
+            #             'opensearch_deprecation.log',
+            #             'opensearch_index_indexing_slowlog.json',
+            #             'opensearch_server.json'
+            #         ]
+            #     )
+            # ]
+
+            for log_file in log_files[0][2]:
+                dest_file = os.path.join(dest_directory, os.path.basename(log_file))
+                shutil.copyfile(os.path.join(log_files[0][0], log_file), dest_file)
 
     class RemoteClusterLogs(LogRecorder):
         def __init__(self, parent_class):
