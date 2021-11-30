@@ -8,14 +8,11 @@ Coming from [release issue 1.1.1](https://github.com/opensearch-project/opensear
 This component issue captures the state of the OpenSearch release, on component/plugin level, its assignee is responsible for driving the release of the component.  Please contact them or @mention them on this issue for help. 
 
 ## Release Steps
-There are several steps to the release process, these steps are completed as the whole release and components that are behind present risk to the release.  The release owner completes the tasks in this ticket, whereas component owners resolve tasks on their ticket in their repositories.
+There are several steps to the release process, components that are behind present risk to the release.  Component owners resolve tasks on this ticket to communicate with the overall release owner.
 
 Steps have completion dates for coordinating efforts between the components of a release; components can start as soon as they are ready far in advance of a future release.
 
 You can find all the corresponding dates of each step in the release issue above.
-
-### Component List
-To aid in understanding the state of the release there is a table with status indicating each component state in the release issue.  This is updated based on the status of the component issues.
 
 </p>
 </details>
@@ -28,12 +25,13 @@ To aid in understanding the state of the release there is a table with status in
 
 - [ ] Assign this issue to a release owner.
 - [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
+- [ ] All the tasks in this issue have been reviewed by the release owner.
 - [ ] Create, update, triage and label all features and issues targeted for this release with v1.1.1.
 
 ### CI/CD
 
-- [ ] Increment plugin version on 1.1 branch to `1.1.1.0` (Only if you have any code changes, else, stay on 1.1.0.0 for your plugin).
-- [ ] Make necessary code change if you have any patch for 1.1.1.
+- [ ] If including changes in this release, increment plugin version on 1.1 branch to `1.1.1.0`, otherwise stay on `1.1.0.0`.
+- [ ] All code changes for 1.1.1 are complete.
 - [ ] Ensure working and passing CI.
 - [ ] Re(add) this repo to the (if not exist) [opensearch-dashboards input manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/1.1.1/opensearch-dashboards-1.1.1.yml).
 
