@@ -49,5 +49,9 @@ void call(Map args = [:]) {
                 echo "s3Upload(bucket: ${ARTIFACT_BUCKET_NAME}, file: ${manifestLock}, path: ${manifestShaPath})"
             }
         }
+
+        String artifactUrl = inputManifest.getPublicDistUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}", args.platform, args.architecture)
+        echo "Setting env.\"ARTIFACT_URL_${args.platform}_${args.architecture}\"=${artifactUrl}"
+        env."ARTIFACT_URL_${args.platform}_${args.architecture}" = artifactUrl
     }
 }

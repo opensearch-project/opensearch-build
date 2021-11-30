@@ -48,12 +48,6 @@ class TestIncrementalBuild extends BuildPipelineTest {
             return true
         })
 
-        helper.registerAllowedMethod("httpRequest", [Map], { args ->
-            return [
-                status: 404
-            ]
-        })
-
         super.testPipeline("tests/jenkins/jobs/IncrementalBuild_Jenkinsfile")
     }
 }
