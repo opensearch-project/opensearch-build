@@ -33,7 +33,7 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0'
+                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
                     args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
                     alwaysPull true
                 }
