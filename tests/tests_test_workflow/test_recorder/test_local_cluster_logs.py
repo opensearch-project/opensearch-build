@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, call, patch
 from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
-class LocalClusterLogsTests(unittest.TestCase):
+class TestLocalClusterLogs(unittest.TestCase):
 
     @patch("shutil.copyfile")
     def test(self, mock_copyfile):
