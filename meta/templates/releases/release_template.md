@@ -34,5 +34,5 @@ Coming from [opensearch-build__REPLACE_ISSUE_NUMBER__](https://github.com/opense
 ### Post Release
 
 - [ ] Create [a release tag](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging).
-- [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/meta/templates/releases/release_template.md).
+- [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/meta/templates/releases/release_template.md).
 - [ ] Conduct a postmortem, and publish its results.
