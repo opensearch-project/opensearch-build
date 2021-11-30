@@ -113,11 +113,12 @@ for pom in ${pomFiles}; do
   pom_dir="$(dirname "${pom}")"
   for FILE in "${pom_dir}"/*; do
     # The POM is deployed with the artifact in a single deploy-file command, we can skip over it
-    if [[ $FILE != $pom ]]; then
+    if [[ $FILE != $pom ]] &&
+       [[ $FILE != *"test-fixtures"* ]] && # This is a hack to ensure the OpenSearch build-tools test fixture jar is not uploaded instead of the actual build-tools jar.
+       [[ $FILE != *"javadoc"* ]] &&
+       [[ $FILE != *"sources"* ]]; then
       extension="${FILE##*.}"
       case $extension in jar | war | zip)
-        # Ensure we are only pushing the artifact that ends with -SNAPSHOT.<extension> and its pom.
-        if [[ $FILE == *SNAPSHOT.${extension} ]]; then
           echo "Uploading: ${FILE} with ${pom} to ${url}"
           mvn --settings="${mvn_settings}" deploy:deploy-file \
             -DgeneratePom=false \
@@ -125,9 +126,6 @@ for pom in ${pomFiles}; do
             -Durl="${SNAPSHOT_REPO_URL}" \
             -DpomFile="${pom}" \
             -Dfile="${FILE}" || echo "Failed to upload ${FILE}"
-        else
-          echo "Skipping upload of additional artifact: ${FILE}"
-        fi
         ;;
       *) echo "Skipping upload for ${FILE}" ;;
       esac
