@@ -95,7 +95,15 @@ class InputManifests(Manifests):
         logging.info(f"Creating new version: {version}")
         data = {
             "schema-version": "1.0",
-            "build": {"name": self.name, "version": version},
+            "build": {
+                "name": self.name,
+                "version": version
+            },
+            "ci": {
+                "image": {
+                    "name": "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019"
+                }
+            },
             "components": [],
         }
         for component in components:
