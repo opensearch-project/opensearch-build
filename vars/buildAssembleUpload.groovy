@@ -36,14 +36,14 @@ void call(Map args = [:]) {
 
         assembleManifest(
             args + [
-                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.getFilename()}/manifest.yml"
+                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml"
             ]
         )
 
         uploadArtifacts(args)
 
         withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-            if (! args.dryRun) {
+            if (!args.dryRun) {
                 s3Upload(bucket: "${ARTIFACT_BUCKET_NAME}", file: manifestLock, path: manifestShaPath)
             } else {
                 echo "s3Upload(bucket: ${ARTIFACT_BUCKET_NAME}, file: ${manifestLock}, path: ${manifestShaPath})"
