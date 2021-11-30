@@ -52,7 +52,6 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         for config in self.test_config.integ_test["test-configs"]:
             status = self.__setup_cluster_and_execute_test_config(config)
 
-            logging.info(f"__setup_cluster_and_execute_test_config status is {status}")
             test_results.append(TestResult(self.component.name, config, status))
         return test_results
 
