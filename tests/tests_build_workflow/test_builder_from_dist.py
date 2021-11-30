@@ -11,13 +11,13 @@ from unittest.mock import MagicMock, patch
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_dist import BuilderFromDist
 from manifests.build_manifest import BuildManifest
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromDist
 
 
 class TestBuilderFromDist(unittest.TestCase):
     def setUp(self):
         self.builder = BuilderFromDist(
-            InputManifest.ComponentFromDist({"name": "common-utils", "dist": "url"}),
+            InputComponentFromDist({"name": "common-utils", "dist": "url"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.1.0",

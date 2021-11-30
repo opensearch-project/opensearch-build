@@ -10,19 +10,19 @@ from manifests.input_manifests import InputManifests
 
 
 class TestInputManifests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.manifests = InputManifests()
 
-    def tests_configs(self):
+    def tests_configs(self) -> None:
         self.assertTrue(len(self.manifests))
 
-    def test_1_1_0(self):
+    def test_1_1_0(self) -> None:
         manifest = self.manifests["1.1.0"]
         self.assertIsNotNone(manifest)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.version, "1.1.0")
 
-    def test_latest(self):
+    def test_latest(self) -> None:
         manifest = self.manifests.latest
         self.assertIsNotNone(manifest)
         self.assertEqual(manifest.build.version, max(self.manifests.keys()))
