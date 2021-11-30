@@ -13,6 +13,7 @@ class TestManifest(ComponentManifest):
 
     The format for schema version 1.0 is:
         schema-version: '1.0'
+        name: 'OpenSearch'
         components:
           - name: index-management
             working-directory: optional relative directory to run commands in
@@ -31,6 +32,7 @@ class TestManifest(ComponentManifest):
 
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
         "components": {
             "type": "list",
             "schema": {
@@ -60,10 +62,12 @@ class TestManifest(ComponentManifest):
 
     def __init__(self, data):
         super().__init__(data)
+        self.name = str(data["name"])
 
     def __to_dict__(self):
         return {
             "schema-version": "1.0",
+            "name": self.name,
             "components": self.components.__to_dict__()
         }
 

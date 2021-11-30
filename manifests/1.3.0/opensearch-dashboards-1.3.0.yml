@@ -1,0 +1,8 @@
+build:
+  name: OpenSearch Dashboards
+  version: 1.3.0
+components:
+- name: OpenSearch-Dashboards
+  ref: 1.x
+  repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+schema-version: '1.0'

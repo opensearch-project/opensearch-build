@@ -1,3 +1,5 @@
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+
 pipeline {
     agent none
     environment {
@@ -8,38 +10,33 @@ pipeline {
         jdk "JDK14"
         maven "maven-3.8.2"
     }
+    parameters {
+        string(
+            defaultValue: '',
+            name: 'opensearch_version',
+            description: 'OpenSearch version to run test on',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'build_id',
+            description: 'The build number for which tests should be run',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'architecture',
+            description: 'Architecture of the build',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'platform',
+            description: 'Platform of the build',
+            trim: true
+        )
+    }
     stages {
-        stage('Parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: '',
-                                            name: 'opensearch_version',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
-                                            name: 'build_id',
-                                            trim: true
-                                    ),
-
-                                    string(
-                                            defaultValue: '',
-                                            name: 'architecture',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: '',
-                                            name: 'platform',
-                                            trim: true
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
         stage('Choose Agent Node') {
             steps {
                 script {
@@ -53,7 +50,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Integration Tests') {
+        stage('integ-test') {
             agent {
                 node {
                     label "${agentLabel}"
@@ -62,26 +59,59 @@ pipeline {
             steps {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    sh "wget ${basePath}/builds/opensearch/manifest.yml"
                     sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post() {
                 always {
                     script {
-                        publish()
+                        uploadTestResults(
+                            jobName: 'bundle-build',
+                            buildNumber: "${build_id}"
+                        )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
             }
         }
     }
-}
+    post() {
+        success {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Integration Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
 
-/** Publishes test results to S3 **/
-void publish() {
-    def artifactPath = "bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
-    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script  {
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Integration Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
+        }
     }
-    echo "Uploaded Test Results to ${artifactPath}/test-results"
 }

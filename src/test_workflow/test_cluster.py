@@ -5,13 +5,35 @@
 # compatible open source license.
 
 import abc
+import os
 from contextlib import contextmanager
+
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class TestCluster(abc.ABC):
     """
     Abstract base class for all types of test clusters.
     """
+
+    def __init__(
+        self,
+        work_dir,
+        component_name,
+        component_test_config,
+        security_enabled,
+        additional_cluster_config,
+        save_logs
+    ):
+        self.work_dir = os.path.join(work_dir, "local-test-cluster")
+        self.component_name = component_name
+        self.component_test_config = component_test_config
+        self.security_enabled = security_enabled
+        self.additional_cluster_config = additional_cluster_config
+        self.save_logs = save_logs
+
+        self.all_services = []
+        self.termination_result = None
 
     @classmethod
     @contextmanager
@@ -22,30 +44,68 @@ class TestCluster(abc.ABC):
         """
         cluster = cls(*args)
         try:
-            cluster.create_cluster()
+            cluster.start()
             yield cluster.endpoint(), cluster.port()
         finally:
-            cluster.destroy()
+            cluster.terminate()
 
-    @abc.abstractmethod
-    def destroy(self, test_recorder):
-        """
-        Tear down the cluster and record server logs. If the cluster is already destroyed or has not yet been created then this is a no-op.
-        :param test_recorder: The test recorder to register server logs with.
-        """
-        pass
+    def start(self):
+        os.makedirs(self.work_dir, exist_ok=True)
 
-    @abc.abstractmethod
+        self.all_services = [self.service] + self.dependencies
+
+        for service in self.all_services:
+            service.start()
+
+        for service in self.all_services:
+            service.wait_for_service()
+
+    def terminate(self):
+        if self.service:
+            self.termination_result = self.service.terminate()
+
+        for service in self.dependencies:
+            service.terminate()
+
+        if not self.termination_result:
+            raise ClusterServiceNotInitializedException()
+
+        self.__save_test_result_data()
+
+    def __save_test_result_data(self):
+
+        test_result_data = TestResultData(
+            self.component_name,
+            self.component_test_config,
+            self.termination_result.return_code,
+            self.termination_result.stdout_data,
+            self.termination_result.stderr_data,
+            self.termination_result.log_files
+        )
+
+        self.save_logs.save_test_result_data(test_result_data)
+
     def endpoint(self):
-        """
-        Get the endpoint that this cluster is listening on, e.g. 'localhost' or 'some.ip.address'.
-        """
-        pass
+        return "localhost"
 
     @abc.abstractmethod
     def port(self):
         """
         Get the port that this cluster is listening on.
+        """
+        pass
+
+    @abc.abstractproperty
+    def service(self):
+        """
+        The main service running in this cluster.
+        """
+        pass
+
+    @abc.abstractproperty
+    def dependencies(self):
+        """
+        The dependencies running in this cluster.
         """
         pass
 
@@ -56,3 +116,12 @@ class ClusterCreationException(Exception):
     """
 
     pass
+
+
+class ClusterServiceNotInitializedException(Exception):
+    """
+    Indicates that the service running in the cluster is not initialized.
+    """
+
+    def __init__(self):
+        super().__init__("Service is not initialized")

@@ -70,12 +70,12 @@ while getopts ":hv:f:" arg; do
 done
 
 # Validate the required parameters to present
-if [ -z "$TAG_NAME" ] || [ -z "$DOCKERFILE" ] || [ -z "$REPOSITORY" ]; then
-  echo "You must specify '-v TAG_NAME', '-f DOCKERFILE', '-r REPOSITORY'"
+if [ -z "$TAG_NAME" ] || [ -z "$DOCKERFILE" ]; then
+  echo "You must specify '-v TAG_NAME', '-f DOCKERFILE'"
   usage
   exit 1
 else
-  echo $TAG_NAME $DOCKERFILE $REPOSITORY
+  echo $TAG_NAME $DOCKERFILE
 fi
 
 # Warning docker desktop

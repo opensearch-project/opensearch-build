@@ -15,7 +15,7 @@ from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
 
 class TestBwcSuite(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "..", "..", "data")
-    MANIFEST = os.path.join(DATA, "remote", "dist", "manifest.yml")
+    MANIFEST = os.path.join(DATA, "remote", "dist", "opensearch", "manifest.yml")
 
     def setUp(self):
         os.chdir(os.path.dirname(__file__))

@@ -27,9 +27,15 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl git tar net-tools procps-ng python3 python3-devel python3-pip
+    yum install -y adoptopenjdk-14-hotspot which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip
 
-# Install Python37 dependencies
+# Create user group
+RUN groupadd -g 1000 opensearch && \
+    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    mkdir -p /usr/share/opensearch && \
+    chown -R 1000:1000 /usr/share/opensearch
+
+# Add Python37 dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies
@@ -92,16 +98,24 @@ RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
-
 # Set JAVA_HOME and JAVA14_HOME
 # AdoptOpenJDK apparently does not add JAVA_HOME after installation
 RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh && \
     echo "export JAVA14_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
+
+# Install PKG builder dependencies with rvm
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
+    curl -sSL https://get.rvm.io | bash -s stable
+
+# Switch shell for rvm related commands
+SHELL ["/bin/bash", "-lc"]
+CMD ["/bin/bash", "-l"]
+
+# Install ruby / rpm / fpm related dependencies
+RUN . /etc/profile.d/rvm.sh && rvm install 2.3.3 && rvm --default use 2.3.3 && \
+    yum install -y rpm-build && \
+    gem install fpm -v 1.13.0
 
 # Install Python37 binary
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \

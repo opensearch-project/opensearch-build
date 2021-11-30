@@ -1,42 +1,34 @@
 pipeline {
     options {
-        timeout(time: 3, unit: 'HOURS') 
+        timeout(time: 3, unit: 'HOURS')
     }
     agent none
+    parameters {
+        string(
+            defaultValue: 'https://github.com/opensearch-project/opensearch-build',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY',
+            description: 'The git repository name that contains dockerfiles and the docker build script.',
+            trim: true
+        )
+        string(
+            defaultValue: 'main',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
+            description: 'The git reference (branch/tag/commit_id) of above repository.',
+            trim: true
+        )
+        string(
+            defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
+            name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
+            description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
+            trim: true
+        )
+        booleanParam(
+            defaultValue: true,
+            name: 'IS_STAGING',
+            description: 'Are we pushing docker images to staging (opensearchstaging) or production (opensearchproject) account.'
+        )
+    }
     stages {
-        stage('parameters') {
-            steps {
-                script {
-                    properties([
-                            parameters([
-                                    string(
-                                            defaultValue: 'https://github.com/opensearch-project/opensearch-build',
-                                            name: 'DOCKER_BUILD_GIT_REPOSITORY',
-                                            description: 'The git repository name that contains dockerfiles and the docker build script',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: 'main',
-                                            name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
-                                            description: 'The git reference (branch/tag/commit_id) of above repository',
-                                            trim: true
-                                    ),
-                                    string(
-                                            defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
-                                            name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
-                                            description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY',
-                                            trim: true
-                                    ),
-                                    booleanParam(
-                                            defaultValue: true,
-                                            name: 'IS_STAGING',
-                                            description: 'Are we pushing docker images to staging (opensearchstaging) or production (opensearchproject) account'
-                                    )
-                            ])
-                    ])
-                }
-            }
-        }
         stage('docker-build') {
             agent {
                 docker {
@@ -50,7 +42,7 @@ pipeline {
                 script {
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
                     def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
-                    if (env.IS_STAGING == "false"){
+                    if (env.IS_STAGING == "false") {
                         CREDENTIAL_ID = "jenkins-staging-docker-prod-token"
                         sh "echo Switch to Production"
                     }
@@ -66,8 +58,10 @@ pipeline {
             }
             post() {
                 always {
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
-                    sh "docker logout && docker image prune -f --all"
+                    script {
+                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        sh "docker logout && docker image prune -f --all"
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
 from build_workflow.builders import Builders
 from manifests.input_manifest import InputManifest
+from paths.build_output_dir import BuildOutputDir
 from system import console
 from system.os import current_architecture, current_platform
 from system.temporary_directory import TemporaryDirectory
@@ -24,7 +25,6 @@ def main():
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
-    output_dir = os.path.join(os.getcwd(), "builds")
 
     if args.ref_manifest:
         manifest = manifest.stable(
@@ -43,6 +43,8 @@ def main():
             manifest.to_file(args.ref_manifest)
         exit(0)
 
+    output_dir = BuildOutputDir(manifest.build.name).dir
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
 
@@ -55,8 +57,6 @@ def main():
             platform=args.platform or manifest.build.platform,
             architecture=args.architecture or manifest.build.architecture,
         )
-
-        os.makedirs(target.output_dir, exist_ok=True)
 
         build_recorder = BuildRecorder(target)
 
