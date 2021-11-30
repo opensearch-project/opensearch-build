@@ -2,48 +2,60 @@
 schema-version: "1.0"
 ci:
   image:
-     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1.10211.18"
+     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
 build:
   name: OpenSearch Dashboards
   version: 1.1.1
 components:
 - name: OpenSearch-Dashboards
-  ref: "1.1"
-  repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
 - name: alertingDashboards
-  repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-  ref: "1.1"
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: securityDashboards
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: indexManagementDashboards
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: queryWorkbenchDashboards
+  working_directory: workbench
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: reportsDashboards
+  working_directory: dashboards-reports
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  platforms:
+    - linux
+  checks:
+      - manifest:component
+- name: notebooksDashboards
+  working_directory: dashboards-notebooks
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: ganttChartDashboards
+  working_directory: gantt-chart
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: traceAnalyticsDashboards
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
+- name: anomalyDetectionDashboards
+  dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+  checks:
+      - manifest:component
 - name: functionalTestDashboards
   repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
   ref: "main"
-- name: securityDashboards
-  repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-  ref: "1.1"
-- name: indexManagementDashboards
-  repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-  ref: "1.1"
-- name: queryWorkbenchDashboards
-  repository: https://github.com/opensearch-project/sql.git
-  working_directory: workbench
-  ref: "1.1"
-- name: reportsDashboards
-  repository: https://github.com/opensearch-project/dashboards-reports.git
-  working_directory: dashboards-reports
-  ref: "1.1"
-  platforms:
-    - linux
-- name: notebooksDashboards
-  repository: https://github.com/opensearch-project/dashboards-notebooks.git
-  working_directory: dashboards-notebooks
-  ref: "1.1"
-- name: ganttChartDashboards
-  repository: https://github.com/opensearch-project/dashboards-visualizations.git
-  working_directory: gantt-chart
-  ref: "1.1"
-- name: traceAnalyticsDashboards
-  repository: https://github.com/opensearch-project/trace-analytics.git
-  ref: "1.1"
-- name: anomalyDetectionDashboards
-  repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-  ref: "1.1"
+  checks:
+      - manifest:component
 schema-version: '1.0'
