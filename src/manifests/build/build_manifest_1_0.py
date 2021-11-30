@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
 from manifests.component_manifest import ComponentManifest
 
 """
@@ -73,11 +74,11 @@ class BuildManifest_1_0(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
@@ -85,17 +86,17 @@ class BuildManifest_1_0(ComponentManifest):
         }
 
     class Components(ComponentManifest.Components):
-        def __create__(self, data):
+        def __create__(self, data: Any) -> 'BuildManifest_1_0.Component':
             return BuildManifest_1_0.Component(data)
 
     class Build:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             self.name = data["name"]
             self.version = data["version"]
             self.architecture = data["architecture"]
             self.id = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -104,7 +105,7 @@ class BuildManifest_1_0(ComponentManifest):
             }
 
     class Component(ComponentManifest.Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
@@ -112,7 +113,7 @@ class BuildManifest_1_0(ComponentManifest):
             self.artifacts = data.get("artifacts", {})
             self.version = data["version"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "repository": self.repository,

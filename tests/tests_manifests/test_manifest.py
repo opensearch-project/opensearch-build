@@ -16,19 +16,19 @@ from system.temporary_directory import TemporaryDirectory
 
 class TestManifest(unittest.TestCase):
     class SampleManifest(Manifest):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.data = data
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return self.data
 
     class SampleManifestWithVersions(Manifest):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.data = data
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return self.data
 
     SampleManifestWithVersions.VERSIONS = {

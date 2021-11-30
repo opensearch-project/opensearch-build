@@ -5,6 +5,7 @@
 # compatible open source license.
 
 from abc import ABC
+from typing import Any
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
@@ -13,7 +14,7 @@ from manifests.input_manifest import InputManifest
 
 class CiCheckLists(ABC):
     @classmethod
-    def from_component(self, component, target):
+    def from_component(self, component: Any, target):
         if type(component) is InputManifest.ComponentFromDist:
             return CiCheckListDist(component, target)
         elif type(component) is InputManifest.ComponentFromSource:

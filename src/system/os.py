@@ -8,7 +8,7 @@ import os
 import subprocess
 
 
-def current_architecture():
+def current_architecture() -> str:
     architecture = subprocess.check_output(["uname", "-m"]).decode().strip()
     if architecture == "x86_64":
         return "x64"
@@ -18,7 +18,7 @@ def current_architecture():
         raise ValueError(f"Unsupported architecture: {architecture}")
 
 
-def current_platform():
+def current_platform() -> str:
     if os.name == "nt":
         return "windows"
     else:

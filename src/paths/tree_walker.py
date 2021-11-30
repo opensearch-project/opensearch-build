@@ -6,9 +6,10 @@
 
 import logging
 import os
+from typing import Iterator, Tuple
 
 
-def walk(root):
+def walk(root: str) -> Iterator[Tuple[str, str]]:
     logging.info(f"Walking tree from {root}")
     for dir, dirs, files in os.walk(root):
         for file_name in files:

@@ -8,7 +8,10 @@ import concurrent.futures
 import logging
 import os
 import shutil
+from typing import List
 import urllib
+from manifests.build_manifest import BuildManifest
+from manifests.bundle_manifest import BundleManifest
 
 import validators  # type:ignore
 
@@ -18,22 +21,22 @@ class DependencyInstaller:
     Provides a dependency installer for the test suites.
     """
 
-    def __init__(self, root_url, build_manifest, bundle_manifest):
+    def __init__(self, root_url: str, build_manifest: BuildManifest, bundle_manifest: BundleManifest) -> None:
         self.root_url = root_url
         self.build_manifest = build_manifest
         self.bundle_manifest = bundle_manifest
 
     @property
-    def maven_local_path(self):
+    def maven_local_path(self) -> str:
         return os.path.join(os.path.expanduser("~"), ".m2", "repository")
 
-    def install_maven_dependencies(self):
+    def install_maven_dependencies(self) -> None:
         for component in self.build_manifest.components.values():
             maven_artifacts = component.artifacts.get("maven", None)
             if maven_artifacts:
                 self.download(maven_artifacts, "builds", self.maven_local_path)
 
-    def install_build_dependencies(self, dependency_dict, dest):
+    def install_build_dependencies(self, dependency_dict, dest) -> None:
         """
         Downloads the build dependencies from S3 and puts them on the given custom path
         for each dependency in the dependencies.
@@ -47,11 +50,11 @@ class DependencyInstaller:
             local_path = os.path.join(dest, f"{dependency}-{version}.zip")
             self.__download_or_copy(path, local_path)
 
-    def download_dist(self, dest):
+    def download_dist(self, dest: str) -> str:
         local_path = os.path.join(dest, os.path.basename(self.bundle_manifest.build.location))
         return self.__download_or_copy(self.bundle_manifest.build.location, local_path)
 
-    def download(self, paths, category, dest):
+    def download(self, paths: List[str], category: str, dest: str) -> None:
         logging.info(f"Downloading to {dest} ...")
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             for path in paths:
@@ -60,7 +63,7 @@ class DependencyInstaller:
                 local_path = os.path.join(dest, "/".join(path.split("/")[1:]))
                 executor.submit(self.__download_or_copy, url, local_path)
 
-    def __download_or_copy(self, source, dest):
+    def __download_or_copy(self, source: str, dest: str) -> str:
         dest = os.path.realpath(dest)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if validators.url(source):

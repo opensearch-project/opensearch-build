@@ -10,8 +10,11 @@ import os
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
+from typing import Any
+from assemble_workflow.bundle_recorder import BundleRecorder
 
 from assemble_workflow.dist import Dist
+from manifests.build_manifest import BuildManifest
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
 
@@ -23,13 +26,13 @@ plugins can be found.
 
 
 class Bundle(ABC):
-    def __enter__(self):
+    def __enter__(self) -> None:
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         self.tmp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
-    def __init__(self, build_manifest, artifacts_dir, bundle_recorder, keep=False):
+    def __init__(self, build_manifest: BuildManifest, artifacts_dir: str, bundle_recorder: BundleRecorder, keep: bool=False) -> None:
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -44,7 +47,7 @@ class Bundle(ABC):
         self.installed_plugins = []
         self.build = build_manifest.build
 
-    def install_min(self):
+    def install_min(self) -> None:
         install_script = ScriptFinder.find_install_script(self.min_dist.name)
         install_command = " ".join(
             [
@@ -64,7 +67,7 @@ class Bundle(ABC):
         )
         self._execute(install_command)
 
-    def install_plugins(self):
+    def install_plugins(self) -> None:
         for plugin in self.plugins:
             logging.info(f"Installing {plugin.name}")
             self.install_plugin(plugin)

@@ -6,16 +6,18 @@
 
 from abc import ABC, abstractmethod
 
+from manifests_workflow.component import Component
+
 
 class CiCheckList(ABC):
-    def __init__(self, component, target):
+    def __init__(self, component: Component, target: None) -> None:
         self.component = component
         self.target = target
 
     @abstractmethod
-    def checkout(self, work_dir):
+    def checkout(self, work_dir: str) -> None:
         pass
 
     @abstractmethod
-    def check(self):
+    def check(self) -> None:
         pass

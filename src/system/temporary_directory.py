@@ -10,9 +10,11 @@ import os
 import shutil
 import stat
 import tempfile
+from types import FunctionType
+from typing import Any, Optional
 
 
-def g__handleRemoveReadonly(func, path, exc):
+def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     excvalue = exc[1]
     if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
@@ -22,19 +24,19 @@ def g__handleRemoveReadonly(func, path, exc):
 
 
 class TemporaryDirectory:
-    def __init__(self, keep=False, chdir=False):
+    def __init__(self, keep: bool=False, chdir: bool=False):
         self.keep = keep
         self.name = tempfile.mkdtemp()
         if chdir:
-            self.curdir = os.getcwd()
+            self.curdir: Optional[str] = os.getcwd()
             os.chdir(self.name)
         else:
             self.curdir = None
 
-    def __enter__(self):
+    def __enter__(self) -> 'TemporaryDirectory':
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         if self.curdir:
             os.chdir(self.curdir)
 

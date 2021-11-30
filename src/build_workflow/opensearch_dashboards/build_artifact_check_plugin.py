@@ -14,7 +14,7 @@ from system.config_file import ConfigFile
 
 
 class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
-    def check(self, path):
+    def check(self, path: str) -> None:
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
         opensearch_dashboards_version = re.sub(r"-SNAPSHOT$", "", self.target.opensearch_version)

@@ -8,20 +8,22 @@
 # GitHub history for details.
 
 import argparse
+from ctypes import Union
 import logging
 import os
+from typing import Any
 import uuid
 
 import validators  # type:ignore
 
 
 class TestArgs:
-    test_run_id: int
+    test_run_id: str
     component: str
     keep: bool
     logging_level: int
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("path", type=str, help="Location of build and bundle manifests.", default=".")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")

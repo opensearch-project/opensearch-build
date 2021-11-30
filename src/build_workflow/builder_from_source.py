@@ -26,7 +26,7 @@ class BuilderFromSource(Builder):
             self.component.working_directory,
         )
 
-    def build(self, build_recorder):
+    def build(self, build_recorder) -> None:
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
 
         build_command = " ".join(

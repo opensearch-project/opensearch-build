@@ -5,22 +5,22 @@
 # compatible open source license.
 
 import os
+from typing import Any, List, NewType
 
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
 from system.config_file import ConfigFile
 
-
 class ComponentOpenSearchDashboardsMin(Component):
-    def __init__(self, repo, snapshot=False):
+    def __init__(self, repo: GitRepository, snapshot: bool=False) -> None:
         super().__init__("OpenSearch-Dashboards", repo, snapshot, [])
 
     @classmethod
-    def branches(self):
+    def branches(self) -> List[str]:
         return Component.branches("https://github.com/opensearch-project/OpenSearch-Dashboards.git")
 
     @classmethod
-    def checkout(self, path, branch="main", snapshot=False):
+    def checkout(self, path: str, branch: str="main", snapshot: bool=False) -> 'ComponentOpenSearchDashboardsMin':
         with GitRepository(
             "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
             branch,
@@ -32,10 +32,10 @@ class ComponentOpenSearchDashboardsMin(Component):
             )
 
     @property
-    def properties(self):
+    def properties(self) -> ConfigFile:
         path = os.path.join(self.git_repo.working_directory, "package.json")
         return ConfigFile.from_file(path)
 
     @property
-    def version(self):
+    def version(self) -> Any:
         return self.properties.get_value("version")

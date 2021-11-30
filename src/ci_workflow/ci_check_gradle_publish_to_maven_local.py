@@ -8,7 +8,7 @@ from ci_workflow.ci_check import CiCheckSource
 
 
 class CiCheckGradlePublishToMavenLocal(CiCheckSource):
-    def check(self):
+    def check(self) -> None:
         cmd = " ".join(
             [
                 "./gradlew publishToMavenLocal",

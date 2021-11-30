@@ -50,7 +50,7 @@ class IntegTestSuite:
         )
         self.save_logs = test_recorder.test_results_logs
 
-    def execute(self):
+    def execute(self) -> TestComponentResults:
         test_results = TestComponentResults()
         self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
@@ -58,7 +58,7 @@ class IntegTestSuite:
             test_results.append(TestResult(self.component.name, config, status))
         return test_results
 
-    def __install_build_dependencies(self):
+    def __install_build_dependencies(self) -> None:
         if "build-dependencies" in self.test_config.integ_test:
             dependency_list = self.test_config.integ_test["build-dependencies"]
             if len(dependency_list) == 1 and "job-scheduler" in dependency_list:

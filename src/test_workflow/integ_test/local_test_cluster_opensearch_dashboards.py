@@ -61,7 +61,7 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
             self.dependency_installer_opensearch_dashboards,
             self.work_dir)
 
-    def endpoint(self):
+    def endpoint(self) -> str:
         return "localhost"
 
     def port(self):

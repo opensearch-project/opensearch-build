@@ -9,11 +9,14 @@ import logging
 import os
 import time
 from os import walk
+from typing import Any, List
 
 import requests
+from requests.adapters import Response
 
 from system.process import Process
 from test_workflow.test_cluster import ClusterCreationException
+from test_workflow.dependency_installer import DependencyInstaller
 
 
 class Service(abc.ABC):
@@ -21,7 +24,7 @@ class Service(abc.ABC):
     Abstract base class for all types of test clusters.
     """
 
-    def __init__(self, work_dir, version, security_enabled, additional_config, dependency_installer):
+    def __init__(self, work_dir: str, version: str, security_enabled: bool, additional_config, dependency_installer: DependencyInstaller) -> None:
         self.work_dir = work_dir
         self.version = version
         self.security_enabled = security_enabled
@@ -32,13 +35,13 @@ class Service(abc.ABC):
         self.install_dir = ""
 
     @abc.abstractmethod
-    def start(self):
+    def start(self) -> None:
         """
         Start a service.
         """
         pass
 
-    def terminate(self):
+    def terminate(self) -> 'ServiceTerminationResult':
         if not self.process_handler.started:
             logging.info("Process is not started")
             return
@@ -49,24 +52,24 @@ class Service(abc.ABC):
 
         return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
 
-    def endpoint(self):
+    def endpoint(self) -> str:
         return "localhost"
 
     @abc.abstractmethod
-    def port(self):
+    def port(self) -> int:
         """
         Get the port that this service is listening on.
         """
         pass
 
     @abc.abstractmethod
-    def get_service_response(self):
+    def get_service_response(self) -> Response:
         """
         Get response from the service endpoint.
         """
         pass
 
-    def service_alive(self):
+    def service_alive(self) -> bool:
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
         if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
@@ -75,7 +78,7 @@ class Service(abc.ABC):
         else:
             return False
 
-    def wait_for_service(self):
+    def wait_for_service(self) -> None:
         logging.info("Waiting for service to become available")
 
         for attempt in range(10):
@@ -96,7 +99,7 @@ class Service(abc.ABC):
 
 
 class ServiceTerminationResult:
-    def __init__(self, return_code, stdout_data, stderr_data, log_files):
+    def __init__(self, return_code: int, stdout_data: str, stderr_data: str, log_files: Any) -> None:
         self.return_code = return_code
         self.stdout_data = stdout_data
         self.stderr_data = stderr_data

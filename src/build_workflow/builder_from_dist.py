@@ -7,6 +7,7 @@
 import logging
 import os
 import urllib.request
+from build_workflow.build_recorder import BuildRecorder
 
 from build_workflow.builder import Builder
 from manifests.build_manifest import BuildManifest
@@ -19,13 +20,13 @@ class BuilderFromDist(Builder):
             self.ref = manifest.ref
             self.sha = manifest.commit_id
 
-    def checkout(self, work_dir):
+    def checkout(self, work_dir: str) -> None:
         self.__download_build_manifest()
 
-    def build(self, build_recorder):
+    def build(self, build_recorder: BuildRecorder) -> None:
         pass
 
-    def export_artifacts(self, build_recorder):
+    def export_artifacts(self, build_recorder: BuildRecorder) -> None:
         os.makedirs(self.output_path, exist_ok=True)
         component_manifest = self.build_manifest.components[self.component.name]
         logging.info(f"Downloading {component_manifest.name} {component_manifest.version} ({component_manifest.commit_id}) ...")

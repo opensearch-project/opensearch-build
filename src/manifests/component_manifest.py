@@ -6,9 +6,9 @@
 
 import itertools
 import logging
+from typing import Any, Dict, List, NewType
 
 from manifests.manifest import Manifest
-
 
 class ComponentManifest(Manifest):
     SCHEMA = {
@@ -20,29 +20,29 @@ class ComponentManifest(Manifest):
         }
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
 
         self.components = self.Components(data.get("components", []))
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "components": self.components.__to_dict__()
         }
 
     class Components(dict):
-        def __init__(self, data):
-            super().__init__(map(lambda component: (component["name"], self.__create__(component)), data))
+        def __init__(self, data: Dict[Any,Any]) -> None:
+            super().__init__(map(lambda component: (component["name"], self.__create__(component)), data)) # type:ignore
 
         @classmethod
-        def __create__(data):
-            ComponentManifest.Component(data)
+        def __create__(data: Any) -> 'ComponentManifest.Component':
+            return ComponentManifest.Component(data)
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> List[Any]:
             return list(map(lambda component: component.__to_dict__(), self.values()))
 
-        def select(self, focus=None):
+        def select(self, focus=None) -> 'ComponentManifest.Component':
             """
             Select components.
 
@@ -58,16 +58,16 @@ class ComponentManifest(Manifest):
             return selected
 
     class Component:
-        def __init__(self, data):
+        def __init__(self, data: dict) -> None:
             self.name = data["name"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name
             }
 
-        def __matches__(self, focus=None, platform=None):
-            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+        def __matches__(self, focus: str=None, platform: str=None) -> bool:
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms)) # ignore:type
 
             if not matches:
                 logging.info(f"Skipping {self.name}")

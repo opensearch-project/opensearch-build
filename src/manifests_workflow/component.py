@@ -6,19 +6,22 @@
 
 import re
 import subprocess
+from typing import List
+from ci_workflow.ci_check import CiCheck
+from git.git_repository import GitRepository
 
 from manifests.manifest import Manifest
 
 
 class Component:
-    def __init__(self, name, repo, snapshot=False, checks=[]):
+    def __init__(self, name: str, repo: GitRepository, snapshot: bool=False, checks: List[CiCheck]=[]) -> None:
         self.name = name
         self.git_repo = repo
         self.snapshot = snapshot
         self.checks = checks
 
     @classmethod
-    def branches(self, uri):
+    def branches(self, uri: str) -> List[str]:
         """Return main or any x.y branches."""
         branches = ["main"]
         remote_branches = subprocess.check_output(f"git ls-remote {uri} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True).decode().split("\n")

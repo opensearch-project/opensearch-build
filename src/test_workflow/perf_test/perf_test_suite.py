@@ -1,5 +1,6 @@
 import os
 import subprocess
+from manifests.bundle_manifest import BundleManifest
 
 from system.working_directory import WorkingDirectory
 
@@ -9,7 +10,7 @@ class PerfTestSuite:
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
     """
 
-    def __init__(self, bundle_manifest, endpoint, security, current_workspace):
+    def __init__(self, bundle_manifest: BundleManifest, endpoint: str, security: bool, current_workspace: str) -> None:
         self.manifest = bundle_manifest
         self.work_dir = "mensor/"
         self.endpoint = endpoint
@@ -20,7 +21,7 @@ class PerfTestSuite:
             f" -a {self.manifest.build.architecture} -p {self.current_workspace}"
         )
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             with WorkingDirectory(self.work_dir):
                 dir = os.getcwd()

@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
 from manifests.component_manifest import ComponentManifest
 
 
@@ -57,11 +58,11 @@ class BundleManifest_1_0(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
@@ -69,14 +70,14 @@ class BundleManifest_1_0(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             self.name = data["name"]
             self.version = data["version"]
             self.architecture = data["architecture"]
             self.location = data["location"]
             self.id = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -86,18 +87,18 @@ class BundleManifest_1_0(ComponentManifest):
             }
 
     class Components(ComponentManifest.Components):
-        def __create__(self, data):
+        def __create__(self, data: Any):
             return BundleManifest_1_0.Component(data)
 
     class Component(ComponentManifest.Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.commit_id = data["commit_id"]
             self.location = data["location"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "repository": self.repository,

@@ -6,12 +6,13 @@
 
 import os
 from contextlib import contextmanager
+from typing import Iterator
 
 
 @contextmanager
-def WorkingDirectory(path):
+def WorkingDirectory(path: str) -> Iterator[str]:
     try:
         saved_path = os.getcwd()
-        yield os.chdir(path)
+        yield os.chdir(path) # type: ignore
     finally:
         os.chdir(saved_path)

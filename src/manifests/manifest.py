@@ -8,7 +8,7 @@ import logging
 import os
 import urllib.request
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import IO, Any, Dict, List, Optional, Type
 
 import validators  # type:ignore
 import yaml
@@ -22,17 +22,17 @@ class Manifest(ABC):
         }
     }
 
-    VERSIONS: Optional[Dict] = None
+    VERSIONS: Optional[Dict[str, Type['Manifest']]] = None
 
     @classmethod
-    def from_file(cls, file):
+    def from_file(cls, file: IO[Any]) -> 'Manifest':
         yml = yaml.safe_load(file)
         version = yml["schema-version"]
         loader = cls.from_version(version)
         return loader(yml)
 
     @classmethod
-    def from_url(cls, url):
+    def from_url(cls, url: str) -> 'Manifest':
         logging.info(f"Loading {url}")
         with urllib.request.urlopen(url) as f:
             yml = yaml.safe_load(f.read().decode("utf-8"))
@@ -41,7 +41,7 @@ class Manifest(ABC):
             return loader(yml)
 
     @classmethod
-    def from_version(cls, version):
+    def from_version(cls, version: str) -> Type['Manifest']:
         if cls.VERSIONS is None:
             return cls
 
@@ -54,13 +54,13 @@ class Manifest(ABC):
             raise ValueError(f"Invalid manifest version: {version}, must be one of {', '.join(cls.VERSIONS.keys())}")
 
     @classmethod
-    def from_path(cls, path):
+    def from_path(cls, path: str) -> 'Manifest':
         logging.info(f"Loading {path}")
         with open(path, "r") as f:
             return cls.from_file(f)
 
     @classmethod
-    def from_urlpath(cls, file_or_url):
+    def from_urlpath(cls, file_or_url: str) -> 'Manifest':
         if validators.url(file_or_url):
             return cls.from_url(file_or_url)
         elif os.path.exists(file_or_url):
@@ -69,9 +69,9 @@ class Manifest(ABC):
             raise ValueError(f"Invalid manifest: {file_or_url}")
 
     @classmethod
-    def compact(cls, d):
+    def compact(cls, d: Any): # type:ignore
         if isinstance(d, list):
-            return list(map(lambda i: cls.compact(i), d))
+            return list(map(lambda i: cls.compact(i), d)) # type:ignore
         elif isinstance(d, dict):
             result = {}
             for k, v in d.items():
@@ -82,31 +82,31 @@ class Manifest(ABC):
         else:
             return d
 
-    def __to_dict(self):
+    def __to_dict(self) -> dict:
         return {}
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, type(self)):
-            return self.to_dict() == other.to_dict()
+            return self.to_dict() == other.to_dict() # type:ignore
         return False
 
-    def to_dict(self):
-        return Manifest.compact(self.__to_dict__())
+    def to_dict(self) -> Any:
+        return Manifest.compact(self.__to_dict__()) # type:ignore
 
-    def to_file(self, path):
+    def to_file(self, path: str) -> None:
         with open(path, "w") as file:
             yaml.safe_dump(self.to_dict(), file)
 
     @abstractmethod
-    def __init__(self, data):
+    def __init__(self, data: Any) -> None:
         self.validate(data)
         self.version = str(data["schema-version"])
 
     @property
-    def schema(self):
+    def schema(self) -> Any:
         return self.SCHEMA
 
-    def validate(self, data):
+    def validate(self, data: Any) -> None:
         v = Validator(self.schema)
         if not v.validate(data):
             raise ValueError(f"Invalid manifest schema: {v.errors}")

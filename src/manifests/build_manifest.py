@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
 from manifests.build.build_manifest_1_0 import BuildManifest_1_0
 from manifests.build.build_manifest_1_1 import BuildManifest_1_1
 from manifests.component_manifest import ComponentManifest
@@ -86,11 +87,11 @@ class BuildManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.2",
             "build": self.build.__to_dict__(),
@@ -98,14 +99,14 @@ class BuildManifest(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data["platform"]
             self.architecture = data["architecture"]
             self.id = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -116,11 +117,11 @@ class BuildManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create__(self, data):
+        def __create__(self, data: Any):
             return BuildManifest.Component(data)
 
     class Component(ComponentManifest.Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
@@ -128,7 +129,7 @@ class BuildManifest(ComponentManifest):
             self.artifacts = data.get("artifacts", {})
             self.version = data["version"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "repository": self.repository,

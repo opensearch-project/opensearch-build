@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
 from manifests.component_manifest import ComponentManifest
 
 
@@ -60,11 +61,11 @@ class TestManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.name = str(data["name"])
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "name": self.name,
@@ -73,17 +74,17 @@ class TestManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create__(self, data):
+        def __create__(self, data: Any):
             return TestManifest.Component(data)
 
     class Component(ComponentManifest.Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.working_directory = data.get("working-directory", None)
             self.integ_test = data.get("integ-test", None)
             self.bwc_test = data.get("bwc-test", None)
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "working-directory": self.working_directory,

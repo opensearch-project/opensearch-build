@@ -39,6 +39,7 @@ components:
 import copy
 import itertools
 import logging
+from typing import Any, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import ComponentManifest
@@ -99,14 +100,14 @@ class InputManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
         self.ci = self.Ci(data.get("ci", None))
         self.components = self.Components(data.get("components", []))
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
@@ -125,25 +126,25 @@ class InputManifest(ComponentManifest):
         return manifest
 
     class Ci:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             self.image = None if data is None else self.Image(data.get("image", None))
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> Optional[dict]:
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data):
+            def __init__(self, data: Any):
                 self.name = data["name"]
                 self.args = data.get("args", None)
 
-            def __to_dict__(self):
+            def __to_dict__(self) -> dict:
                 return {
                     "name": self.name,
                     "args": self.args
                 }
 
     class Build:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data.get("platform", None)
@@ -156,7 +157,7 @@ class InputManifest(ComponentManifest):
             self.platform = platform
             self.snapshot = snapshot
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -168,10 +169,10 @@ class InputManifest(ComponentManifest):
 
     class Components(ComponentManifest.Components):
         @classmethod
-        def __create__(self, data):
+        def __create__(self, data: Any) -> None:
             return InputManifest.Component._from(data)
 
-        def __stabilize__(self):
+        def __stabilize__(self) -> None:
             for component in self.values():
                 component.__stabilize__()
 
@@ -192,12 +193,12 @@ class InputManifest(ComponentManifest):
             return selected
 
     class Component(ComponentManifest.Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.platforms = data.get("platforms", None)
 
         @classmethod
-        def _from(self, data):
+        def _from(self, data: Any):
             if "repository" in data:
                 return InputManifest.ComponentFromSource(data)
             elif "dist" in data:
@@ -213,23 +214,23 @@ class InputManifest(ComponentManifest):
 
             return matches
 
-        def __stabilize__(self):
+        def __stabilize__(self) -> None:
             pass
 
     class ComponentFromSource(Component):
-        def __init__(self, data):
+        def __init__(self, data: Any) -> None:
             super().__init__(data)
             self.repository = data["repository"]
             self.ref = data["ref"]
             self.working_directory = data.get("working_directory", None)
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
-        def __stabilize__(self):
+        def __stabilize__(self) -> None:
             ref, name = GitRepository.stable_ref(self.repository, self.ref)
             logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
             self.ref = ref
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "repository": self.repository,
@@ -240,12 +241,12 @@ class InputManifest(ComponentManifest):
             }
 
     class ComponentFromDist(Component):
-        def __init__(self, data):
+        def __init__(self, data: Any):
             super().__init__(data)
             self.dist = data["dist"]
             self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "dist": self.dist,
@@ -254,7 +255,7 @@ class InputManifest(ComponentManifest):
             }
 
     class Check:
-        def __init__(self, data):
+        def __init__(self, data: Any):
             if isinstance(data, dict):
                 if len(data) != 1:
                     raise ValueError(f"Invalid check format: {data}")
@@ -263,7 +264,7 @@ class InputManifest(ComponentManifest):
                 self.name = data
                 self.args = None
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             if self.args:
                 return {self.name: self.args}
             else:

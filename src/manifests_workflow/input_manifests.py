@@ -16,7 +16,7 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifests(Manifests):
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
         self.prefix = name.lower().replace(" ", "-")
         super().__init__(InputManifest, InputManifests.files(self.prefix))

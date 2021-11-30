@@ -6,9 +6,10 @@
 
 import logging
 import sys
+from typing import Any
 
 
-def configure(level):
+def configure(level: Any) -> None:
     logging.basicConfig(
         stream=sys.stdout,
         level=level,

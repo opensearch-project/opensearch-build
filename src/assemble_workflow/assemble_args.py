@@ -12,7 +12,7 @@ class AssembleArgs:
     manifest: str
     keep: bool
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Assemble an OpenSearch Distribution")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument("-b", "--base-url", dest="base_url", help="The base url to download the artifacts.")

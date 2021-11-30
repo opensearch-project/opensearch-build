@@ -7,6 +7,7 @@
 import logging
 import subprocess
 import tempfile
+from typing import IO, Optional
 
 import psutil  # type: ignore
 
@@ -14,14 +15,14 @@ import psutil  # type: ignore
 class Process:
     def __init__(
         self
-    ):
-        self.process = None
-        self.stdout = None
-        self.stderr = None
-        self.__stdout_data__ = None
-        self.__stderr_data__ = None
+    ) -> None:
+        self.process: subprocess.Popen = None
+        self.stdout: IO[str] = None
+        self.stderr: IO[str] = None
+        self.__stdout_data__: str = None
+        self.__stderr_data__: str = None
 
-    def start(self, command, cwd):
+    def start(self, command: str, cwd: str) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
@@ -36,19 +37,19 @@ class Process:
             stderr=self.stderr,
         )
 
-    def terminate(self):
+    def terminate(self) -> int:
         if not self.started:
             raise ProcessNotStartedError()
 
-        parent = psutil.Process(self.process.pid)
+        parent = psutil.Process(self.pid)
         logging.debug("Checking for child processes")
         child_processes = parent.children(recursive=True)
         for child in child_processes:
             logging.debug(f"Found child process with pid {child.pid}")
-            if child.pid != self.process.pid:
+            if child.pid != self.pid:
                 logging.debug(f"Sending SIGKILL to {child.pid} ")
                 child.kill()
-        logging.info(f"Sending SIGKILL to PID {self.process.pid}")
+        logging.info(f"Sending SIGKILL to PID {self.pid}")
 
         self.process.kill()
 
@@ -70,19 +71,19 @@ class Process:
         return self.return_code
 
     @property
-    def started(self):
+    def started(self) -> bool:
         return True if self.process else False
 
     @property
-    def pid(self):
+    def pid(self) -> Optional[int]:
         return self.process.pid if self.started else None
 
     @property
-    def stdout_data(self):
+    def stdout_data(self) -> str:
         return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
-    def stderr_data(self):
+    def stderr_data(self) -> str:
         return self.stderr.read() if self.stderr else self.__stderr_data__
 
 
@@ -91,7 +92,7 @@ class ProcessStartedError(Exception):
     Indicates that process already started.
     """
 
-    def __init__(self, pid):
+    def __init__(self, pid: Optional[int]) -> None:
         self.pid = pid
         super().__init__(f"Process already started, pid: {pid}")
 
@@ -101,5 +102,5 @@ class ProcessNotStartedError(Exception):
     Indicates that process has not started.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Process has not started")

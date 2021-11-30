@@ -7,6 +7,9 @@
 import abc
 import os
 from contextlib import contextmanager
+from typing import Any, List
+from test_workflow.integ_test.service import Service
+from test_workflow.test_recorder.log_recorder import LogRecorder
 
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -18,13 +21,13 @@ class TestCluster(abc.ABC):
 
     def __init__(
         self,
-        work_dir,
-        component_name,
-        component_test_config,
-        security_enabled,
-        additional_cluster_config,
-        save_logs
-    ):
+        work_dir: str,
+        component_name: str,
+        component_test_config: Any,
+        security_enabled: bool,
+        additional_cluster_config: Any,
+        save_logs: LogRecorder
+    ) -> None:
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         self.component_name = component_name
         self.component_test_config = component_test_config
@@ -32,12 +35,12 @@ class TestCluster(abc.ABC):
         self.additional_cluster_config = additional_cluster_config
         self.save_logs = save_logs
 
-        self.all_services = []
+        self.all_services: List[Service] = []
         self.termination_result = None
 
     @classmethod
     @contextmanager
-    def create(cls, *args):
+    def create(cls, *args) -> None:
         """
         Set up the cluster. When this method returns, the cluster must be available to take requests.
         Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
@@ -49,7 +52,7 @@ class TestCluster(abc.ABC):
         finally:
             cluster.terminate()
 
-    def start(self):
+    def start(self) -> None:
         os.makedirs(self.work_dir, exist_ok=True)
 
         self.all_services = [self.service] + self.dependencies
@@ -60,7 +63,7 @@ class TestCluster(abc.ABC):
         for service in self.all_services:
             service.wait_for_service()
 
-    def terminate(self):
+    def terminate(self) -> None:
         if self.service:
             self.termination_result = self.service.terminate()
 
@@ -72,7 +75,7 @@ class TestCluster(abc.ABC):
 
         self.__save_test_result_data()
 
-    def __save_test_result_data(self):
+    def __save_test_result_data(self) -> None:
 
         test_result_data = TestResultData(
             self.component_name,
@@ -85,11 +88,11 @@ class TestCluster(abc.ABC):
 
         self.save_logs.save_test_result_data(test_result_data)
 
-    def endpoint(self):
+    def endpoint(self) -> str:
         return "localhost"
 
     @abc.abstractmethod
-    def port(self):
+    def port(self) -> int:
         """
         Get the port that this cluster is listening on.
         """
@@ -123,5 +126,5 @@ class ClusterServiceNotInitializedException(Exception):
     Indicates that the service running in the cluster is not initialized.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Service is not initialized")

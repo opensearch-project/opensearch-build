@@ -6,9 +6,10 @@
 
 import logging
 import subprocess
+from typing import Tuple
 
 
-def execute(command, dir, capture=True, raise_on_failure=True):
+def execute(command: str, dir: str, capture: bool=True, raise_on_failure: bool=True) -> Tuple[int, str, str]:
     """
     Execute a shell command inside a directory.
     :param command: The shell command to execute.

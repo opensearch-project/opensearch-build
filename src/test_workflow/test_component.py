@@ -13,11 +13,11 @@ class TestComponent:
     repository: str
     commit_id: str
 
-    def __init__(self, respository, commit_id):
-        self.repository = respository
+    def __init__(self, repository: str, commit_id: str) -> None:
+        self.repository = repository
         self.commit_id = commit_id
 
-    def checkout(self, directory):
+    def checkout(self, directory: str) -> GitRepository:
         return GitRepository(self.repository, self.commit_id, directory)
 
 

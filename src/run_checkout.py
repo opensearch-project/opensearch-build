@@ -17,7 +17,7 @@ from system import console
 from system.temporary_directory import TemporaryDirectory
 
 
-def main():
+def main() -> int:
     args = CheckoutArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
