@@ -53,7 +53,6 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
     def execute_tests(self):
         test_results = TestComponentResults()
-        # self.__install_build_dependencies()
         for config in self.test_config.integ_test["test-configs"]:
             status = self.__setup_cluster_and_execute_test_config(config)
 
@@ -63,9 +62,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
     def __setup_cluster_and_execute_test_config(self, config):
         security = self.is_security_enabled(config)
-        # if "additional-cluster-configs" in self.test_config.integ_test.keys():
-        #     self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
-        #     logging.info(f"Additional config found: {self.additional_cluster_config}")
+
         with LocalTestClusterOpenSearchDashboards.create(
             self.dependency_installer_opensearch,
             self.dependency_installer_opensearch_dashboards,
@@ -80,33 +77,4 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         ) as (test_cluster_endpoint, test_cluster_port):
             self.pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
-            return self.__execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
-
-    def __execute_integtest_sh(self, endpoint, port, security, test_config):
-        script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
-        if os.path.exists(script):
-            cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
-            work_dir = os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
-            (status, stdout, stderr) = execute(cmd, work_dir, True, False)
-
-            logging.info(f"status,  is {status}")
-            logging.info(f"stdout is {stdout}")
-
-            logging.info(f"stderr is {stderr}")
-
-            results_dir = os.path.join(work_dir, "build", "reports", "tests", "integTest")
-            test_result_data = TestResultData(
-                self.component.name,
-                test_config,
-                status,
-                stdout,
-                stderr,
-                walk(results_dir)
-            )
-            self.save_logs.save_test_result_data(test_result_data)
-            if stderr:
-                logging.info("Integration test run failed for component " + self.component.name)
-                logging.info(stderr)
-            return status
-        else:
-            logging.info(f"{script} does not exist. Skipping integ tests for {self.name}")
+            return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
