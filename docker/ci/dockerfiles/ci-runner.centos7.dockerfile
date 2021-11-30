@@ -113,7 +113,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.3.3 && rvm --default use 2.3.3 && \
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && \
     yum install -y rpm-build && \
     gem install fpm -v 1.13.0
 
