@@ -1,0 +1,18 @@
+build:
+  architecture: x64
+  name: OpenSearch
+  platform: darwin
+  snapshot: false
+  version: 1.3.0
+ci:
+  image:
+    args: -e JAVA_HOME=/opt/java/openjdk-11
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
+components:
+- checks:
+  - gradle:publish
+  - gradle:properties:version
+  name: OpenSearch
+  ref: 83e005b287816c0135d0a9b762054eaf5dcfe9df
+  repository: https://github.com/opensearch-project/OpenSearch.git
+schema-version: '1.0'

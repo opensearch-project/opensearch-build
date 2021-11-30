@@ -12,29 +12,42 @@ void call(Map args = [:]) {
     manifestSHA = sha1(manifestLock)
     echo "Manifest SHA: ${manifestSHA}"
 
-    lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
     String shasRoot = inputManifest.getSHAsRoot("${JOB_NAME}", args.platform, args.architecture)
+    String manifestShaPath = "${shasRoot}/${manifestSHA}.yml"
 
-    buildManifest(
-        args + [
-            manifest: manifestLock
-        ]
-    )
-
-    assembleManifest(
-        args + [
-            manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
-        ]
-    )
-
-    uploadArtifacts(args)
-
+    Boolean shaExists = false
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        if (! args.dryRun) {
-            s3Upload(bucket: "${ARTIFACT_BUCKET_NAME}", file: manifestLock, path: "${shasRoot}/${manifestSHA}.yml")
-        } else {
-            echo "s3Upload(bucket: ${ARTIFACT_BUCKET_NAME}, file: ${manifestLock}, path: ${shasRoot}/${manifestSHA}.yml)"
+        if (!args.dryRun && s3DoesObjectExist(bucket: "${ARTIFACT_BUCKET_NAME}", path: manifestShaPath)) {
+            shaExists = true
+        }
+    }
+
+    if (shaExists) {
+        lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Skipped ${STAGE_NAME}, ${manifestShaPath} exists.")
+        echo "Skipping, ${manifestShaPath} already exists."
+    } else {
+        buildManifest(
+            args + [
+                manifest: manifestLock
+            ]
+        )
+
+        assembleManifest(
+            args + [
+                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.getFilename()}/manifest.yml"
+            ]
+        )
+
+        uploadArtifacts(args)
+
+        withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+            if (! args.dryRun) {
+                s3Upload(bucket: "${ARTIFACT_BUCKET_NAME}", file: manifestLock, path: manifestShaPath)
+            } else {
+                echo "s3Upload(bucket: ${ARTIFACT_BUCKET_NAME}, file: ${manifestLock}, path: ${manifestShaPath})"
+            }
         }
     }
 }
