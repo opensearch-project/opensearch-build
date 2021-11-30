@@ -35,13 +35,29 @@ pipeline {
                 }
             }
         }
-        stage('buildAssembleUpload') {
+        stage('buildAssembleUpload x64/linux') {
             steps {
                 script {
                     buildAssembleUpload(
                         dryRun: true,
                         platform: 'linux',
                         architecture: 'x64'
+                    )
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('buildAssembleUpload arm64/linux') {
+            steps {
+                script {
+                    buildAssembleUpload(
+                        dryRun: true,
+                        platform: 'linux',
+                        architecture: 'arm64'
                     )
                 }
             }

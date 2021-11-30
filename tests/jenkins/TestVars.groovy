@@ -14,7 +14,7 @@ import java.util.*
 class TestVars extends BuildPipelineTest {
     @Test
     public void testVars() {
-        binding.setVariable('INPUT_MANIFEST', '2.0.0/opensearch-2.0.0.yml')
+        binding.setVariable('INPUT_MANIFEST', '1.2.0/opensearch-1.2.0.yml')
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('BUILD_NUMBER', '33')
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
