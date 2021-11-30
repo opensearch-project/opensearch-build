@@ -15,7 +15,7 @@ from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.dependency_installer import DependencyInstaller
-from test_workflow.integ_test.integ_test_suite import IntegTestSuite
+from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch
 from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_suite_results import TestSuiteResults
@@ -39,7 +39,7 @@ def main():
             if component.name in test_manifest.components:
                 test_config = test_manifest.components[component.name]
                 if test_config.integ_test:
-                    test_suite = IntegTestSuite(
+                    test_suite = IntegTestSuiteOpenSearch(
                         dependency_installer,
                         component,
                         test_config,
@@ -48,7 +48,7 @@ def main():
                         work_dir.name,
                         test_recorder
                     )
-                    test_results = test_suite.execute()
+                    test_results = test_suite.execute_tests()
                     all_results.append(component.name, test_results)
                 else:
                     logging.info(f"Skipping integ-tests for {component.name}, as it is currently not supported")
