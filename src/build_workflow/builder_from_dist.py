@@ -19,6 +19,9 @@ class BuilderFromDist(Builder):
             self.ref = manifest.ref
             self.sha = manifest.commit_id
 
+    def get_name(self):
+        return self.target.name.lower().replace(' ', '-')
+
     def checkout(self, work_dir):
         self.__download_build_manifest()
 
@@ -35,7 +38,7 @@ class BuilderFromDist(Builder):
             artifact_path = os.path.join(self.output_path, artifact_type)
             logging.info(f"Downloading into {artifact_path} ...")
             for artifact in component_manifest.artifacts[artifact_type]:
-                artifact_url = f"{self.component.dist}/{self.target.architecture}/{artifact}"
+                artifact_url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.get_name()}/{artifact}"
                 artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
                 os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
                 logging.info(f"Downloading {artifact_url} into {artifact_dest}")
@@ -43,6 +46,6 @@ class BuilderFromDist(Builder):
                 build_recorder.record_artifact(self.component.name, artifact_type, artifact, artifact_dest)
 
     def __download_build_manifest(self):
-        url = f"{self.component.dist}/{self.target.architecture}/manifest.yml"
+        url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.get_name()}/manifest.yml"
         logging.info(f"Downloading {url} ...")
         self.build_manifest = BuildManifest.from_url(url)
