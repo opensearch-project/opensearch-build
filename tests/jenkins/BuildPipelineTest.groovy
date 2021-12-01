@@ -47,9 +47,9 @@ abstract class BuildPipelineTest extends DeclarativePipelineTest {
         })
     }
 
-    void testPipeline(String jenkinsScript) {
+    void testPipeline(String jenkinsScript, String regressionFilename = null) {
         runScript(jenkinsScript)
-        RegressionTestHelper.testNonRegression(helper, jenkinsScript)
+        RegressionTestHelper.testNonRegression(helper, regressionFilename ?: jenkinsScript)
         assertJobStatusSuccess()
         printCallStack()
     }
