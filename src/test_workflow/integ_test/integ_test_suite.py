@@ -16,6 +16,11 @@ from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class IntegTestSuite(abc.ABC):
+    """
+    Kicks of integration tests for a component based on test configurations provided in
+    test_support_matrix.yml
+    """
+
     def __init__(
         self,
         work_dir,

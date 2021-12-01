@@ -13,10 +13,6 @@ from test_workflow.test_result.test_result import TestResult
 
 
 class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
-    """
-    Kicks of integration tests for a component based on test configurations provided in
-    test_support_matrix.yml
-    """
 
     def __init__(
         self,
