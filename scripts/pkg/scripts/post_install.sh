@@ -56,10 +56,8 @@ OPENSEARCH_CONFIG_DIR=<%= configDir %>
 
 function securitySettings() {
     echo Apply Security Settings
-    exec /bin/sh $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
-}
+    sh $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
 
-function performanceAnalyzerSettings() {
     echo Apply PerformanceAnalyzer Settings
     mkdir -p $OPENSEARCH_HOME/data
     mkdir -p $OPENSEARCH_CONFIG_DIR
@@ -92,6 +90,6 @@ if [ "<%= product %>" = "opensearch" ]
 then
     echo Product is OpenSearch, apply plugin settings
     securitySettings || echo securityfailed
-    performanceAnalyzerSettings
+    #performanceAnalyzerSettings
     
 fi
