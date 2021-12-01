@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -50,7 +50,9 @@ pipeline {
                                 platform: "linux",
                                 architecture: "x64"
                             )
-                            assembleManifest()
+                            assembleManifest(
+                                manifest: 'builds/opensearch-dashboards/manifest.yml'
+                            )
                             uploadArtifacts()
                         }
                     }
@@ -78,8 +80,15 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
-                                    zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'builds'
-                                    archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
+                                    zip(
+                                        zipFile: 'buildArtifacts.zip',
+                                        archive: false,
+                                        dir: 'builds'
+                                    )
+                                    archiveArtifacts(
+                                        artifacts: 'buildArtifacts.zip',
+                                        fingerprint: true
+                                    )
                                 }
                             }
                             post {
@@ -99,10 +108,22 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-                                    unzip zipFile: 'buildArtifacts.zip', dir: './builds'
-                                    assembleManifest()
-                                    uploadArtifacts(upload: true)
+                                    copyArtifacts(
+                                        filter: 'buildArtifacts.zip',
+                                        fingerprintArtifacts: true,
+                                        projectName: env.JOB_NAME,
+                                        selector: specific(env.BUILD_NUMBER)
+                                    )
+                                    unzip(
+                                        zipFile: 'buildArtifacts.zip',
+                                        dir: './builds'
+                                    )
+                                    assembleManifest(
+                                        manifest: 'builds/opensearch-dashboards/manifest.yml'
+                                    )
+                                    uploadArtifacts(
+                                        upload: true
+                                    )
                                 }
                             }
                             post {
@@ -141,7 +162,7 @@ pipeline {
                     )
 
                     cleanWs(
-                        disableDeferredWipeout: true, 
+                        disableDeferredWipeout: true,
                         deleteDirs: true
                     )
                 }
