@@ -20,7 +20,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         self.component.name = "sql"
 
         self.test_config = MagicMock()
-        self.test_config.working_directory = "test_work_dir"
+        self.test_config.working_directory = "test_working_directory"
         self.test_config.integ_test = {"test-configs": ['with-security', 'without-security']}
 
         self.bundle_manifest_opensearch = MagicMock()
@@ -136,7 +136,8 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         status = suite.execute_integtest_sh("test_endpoint", 1234, True, ["with-security", "without-security"])
 
         self.assertEqual(status, "test_status")
-        mock_execute.assert_called_once_with('./integtest.sh -b test_endpoint -p 1234 -s true -v 1.2.0', os.path.join("dir", self.work_dir), True, False)
+        mock_execute.assert_called_once_with('./integtest.sh -b test_endpoint -p 1234 -s true -v 1.2.0',
+                                             os.path.join("dir", "test_working_directory"), True, False)
         mock_test_result_data.assert_called_once_with('sql', ['with-security', 'without-security'], 'test_status', 'test_stdout', '', mock_walk_results)
         self.save_logs.save_test_result_data.assert_called_once_with(mock_test_result_data_object)
 
