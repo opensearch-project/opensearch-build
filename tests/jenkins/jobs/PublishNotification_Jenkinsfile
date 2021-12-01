@@ -1,0 +1,18 @@
+pipeline {
+    agent none
+    stages {
+        stage('notify') {
+            steps {
+                script {
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: 'extra',
+                        manifest: '1.2.0/opensearch-1.2.0.yml',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                    )
+                }
+            }
+        }
+    }
+}

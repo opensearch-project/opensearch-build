@@ -1,0 +1,17 @@
+pipeline {
+    agent none
+    stages {
+        stage('build and assemble') {
+            steps {
+                script {
+                    buildAssembleUpload(
+                        dryRun: true,
+                        manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
+                        platform: 'linux',
+                        architecture: 'x64'
+                    )
+                }
+            }
+        }
+    }
+}

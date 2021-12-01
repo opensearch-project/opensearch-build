@@ -19,7 +19,7 @@ Map call(Map args = [:]) {
 
     Boolean manifestSHAExists = false
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        if (!args.dryRun && s3DoesObjectExist(bucket: "${ARTIFACT_BUCKET_NAME}", path: manifestSHAPath)) {
+        if (s3DoesObjectExist(bucket: "${ARTIFACT_BUCKET_NAME}", path: manifestSHAPath)) {
             manifestSHAExists = true
         }
     }

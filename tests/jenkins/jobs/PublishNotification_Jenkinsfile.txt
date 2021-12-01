@@ -1,0 +1,12 @@
+   PublishNotification_Jenkinsfile.run()
+      PublishNotification_Jenkinsfile.pipeline(groovy.lang.Closure)
+         PublishNotification_Jenkinsfile.echo(Executing on agent [label:none])
+         PublishNotification_Jenkinsfile.stage(notify, groovy.lang.Closure)
+            PublishNotification_Jenkinsfile.script(groovy.lang.Closure)
+               PublishNotification_Jenkinsfile.publishNotification({icon=:white_check_mark:, message=Successful Build, extra=extra, manifest=1.2.0/opensearch-1.2.0.yml, credentialsId=BUILD_NOTICE_WEBHOOK})
+                  publishNotification.string({credentialsId=BUILD_NOTICE_WEBHOOK, variable=WEBHOOK_URL})
+                  publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
+                     publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark: get-manifest-sha-build [33] Successful Build
+Build: http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42
+1.2.0/opensearch-1.2.0.yml
+extra"}' "WEBHOOK_URL")
