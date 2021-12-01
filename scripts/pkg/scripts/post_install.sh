@@ -54,7 +54,7 @@ OPENSEARCH_HOME=<%= homeDir %>
 OPENSEARCH_DATA_DIR=<%= dataDir %>
 OPENSEARCH_CONFIG_DIR=<%= configDir %>
 
-function securitySettings() {
+function pluginSettings() {
     echo Apply Security Settings
     sh $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
 
@@ -89,7 +89,6 @@ function securitySettings() {
 if [ "<%= product %>" = "opensearch" ]
 then
     echo Product is OpenSearch, apply plugin settings
-    securitySettings || echo securityfailed
-    #performanceAnalyzerSettings
+    pluginSettings || echo plugin settings failed
     
 fi

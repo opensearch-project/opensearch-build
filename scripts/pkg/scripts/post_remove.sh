@@ -11,6 +11,8 @@
 
 set -e
 
+echo start post remove
+
 REMOVE_USER_AND_GROUP=false
 REMOVE_DIRS=false
 
