@@ -69,7 +69,7 @@ class Service(abc.ABC):
     @abc.abstractmethod
     def check_service_response_text(self):
         """
-        Get response from the service endpoint.
+        Check response text from the service endpoint.
         """
         pass
 
