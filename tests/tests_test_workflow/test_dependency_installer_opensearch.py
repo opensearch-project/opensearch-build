@@ -4,10 +4,10 @@ from unittest.mock import MagicMock, patch
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.dependency_installer import DependencyInstaller
+from test_workflow.dependency_installer_opensearch import DependencyInstallerOpenSearch
 
 
-class DependencyInstallerTests(unittest.TestCase):
+class DependencyInstallerOpenSearchTests(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUILD_MANIFEST = os.path.join(DATA, "local", "builds", "opensearch", "manifest.yml")
     DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "opensearch", "manifest.yml")
@@ -24,7 +24,7 @@ class DependencyInstallerTests(unittest.TestCase):
                 return callable(source, dest)
             return None
         mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
@@ -58,7 +58,7 @@ class DependencyInstallerTests(unittest.TestCase):
                 return callable(source, dest)
             return None
         mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
@@ -84,7 +84,7 @@ class DependencyInstallerTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_build_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
@@ -102,7 +102,7 @@ class DependencyInstallerTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_build_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y", BuildManifest.from_path(self.BUILD_MANIFEST), BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
         )
         dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
