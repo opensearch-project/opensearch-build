@@ -44,6 +44,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
     def execute_tests(self):
         test_results = TestComponentResults()
+
         for config in self.test_config.integ_test["test-configs"]:
             status = self.__setup_cluster_and_execute_test_config(config)
 
