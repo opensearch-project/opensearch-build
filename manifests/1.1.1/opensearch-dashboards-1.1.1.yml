@@ -30,7 +30,9 @@ components:
     checks:
         - manifest:component
   - name: reportsDashboards
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    repository: https://github.com/opensearch-project/dashboards-reports
+    ref: "1.1"
+    working_directory: "dashboards-reports"
     platforms:
       - linux
     checks:
