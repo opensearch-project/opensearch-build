@@ -23,7 +23,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "test", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019"}},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"}},
             },
         )
 
