@@ -10,6 +10,7 @@
 # Post-install script to set up the environment.
 
 set -e
+echo start post install
 
 case $1 in
   configure)
@@ -49,7 +50,7 @@ chown <%= user %>:<%= group %> <%= pluginsDir %>
 
 ############ Additional Plugins Settings ############
 
-OPENSEARCH_HOME=<=% homeDir =>
+OPENSEARCH_HOME=<%= homeDir %>
 OPENSEARCH_DATA_DIR=<%= dataDir %>
 OPENSEARCH_CONFIG_DIR=<%= configDir %>
 
@@ -90,7 +91,7 @@ function performanceAnalyzerSettings() {
 if [ "<%= product %>" = "opensearch" ]
 then
     echo Product is OpenSearch, apply plugin settings
-    securitySettings
+    securitySettings || echo securityfailed
     performanceAnalyzerSettings
     
 fi
