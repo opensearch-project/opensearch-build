@@ -10,9 +10,6 @@ from test_workflow.dependency_installer import DependencyInstaller
 
 
 class DependencyInstallerOpenSearch(DependencyInstaller):
-    """
-    Provides a dependency installer for the test suites.
-    """
 
     def __init__(self, root_url, build_manifest, bundle_manifest):
         super().__init__(root_url, build_manifest, bundle_manifest)
