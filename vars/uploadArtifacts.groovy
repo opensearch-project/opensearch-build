@@ -1,8 +1,7 @@
 void call(Map args = [:]) {
-    def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
-    def manifestFilename = args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : 'builds/opensearch/manifest.yml'
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: manifestFilename))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.manifest))
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
@@ -19,8 +18,8 @@ void call(Map args = [:]) {
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/opensearch/manifest.yml",
-            "${baseUrl}/dist/opensearch/manifest.yml"
+            "${baseUrl}/builds/${buildManifest.build.getFilename()}/manifest.yml",
+            "${baseUrl}/dist/${buildManifest.build.getFilename()}/manifest.yml"
         ].join('\n')
     )
 }

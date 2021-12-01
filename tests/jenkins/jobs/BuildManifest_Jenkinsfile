@@ -19,6 +19,7 @@ pipeline {
                     echo buildManifest.build.version
                     echo buildManifest.build.platform
                     echo buildManifest.build.architecture
+                    echo buildManifest.build.getFilename()
                     echo buildManifest.getArtifactRoot('bundle-build', '1')
                     echo buildManifest.getArtifactRootUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                 }
