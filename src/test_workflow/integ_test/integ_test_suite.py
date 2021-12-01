@@ -22,18 +22,18 @@ class IntegTestSuite(abc.ABC):
         component,
         test_config,
         test_recorder,
-        dependency_installer_opensearch,
-        bundle_manifest_opensearch,
-        build_manifest_opensearch
+        dependency_installer,
+        bundle_manifest,
+        build_manifest
     ):
         self.work_dir = work_dir
         self.component = component
         self.test_config = test_config
         self.test_recorder = test_recorder
 
-        self.dependency_installer_opensearch = dependency_installer_opensearch
-        self.bundle_manifest_opensearch = bundle_manifest_opensearch
-        self.build_manifest_opensearch = build_manifest_opensearch
+        self.dependency_installer = dependency_installer
+        self.bundle_manifest = bundle_manifest
+        self.build_manifest = build_manifest
 
         self.repo = GitRepository(
             self.component.repository,
@@ -52,7 +52,7 @@ class IntegTestSuite(abc.ABC):
     def execute_integtest_sh(self, endpoint, port, security, test_config):
         script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
         if os.path.exists(script):
-            cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest_opensearch.build.version}"
+            cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
             work_dir = os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
             (status, stdout, stderr) = execute(cmd, work_dir, True, False)
             results_dir = os.path.join(work_dir, "build", "reports", "tests", "integTest")

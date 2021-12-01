@@ -60,8 +60,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         custom_local_path = os.path.join(self.repo.dir, "src", "test", "resources", "job-scheduler")
         for file in glob.glob(os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")):
             os.unlink(file)
-        job_scheduler = self.build_manifest_opensearch.components["job-scheduler"]
-        self.dependency_installer_opensearch.install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
+        job_scheduler = self.build_manifest.components["job-scheduler"]
+        self.dependency_installer.install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
 
     def __setup_cluster_and_execute_test_config(self, config):
         security = self.is_security_enabled(config)
@@ -69,11 +69,11 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
         with LocalTestCluster.create(
-            self.dependency_installer_opensearch,
+            self.dependency_installer,
             self.work_dir,
             self.component.name,
             self.additional_cluster_config,
-            self.bundle_manifest_opensearch,
+            self.bundle_manifest,
             security,
             config,
             self.test_recorder,

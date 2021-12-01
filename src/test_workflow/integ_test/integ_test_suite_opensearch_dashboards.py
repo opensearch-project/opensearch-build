@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
 
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
@@ -59,12 +58,12 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         security = self.is_security_enabled(config)
 
         with LocalTestClusterOpenSearchDashboards.create(
-            self.dependency_installer_opensearch,
+            self.dependency_installer,
             self.dependency_installer_opensearch_dashboards,
             self.work_dir,
             self.component.name,
             {},
-            self.bundle_manifest_opensearch,
+            self.bundle_manifest,
             self.bundle_manifest_opensearch_dashboards,
             security,
             config,
