@@ -31,8 +31,6 @@ class TestGetManifestSHA extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("git", [Map])
-
-
     }
 
     @Test

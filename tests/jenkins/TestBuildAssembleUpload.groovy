@@ -11,10 +11,11 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestVars extends BuildPipelineTest {
-    @Test
-    public void testVars() {
-        binding.setVariable('INPUT_MANIFEST', '1.2.0/opensearch-1.2.0.yml')
+class TestBuildAssembleUpload extends BuildPipelineTest {
+    @Before
+    void setUp() {
+        super.setUp()
+
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('BUILD_NUMBER', '33')
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
@@ -28,8 +29,6 @@ class TestVars extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
 
-        binding.setVariable('WEBHOOK_URL', 'https://web/hook/url')
-
         helper.registerAllowedMethod("sha1", [String], { filename ->
             return 'sha1'
         })
@@ -41,8 +40,29 @@ class TestVars extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("git", [Map])
-        helper.registerAllowedMethod("cleanWs", [Map])
+    }
 
-        super.testPipeline("tests/jenkins/jobs/Vars_Jenkinsfile")
+    @Test
+    public void testIncremental() {
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return true
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_incremental"
+        )
+    }
+
+    @Test
+    public void testNotIncremental() {
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return false
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_not_incremental"
+        )
     }
 }

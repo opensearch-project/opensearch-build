@@ -1,0 +1,17 @@
+pipeline {
+    agent none
+    stages {
+        stage('cleanup') {
+            steps {
+                script {
+
+                }
+            }
+        }
+        post {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
