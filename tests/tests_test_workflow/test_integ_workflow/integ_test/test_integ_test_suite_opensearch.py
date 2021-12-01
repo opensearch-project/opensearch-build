@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
 import unittest
 from unittest.mock import MagicMock, call, patch
@@ -83,24 +82,14 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
     def test_execute_without_build_dependencies(self, mock_execute, *mock):
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
-
-        # logging.info(f"it is {mock_test_cluster_create}")
-        # mock_test_cluster_create.return_value = ("test-endpoint", 1234)
-
         mock_test_recorder = MagicMock()
-        logging.info(f"mock_test_recorder is {mock_test_recorder}")
-
         mock_test_results_logs = MagicMock()
         mock_test_recorder.test_results_logs.return_value = mock_test_results_logs
 
         mock_create = MagicMock()
-        # mock_create.return_value = ("test-endpoint", 1234)
-
         mock_create.return_value.__enter__.return_value = ("test_endpoint", 1234)
 
         LocalTestCluster.create = mock_create
-
-        logging.info(f"mock_create is {mock_create}")
 
         mock_execute.return_value = ("test_status", "test_stdout", "")
 
@@ -117,7 +106,6 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
         dependency_installer.install_build_dependencies.assert_not_called()
 
-    # @patch.object(IntegTestSuite, "_IntegTestSuite__setup_cluster_and_execute_test_config")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_with_unsupported_build_dependencies(self, mock_test_recorder, *mock):
         dependency_installer = MagicMock()
@@ -153,9 +141,6 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     def test_execute_with_working_directory(self, mock_test_recorder, mock_local_test_cluster, mock_script_finder, *mock):
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
-
-        logging.info(f"test_config is {test_config}")
-
         dependency_installer = MagicMock()
         integ_test_suite = IntegTestSuiteOpenSearch(
             dependency_installer,
