@@ -39,7 +39,7 @@ class BundleRecorder:
         EXTENSIONS = {
             "rpm": ".rpm",
             "zip": ".zip",
-            "tar": "tar.gz",
+            "tar": ".tar.gz",
         }
         return "-".join(parts) + EXTENSIONS[self.distribution]
 
