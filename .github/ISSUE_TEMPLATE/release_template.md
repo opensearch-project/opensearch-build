@@ -62,7 +62,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 - [ ] Verify all issued labeled `v{{ env.VERSION }}` in all projects have been resolved.
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
 - [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
-- [ ] Gather, review and publish release notes.
+- [ ] Gather, review and publish release notes. [git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
 - [ ] __REPLACE_RELEASE-day - Publish [blog post](https://github.com/opensearch-project/project-website) - release is launched!
 
