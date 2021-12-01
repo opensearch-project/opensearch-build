@@ -21,7 +21,11 @@ void call(Map args = [:]) {
             ]
         )
 
-        uploadArtifacts(args)
+        uploadArtifacts(
+            args + [
+                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml"
+            ]
+        )
 
         withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
             if (!args.dryRun) {

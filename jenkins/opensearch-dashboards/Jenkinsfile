@@ -53,7 +53,9 @@ pipeline {
                             assembleManifest(
                                 manifest: 'builds/opensearch-dashboards/manifest.yml'
                             )
-                            uploadArtifacts()
+                            uploadArtifacts(
+                                manifest: 'builds/opensearch-dashboards/manifest.yml'
+                            )
                         }
                     }
                     post {
@@ -122,7 +124,7 @@ pipeline {
                                         manifest: 'builds/opensearch-dashboards/manifest.yml'
                                     )
                                     uploadArtifacts(
-                                        upload: true
+                                        manifest: 'builds/opensearch-dashboards/manifest.yml'
                                     )
                                 }
                             }
