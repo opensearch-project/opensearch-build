@@ -52,5 +52,5 @@ You can find all the corresponding dates of each step in the release issue above
 ### Post Release
 
 - [ ] Create [a release tag](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging).
-- [ ] Suggest improvements to [this template](https://github.com/opensearch-project/opensearch-plugins/templates/release.md).
+- [ ] Suggest improvements to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md).
 - [ ] Conduct a postmortem, and publish its results.
