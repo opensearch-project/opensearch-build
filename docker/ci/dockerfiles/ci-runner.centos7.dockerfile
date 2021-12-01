@@ -117,6 +117,12 @@ RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && \
     yum install -y rpm-build && \
     gem install fpm -v 1.13.0
 
+ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
+ENV RVM_HOME=/usr/local/rvm/bin
+ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV GEM_PATH=$GEM_HOME
+ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
+
 # Install Python37 binary
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
     cd Python-3.7.7 && \
