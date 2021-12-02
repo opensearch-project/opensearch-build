@@ -24,8 +24,7 @@ from test_workflow.test_result.test_suite_results import TestSuiteResults
 def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
-    test_manifest_path = os.path.join(os.path.dirname(__file__), "test_workflow", "config", "opensearch", "test_manifest.yml")
-    test_manifest = TestManifest.from_path(test_manifest_path)
+    test_manifest = TestManifest.from_path(args.test_manifest_path)
     bundle_manifest = BundleManifest.from_urlpath("/".join([args.path.rstrip("/"), "dist/opensearch/manifest.yml"]))
     build_manifest = BuildManifest.from_urlpath("/".join([args.path.rstrip("/"), "builds/opensearch/manifest.yml"]))
     dependency_installer = DependencyInstallerOpenSearch(args.path, build_manifest, bundle_manifest)
