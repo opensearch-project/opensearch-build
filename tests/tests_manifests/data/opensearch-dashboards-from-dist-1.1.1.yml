@@ -1,0 +1,59 @@
+schema-version: "1.0"
+ci:
+  image:
+     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
+build:
+  name: OpenSearch Dashboards
+  version: 1.1.1
+  patches:
+    - 1.1.0
+components:
+  - name: OpenSearch-Dashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: alertingDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: securityDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: indexManagementDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: queryWorkbenchDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports
+    ref: "1.1"
+    working_directory: "dashboards-reports"
+    platforms:
+      - linux
+    checks:
+        - manifest:component
+  - name: notebooksDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: ganttChartDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: traceAnalyticsDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: anomalyDetectionDashboards
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
+    checks:
+        - manifest:component
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: "main"
+    checks:
+        - manifest:component

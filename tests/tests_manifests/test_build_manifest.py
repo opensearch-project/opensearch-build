@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from unittest.mock import MagicMock, Mock, patch
 
 import yaml
 
@@ -37,6 +38,29 @@ class TestBuildManifest(unittest.TestCase):
             sorted(opensearch_component.artifacts.keys()),
             ["core-plugins", "dist", "maven"],
         )
+
+    @patch("manifests.manifest.urllib.request.urlopen")
+    def test_legacy_from_url(self, urlopen: Mock) -> None:
+        # Fake the dashboard file to look like its coming from the url, but its really in the data directory
+        cm = MagicMock()
+        self.manifest_filename = os.path.join(self.data_path, "opensearch-dashboards-build-1.1.0.yml")
+        cm.read.return_value.decode.return_value = open(self.manifest_filename, 'r').read()
+        cm.__enter__.return_value = cm
+        urlopen.return_value = cm
+
+        self.manifest = BuildManifest.from_url('http://fakeurl')
+        self.assertEqual(self.manifest.version, "1.1")
+        self.assertEqual(self.manifest.build.name, "OpenSearch Dashboards")
+        self.assertEqual(self.manifest.build.version, "1.1.0")
+        self.assertEqual(len(self.manifest.components), 10)
+
+        component = self.manifest.components['OpenSearch-Dashboards']
+        self.assertEqual(component.commit_id, "44d2cb5b4f9a7c641c1fef32ec569bc48ec46979")
+        self.assertEqual(component.name, 'OpenSearch-Dashboards')
+        self.assertEqual(component.ref, "1.1")
+        self.assertEqual(component.repository, 'https://github.com/opensearch-project/OpenSearch-Dashboards.git')
+
+        urlopen.assert_called_once_with('http://fakeurl')
 
     def test_to_dict(self) -> None:
         data = self.manifest.to_dict()
