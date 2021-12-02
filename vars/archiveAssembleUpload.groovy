@@ -10,7 +10,10 @@ void call(Map args = [:]) {
     echo "sha.lock=${sha.lock}"
     echo "sha.path=${sha.path}"
 
+    lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
     if (sha.sha == null) {
+        lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Skipped ${args.platform} ${args.architecture} was not built.")
         echo "Skipping, ${args.platform} ${args.architecture} was not built."
     } else {
 
@@ -26,7 +29,6 @@ void call(Map args = [:]) {
         unzip(zipFile: "${sha.sha}-builds.zip")
         unzip(zipFile: "${sha.sha}-manifest.zip")
 
-        lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
         def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))
 
         assembleUpload(

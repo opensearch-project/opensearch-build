@@ -85,7 +85,7 @@ pipeline {
                                 }
                             }
                         }
-                        stage('assemble-linux-arm64') {
+                        stage('assemble-archive-linux-arm64') {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -128,7 +128,8 @@ pipeline {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([
                         'build-linux-x64',
-                        'assemble-linux-arm64'
+                        'build-archive-linux-arm64',
+                        'assemble-archive-linux-arm64'
                     ])
 
                     publishNotification(
