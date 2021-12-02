@@ -27,6 +27,8 @@ void call(Map args = [:]) {
             glob: sha.lock
         )
 
+        lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Built ${STAGE_NAME}, ${sha.sha}.")
+
         def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))
         echo "Setting env.BUILD_SHA_${inputManifest.build.platform}_${inputManifest.build.architecture}_SHA=${sha.sha}"
         env."BUILD_SHA_${inputManifest.build.platform}_${inputManifest.build.architecture}_SHA" = sha.sha
