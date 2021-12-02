@@ -13,7 +13,7 @@ void call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     if (sha.sha == null) {
-        lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Skipped ${args.platform} ${args.architecture} was not built.")
+        lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Skipped ${STAGE_NAME}, ${args.platform}-${args.architecture} was not built.")
         echo "Skipping, ${args.platform} ${args.architecture} was not built."
     } else {
 
