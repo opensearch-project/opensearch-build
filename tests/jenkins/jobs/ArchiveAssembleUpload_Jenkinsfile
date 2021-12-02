@@ -5,7 +5,6 @@ pipeline {
             steps {
                 script {
                     archiveAssembleUpload(
-                        dryRun: true,
                         platform: 'linux',
                         architecture: 'x64'
                     )

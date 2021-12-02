@@ -8,7 +8,7 @@ Map call(Map args = [:]) {
         ]
     )
 
-    String manifestLock = args.dryRun ? manifest : "${manifest}.lock"
+    String manifestLock = "${manifest}.lock"
     String manifestSHA = sha1(manifestLock)
     echo "Manifest SHA: ${manifestSHA}"
 

@@ -33,7 +33,7 @@ void call(Map args = [:]) {
 
         assembleUpload(
             args + [
-                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml",
+                manifest: "builds/${inputManifest.build.getFilename()}/manifest.yml",
                 sha: sha
             ]
         )

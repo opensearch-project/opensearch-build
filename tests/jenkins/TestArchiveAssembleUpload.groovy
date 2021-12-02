@@ -10,6 +10,7 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
+import java.nio.file.*
 
 class TestArchiveAssembleUpload extends BuildPipelineTest {
     @Before
@@ -31,6 +32,11 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("git", [Map])
+
+        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
+        Path target = Path.of("builds/opensearch/manifest.yml");
+        Files.createDirectories(target.getParent());
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
     }
 
     @Test
