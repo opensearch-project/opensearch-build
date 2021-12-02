@@ -116,6 +116,59 @@ pipeline {
                         }
                     }
                 }
+                stage('cross platform build') {
+                    agent none
+                    stages {
+                        stage('cross-platform-build-windows-x86') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        dryRun: true,
+                                        platform: 'windows',
+                                        architecture: 'x86'
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('cross-platform-assemble-windows-x86') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    archiveAssembleUpload(
+                                        dryRun: true,
+                                        platform: 'windows',
+                                        architecture: 'x86'
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('docker build') {

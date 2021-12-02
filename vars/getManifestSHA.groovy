@@ -16,6 +16,8 @@ Map call(Map args = [:]) {
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
     String shasRoot = inputManifest.getSHAsRoot("${JOB_NAME}", args.platform, args.architecture)
     String manifestSHAPath = "${shasRoot}/${manifestSHA}.yml"
+    echo "Manifest lock: ${manifestLock}"
+    echo "Manifest SHA path: ${manifestSHAPath}"
 
     Boolean manifestSHAExists = false
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
@@ -23,6 +25,8 @@ Map call(Map args = [:]) {
             manifestSHAExists = true
         }
     }
+
+    echo "Manifest SHA exists: ${manifestSHAExists}"
 
     return [
         sha: manifestSHA,

@@ -230,12 +230,16 @@ Jenkins workflow regression tests typically output a .txt file into [tests/jenki
 
 #### Testing in Jenkins
 
-This repository contains a Jenkins job that looks similar to OpenSearch and OpenSearch Dashboards with actual `sh` calls replaced by `echo`. Make your code changes in a branch, e.g. `jenkins-changes`, including to this job, then create a pipeline in Jenkins.
+This repository contains several Jenkins jobs that look or are similar to OpenSearch and OpenSearch Dashboards.
 
+* [Build_DryRun_Jenkinsfile](tests/jenkins/jobs/Build_DryRun_Jenkinsfile): a dry run job for quick debugging, with actual `sh` calls replaced by `echo`. 
+* [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.
+ 
+Make your code changes in a branch, e.g. `jenkins-changes`, including to any of the above jobs. Create a pipeline in Jenkins with the following settings.
+ 
 * GitHub Project: `https://github.com/[your username]/opensearch-build/`.
-* Add an input parameter: `INPUT_MANIFEST`, default to `2.0.0/opensearch-2.0.0.yml`.
 * Pipeline repository URL: `https://github.com/[your username]/opensearch-build`.
 * Branch specifier: `refs/heads/jenkins-changes`.
-* Script path: `tests/jenkins/jobs/Build_Jenkinsfile`
+* Script path: `tests/jenkins/jobs/Build_DryRun_Jenkinsfile`
 
-You can iterate by running the job in Jenkins, examining outputs, and pushing updates to GitHub.
+You can now iterate by running the job in Jenkins, examining outputs, and pushing updates to GitHub.
