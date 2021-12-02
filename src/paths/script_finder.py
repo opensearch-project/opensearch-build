@@ -5,11 +5,12 @@
 # compatible open source license.
 
 import os
+from typing import Callable, List
 
 
 class ScriptFinder:
     class ScriptNotFoundError(Exception):
-        def __init__(self, kind, paths):
+        def __init__(self, kind: str, paths: List[str]) -> None:
             self.kind = kind
             self.paths = paths
             super().__init__(f"Could not find {kind} script. Looked in {paths}.")
@@ -34,15 +35,16 @@ class ScriptFinder:
     """
 
     @classmethod
-    def __find_script(cls, name, paths):
-        script = next(filter(lambda path: os.path.exists(path), paths), None)
+    def __find_script(cls, name: str, paths: List[str]) -> str:
+        exists: Callable[[str], bool] = lambda path: os.path.exists(path)
+        script = next(filter(exists, paths), None)
         if script is None:
             raise ScriptFinder.ScriptNotFoundError(name, paths)
 
         return script
 
     @classmethod
-    def __find_named_script(cls, script_name, component_name, git_dir):
+    def __find_named_script(cls, script_name: str, component_name: str, git_dir: str) -> str:
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, script_name)),
             os.path.realpath(os.path.join(git_dir, script_name)),
@@ -53,7 +55,7 @@ class ScriptFinder:
         return cls.__find_script(script_name, paths)
 
     @classmethod
-    def find_build_script(cls, project, component_name, git_dir):
+    def find_build_script(cls, project: str, component_name: str, git_dir: str) -> str:
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "build.sh")),
@@ -70,7 +72,7 @@ class ScriptFinder:
         return cls.__find_script("build.sh", paths)
 
     @classmethod
-    def find_install_script(cls, component_name):
+    def find_install_script(cls, component_name: str) -> str:
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "install.sh")),
             os.path.realpath(os.path.join(cls.default_scripts_path, "install.sh")),
@@ -79,9 +81,9 @@ class ScriptFinder:
         return cls.__find_script("install.sh", paths)
 
     @classmethod
-    def find_integ_test_script(cls, component_name, git_dir):
+    def find_integ_test_script(cls, component_name: str, git_dir: str) -> str:
         return cls.__find_named_script("integtest.sh", component_name, git_dir)
 
     @classmethod
-    def find_bwc_test_script(cls, component_name, git_dir):
+    def find_bwc_test_script(cls, component_name: str, git_dir: str) -> str:
         return cls.__find_named_script("bwctest.sh", component_name, git_dir)
