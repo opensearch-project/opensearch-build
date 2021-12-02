@@ -113,11 +113,11 @@ class DistRpm(Dist):
         scripts_path = os.path.join(root, "scripts", "pkg")
         architecture_alt = "x86_64" if manifest_data["architecture"] == "x64" else "aarch64"
         real_archive_path = os.path.realpath(self.archive_path)
-        data_foler_path = os.path.join(real_archive_path, "data", "")
-        logs_foler_path = os.path.join(real_archive_path, "logs", "")
+        data_dir_path = os.path.join(real_archive_path, "data", "")
+        log_dir_path = os.path.join(real_archive_path, "logs", "")
         systemed_entrypoint_path = os.path.join(real_archive_path, "bin", "systemd-entrypoint")
-        os.makedirs(data_foler_path, exist_ok=True)
-        os.makedirs(logs_foler_path, exist_ok=True)
+        os.makedirs(data_dir_path, exist_ok=True)
+        os.makedirs(log_dir_path, exist_ok=True)
         shutil.copyfile("scripts/pkg/scripts/systemd-entrypoint", systemed_entrypoint_path)
         subprocess.run(
             [

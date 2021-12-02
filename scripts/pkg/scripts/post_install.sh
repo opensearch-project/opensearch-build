@@ -53,6 +53,7 @@ chown <%= user %>:<%= group %> <%= pluginsDir %>
 OPENSEARCH_HOME=<%= homeDir %>
 OPENSEARCH_DATA_DIR=<%= dataDir %>
 OPENSEARCH_CONFIG_DIR=<%= configDir %>
+OPENSEARCH_LOG_DIR=<%= logDir %>
 
 function pluginSettings() {
     echo Apply Security Settings
@@ -92,3 +93,8 @@ then
     pluginSettings || echo plugin settings failed
     
 fi
+
+chown -R <%= user %>:<%= group %> $OPENSEARCH_HOME
+chown -R <%= user %>:<%= group %> $OPENSEARCH_DATA_DIR
+chown -R <%= user %>:<%= group %> $OPENSEARCH_CONFIG_DIR
+chown -R <%= user %>:<%= group %> $OPENSEARCH_LOG_DIR
