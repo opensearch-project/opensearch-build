@@ -30,14 +30,16 @@ pipeline {
                         sh'''
                             set +x
                             echo "$RUBYGEMS_PRIVATE_KEY" > private_key.pem
-                            keypath=$(realpath private_key.pem)
-                            for f in $(find . -name '*.gemspec'); do echo $f; sed -i '$s#end#  s.signing_key = File.expand_path("'"$keypath"'") if $0 =~ /gem\\\\z/\\n&#' $f; done
-                            gem cert --add certs/opensearch-rubygems.pem
-                            bash release/build.sh
-                            for f in $(find dist/ -name '*.gem'); do echo $f; gem install $f; val=$(echo $f | grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+'); gem uninstall $f -v $val; gem install $f -P HighSecurity; done
-                            rm -f $keypath
                         '''
                     }
+                    sh'''
+                        keypath=$(realpath private_key.pem)
+                        for f in $(find . -name '*.gemspec'); do echo $f; sed -i '$s#end#  s.signing_key = File.expand_path("'"$keypath"'") if $0 =~ /gem\\\\z/\\n&#' $f; done
+                        gem cert --add certs/opensearch-rubygems.pem
+                        bash release/build.sh
+                        for f in $(find dist/ -name '*.gem'); do echo $f; gem install $f; val=$(echo $f | grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+'); gem uninstall $f -v $val; gem install $f -P HighSecurity; done
+                        rm -f $keypath
+                    '''
                     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
                         s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds")
                         sh('echo Uploading to s3://${ARTIFACT_BUCKET_NAME}/${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds')
