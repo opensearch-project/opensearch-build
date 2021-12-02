@@ -39,7 +39,7 @@ pipeline {
                         '''
                     }
                     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-//                      s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds")
+                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds")
                         sh('echo Uploading to s3://${ARTIFACT_BUCKET_NAME}/${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds')
                     }
                 }
