@@ -11,7 +11,7 @@ pipeline {
         )
     }
     stages {
-        stage('opensearch-ruby-build') {
+        stage('ruby-build-sign-upload') {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
