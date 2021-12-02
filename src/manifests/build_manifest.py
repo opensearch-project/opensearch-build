@@ -41,33 +41,7 @@ components:
 """
 
 
-class BuildComponent(Component):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        self.repository = data["repository"]
-        self.ref = data["ref"]
-        self.commit_id = data["commit_id"]
-        self.artifacts = data.get("artifacts", {})
-        self.version = data["version"]
-
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name,
-            "repository": self.repository,
-            "ref": self.ref,
-            "commit_id": self.commit_id,
-            "artifacts": self.artifacts,
-            "version": self.version,
-        }
-
-
-class BuildComponents(Components[BuildComponent]):
-    @classmethod
-    def __create__(self, data: Any) -> 'BuildComponent':
-        return BuildComponent(data)
-
-
-class BuildManifest(ComponentManifest['BuildManifest', BuildComponents]):
+class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
     VERSIONS = {
         "1.0": BuildManifest_1_0,
         "1.1": BuildManifest_1_1,
@@ -140,6 +114,32 @@ class BuildManifest(ComponentManifest['BuildManifest', BuildComponents]):
                 "architecture": self.architecture,
                 "id": self.id
             }
+
+
+class BuildComponents(Components['BuildComponent']):
+    @classmethod
+    def __create__(self, data: Any) -> 'BuildComponent':
+        return BuildComponent(data)
+
+
+class BuildComponent(Component):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.repository = data["repository"]
+        self.ref = data["ref"]
+        self.commit_id = data["commit_id"]
+        self.artifacts = data.get("artifacts", {})
+        self.version = data["version"]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "repository": self.repository,
+            "ref": self.ref,
+            "commit_id": self.commit_id,
+            "artifacts": self.artifacts,
+            "version": self.version,
+        }
 
 
 BuildManifest.VERSIONS = {"1.0": BuildManifest_1_0, "1.1": BuildManifest_1_1, "1.2": BuildManifest}

@@ -45,116 +45,7 @@ from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class InputComponent(Component):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        self.platforms = data.get("platforms", None)
-
-    @classmethod
-    def _from(self, data: Any) -> 'InputComponent':
-        if "repository" in data:
-            return InputComponentFromSource(data)
-        elif "dist" in data:
-            return InputComponentFromDist(data)
-        else:
-            raise ValueError(f"Invalid component data: {data}")
-
-    def __matches__(self, focus: str = None, platform: str = None) -> bool:
-        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
-
-        if not matches:
-            logging.info(f"Skipping {self.name}")
-
-        return matches
-
-    def __stabilize__(self) -> None:
-        pass
-
-
-class InputComponents(Components):
-    @classmethod
-    def __create__(self, data: Any) -> InputComponent:
-        return InputComponent._from(data)  # type: ignore[no-any-return]
-
-    def __stabilize__(self) -> None:
-        for component in self.values():
-            component.__stabilize__()
-
-    def select(self, focus: str = None, platform: str = None) -> Iterator['InputComponent']:
-        """
-        Select components.
-
-        :param str focus: Choose one component.
-        :param str platform: Only components targeting a given platform.
-        :return: Collection of components.
-        :raises ValueError: Invalid platform or component name specified.
-        """
-        by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
-        selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
-
-        if not any(it):
-            raise ValueError(f"No components matched focus={focus}, platform={platform}.")
-
-        return selected
-
-
-class InputComponentFromSource(InputComponent):
-    def __init__(self, data: Any) -> None:
-        super().__init__(data)
-        self.repository = data["repository"]
-        self.ref = data["ref"]
-        self.working_directory = data.get("working_directory", None)
-        self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
-
-    def __stabilize__(self) -> None:
-        ref, name = GitRepository.stable_ref(self.repository, self.ref)
-        logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
-        self.ref = ref
-
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name,
-            "repository": self.repository,
-            "ref": self.ref,
-            "working_directory": self.working_directory,
-            "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
-            "platforms": self.platforms,
-        }
-
-
-class InputComponentFromDist(InputComponent):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        self.dist = data["dist"]
-        self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
-
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name,
-            "dist": self.dist,
-            "platforms": self.platforms,
-            "checks": list(map(lambda check: check.__to_dict__(), self.checks))
-        }
-
-
-class Check:
-    def __init__(self, data: Any) -> None:
-        if isinstance(data, dict):
-            if len(data) != 1:
-                raise ValueError(f"Invalid check format: {data}")
-            self.name, self.args = next(iter(data.items()))
-        else:
-            self.name = data
-            self.args = None
-
-    def __to_dict__(self) -> dict:
-        if self.args:
-            return {self.name: self.args}
-        else:
-            return self.name  # type: ignore[no-any-return]
-
-
-class InputManifest(ComponentManifest['InputManifest', InputComponents]):
+class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "build": {
@@ -276,6 +167,114 @@ class InputManifest(ComponentManifest['InputManifest', InputComponents]):
                 "architecture": self.architecture,
                 "snapshot": self.snapshot,
             }
+
+
+class InputComponents(Components['InputComponent']):
+    @classmethod
+    def __create__(self, data: Any) -> 'InputComponent':
+        return InputComponent._from(data)  # type: ignore[no-any-return]
+
+    def __stabilize__(self) -> None:
+        for component in self.values():
+            component.__stabilize__()
+
+    def select(self, focus: str = None, platform: str = None) -> Iterator['InputComponent']:
+        """
+        Select components.
+
+        :param str focus: Choose one component.
+        :param str platform: Only components targeting a given platform.
+        :return: Collection of components.
+        :raises ValueError: Invalid platform or component name specified.
+        """
+        by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
+        selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
+
+        if not any(it):
+            raise ValueError(f"No components matched focus={focus}, platform={platform}.")
+
+        return selected
+
+
+class InputComponent(Component):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.platforms = data.get("platforms", None)
+        self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
+
+    @classmethod
+    def _from(self, data: Any) -> 'InputComponent':
+        if "repository" in data:
+            return InputComponentFromSource(data)
+        elif "dist" in data:
+            return InputComponentFromDist(data)
+        else:
+            raise ValueError(f"Invalid component data: {data}")
+
+    def __matches__(self, focus: str = None, platform: str = None) -> bool:
+        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+
+        if not matches:
+            logging.info(f"Skipping {self.name}")
+
+        return matches
+
+    def __stabilize__(self) -> None:
+        pass
+
+
+class InputComponentFromSource(InputComponent):
+    def __init__(self, data: Any) -> None:
+        super().__init__(data)
+        self.repository = data["repository"]
+        self.ref = data["ref"]
+        self.working_directory = data.get("working_directory", None)
+
+    def __stabilize__(self) -> None:
+        ref, name = GitRepository.stable_ref(self.repository, self.ref)
+        logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
+        self.ref = ref
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "repository": self.repository,
+            "ref": self.ref,
+            "working_directory": self.working_directory,
+            "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
+            "platforms": self.platforms,
+        }
+
+
+class InputComponentFromDist(InputComponent):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.dist = data["dist"]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "dist": self.dist,
+            "platforms": self.platforms,
+            "checks": list(map(lambda check: check.__to_dict__(), self.checks))
+        }
+
+
+class Check:
+    def __init__(self, data: Any) -> None:
+        if isinstance(data, dict):
+            if len(data) != 1:
+                raise ValueError(f"Invalid check format: {data}")
+            self.name, self.args = next(iter(data.items()))
+        else:
+            self.name = data
+            self.args = None
+
+    def __to_dict__(self) -> dict:
+        if self.args:
+            return {self.name: self.args}
+        else:
+            return self.name  # type: ignore[no-any-return]
 
 
 InputManifest.VERSIONS = {"1.0": InputManifest}

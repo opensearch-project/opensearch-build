@@ -46,33 +46,6 @@ class IntegTestSuite(abc.ABC):
             os.path.join(self.work_dir, self.component.name),
             test_config.working_directory
         )
-        self.save_logs = test_recorder.test_results_logs
-
-    def execute(self):
-        test_results = TestComponentResults()
-        self.__install_build_dependencies()
-        for config in self.test_config.integ_test["test-configs"]:
-            status = self.__setup_cluster_and_execute_test_config(config)
-            test_results.append(TestResult(self.component.name, config, status))
-        return test_results
-
-    def __install_build_dependencies(self):
-        if "build-dependencies" in self.test_config.integ_test:
-            dependency_list = self.test_config.integ_test["build-dependencies"]
-            if len(dependency_list) == 1 and "job-scheduler" in dependency_list:
-                self.__copy_job_scheduler_artifact()
-            else:
-                raise InvalidTestConfigError("Integration test job only supports job-scheduler build dependency at present.")
-
-    def __copy_job_scheduler_artifact(self):
-        custom_local_path = os.path.join(self.repo.dir, "src", "test", "resources", "job-scheduler")
-        for file in glob.glob(os.path.join(custom_local_path, "opensearch-job-scheduler-*.zip")):
-            os.unlink(file)
-        job_scheduler = self.build_manifest.components["job-scheduler"]
-        self.dependency_installer.install_build_dependencies({"opensearch-job-scheduler": job_scheduler.version}, custom_local_path)
-
-        self.save_logs = test_recorder.test_results_logs
-        self.additional_cluster_config = None
 
     @abc.abstractmethod
     def execute_tests(self):

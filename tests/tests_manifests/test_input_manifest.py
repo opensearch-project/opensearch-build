@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 
 import yaml
 
-from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputManifest
+from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
 
 
 class TestInputManifest(unittest.TestCase):
@@ -26,7 +26,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.version, "1.0.0")
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
-        opensearch_component = manifest.components["OpenSearch"]
+        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        self.assertIsInstance(opensearch_component, InputComponentFromSource)
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -34,7 +35,7 @@ class TestInputManifest(unittest.TestCase):
         )
         self.assertEqual(opensearch_component.ref, "1.0")
         for component in manifest.components.values():
-            self.assertIsInstance(component.ref, str)
+            self.assertIsInstance(component, InputComponentFromSource)
 
     def test_1_1(self) -> None:
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
@@ -44,7 +45,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         # opensearch component
-        opensearch_component = manifest.components["OpenSearch"]
+        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -53,9 +54,9 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch_component.ref, "tags/1.1.0")
         # components
         for component in manifest.components.values():
-            self.assertIsInstance(component.ref, str)
+            self.assertIsInstance(component, InputComponentFromSource)
         # alerting component checks
-        alerting_component = manifest.components["alerting"]
+        alerting_component: InputComponentFromSource = manifest.components["alerting"]  # type: ignore[assignment]
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:
@@ -74,7 +75,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertNotEqual(len(manifest.components), 0)
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         # opensearch component
-        opensearch_component = manifest.components["OpenSearch"]
+        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -83,7 +84,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch_component.ref, "tags/1.2.0")
         # components
         for component in manifest.components.values():
-            self.assertIsInstance(component.ref, str)
+            self.assertIsInstance(component, InputComponentFromSource)
         # alerting component checks
         alerting_component = manifest.components["alerting"]
         self.assertIsNotNone(alerting_component)
@@ -144,7 +145,7 @@ class TestInputManifest(unittest.TestCase):
         mock_output.return_value.decode.return_value = "updated\tHEAD"
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path).stable()
-        opensearch = manifest.components["OpenSearch"]
+        opensearch: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch.ref, "updated")
 
     @patch("subprocess.check_output")

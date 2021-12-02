@@ -66,6 +66,13 @@ class Service(abc.ABC):
         """
         pass
 
+    @abc.abstractmethod
+    def check_service_response_text(self):
+        """
+        Check response text from the service endpoint.
+        """
+        pass
+
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
