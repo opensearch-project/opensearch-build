@@ -141,7 +141,94 @@ This will produce `dist/opensearch-1.2.0-SNAPSHOT-windows-x64.zip` on Linux and 
 
 #### Sanity Checking the Bundle
 
+<<<<<<< HEAD
 This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](.github/workflows/manifests.yml) in this repository. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch version.
+=======
+More details around how this workflow is instrumented as part of CI CD, are covered [here](src/test_workflow/README.md).
+
+Usage:
+
+```bash
+./test.sh <test-type> <path> <test-manifest-path>
+```
+
+The following options are available.
+
+| name                 | description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| path                 | Location of manifest(s).                                                |
+| --test-run-id        | Unique identifier for a test run                                        |
+| --test-manifest-path | Specify a test manifest path                                            |
+| --component          | Test a specific component in a manifest                                 |
+| --keep               | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose        | Show more verbose output.                                               |
+
+##### Integration Tests
+
+This step runs integration tests invoking `run_integ_test.py` in each component from bundle manifest.
+
+To run integration tests locally, use below command. It pulls down the built bundle and its manifest file from S3, reads all components of the bundle and runs integration tests against each component.
+ 
+Usage:
+
+```bash
+./test.sh integ-test <target> <test-manifest-path>
+```
+
+For example, build locally and run integration tests.
+
+```bash
+./build.sh manifests/1.2.0/opensearch-1.2.0.yml
+./assemble.sh builds/opensearch/manifest.yml
+./test.sh integ-test . manifests/1.3.0/opensearch-1.3.0-test.yml # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+```
+
+Run integration tests against an existing build.
+
+```bash
+./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 manifests/1.3.0/opensearch-1.3.0-test.yml # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+```
+
+##### Backwards Compatibility Tests
+
+This step run backward compatibility invoking `run_bwc_test.py` in each component from bundle manifest.
+
+Usage:
+
+```bash
+./test.sh bwc-test <target> <test-manifest-path>
+```
+
+##### Performance Tests
+
+TODO
+
+#### Sanity Check the Bundle
+
+This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](/.github/workflows/manifests.yml) in this repostiory. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch version.
+
+To use checks, nest them under `checks` in the manifest.
+
+```yaml
+- name: common-utils
+  repository: https://github.com/opensearch-project/common-utils.git
+  ref: main
+  checks:
+    - gradle:publish
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version
+    - gradle:dependencies:opensearch.version: alerting
+```
+
+The following checks are available.
+
+| name                                          | description                                                   |
+|-----------------------------------------------|---------------------------------------------------------------|
+| gradle:properties:version                     | Check version of the component.                               |
+| gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch.        |
+| gradle:publish                                | Check that publishing to Maven local works, and publish.      |
+>>>>>>> 52867b6 (update README.md)
 
 The following example sanity-checks components in the the OpenSearch 1.2.0 manifest.
 
