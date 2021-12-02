@@ -8,15 +8,15 @@ from abc import ABC
 
 from build_workflow.builder_from_dist import BuilderFromDist
 from build_workflow.builder_from_source import BuilderFromSource
-from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
+from manifests.input_manifest import InputManifest
 
 
 class Builders(ABC):
     @classmethod
     def builder_from(self, component, target):
-        if type(component) is InputComponentFromDist:
+        if type(component) is InputManifest.ComponentFromDist:
             return BuilderFromDist(component, target)
-        elif type(component) is InputComponentFromSource:
+        elif type(component) is InputManifest.ComponentFromSource:
             return BuilderFromSource(component, target)
         else:
             raise ValueError(f"Invalid component type: {type(component)}")

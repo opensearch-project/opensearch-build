@@ -8,33 +8,31 @@ import logging
 import os
 import urllib.request
 from abc import ABC, abstractmethod
-from typing import IO, Any, Dict, Generic, Optional, Type, TypeVar
+from typing import Dict, Optional
 
-import validators
+import validators  # type:ignore
 import yaml
-from cerberus import Validator
-
-T = TypeVar('T', bound='Manifest')
+from cerberus import Validator  # type:ignore
 
 
-class Manifest(ABC, Generic[T]):
+class Manifest(ABC):
     SCHEMA = {
         "schema-version": {
             "required": True, "type": "string", "empty": False
         }
     }
 
-    VERSIONS: Optional[Dict[str, object]] = None
+    VERSIONS: Optional[Dict] = None
 
     @classmethod
-    def from_file(cls, file: IO[Any]) -> T:
+    def from_file(cls, file):
         yml = yaml.safe_load(file)
         version = yml["schema-version"]
         loader = cls.from_version(version)
         return loader(yml)
 
     @classmethod
-    def from_url(cls, url: str) -> T:
+    def from_url(cls, url):
         logging.info(f"Loading {url}")
         with urllib.request.urlopen(url) as f:
             yml = yaml.safe_load(f.read().decode("utf-8"))
@@ -43,25 +41,26 @@ class Manifest(ABC, Generic[T]):
             return loader(yml)
 
     @classmethod
-    def from_version(cls, version: str) -> Type[T]:
+    def from_version(cls, version):
         if cls.VERSIONS is None:
-            return cls  # type: ignore[return-value]
+            return cls
+
         if version in [None, ""]:
             raise ValueError(f"Missing manifest version, must be one of {', '.join(cls.VERSIONS.keys())}")
 
         try:
-            return cls.VERSIONS[version]  # type: ignore[return-value]
+            return cls.VERSIONS[version]
         except KeyError:
             raise ValueError(f"Invalid manifest version: {version}, must be one of {', '.join(cls.VERSIONS.keys())}")
 
     @classmethod
-    def from_path(cls, path: str) -> T:
+    def from_path(cls, path):
         logging.info(f"Loading {path}")
         with open(path, "r") as f:
             return cls.from_file(f)
 
     @classmethod
-    def from_urlpath(cls, file_or_url: str) -> T:
+    def from_urlpath(cls, file_or_url):
         if validators.url(file_or_url):
             return cls.from_url(file_or_url)
         elif os.path.exists(file_or_url):
@@ -70,9 +69,9 @@ class Manifest(ABC, Generic[T]):
             raise ValueError(f"Invalid manifest: {file_or_url}")
 
     @classmethod
-    def compact(cls, d: Any) -> Any:
+    def compact(cls, d):
         if isinstance(d, list):
-            return list(map(lambda i: cls.compact(i), d))  # type: ignore[return-value, no-any-return]
+            return list(map(lambda i: cls.compact(i), d))
         elif isinstance(d, dict):
             result = {}
             for k, v in d.items():
@@ -83,31 +82,31 @@ class Manifest(ABC, Generic[T]):
         else:
             return d
 
-    def __to_dict(self) -> dict:
+    def __to_dict(self):
         return {}
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other):
         if isinstance(other, type(self)):
-            return self.to_dict() == other.to_dict()  # type: ignore[no-any-return]
+            return self.to_dict() == other.to_dict()
         return False
 
-    def to_dict(self) -> Any:
-        return Manifest.compact(self.__to_dict__())  # type: ignore[attr-defined]
+    def to_dict(self):
+        return Manifest.compact(self.__to_dict__())
 
-    def to_file(self, path: str) -> None:
+    def to_file(self, path):
         with open(path, "w") as file:
             yaml.safe_dump(self.to_dict(), file)
 
     @abstractmethod
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data):
         self.validate(data)
         self.version = str(data["schema-version"])
 
     @property
-    def schema(self) -> Any:
+    def schema(self):
         return self.SCHEMA
 
-    def validate(self, data: Any) -> None:
+    def validate(self, data):
         v = Validator(self.schema)
         if not v.validate(data):
             raise ValueError(f"Invalid manifest schema: {v.errors}")

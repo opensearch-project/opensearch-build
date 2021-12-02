@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, call, patch
 
 from ci_workflow.ci_check_manifest_component import CiCheckManifestComponent
 from manifests.build_manifest import BuildManifest
-from manifests.input_manifest import InputComponentFromDist
+from manifests.input_manifest import InputManifest
 
 
 class TestCiCheckManifestComponent(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestCiCheckManifestComponent(unittest.TestCase):
 
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
     def test_retrieves_manifests(self, mock_manifest):
-        check = CiCheckManifestComponent(InputComponentFromDist({
+        check = CiCheckManifestComponent(InputManifest.ComponentFromDist({
             "name": "common-utils",
             "dist": "url"
         }), MagicMock())
@@ -34,7 +34,7 @@ class TestCiCheckManifestComponent(unittest.TestCase):
 
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
     def test_missing_component(self, mock_manifest):
-        check = CiCheckManifestComponent(InputComponentFromDist({
+        check = CiCheckManifestComponent(InputManifest.ComponentFromDist({
             "name": "does-not-exist",
             "dist": "url"
         }), MagicMock())

@@ -39,13 +39,12 @@ components:
 import copy
 import itertools
 import logging
-from typing import Any, Callable, Iterator, Optional
 
 from git.git_repository import GitRepository
-from manifests.component_manifest import Component, ComponentManifest, Components
+from manifests.component_manifest import ComponentManifest
 
 
-class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
+class InputManifest(ComponentManifest):
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "build": {
@@ -100,15 +99,14 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         },
     }
 
-    def __init__(self, data: Any):
+    def __init__(self, data):
         super().__init__(data)
 
         self.build = self.Build(data["build"])
         self.ci = self.Ci(data.get("ci", None))
+        self.components = self.Components(data.get("components", []))
 
-        self.components = InputComponents(data.get("components", []))  # type: ignore[assignment]
-
-    def __to_dict__(self) -> dict:
+    def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "build": self.build.__to_dict__(),
@@ -116,8 +114,8 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             "components": self.components.__to_dict__(),
         }
 
-    def stable(self, architecture: str = None, platform: str = None, snapshot: bool = False) -> 'InputManifest':
-        manifest: 'InputManifest' = copy.deepcopy(self)
+    def stable(self, architecture=None, platform=None, snapshot=False):
+        manifest = copy.deepcopy(self)
         manifest.build.__stabilize__(
             platform=platform,
             architecture=architecture,
@@ -127,25 +125,25 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         return manifest
 
     class Ci:
-        def __init__(self, data: Any):
+        def __init__(self, data):
             self.image = None if data is None else self.Image(data.get("image", None))
 
-        def __to_dict__(self) -> Optional[dict]:
+        def __to_dict__(self):
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data: Any):
+            def __init__(self, data):
                 self.name = data["name"]
                 self.args = data.get("args", None)
 
-            def __to_dict__(self) -> dict:
+            def __to_dict__(self):
                 return {
                     "name": self.name,
                     "args": self.args
                 }
 
     class Build:
-        def __init__(self, data: Any):
+        def __init__(self, data):
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data.get("platform", None)
@@ -153,12 +151,12 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             self.snapshot = data.get("snapshot", None)
             self.patches = data.get("patches", [])
 
-        def __stabilize__(self, platform: str, architecture: str, snapshot: bool) -> None:
+        def __stabilize__(self, platform, architecture, snapshot):
             self.architecture = architecture
             self.platform = platform
             self.snapshot = snapshot
 
-        def __to_dict__(self) -> dict:
+        def __to_dict__(self):
             return {
                 "name": self.name,
                 "version": self.version,
@@ -168,113 +166,108 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                 "snapshot": self.snapshot,
             }
 
+    class Components(ComponentManifest.Components):
+        @classmethod
+        def __create__(self, data):
+            return InputManifest.Component._from(data)
 
-class InputComponents(Components['InputComponent']):
-    @classmethod
-    def __create__(self, data: Any) -> 'InputComponent':
-        return InputComponent._from(data)  # type: ignore[no-any-return]
+        def __stabilize__(self):
+            for component in self.values():
+                component.__stabilize__()
 
-    def __stabilize__(self) -> None:
-        for component in self.values():
-            component.__stabilize__()
+        def select(self, focus=None, platform=None):
+            """
+            Select components.
 
-    def select(self, focus: str = None, platform: str = None) -> Iterator['InputComponent']:
-        """
-        Select components.
+            :param str focus: Choose one component.
+            :param str platform: Only components targeting a given platform.
+            :return: Collection of components.
+            :raises ValueError: Invalid platform or component name specified.
+            """
+            selected, it = itertools.tee(filter(lambda component: component.__matches__(focus, platform), self.values()))
 
-        :param str focus: Choose one component.
-        :param str platform: Only components targeting a given platform.
-        :return: Collection of components.
-        :raises ValueError: Invalid platform or component name specified.
-        """
-        by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
-        selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
+            if not any(it):
+                raise ValueError(f"No components matched focus={focus}, platform={platform}.")
 
-        if not any(it):
-            raise ValueError(f"No components matched focus={focus}, platform={platform}.")
+            return selected
 
-        return selected
+    class Component(ComponentManifest.Component):
+        def __init__(self, data):
+            super().__init__(data)
+            self.platforms = data.get("platforms", None)
 
+        @classmethod
+        def _from(self, data):
+            if "repository" in data:
+                return InputManifest.ComponentFromSource(data)
+            elif "dist" in data:
+                return InputManifest.ComponentFromDist(data)
+            else:
+                raise ValueError(f"Invalid component data: {data}")
 
-class InputComponent(Component):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        self.platforms = data.get("platforms", None)
-        self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
+        def __matches__(self, focus=None, platform=None):
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
 
-    @classmethod
-    def _from(self, data: Any) -> 'InputComponent':
-        if "repository" in data:
-            return InputComponentFromSource(data)
-        elif "dist" in data:
-            return InputComponentFromDist(data)
-        else:
-            raise ValueError(f"Invalid component data: {data}")
+            if not matches:
+                logging.info(f"Skipping {self.name}")
 
-    def __matches__(self, focus: str = None, platform: str = None) -> bool:
-        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+            return matches
 
-        if not matches:
-            logging.info(f"Skipping {self.name}")
+        def __stabilize__(self):
+            pass
 
-        return matches
+    class ComponentFromSource(Component):
+        def __init__(self, data):
+            super().__init__(data)
+            self.repository = data["repository"]
+            self.ref = data["ref"]
+            self.working_directory = data.get("working_directory", None)
+            self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
-    def __stabilize__(self) -> None:
-        pass
+        def __stabilize__(self):
+            ref, name = GitRepository.stable_ref(self.repository, self.ref)
+            logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
+            self.ref = ref
 
+        def __to_dict__(self):
+            return {
+                "name": self.name,
+                "repository": self.repository,
+                "ref": self.ref,
+                "working_directory": self.working_directory,
+                "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
+                "platforms": self.platforms,
+            }
 
-class InputComponentFromSource(InputComponent):
-    def __init__(self, data: Any) -> None:
-        super().__init__(data)
-        self.repository = data["repository"]
-        self.ref = data["ref"]
-        self.working_directory = data.get("working_directory", None)
+    class ComponentFromDist(Component):
+        def __init__(self, data):
+            super().__init__(data)
+            self.dist = data["dist"]
+            self.checks = list(map(lambda entry: InputManifest.Check(entry), data.get("checks", [])))
 
-    def __stabilize__(self) -> None:
-        ref, name = GitRepository.stable_ref(self.repository, self.ref)
-        logging.info(f"Updating ref for {self.repository} from {self.ref} to {ref} ({name})")
-        self.ref = ref
+        def __to_dict__(self):
+            return {
+                "name": self.name,
+                "dist": self.dist,
+                "platforms": self.platforms,
+                "checks": list(map(lambda check: check.__to_dict__(), self.checks))
+            }
 
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name,
-            "repository": self.repository,
-            "ref": self.ref,
-            "working_directory": self.working_directory,
-            "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
-            "platforms": self.platforms,
-        }
+    class Check:
+        def __init__(self, data):
+            if isinstance(data, dict):
+                if len(data) != 1:
+                    raise ValueError(f"Invalid check format: {data}")
+                self.name, self.args = next(iter(data.items()))
+            else:
+                self.name = data
+                self.args = None
 
-
-class InputComponentFromDist(InputComponent):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        self.dist = data["dist"]
-
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name,
-            "dist": self.dist,
-            "platforms": self.platforms,
-            "checks": list(map(lambda check: check.__to_dict__(), self.checks))
-        }
-
-
-class Check:
-    def __init__(self, data: Any) -> None:
-        if isinstance(data, dict):
-            if len(data) != 1:
-                raise ValueError(f"Invalid check format: {data}")
-            self.name, self.args = next(iter(data.items()))
-        else:
-            self.name = data
-            self.args = None
-
-    def __to_dict__(self) -> dict:
-        if self.args:
-            return {self.name: self.args}
-        else:
-            return self.name  # type: ignore[no-any-return]
+        def __to_dict__(self):
+            if self.args:
+                return {self.name: self.args}
+            else:
+                return self.name
 
 
 InputManifest.VERSIONS = {"1.0": InputManifest}

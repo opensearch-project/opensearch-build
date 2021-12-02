@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from manifests.build_manifest import BuildManifest
-from manifests.input_manifest import InputComponentFromDist
+from manifests.input_manifest import InputManifest
 
 
 class TestCiCheckListsDist(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestCiCheckListsDist(unittest.TestCase):
     @patch("manifests.build_manifest.BuildManifest.from_url")
     def test_check(self, mock_manifest, *mocks):
         mock_manifest.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
-        component = InputComponentFromDist({
+        component = InputManifest.ComponentFromDist({
             "name": "common-utils",
             "dist": "url",
             "checks": ["manifest:component"]
@@ -30,7 +30,7 @@ class TestCiCheckListsDist(unittest.TestCase):
         mock_manifest.assert_called()
 
     def test_invalid_check(self, *mocks):
-        component = InputComponentFromDist({
+        component = InputManifest.ComponentFromDist({
             "name": "common-utils",
             "dist": "url",
             "checks": ["invalid:check"]

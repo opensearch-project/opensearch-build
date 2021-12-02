@@ -6,17 +6,11 @@
 
 import itertools
 import logging
-from typing import Any, Callable, Dict, Generic, Iterator, List, Tuple, TypeVar
 
 from manifests.manifest import Manifest
 
-ManifestType = TypeVar('ManifestType', bound='ComponentManifest')
-ComponentsType = TypeVar('ComponentsType', bound='Components')
-ComponentType = TypeVar('ComponentType', bound='Component')
 
-
-class ComponentManifest(Manifest[ManifestType], Generic[ManifestType, ComponentsType]):
-    components: ComponentsType
+class ComponentManifest(Manifest):
     SCHEMA = {
         "schema-version": {
             "required": True, "type": "string", "allowed": ["1.0"]
@@ -26,63 +20,56 @@ class ComponentManifest(Manifest[ManifestType], Generic[ManifestType, Components
         }
     }
 
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data):
         super().__init__(data)
 
-        self.components = Components(data.get("components", []))  # type: ignore[assignment]
+        self.components = self.Components(data.get("components", []))
 
-    def __to_dict__(self) -> dict:
+    def __to_dict__(self):
         return {
             "schema-version": "1.0",
             "components": self.components.__to_dict__()
         }
 
+    class Components(dict):
+        def __init__(self, data):
+            super().__init__(map(lambda component: (component["name"], self.__create__(component)), data))
 
-class Components(Dict[str, ComponentType], Generic[ComponentType]):
-    def __init__(self, data: Dict[Any, Any]) -> None:
-        create_component: Callable[[Any], Tuple[str, ComponentType]] = lambda component: (component["name"], self.__create__(component))
-        super().__init__(map(create_component, data))
+        @classmethod
+        def __create__(data):
+            ComponentManifest.Component(data)
 
-    @classmethod
-    def __create__(self, data: Any) -> ComponentType:
-        return Component(data)  # type: ignore[return-value]
+        def __to_dict__(self):
+            return list(map(lambda component: component.__to_dict__(), self.values()))
 
-    def __to_dict__(self) -> List[Dict[Any, Any]]:
-        as_dict: Callable[[ComponentType], dict] = lambda component: component.__to_dict__()
-        return list(map(as_dict, self.values()))
+        def select(self, focus=None):
+            """
+            Select components.
 
-    def select(self, focus: str = None) -> Iterator[ComponentType]:
-        """
-        Select components.
+            :param str focus: Choose one component.
+            :return: Collection of components.
+            :raises ValueError: Invalid platform or component name specified.
+            """
+            selected, it = itertools.tee(filter(lambda component: component.__matches__(focus), self.values()))
 
-        :param str focus: Choose one component.
-        :return: Collection of components.
-        :raises ValueError: Invalid platform or component name specified.
-        """
-        is_focused: Callable[[ComponentType], bool] = lambda component: component.__matches__(focus)
-        selected, it = itertools.tee(filter(is_focused, self.values()))
+            if not any(it):
+                raise ValueError(f"No components matched focus={focus}.")
 
-        if not any(it):
-            raise ValueError(f"No components matched focus={focus}.")
+            return selected
 
-        return selected
+    class Component:
+        def __init__(self, data):
+            self.name = data["name"]
 
+        def __to_dict__(self):
+            return {
+                "name": self.name
+            }
 
-class Component:
-    platforms: List[str]
+        def __matches__(self, focus=None, platform=None):
+            matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
 
-    def __init__(self, data: dict) -> None:
-        self.name = data["name"]
+            if not matches:
+                logging.info(f"Skipping {self.name}")
 
-    def __to_dict__(self) -> dict:
-        return {
-            "name": self.name
-        }
-
-    def __matches__(self, focus: str = None, platform: str = None) -> bool:
-        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
-
-        if not matches:
-            logging.info(f"Skipping {self.name}")
-
-        return matches
+            return matches

@@ -9,22 +9,22 @@ import unittest
 
 import yaml
 
-from manifests.build_manifest import BuildComponent, BuildManifest
+from manifests.build_manifest import BuildManifest
 
 
 class TestBuildManifest(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
         self.manifest_filename = os.path.join(self.data_path, "opensearch-build-1.1.0.yml")
         self.manifest = BuildManifest.from_path(self.manifest_filename)
 
-    def test_build(self) -> None:
+    def test_build(self):
         self.assertEqual(self.manifest.version, "1.2")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 15)
 
-    def test_component(self) -> None:
+    def test_component(self):
         opensearch_component = self.manifest.components["OpenSearch"]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
@@ -38,44 +38,44 @@ class TestBuildManifest(unittest.TestCase):
             ["core-plugins", "dist", "maven"],
         )
 
-    def test_to_dict(self) -> None:
+    def test_to_dict(self):
         data = self.manifest.to_dict()
         with open(self.manifest_filename) as f:
             self.assertEqual(yaml.safe_load(f), data)
 
-    def test_components_index(self) -> None:
+    def test_components_index(self):
         component = self.manifest.components["index-management"]
         self.assertEqual(component.name, "index-management")
 
-    def test_components_index_error(self) -> None:
+    def test_components_index_error(self):
         with self.assertRaises(KeyError) as ctx:
             self.manifest.components["invalid-component"]
         self.assertEqual(str(ctx.exception), "'invalid-component'")
 
-    def test_versions(self) -> None:
+    def test_versions(self):
         self.assertTrue(len(BuildManifest.VERSIONS))
         for version in BuildManifest.VERSIONS:
             manifest = BuildManifest.from_path(os.path.join(self.data_path, "build", f"opensearch-build-schema-version-{version}.yml"))
             self.assertEqual(version, manifest.version)
             self.assertIsNotNone(any(manifest.components))
 
-    def test_select(self) -> None:
+    def test_select(self):
         path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
         manifest = BuildManifest.from_path(path)
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
 
-    def test_select_none(self) -> None:
+    def test_select_none(self):
         path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
         manifest = BuildManifest.from_path(path)
         with self.assertRaises(ValueError) as ctx:
             self.assertEqual(len(list(manifest.components.select(focus="x"))), 0)
         self.assertEqual(str(ctx.exception), "No components matched focus=x.")
 
-    def test_component_matches(self) -> None:
-        self.assertTrue(BuildComponent({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).__matches__())
+    def test_component_matches(self):
+        self.assertTrue(BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).__matches__())
 
-    def test_component_matches_focus(self) -> None:
-        component = BuildComponent({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""})
+    def test_component_matches_focus(self):
+        component = BuildManifest.Component({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""})
         self.assertTrue(component.__matches__(focus=None))
         self.assertTrue(component.__matches__(focus="x"))
         self.assertFalse(component.__matches__(focus="y"))
