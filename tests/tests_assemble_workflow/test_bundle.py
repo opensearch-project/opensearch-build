@@ -21,8 +21,7 @@ class TestBundle(unittest.TestCase):
     def test_bundle(self, *mocks):
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
-        buildManifest = BuildManifest.from_path(manifest_path)
-        bundle = self.DummyBundle(buildManifest, artifacts_path, MagicMock())
+        bundle = self.DummyBundle(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
         self.assertEqual(bundle.min_dist.name, "OpenSearch")
         self.assertEqual(len(bundle.plugins), 12)
         self.assertEqual(bundle.artifacts_dir, artifacts_path)
