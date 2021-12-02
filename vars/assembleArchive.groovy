@@ -1,0 +1,40 @@
+void call(Map args = [:]) {
+    sha = [
+        sha: env."BUILD_SHA_${args.platform}_${args.architecture}_SHA",
+        lock: env."BUILD_SHA_${args.platform}_${args.architecture}_LOCK",
+        path: env."BUILD_SHA_${args.platform}_${args.architecture}_PATH"
+    ]
+
+    echo "Read BUILD_SHA_${args.platform}_${args.architecture}_[SHA|LOCK|PATH]."
+    echo "sha.sha=${sha.sha}"
+    echo "sha.lock=${sha.lock}"
+    echo "sha.path=${sha.path}"
+
+    if (sha.sha == null) {
+        echo "Skipping, ${args.platform} ${args.architecture} was not built."
+    } else {
+
+        echo "Assembling ${sha.sha} (${sha.lock})"
+
+        copyArtifacts(
+            filter: "${sha.sha}.zip",
+            fingerprintArtifacts: true,
+            projectName: "${JOB_NAME}",
+            selector: specific("${BUILD_NUMBER}")
+        )
+
+        unzip(
+            zipFile: "${sha.sha}.zip"
+        )
+
+        lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+        def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))
+
+        assembleUpload(
+            args + [
+                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml",
+                sha: sha
+            ]
+        )
+    }
+}
