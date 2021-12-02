@@ -114,8 +114,10 @@ class DistRpm(Dist):
         architecture_alt = "x86_64" if manifest_data["architecture"] == "x64" else "aarch64"
         real_archive_path = os.path.realpath(self.archive_path)
         data_foler_path = os.path.join(real_archive_path, "data", "")
+        logs_foler_path = os.path.join(real_archive_path, "logs", "")
         systemed_entrypoint_path = os.path.join(real_archive_path, "bin", "systemd-entrypoint")
         os.makedirs(data_foler_path, exist_ok=True)
+        os.makedirs(logs_foler_path, exist_ok=True)
         shutil.copyfile("scripts/pkg/scripts/systemd-entrypoint", systemed_entrypoint_path)
         subprocess.run(
             [
@@ -178,7 +180,6 @@ class DistRpm(Dist):
                 os.path.join(real_archive_path, "config", "") + "=" + os.path.join(os.sep, "etc", product_name, ""),
                 os.path.join(real_archive_path, "data", "") + "=" + os.path.join(os.sep, "var", "lib", product_name, ""),
                 os.path.join(scripts_path, "service_templates", product_name, "systemd", "etc", "") + "=" + os.path.join(os.sep, "etc", ""),
-                #os.path.join(os.sep, "usr", "share", product_name, "") + "=" + os.path.join(os.sep, "var", "log", product_name, "")
-                #/usr/share/opensearch/logs/=/var/log/opensearch/
+                os.path.join(real_archive_path, "logs", "") + "=" + os.path.join(os.sep, "var", "log", product_name, "")
             ]
         )
