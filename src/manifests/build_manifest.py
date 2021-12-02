@@ -98,12 +98,12 @@ class BuildManifest(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
-            self.name = data["name"]
-            self.version = data["version"]
-            self.platform = data["platform"]
-            self.architecture = data["architecture"]
-            self.id = data["id"]
+        def __init__(self, data: Any):
+            self.name: str = data["name"]
+            self.version: str = data["version"]
+            self.platform: str = data["platform"]
+            self.architecture: str = data["architecture"]
+            self.id: str = data["id"]
 
         def __to_dict__(self):
             return {

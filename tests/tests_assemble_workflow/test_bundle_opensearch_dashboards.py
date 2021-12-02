@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from assemble_workflow.bundle_opensearch_dashboards import BundleOpenSearchDashboards
 from manifests.build_manifest import BuildManifest
@@ -14,7 +14,7 @@ from paths.script_finder import ScriptFinder
 
 
 class TestBundleOpenSearchDashboards(unittest.TestCase):
-    def test_bundle_opensearch_dashboards(self):
+    def test_bundle_opensearch_dashboards(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearchDashboards(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -25,7 +25,7 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
         self.assertEqual(bundle.installed_plugins, [])
         self.assertTrue(bundle.min_dist.path.endswith("opensearch-dashboards-min-1.1.0-linux-x64.tar.gz"))
 
-    def test_bundle_install_min(self):
+    def test_bundle_install_min(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data/artifacts")
         bundle = BundleOpenSearchDashboards(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -58,7 +58,7 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
             )
 
     @patch("os.path.isfile", return_value=True)
-    def test_bundle_install_plugin(self, *mocks):
+    def test_bundle_install_plugin(self, path_isfile: Mock) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-dashboards-build-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearchDashboards(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -99,3 +99,4 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
                         ),
                     ]
                 )
+        self.assertEqual(path_isfile.call_count, 2)
