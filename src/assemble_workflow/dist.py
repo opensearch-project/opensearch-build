@@ -16,15 +16,19 @@ from system.zip_file import ZipFile
 
 
 class Dist(ABC):
-    def __init__(self, name, path):
+    def __init__(self, name: str, path: str) -> None:
         self.name = name
         self.path = path
 
     @abstractmethod
-    def __extract__(self, dest):
+    def __extract__(self, dest: str) -> None:
         pass
 
-    def extract(self, dest):
+    @abstractmethod
+    def __build__(self, name: str, dest: str) -> None:
+        pass
+
+    def extract(self, dest: str) -> str:
         self.__extract__(dest)
 
         # OpenSearch & Dashboard tars will include only a single folder at the top level of the tar.
@@ -36,14 +40,14 @@ class Dist(ABC):
 
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.join(dest, "*"))
 
-    def build(self, name, dest):
+    def build(self, name: str, dest: str) -> None:
         self.__build__(name, dest)
         path = os.path.join(dest, name)
         shutil.copyfile(name, path)
         logging.info(f"Published {path}.")
 
     @classmethod
-    def from_path(cls, name, path):
+    def from_path(cls, name: str, path: str) -> 'Dist':
         ext = os.path.splitext(path)[1]
         if ext == ".gz":
             return DistTar(name, path)
@@ -54,24 +58,24 @@ class Dist(ABC):
 
 
 class DistZip(Dist):
-    def __extract__(self, dest):
+    def __extract__(self, dest: str) -> None:
         with ZipFile(self.path, "r") as zip:
             zip.extractall(dest)
 
-    def __build__(self, name, dest):
+    def __build__(self, name: str, dest: str) -> None:
         with ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
             rootlen = len(self.archive_path) + 1
-            for base, dirs, files in os.walk(self.archive_path):
+            for base, _, files in os.walk(self.archive_path):
                 for file in files:
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
 
 
 class DistTar(Dist):
-    def __extract__(self, dest):
+    def __extract__(self, dest: str) -> None:
         with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
-    def __build__(self, name, dest):
+    def __build__(self, name: str, dest: str) -> None:
         with tarfile.open(name, "w:gz") as tar:
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
