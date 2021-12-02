@@ -10,7 +10,7 @@ import unittest
 import yaml
 
 from assemble_workflow.bundle_recorder import BundleRecorder
-from manifests.build_manifest import BuildManifest
+from manifests.build_manifest import BuildComponent, BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory
 
@@ -23,7 +23,7 @@ class TestBundleRecorder(unittest.TestCase):
         self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None)
 
     def test_record_component(self):
-        component = BuildManifest.Component(
+        component = BuildComponent(
             {
                 "name": "job_scheduler",
                 "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -88,7 +88,7 @@ class TestBundleRecorder(unittest.TestCase):
 
     def test_record_component_public(self):
         self.bundle_recorder.base_url = "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/"
-        component = BuildManifest.Component(
+        component = BuildComponent(
             {
                 "name": "job_scheduler",
                 "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -155,7 +155,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         self.bundle_recorder = BundleRecorder(manifest.build, "output_dir", "artifacts_dir", None)
 
     def test_record_component(self):
-        component = BuildManifest.Component(
+        component = BuildComponent(
             {
                 "name": "alertingDashboards",
                 "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
@@ -220,7 +220,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
 
     def test_record_component_public(self):
         self.bundle_recorder.base_url = "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/"
-        component = BuildManifest.Component(
+        component = BuildComponent(
             {
                 "name": "alertingDashboards",
                 "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",

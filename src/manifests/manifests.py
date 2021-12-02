@@ -6,17 +6,22 @@
 
 import os
 import re
+from typing import Any, Generic, List, TypeVar
 
-from sortedcontainers import SortedDict  # type: ignore
+from sortedcontainers import SortedDict
+
+from manifests.manifest import Manifest
+
+T = TypeVar('T', bound='Manifest')
 
 
-class Manifests(SortedDict):
-    def __init__(self, klass, files):
+class Manifests(SortedDict, Generic[T]):
+    def __init__(self, klass: Any, files: List[str]):
         super(Manifests, self).__init__()
         self.klass = klass
         self.__append__(files)
 
-    def __append__(self, files):
+    def __append__(self, files: List[str]) -> None:
         for filename in files:
             basename = os.path.basename(filename)
             match = re.search(r"-([0-9.]*).yml$", basename)
@@ -28,16 +33,16 @@ class Manifests(SortedDict):
             self.__setitem__(version, manifest)
 
     @property
-    def manifests_path(self):
+    def manifests_path(self) -> str:
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @property
-    def versions(self):
-        return list(map(lambda manifest: manifest.build.version, self.values()))
+    def versions(self) -> List[T]:
+        return list(map(lambda manifest: manifest.build.version, self.values()))  # type: ignore[no-any-return]
 
     @property
-    def latest(self):
+    def latest(self) -> T:
         if len(self) == 0:
             raise RuntimeError("No manifests found")
 
-        return self.values()[-1]
+        return self.values()[-1]  # type: ignore[no-any-return]

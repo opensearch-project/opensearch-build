@@ -10,14 +10,14 @@ from unittest.mock import MagicMock, call, patch
 
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_source import BuilderFromSource
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromSource
 from paths.script_finder import ScriptFinder
 
 
 class TestBuilderFromSource(unittest.TestCase):
     def setUp(self):
         self.builder = BuilderFromSource(
-            InputManifest.ComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
+            InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.1.0",

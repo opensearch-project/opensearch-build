@@ -4,11 +4,13 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any, Dict
+
 from manifests.bundle.bundle_manifest_1_0 import BundleManifest_1_0
-from manifests.component_manifest import ComponentManifest
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class BundleManifest(ComponentManifest):
+class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
     """
     A BundleManifest is an immutable view of the outputs from a assemble step
     The manifest contains information about the bundle that was built (in the `assemble` section),
@@ -60,11 +62,12 @@ class BundleManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.build = self.Build(data["build"])
+        self.components = BundleComponents(data.get("components", []))  # type: ignore[assignment]
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.1",
             "build": self.build.__to_dict__(),
@@ -72,7 +75,7 @@ class BundleManifest(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
+        def __init__(self, data: Dict[str, str]):
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data["platform"]
@@ -80,7 +83,7 @@ class BundleManifest(ComponentManifest):
             self.location = data["location"]
             self.id = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -90,27 +93,29 @@ class BundleManifest(ComponentManifest):
                 "id": self.id,
             }
 
-    class Components(ComponentManifest.Components):
-        @classmethod
-        def __create__(self, data):
-            return BundleManifest.Component(data)
 
-    class Component(ComponentManifest.Component):
-        def __init__(self, data):
-            super().__init__(data)
-            self.repository = data["repository"]
-            self.ref = data["ref"]
-            self.commit_id = data["commit_id"]
-            self.location = data["location"]
+class BundleComponents(Components['BundleComponent']):
+    @classmethod
+    def __create__(self, data: Any) -> 'BundleComponent':
+        return BundleComponent(data)
 
-        def __to_dict__(self):
-            return {
-                "name": self.name,
-                "repository": self.repository,
-                "ref": self.ref,
-                "commit_id": self.commit_id,
-                "location": self.location
-            }
+
+class BundleComponent(Component):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.repository = data["repository"]
+        self.ref = data["ref"]
+        self.commit_id = data["commit_id"]
+        self.location = data["location"]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "repository": self.repository,
+            "ref": self.ref,
+            "commit_id": self.commit_id,
+            "location": self.location
+        }
 
 
 BundleManifest.VERSIONS = {"1.0": BundleManifest_1_0, "1.1": BundleManifest}

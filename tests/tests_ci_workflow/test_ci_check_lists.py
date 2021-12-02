@@ -9,12 +9,12 @@ import unittest
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
 from ci_workflow.ci_check_lists import CiCheckLists
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
 
 
 class TestCiCheckLists(unittest.TestCase):
     def test_from_component_source(self):
-        check_list = CiCheckLists.from_component(InputManifest.ComponentFromSource({
+        check_list = CiCheckLists.from_component(InputComponentFromSource({
             "name": "common-utils",
             "repository": "url",
             "ref": "ref"
@@ -22,7 +22,7 @@ class TestCiCheckLists(unittest.TestCase):
         self.assertIs(type(check_list), CiCheckListSource)
 
     def test_from_component_dist(self):
-        check_list = CiCheckLists.from_component(InputManifest.ComponentFromDist({
+        check_list = CiCheckLists.from_component(InputComponentFromDist({
             "name": "common-utils",
             "dist": "url"
         }), None)

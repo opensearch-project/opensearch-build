@@ -8,15 +8,15 @@ from abc import ABC
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
 
 
 class CiCheckLists(ABC):
     @classmethod
     def from_component(self, component, target):
-        if type(component) is InputManifest.ComponentFromDist:
+        if type(component) is InputComponentFromDist:
             return CiCheckListDist(component, target)
-        elif type(component) is InputManifest.ComponentFromSource:
+        elif type(component) is InputComponentFromSource:
             return CiCheckListSource(component, target)
         else:
             raise ValueError(f"Invalid component type: {type(component)}")
