@@ -47,6 +47,9 @@ class IntegTestSuite(abc.ABC):
             test_config.working_directory
         )
 
+        self.save_logs = test_recorder.test_results_logs
+        self.additional_cluster_config = None
+
     @abc.abstractmethod
     def execute_tests(self):
         pass
