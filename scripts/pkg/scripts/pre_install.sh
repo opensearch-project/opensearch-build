@@ -13,6 +13,8 @@ set -e
 
 echo start pre install
 
+OPENSEARCH_LOG_DIR=<%= logDir %>
+mkdir -p /var/log/$OPENSEARCH_LOG_DIR
 if command -v systemctl >/dev/null && systemctl is-active "<%= product %>".service >/dev/null; then
     systemctl --no-reload stop "<%= product %>".service
 fi

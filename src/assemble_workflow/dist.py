@@ -166,6 +166,8 @@ class DistRpm(Dist):
                 "pluginsDir=" + os.path.join(os.sep, "usr", "share", product_name, "plugins"),
                 "--template-value",
                 "dataDir=" + os.path.join(os.sep, "var", "lib", product_name),
+                "--template-value",
+                "logDir=" + os.path.join(os.sep, "var", "log", product_name),               
                 "--exclude",
                 os.path.join("usr", "share", product_name, "data"),
                 "--exclude",
@@ -176,5 +178,7 @@ class DistRpm(Dist):
                 os.path.join(real_archive_path, "config", "") + "=" + os.path.join(os.sep, "etc", product_name, ""),
                 os.path.join(real_archive_path, "data", "") + "=" + os.path.join(os.sep, "var", "lib", product_name, ""),
                 os.path.join(scripts_path, "service_templates", product_name, "systemd", "etc", "") + "=" + os.path.join(os.sep, "etc", ""),
+                #os.path.join(os.sep, "usr", "share", product_name, "") + "=" + os.path.join(os.sep, "var", "log", product_name, "")
+                #/usr/share/opensearch/logs/=/var/log/opensearch/
             ]
         )
