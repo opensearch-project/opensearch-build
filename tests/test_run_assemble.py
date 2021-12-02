@@ -6,20 +6,21 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import ANY, MagicMock, Mock, call, patch
 
 import pytest
+from pytest import CaptureFixture
 
 from run_assemble import main
 
 
 class TestRunAssemble(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def capfd(self, capfd):
+    def getCapfd(self, capfd: CaptureFixture) -> None:
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_assemble.py", "--help"])
-    def test_usage(self, *mocks):
+    def test_usage(self) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -28,14 +29,12 @@ class TestRunAssemble(unittest.TestCase):
 
     BUILD_MANIFEST = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml")
 
-    @patch("os.chdir")
     @patch("os.makedirs")
-    @patch("shutil.copy2")
     @patch("os.getcwd", return_value="curdir")
     @patch("argparse._sys.argv", ["run_assemble.py", BUILD_MANIFEST])
     @patch("run_assemble.Bundles.create")
     @patch("run_assemble.BundleRecorder", return_value=MagicMock())
-    def test_main(self, mock_recorder, mock_bundles, *mocks):
+    def test_main(self, mock_recorder: Mock, mock_bundles: Mock, getcwd: Mock, makeDirs: Mock) -> None:
         mock_bundle = MagicMock(min_dist=MagicMock(archive_path="path"))
         mock_bundles.return_value.__enter__.return_value = mock_bundle
 
@@ -50,3 +49,6 @@ class TestRunAssemble(unittest.TestCase):
             call("path"),
             call(os.path.join("curdir", "dist", "opensearch"))
         ])  # manifest included in package
+
+        getcwd.assert_called_once_with()
+        makeDirs.assert_called_once_with(ANY, exist_ok=True)

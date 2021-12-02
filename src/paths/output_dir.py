@@ -9,7 +9,7 @@ import os
 
 
 class OutputDir(abc.ABC):
-    def __init__(cls, parent_dir, name, cwd=None, makedirs=True):
+    def __init__(cls, parent_dir: str, name: str, cwd: str = None, makedirs: bool = True) -> None:
         cls.dir = os.path.join(
             cwd or os.getcwd(),
             parent_dir,

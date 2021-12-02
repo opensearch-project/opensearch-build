@@ -8,7 +8,7 @@ import logging
 import sys
 
 
-def configure(level):
+def configure(level: int) -> None:
     logging.basicConfig(
         stream=sys.stdout,
         level=level,

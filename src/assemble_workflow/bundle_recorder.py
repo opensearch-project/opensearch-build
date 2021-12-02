@@ -5,13 +5,15 @@
 # compatible open source license.
 
 import os
+from typing import Any, Dict
 from urllib.parse import urljoin
 
+from manifests.build_manifest import BuildComponent, BuildManifest
 from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
-    def __init__(self, build, output_dir, artifacts_dir, base_url):
+    def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, base_url: str) -> None:
         self.output_dir = output_dir
         self.build_id = build.id
         self.base_url = base_url
@@ -28,7 +30,7 @@ class BundleRecorder:
             self.__get_package_location(),
         )
 
-    def __get_package_name(self, build):
+    def __get_package_name(self, build: BuildManifest.Build) -> str:
         parts = [
             build.name.lower().replace(" ", "-"),
             build.version,
@@ -37,27 +39,27 @@ class BundleRecorder:
         ]
         return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
 
-    def __get_public_url_path(self, folder, rel_path):
+    def __get_public_url_path(self, folder: str, rel_path: str) -> str:
         path = "/".join((folder, rel_path))
         return urljoin(self.base_url + "/", path)
 
-    def __get_location(self, folder_name, rel_path, abs_path):
+    def __get_location(self, folder_name: str, rel_path: str, abs_path: str) -> str:
         if self.base_url:
             return self.__get_public_url_path(folder_name, rel_path)
         return abs_path
 
     # Assembled output are expected to be served from a separate "dist" folder
     # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/dist/
-    def __get_package_location(self):
+    def __get_package_location(self) -> str:
         return self.__get_location("dist", self.package_name, os.path.join(self.output_dir, self.package_name))
 
     # Build artifacts are expected to be served from a "builds" folder
     # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/builds/
-    def __get_component_location(self, component_rel_path):
+    def __get_component_location(self, component_rel_path: str) -> str:
         abs_path = os.path.join(self.artifacts_dir, component_rel_path)
         return self.__get_location("builds", component_rel_path, abs_path)
 
-    def record_component(self, component, rel_path):
+    def record_component(self, component: BuildComponent, rel_path: str) -> None:
         self.bundle_manifest.append_component(
             component.name,
             component.repository,
@@ -66,16 +68,16 @@ class BundleRecorder:
             self.__get_component_location(rel_path),
         )
 
-    def get_manifest(self):
+    def get_manifest(self) -> BundleManifest:
         return self.bundle_manifest.to_manifest()
 
-    def write_manifest(self, folder):
+    def write_manifest(self, folder: str) -> None:
         manifest_path = os.path.join(folder, "manifest.yml")
         self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
-        def __init__(self, build_id, name, version, platform, architecture, location):
-            self.data = {}
+        def __init__(self, build_id: str, name: str, version: str, platform: str, architecture: str, location: str) -> None:
+            self.data: Dict[str, Any] = {}
             self.data["build"] = {}
             self.data["build"]["id"] = build_id
             self.data["build"]["name"] = name
@@ -88,7 +90,7 @@ class BundleRecorder:
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []
 
-        def append_component(self, name, repository_url, ref, commit_id, location):
+        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str) -> None:
             component = {
                 "name": name,
                 "repository": repository_url,
@@ -98,5 +100,5 @@ class BundleRecorder:
             }
             self.data["components"].append(component)
 
-        def to_manifest(self):
+        def to_manifest(self) -> BundleManifest:
             return BundleManifest(self.data)
