@@ -11,7 +11,7 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestAssembleArchive extends BuildPipelineTest {
+class TestArchiveAssembleUpload extends BuildPipelineTest {
     @Before
     void setUp() {
         super.setUp()
@@ -40,16 +40,16 @@ class TestAssembleArchive extends BuildPipelineTest {
         binding.env."BUILD_SHA_linux_x64_PATH" = 'assemble-upload-build/1.1.0/shas/linux/x64/sha1.yml'
 
         super.testPipeline(
-            "tests/jenkins/jobs/AssembleArchive_Jenkinsfile",
-            "tests/jenkins/jobs/AssembleArchive_Jenkinsfile_sha"
+            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_sha"
         )
     }
 
     @Test
     public void testSHADoesNotExist() {
         super.testPipeline(
-            "tests/jenkins/jobs/AssembleArchive_Jenkinsfile",
-            "tests/jenkins/jobs/AssembleArchive_Jenkinsfile_no_sha"
+            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_no_sha"
         )
     }
 }

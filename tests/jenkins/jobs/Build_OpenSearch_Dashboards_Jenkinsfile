@@ -1,5 +1,3 @@
-lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-
 pipeline {
     agent none
     parameters {
@@ -87,7 +85,7 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    assembleArchive(
+                                    archiveAssembleUpload(
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
@@ -109,6 +107,32 @@ pipeline {
                     script {
                         buildDockerImage()
                     }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+                    def stashed = lib.jenkins.Messages.new(this).get([
+                        'build-linux-x64',
+                        'assemble-linux-arm64'
+                    ])
+
+                    echo "SUCCESS: ${stashed}"
+
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    echo 'FAILURE'
+
+                    postCleanup()
                 }
             }
         }

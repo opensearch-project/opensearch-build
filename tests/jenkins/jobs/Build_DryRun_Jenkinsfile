@@ -154,7 +154,7 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    assembleArchive(
+                                    archiveAssembleUpload(
                                         dryRun: true,
                                         platform: 'windows',
                                         architecture: 'x86'
