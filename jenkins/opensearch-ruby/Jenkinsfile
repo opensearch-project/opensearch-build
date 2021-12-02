@@ -30,10 +30,10 @@ pipeline {
                         sh'''
                             set +x
                             echo "$RUBYGEMS_PRIVATE_KEY" > private_key.pem
+                            keypath=$(realpath private_key.pem)
                         '''
                     }
                     sh'''
-                        keypath=$(realpath private_key.pem)
                         for f in $(find . -name '*.gemspec'); do echo $f; sed -i '$s#end#  s.signing_key = File.expand_path("'"$keypath"'") if $0 =~ /gem\\\\z/\\n&#' $f; done
                         gem cert --add certs/opensearch-rubygems.pem
                         bash release/build.sh
