@@ -85,6 +85,11 @@ esac
 
 CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"
 
+echo WHERE AM I
+pwd
+
+git clone --branch 1.1.0 --single-branch https://github.com/opensearch-project/OpenSearch-Dashboards
+
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'reportsDashboards/dashboards-reports'
 PLUGIN_FOLDER=$(basename "$PWD")

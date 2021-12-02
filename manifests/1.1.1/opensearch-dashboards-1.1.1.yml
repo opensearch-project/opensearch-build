@@ -9,6 +9,14 @@ build:
   patches:
     - 1.1.0
 components:
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports
+    ref: "1.1"
+    working_directory: "dashboards-reports"
+    platforms:
+      - linux
+    checks:
+        - manifest:component
   - name: OpenSearch-Dashboards
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:
@@ -29,14 +37,6 @@ components:
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:
         - manifest:component
-  - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reports
-    ref: "1.1"
-    working_directory: "dashboards-reports"
-    platforms:
-      - linux
-    checks:
-        - manifest:component
   - name: notebooksDashboards
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:
@@ -53,8 +53,8 @@ components:
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:
         - manifest:component
-  - name: functionalTestDashboards
-    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: "main"
-    checks:
-        - manifest:component
+#  - name: functionalTestDashboards
+#    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+#    ref: "main"
+#    checks:
+#        - manifest:component
