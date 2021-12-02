@@ -59,6 +59,7 @@ class TestBuildManifest(unittest.TestCase):
         self.assertEqual(component.name, 'OpenSearch-Dashboards')
         self.assertEqual(component.ref, "1.1")
         self.assertEqual(component.repository, 'https://github.com/opensearch-project/OpenSearch-Dashboards.git')
+        self.assertEqual(component.artifacts['dist'], ['dist/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz'])
 
         urlopen.assert_called_once_with('http://fakeurl')
 
