@@ -7,7 +7,7 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 import pytest
 
@@ -43,6 +43,12 @@ class TestRunCi(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_TEST_MANIFEST])
     @patch("run_ci.TemporaryDirectory")
-    def test_main_test_manifest(self, mock_temp, *mocks):
+    @patch("logging.info")
+    def test_main_test_manifest(self, mock_logging, mock_temp, *mocks):
+
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
+        mock_logging.assert_has_calls([
+            call("TestManifest schema validation succeeded"),
+            call("Done.")
+        ])

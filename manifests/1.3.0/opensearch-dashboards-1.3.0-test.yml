@@ -1,5 +1,4 @@
 name: OpenSearch Dashboards
-type: Test
 components:
   - name: functionalTestDashboards
     integ-test:

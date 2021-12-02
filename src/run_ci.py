@@ -7,9 +7,8 @@
 # compatible open source license.
 
 import logging
+import re
 import sys
-
-import yaml
 
 from ci_workflow.ci_args import CiArgs
 from ci_workflow.ci_check_lists import CiCheckLists
@@ -24,9 +23,7 @@ def main():
     args = CiArgs()
     console.configure(level=args.logging_level)
 
-    manifest_type = __get_manifest_type(args.manifest)
-
-    if manifest_type == "Test":
+    if __is_test_manifest(args.manifest.name):
         TestManifest.from_path(args.manifest.name)
 
         logging.info("TestManifest schema validation succeeded")
@@ -56,9 +53,8 @@ def main():
     logging.info("Done.")
 
 
-def __get_manifest_type(path):
-    yml = yaml.safe_load(path)
-    return yml["type"] if "type" in yml else None
+def __is_test_manifest(path):
+    return re.search("-test.yml$", path)
 
 
 if __name__ == "__main__":
