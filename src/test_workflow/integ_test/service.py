@@ -66,10 +66,19 @@ class Service(abc.ABC):
         """
         pass
 
+    @abc.abstractmethod
+    def check_service_response_text(self):
+        """
+        Check response text from the service endpoint.
+        """
+        pass
+
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
-        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
+
+        # TODO: https://github.com/opensearch-project/opensearch-build/issues/1217
+        if response.status_code == 200 and self.check_service_response_text(response.text):
             logging.info("Service is available")
             return True
         else:

@@ -138,6 +138,7 @@ pipeline {
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}",
                         extra: stashed
                     )
 
@@ -155,7 +156,8 @@ pipeline {
                         dryRun: true,
                         icon: ':warning:',
                         message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
                     cleanWs(

@@ -11,29 +11,20 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestIncrementalBuild extends BuildPipelineTest {
+class TestGetManifestSHA extends BuildPipelineTest {
+    @Override
     @Before
     void setUp() {
         super.setUp()
 
-        binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
-        binding.setVariable('BUILD_NUMBER', '33')
-        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
-        binding.setVariable('JOB_NAME', 'vars-build')
-        binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
+        binding.setVariable('JOB_NAME', 'get-manifest-sha-build')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
-        binding.setVariable('STAGE_NAME', 'stage')
-
-        helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
 
         helper.registerAllowedMethod("sha1", [String], { filename ->
             return 'sha1'
         })
 
-        helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
@@ -43,11 +34,26 @@ class TestIncrementalBuild extends BuildPipelineTest {
     }
 
     @Test
-    public void test() {
+    public void testExists() {
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return true
         })
 
-        super.testPipeline("tests/jenkins/jobs/IncrementalBuild_Jenkinsfile")
+        super.testPipeline(
+            "tests/jenkins/jobs/GetManifestSHA_Jenkinsfile",
+            "tests/jenkins/jobs/GetManifestSHA_Jenkinsfile_exists"
+        )
+    }
+
+    @Test
+    public void testDoesNotExist() {
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return false
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/GetManifestSHA_Jenkinsfile",
+            "tests/jenkins/jobs/GetManifestSHA_Jenkinsfile_does_not_exist"
+        )
     }
 }

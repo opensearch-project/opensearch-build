@@ -1,5 +1,25 @@
 Coming from [opensearch-build__REPLACE_ISSUE_NUMBER__](https://github.com/opensearch-project/opensearch-build/issues/__REPLACE_ISSUE_NUMBER__), release version __REPLACE_MAJOR_MINOR__. Please follow the following checklist.
 
+<details><summary>How to use this issue</summary>
+<p>
+
+## This Component Release Issue
+
+This issue captures the state of the OpenSearch release for this component, its assignee is responsible for driving the release. Please contact them or @mention them on this issue for help.  Any release related work can be linked to this issue or added as comments to create visiblity into the release status.
+
+## The Overall Release Issue
+
+Linked at the top of this issue, the overall release issue captures the state of the entire OpenSearch release including references to this issue, the release owner which is the assignee is responsible for communicating the release status broadly.  Please contact them or @mention them on that issue for help.
+
+## Release Steps
+
+There are several steps to the release process, these steps are completed as the whole release and components that are behind present risk to the release.  The component owner completes the tasks in this issue which are monitored by the overall release owner to make sure all components are moving along as expected.
+
+Steps have completion dates for coordinating efforts between the components of a release; components can start as soon as they are ready far in advance of a future release.  The most current set of dates is on the overall release issue linked at the top of this issue.
+
+</p>
+</details>
+
 ### Preparation
 
 - [ ] Assign this issue to a release owner.

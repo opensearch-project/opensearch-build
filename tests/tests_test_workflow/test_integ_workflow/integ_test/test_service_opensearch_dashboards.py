@@ -179,3 +179,66 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         mock_url.assert_called_once_with("/api/status")
         mock_requests_get.assert_called_once_with(mock_url_result, auth=None, verify=False)
+
+    @patch.object(ServiceOpenSearchDashboards, "get_service_response")
+    def test_service_alive_green_available(self, mock_get_service_response):
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            self.platform,
+            self.architecture,
+            self.additional_config,
+            True,
+            self.dependency_installer,
+            self.work_dir
+        )
+
+        mock_response = MagicMock()
+
+        mock_response.status_code = 200
+        mock_response.text = '"state":"green"'
+
+        mock_get_service_response.return_value = mock_response
+
+        self.assertTrue(service.service_alive())
+
+    @patch.object(ServiceOpenSearchDashboards, "get_service_response")
+    def test_service_alive_yellow_available(self, mock_get_service_response):
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            self.platform,
+            self.architecture,
+            self.additional_config,
+            True,
+            self.dependency_installer,
+            self.work_dir
+        )
+
+        mock_response = MagicMock()
+
+        mock_response.status_code = 200
+        mock_response.text = '"state":"yellow"'
+
+        mock_get_service_response.return_value = mock_response
+
+        self.assertTrue(service.service_alive())
+
+    @patch.object(ServiceOpenSearchDashboards, "get_service_response")
+    def test_service_alive_red_unavailable(self, mock_get_service_response):
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            self.platform,
+            self.architecture,
+            self.additional_config,
+            True,
+            self.dependency_installer,
+            self.work_dir
+        )
+
+        mock_response = MagicMock()
+
+        mock_response.status_code = 200
+        mock_response.text = '"state":"red"'
+
+        mock_get_service_response.return_value = mock_response
+
+        self.assertFalse(service.service_alive())

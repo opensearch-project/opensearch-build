@@ -69,3 +69,6 @@ class ServiceOpenSearch(Service):
 
     def port(self):
         return 9200
+
+    def check_service_response_text(self, response_text):
+        return ('"status":"green"' in response_text) or ('"status":"yellow"' in response_text)

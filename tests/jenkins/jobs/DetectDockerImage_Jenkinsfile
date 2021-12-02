@@ -1,0 +1,49 @@
+pipeline {
+    agent none
+    stages {
+        stage('opensearch-1.1.0') {
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent(
+                        manifest: 'manifests/1.1.0/opensearch-1.1.0.yml'
+                    )
+                    echo dockerAgent.image
+                    echo dockerAgent.args
+                }
+            }
+        }
+        stage('opensearch-1.2.0') {
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent(
+                        manifest: 'manifests/1.2.0/opensearch-1.2.0.yml'
+                    )
+                    echo dockerAgent.image
+                    echo dockerAgent.args
+                }
+            }
+        }
+        stage('opensearch-dashboards-1.1.0') {
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent(
+                        manifest: 'manifests/1.1.0/opensearch-dashboards-1.1.0.yml'
+                    )
+                    echo dockerAgent.image
+                    echo dockerAgent.args
+                }
+            }
+        }
+        stage('opensearch-dashboards-1.2.0') {
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent(
+                        manifest: 'manifests/1.2.0/opensearch-dashboards-1.2.0.yml'
+                    )
+                    echo dockerAgent.image
+                    echo dockerAgent.args
+                }
+            }
+        }
+    }
+}

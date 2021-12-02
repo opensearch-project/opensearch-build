@@ -4,7 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from jproperties import Properties  # type:ignore
+from jproperties import Properties
 
 
 class PropertiesFile(Properties):

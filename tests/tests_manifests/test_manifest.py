@@ -6,7 +6,8 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from typing import Any, Dict
+from unittest.mock import MagicMock, Mock, patch
 
 import yaml
 
@@ -15,20 +16,20 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestManifest(unittest.TestCase):
-    class SampleManifest(Manifest):
-        def __init__(self, data):
+    class SampleManifest(Manifest['TestManifest.SampleManifest']):
+        def __init__(self, data: Dict[Any, Any]) -> None:
             super().__init__(data)
             self.data = data
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return self.data
 
-    class SampleManifestWithVersions(Manifest):
-        def __init__(self, data):
+    class SampleManifestWithVersions(Manifest['TestManifest.SampleManifest']):
+        def __init__(self, data: Dict[Any, Any]) -> None:
             super().__init__(data)
             self.data = data
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return self.data
 
     SampleManifestWithVersions.VERSIONS = {
@@ -36,18 +37,18 @@ class TestManifest(unittest.TestCase):
         "6.42": SampleManifestWithVersions
     }
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.data_path = os.path.join(os.path.dirname(__file__), "data")
 
-    def test_manifest_is_abstract(self):
+    def test_manifest_is_abstract(self) -> None:
         with self.assertRaises(TypeError) as context:
-            Manifest(None)
+            Manifest(None)  # type: ignore[abstract]
         self.assertEqual(
             "Can't instantiate abstract class Manifest with abstract methods __init__",
             context.exception.__str__(),
         )
 
-    def test_invalid_version_empty(self):
+    def test_invalid_version_empty(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-empty.yml")
 
         with self.assertRaises(ValueError) as context:
@@ -57,7 +58,7 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-    def test_invalid_version_no_value(self):
+    def test_invalid_version_no_value(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-no-value.yml")
 
         with self.assertRaises(ValueError) as context:
@@ -67,7 +68,7 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-    def test_compact(self):
+    def test_compact(self) -> None:
         self.assertEqual(Manifest.compact({}), {})
         self.assertEqual(Manifest.compact({"x": "y"}), {"x": "y"})
         self.assertEqual(Manifest.compact({"x": "y", "z": []}), {"x": "y"})
@@ -76,7 +77,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(Manifest.compact({"x": True}), {"x": True})
         self.assertEqual(Manifest.compact({"x": False}), {"x": False})
 
-    def test_to_file(self):
+    def test_to_file(self) -> None:
         manifest_path = os.path.join(self.data_path, "min.yml")
         manifest = TestManifest.SampleManifest.from_path(manifest_path)
 
@@ -87,7 +88,7 @@ class TestManifest(unittest.TestCase):
             with open(output_path) as f:
                 self.assertEqual(yaml.safe_load(f), manifest.to_dict())
 
-    def test_invalid_version_no_value_3_14(self):
+    def test_invalid_version_no_value_3_14(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-no-value.yml")
 
         with self.assertRaises(ValueError) as context:
@@ -97,7 +98,7 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-    def test_invalid_version_empty_3_14(self):
+    def test_invalid_version_empty_3_14(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-empty.yml")
 
         with self.assertRaises(ValueError) as context:
@@ -107,7 +108,7 @@ class TestManifest(unittest.TestCase):
             context.exception.__str__(),
         )
 
-    def test_invalid_version_3_14(self):
+    def test_invalid_version_3_14(self) -> None:
         manifest_path = os.path.join(self.data_path, "opensearch-build-1.1.0.yml")
 
         with self.assertRaises(ValueError) as context:
@@ -118,7 +119,7 @@ class TestManifest(unittest.TestCase):
         )
 
     @patch("manifests.manifest.urllib.request.urlopen")
-    def test_from_url(self, mock_urlopen):
+    def test_from_url(self, mock_urlopen: Mock) -> None:
         cm = MagicMock()
         cm.read.return_value.decode.return_value = '{"schema-version":"3.14"}'
         cm.__enter__.return_value = cm
@@ -127,7 +128,7 @@ class TestManifest(unittest.TestCase):
         self.assertEqual(manifest.version, "3.14")
         mock_urlopen.assert_called_with("url")
 
-    def test_eq(self):
+    def test_eq(self) -> None:
         manifest_path = os.path.join(self.data_path, "min.yml")
         manifest1 = TestManifest.SampleManifest.from_path(manifest_path)
         manifest2 = TestManifest.SampleManifest.from_path(manifest_path)
