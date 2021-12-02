@@ -1,4 +1,5 @@
 name: OpenSearch
+type: Test
 components:
   - name: index-management
     integ-test:

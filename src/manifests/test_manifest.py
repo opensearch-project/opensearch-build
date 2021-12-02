@@ -16,6 +16,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     The format for schema version 1.0 is:
         schema-version: '1.0'
         name: 'OpenSearch'
+        type: 'Test'
         components:
           - name: index-management
             working-directory: optional relative directory to run commands in
@@ -35,6 +36,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
+        "type": {"required": True, "type": "string", "allowed": ["Test"]},
         "components": {
             "type": "list",
             "schema": {
@@ -65,12 +67,17 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.name = str(data["name"])
+<<<<<<< HEAD
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
+=======
+        self.type = str(data["type"])
+>>>>>>> 7dc0f94 (fix the CI manifest checks)
 
     def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "name": self.name,
+            "type": self.type,
             "components": self.components.__to_dict__()
         }
 

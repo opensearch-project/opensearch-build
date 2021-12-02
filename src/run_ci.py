@@ -9,10 +9,13 @@
 import logging
 import sys
 
+import yaml
+
 from ci_workflow.ci_args import CiArgs
 from ci_workflow.ci_check_lists import CiCheckLists
 from ci_workflow.ci_target import CiTarget
 from manifests.input_manifest import InputManifest
+from manifests.test_manifest import TestManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 
@@ -20,7 +23,17 @@ from system.temporary_directory import TemporaryDirectory
 def main():
     args = CiArgs()
     console.configure(level=args.logging_level)
-    manifest = InputManifest.from_file(args.manifest)
+
+    manifest_type = __get_manifest_type(args.manifest)
+
+    if manifest_type == "Test":
+        TestManifest.from_path(args.manifest.name)
+
+        logging.info("TestManifest schema validation succeeded")
+        logging.info("Done.")
+        return
+
+    manifest = InputManifest.from_path(args.manifest.name)
 
     target = CiTarget(version=manifest.build.version, snapshot=args.snapshot)
 
@@ -41,6 +54,11 @@ def main():
                 raise
 
     logging.info("Done.")
+
+
+def __get_manifest_type(path):
+    yml = yaml.safe_load(path)
+    return yml["type"] if "type" in yml else None
 
 
 if __name__ == "__main__":

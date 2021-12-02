@@ -38,3 +38,11 @@ class TestRunCi(unittest.TestCase):
         self.assertNotEqual(mock_lists.call_count, 0)
         self.assertEqual(mock_lists.return_value.checkout.call_count, mock_lists.call_count)
         self.assertEqual(mock_lists.return_value.check.call_count, mock_lists.call_count)
+
+    OPENSEARCH_TEST_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.3.0/opensearch-1.3.0-test.yml"))
+
+    @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_TEST_MANIFEST])
+    @patch("run_ci.TemporaryDirectory")
+    def test_main_test_manifest(self, mock_temp, *mocks):
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        main()

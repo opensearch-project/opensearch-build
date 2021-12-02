@@ -1,4 +1,5 @@
 name: OpenSearch
+type: Test
 components:
   - name: job-scheduler
     integ-test:
