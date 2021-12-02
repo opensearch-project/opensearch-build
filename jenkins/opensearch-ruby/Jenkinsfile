@@ -5,7 +5,7 @@ pipeline {
     agent none
     parameters {
         string(
-                name: 'OPENSEARCH_RUBY_RELEASE_BRANCH_NAME',
+                name: 'RELEASE_BRANCH',
                 description: 'Branch name for the release',
                 trim: true
         )
@@ -21,11 +21,11 @@ pipeline {
             }
             steps {
                 script {
-                    if (params.OPENSEARCH_RUBY_RELEASE_BRANCH_NAME == '') {
+                    if (params.RELEASE_BRANCH == '') {
                         currentBuild.result = 'ABORTED'
-                        error('OPENSEARCH_RUBY_RELEASE_BRANCH_NAME parameter is not set')
+                        error('RELEASE_BRANCH parameter is not set')
                     }
-                    git url: 'https://github.com/opensearch-project/opensearch-ruby.git', branch: "$OPENSEARCH_RUBY_RELEASE_BRANCH_NAME"
+                    git url: 'https://github.com/opensearch-project/opensearch-ruby.git', branch: "$RELEASE_BRANCH"
                     withCredentials([string(credentialsId: 'opensearchproject-rubygems-private-key', variable: 'RUBYGEMS_PRIVATE_KEY')]) {
                         sh'''
                             set +x
@@ -48,12 +48,12 @@ pipeline {
                         rm -f $keypath
                     '''
                     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds")
-                        sh('echo Uploading to s3://${ARTIFACT_BUCKET_NAME}/${JOB_NAME}/${OPENSEARCH_RUBY_RELEASE_BRANCH_NAME}/builds')
+                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/${RELEASE_BRANCH}/builds")
+                        sh('echo Uploading to s3://${ARTIFACT_BUCKET_NAME}/${JOB_NAME}/${RELEASE_BRANCH}/builds')
                     }
                 }
             }
-            post() {
+            post {
                 always {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         script {
