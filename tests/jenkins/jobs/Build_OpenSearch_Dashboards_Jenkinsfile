@@ -2,6 +2,10 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     agent none
+    options {
+        copyArtifactPermission('bundle-build-*')
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',

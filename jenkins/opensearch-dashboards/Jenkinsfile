@@ -16,6 +16,7 @@ pipeline {
         )
     }
     options {
+        copyArtifactPermission('bundle-build-dashboards')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     stages {
