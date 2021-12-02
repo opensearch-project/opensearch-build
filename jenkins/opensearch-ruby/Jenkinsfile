@@ -1,0 +1,60 @@
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+                name: 'OPENSEARCH_RUBY_RELEASE_BRANCH_NAME',
+                description: 'Branch name for the release',
+                trim: true
+        )
+    }
+    stages {
+        stage('opensearch-ruby-build') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    if (params.OPENSEARCH_RUBY_RELEASE_BRANCH_NAME == '') {
+                        currentBuild.result = 'ABORTED'
+                        error('OPENSEARCH_RUBY_RELEASE_BRANCH_NAME parameter is not set')
+                    }
+                    git url: 'https://github.com/opensearch-project/opensearch-ruby.git', branch: "$OPENSEARCH_RUBY_RELEASE_BRANCH_NAME"
+                    withCredentials([string(credentialsId: 'opensearchproject-rubygems-private-key', variable: 'RUBYGEMS_PRIVATE_KEY')]) {
+                        sh'''
+                            set +x
+                            echo "$RUBYGEMS_PRIVATE_KEY" > private_key.pem
+                            keypath=$(realpath private_key.pem)
+                            for f in $(find . -name '*.gemspec'); do echo $f; sed -i '$s#end#  s.signing_key = File.expand_path("'"$keypath"'") if $0 =~ /gem\\\\z/\\n&#' $f; done
+                            gem cert --add certs/opensearch-rubygems.pem
+                            bash release/build.sh
+                            for f in $(find dist/ -name '*.gem'); do echo $f; gem install $f; val=$(echo $f | grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+'); gem uninstall $f -v $val; gem install $f -P HighSecurity; done
+                            rm -f $keypath
+                        '''
+                    }
+                    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "")
+                    }
+                }
+            }
+            post() {
+                always {
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        script {
+                            cleanWs(
+                                    disableDeferredWipeout: true,
+                                    deleteDirs: true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
