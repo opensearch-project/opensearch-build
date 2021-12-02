@@ -9,7 +9,7 @@ This issue captures the state of the OpenSearch release for this component, its 
 
 ## The Overall Release Issue
 
-Linked at the top of this issue, the overall release issue captures the state of the entire OpenSearch release including references to this issue, the release owner which is the assignee is responsible for communicate the release status broadly.  Please contact them or @mention them on that issue for help.
+Linked at the top of this issue, the overall release issue captures the state of the entire OpenSearch release including references to this issue, the release owner which is the assignee is responsible for communicating the release status broadly.  Please contact them or @mention them on that issue for help.
 
 ## Release Steps
 
