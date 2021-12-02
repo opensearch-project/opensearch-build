@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, Mock, call, patch
+from unittest.mock import ANY, MagicMock, Mock, call, patch
 
 import pytest
 from pytest import CaptureFixture
@@ -51,4 +51,4 @@ class TestRunAssemble(unittest.TestCase):
         ])  # manifest included in package
 
         getcwd.assert_called_once_with()
-        makeDirs.assert_called_once_with('curdir/dist/opensearch', exist_ok=True)
+        makeDirs.assert_called_once_with(ANY, exist_ok=True)
