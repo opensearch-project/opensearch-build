@@ -13,15 +13,18 @@ void call(Map args = [:]) {
             ]
         )
 
+        echo "Archiving into ${sha.sha} zip: builds/**, ${sha.lock}"
+
         zip(
-            zipFile: "${sha.sha}.zip",
-            archive: false,
-            glob: './builds/**/*'
+            zipFile: "${sha.sha}-builds.zip",
+            archive: true,
+            glob: 'builds/**'
         )
 
-        archiveArtifacts(
-            artifacts: "${sha.sha}.zip,${sha.path},${sha.lock}",
-            fingerprint: true
+        zip(
+            zipFile: "${sha.sha}-manifest.zip",
+            archive: true,
+            glob: sha.lock
         )
 
         def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))

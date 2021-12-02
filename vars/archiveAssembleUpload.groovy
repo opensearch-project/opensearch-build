@@ -17,15 +17,14 @@ void call(Map args = [:]) {
         echo "Assembling ${sha.sha} (${sha.lock})"
 
         copyArtifacts(
-            filter: "${sha.sha}.zip",
+            filter: "${sha.sha}-*.zip",
             fingerprintArtifacts: true,
             projectName: "${JOB_NAME}",
             selector: specific("${BUILD_NUMBER}")
         )
 
-        unzip(
-            zipFile: "${sha.sha}.zip"
-        )
+        unzip(zipFile: "${sha.sha}-builds.zip")
+        unzip(zipFile: "${sha.sha}-manifest.zip")
 
         lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
         def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))

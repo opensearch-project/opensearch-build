@@ -1,3 +1,5 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
 pipeline {
     agent none
     parameters {
@@ -115,7 +117,6 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
                     def stashed = lib.jenkins.Messages.new(this).get([
                         'build-linux-x64',
                         'assemble-linux-arm64'
