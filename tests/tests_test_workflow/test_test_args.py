@@ -38,13 +38,13 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(test_args.test_run_id, 6)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @ patch("argparse._sys.argv", [ARGS_PY, PATH, "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, PATH, "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
     def test_verbose(self):
         test_args = TestArgs()
         self.assertEqual(test_args.logging_level, logging.DEBUG)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @ patch("argparse._sys.argv", [ARGS_PY, 'https://ci.opensearch.org/x/y', "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, 'https://ci.opensearch.org/x/y', "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
     def test_url(self):
         test_args = TestArgs()
         self.assertEqual(TestArgs().path, 'https://ci.opensearch.org/x/y')

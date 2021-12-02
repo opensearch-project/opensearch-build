@@ -20,9 +20,9 @@ class TestRunIntegTest(unittest.TestCase):
             "--test-manifest-path",
             os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml")
         ])
-    @ patch("run_integ_test.DependencyInstallerOpenSearch")
-    @ patch("run_integ_test.TestSuiteResults")
-    @ patch("run_integ_test.IntegTestSuiteOpenSearch")
+    @patch("run_integ_test.DependencyInstallerOpenSearch")
+    @patch("run_integ_test.TestSuiteResults")
+    @patch("run_integ_test.IntegTestSuiteOpenSearch")
     def test_run_integ_test(self, mock_integ_suite, mock_test_suite_results, *mock):
         mock_test_suite_results.return_value.failed.return_value = False
         main()
