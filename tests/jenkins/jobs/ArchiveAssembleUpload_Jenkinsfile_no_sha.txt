@@ -3,7 +3,7 @@
          ArchiveAssembleUpload_Jenkinsfile.echo(Executing on agent [label:none])
          ArchiveAssembleUpload_Jenkinsfile.stage(assemble from archive, groovy.lang.Closure)
             ArchiveAssembleUpload_Jenkinsfile.script(groovy.lang.Closure)
-               ArchiveAssembleUpload_Jenkinsfile.archiveAssembleUpload({dryRun=true, platform=linux, architecture=x64})
+               ArchiveAssembleUpload_Jenkinsfile.archiveAssembleUpload({platform=linux, architecture=x64})
                   archiveAssembleUpload.echo(Read BUILD_SHA_linux_x64_[SHA|LOCK|PATH].)
                   archiveAssembleUpload.echo(sha.sha=null)
                   archiveAssembleUpload.echo(sha.lock=null)

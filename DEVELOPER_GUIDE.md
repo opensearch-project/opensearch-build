@@ -230,10 +230,7 @@ Jenkins workflow regression tests typically output a .txt file into [tests/jenki
 
 #### Testing in Jenkins
 
-This repository contains several Jenkins jobs that look or are similar to OpenSearch and OpenSearch Dashboards.
-
-* [Build_DryRun_Jenkinsfile](tests/jenkins/jobs/Build_DryRun_Jenkinsfile): a dry run job for quick debugging, with actual `sh` calls replaced by `echo`. 
-* [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.
+* [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): is similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.
  
 Make your code changes in a branch, e.g. `jenkins-changes`, including to any of the above jobs. Create a pipeline in Jenkins with the following settings.
  

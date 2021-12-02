@@ -16,37 +16,31 @@ void call(Map args = [:]) {
     if (x64TarGz == null || arm64TarGz ==  null) {
         echo 'Skipping docker build, one of x64 or arm64 artifacts was not built.'
     } else {
-        def parameters = [
-            string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
-            string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
-            string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: [
-                    'id',
-                    'pwd',
-                    'cd docker/release',
-                    "curl -sSL ${x64TarGz} -o ${filename}-x64.tgz",
-                    "curl -sSL ${arm64TarGz} -o ${filename}-arm64.tgz",
-                    [
-                        'bash',
-                        'build-image-multi-arch.sh',
-                        "-v ${inputManifest.build.version}",
-                        "-f ./dockerfiles/${filename}.al2.dockerfile",
-                        "-p ${filename}",
-                        "-a 'x64,arm64'",
-                        "-r opensearchstaging/${filename}",
-                        "-t '${filename}-x64.tgz,${filename}-arm64.tgz'",
-                        "-n ${BUILD_NUMBER}"
-                    ].join(' ')
-                ].join(' && ')),
-            booleanParam(name: 'IS_STAGING', value: true)
-        ]
-
-        if (!args.dryRun) {
-            dockerBuild: {
-                build job: 'docker-build',
-                parameters: parameters
-            }
-        } else {
-            echo "dockerBuild: { build job: 'docker-build', parameters: ${parameters} }"
+        dockerBuild: {
+            build job: 'docker-build',
+            parameters: [
+                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
+                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
+                string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: [
+                        'id',
+                        'pwd',
+                        'cd docker/release',
+                        "curl -sSL ${x64TarGz} -o ${filename}-x64.tgz",
+                        "curl -sSL ${arm64TarGz} -o ${filename}-arm64.tgz",
+                        [
+                            'bash',
+                            'build-image-multi-arch.sh',
+                            "-v ${inputManifest.build.version}",
+                            "-f ./dockerfiles/${filename}.al2.dockerfile",
+                            "-p ${filename}",
+                            "-a 'x64,arm64'",
+                            "-r opensearchstaging/${filename}",
+                            "-t '${filename}-x64.tgz,${filename}-arm64.tgz'",
+                            "-n ${BUILD_NUMBER}"
+                        ].join(' ')
+                    ].join(' && ')),
+                booleanParam(name: 'IS_STAGING', value: true)
+            ]
         }
     }
 }

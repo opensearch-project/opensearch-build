@@ -96,7 +96,7 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    assembleArchive(
+                                    archiveAssembleUpload(
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
