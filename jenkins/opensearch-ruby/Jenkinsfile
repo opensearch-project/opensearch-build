@@ -1,3 +1,5 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
 pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
@@ -5,9 +7,9 @@ pipeline {
     agent none
     parameters {
         string(
-                name: 'RELEASE_BRANCH',
-                description: 'Branch name to release',
-                trim: true
+            name: 'RELEASE_BRANCH',
+            description: 'Branch name to release',
+            trim: true
         )
     }
     stages {
@@ -53,10 +55,7 @@ pipeline {
                 always {
                     node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                         script {
-                            cleanWs(
-                                    disableDeferredWipeout: true,
-                                    deleteDirs: true
-                            )
+                            postCleanup()
                         }
                     }
                 }
