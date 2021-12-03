@@ -11,13 +11,13 @@ from unittest.mock import MagicMock, patch
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_dist import BuilderFromDist
 from manifests.build_manifest import BuildManifest
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromDist
 
 
 class TestBuilderFromDist(unittest.TestCase):
     def setUp(self):
         self.builder = BuilderFromDist(
-            InputManifest.ComponentFromDist({"name": "common-utils", "dist": "url"}),
+            InputComponentFromDist({"name": "common-utils", "dist": "url"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.1.0",
@@ -33,7 +33,7 @@ class TestBuilderFromDist(unittest.TestCase):
     @patch("build_workflow.builder_from_dist.BuildManifest")
     def test_checkout(self, mock_manifest):
         self.builder.checkout("dir")
-        mock_manifest.from_url.assert_called_with("url/x64/manifest.yml")
+        mock_manifest.from_url.assert_called_with("url/windows/x64/builds/opensearch/manifest.yml")
 
     def test_build(self):
         build_recorder = MagicMock()
@@ -53,6 +53,6 @@ class TestBuilderFromDist(unittest.TestCase):
             exist_ok=True
         )
         mock_urllib.assert_called_with(
-            "url/x64/maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar",
+            "url/windows/x64/builds/opensearch/maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar",
             os.path.realpath(os.path.join("builds", "maven", "org", "opensearch", "common-utils", "1.1.0.0", "common-utils-1.1.0.0.jar")),
         )

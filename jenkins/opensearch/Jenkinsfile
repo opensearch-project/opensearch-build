@@ -113,22 +113,21 @@ pipeline {
             }
         }
     }
-    post() {
+    post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }
@@ -138,13 +137,11 @@ pipeline {
                     publishNotification(
                         icon: ':warning:',
                         message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }

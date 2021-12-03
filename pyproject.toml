@@ -5,3 +5,12 @@ target-version = ['py37']
 [tool.isort]
 profile = "black"
 line_length = 160
+
+[tool.mypy]
+python_version = 3.7
+disallow_untyped_defs = true
+warn_return_any = true
+warn_unused_configs = true
+strict_optional = false
+show_error_codes = true
+ignore_missing_imports = true

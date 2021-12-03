@@ -8,7 +8,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import Component
 from manifests_workflow.input_manifests_opensearch import InputManifestsOpenSearch
 
 
@@ -41,7 +41,7 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
         mock_component_opensearch.return_value = MagicMock(name="common-utils")
         mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
         mock_input_manifest_from_path.return_value.components = {
-            "common-utils": InputManifest.Component({"name": "common-utils", "repository": "git", "ref": "ref"})
+            "common-utils": Component({"name": "common-utils", "repository": "git", "ref": "ref"})
         }
         manifests = InputManifestsOpenSearch()
         manifests.update()

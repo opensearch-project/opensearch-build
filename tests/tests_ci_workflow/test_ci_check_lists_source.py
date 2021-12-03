@@ -8,13 +8,13 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from ci_workflow.ci_check_list_source import CiCheckListSource
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromSource
 
 
 class TestCiCheckListsSource(unittest.TestCase):
     @patch("ci_workflow.ci_check_list_source.GitRepository")
     def test_checkout(self, mock_git_repo):
-        component = InputManifest.ComponentFromSource({
+        component = InputComponentFromSource({
             "name": "common-utils",
             "repository": "url",
             "ref": "ref"
@@ -26,7 +26,7 @@ class TestCiCheckListsSource(unittest.TestCase):
     @patch("ci_workflow.ci_check_list_source.GitRepository")
     @patch("ci_workflow.ci_check_gradle_properties.PropertiesFile")
     def test_check(self, mock_properties_file, mock_check, *mocks):
-        component = InputManifest.ComponentFromSource({
+        component = InputComponentFromSource({
             "name": "common-utils",
             "repository": "url",
             "ref": "ref",
@@ -41,7 +41,7 @@ class TestCiCheckListsSource(unittest.TestCase):
 
     @patch("ci_workflow.ci_check_list_source.GitRepository")
     def test_invalid_check(self, *mocks):
-        component = InputManifest.ComponentFromSource({
+        component = InputComponentFromSource({
             "name": "common-utils",
             "repository": "url",
             "ref": "ref",

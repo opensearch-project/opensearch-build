@@ -8,7 +8,7 @@ import logging
 import subprocess
 import tempfile
 
-import psutil  # type: ignore
+import psutil
 
 
 class Process:

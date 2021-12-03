@@ -18,7 +18,7 @@ from paths.assemble_output_dir import AssembleOutputDir
 from system import console
 
 
-def main():
+def main() -> int:
     args = AssembleArgs()
 
     console.configure(level=args.logging_level)
@@ -45,6 +45,7 @@ def main():
         bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")
+    return 0
 
 
 if __name__ == "__main__":

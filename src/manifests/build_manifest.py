@@ -4,9 +4,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
+
 from manifests.build.build_manifest_1_0 import BuildManifest_1_0
 from manifests.build.build_manifest_1_1 import BuildManifest_1_1
-from manifests.component_manifest import ComponentManifest
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -39,9 +41,7 @@ components:
 """
 
 
-class BuildManifest(ComponentManifest):
-    components: list
-
+class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
     VERSIONS = {
         "1.0": BuildManifest_1_0,
         "1.1": BuildManifest_1_1,
@@ -86,11 +86,12 @@ class BuildManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
+        self.components = BuildComponents(data.get("components", []))  # type: ignore[assignment]
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.2",
             "build": self.build.__to_dict__(),
@@ -98,14 +99,14 @@ class BuildManifest(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
-            self.name = data["name"]
-            self.version = data["version"]
-            self.platform = data["platform"]
-            self.architecture = data["architecture"]
-            self.id = data["id"]
+        def __init__(self, data: Any):
+            self.name: str = data["name"]
+            self.version: str = data["version"]
+            self.platform: str = data["platform"]
+            self.architecture: str = data["architecture"]
+            self.id: str = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -114,29 +115,31 @@ class BuildManifest(ComponentManifest):
                 "id": self.id
             }
 
-    class Components(ComponentManifest.Components):
-        @classmethod
-        def __create__(self, data):
-            return BuildManifest.Component(data)
 
-    class Component(ComponentManifest.Component):
-        def __init__(self, data):
-            super().__init__(data)
-            self.repository = data["repository"]
-            self.ref = data["ref"]
-            self.commit_id = data["commit_id"]
-            self.artifacts = data.get("artifacts", {})
-            self.version = data["version"]
+class BuildComponents(Components['BuildComponent']):
+    @classmethod
+    def __create__(self, data: Any) -> 'BuildComponent':
+        return BuildComponent(data)
 
-        def __to_dict__(self):
-            return {
-                "name": self.name,
-                "repository": self.repository,
-                "ref": self.ref,
-                "commit_id": self.commit_id,
-                "artifacts": self.artifacts,
-                "version": self.version,
-            }
+
+class BuildComponent(Component):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.repository = data["repository"]
+        self.ref = data["ref"]
+        self.commit_id = data["commit_id"]
+        self.artifacts = data.get("artifacts", {})
+        self.version = data["version"]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "repository": self.repository,
+            "ref": self.ref,
+            "commit_id": self.commit_id,
+            "artifacts": self.artifacts,
+            "version": self.version,
+        }
 
 
 BuildManifest.VERSIONS = {"1.0": BuildManifest_1_0, "1.1": BuildManifest_1_1, "1.2": BuildManifest}

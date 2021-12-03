@@ -5,22 +5,24 @@
 # compatible open source license.
 
 import unittest
-from abc import abstractmethod
+from typing import Any
 
-from manifests.component_manifest import ComponentManifest
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 
 class TestComponentManifest(unittest.TestCase):
-    class UnitTestManifest(ComponentManifest):
-        class Components(ComponentManifest.Components):
-            @abstractmethod
-            def __create__(self, data):
-                return TestComponentManifest.UnitTestManifest.Component(data)
+    class UnitTestManifest(ComponentManifest['TestComponentManifest.UnitTestManifest', 'TestComponentManifest.TestComponents']):
+        pass
 
-        class Component(ComponentManifest.Component):
-            pass
+    class TestComponents(Components['TestComponentManifest.TestComponent']):
+        @classmethod
+        def __create__(self, data: Any) -> 'TestComponentManifest.TestComponent':
+            return TestComponentManifest.TestComponent(data)
 
-    def test_select(self):
+    class TestComponent(Component):
+        pass
+
+    def test_select(self) -> None:
         manifest = TestComponentManifest.UnitTestManifest({
             "schema-version": "1.0",
             "components": [

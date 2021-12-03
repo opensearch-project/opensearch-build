@@ -68,6 +68,6 @@ fi
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 ## Setup Performance Analyzer Agent
-cp -r $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
+mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
 mv $OUTPUT/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $OUTPUT/bin
 rm -rf $OUTPUT/bin/opensearch-performance-analyzer

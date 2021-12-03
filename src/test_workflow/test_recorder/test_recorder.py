@@ -121,3 +121,6 @@ class TestRecorder:
                     dest_file = os.path.join(dest_directory, os.path.basename(result[0]))
                     shutil.copyfile(result[0], dest_file)
             self.parent_class._generate_yml(test_result_data, dest_directory)
+
+
+TestRecorder.__test__ = False  # type:ignore

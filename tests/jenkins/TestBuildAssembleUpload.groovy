@@ -10,14 +10,16 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
+import java.nio.file.*
 
-class TestVars extends BuildPipelineTest {
-    @Test
-    public void testVars() {
-        binding.setVariable('INPUT_MANIFEST', '2.0.0/opensearch-2.0.0.yml')
+class TestBuildAssembleUpload extends BuildPipelineTest {
+    @Before
+    void setUp() {
+        super.setUp()
+
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('BUILD_NUMBER', '33')
-        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc/')
+        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
         binding.setVariable('JOB_NAME', 'vars-build')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
@@ -27,8 +29,6 @@ class TestVars extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-
-        binding.setVariable('WEBHOOK_URL', 'https://web/hook/url')
 
         helper.registerAllowedMethod("sha1", [String], { filename ->
             return 'sha1'
@@ -41,8 +41,34 @@ class TestVars extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("git", [Map])
-        helper.registerAllowedMethod("cleanWs", [Map])
+    }
 
-        super.testPipeline("tests/jenkins/jobs/Vars_Jenkinsfile")
+    @Test
+    public void testIncremental() {
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return true
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_incremental"
+        )
+    }
+
+    @Test
+    public void testNotIncremental() {
+        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
+        Path target = Path.of("builds/opensearch/manifest.yml");
+        Files.createDirectories(target.getParent());
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
+
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return false
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
+            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_not_incremental"
+        )
     }
 }
