@@ -5,12 +5,12 @@
 # compatible open source license.
 
 import logging
-from tempfile import TemporaryDirectory
 
 from ci_workflow.ci_check_lists import CiCheckLists
 from ci_workflow.ci_manifest import CiManifest
 from ci_workflow.ci_target import CiTarget
 from manifests.input_manifest import InputManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class CiInputManifest(CiManifest):
