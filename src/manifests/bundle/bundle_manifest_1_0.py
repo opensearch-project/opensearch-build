@@ -62,6 +62,7 @@ class BundleManifest_1_0(ComponentManifest['BundleManifest_1_0', 'BundleComponen
     def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
+        self.components = BundleComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
