@@ -10,20 +10,20 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
-import java.nio.file.*
 
-class TestBuildAssembleUpload extends BuildPipelineTest {
+class TestBuildArchive extends BuildPipelineTest {
     @Before
     void setUp() {
         super.setUp()
 
-        binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
-        binding.setVariable('BUILD_NUMBER', '33')
-        binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
-        binding.setVariable('JOB_NAME', 'vars-build')
-        binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
-        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
+        binding.setVariable('JOB_NAME', 'build-archive')
         binding.setVariable('STAGE_NAME', 'stage')
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
+
+        helper.registerAllowedMethod("sha1", [String], { filename ->
+            return 'sha1'
+        })
 
         helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
             closure.delegate = delegate
@@ -34,12 +34,12 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
             return 'sha1'
         })
 
-        helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
 
+        helper.registerAllowedMethod("zip", [Map])
         helper.registerAllowedMethod("git", [Map])
     }
 
@@ -50,25 +50,20 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
         })
 
         super.testPipeline(
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_incremental"
+            "tests/jenkins/jobs/BuildArchive_Jenkinsfile",
+            "tests/jenkins/jobs/BuildArchive_Jenkinsfile_incremental"
         )
     }
 
     @Test
     public void testNotIncremental() {
-        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
-        Path target = Path.of("builds/opensearch/manifest.yml");
-        Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
-
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return false
         })
 
         super.testPipeline(
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_not_incremental"
+            "tests/jenkins/jobs/BuildArchive_Jenkinsfile",
+            "tests/jenkins/jobs/BuildArchive_Jenkinsfile_not_incremental"
         )
     }
 }

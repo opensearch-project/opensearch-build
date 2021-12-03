@@ -2,22 +2,17 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     agent none
-    triggers {
-        parameterizedCron '''
-            H */2 * * * %INPUT_MANIFEST=1.3.0/opensearch-dashboards-1.3.0.yml
-            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-dashboards-2.0.0.yml
-        '''
+    options {
+        copyArtifactPermission('bundle-build-*')
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
+            defaultValue: '1.3.0/opensearch-dashboards-1.3.0.yml',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0.yml.',
             trim: true
         )
-    }
-    options {
-        copyArtifactPermission('bundle-build-dashboards')
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     stages {
         stage('detect docker image + args') {
@@ -132,13 +127,7 @@ pipeline {
                         'assemble-archive-linux-arm64'
                     ])
 
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    echo "SUCCESS: ${stashed}"
 
                     postCleanup()
                 }
@@ -147,12 +136,7 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    echo 'FAILURE'
 
                     postCleanup()
                 }

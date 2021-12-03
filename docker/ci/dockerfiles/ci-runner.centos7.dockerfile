@@ -163,7 +163,11 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@^6.9.1 && npm cache verify
+RUN npm install -g cypress@5.6.0 && npm cache verify
+# replace default binary with arm64 specific binary from ci.opensearch.org
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist
