@@ -18,7 +18,7 @@ class IntegTestRunner(abc.ABC):
         self.args = args
         self.test_manifest = test_manifest
 
-        self.tests_dir = os.path.join(os.getcwd(), "test-results", "opensearch")
+        self.tests_dir = os.path.join(os.getcwd(), "test-results")
         os.makedirs(self.tests_dir, exist_ok=True)
         self.test_recorder = TestRecorder(self.args.test_run_id, "integ-test", self.tests_dir)
 
