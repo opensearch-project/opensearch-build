@@ -16,9 +16,8 @@ class TestRunIntegTest(unittest.TestCase):
         "argparse._sys.argv",
         [
             "run_integ_test.py",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote"),
-            "--test-manifest-path",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml")
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote")
         ])
     @patch("run_integ_test.DependencyInstallerOpenSearch")
     @patch("run_integ_test.TestSuiteResults")

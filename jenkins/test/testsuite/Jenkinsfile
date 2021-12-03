@@ -60,7 +60,7 @@ pipeline {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
                     sh "wget ${basePath}/builds/opensearch/manifest.yml"
-                    sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER} --test-manifest-path manifests/${opensearch_version}/opensearch-${opensearch_version}-test.yml"
+                    sh "./test.sh ${JOB_NAME} manifests/${opensearch_version}/opensearch-${opensearch_version}-test.yml ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post {

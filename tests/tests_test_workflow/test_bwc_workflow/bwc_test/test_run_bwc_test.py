@@ -16,11 +16,10 @@ class TestRunBwcTest(unittest.TestCase):
         "argparse._sys.argv",
         [
             "run_bwc_test.py",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote", "dist", "opensearch", "manifest.yml"),
-            "--test-manifest-path",
-            os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml")
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote", "dist", "opensearch", "manifest.yml")
         ])
-    @patch("run_bwc_test.BwcTestSuite")
+    @ patch("run_bwc_test.BwcTestSuite")
     def test_run_bwc_test(self, mock_bwc_suite, *mock):
         main()
         self.assertEqual(mock_bwc_suite.return_value.execute.call_count, 1)

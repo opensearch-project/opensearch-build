@@ -149,7 +149,7 @@ More details around how this workflow is instrumented as part of CI CD, are cove
 Usage:
 
 ```bash
-./test.sh <test-type> <path> <test-manifest-path>
+./test.sh <test-type> <test-manifest-path> <path>
 ```
 
 The following options are available.
@@ -157,9 +157,9 @@ The following options are available.
 | name                 | description                                                             |
 |----------------------|-------------------------------------------------------------------------|
 | test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| test-manifest-path   | Specify a test manifest path                                            |
 | path                 | Location of manifest(s).                                                |
 | --test-run-id        | Unique identifier for a test run                                        |
-| --test-manifest-path | Specify a test manifest path                                            |
 | --component          | Test a specific component in a manifest                                 |
 | --keep               | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose        | Show more verbose output.                                               |
@@ -173,7 +173,7 @@ To run integration tests locally, use below command. It pulls down the built bun
 Usage:
 
 ```bash
-./test.sh integ-test <target> <test-manifest-path>
+./test.sh integ-test <test-manifest-path> <target>
 ```
 
 For example, build locally and run integration tests.
@@ -181,13 +181,13 @@ For example, build locally and run integration tests.
 ```bash
 ./build.sh manifests/1.2.0/opensearch-1.2.0.yml
 ./assemble.sh builds/opensearch/manifest.yml
-./test.sh integ-test . manifests/1.3.0/opensearch-1.3.0-test.yml # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
 ```
 
 Run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 manifests/1.3.0/opensearch-1.3.0-test.yml # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 ##### Backwards Compatibility Tests
@@ -197,7 +197,7 @@ This step run backward compatibility invoking `run_bwc_test.py` in each componen
 Usage:
 
 ```bash
-./test.sh bwc-test <target> <test-manifest-path>
+./test.sh bwc-test <test-manifest-path> <target>
 ```
 
 ##### Performance Tests

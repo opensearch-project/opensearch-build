@@ -22,7 +22,7 @@ class TestTestArgs(unittest.TestCase):
         os.path.dirname(__file__), "data", "test_manifest.yml"
     )
 
-    @patch("argparse._sys.argv", [ARGS_PY, PATH, "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, PATH])
     def test_defaults(self):
         test_args = TestArgs()
         self.assertEqual(test_args.path, os.path.realpath(self.PATH))
@@ -32,19 +32,19 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @patch("argparse._sys.argv", [ARGS_PY, PATH, "--test-run-id", "6", "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, PATH, "--test-run-id", "6"])
     def test_run_id(self):
         test_args = TestArgs()
         self.assertEqual(test_args.test_run_id, 6)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @patch("argparse._sys.argv", [ARGS_PY, PATH, "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, PATH, "--verbose"])
     def test_verbose(self):
         test_args = TestArgs()
         self.assertEqual(test_args.logging_level, logging.DEBUG)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @patch("argparse._sys.argv", [ARGS_PY, 'https://ci.opensearch.org/x/y', "--verbose", "--test-manifest-path", TEST_MANIFEST_PATH])
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, 'https://ci.opensearch.org/x/y', "--verbose"])
     def test_url(self):
         test_args = TestArgs()
         self.assertEqual(TestArgs().path, 'https://ci.opensearch.org/x/y')
