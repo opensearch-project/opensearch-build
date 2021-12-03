@@ -35,7 +35,6 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
-        "type": {"required": True, "type": "string", "allowed": ["Test"]},
         "components": {
             "type": "list",
             "schema": {
