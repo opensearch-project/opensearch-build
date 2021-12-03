@@ -82,7 +82,7 @@ See [jenkins](./jenkins) and [docker](./docker) for more information.
 Tests the OpenSearch distribution, including integration, backwards-compatibility and performance tests.
 
 ```bash
-./test.sh <test-type> <path>
+./test.sh <test-type> <test-manifest-path> <path>
 ```
 
 See [src/test_workflow](./src/test_workflow) for more information.
