@@ -10,8 +10,7 @@ import sys
 
 from manifests.test_manifest import TestManifest
 from system import console
-from test_workflow.integ_test.integ_test_runner_opensearch import IntegTestRunnerOpenSearch
-from test_workflow.integ_test.integ_test_runner_opensearch_dashboards import IntegTestRunnerOpenSearchDashboards
+from test_workflow.integ_test.integ_test_runners import IntegTestRunners
 from test_workflow.test_args import TestArgs
 
 
@@ -22,12 +21,7 @@ def main():
 
     test_manifest = TestManifest.from_path(args.test_manifest_path)
 
-    all_results = None
-
-    if test_manifest.name == "OpenSearch Dashboards":
-        all_results = IntegTestRunnerOpenSearchDashboards(args, test_manifest).run()
-    else:
-        all_results = IntegTestRunnerOpenSearch(args, test_manifest).run()
+    all_results = IntegTestRunners.from_test_manifest(args, test_manifest).run()
 
     all_results.log()
 
