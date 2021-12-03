@@ -9,8 +9,8 @@ import os
 
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_runner import IntegTestRunner
+from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
 from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch
-from test_workflow.integ_test.service_start_properties_opensearch import ServiceStartPropertiesOpenSearch
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_suite_results import TestSuiteResults
 
@@ -19,7 +19,7 @@ class IntegTestRunnerOpenSearch(IntegTestRunner):
 
     def __init__(self, args, test_manifest):
         super().__init__(args, test_manifest)
-        self.properties = ServiceStartPropertiesOpenSearch(args.path)
+        self.properties = IntegTestStartPropertiesOpenSearch(args.path)
 
     def run(self):
         logging.info("Running integ test for OpenSearch")

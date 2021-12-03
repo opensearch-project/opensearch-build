@@ -9,9 +9,9 @@ import os
 
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.integ_test_runner import IntegTestRunner
+from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
+from test_workflow.integ_test.integ_test_start_properties_opensearch_dashboards import IntegTestStartPropertiesOpenSearchDashboards
 from test_workflow.integ_test.integ_test_suite_opensearch_dashboards import IntegTestSuiteOpenSearchDashboards
-from test_workflow.integ_test.service_start_properties_opensearch import ServiceStartPropertiesOpenSearch
-from test_workflow.integ_test.service_start_properties_opensearch_dashboards import ServiceStartPropertiesOpenSearchDashboards
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_suite_results import TestSuiteResults
 
@@ -21,8 +21,8 @@ class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
     def __init__(self, args, test_manifest):
         super().__init__(args, test_manifest)
 
-        self.properties_dependency = ServiceStartPropertiesOpenSearch(args.path)
-        self.properties = ServiceStartPropertiesOpenSearchDashboards(args.path)
+        self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.path)
+        self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.path)
 
     def run(self):
         logging.info("Running integ test for OpenSearch Dashboards")

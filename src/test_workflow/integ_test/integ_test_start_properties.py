@@ -11,7 +11,7 @@ from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 
 
-class ServiceStartProperties(abc.ABC):
+class IntegTestStartProperties(abc.ABC):
     def __init__(self, path, build_dir, bundle_dir):
         self.path = path
         self.build_dir = build_dir
