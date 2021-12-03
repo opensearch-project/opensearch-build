@@ -12,17 +12,10 @@ from manifests.test_manifest import TestManifest
 
 
 class CiTestManifest(CiManifest):
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, file, args):
+        super().__init__(TestManifest.from_file(file), args)
 
-    def __from_file(self):
-        self.manifest = TestManifest.from_file(self.file)
-
-    def check(self):
-        try:
-            self.__from_file()
-            logging.info("TestManifest schema validation succeeded")
-            logging.info("Done.")
-        except:
-            logging.error(f"TestManifest check failed for {self.file.name}")
-            raise
+    def __check__(self):
+        assert self.manifest
+        logging.info("TestManifest schema validation succeeded")
+        logging.info("Done.")

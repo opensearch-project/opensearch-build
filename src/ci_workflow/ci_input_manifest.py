@@ -14,34 +14,22 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class CiInputManifest(CiManifest):
-    def __init__(self, keep, snapshot, component, file, component_command):
-        self.keep = keep
-        self.snapshot = snapshot
-        self.component = component
-        self.file = file
-        self.component_command = component_command
+    def __init__(self, file, args):
+        super().__init__(InputManifest.from_file(file), args)
 
-    def __from_file(self):
-        self.manifest = InputManifest.from_file(self.file)
+    def __check__(self):
 
-    def check(self):
-        self.__from_file()
+        target = CiTarget(version=self.manifest.build.version, snapshot=self.args.snapshot)
 
-        target = CiTarget(version=self.manifest.build.version, snapshot=self.snapshot)
-
-        with TemporaryDirectory(keep=self.keep, chdir=True) as work_dir:
+        with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             logging.info(f"Sanity-testing in {work_dir.name}")
 
             logging.info(f"Sanity testing {self.manifest.build.name}")
 
-            for component in self.manifest.components.select(focus=self.component):
+            for component in self.manifest.components.select(focus=self.args.component):
                 logging.info(f"Sanity testing {component.name}")
 
-                try:
-                    ci_check_list = CiCheckLists.from_component(component, target)
-                    ci_check_list.checkout(work_dir.name)
-                    ci_check_list.check()
-                    logging.info("Done.")
-                except:
-                    logging.error(f"Error checking {component.name}, retry with: {self.component_command(component.name)}")
-                    raise
+                ci_check_list = CiCheckLists.from_component(component, target)
+                ci_check_list.checkout(work_dir.name)
+                ci_check_list.check()
+                logging.info("Done.")

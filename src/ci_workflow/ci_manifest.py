@@ -5,12 +5,17 @@
 # compatible open source license.
 
 import abc
+import logging
 
 
 class CiManifest(abc.ABC):
-    def __init__(self):
-        pass
+    def __init__(self, manifest, args):
+        self.manifest = manifest
+        self.args = args
 
-    @abc.abstractmethod
     def check(self):
-        pass
+        try:
+            self.__check__()
+        except:
+            logging.error("CI Manifest check failed")
+            raise
