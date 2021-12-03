@@ -10,12 +10,11 @@ from test_workflow.integ_test.integ_test_runner_opensearch_dashboards import Int
 
 
 class IntegTestRunners:
-    def __klass(name):
-        if name == "OpenSearch Dashboards":
-            return IntegTestRunnerOpenSearchDashboards
-        else:
-            return IntegTestRunnerOpenSearch
+    RUNNERS = {
+        "OpenSearch": IntegTestRunnerOpenSearch,
+        "OpenSearch Dashboards": IntegTestRunnerOpenSearchDashboards
+    }
 
     @classmethod
     def from_test_manifest(cls, args, test_manifest):
-        return cls.__klass(test_manifest.name)(args, test_manifest)
+        return cls.RUNNERS[test_manifest.name](args, test_manifest)
