@@ -42,12 +42,12 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
 ### Onboard to `test-workflow`
 
-1. Update the test configuration file, [test_manifest.yml](src/test_workflow/config/opensearch/test_manifest.yml), for a particular release, to include your plugin. This test configuration defines full suite of tests - `integ`, `bwc`, that can be run on the plugin.
+1. Update the test configuration file (use 1.3.0 as an example), [opensearch-1.3.0-test.yml](manifests/1.3.0/opensearch-1.3.0-test.yml), for a particular release, to include your plugin. This test configuration defines full suite of tests - `integ`, `bwc`, that can be run on the plugin.
 
-2. For integration testing, the `test-workflow` runs integration tests available in the plugin repository. You will need to add `integ-test` config for your plugin in test_manifest.yml, [example](src/test_workflow/config/opensearch/test_manifest.yml#L3).
+2. For integration testing, the `test-workflow` runs integration tests available in the plugin repository. You will need to add `integ-test` config for your plugin in opensearch-1.3.0-test.yml, [example](manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml).
    
     1. It supports two test configs - `with-security` and `without-security`, which runs test with security plugin enabled and disabled respectively. Choose one or both depending on what your plugin integration tests support.
    
     2. If your plugin is dependent on `job-scheduler` zip, you can define that in `build-dependencies` in the config. Currently, the test workflow only supports `job-scheduler` as build dependency. Please create an issue if your plugin needs more support.
 
-3. For backward compatibility testing, the `test-workflow` runs backward compatibility tests available in the plugin repository, (see [reference]((https://github.com/opensearch-project/anomaly-detection/blob/d9a122d05282f7efc1e24c61d64f18dec0fd47af/build.gradle#L428))). Like integration test, it has a set of configurable options defined in test_manifest.yml, [example](src/test_workflow/config/opensearch/test_manifest.yml#L8).
+3. For backward compatibility testing, the `test-workflow` runs backward compatibility tests available in the plugin repository, (see [reference]((https://github.com/opensearch-project/anomaly-detection/blob/d9a122d05282f7efc1e24c61d64f18dec0fd47af/build.gradle#L428))). Like integration test, it has a set of configurable options defined in opensearch-1.3.0-test.yml, [example](manifests/1.3.0/opensearch-1.3.0-test.yml).

@@ -26,6 +26,7 @@ The following options are available.
 | name                 | description                                                             |
 |----------------------|-------------------------------------------------------------------------|
 | test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| test-manifest-path   | Specify a test manifest path                                            |
 | path                 | Location of manifest(s).                                                |
 | --test-run-id        | Unique identifier for a test run                                        |
 | --component          | Test a specific component in a manifest                                 |
@@ -41,21 +42,21 @@ To run integration tests locally, use below command. This pulls down the built b
 Usage:
 
 ```bash
-./test.sh integ-test <target>
+./test.sh integ-test <test-manifest-path> <target>
 ```
 
 For example, build locally and run integration tests.
 
 ```bash
-./build.sh manifests/1.2.0/opensearch-1.2.0.yml
+./build.sh manifests/1.3.0/opensearch-1.3.0.yml
 ./assemble.sh builds/opensearch/manifest.yml
-./test.sh integ-test . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
 ```
 
 Or run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 ### Backwards Compatibility Tests
@@ -65,7 +66,7 @@ Runs backward compatibility invoking `run_bwc_test.py` in each component from a 
 Usage:
 
 ```bash
-./test.sh bwc-test <target>
+./test.sh bwc-test <test-manifest-path> <target>
 ```
 
 ### Performance Tests
@@ -80,7 +81,7 @@ The CI/CD infrastructure is divided into two main workflows - `build` and `test`
 
 Once a new distribution is ready, the `build-job` kicks off the [test-orchestrator-pipeline](../../jenkins_workflow/test/orchestrator/Jenkinsfile) with input parameters `(build_id, architecture, opensearch_version)` that uniquely identify the bundle. The test orchestrator-pipeline generate a unique `test_run_id`, that uniquely identifies the test execution and invokes all three test jobs - `integ-test, bwc-test, perf-test` in parallel.
 
-The [integ-test job](../../jenkins_workflow/test/testsuite/Jenkinsfile) starts by pulling the manifest files and installing the required dependencies for running plugin integration tests. It then kicks off the integration test for each plugin based on the `test-configs` defined in [test-manifest.yml](config/opensearch/test_manifest.yml). It executes each configuration separately from others by spinning up a dedicated local test cluster. It uses `integtest.sh` script to run the integration test. There is a [default](../../scripts/default/integtest.sh) version of this script present in opensearch-build repo and also allows plugins to override the default by having a custom integtest.sh in plugin repo.
+The [integ-test job](../../jenkins_workflow/test/testsuite/Jenkinsfile) starts by pulling the manifest files and installing the required dependencies for running plugin integration tests. It then kicks off the integration test for each plugin based on the `test-configs` defined in [opensearch-1.3.0-test.yml](manifests/1.3.0/opensearch-1.3.0-test.yml). It executes each configuration separately from others by spinning up a dedicated local test cluster. It uses `integtest.sh` script to run the integration test. There is a [default](../../scripts/default/integtest.sh) version of this script present in opensearch-build repo and also allows plugins to override the default by having a custom integtest.sh in plugin repo.
 
 Once all tests complete, the notifications job can send out the notifications to the subscribed channels. Below figure illustrates how different components of the test workflow would interact with each other. 
 
@@ -126,7 +127,7 @@ The development is tracked by [meta issue #126](https://github.com/opensearch-pr
 
 Manifest files are configurations for a particular bundle. `test-workflow` uses three types of manifest files to run test suites. 
 
-1. `test-manifest.yml` provides a list of test configurations to run against a given component in the bundle. An example of a configuration would be, integration test `index-management` plugin `with-security` and `without-security`. This manifest file serves as a support matrix config for the testing and should be updated by plugins if new components or test suites are to be added as part of the release workflow. See [here](config/opensearch/test_manifest.yml)
+1. `test-manifest.yml` provides a list of test configurations to run against a given component in the bundle. An example of a configuration would be, integration test `index-management` plugin `with-security` and `without-security`. This manifest file serves as a support matrix config for the testing and should be updated by plugins if new components or test suites are to be added as part of the release workflow. See [here](manifests/1.3.0/opensearch-1.3.0-test.yml)
 2. `build-manifest.yml` created by the build-workflow and provides a list of artifacts built as part of the build-workflow. It assists `test-workflow` pull the maven and build dependencies to run the test suites.
 3. `bundle-manfest.yml` created by the build-workflow and provides a list of components packaged in a given bundle.  It assists `test-workflow` to identify what components should be tested for a given bundle.
 
