@@ -22,6 +22,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties):
         self.args.path = "test-path"
         self.args.component = "sql"
+        self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
@@ -78,6 +79,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     def test_without_integ_test(self, mock_suite, mock_properties):
         self.args.path = "test-path"
         self.args.component = "sql"
+        self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = None
@@ -113,6 +115,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     def test_component_not_in_test_manifest(self, mock_suite, mock_properties):
         self.args.path = "test-path"
         self.args.component = "sql"
+        self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()

@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -22,10 +21,9 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
     def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties, mock_properties_dependency):
-        logging.info(locals())
-
         self.args.path = "test-path"
         self.args.component = "sql"
+        self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
