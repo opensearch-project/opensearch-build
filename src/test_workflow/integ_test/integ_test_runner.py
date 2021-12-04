@@ -30,7 +30,7 @@ class IntegTestRunner(abc.ABC):
                 if component.name in self.test_manifest.components:
                     test_config = self.test_manifest.components[component.name]
                     if test_config.integ_test:
-                        test_suite = self.create_test_suite(component, test_config, work_dir)
+                        test_suite = self.__create_test_suite__(component, test_config, work_dir)
                         test_results = test_suite.execute_tests()
                         all_results.append(component.name, test_results)
                     else:
@@ -39,7 +39,3 @@ class IntegTestRunner(abc.ABC):
                     logging.info(f"Skipping integ-tests for {component.name}, as it is currently not declared in the test manifest")
 
         return all_results
-
-    @abc.abstractmethod
-    def create_test_suite(self, component, test_config, work_dir):
-        pass

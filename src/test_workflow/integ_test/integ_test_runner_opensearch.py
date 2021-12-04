@@ -23,7 +23,7 @@ class IntegTestRunnerOpenSearch(IntegTestRunner):
 
         logging.info("Entering integ test for OpenSearch")
 
-    def create_test_suite(self, component, test_config, work_dir):
+    def __create_test_suite__(self, component, test_config, work_dir):
         return IntegTestSuiteOpenSearch(
             self.properties.dependency_installer,
             component,
