@@ -19,6 +19,27 @@ class TestInputManifest(unittest.TestCase):
         self.maxDiff = None
         self.manifests_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
+    def test_1_1_1_dist(self) -> None:
+        data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
+        path = os.path.join(data_path, "opensearch-dashboards-from-dist-1.1.1.yml")
+        manifest = InputManifest.from_path(path)
+        self.assertEqual(manifest.version, "1.0")
+        self.assertEqual(manifest.build.name, "OpenSearch Dashboards")
+        self.assertEqual(manifest.build.version, "1.1.1")
+        self.assertEqual(len(list(manifest.components.select(focus="alertingDashboards"))), 1)
+        opensearch_component: InputComponentFromDist = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
+        self.assertIsInstance(opensearch_component, InputComponentFromDist)
+        self.assertEqual(opensearch_component.name, "OpenSearch-Dashboards")
+        self.assertEqual(
+            opensearch_component.dist,
+            "https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930",
+        )
+        for component in manifest.components.values():
+            if component.name in ['reportsDashboards', 'functionalTestDashboards']:
+                self.assertIsInstance(component, InputComponentFromSource)
+            else:
+                self.assertIsInstance(component, InputComponentFromDist)
+
     def test_1_0(self) -> None:
         path = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")
         manifest = InputManifest.from_path(path)

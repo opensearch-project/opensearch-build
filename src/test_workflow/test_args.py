@@ -23,6 +23,7 @@ class TestArgs:
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
+        parser.add_argument("test_manifest_path", type=str, help="Specify a test manifest path.")
         parser.add_argument("path", type=str, help="Location of build and bundle manifests.", default=".")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, help="Test a specific component instead of the entire distribution.")
@@ -36,6 +37,8 @@ class TestArgs:
         self.keep = args.keep
         self.logging_level = args.logging_level
         self.path = args.path if validators.url(args.path) else os.path.realpath(args.path)
+
+        self.test_manifest_path = args.test_manifest_path if validators.url(args.test_manifest_path) else os.path.realpath(args.test_manifest_path)
 
 
 TestArgs.__test__ = False  # type:ignore
