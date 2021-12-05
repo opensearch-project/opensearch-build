@@ -36,6 +36,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             build_manifest_opensearch
         )
 
+        self.test_results_dir = os.path.join("build", "reports", "tests", "integTest")
+
     def execute_tests(self):
         test_results = TestComponentResults()
         self.__install_build_dependencies()
@@ -77,3 +79,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
+
+    def get_test_artifact_files(self, work_dir):
+        return {
+            "opensearch-integ-test": os.path.join(work_dir, "build", "reports", "tests", "integTest")
+        }

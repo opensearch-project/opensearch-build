@@ -51,7 +51,6 @@ class TestCluster(abc.ABC):
 
     def start(self):
         os.makedirs(self.work_dir, exist_ok=True)
-
         self.all_services = [self.service] + self.dependencies
 
         for service in self.all_services:
@@ -65,22 +64,23 @@ class TestCluster(abc.ABC):
             self.termination_result = self.service.terminate()
 
         for service in self.dependencies:
-            service.terminate()
+            termination_result = service.terminate()
+            self.__save_test_result_data(termination_result)
 
         if not self.termination_result:
             raise ClusterServiceNotInitializedException()
 
-        self.__save_test_result_data()
+        self.__save_test_result_data(self.termination_result)
 
-    def __save_test_result_data(self):
+    def __save_test_result_data(self, termination_result):
 
         test_result_data = TestResultData(
             self.component_name,
             self.component_test_config,
-            self.termination_result.return_code,
-            self.termination_result.stdout_data,
-            self.termination_result.stderr_data,
-            self.termination_result.log_files
+            termination_result.return_code,
+            termination_result.stdout_data,
+            termination_result.stderr_data,
+            termination_result.log_files
         )
 
         self.save_logs.save_test_result_data(test_result_data)

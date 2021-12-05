@@ -91,3 +91,6 @@ class ServiceOpenSearchDashboards(Service):
 
     def check_service_response_text(self, response_text):
         return ('"state":"green"' in response_text) or ('"state":"yellow"' in response_text)
+
+    def get_log_files(self):
+        return {"opensearch-dashboards-service-logs": os.path.join(self.install_dir, "logs")}
