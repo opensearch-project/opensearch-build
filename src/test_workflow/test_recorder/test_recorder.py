@@ -52,8 +52,8 @@ class TestRecorder:
         if log_files is not None:
             for log_dest_dir_name, source_log_dir in log_files.items():
                 if os.path.exists(source_log_dir):
-                    dest_file = os.path.join(dest_directory, log_dest_dir_name)
-                    shutil.copytree(source_log_dir, dest_file)
+                    dest_dir = os.path.join(dest_directory, log_dest_dir_name)
+                    shutil.copytree(source_log_dir, dest_dir)
 
     class LocalClusterLogs(LogRecorder):
         def __init__(self, parent_class):
