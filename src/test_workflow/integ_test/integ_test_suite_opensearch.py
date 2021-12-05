@@ -36,8 +36,6 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             build_manifest_opensearch
         )
 
-        self.test_results_dir = os.path.join("build", "reports", "tests", "integTest")
-
     def execute_tests(self):
         test_results = TestComponentResults()
         self.__install_build_dependencies()

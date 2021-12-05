@@ -51,6 +51,7 @@ class TestCluster(abc.ABC):
 
     def start(self):
         os.makedirs(self.work_dir, exist_ok=True)
+
         self.all_services = [self.service] + self.dependencies
 
         for service in self.all_services:
