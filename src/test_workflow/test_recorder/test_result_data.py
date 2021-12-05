@@ -5,7 +5,6 @@
 # compatible open source license.
 
 from dataclasses import dataclass
-from typing import Iterator
 
 
 @dataclass
