@@ -78,7 +78,8 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
 
-    def get_test_artifact_files(self, work_dir):
+    @property
+    def test_artifact_files(self):
         return {
-            "opensearch-integ-test": os.path.join(work_dir, "build", "reports", "tests", "integTest")
+            "opensearch-integ-test": os.path.join(self.repo_work_dir, "build", "reports", "tests", "integTest")
         }

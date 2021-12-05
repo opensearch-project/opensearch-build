@@ -49,7 +49,7 @@ class TestRecorder:
         return os.path.realpath("%s.yml" % test_result_data.component_name)
 
     def _copy_log_files(self, log_files, dest_directory):
-        if log_files is not None:
+        if log_files:
             for log_dest_dir_name, source_log_dir in log_files.items():
                 if os.path.exists(source_log_dir):
                     dest_dir = os.path.join(dest_directory, log_dest_dir_name)

@@ -43,7 +43,7 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
-        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, self.get_log_files())
+        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, self.log_files)
 
     def endpoint(self):
         return "localhost"
@@ -99,8 +99,9 @@ class Service(abc.ABC):
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
 
+    @property
     @abc.abstractmethod
-    def get_log_files(self):
+    def log_files(self):
         pass
 
 

@@ -57,8 +57,9 @@ class IntegTestSuite(abc.ABC):
         script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
         if os.path.exists(script):
             cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
-            work_dir = os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
-            (status, stdout, stderr) = execute(cmd, work_dir, True, False)
+            self.repo_work_dir = os.path.join(
+                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
+            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
 
             test_result_data = TestResultData(
                 self.component.name,
@@ -66,7 +67,7 @@ class IntegTestSuite(abc.ABC):
                 status,
                 stdout,
                 stderr,
-                self.get_test_artifact_files(work_dir)
+                self.test_artifact_files
             )
             self.save_logs.save_test_result_data(test_result_data)
             if stderr:
@@ -87,8 +88,9 @@ class IntegTestSuite(abc.ABC):
         logging.info(message)
         logging.info("===============================================")
 
+    @property
     @abc.abstractmethod
-    def get_test_artifact_files(self, work_dir):
+    def test_artifact_files(self):
         pass
 
 

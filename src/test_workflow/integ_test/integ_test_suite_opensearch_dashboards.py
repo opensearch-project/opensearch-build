@@ -70,9 +70,10 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
 
-    def get_test_artifact_files(self, work_dir):
+    @property
+    def test_artifact_files(self):
         return {
-            "cypress-videos": os.path.join(work_dir, "cypress", "videos"),
-            "cypress-screenshots": os.path.join(work_dir, "cypress", "screenshots"),
-            "cypress-report": os.path.join(work_dir, "cypress", "results"),
+            "cypress-videos": os.path.join(self.repo_work_dir, "cypress", "videos"),
+            "cypress-screenshots": os.path.join(self.repo_work_dir, "cypress", "screenshots"),
+            "cypress-report": os.path.join(self.repo_work_dir, "cypress", "results"),
         }
