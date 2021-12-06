@@ -114,10 +114,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=True)
     @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
-    @patch("test_workflow.integ_test.service.walk")
     def test_terminate(
         self,
-        mock_walk,
         mock_process_stderr_data,
         mock_process_stdout_data,
         mock_process_started,
@@ -131,18 +129,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
             self.work_dir
         )
 
-        mock_log_files = MagicMock()
-        mock_walk.return_value = mock_log_files
-
         termination_result = service.terminate()
 
         mock_process_terminate.assert_called_once()
-        mock_walk.assert_called_once()
 
         self.assertEqual(termination_result.return_code, 123)
         self.assertEqual(termination_result.stdout_data, "test stdout_data")
         self.assertEqual(termination_result.stderr_data, "test stderr_data")
-        self.assertEqual(termination_result.log_files, mock_log_files)
+        self.assertEqual(termination_result.log_files, {"opensearch-service-logs": os.path.join("test_work_dir", "opensearch-1.1.0", "logs")})
 
     @patch("test_workflow.integ_test.service.Process.terminate")
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=False)

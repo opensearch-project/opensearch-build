@@ -10,7 +10,6 @@ import os
 
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
-from paths.tree_walker import walk
 from system.execute import execute
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -58,16 +57,17 @@ class IntegTestSuite(abc.ABC):
         script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
         if os.path.exists(script):
             cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
-            work_dir = os.path.join(self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
-            (status, stdout, stderr) = execute(cmd, work_dir, True, False)
-            results_dir = os.path.join(work_dir, "build", "reports", "tests", "integTest")
+            self.repo_work_dir = os.path.join(
+                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
+            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
+
             test_result_data = TestResultData(
                 self.component.name,
                 test_config,
                 status,
                 stdout,
                 stderr,
-                walk(results_dir)
+                self.test_artifact_files
             )
             self.save_logs.save_test_result_data(test_result_data)
             if stderr:
@@ -87,6 +87,11 @@ class IntegTestSuite(abc.ABC):
         logging.info("===============================================")
         logging.info(message)
         logging.info("===============================================")
+
+    @property
+    @abc.abstractmethod
+    def test_artifact_files(self):
+        pass
 
 
 class InvalidTestConfigError(Exception):
