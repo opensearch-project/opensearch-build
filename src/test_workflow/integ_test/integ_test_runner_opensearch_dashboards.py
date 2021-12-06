@@ -10,15 +10,16 @@ from test_workflow.integ_test.integ_test_runner import IntegTestRunner
 from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
 from test_workflow.integ_test.integ_test_start_properties_opensearch_dashboards import IntegTestStartPropertiesOpenSearchDashboards
 from test_workflow.integ_test.integ_test_suite_opensearch_dashboards import IntegTestSuiteOpenSearchDashboards
+from test_workflow.test_args import TestArgs
 
 
 class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
 
-    def __init__(self, args, test_manifest):
+    def __init__(self, args: TestArgs, test_manifest):
         super().__init__(args, test_manifest)
 
-        self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.path)
-        self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.path)
+        self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.opensearch_path)
+        self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.opensearch_dashboards_path)
 
         self.components = self.properties.build_manifest.components
 

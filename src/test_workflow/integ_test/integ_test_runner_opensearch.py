@@ -9,13 +9,14 @@ import logging
 from test_workflow.integ_test.integ_test_runner import IntegTestRunner
 from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
 from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch
+from test_workflow.test_args import TestArgs
 
 
 class IntegTestRunnerOpenSearch(IntegTestRunner):
 
-    def __init__(self, args, test_manifest):
+    def __init__(self, args: TestArgs, test_manifest):
         super().__init__(args, test_manifest)
-        self.properties = IntegTestStartPropertiesOpenSearch(args.path)
+        self.properties = IntegTestStartPropertiesOpenSearch(args.opensearch_path)
 
         self.properties.dependency_installer.install_maven_dependencies()
 

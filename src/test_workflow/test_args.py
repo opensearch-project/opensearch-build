@@ -24,7 +24,8 @@ class TestArgs:
     def __init__(self):
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("test_manifest_path", type=str, help="Specify a test manifest path.")
-        parser.add_argument("path", type=str, help="Location of build and bundle manifests.", default=".")
+        parser.add_argument("opensearch_path", type=str, help="Location of build and bundle manifests.", default=".")
+        parser.add_argument("opensearch_dashboards_path", type=str, help="Location of build and bundle manifests for OpenSearch Dashboards.", default=".")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, help="Test a specific component instead of the entire distribution.")
         parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
@@ -36,9 +37,13 @@ class TestArgs:
         self.component = args.component
         self.keep = args.keep
         self.logging_level = args.logging_level
-        self.path = args.path if validators.url(args.path) else os.path.realpath(args.path)
 
-        self.test_manifest_path = args.test_manifest_path if validators.url(args.test_manifest_path) else os.path.realpath(args.test_manifest_path)
+        self.opensearch_path = self._validate_path(args.opensearch_path)
+        self.opensearch_dashboards_path = self._validate_path(args.opensearch_dashboards_path)
+        self.test_manifest_path = self._validate_path(args.test_manifest_path)
+
+    def _validate_path(self, path):
+        return path if validators.url(path) else os.path.realpath(path)
 
 
 TestArgs.__test__ = False  # type:ignore
