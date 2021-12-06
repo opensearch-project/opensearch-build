@@ -7,13 +7,8 @@ void call(Map args = [:]) {
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        if (!args.dryRun) {
-            s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
-            s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
-        } else {
-            echo "s3Upload(file: 'builds', bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/builds)"
-            echo "s3Upload(file: 'dist', bucket: ${ARTIFACT_BUCKET_NAME}, path: ${artifactPath}/dist)"
-        }
+        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/builds")
+        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
     }
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")

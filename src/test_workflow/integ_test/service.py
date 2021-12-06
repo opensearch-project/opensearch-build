@@ -6,9 +6,7 @@
 
 import abc
 import logging
-import os
 import time
-from os import walk
 
 import requests
 
@@ -45,9 +43,7 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
-        log_files = walk(os.path.join(self.install_dir, "logs"))
-
-        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
+        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, self.log_files)
 
     def endpoint(self):
         return "localhost"
@@ -102,6 +98,11 @@ class Service(abc.ABC):
 
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
+
+    @property
+    @abc.abstractmethod
+    def log_files(self):
+        pass
 
 
 class ServiceTerminationResult:

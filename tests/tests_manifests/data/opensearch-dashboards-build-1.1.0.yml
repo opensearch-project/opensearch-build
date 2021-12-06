@@ -1,0 +1,88 @@
+build:
+  architecture: x64
+  id: '524'
+  name: OpenSearch Dashboards
+#  platform: linux
+  version: 1.1.0
+components:
+- artifacts:
+    dist:
+    - dist/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
+  commit_id: 44d2cb5b4f9a7c641c1fef32ec569bc48ec46979
+  name: OpenSearch-Dashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/alertingDashboards-1.1.0.zip
+  commit_id: ff9edaab1c7baf9c72192d9e8c6965886ce80b24
+  name: alertingDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/alerting-dashboards-plugin
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/securityDashboards-1.1.0.zip
+  commit_id: 67b540831b5b5b987090bfb887ab3402b9acbdda
+  name: securityDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/indexManagementDashboards-1.1.0.zip
+  commit_id: 7d50077be789d812626f1c3228c9052b8bbc7ba1
+  name: indexManagementDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/queryWorkbenchDashboards-1.1.0.zip
+  commit_id: ceedf9a1da2c35f64e5aa95077098baa71df46f0
+  name: queryWorkbenchDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/sql.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/notebooksDashboards-1.1.0.zip
+  commit_id: 0d498b10f62f0cc3896b736651af5103132200e1
+  name: notebooksDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/dashboards-notebooks.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/reportsDashboards-1.1.0.zip
+  commit_id: 8df794287ae8c83acc5c96a90f4cd606e720e015
+  name: reportsDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/dashboards-reports.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/traceAnalyticsDashboards-1.1.0.zip
+  commit_id: 58237889693bc46abd0d19e27a13b363018d07f9
+  name: traceAnalyticsDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/trace-analytics.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/ganttChartDashboards-1.1.0.zip
+  commit_id: ba2911ec4f4273dd784272ce62842ccbdbb93da7
+  name: ganttChartDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/dashboards-visualizations.git
+  version: 1.1.0.0
+- artifacts:
+    plugins:
+    - plugins/anomalyDetectionDashboards-1.1.0.zip
+  commit_id: 569cedeedab46167614fb0148db37b35cd648712
+  name: anomalyDetectionDashboards
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+  version: 1.1.0.0
+schema-version: '1.1'

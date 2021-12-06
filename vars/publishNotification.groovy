@@ -8,7 +8,7 @@ void call(Map args = [:]) {
 
     withCredentials([string(credentialsId: args.credentialsId, variable: 'WEBHOOK_URL')]) {
         sh ([
-            args.dryRun ? 'echo curl' : 'curl',
+            'curl',
             '-XPOST',
             '--header "Content-Type: application/json"',
             "--data '{\"result_text\":\"${text}\"}'",

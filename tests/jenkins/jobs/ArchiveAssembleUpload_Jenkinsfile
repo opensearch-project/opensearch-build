@@ -1,0 +1,15 @@
+pipeline {
+    agent none
+    stages {
+        stage('assemble from archive') {
+            steps {
+                script {
+                    archiveAssembleUpload(
+                        platform: 'linux',
+                        architecture: 'x64'
+                    )
+                }
+            }
+        }
+    }
+}

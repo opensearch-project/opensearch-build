@@ -1,0 +1,146 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    options {
+        copyArtifactPermission('bundle-build-*')
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            defaultValue: '1.3.0/opensearch-dashboards-1.3.0.yml',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0.yml.',
+            trim: true
+        )
+    }
+    stages {
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent()
+                }
+            }
+        }
+        stage('build') {
+            parallel {
+                stage('build-linux-x64') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            buildAssembleUpload(
+                                platform: 'linux',
+                                architecture: 'x64'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-linux-arm64') {
+                    agent none
+                    stages {
+                        stage('build-archive-linux-arm64') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        platform: 'linux',
+                                        architecture: 'arm64'
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('assemble-archive-linux-arm64') {
+                            agent {
+                                docker {
+                                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    archiveAssembleUpload(
+                                        platform: 'linux',
+                                        architecture: 'arm64'
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('docker build') {
+            steps {
+                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    script {
+                        buildDockerImage()
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([
+                        'build-linux-x64',
+                        'build-archive-linux-arm64',
+                        'assemble-archive-linux-arm64'
+                    ])
+
+                    echo "SUCCESS: ${stashed}"
+
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    echo 'FAILURE'
+
+                    postCleanup()
+                }
+            }
+        }
+    }
+}

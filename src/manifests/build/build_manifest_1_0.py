@@ -76,6 +76,7 @@ class BuildManifest_1_0(ComponentManifest):
     def __init__(self, data):
         super().__init__(data)
         self.build = self.Build(data["build"])
+        self.components = BuildComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self):
         return {

@@ -15,28 +15,11 @@ void call(Map args = [:]) {
             ]
         )
 
-        assembleManifest(
+        assembleUpload(
             args + [
-                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml"
+                manifest: "builds/${inputManifest.build.getFilename()}/manifest.yml",
+                sha: sha
             ]
         )
-
-        uploadArtifacts(
-            args + [
-                manifest: args.dryRun ? 'tests/data/opensearch-build-1.1.0.yml' : "builds/${inputManifest.build.getFilename()}/manifest.yml"
-            ]
-        )
-
-        withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-            if (!args.dryRun) {
-                s3Upload(bucket: "${ARTIFACT_BUCKET_NAME}", file: sha.lock, path: sha.path)
-            } else {
-                echo "s3Upload(bucket: ${ARTIFACT_BUCKET_NAME}, file: ${sha.lock}, path: ${sha.path})"
-            }
-        }
-
-        String artifactUrl = inputManifest.getPublicDistUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}", args.platform, args.architecture)
-        echo "Setting env.\"ARTIFACT_URL_${args.platform}_${args.architecture}\"=${artifactUrl}"
-        env."ARTIFACT_URL_${args.platform}_${args.architecture}" = artifactUrl
     }
 }
