@@ -50,12 +50,4 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
             "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_sha"
         )
     }
-
-    @Test
-    public void testSHADoesNotExist() {
-        super.testPipeline(
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_no_sha"
-        )
-    }
 }
