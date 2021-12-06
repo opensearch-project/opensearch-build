@@ -7,8 +7,8 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H */12 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;JOB_NAME=distribution-build-opensearch
+            H */12 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
         '''
     }
     parameters {
@@ -18,7 +18,7 @@ pipeline {
             trim: true
         )
         string(
-            name: 'JOB_NAME',
+            name: 'TARGET_JOB_NAME',
             description: 'Job to trigger if build has changed',
             trim: true
         )
@@ -49,11 +49,11 @@ pipeline {
             }
             steps {
                 script {
-                    def sha = getManifestSHA(jobName: "${JOB_NAME}")
+                    def sha = getManifestSHA(jobName: "${TARGET_JOB_NAME}")
                     if (sha.exists) {
                         echo "Skipping, ${sha.path} already exists."
                     } else {
-                        build job: "${JOB_NAME}", parameters: [
+                        build job: "${TARGET_JOB_NAME}", parameters: [
                             string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
                         ], wait: true
                     }
@@ -75,7 +75,7 @@ pipeline {
                         message: 'Failed checking for build to trigger',
                         credentialsId: 'BUILD_NOTICE_WEBHOOK',
                         manifest: "${INPUT_MANIFEST}",
-                        job_name: "${JOB_NAME}"
+                        target_job_name: "${TARGET_JOB_NAME}"
                     )
 
                     postCleanup()
