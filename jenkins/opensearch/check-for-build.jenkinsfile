@@ -1,0 +1,86 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    options {
+        disableConcurrentBuilds() // Make sure not to interupt builds in progress
+    }
+    triggers {
+        parameterizedCron '''
+            H */12 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;JOB_NAME=distribution-build-opensearch
+        '''
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+        string(
+            name: 'JOB_NAME',
+            description: 'Job to trigger if build has changed',
+            trim: true
+        )
+    }
+    stages {
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script { 
+                    dockerAgent = detectDockerAgent()
+                }
+            }
+        }
+        stage('check-sha-exists') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    def sha = getManifestSHA(jobName: "${JOB_NAME}")
+                    if (sha.exists) {
+                        echo "Skipping, ${sha.path} already exists."
+                    } else {
+                        build job: "${JOB_NAME}", parameters: [
+                            string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
+                        ], wait: true
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+    post {
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed checking for build to trigger',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}",
+                        job_name: "${JOB_NAME}"
+                    )
+
+                    postCleanup()
+                }
+            }
+        }
+    }
+}
