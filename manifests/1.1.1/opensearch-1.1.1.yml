@@ -10,11 +10,9 @@ build:
     - 1.1.0
 components:
   - name: OpenSearch
-    repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.1"
+    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
     checks:
-      - gradle:publish
-      - gradle:properties:version
+      - manifest:component
   - name: common-utils
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
     checks:
@@ -71,7 +69,7 @@ components:
     platforms:
       - linux
     checks:
-        - manifest:component
+      - manifest:component
   - name: dashboards-notebooks
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
     checks:
