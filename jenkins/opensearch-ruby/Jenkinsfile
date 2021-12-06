@@ -35,6 +35,7 @@ pipeline {
                         gem cert --add certs/opensearch-rubygems.pem
                         bash release/build.sh
                         for f in $(find dist/ -name '*.gem');\\
+                            echo $f;\\
                             gem install $f;\\
                             val=$(echo $f | grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+');\\
                             gem uninstall $f -v $val;\\
