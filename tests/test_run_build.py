@@ -13,7 +13,6 @@ import pytest
 
 from manifests.input_manifest import InputManifest
 from run_build import main
-from system.os import current_architecture, current_platform
 
 
 class TestRunBuild(unittest.TestCase):
@@ -119,7 +118,7 @@ class TestRunBuild(unittest.TestCase):
     def test_main_manifest_lock_without_changes(self, mock_logging, mock_to_file, mock_stable, *mocks):
         with self.assertRaises(SystemExit):
             main()
-        mock_stable.assert_called_with(architecture=current_architecture(), platform=current_platform(), snapshot=False)
+        mock_stable.assert_called_with()
         mock_to_file.assert_not_called()
         mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST}.lock")
 
@@ -132,7 +131,7 @@ class TestRunBuild(unittest.TestCase):
     def test_main_manifest_lock_with_changes(self, mock_logging, mock_to_file, mock_stable, *mocks):
         with self.assertRaises(SystemExit):
             main()
-        mock_stable.assert_called_with(architecture=current_architecture(), platform=current_platform(), snapshot=False)
+        mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Updating {self.OPENSEARCH_MANIFEST}.lock")
 
@@ -145,7 +144,7 @@ class TestRunBuild(unittest.TestCase):
     def test_main_manifest_new_lock(self, mock_logging, mock_to_file, mock_stable, *mocks):
         with self.assertRaises(SystemExit):
             main()
-        mock_stable.assert_called_with(architecture=current_architecture(), platform=current_platform(), snapshot=False)
+        mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")
 
@@ -158,6 +157,6 @@ class TestRunBuild(unittest.TestCase):
     def test_main_manifest_new_lock_with_overrides(self, mock_logging, mock_to_file, mock_stable, *mocks):
         with self.assertRaises(SystemExit):
             main()
-        mock_stable.assert_called_with(architecture="arm64", platform="windows", snapshot=True)
+        mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")

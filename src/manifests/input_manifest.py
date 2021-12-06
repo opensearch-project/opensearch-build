@@ -116,13 +116,8 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             "components": self.components.__to_dict__(),
         }
 
-    def stable(self, architecture: str = None, platform: str = None, snapshot: bool = False) -> 'InputManifest':
+    def stable(self) -> 'InputManifest':
         manifest: 'InputManifest' = copy.deepcopy(self)
-        manifest.build.__stabilize__(
-            platform=platform,
-            architecture=architecture,
-            snapshot=snapshot
-        )
         manifest.components.__stabilize__()
         return manifest
 
@@ -152,11 +147,6 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             self.architecture = data.get("architecture", None)
             self.snapshot = data.get("snapshot", None)
             self.patches = data.get("patches", [])
-
-        def __stabilize__(self, platform: str, architecture: str, snapshot: bool) -> None:
-            self.architecture = architecture
-            self.platform = platform
-            self.snapshot = snapshot
 
         def __to_dict__(self) -> dict:
             return {
