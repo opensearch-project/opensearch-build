@@ -69,3 +69,11 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             self.pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
+
+    @property
+    def test_artifact_files(self):
+        return {
+            "cypress-videos": os.path.join(self.repo_work_dir, "cypress", "videos"),
+            "cypress-screenshots": os.path.join(self.repo_work_dir, "cypress", "screenshots"),
+            "cypress-report": os.path.join(self.repo_work_dir, "cypress", "results"),
+        }

@@ -77,3 +77,9 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(test_cluster_endpoint, test_cluster_port, security, config)
+
+    @property
+    def test_artifact_files(self):
+        return {
+            "opensearch-integ-test": os.path.join(self.repo_work_dir, "build", "reports", "tests", "integTest")
+        }
