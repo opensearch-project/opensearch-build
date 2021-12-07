@@ -19,7 +19,7 @@ You can find all the corresponding dates of each step in the release issue above
 
 
 ### You can find all the date in above issue 
-### (We only make changes to OpenSearch-Dashboards to 1.1.1, therefore, OpenSearch stays 1.1.1.)
+### (We make changes to both OpenSearch and OpenSearch-Dashboards for 1.1.1)
 
 ### Preparation
 
@@ -29,7 +29,7 @@ You can find all the corresponding dates of each step in the release issue above
 
 ### CI/CD
 
-- [ ] If including changes in this release, increment plugin version on 1.1 branch to `1.1.1.0`, otherwise stay on `1.1.1.0`.
+- [ ] If including changes in this release, increment plugin version on 1.1 branch to `1.1.1.0`, otherwise stay on `1.1.0.0`.
 - [ ] All code changes for 1.1.1 are complete.
 - [ ] Ensure working and passing CI.
 
