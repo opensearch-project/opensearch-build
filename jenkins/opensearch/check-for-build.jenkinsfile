@@ -3,7 +3,6 @@ lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 pipeline {
     agent none
     options {
-        disableConcurrentBuilds() // Make sure not to interupt builds in progress
     }
     triggers {
         parameterizedCron '''
@@ -49,13 +48,16 @@ pipeline {
             }
             steps {
                 script {
-                    def sha = getManifestSHA(jobName: "${TARGET_JOB_NAME}")
-                    if (sha.exists) {
-                        echo "Skipping, ${sha.path} already exists."
-                    } else {
-                        build job: "${TARGET_JOB_NAME}", parameters: [
-                            string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
-                        ], wait: true
+                    lock(resource: "CheckForBuild-${INPUT_MANIFEST}-${TARGET_JOB_NAME}", skipIfLocked: true) {
+                        def sha = getManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                        if (sha.exists) {
+                            echo "Skipping, ${sha.path} already exists."
+                        } else {
+                            build job: "${TARGET_JOB_NAME}", parameters: [
+                                string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
+                            ], wait: true
+                            buildAndUploadManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                        }
                     }
                 }
             }

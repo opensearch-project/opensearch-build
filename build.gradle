@@ -75,11 +75,6 @@ test {
         systemProperty "pipeline.stack.write", project.getProperty("pipeline.stack.write")
     }
 
-    jacoco {
-        classDumpDir = file("$buildDir/jacoco/classpathdumps")
-    }
-
-    finalizedBy jacocoTestReport
 }
 
 jacoco {

@@ -1,19 +1,14 @@
 void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def sha = getManifestSHA(args)
+    String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
 
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))
+    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
 
-    buildManifest(
-        args + [
-            manifest: sha.lock
-        ]
-    )
+    buildManifest(args)
 
     assembleUpload(
         args + [
             manifest: "builds/${inputManifest.build.getFilename()}/manifest.yml",
-            sha: sha
         ]
     )
 }

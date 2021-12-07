@@ -11,32 +11,37 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestBuildArchive extends BuildPipelineTest {
+class TestBuildAndUploadManifestSHA extends BuildPipelineTest {
+    @Override
     @Before
     void setUp() {
         super.setUp()
 
-        binding.setVariable('JOB_NAME', 'build-archive')
-        binding.setVariable('STAGE_NAME', 'stage')
+        binding.setVariable('JOB_NAME', 'get-manifest-sha-build')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
 
-        helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
+        helper.registerAllowedMethod("sha1", [String], { filename ->
+            return 'sha1'
         })
 
+        helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
 
-        helper.registerAllowedMethod("zip", [Map])
         helper.registerAllowedMethod("git", [Map])
     }
 
     @Test
-    public void testJenkinsfile() {
-        super.testPipeline("tests/jenkins/jobs/BuildArchive_Jenkinsfile")
+    public void testDoesNotExist() {
+        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
+            return false
+        })
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildAndUploadManifestSHA_Jenkinsfile"
+        )
     }
 }

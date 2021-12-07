@@ -1,35 +1,23 @@
 void call(Map args = [:]) {
-    sha = [
-        sha: env."BUILD_SHA_${args.platform}_${args.architecture}_SHA",
-        lock: env."BUILD_SHA_${args.platform}_${args.architecture}_LOCK",
-        path: env."BUILD_SHA_${args.platform}_${args.architecture}_PATH"
-    ]
-
-    echo "Read BUILD_SHA_${args.platform}_${args.architecture}_[SHA|LOCK|PATH]."
-    echo "sha.sha=${sha.sha}"
-    echo "sha.lock=${sha.lock}"
-    echo "sha.path=${sha.path}"
-
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
-    echo "Assembling ${sha.sha} (${sha.lock})"
+    echo "Assembling ${args.manifest}"
 
     copyArtifacts(
-        filter: "${sha.sha}-*.zip",
+        filter: "*.zip",
         fingerprintArtifacts: true,
         projectName: "${JOB_NAME}",
         selector: specific("${BUILD_NUMBER}")
     )
 
-    unzip(zipFile: "${sha.sha}-builds.zip")
-    unzip(zipFile: "${sha.sha}-manifest.zip")
+    unzip(zipFile: "builds.zip")
+    unzip(zipFile: "manifest.zip")
 
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: sha.lock))
+    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.manifest))
 
     assembleUpload(
         args + [
             manifest: "builds/${inputManifest.build.getFilename()}/manifest.yml",
-            sha: sha
         ]
     )
 }
