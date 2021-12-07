@@ -250,7 +250,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "ae789280740d7000d1f13245019414abeedfc286",
-                        "location": "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/plugins",
+                        "location": "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch-dashboards/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/alerting-dashboards-plugin",
@@ -273,13 +273,13 @@ class TestBundleRecorderDashboards(unittest.TestCase):
         # Public URL - No trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64"),
-            "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch-dashboards/dir1/dir2/file",
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/"),
-            "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch-dashboards/dir1/dir2/file",
         )
 
     def test_package_name(self) -> None:
