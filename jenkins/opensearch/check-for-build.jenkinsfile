@@ -2,8 +2,6 @@ lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
-    options {
-    }
     triggers {
         parameterizedCron '''
             H */12 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
