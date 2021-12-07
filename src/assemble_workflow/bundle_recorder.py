@@ -14,7 +14,6 @@ from manifests.bundle_manifest import BundleManifest
 
 class BundleRecorder:
     def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, base_url: str) -> None:
-        self.product = build.name.lower().replace(" ", "-")
         self.output_dir = output_dir
         self.build_id = build.id
         self.base_url = base_url
@@ -41,7 +40,7 @@ class BundleRecorder:
         return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
 
     def __get_public_url_path(self, folder: str, rel_path: str) -> str:
-        path = "/".join((folder, self.product, rel_path))
+        path = "/".join((folder, rel_path))
         return urljoin(self.base_url + "/", path)
 
     def __get_location(self, folder_name: str, rel_path: str, abs_path: str) -> str:
