@@ -115,7 +115,7 @@ class TestBundleRecorder(unittest.TestCase):
                 "components": [
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
-                        "location": "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/plugins",
+                        "location": "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",
@@ -138,13 +138,13 @@ class TestBundleRecorder(unittest.TestCase):
         # Public URL - No trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64"),
-            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch/dir1/dir2/file",
         )
 
         # Public URL - Trailing slash
         self.assertEqual(
             get_location("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/"),
-            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/dir1/dir2/file",
+            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch/dir1/dir2/file",
         )
 
     def test_package_name(self) -> None:
@@ -223,6 +223,7 @@ class TestBundleRecorderDashboards(unittest.TestCase):
 
     def test_record_component_public(self) -> None:
         self.bundle_recorder.base_url = "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/"
+
         component = BuildComponent(
             {
                 "name": "alertingDashboards",
