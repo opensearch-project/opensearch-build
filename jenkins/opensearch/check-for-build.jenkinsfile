@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         }
-        stage('check-sha-exists') {
+        stage('trigger-build-no-sha') {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -54,6 +54,7 @@ pipeline {
                             build job: "${TARGET_JOB_NAME}", parameters: [
                                 string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
                             ], wait: true
+                            echo "Build succeeded, uploading build SHA for that job"
                             buildAndUploadManifestSHA(jobName: "${TARGET_JOB_NAME}")
                         }
                     }
