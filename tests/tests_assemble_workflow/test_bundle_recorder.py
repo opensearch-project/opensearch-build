@@ -223,7 +223,6 @@ class TestBundleRecorderDashboards(unittest.TestCase):
 
     def test_record_component_public(self) -> None:
         self.bundle_recorder.base_url = "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/"
-
         component = BuildComponent(
             {
                 "name": "alertingDashboards",
