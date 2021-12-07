@@ -9,7 +9,6 @@
 import logging
 import os
 import sys
-from urllib.parse import urljoin
 
 from assemble_workflow.assemble_args import AssembleArgs
 from assemble_workflow.bundle_recorder import BundleRecorder
@@ -32,10 +31,7 @@ def main() -> int:
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
-    product_name = build.name.lower().replace(" ", "-")
-    work_url = urljoin(args.base_url + "/", product_name) if args.base_url else None
-
-    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, work_url)
+    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
 
     with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:
         bundle.install_min()
