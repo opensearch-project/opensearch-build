@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
 from typing import Any, Dict
 from urllib.parse import urljoin
