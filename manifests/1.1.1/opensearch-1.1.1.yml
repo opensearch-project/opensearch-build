@@ -9,14 +9,6 @@ build:
   patches: 
     - 1.1.0
 components:
-  - name: dashboards-reports
-    repository: https://github.com/opensearch-project/dashboards-reports.git
-    working_directory: reports-scheduler
-    ref: "1.1"
-    platforms:
-      - linux
-    checks:
-      - manifest:component
   - name: OpenSearch
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
     checks:
@@ -27,6 +19,14 @@ components:
       - manifest:component
   - name: job-scheduler
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
+    checks:
+      - manifest:component
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: reports-scheduler
+    ref: "1.1"
+    platforms:
+      - linux
     checks:
       - manifest:component
   - name: sql
