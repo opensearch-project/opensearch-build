@@ -9,11 +9,11 @@ import os
 
 
 class OutputDir(abc.ABC):
-    def __init__(cls, parent_dir: str, name: str, cwd: str = None, makedirs: bool = True) -> None:
+    def __init__(cls, parent_dir: str, filename: str, cwd: str = None, makedirs: bool = True) -> None:
         cls.dir = os.path.join(
             cwd or os.getcwd(),
             parent_dir,
-            name.lower().replace(' ', '-')
+            filename
         )
 
         if makedirs:
