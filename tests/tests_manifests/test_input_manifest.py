@@ -25,7 +25,7 @@ class TestInputManifest(unittest.TestCase):
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch Dashboards")
-        self.assertEqual(manifest.build.filename, "openSearch-dashboards")
+        self.assertEqual(manifest.build.filename, "opensearch-dashboards")
         self.assertEqual(manifest.build.version, "1.1.1")
         self.assertEqual(len(list(manifest.components.select(focus="alertingDashboards"))), 1)
         opensearch_component: InputComponentFromDist = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
