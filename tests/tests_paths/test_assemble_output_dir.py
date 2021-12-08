@@ -21,15 +21,15 @@ class AssembleOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("OpenSearch", makedirs=True)
+        AssembleOutputDir("opensearch", makedirs=True)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             mock_cwd,
             "dist",
             "opensearch"
         )
 
-        mock_os.makedirs.called_once_with(mock_dir, exist_ok=True)
+        mock_os.makedirs.assert_called_once_with(mock_dir, exist_ok=True)
 
     @patch("paths.output_dir.os")
     def test_opensearch_dashboards(self, mock_os):
@@ -40,24 +40,24 @@ class AssembleOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("OpenSearch Dashboards", makedirs=True)
+        AssembleOutputDir("opensearch-dashboards", makedirs=True)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             mock_cwd,
             "dist",
             "opensearch-dashboards"
         )
 
-        mock_os.makedirs.called_once_with(mock_dir, exist_ok=True)
+        mock_os.makedirs.assert_called_once_with(mock_dir, exist_ok=True)
 
     @patch("paths.output_dir.os")
     def test_with_cwd(self, mock_os):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("OpenSearch", cwd="test_cwd", makedirs=False)
+        AssembleOutputDir("opensearch", cwd="test_cwd", makedirs=False)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             "test_cwd",
             "dist",
             "opensearch"

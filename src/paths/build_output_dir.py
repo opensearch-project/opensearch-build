@@ -8,5 +8,5 @@ from paths.output_dir import OutputDir
 
 
 class BuildOutputDir(OutputDir):
-    def __init__(cls, name, cwd=None, makedirs=True):
-        super().__init__("builds", name, cwd, makedirs)
+    def __init__(cls, filename, cwd=None, makedirs=True):
+        super().__init__("builds", filename, cwd, makedirs)

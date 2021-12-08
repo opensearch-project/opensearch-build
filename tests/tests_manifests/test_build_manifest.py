@@ -22,6 +22,7 @@ class TestBuildManifest(unittest.TestCase):
     def test_build(self) -> None:
         self.assertEqual(self.manifest.version, "1.2")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
+        self.assertEqual(self.manifest.build.filename, "opensearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 15)
 
@@ -51,6 +52,7 @@ class TestBuildManifest(unittest.TestCase):
         self.manifest = BuildManifest.from_url('http://fakeurl')
         self.assertEqual(self.manifest.version, "1.1")
         self.assertEqual(self.manifest.build.name, "OpenSearch Dashboards")
+        self.assertEqual(self.manifest.build.filename, "opensearch-dashboards")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 10)
 
