@@ -45,11 +45,9 @@ def main() -> int:
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar
-        logging.info(f"tar copy bundle.min_dist.archive_path is {bundle.min_dist.archive_path}")
         bundle_recorder.write_manifest(bundle.min_dist.archive_path)
         bundle.package(output_dir)
 
-        logging.info(f"write manifest second time {output_dir}")
         bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")

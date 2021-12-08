@@ -44,8 +44,6 @@ class Bundle(ABC):
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory(keep=keep)
         self.min_dist = self.__get_min_dist(build_manifest.components)
-
-        logging.info(f"self.min_dist is {self.min_dist}")
         self.installed_plugins: List[str] = []
         self.build = build_manifest.build
 
