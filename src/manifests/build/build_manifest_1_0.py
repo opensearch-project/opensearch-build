@@ -89,7 +89,7 @@ class BuildManifest_1_0(ComponentManifest['BuildManifest_1_0', 'BuildComponents_
 
     class Build:
         def __init__(self, data: Any):
-            self.name = data["name"]
+            self.name: str = data["name"]
             self.version = data["version"]
             self.architecture = data["architecture"]
             self.id = data["id"]
