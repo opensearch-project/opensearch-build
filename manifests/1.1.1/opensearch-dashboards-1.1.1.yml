@@ -16,7 +16,8 @@ components:
     platforms:
       - linux
     checks:
-        - manifest:component
+      - gradle:publish
+      - gradle:properties:version
   - name: OpenSearch-Dashboards
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:

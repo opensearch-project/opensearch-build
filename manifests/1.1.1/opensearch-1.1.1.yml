@@ -28,7 +28,8 @@ components:
     platforms:
       - linux
     checks:
-      - manifest:component
+      - gradle:publish
+      - gradle:properties:version
   - name: sql
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.1.0/20210930
     checks:
