@@ -19,7 +19,7 @@ class CiCheckManifestComponent(CiCheckDist):
     def check(self):
         for architecture in BuildArgs.SUPPORTED_ARCHITECTURES:
             # Since we only have 'linux' builds now we hard code it to 'linux'
-            # Once we have all platform builds we can adding a second loop for 'BuildArgs.SUPPORTED_PLATFORMS'
+            # Once we have all platform builds on S3 we can then add a second loop for 'BuildArgs.SUPPORTED_PLATFORMS'
             url = "/".join([self.component.dist, "linux", architecture, "builds", self.target.name, "manifest.yml"])
             self.build_manifest = BuildManifest.from_url(url)
             if self.component.name in self.build_manifest.components:

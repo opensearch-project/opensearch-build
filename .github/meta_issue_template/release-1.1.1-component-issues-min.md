@@ -19,7 +19,6 @@ You can find all the corresponding dates of each step in the release issue above
 
 
 ### You can find all the date in above issue 
-### (We make changes to both OpenSearch and OpenSearch-Dashboards for 1.1.1)
 
 ### Preparation
 
@@ -27,18 +26,21 @@ You can find all the corresponding dates of each step in the release issue above
 - [ ] All the tasks in this issue have been reviewed by the release owner.
 - [ ] Create, update, triage and label all features and issues targeted for this release with v1.1.1.
 
+### What should I do if my plugin isn't making any changes?
+- [ ] If including changes in this release, increment the version on 1.1 branch to `1.1.1`, otherwise stay on `1.1.0`.
+
 ### CI/CD
 
-- [ ] If including changes in this release, increment plugin version on 1.1 branch to `1.1.1.0`, otherwise stay on `1.1.0.0`.
 - [ ] All code changes for 1.1.1 are complete.
 - [ ] Ensure working and passing CI.
 
 ### Pre-Release
 
 - [ ] Merge any changes to 1.1 you need for the patch
-- [ ] Complete integration and sanity tests, and update results in the comment, contact corresponding assigner in meta issue above if needed.
-- [ ] Fix bugs that you find during the integration test, wait for a new build and test again.
-- [ ] All intermittent test failures have issues filed
+- [ ] Complete integration and sanity tests, and update results in the comment, [example](https://github.com/opensearch-project/opensearch-build/issues/1118).
+- [ ] Find/fix bugs using latest tarball and docker image provided in meta issue.
+- [ ] Completed release candidate testing build #TBD.
+- [ ] All intermittent test failures have issues filed.
 
 ### Release
 
@@ -50,4 +52,4 @@ You can find all the corresponding dates of each step in the release issue above
 
 - [ ] Create [a release tag](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging).
 - [ ] Suggest improvements to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md).
-- [ ] Conduct a postmortem, and publish its results.
+- [ ] Conduct a retrospect, and publish its results.
