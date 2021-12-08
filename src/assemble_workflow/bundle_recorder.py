@@ -16,7 +16,6 @@ class BundleRecorder:
     def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
         self.output_dir = output_dir
         self.build_id = build.id
-        self.build_filename = build.filename
         self.bundle_location = bundle_location
         self.version = build.version
         self.package_name = self.__get_package_name(build)
