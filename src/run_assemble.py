@@ -11,6 +11,7 @@ import os
 import sys
 
 from assemble_workflow.assemble_args import AssembleArgs
+from assemble_workflow.bundle_locations import BundleLocations
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
@@ -31,7 +32,12 @@ def main() -> int:
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
-    bundle_recorder = BundleRecorder(build, output_dir, artifacts_dir, args.base_url)
+    bundle_recorder = BundleRecorder(
+        build,
+        output_dir,
+        artifacts_dir,
+        BundleLocations.from_path(args.base_url, os.getcwd(), build.filename)
+    )
 
     with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:
         bundle.install_min()
@@ -39,9 +45,11 @@ def main() -> int:
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar
+        logging.info(f"tar copy bundle.min_dist.archive_path is {bundle.min_dist.archive_path}")
         bundle_recorder.write_manifest(bundle.min_dist.archive_path)
         bundle.package(output_dir)
 
+        logging.info(f"write manifest second time {output_dir}")
         bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")
