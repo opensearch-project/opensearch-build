@@ -53,8 +53,8 @@ components:
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
     checks:
         - manifest:component
-#  - name: functionalTestDashboards
-#    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-#    ref: "main"
-#    checks:
-#        - manifest:component
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: "main"
+    checks:
+        - manifest:component
