@@ -21,8 +21,12 @@ class TestInputManifests(unittest.TestCase):
         self.assertIsNotNone(manifest)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.version, "1.1.0")
+        self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")
 
     def test_latest(self) -> None:
         manifest = self.manifests.latest
         self.assertIsNotNone(manifest)
         self.assertEqual(manifest.build.version, max(self.manifests.keys()))
+        self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")

@@ -141,7 +141,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
 
     class Build:
         def __init__(self, data: Any):
-            self.name = data["name"]
+            self.name: str = data["name"]
             self.version = data["version"]
             self.platform = data.get("platform", None)
             self.architecture = data.get("architecture", None)
@@ -157,6 +157,10 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                 "architecture": self.architecture,
                 "snapshot": self.snapshot,
             }
+
+        @property
+        def filename(self) -> str:
+            return self.name.lower().replace(" ", "-")
 
 
 class InputComponents(Components['InputComponent']):
