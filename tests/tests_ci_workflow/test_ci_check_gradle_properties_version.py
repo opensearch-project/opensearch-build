@@ -20,7 +20,7 @@ class TestCiCheckGradlePropertiesVersion(unittest.TestCase):
             return CiCheckGradlePropertiesVersion(
                 component=component or MagicMock(),
                 git_repo=MagicMock(),
-                target=CiTarget(version="1.1.0", snapshot=snapshot),
+                target=CiTarget(version="1.1.0", name="opensearch", snapshot=snapshot),
             )
 
     def test_has_version(self):
