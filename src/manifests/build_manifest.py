@@ -115,6 +115,10 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
                 "id": self.id
             }
 
+        @property
+        def filename(self) -> str:
+            return self.name.lower().replace(" ", "-")
+
 
 class BuildComponents(Components['BuildComponent']):
     @classmethod

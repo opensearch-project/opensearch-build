@@ -23,13 +23,13 @@ class BuildOutputDirTests(unittest.TestCase):
 
         BuildOutputDir("OpenSearch", makedirs=True)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             mock_cwd,
             "builds",
             "opensearch"
         )
 
-        mock_os.makedirs.called_once_with(mock_dir, exist_ok=True)
+        mock_os.makedirs.assert_called_once_with(mock_dir, exist_ok=True)
 
     @patch("paths.output_dir.os")
     def test_opensearch_dashboards(self, mock_os):
@@ -42,13 +42,13 @@ class BuildOutputDirTests(unittest.TestCase):
 
         BuildOutputDir("OpenSearch Dashboards", makedirs=True)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             mock_cwd,
             "builds",
             "opensearch-dashboards"
         )
 
-        mock_os.makedirs.called_once_with(mock_dir, exist_ok=True)
+        mock_os.makedirs.assert_called_once_with(mock_dir, exist_ok=True)
 
     @patch("paths.output_dir.os")
     def test_with_cwd(self, mock_os):
@@ -57,7 +57,7 @@ class BuildOutputDirTests(unittest.TestCase):
 
         BuildOutputDir("OpenSearch", cwd="test_cwd", makedirs=False)
 
-        mock_os.path.join.called_once_with(
+        mock_os.path.join.assert_called_once_with(
             "test_cwd",
             "builds",
             "opensearch"

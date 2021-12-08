@@ -9,4 +9,4 @@ from paths.output_dir import OutputDir
 
 class BuildOutputDir(OutputDir):
     def __init__(cls, name, cwd=None, makedirs=True):
-        super().__init__("builds", name, cwd, makedirs)
+        super().__init__("builds", name.lower().replace(" ", "-"), cwd, makedirs)
