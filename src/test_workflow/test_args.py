@@ -26,7 +26,7 @@ class TestArgs:
     def __init__(self):
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("test_manifest_path", type=str, help="Specify a test manifest path.")
-        parser.add_argument('-p', '--paths', nargs='*', action=ParseKwargs, help="Specify paths for OpenSearch and OpenSearch Dashboards.")
+        parser.add_argument("-p", "--paths", nargs='*', action=ParseKwargs, help="Specify paths for OpenSearch and OpenSearch Dashboards.")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, help="Test a specific component instead of the entire distribution.")
         parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
