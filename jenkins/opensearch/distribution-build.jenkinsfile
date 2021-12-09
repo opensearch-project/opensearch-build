@@ -44,8 +44,12 @@ pipeline {
                             buildManifest(
                                 snapshot: true
                             )
-                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('test -d $WORKSPACE/builds/opensearch/maven && $WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                            if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
+                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                                }
+                            } else {
+                                echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
                         }
                     }
