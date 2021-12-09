@@ -3,8 +3,9 @@ void call(Map args = [:]) {
     buildManifest(args)
 
     echo "Archiving into zip: builds/**, ${args.manifest}"
-
-    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Built ${STAGE_NAME}.") 
-
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.manifest))
+    zip(
+        zipFile: "archived-builds.zip",
+        archive: true,
+        glob: 'builds/**'
+    )
 }
