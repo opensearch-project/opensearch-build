@@ -10,15 +10,15 @@ from assemble_workflow.dist import Dist, DistTar, DistZip
 
 
 class TestDist(unittest.TestCase):
-    def test_from_path_tar_gz(self):
+    def test_from_path_tar_gz(self) -> None:
         dist = Dist.from_path("opensearch", "filename.tar.gz")
         self.assertIs(type(dist), DistTar)
 
-    def test_from_path_zip(self):
+    def test_from_path_zip(self) -> None:
         dist = Dist.from_path("opensearch", "filename.zip")
         self.assertIs(type(dist), DistZip)
 
-    def test_from_path_invalid(self):
+    def test_from_path_invalid(self) -> None:
         with self.assertRaises(ValueError) as ctx:
             Dist.from_path("opensearch", "filename.invalid")
         self.assertEqual(str(ctx.exception), 'Invalid min "dist" extension in input artifacts: .invalid (filename.invalid).')

@@ -15,26 +15,26 @@ from manifests.build_manifest import BuildManifest
 
 
 class TestBundles(unittest.TestCase):
-    def test_bundle_opensearch(self):
+    def test_bundle_opensearch(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), False)
         self.assertIs(type(bundle), BundleOpenSearch)
 
-    def test_bundle_opensearch_dashboards(self):
+    def test_bundle_opensearch_dashboards(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), False)
         self.assertIs(type(bundle), BundleOpenSearchDashboards)
         self.assertFalse(bundle.tmp_dir.keep)
 
-    def test_bundle_keep(self):
+    def test_bundle_keep(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), True)
         self.assertTrue(bundle.tmp_dir.keep)
 
-    def test_bundle_opensearch_invalid(self):
+    def test_bundle_opensearch_invalid(self) -> None:
         manifest = BuildManifest(
             {
                 "schema-version": "1.2",

@@ -16,6 +16,7 @@ FROM amazonlinux:2 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
+ARG TEMP_DIR=/tmp/opensearch-dashboards
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 
 # Update packages
@@ -26,13 +27,15 @@ RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 # Create an opensearch-dashboards user, group, and directory
 RUN groupadd -g $GID opensearch-dashboards && \
     adduser -u $UID -g $GID -d $OPENSEARCH_DASHBOARDS_HOME opensearch-dashboards && \
-    mkdir /tmp/opensearch-dashboards
+    mkdir $TEMP_DIR
 
 # Prepare working directory
-COPY opensearch-dashboards-*.tgz /tmp/opensearch-dashboards/
-RUN tar -xzpf /tmp/opensearch-dashboards/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && rm -rf /tmp/opensearch-dashboards
-COPY opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/
-COPY opensearch_dashboards.yml opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/
+COPY * $TEMP_DIR
+RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
+    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/ && \
+    cp -v $TEMP_DIR/opensearch_dashboards.yml $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
+    ls -l $OPENSEARCH_DASHBOARDS_HOME && \
+    rm -rf $TEMP_DIR
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images

@@ -1,0 +1,60 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+            name: 'RELEASE_BRANCH',
+            description: 'Branch name to release',
+            trim: true
+        )
+    }
+    stages {
+        stage('ruby-build-sign-upload') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    if (params.RELEASE_BRANCH == '') {
+                        currentBuild.result = 'ABORTED'
+                        error('RELEASE_BRANCH parameter is not set')
+                    }
+                    git url: 'https://github.com/opensearch-project/opensearch-ruby.git', branch: "$RELEASE_BRANCH"
+                    withCredentials([string(credentialsId: 'opensearchproject-rubygems-private-key', variable: 'RUBYGEMS_PRIVATE_KEY')]) {
+                        writeFile file: 'gem-private_key.pem', text: RUBYGEMS_PRIVATE_KEY
+                    }
+                    sh'''
+                        gem cert --add certs/opensearch-rubygems.pem
+                        bash release/build.sh
+                        for f in $(find dist/ -name '*.gem');\\
+                            do gem install $f;\\
+                            val=$(echo $f | grep -Eo '[0-9]+\\.[0-9]+\\.[0-9]+');\\
+                            gem uninstall $f -v $val;\\
+                            gem install $f -P HighSecurity;\\
+                        done
+                    '''
+                    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/branch_${RELEASE_BRANCH}/${BUILD_NUMBER}/builds")
+                    }
+                }
+            }
+            post {
+                always {
+                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                        script {
+                            postCleanup()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

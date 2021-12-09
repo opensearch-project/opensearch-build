@@ -8,11 +8,11 @@ build:
   version: 1.2.0
 components:
 - name: OpenSearch-Dashboards
-  ref: "1.2"
+  ref: tags/1.2.0
   repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
 - name: alertingDashboards
   repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-  ref: "1.2"
+  ref: tags/1.2.0.0
 - name: functionalTestDashboards
   repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
   ref: "main"
@@ -25,22 +25,22 @@ components:
 - name: queryWorkbenchDashboards
   repository: https://github.com/opensearch-project/sql.git
   working_directory: workbench
-  ref: "1.2"
+  ref: "1.2.0.0"
 - name: reportsDashboards
   repository: https://github.com/opensearch-project/dashboards-reports.git
   working_directory: dashboards-reports
-  ref: "1.2"
+  ref: "1.2.0.0"
   platforms:
     - linux
 - name: observabilityDashboards
   repository: https://github.com/opensearch-project/trace-analytics.git
   working_directory: dashboards-observability
-  ref: "1.2"
+  ref: "1.2.0.0"
 - name: ganttChartDashboards
   repository: https://github.com/opensearch-project/dashboards-visualizations.git
   working_directory: gantt-chart
-  ref: "1.2"
+  ref: "1.2.0.0"
 - name: anomalyDetectionDashboards
   repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-  ref: "1.2"
+  ref: tags/1.2.0.0
 schema-version: '1.0'

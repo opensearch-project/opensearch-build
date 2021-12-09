@@ -35,10 +35,24 @@ class InputManifest {
     class Build implements Serializable {
         String name
         String version
+        String platform
+        String architecture
 
         Build(Map data) {
             this.name = data.name
             this.version = data.version
+            this.platform = data.platform
+            this.architecture = data.architecture
+        }
+
+        String getFilename() {
+            return this.name.toLowerCase().replaceAll(' ', '-')
+        }
+
+        String getFilenameWithExtension(String platform = null, String architecture = null) {
+            String resolvedPlatform = platform ?: this.platform
+            String resolvedArchitecture = architecture ?: this.architecture
+            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${resolvedPlatform == 'windows' ? 'zip' : 'tar.gz'}"
         }
     }
 
@@ -47,19 +61,30 @@ class InputManifest {
 
     InputManifest(Map data) {
         this.build = new InputManifest.Build(data.build)
-        this.ci = new InputManifest.Ci(data.ci)
+        this.ci = data.ci ? new InputManifest.Ci(data.ci) : null
     }
-   
-    public String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform, String architecture) {
+
+    String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
         return [
             publicArtifactUrl,
             jobName,
             this.build.version,
             buildNumber,
-            platform,
-            architecture,
+            platform ?: this.build.platform,
+            architecture ?: this.build.architecture,
             'dist',
-            "${this.build.name.toLowerCase().replaceAll(' ', '-')}-${this.build.version}-${platform}-${architecture}.${platform == 'windows' ? 'zip' : 'tar.gz'}"
+            this.build.getFilename(),
+            this.build.getFilenameWithExtension(platform, architecture)
+        ].join("/")
+    }
+
+    String getSHAsRoot(String jobName, String platform = null, String architecture = null) {
+        return [
+            jobName,
+            this.build.version,
+            'shas',
+            platform ?: this.build.platform,
+            architecture ?: this.build.architecture
         ].join("/")
     }
 }

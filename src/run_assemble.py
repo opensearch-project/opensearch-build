@@ -14,10 +14,11 @@ from assemble_workflow.assemble_args import AssembleArgs
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundles import Bundles
 from manifests.build_manifest import BuildManifest
+from paths.assemble_output_dir import AssembleOutputDir
 from system import console
 
 
-def main():
+def main() -> int:
     args = AssembleArgs()
 
     console.configure(level=args.logging_level)
@@ -25,8 +26,8 @@ def main():
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
-    output_dir = os.path.join(os.getcwd(), "dist")
-    os.makedirs(output_dir, exist_ok=True)
+
+    output_dir = AssembleOutputDir(build.filename).dir
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
@@ -44,6 +45,7 @@ def main():
         bundle_recorder.write_manifest(output_dir)
 
     logging.info("Done.")
+    return 0
 
 
 if __name__ == "__main__":

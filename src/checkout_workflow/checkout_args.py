@@ -6,12 +6,13 @@
 
 import argparse
 import logging
+from typing import IO
 
 
 class CheckoutArgs:
-    manifest: str
+    manifest: IO
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(

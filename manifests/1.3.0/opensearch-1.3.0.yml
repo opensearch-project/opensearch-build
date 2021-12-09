@@ -13,3 +13,27 @@ components:
   checks:
     - gradle:publish
     - gradle:properties:version
+- name: common-utils
+  repository: https://github.com/opensearch-project/common-utils.git
+  ref: 'main'
+  checks:
+    - gradle:publish
+    - gradle:properties:version
+- name: job-scheduler
+  repository: https://github.com/opensearch-project/job-scheduler.git
+  ref: 'main'
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version
+- name: alerting
+  repository: https://github.com/opensearch-project/alerting.git
+  ref: 'main'
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version: alerting
+- name: index-management
+  repository: https://github.com/opensearch-project/index-management.git
+  ref: 'main'
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version

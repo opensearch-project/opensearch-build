@@ -21,6 +21,10 @@ class BuildManifest implements Serializable {
             this.platform = data.platform
             this.architecture = data.architecture
         }
+
+        String getFilename() {
+            return this.name.toLowerCase().replaceAll(' ', '-')
+        }
     }
 
     Build build

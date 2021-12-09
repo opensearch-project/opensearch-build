@@ -11,11 +11,11 @@ import zipfile
 
 
 class ZipFile(zipfile.ZipFile):
-    def _extract_member(self, member, targetpath, pwd):
+    def _extract_member(self, member: zipfile.ZipInfo, targetpath: str, pwd: str) -> str:
         if not isinstance(member, zipfile.ZipInfo):
             member = self.getinfo(member)
 
-        targetpath = super()._extract_member(member, targetpath, pwd)
+        targetpath = super()._extract_member(member, targetpath, pwd)  # type: ignore[misc]
 
         attr = member.external_attr >> 16
         if attr != 0:

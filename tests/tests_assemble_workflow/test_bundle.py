@@ -6,19 +6,19 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from assemble_workflow.bundle import Bundle
-from manifests.build_manifest import BuildManifest
+from manifests.build_manifest import BuildComponent, BuildManifest
 
 
 class TestBundle(unittest.TestCase):
     class DummyBundle(Bundle):
-        def install_plugin(self, plugin):
+        def install_plugin(self, plugin: BuildComponent) -> None:
             pass
 
     @patch("assemble_workflow.dist.Dist.extract")
-    def test_bundle(self, *mocks):
+    def test_bundle(self, dist_extract: Mock) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = self.DummyBundle(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -28,8 +28,9 @@ class TestBundle(unittest.TestCase):
         self.assertIsNotNone(bundle.bundle_recorder)
         self.assertEqual(bundle.installed_plugins, [])
         self.assertTrue(bundle.min_dist.path.endswith("opensearch-min-1.1.0-linux-x64.tar.gz"))
+        dist_extract.assert_called_once()
 
-    def test_bundle_does_not_exist_raises_error(self):
+    def test_bundle_does_not_exist_raises_error(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data/opensearch-build-linux-1.1.0.yml")
         with self.assertRaises(FileNotFoundError) as ctx:
             self.DummyBundle(

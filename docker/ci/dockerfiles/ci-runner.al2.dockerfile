@@ -19,8 +19,14 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl python git tar net-tools procps-ng python3 python3-pip python3-devel && \
+    yum install -y adoptopenjdk-14-hotspot which curl python git gnupg2 tar net-tools procps-ng python3 python3-pip python3-devel && \
     ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
+
+# Create user group
+RUN groupadd -g 1000 opensearch && \
+    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    mkdir -p /usr/share/opensearch && \
+    chown -R 1000:1000 /usr/share/opensearch
 
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -29,7 +35,7 @@ RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GC
 RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
 
 # Add k-NN Library dependencies
-RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
+RUN amazon-linux-extras install epel -y && yum install openblas-static lapack -y
 RUN pip3 install cmake==3.21.3
 
 # Add Yarn dependencies
@@ -86,16 +92,31 @@ RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
-
 # Set JAVA_HOME and JAVA14_HOME
 # AdoptOpenJDK apparently does not add JAVA_HOME after installation
 RUN echo "export JAVA_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh && \
     echo "export JAVA14_HOME=`dirname $(dirname $(readlink -f $(which javac)))`" >> /etc/profile.d/java_home.sh
+
+# Install PKG builder dependencies with rvm
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
+    curl -sSL https://get.rvm.io | bash -s stable
+
+# Switch shell for rvm related commands
+SHELL ["/bin/bash", "-lc"]
+CMD ["/bin/bash", "-l"]
+
+# Install ruby / rpm / fpm related dependencies
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && \
+    yum install -y rpm-build && \
+    gem install fpm -v 1.13.0
+
+ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
+ENV RVM_HOME=/usr/local/rvm/bin
+ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV GEM_PATH=$GEM_HOME
+ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
+
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
@@ -118,7 +139,11 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@^6.9.1 && npm cache verify
+RUN npm install -g cypress@5.6.0 && npm cache verify
+# replace default binary with arm64 specific binary from ci.opensearch.org
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist

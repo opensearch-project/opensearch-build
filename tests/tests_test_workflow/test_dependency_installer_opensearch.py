@@ -4,14 +4,14 @@ from unittest.mock import MagicMock, patch
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
-from test_workflow.dependency_installer import DependencyInstaller
+from test_workflow.dependency_installer_opensearch import DependencyInstallerOpenSearch
 
 
-class DependencyInstallerTests(unittest.TestCase):
+class DependencyInstallerOpenSearchTests(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
-    BUILD_MANIFEST = os.path.join(DATA, "local", "builds", "manifest.yml")
-    DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "manifest.yml")
-    DIST_MANIFEST_REMOTE = os.path.join(DATA, "remote", "dist", "manifest.yml")
+    BUILD_MANIFEST = os.path.join(DATA, "local", "builds", "opensearch", "manifest.yml")
+    DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "opensearch", "manifest.yml")
+    DIST_MANIFEST_REMOTE = os.path.join(DATA, "remote", "dist", "opensearch", "manifest.yml")
 
     @patch("concurrent.futures.ThreadPoolExecutor", return_value=MagicMock())
     @patch("os.makedirs")
@@ -24,7 +24,7 @@ class DependencyInstallerTests(unittest.TestCase):
                 return callable(source, dest)
             return None
         mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
@@ -58,7 +58,7 @@ class DependencyInstallerTests(unittest.TestCase):
                 return callable(source, dest)
             return None
         mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
@@ -84,7 +84,7 @@ class DependencyInstallerTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_build_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
@@ -94,7 +94,7 @@ class DependencyInstallerTests(unittest.TestCase):
         mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
         mock_request.assert_not_called()
         mock_copyfile.assert_called_once_with(
-            os.path.join(self.DATA, "builds", "plugins", "opensearch-job-scheduler-1.1.0.0.zip"),
+            os.path.join(self.DATA, "builds", "opensearch", "plugins", "opensearch-job-scheduler-1.1.0.0.zip"),
             os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
         )
 
@@ -102,7 +102,7 @@ class DependencyInstallerTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_build_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
-        dependency_installer = DependencyInstaller(
+        dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y", BuildManifest.from_path(self.BUILD_MANIFEST), BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
         )
         dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
@@ -110,6 +110,6 @@ class DependencyInstallerTests(unittest.TestCase):
         mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
         mock_copyfile.assert_not_called()
         mock_request.assert_called_once_with(
-            "https://ci.opensearch.org/x/y/builds/plugins/opensearch-job-scheduler-1.1.0.0.zip",
+            "https://ci.opensearch.org/x/y/builds/opensearch/plugins/opensearch-job-scheduler-1.1.0.0.zip",
             os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
         )

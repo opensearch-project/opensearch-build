@@ -1,4 +1,4 @@
-lib = library(identifier: "jenkins@current", retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none

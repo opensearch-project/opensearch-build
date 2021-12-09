@@ -4,7 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from manifests.component_manifest import ComponentManifest
+from typing import Any
+
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -36,7 +38,7 @@ components:
 """
 
 
-class BuildManifest_1_1(ComponentManifest):
+class BuildManifest_1_1(ComponentManifest['BuildManifest_1_1', 'BuildComponents_1_1']):
     SCHEMA = {
         "build": {
             "required": True,
@@ -74,11 +76,12 @@ class BuildManifest_1_1(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any):
         super().__init__(data)
         self.build = self.Build(data["build"])
+        self.components = BuildComponents_1_1(data.get("components", []))  # type: ignore[assignment]
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.1",
             "build": self.build.__to_dict__(),
@@ -86,13 +89,13 @@ class BuildManifest_1_1(ComponentManifest):
         }
 
     class Build:
-        def __init__(self, data):
-            self.name = data["name"]
+        def __init__(self, data: Any):
+            self.name: str = data["name"]
             self.version = data["version"]
             self.architecture = data["architecture"]
             self.id = data["id"]
 
-        def __to_dict__(self):
+        def __to_dict__(self) -> dict:
             return {
                 "name": self.name,
                 "version": self.version,
@@ -100,25 +103,32 @@ class BuildManifest_1_1(ComponentManifest):
                 "id": self.id
             }
 
-    class Components(ComponentManifest.Components):
-        def __create__(self, data):
-            return BuildManifest_1_1.Component(data)
+        @property
+        def filename(self) -> str:
+            return self.name.lower().replace(" ", "-")
 
-    class Component(ComponentManifest.Component):
-        def __init__(self, data):
-            super().__init__(data)
-            self.repository = data["repository"]
-            self.ref = data["ref"]
-            self.commit_id = data["commit_id"]
-            self.artifacts = data.get("artifacts", {})
-            self.version = data["version"]
 
-        def __to_dict__(self):
-            return {
-                "name": self.name,
-                "repository": self.repository,
-                "ref": self.ref,
-                "commit_id": self.commit_id,
-                "artifacts": self.artifacts,
-                "version": self.version,
-            }
+class BuildComponents_1_1(Components['BuildComponent_1_1']):
+    @classmethod
+    def __create__(self, data: Any) -> 'BuildComponent_1_1':
+        return BuildComponent_1_1(data)
+
+
+class BuildComponent_1_1(Component):
+    def __init__(self, data: Any):
+        super().__init__(data)
+        self.repository = data["repository"]
+        self.ref = data["ref"]
+        self.commit_id = data["commit_id"]
+        self.artifacts = data.get("artifacts", {})
+        self.version = data["version"]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "repository": self.repository,
+            "ref": self.ref,
+            "commit_id": self.commit_id,
+            "artifacts": self.artifacts,
+            "version": self.version,
+        }
