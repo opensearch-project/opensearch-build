@@ -69,9 +69,5 @@ class TestBuilderFromDist(unittest.TestCase):
         mock_builder.build_manifest = BuildManifest.from_path(manifest_path)
         mock_builder.export_artifacts(build_recorder)
         build_recorder.record_component.assert_called_with("common-utils", mock_manifest_git_repository.return_value)
-        # creates a directory to allow publish-snapshot.sh to run, but does not download
-        mock_makedirs.assert_called_with(
-            os.path.realpath(os.path.join("builds", "maven")),
-            exist_ok=True
-        )
+        mock_makedirs.assert_called_with("builds", exist_ok=True)
         mock_urllib.assert_not_called()
