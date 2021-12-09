@@ -1,6 +1,6 @@
 - [Jenkinsfiles](#jenkinsfiles)
   - [Check for Build](#check-for-build)
-    - [Add jobs to run periodically](#add-jobs-to-run-periodically)
+    - [Add Periodically Run Jobs](#add-periodically-run-jobs)
   - [Jenkins Shared Library](#jenkins-shared-library)
 
 ## Jenkinsfiles
@@ -17,7 +17,7 @@ To ensure that builds are trigger as changes come in the [Check-for-build](check
 
 For concurrent builds the Check-for-build job has an internal locks to prevent interruption for the same manifest and target job name, any requests that match an existing lock will be skipped to prevent a backup of queued build jobs.
 
-#### Add jobs to run periodically 
+#### Add Periodically Run Jobs 
 
 * Set cron to `H/10 * * * *` for jobs that are in active development.
 * Set cron to `H 1 * * *` for all other jobs.

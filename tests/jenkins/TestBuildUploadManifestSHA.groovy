@@ -11,7 +11,7 @@ package jenkins.tests
 import org.junit.*
 import java.util.*
 
-class TestBuildAndUploadManifestSHA extends BuildPipelineTest {
+class TestBuildUploadManifestSHA extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
@@ -41,7 +41,7 @@ class TestBuildAndUploadManifestSHA extends BuildPipelineTest {
         })
 
         super.testPipeline(
-            "tests/jenkins/jobs/BuildAndUploadManifestSHA_Jenkinsfile"
+            "tests/jenkins/jobs/BuildUploadManifestSHA_Jenkinsfile"
         )
     }
 }
