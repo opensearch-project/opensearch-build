@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 from typing import Any, Dict
 
@@ -57,6 +58,8 @@ class BundleRecorder:
             component.commit_id,
             self.__get_component_location(rel_path),
         )
+
+        logging.info(f"record_component has {self.__get_component_location(rel_path)}")
 
     def get_manifest(self) -> BundleManifest:
         return self.bundle_manifest.to_manifest()
