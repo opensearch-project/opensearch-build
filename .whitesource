@@ -1,6 +1,6 @@
 {
   "scanSettings": {
-    "configMode": "AUTO",
+    "configMode": "LOCAL",
     "configExternalURL": "",
     "projectToken": "",
     "baseBranches": []
@@ -10,6 +10,6 @@
     "displayMode": "diff"
   },
   "issueSettings": {
-    "minSeverityLevel": "LOW"
+    "minSeverityLevel": "MEDIUM"
   }
 }
