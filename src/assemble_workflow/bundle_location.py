@@ -8,16 +8,16 @@ import abc
 
 
 class BundleLocation(abc.ABC):
-    def __init__(self, path, filename) -> None:
+    def __init__(self, path: str, filename: str) -> None:
         self.path = path
         self.filename = filename
 
     @abc.abstractmethod
-    def join(self, *args):
+    def join(self, *args: str) -> str:
         pass
 
-    def get_build_location(self, target_name):
+    def get_build_location(self, target_name: str) -> str:
         return self.join("builds", self.filename, target_name)
 
-    def get_bundle_location(self, target_name):
+    def get_bundle_location(self, target_name: str) -> str:
         return self.join("dist", self.filename, target_name)

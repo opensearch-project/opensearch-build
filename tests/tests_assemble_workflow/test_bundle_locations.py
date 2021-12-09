@@ -13,7 +13,7 @@ from assemble_workflow.bundle_url_location import BundleUrlLocation
 
 class TestBundleLocations(unittest.TestCase):
 
-    def test(self):
+    def test(self) -> None:
         self.assertIsInstance(
             BundleLocations.from_path("", "file", "opensearch"),
             BundleFileLocation
