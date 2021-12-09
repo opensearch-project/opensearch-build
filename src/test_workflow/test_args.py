@@ -33,7 +33,6 @@ class TestArgs:
         parser.add_argument(
             "-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level"
         )
-
         args = parser.parse_args()
         self.test_run_id = args.test_run_id or uuid.uuid4().hex
         self.component = args.component
@@ -43,8 +42,6 @@ class TestArgs:
 
         self.opensearch_path = self._validate_paths(args.paths, "opensearch")
         self.opensearch_dashboards_path = self._validate_paths(args.paths, "opensearch-dashboards")
-
-        print(args)
 
     def _validate_paths(self, args_paths: dict, name: str) -> str:
         path = "."
