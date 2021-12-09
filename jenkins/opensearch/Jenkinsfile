@@ -52,7 +52,9 @@ pipeline {
                                 snapshot: true
                             )
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                                sh '''
+                                    if [ -d "WORKSPACE/builds/opensearch/maven" ]; then $WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven; fi
+                                '''
                             }
                         }
                     }
