@@ -11,8 +11,7 @@ void call(Map args = [:]) {
         selector: specific("${BUILD_NUMBER}")
     )
 
-    unzip(zipFile: "builds.zip")
-    unzip(zipFile: "manifest.zip")
+    unzip(zipFile: "archived-builds.zip")
 
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
 

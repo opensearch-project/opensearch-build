@@ -4,7 +4,7 @@ pipeline {
         stage('upload manifest SHA') {
             steps {
                 script {
-                    buildAndUploadManifestSHA(
+                    buildUploadManifestSHA(
                         manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
                         platform: 'linux',
                         architecture: 'x64'

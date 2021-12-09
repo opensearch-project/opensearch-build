@@ -32,7 +32,7 @@ A cross platform build divides the all-in-one build into steps that can be execu
 See [buildDockerImage](./buildDockerImage.groovy).
 
 ### Avoiding Rebuilding
-A [SHA of the manifest lock](../src/build_workflow/README.md#avoiding-rebuilds) can be generated using [getManifestSHA](./getManifestSHA.groovy), and checking it against previously published artifacts.  If a build is consider released, its manifest SHA can be uploaded with [buildAndUploadManifestSHA](./buildAndUploadManifestSHA.groovy).
+A [SHA of the manifest lock](../src/build_workflow/README.md#avoiding-rebuilds) can be generated using [getManifestSHA](./getManifestSHA.groovy), and checking it against previously published artifacts.  If a build is consider released, its manifest SHA can be uploaded with [buildUploadManifestSHA](./buildUploadManifestSHA.groovy).
 
 
 ### Publishing Notifications
