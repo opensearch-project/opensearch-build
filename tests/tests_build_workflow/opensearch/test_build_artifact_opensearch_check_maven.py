@@ -54,6 +54,6 @@ class TestBuildArtifactOpenSearchCheckMaven(unittest.TestCase):
                 mock.check("valid.jar")
 
         self.assertEqual(
-            "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of [None, '1.1.0.0', '1.0.0.0', '1.1.0', '1.0.0'], but was '1.2.3.4'.",
+            "Artifact valid.jar is invalid. Expected to have Implementation-Version=any of [None, '1.1.0.0', '1.0.0.0', '1.0.0.0-SNAPSHOT', '1.1.0', '1.0.0', '1.0.0-SNAPSHOT'], but was '1.2.3.4'.",
             str(context.exception),
         )
