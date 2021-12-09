@@ -60,10 +60,10 @@ pipeline {
                 script {
                     basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
                     sh "wget ${basePath}/builds/opensearch/manifest.yml"
-                    sh "./test.sh ${JOB_NAME} ${basePath} --test-run-id ${env.BUILD_NUMBER}"
+                    sh "./test.sh ${JOB_NAME} manifests/${opensearch_version}/opensearch-${opensearch_version}-test.yml ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
-            post() {
+            post {
                 always {
                     script {
                         uploadTestResults(
@@ -76,7 +76,7 @@ pipeline {
             }
         }
     }
-    post() {
+    post {
         success {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script {

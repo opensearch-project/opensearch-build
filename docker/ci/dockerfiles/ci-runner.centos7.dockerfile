@@ -113,9 +113,15 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.3.3 && rvm --default use 2.3.3 && \
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && \
     yum install -y rpm-build && \
     gem install fpm -v 1.13.0
+
+ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
+ENV RVM_HOME=/usr/local/rvm/bin
+ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV GEM_PATH=$GEM_HOME
+ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
 # Install Python37 binary
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
@@ -157,7 +163,11 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@^6.9.1 && npm cache verify
+RUN npm install -g cypress@5.6.0 && npm cache verify
+# replace default binary with arm64 specific binary from ci.opensearch.org
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist

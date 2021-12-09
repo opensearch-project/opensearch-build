@@ -24,7 +24,7 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
         return TestCiCheckGradleDependencies.DummyDependencies(
             component=MagicMock(),
             git_repo=git_repo,
-            target=CiTarget(version="1.1.0", snapshot=snapshot),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=snapshot),
             args=gradle_project,
         )
 

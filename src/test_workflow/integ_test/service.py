@@ -6,9 +6,7 @@
 
 import abc
 import logging
-import os
 import time
-from os import walk
 
 import requests
 
@@ -45,9 +43,7 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
-        log_files = walk(os.path.join(self.install_dir, "logs"))
-
-        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, log_files)
+        return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, self.log_files)
 
     def endpoint(self):
         return "localhost"
@@ -66,10 +62,19 @@ class Service(abc.ABC):
         """
         pass
 
+    @abc.abstractmethod
+    def check_service_response_text(self):
+        """
+        Check response text from the service endpoint.
+        """
+        pass
+
     def service_alive(self):
         response = self.get_service_response()
         logging.info(f"{response.status_code}: {response.text}")
-        if response.status_code == 200 and (('"status":"green"' in response.text) or ('"status":"yellow"' in response.text)):
+
+        # TODO: https://github.com/opensearch-project/opensearch-build/issues/1217
+        if response.status_code == 200 and self.check_service_response_text(response.text):
             logging.info("Service is available")
             return True
         else:
@@ -93,6 +98,11 @@ class Service(abc.ABC):
 
             time.sleep(10)
         raise ClusterCreationException("Cluster is not available after 10 attempts")
+
+    @property
+    @abc.abstractmethod
+    def log_files(self):
+        pass
 
 
 class ServiceTerminationResult:

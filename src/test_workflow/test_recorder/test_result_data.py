@@ -5,7 +5,6 @@
 # compatible open source license.
 
 from dataclasses import dataclass
-from typing import Iterator
 
 
 @dataclass
@@ -26,4 +25,4 @@ class TestResultData:
     exit_code: int
     stdout: str
     stderr: str
-    log_files: Iterator[str]
+    log_files: dict

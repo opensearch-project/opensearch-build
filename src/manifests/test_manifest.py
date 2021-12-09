@@ -4,10 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from manifests.component_manifest import ComponentManifest
+from typing import Any
+
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class TestManifest(ComponentManifest):
+class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     """
     TestManifest contains the test support matrix for any component.
 
@@ -60,38 +62,42 @@ class TestManifest(ComponentManifest):
         },
     }
 
-    def __init__(self, data):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.name = str(data["name"])
+        self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
-    def __to_dict__(self):
+    def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "name": self.name,
             "components": self.components.__to_dict__()
         }
 
-    class Components(ComponentManifest.Components):
-        @classmethod
-        def __create__(self, data):
-            return TestManifest.Component(data)
 
-    class Component(ComponentManifest.Component):
-        def __init__(self, data):
-            super().__init__(data)
-            self.working_directory = data.get("working-directory", None)
-            self.integ_test = data.get("integ-test", None)
-            self.bwc_test = data.get("bwc-test", None)
+class TestComponents(Components['TestComponent']):
+    @classmethod
+    def __create__(self, data: Any) -> 'TestComponent':
+        return TestComponent(data)
 
-        def __to_dict__(self):
-            return {
-                "name": self.name,
-                "working-directory": self.working_directory,
-                "integ-test": self.integ_test,
-                "bwc-test": self.bwc_test
-            }
+
+class TestComponent(Component):
+    def __init__(self, data: Any) -> None:
+        super().__init__(data)
+        self.working_directory = data.get("working-directory", None)
+        self.integ_test = data.get("integ-test", None)
+        self.bwc_test = data.get("bwc-test", None)
+        self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
+
+    def __to_dict__(self) -> dict:
+        return {
+            "name": self.name,
+            "working-directory": self.working_directory,
+            "integ-test": self.integ_test,
+            "bwc-test": self.bwc_test
+        }
 
 
 TestManifest.VERSIONS = {"1.0": TestManifest}
 
-TestManifest.__test__ = False  # type:ignore
+TestManifest.__test__ = False  # type: ignore[attr-defined]

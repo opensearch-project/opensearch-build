@@ -1,9 +1,10 @@
-lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     agent none
     triggers {
         parameterizedCron '''
+            H */2 * * * %INPUT_MANIFEST=1.1.1/opensearch-dashboards-1.1.1.yml
             H */2 * * * %INPUT_MANIFEST=1.3.0/opensearch-dashboards-1.3.0.yml
             H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-dashboards-2.0.0.yml
         '''
@@ -16,6 +17,7 @@ pipeline {
         )
     }
     options {
+        copyArtifactPermission('bundle-build-dashboards')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     stages {
@@ -46,12 +48,10 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildManifest(
-                                platform: "linux",
-                                architecture: "x64"
+                            buildAssembleUpload(
+                                platform: 'linux',
+                                architecture: 'x64'
                             )
-                            assembleManifest()
-                            uploadArtifacts()
                         }
                     }
                     post {
@@ -63,7 +63,7 @@ pipeline {
                 stage('build-linux-arm64') {
                     agent none
                     stages {
-                        stage('build (linux-arm64)') {
+                        stage('build-archive-linux-arm64') {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -74,12 +74,10 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    buildManifest(
+                                    buildArchive(
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
-                                    zip zipFile: 'buildArtifacts.zip', archive: false, dir: 'builds'
-                                    archiveArtifacts artifacts: 'buildArtifacts.zip', fingerprint: true
                                 }
                             }
                             post {
@@ -88,7 +86,7 @@ pipeline {
                                 }
                             }
                         }
-                        stage('assemble-linux-arm64') {
+                        stage('assemble-archive-linux-arm64') {
                             agent {
                                 docker {
                                     label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -99,10 +97,10 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    copyArtifacts filter: 'buildArtifacts.zip', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-                                    unzip zipFile: 'buildArtifacts.zip', dir: './builds'
-                                    assembleManifest()
-                                    uploadArtifacts(upload: true)
+                                    archiveAssembleUpload(
+                                        platform: 'linux',
+                                        architecture: 'arm64'
+                                    )
                                 }
                             }
                             post {
@@ -125,25 +123,25 @@ pipeline {
             }
         }
     }
-    post() {
+    post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([
                         'build-linux-x64',
-                        'assemble-linux-arm64'
+                        'build-archive-linux-arm64',
+                        'assemble-archive-linux-arm64'
                     ])
+
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Successful Build',
                         extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true, 
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }
@@ -153,13 +151,11 @@ pipeline {
                     publishNotification(
                         icon: ':warning:',
                         message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }

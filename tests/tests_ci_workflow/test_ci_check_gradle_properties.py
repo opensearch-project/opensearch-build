@@ -23,7 +23,7 @@ class TestCiCheckGradleProperties(unittest.TestCase):
         TestCiCheckGradleProperties.DummyProperties(
             component=MagicMock(),
             git_repo=git_repo,
-            target=CiTarget(version="1.1.0", snapshot=False),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=False),
         )
 
         git_repo.output.assert_called_once_with("./gradlew properties -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
@@ -35,7 +35,7 @@ class TestCiCheckGradleProperties(unittest.TestCase):
         TestCiCheckGradleProperties.DummyProperties(
             component=MagicMock(),
             git_repo=git_repo,
-            target=CiTarget(version="1.1.0", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
         )
 
         git_repo.output.assert_called_once_with("./gradlew properties -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")

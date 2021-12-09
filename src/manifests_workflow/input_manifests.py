@@ -91,18 +91,30 @@ class InputManifests(Manifests):
             for release_version in sorted(main_versions.keys() - known_versions):
                 self.write_manifest(release_version, main_versions[release_version])
 
-    def write_manifest(self, version, components=[]):
-        logging.info(f"Creating new version: {version}")
+    def create_manifest(self, version, components=[]):
         data = {
             "schema-version": "1.0",
-            "build": {"name": self.name, "version": version},
+            "build": {
+                "name": self.name,
+                "version": version
+            },
+            "ci": {
+                "image": {
+                    "name": "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
+                }
+            },
             "components": [],
         }
+
         for component in components:
             logging.info(f" Adding {component.name}")
             data["components"].append(component.to_dict())
 
-        manifest = InputManifest(data)
+        return InputManifest(data)
+
+    def write_manifest(self, version, components=[]):
+        logging.info(f"Creating new version: {version}")
+        manifest = self.create_manifest(version, components)
         manifest_dir = os.path.join(self.manifests_path(), version)
         os.makedirs(manifest_dir, exist_ok=True)
         manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}.yml")

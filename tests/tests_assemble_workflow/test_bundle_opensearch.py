@@ -7,7 +7,7 @@
 import os
 import unittest
 import zipfile
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from assemble_workflow.bundle_opensearch import BundleOpenSearch
 from manifests.build_manifest import BuildManifest
@@ -16,7 +16,7 @@ from system.os import current_platform
 
 
 class TestBundleOpenSearch(unittest.TestCase):
-    def test_bundle_opensearch(self):
+    def test_bundle_opensearch(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -28,7 +28,7 @@ class TestBundleOpenSearch(unittest.TestCase):
         self.assertTrue(bundle.min_dist.path.endswith("opensearch-min-1.1.0-linux-x64.tar.gz"))
         self.assertIsNotNone(bundle.min_dist.archive_path)
 
-    def test_bundle_install_min(self):
+    def test_bundle_install_min(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -61,7 +61,7 @@ class TestBundleOpenSearch(unittest.TestCase):
             )
 
     @patch.object(BundleOpenSearch, "install_plugin")
-    def test_bundle_install_plugins(self, mocks_bundle):
+    def test_bundle_install_plugins(self, bundle_install_plugin: Mock) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         bundle = BundleOpenSearch(
             BuildManifest.from_path(manifest_path),
@@ -70,10 +70,10 @@ class TestBundleOpenSearch(unittest.TestCase):
         )
 
         bundle.install_plugins()
-        self.assertEqual(mocks_bundle.call_count, 12)
+        self.assertEqual(bundle_install_plugin.call_count, 12)
 
     @patch("os.path.isfile", return_value=True)
-    def test_bundle_install_plugin(self, *mocks):
+    def test_bundle_install_plugin(self, path_isfile: Mock) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
@@ -115,8 +115,9 @@ class TestBundleOpenSearch(unittest.TestCase):
                         ),
                     ]
                 )
+        self.assertEqual(path_isfile.call_count, 2)
 
-    def test_bundle_package_tar(self):
+    def test_bundle_package_tar(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(
@@ -134,7 +135,7 @@ class TestBundleOpenSearch(unittest.TestCase):
                 mock_tarfile_add.assert_called_with(os.path.join(bundle.tmp_dir.name, "bundle"), arcname="bundle")
                 self.assertEqual(mock_copyfile.call_count, 1)
 
-    def test_bundle_package_zip(self):
+    def test_bundle_package_zip(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(

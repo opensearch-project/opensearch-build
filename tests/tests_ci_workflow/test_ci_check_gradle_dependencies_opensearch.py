@@ -22,7 +22,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             return CiCheckGradleDependenciesOpenSearchVersion(
                 component=MagicMock(),
                 git_repo=MagicMock(),
-                target=CiTarget(version="1.1.0", snapshot=True),
+                target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
                 args=None,
             )
 
@@ -52,7 +52,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
             args=None,
         )
         check.git_repo.output.assert_called_once_with(
@@ -63,7 +63,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
             args="plugin",
         )
         check.git_repo.output.assert_called_once_with(

@@ -137,7 +137,7 @@ echo "Plugins installed are:"
 ls -tlr $WORKING_DIR/plugins
 
 # Setup Performance Analyzer Agent
-cp -r $WORKING_DIR/plugins/opensearch-performance-analyzer/performance-analyzer-rca $WORKING_DIR/
+mv $WORKING_DIR/plugins/opensearch-performance-analyzer/performance-analyzer-rca $WORKING_DIR/
 chmod -R 755 $WORKING_DIR/performance-analyzer-rca
 mv $WORKING_DIR/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $WORKING_DIR/bin
 rm -rf $WORKING_DIR/bin/opensearch-performance-analyzer
