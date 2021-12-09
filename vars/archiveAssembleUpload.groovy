@@ -1,7 +1,8 @@
 void call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+    String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
 
-    echo "Assembling ${args.manifest}"
+    echo "Assembling ${manifest}"
 
     copyArtifacts(
         filter: "*.zip",
@@ -13,7 +14,7 @@ void call(Map args = [:]) {
     unzip(zipFile: "builds.zip")
     unzip(zipFile: "manifest.zip")
 
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.manifest))
+    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
 
     assembleUpload(
         args + [
