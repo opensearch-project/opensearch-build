@@ -26,10 +26,10 @@ The following options are available.
 | name                 | description                                                             |
 |----------------------|-------------------------------------------------------------------------|
 | test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
-| test-manifest-path   | Specify a test manifest path                                            |
-| path                 | Location of manifest(s).                                                |
-| --test-run-id        | Unique identifier for a test run                                        |
-| --component          | Test a specific component in a manifest                                 |
+| test-manifest-path   | Specify a test manifest path.                                           |
+| --paths              | Location of manifest(s).                                                |
+| --test-run-id        | Unique identifier for a test run.                                       |
+| --component          | Test a specific component in a manifest.                                |
 | --keep               | Do not delete the temporary working directory on both success or error. |
 | -v, --verbose        | Show more verbose output.                                               |
 
@@ -56,7 +56,14 @@ For example, build locally and run integration tests.
 Or run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+```
+
+To run OpenSearch Dashboards integration tests.
+
+```bash
+./test.sh integ-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64
+opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
 ```
 
 ### Backwards Compatibility Tests
