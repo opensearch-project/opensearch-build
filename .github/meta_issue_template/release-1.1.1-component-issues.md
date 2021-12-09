@@ -14,6 +14,9 @@ Steps have completion dates for coordinating efforts between the components of a
 
 You can find all the corresponding dates of each step in the release issue above.
 
+### What should I do if my plugin isn't making any changes?
+If including changes in this release, increment the version on 1.1 branch to `1.1.1` for Min/Core, and `1.1.1.0` for components. Otherwise, keep the version number unchanged for both.
+
 </p>
 </details>
 
@@ -26,8 +29,6 @@ You can find all the corresponding dates of each step in the release issue above
 - [ ] All the tasks in this issue have been reviewed by the release owner.
 - [ ] Create, update, triage and label all features and issues targeted for this release with v1.1.1.
 
-### What should I do if my plugin isn't making any changes?
-- [ ] If including changes in this release, increment the version on 1.1 branch to `1.1.1.0`, otherwise stay on `1.1.0.0`.
 
 ### CI/CD
 
@@ -36,7 +37,7 @@ You can find all the corresponding dates of each step in the release issue above
 
 ### Pre-Release
 
-- [ ] Merge any changes to 1.1 you need for the patch
+- [ ] Confirm that all changes for 1.1.1 have been merged.
 - [ ] Complete integration and sanity tests, and update results in the comment, [example](https://github.com/opensearch-project/opensearch-build/issues/1118).
 - [ ] Find/fix bugs using latest tarball and docker image provided in meta issue.
 - [ ] Completed release candidate testing build #TBD.
