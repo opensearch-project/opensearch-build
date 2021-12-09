@@ -85,6 +85,10 @@ esac
 
 CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"
 
+MINOR_VERSION=${VERSION%.*}
+git clone --branch $MINOR_VERSION --single-branch https://github.com/opensearch-project/OpenSearch-Dashboards ../../OpenSearch-Dashboards || echo repo exists
+mkdir -p ../../OpenSearch-Dashboards/plugins
+
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'reportsDashboards/dashboards-reports'
 PLUGIN_FOLDER=$(basename "$PWD")
@@ -96,13 +100,16 @@ echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build)
+ZIP_NAME=`ls ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build | grep .zip`
+unzip ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$ZIP_NAME -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/
 # Reporting uses headless chromium to generate reports, which needs to be included in its artifact
 echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
 mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
-curl -sLO "$CHROMIUM_URL"
+curl -SL "$CHROMIUM_URL" -o $CHROMIUM_TARGET
 echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION.zip"
 unzip "$CHROMIUM_TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION.zip opensearch-dashboards)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
+
