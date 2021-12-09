@@ -62,7 +62,7 @@ Or run integration tests against an existing build.
 To run OpenSearch Dashboards integ tests
 
 ```bash
-./test.sh integ-test manifests/1.3.0/opensearch-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64
+./test.sh integ-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
 ```
 
