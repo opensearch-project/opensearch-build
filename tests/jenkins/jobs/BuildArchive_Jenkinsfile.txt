@@ -10,3 +10,7 @@
                      buildManifest.sh(./build.sh tests/jenkins/data/opensearch-1.3.0.yml -p linux -a x64)
                   buildArchive.echo(Archiving into zip: builds/**, tests/jenkins/data/opensearch-1.3.0.yml)
                   buildArchive.zip({zipFile=archived-builds.zip, archive=true, glob=builds/**})
+                  Messages.asBoolean()
+                  Messages.add(stage, Built stage.)
+                     buildArchive.writeFile({file=messages/stage.msg, text=Built stage.})
+                     buildArchive.stash({includes=messages/*, name=messages-stage})
