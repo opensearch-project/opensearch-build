@@ -96,4 +96,4 @@ else
 fi
 ```
 
-The [Jenkins workflows](../../jenkins) in this repository use this mechanism to avoid rebuilding all of OpenSearch and OpenSearch Dashboards unnecessarily. 
+The [Jenkins workflows](../../jenkins) in this repository can use this mechanism to avoid rebuilding all of OpenSearch and OpenSearch Dashboards unnecessarily. 

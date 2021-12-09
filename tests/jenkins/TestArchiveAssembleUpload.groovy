@@ -41,21 +41,6 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
 
     @Test
     public void testSHAExists() {
-        binding.env."BUILD_SHA_linux_x64_SHA" = 'sha1'
-        binding.env."BUILD_SHA_linux_x64_LOCK" = 'tests/jenkins/data/opensearch-1.3.0.yml.lock'
-        binding.env."BUILD_SHA_linux_x64_PATH" = 'assemble-upload-build/1.1.0/shas/linux/x64/sha1.yml'
-
-        super.testPipeline(
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_sha"
-        )
-    }
-
-    @Test
-    public void testSHADoesNotExist() {
-        super.testPipeline(
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile_no_sha"
-        )
+        super.testPipeline("tests/jenkins/jobs/ArchiveAssembleUpload_Jenkinsfile")
     }
 }

@@ -30,10 +30,6 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
 
-        helper.registerAllowedMethod("sha1", [String], { filename ->
-            return 'sha1'
-        })
-
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
@@ -44,31 +40,11 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
     }
 
     @Test
-    public void testIncremental() {
+    public void testJenkinsfile() {
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return true
         })
 
-        super.testPipeline(
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_incremental"
-        )
-    }
-
-    @Test
-    public void testNotIncremental() {
-        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
-        Path target = Path.of("builds/opensearch/manifest.yml");
-        Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
-
-        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
-            return false
-        })
-
-        super.testPipeline(
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile",
-            "tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile_not_incremental"
-        )
+        super.testPipeline("tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile")
     }
 }
