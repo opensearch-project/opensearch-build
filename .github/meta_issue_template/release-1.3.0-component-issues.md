@@ -14,7 +14,7 @@ Steps have completion dates for coordinating efforts between the components of a
 
 You can find all the corresponding dates of each step in the release issue above.
 
-### What should I do if my plugin isn't making any changes?
+## What should I do if my plugin isn't making any changes?
 If including changes in this release, increment the version on 1.1 branch to `1.1.1` for Min/Core, and `1.1.1.0` for components. Otherwise, keep the version number unchanged for both.
 
 </p>
