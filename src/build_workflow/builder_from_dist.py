@@ -36,15 +36,17 @@ class BuilderFromDist(Builder):
         logging.info(f"Distribution was built from {component_manifest.repository}#{component_manifest.ref}")
         build_recorder.record_component(self.component.name, BuilderFromDist.ManifestGitRepository(component_manifest))
         for artifact_type in component_manifest.artifacts:
-            artifact_path = os.path.join(self.output_path, artifact_type)
+            artifact_path = os.path.realpath(os.path.join(self.output_path, artifact_type))
             logging.info(f"Downloading into {artifact_path} ...")
-            for artifact in component_manifest.artifacts[artifact_type]:
-                artifact_url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}/{artifact}"
-                artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
-                os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
-                logging.info(f"Downloading {artifact_url} into {artifact_dest}")
-                urllib.request.urlretrieve(artifact_url, artifact_dest)
-                build_recorder.record_artifact(self.component.name, artifact_type, artifact, artifact_dest)
+            os.makedirs(artifact_path, exist_ok=True)
+            if artifact_type not in ["maven"]:  # avoid re-publishing maven artifacts, see https://github.com/opensearch-project/opensearch-build/issues/1279
+                for artifact in component_manifest.artifacts[artifact_type]:
+                    artifact_url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}/{artifact}"
+                    artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
+                    os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
+                    logging.info(f"Downloading {artifact_url} into {artifact_dest}")
+                    urllib.request.urlretrieve(artifact_url, artifact_dest)
+                    build_recorder.record_artifact(self.component.name, artifact_type, artifact, artifact_dest)
 
     def __download_build_manifest(self):
         url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}/manifest.yml"

@@ -26,7 +26,7 @@ class TestBuildArtifactOpenSearchCheckPlugin(unittest.TestCase):
                     version="1.1.0",
                     patches=["1.0.0"],
                     architecture="x64",
-                    snapshot=snapshot,
+                    snapshot=snapshot
                 )
             )
 
@@ -35,8 +35,7 @@ class TestBuildArtifactOpenSearchCheckPlugin(unittest.TestCase):
             with self.__mock() as mock:
                 mock.check("invalid.zip")
         self.assertEqual(
-            "Artifact invalid.zip is invalid. Expected filename to include one of ['1.1.0.0-SNAPSHOT', '1.0.0.0-SNAPSHOT'].",
-            str(context.exception),
+            "Artifact invalid.zip is invalid. Expected filename to include one of ['1.1.0.0-SNAPSHOT', '1.0.0.0', '1.0.0.0-SNAPSHOT'].", str(context.exception)
         )
 
     def test_check_plugin_zip_version(self):
@@ -44,8 +43,7 @@ class TestBuildArtifactOpenSearchCheckPlugin(unittest.TestCase):
             with self.__mock(snapshot=False) as mock:
                 mock.check("invalid.zip")
         self.assertEqual(
-            "Artifact invalid.zip is invalid. Expected filename to include one of ['1.1.0.0', '1.0.0.0'].",
-            str(context.exception),
+            "Artifact invalid.zip is invalid. Expected filename to include one of ['1.1.0.0', '1.0.0.0', '1.0.0.0-SNAPSHOT'].", str(context.exception)
         )
 
     def test_check_plugin_version_properties_missing(self, *mocks):
@@ -53,7 +51,7 @@ class TestBuildArtifactOpenSearchCheckPlugin(unittest.TestCase):
             with self.__mock("") as mock:
                 mock.check("valid-1.1.0.0-SNAPSHOT.zip")
         self.assertEqual(
-            "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version=any of ['1.1.0.0-SNAPSHOT', '1.0.0.0-SNAPSHOT'], but none was found.",
+            "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version=any of ['1.1.0.0-SNAPSHOT', '1.0.0.0', '1.0.0.0-SNAPSHOT'], but none was found.",
             str(context.exception),
         )
 
@@ -62,7 +60,7 @@ class TestBuildArtifactOpenSearchCheckPlugin(unittest.TestCase):
             with self.__mock("version=1.2.3.4") as mock:
                 mock.check("valid-1.1.0.0-SNAPSHOT.zip")
             self.assertEqual(
-                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version=any of ['1.1.0.0-SNAPSHOT', '1.0.0.0-SNAPSHOT'], but was '1.2.3.4'.",
+                "Artifact valid-1.1.0.0-SNAPSHOT.zip is invalid. Expected to have version=any of ['1.1.0-SNAPSHOT', '1.0.0.0', '1.0.0.0-SNAPSHOT'], but was '1.2.3.4'.",
                 str(context.exception),
             )
 

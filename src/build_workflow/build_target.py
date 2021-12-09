@@ -28,7 +28,7 @@ class BuildTarget:
         name=None,
         snapshot=True,
         build_id=None,
-        output_dir="artifacts",
+        output_dir="artifacts"
     ):
         self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
@@ -45,7 +45,11 @@ class BuildTarget:
 
     @property
     def compatible_opensearch_versions(self):
-        return list(map(lambda version: version + "-SNAPSHOT" if self.snapshot else version, self.compatible_versions))
+        return (
+            [self.version + "-SNAPSHOT" if self.snapshot else self.version]
+            + self.patches
+            + list(map(lambda version: version + "-SNAPSHOT", self.patches))
+        )
 
     @property
     def component_version(self):
@@ -54,8 +58,11 @@ class BuildTarget:
 
     @property
     def compatible_component_versions(self):
-        # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
-        return list(map(lambda version: version + ".0-SNAPSHOT" if self.snapshot else f"{version}.0", self.compatible_versions))
+        return (
+            [self.version + ".0-SNAPSHOT" if self.snapshot else f"{self.version}.0"]
+            + list(map(lambda version: version + ".0", self.patches))
+            + list(map(lambda version: version + ".0-SNAPSHOT", self.patches))
+        )
 
     @property
     def compatible_versions(self):

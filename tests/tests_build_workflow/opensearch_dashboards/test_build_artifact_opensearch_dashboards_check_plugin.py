@@ -71,7 +71,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             with self.__mock(snapshot=False) as mock:
                 mock.check("pluginName-1.1.0.zip")
         self.assertEqual(
-            "Artifact pluginName-1.1.0.zip is invalid. Expected to have version=any of ['1.1.0.0', '1.0.0.0'], but none was found.",
+            "Artifact pluginName-1.1.0.zip is invalid. Expected to have version=any of ['1.1.0.0', '1.0.0.0', '1.0.0.0-SNAPSHOT'], but none was found.",
             str(context.exception),
         )
 

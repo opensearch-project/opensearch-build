@@ -18,7 +18,7 @@ def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        bundle_manifest = BundleManifest.from_urlpath(args.path)
+        bundle_manifest = BundleManifest.from_urlpath(args.opensearch_path)
         BwcTestSuite(bundle_manifest, work_dir.name, args.component, args.keep).execute()
 
 
