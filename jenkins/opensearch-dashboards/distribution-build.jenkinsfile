@@ -10,7 +10,7 @@ pipeline {
         )
     }
     options {
-        copyArtifactPermission('bundle-build-dashboards')
+        copyArtifactPermission("${JOB_NAME}")
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     stages {
