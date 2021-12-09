@@ -16,7 +16,7 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", snapshot=False),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=False),
         )
         check.check()
         check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
@@ -25,7 +25,7 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
         )
         check.check()
         check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")

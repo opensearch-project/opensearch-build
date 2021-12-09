@@ -6,9 +6,10 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
 
 from ci_workflow.ci_check_manifest_component import CiCheckManifestComponent
+from ci_workflow.ci_target import CiTarget
 from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputComponentFromDist
 
@@ -22,14 +23,14 @@ class TestCiCheckManifestComponent(unittest.TestCase):
         check = CiCheckManifestComponent(InputComponentFromDist({
             "name": "common-utils",
             "dist": "url"
-        }), MagicMock())
+        }), CiTarget(version="1.1.0", name="opensearch", snapshot=True))
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
 
         check.check()
         mock_manifest.from_url.assert_has_calls([
-            call("url/x64/manifest.yml"),
-            call("url/arm64/manifest.yml")
+            call("url/linux/x64/builds/opensearch/manifest.yml"),
+            call("url/linux/arm64/builds/opensearch/manifest.yml"),
         ])
 
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
@@ -37,11 +38,11 @@ class TestCiCheckManifestComponent(unittest.TestCase):
         check = CiCheckManifestComponent(InputComponentFromDist({
             "name": "does-not-exist",
             "dist": "url"
-        }), MagicMock())
+        }), CiTarget(version="1.1.0", name="opensearch", snapshot=True))
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
 
         with self.assertRaises(CiCheckManifestComponent.MissingComponentError) as ctx:
             check.check()
 
-        self.assertEqual(str(ctx.exception), "Missing does-not-exist in url/x64/manifest.yml.")
+        self.assertEqual(str(ctx.exception), "Missing does-not-exist in url/linux/x64/builds/opensearch/manifest.yml.")
