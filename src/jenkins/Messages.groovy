@@ -27,7 +27,11 @@ class Messages implements Serializable {
         // see https://ryan.himmelwright.net/post/jenkins-parallel-stashing/
         
         for (stage in stages) {
-            this.steps.unstash(name: "messages-${stage}")
+            try {
+                this.steps.unstash(name: "messages-${stage}")
+            } catch(Exception e) {
+                echo "No messages found for ${stage}"
+            }
         }
 
         def files = this.steps.findFiles(excludes: '', glob: 'messages/*')

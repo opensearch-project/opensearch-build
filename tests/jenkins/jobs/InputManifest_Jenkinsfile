@@ -21,7 +21,7 @@ pipeline {
                     echo inputManifest.build.getFilename()
                     echo inputManifest.build.getFilenameWithExtension('windows', 'x86')
                     echo inputManifest.getPublicDistUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1', 'linux', 'x86')
-                    echo inputManifest.getSHAsRoot('bundle-build', 'linux', 'x86')
+                    echo inputManifest.getSHAsRoot('bundle-build')
                 }
             }
         }
@@ -36,7 +36,7 @@ pipeline {
                     echo inputManifest.build.getFilename()
                     echo inputManifest.build.getFilenameWithExtension('windows', 'x86')
                     echo inputManifest.getPublicDistUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1', 'linux', 'x86')
-                    echo inputManifest.getSHAsRoot('bundle-build', 'linux', 'x86')
+                    echo inputManifest.getSHAsRoot('bundle-build')
                 }
             }
         }

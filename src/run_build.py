@@ -17,7 +17,6 @@ from build_workflow.builders import Builders
 from manifests.input_manifest import InputManifest
 from paths.build_output_dir import BuildOutputDir
 from system import console
-from system.os import current_architecture, current_platform
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -27,11 +26,7 @@ def main():
     manifest = InputManifest.from_file(args.manifest)
 
     if args.ref_manifest:
-        manifest = manifest.stable(
-            architecture=args.architecture or current_architecture(),
-            platform=args.platform or current_platform(),
-            snapshot=args.snapshot if args.snapshot is not None else False
-        )
+        manifest = manifest.stable()
         if os.path.exists(args.ref_manifest):
             if manifest == InputManifest.from_path(args.ref_manifest):
                 logging.info(f"No changes since {args.ref_manifest}")

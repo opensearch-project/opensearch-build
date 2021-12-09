@@ -3,6 +3,7 @@
   - [All-In-One Build](#all-in-one-build)
   - [Cross-Platform Build](#cross-platform-build)
   - [Building Docker Images](#building-docker-images)
+  - [Avoiding Rebuilding](#avoiding-rebuilding)
   - [Publishing Notifications](#publishing-notifications)
   - [Cleanup](#cleanup)
   - [Uploading Test Results](#uploading-test-results)
@@ -17,7 +18,7 @@ OpenSearch and OpenSearch Dashboards manifests contain a `ci` section with the d
 
 ### All-In-One Build
 
-A typical all-in-one build consists of [build](./buildManifest.groovy), [assemble](./assembleManifest.groovy) and [upload](./uploadArtifacts.groovy), implemented in [buildAssembleUpload.groovy](./buildAssembleUpload.groovy). This function also avoids rebuilds by generating a [SHA of the manifest lock](../README#avoiding-rebuilds) using [getManifestSHA](./getManifestSHA.groovy), and checking it against previously published artifacts.  
+A typical all-in-one build consists of [build](./buildManifest.groovy), [assemble](./assembleManifest.groovy) and [upload](./uploadArtifacts.groovy), implemented in [buildAssembleUpload.groovy](./buildAssembleUpload.groovy).
 
 ### Cross-Platform Build
 
@@ -29,6 +30,10 @@ A cross platform build divides the all-in-one build into steps that can be execu
 ### Building Docker Images
 
 See [buildDockerImage](./buildDockerImage.groovy).
+
+### Avoiding Rebuilding
+A [SHA of the manifest lock](../src/build_workflow/README.md#avoiding-rebuilds) can be generated using [getManifestSHA](./getManifestSHA.groovy), and checking it against previously published artifacts.  If a build is consider released, its manifest SHA can be uploaded with [buildUploadManifestSHA](./buildUploadManifestSHA.groovy).
+
 
 ### Publishing Notifications
 
