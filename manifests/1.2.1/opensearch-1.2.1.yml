@@ -7,8 +7,6 @@ ci:
 build:
   name: OpenSearch
   version: 1.2.1
-  patches: 
-    - 1.2.0
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
@@ -16,55 +14,3 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
-  - name: common-utils
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: job-scheduler
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: alerting
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: asynchronous-search
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: index-management
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: k-NN
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: security
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: performance-analyzer
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: anomaly-detection
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: cross-cluster-replication
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: sql
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: dashboards-reports
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
-  - name: opensearch-observability
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
-    checks:
-      - manifest:component
