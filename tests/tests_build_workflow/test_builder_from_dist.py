@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_dist import BuilderFromDist
@@ -31,9 +31,12 @@ class TestBuilderFromDist(unittest.TestCase):
         self.assertEqual(self.__mock_builder("common-utils").component.name, "common-utils")
 
     @patch("build_workflow.builder_from_dist.BuildManifest")
-    def test_checkout(self, mock_manifest):
+    def test_checkout(self, mock_manifest: Mock):
         self.__mock_builder("common-utils").checkout("dir")
-        mock_manifest.from_url.assert_called_with("url/windows/x64/builds/opensearch/manifest.yml")
+        mock_manifest.from_url.assert_has_calls([
+            call('url/windows/x64/builds/opensearch/manifest.yml'),
+            call('url/windows/x64/builds/manifest.yml'),
+        ])
 
     def test_build(self):
         build_recorder = MagicMock()
@@ -42,7 +45,7 @@ class TestBuilderFromDist(unittest.TestCase):
     @patch("os.makedirs")
     @patch("urllib.request.urlretrieve")
     @patch("build_workflow.builder_from_dist.BuilderFromDist.ManifestGitRepository")
-    def test_export_artifacts(self, mock_manifest_git_repository, mock_urllib, mock_makedirs, *mocks):
+    def test_export_artifacts(self, mock_manifest_git_repository, mock_urllib: Mock, mock_makedirs, *mocks):
         build_recorder = MagicMock()
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
         mock_builder = self.__mock_builder("notifications")
@@ -54,10 +57,14 @@ class TestBuilderFromDist(unittest.TestCase):
             os.path.realpath(os.path.join("builds", "plugins")),
             exist_ok=True
         )
-        mock_urllib.assert_called_with(
-            "url/windows/x64/builds/opensearch/plugins/opensearch-notifications-1.1.0.0.zip",
-            os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip")),
-        )
+        mock_urllib.assert_has_calls([
+            call(
+                'url/windows/x64/builds/opensearch/plugins/opensearch-notifications-1.1.0.0.zip',
+                os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip"))),
+            call(
+                'url/windows/x64/builds/plugins/opensearch-notifications-1.1.0.0.zip',
+                os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip")))
+        ])
 
     @patch("os.makedirs")
     @patch("urllib.request.urlretrieve")

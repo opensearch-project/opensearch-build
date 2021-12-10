@@ -7,6 +7,7 @@
 import logging
 import os
 import urllib.request
+from typing import List
 
 from build_workflow.builder import Builder
 from manifests.build_manifest import BuildManifest
@@ -40,14 +41,28 @@ class BuilderFromDist(Builder):
             logging.info(f"Downloading into {artifact_path} ...")
             if artifact_type not in ["maven"]:  # avoid re-publishing maven artifacts, see https://github.com/opensearch-project/opensearch-build/issues/1279
                 for artifact in component_manifest.artifacts[artifact_type]:
-                    artifact_url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}/{artifact}"
-                    artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
-                    os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
-                    logging.info(f"Downloading {artifact_url} into {artifact_dest}")
-                    urllib.request.urlretrieve(artifact_url, artifact_dest)
-                    build_recorder.record_artifact(self.component.name, artifact_type, artifact, artifact_dest)
+                    for url_pattern in self.__get_url_patterns():
+                        artifact_url = f"{url_pattern}/{artifact}"
+                        try:
+                            artifact_dest = os.path.realpath(os.path.join(self.output_path, artifact))
+                            os.makedirs(os.path.dirname(artifact_dest), exist_ok=True)
+                            logging.info(f"Downloading {artifact_url} into {artifact_dest}")
+                            urllib.request.urlretrieve(artifact_url, artifact_dest)
+                            build_recorder.record_artifact(self.component.name, artifact_type, artifact, artifact_dest)
+                        except:
+                            pass
 
     def __download_build_manifest(self):
-        url = f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}/manifest.yml"
-        logging.info(f"Downloading {url} ...")
-        self.build_manifest = BuildManifest.from_url(url)
+        for url_pattern in self.__get_url_patterns():
+            manifest_url = f"{url_pattern}/manifest.yml"
+            try:
+                logging.info(f"Downloading {manifest_url} ...")
+                self.build_manifest = BuildManifest.from_url(manifest_url)
+            except:
+                pass
+
+    def __get_url_patterns(self) -> List[str]:
+        return [
+            f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds/{self.target_name}",
+            f"{self.component.dist}/{self.target.platform}/{self.target.architecture}/builds"
+        ]
