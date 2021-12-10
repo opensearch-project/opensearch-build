@@ -60,7 +60,9 @@ class TestBuilderFromDist(unittest.TestCase):
             exist_ok=True
         )
         mock_urllib.assert_has_calls([
-            call('dist_url/plugins/opensearch-notifications-1.1.0.0.zip', '/local/home/petern/git/opensearch-build/builds/plugins/opensearch-notifications-1.1.0.0.zip')
+            call(
+                'dist_url/plugins/opensearch-notifications-1.1.0.0.zip',
+                os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip")))
         ])
 
     @patch("os.makedirs")
