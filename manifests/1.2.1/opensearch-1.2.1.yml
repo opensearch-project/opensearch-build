@@ -9,9 +9,11 @@ build:
   version: 1.2.1
 components:
   - name: OpenSearch
-    dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: "1.2"
     checks:
-      - manifest:component
+      - gradle:publish
+      - gradle:properties:version
   - name: common-utils
     dist: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/1127
     checks:
