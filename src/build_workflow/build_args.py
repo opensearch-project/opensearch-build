@@ -48,12 +48,6 @@ class BuildArgs:
             action="store_true",
             help="Do not delete the working temporary directory.",
         )
-        parser.add_argument(
-            "--patch",
-            dest="patch",
-            action="store_true",
-            help="Create a patch manifest.",
-        )
         parser.add_argument("-p", "--platform", type=str, choices=self.SUPPORTED_PLATFORMS, help="Platform to build.")
         parser.add_argument("-a", "--architecture", type=str, choices=self.SUPPORTED_ARCHITECTURES, help="Architecture to build.")
         parser.add_argument(
@@ -73,7 +67,6 @@ class BuildArgs:
         self.snapshot = args.snapshot
         self.component = args.component
         self.keep = args.keep
-        self.patch = args.patch
         self.platform = args.platform
         self.architecture = args.architecture
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")

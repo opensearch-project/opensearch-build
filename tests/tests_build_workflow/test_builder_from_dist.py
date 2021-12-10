@@ -30,13 +30,14 @@ class TestBuilderFromDist(unittest.TestCase):
     def test_builder(self):
         self.assertEqual(self.__mock_builder("common-utils").component.name, "common-utils")
 
+    @patch("manifests.distribution.find_build_root")
     @patch("build_workflow.builder_from_dist.BuildManifest")
-    def test_checkout(self, mock_manifest: Mock):
-        self.__mock_builder("common-utils").checkout("dir")
-        mock_manifest.from_url.assert_has_calls([
-            call('url/windows/x64/builds/opensearch/manifest.yml'),
-            call('url/windows/x64/builds/manifest.yml'),
-        ])
+    def test_checkout(self, mock_manifest: Mock, find_build_root: Mock):
+        builder = self.__mock_builder("common-utils")
+        builder.checkout("dir")
+        mock_manifest.from_url.assert_called_once()
+        find_build_root.assert_called_once()
+        self.assertIsNotNone(builder.distribution_url)
 
     def test_build(self):
         build_recorder = MagicMock()
@@ -49,6 +50,7 @@ class TestBuilderFromDist(unittest.TestCase):
         build_recorder = MagicMock()
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
         mock_builder = self.__mock_builder("notifications")
+        mock_builder.distribution_url = "dist_url"
         mock_builder.build_manifest = BuildManifest.from_path(manifest_path)
         mock_builder.export_artifacts(build_recorder)
         build_recorder.record_component.assert_called_with(
@@ -58,12 +60,7 @@ class TestBuilderFromDist(unittest.TestCase):
             exist_ok=True
         )
         mock_urllib.assert_has_calls([
-            call(
-                'url/windows/x64/builds/opensearch/plugins/opensearch-notifications-1.1.0.0.zip',
-                os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip"))),
-            call(
-                'url/windows/x64/builds/plugins/opensearch-notifications-1.1.0.0.zip',
-                os.path.realpath(os.path.join("builds", "plugins", "opensearch-notifications-1.1.0.0.zip")))
+            call('dist_url/plugins/opensearch-notifications-1.1.0.0.zip', '/local/home/petern/git/opensearch-build/builds/plugins/opensearch-notifications-1.1.0.0.zip')
         ])
 
     @patch("os.makedirs")

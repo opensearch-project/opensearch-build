@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import call, patch
+from unittest.mock import Mock, call, patch
 
 from ci_workflow.ci_check_manifest_component import CiCheckManifestComponent
 from ci_workflow.ci_target import CiTarget
@@ -18,8 +18,10 @@ class TestCiCheckManifestComponent(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUILD_MANIFEST = os.path.join(DATA, "opensearch-1.1.0-x64-build-manifest.yml")
 
+    @patch("manifests.distribution.find_build_root")
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
-    def test_retrieves_manifests(self, mock_manifest):
+    def test_retrieves_manifests(self, mock_manifest: Mock, find_build_root: Mock):
+        find_build_root.return_value = 'url/linux/ARCH/builds/opensearch'
         check = CiCheckManifestComponent(InputComponentFromDist({
             "name": "common-utils",
             "dist": "url"
@@ -29,12 +31,18 @@ class TestCiCheckManifestComponent(unittest.TestCase):
 
         check.check()
         mock_manifest.from_url.assert_has_calls([
-            call("url/linux/x64/builds/opensearch/manifest.yml"),
-            call("url/linux/arm64/builds/opensearch/manifest.yml"),
+            call("url/linux/ARCH/builds/opensearch/manifest.yml"),
+            call("url/linux/ARCH/builds/opensearch/manifest.yml"),
+        ])
+        find_build_root.assert_has_calls([
+            call('url', 'linux', 'x64', 'opensearch'),
+            call('url', 'linux', 'arm64', 'opensearch'),
         ])
 
+    @patch("manifests.distribution.find_build_root")
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
-    def test_missing_component(self, mock_manifest):
+    def test_missing_component(self, mock_manifest: Mock, find_build_root: Mock):
+        find_build_root.return_value = 'url/linux/x64/builds/opensearch'
         check = CiCheckManifestComponent(InputComponentFromDist({
             "name": "does-not-exist",
             "dist": "url"
@@ -46,3 +54,4 @@ class TestCiCheckManifestComponent(unittest.TestCase):
             check.check()
 
         self.assertEqual(str(ctx.exception), "Missing does-not-exist in url/linux/x64/builds/opensearch/manifest.yml.")
+        find_build_root.assert_called()
