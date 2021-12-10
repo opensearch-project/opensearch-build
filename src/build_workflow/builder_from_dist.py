@@ -8,7 +8,7 @@ import logging
 import os
 import urllib.request
 
-import manifests
+import manifests.distribution
 from build_workflow.builder import Builder
 from manifests.build_manifest import BuildManifest
 
