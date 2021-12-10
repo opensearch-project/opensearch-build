@@ -7,6 +7,8 @@ ci:
 build:
   name: OpenSearch
   version: 1.2.1
+  patches: 
+    - 1.2.0
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
