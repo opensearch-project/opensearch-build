@@ -39,13 +39,13 @@ class Bundle(ABC):
         :param artifacts_dir: Dir location where build artifacts can be found locally
         :param bundle_recorder: The bundle recorder that will capture and build a BundleManifest
         """
+        self.build = build_manifest.build
         self.plugins = self.__get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory(keep=keep)
         self.min_dist = self.__get_min_dist(build_manifest.components)
         self.installed_plugins: List[str] = []
-        self.build = build_manifest.build
 
     def install_min(self) -> None:
         install_script = ScriptFinder.find_install_script(self.min_dist.name)
@@ -131,7 +131,8 @@ class Bundle(ABC):
             raise ValueError('Missing min "dist" in input artifacts.')
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
-        min_dist = Dist.from_path(min_bundle.name, min_dist_path)
+        min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
+        min_dist = Dist.from_path(min_bundle.name, min_dist_path, min_path)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")
