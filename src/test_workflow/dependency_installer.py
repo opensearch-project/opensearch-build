@@ -25,24 +25,28 @@ class DependencyInstaller(abc.ABC):
         self.bundle_manifest = bundle_manifest
 
     def download_dist(self, dest):
-        local_path = os.path.join(dest, os.path.basename(self.bundle_manifest.build.location))
+        local_path = os.path.realpath(os.path.join(dest, os.path.basename(self.bundle_manifest.build.location)))
         return self.download_or_copy(self.bundle_manifest.build.location, local_path)
+
+    def __source_dest(self, path, category, dest):
+        source = "/".join([self.root_url, category, self.build_manifest.build.filename, path])
+        dest = os.path.realpath(os.path.join(dest, "/".join(path.split("/")[1:])))
+        return (source, dest)
 
     def download(self, paths, category, dest):
         logging.info(f"Downloading to {dest} ...")
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-            for path in paths:
-                url = "/".join([self.root_url, category, path])
-                # paths are prefixed by category, remove
-                local_path = os.path.join(dest, "/".join(path.split("/")[1:]))
-                executor.submit(self.download_or_copy, url, local_path)
+            for result in executor.map(
+                lambda args: self.download_or_copy(*args),
+                    map(lambda path: self.__source_dest(path, category, dest),
+                        paths)
+            ):
+                logging.debug(f"Written {result}")
 
     def download_or_copy(self, source, dest):
-        dest = os.path.realpath(dest)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if validators.url(source):
             logging.info(f"Downloading {source} into {dest} ...")
-
             urllib.request.urlretrieve(source, dest)
         else:
             logging.info(f"Copying {source} into {dest} ...")

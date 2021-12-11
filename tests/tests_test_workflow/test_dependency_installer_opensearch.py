@@ -1,6 +1,6 @@
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
@@ -18,20 +18,15 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs, mock_threadpool):
-        def submit_and_run(callable, source, dest):
-            # Filter down the actual calls to make analyzing failures easier
-            if 'alerting-notification-1.2.0.0.jar' in source:
-                return callable(source, dest)
-            return None
-        mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
+        mock_threadpool.return_value.__enter__().map.side_effect = lambda f, args: MagicMock(results=list(map(f, args)))
+
         dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_LOCAL)
         )
+
         dependency_installer.install_maven_dependencies()
-        self.assertEqual(mock_threadpool.call_count, 4)
-        self.assertEqual(mock_threadpool().__enter__().submit.call_count, 2375)
 
         mock_makedirs.assert_called_with(
             os.path.realpath(
@@ -42,30 +37,29 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             exist_ok=True
         )
         mock_request.assert_not_called()
-        mock_copyfile.assert_called_with(
-            os.path.join(self.DATA, "builds", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
-            os.path.realpath(os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"))
-        )
+        self.assertEqual(mock_copyfile.call_count, 2375)
+        mock_copyfile.assert_has_calls([
+            call(
+                os.path.join(self.DATA, "builds", "opensearch", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
+                os.path.realpath(os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"))
+            )
+        ])
 
     @patch("concurrent.futures.ThreadPoolExecutor", return_value=MagicMock())
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs, mock_threadpool):
-        def submit_and_run(callable, source, dest):
-            # Filter down the actual calls to make analyzing failures easier
-            if 'alerting-notification-1.2.0.0.jar' in source:
-                return callable(source, dest)
-            return None
-        mock_threadpool.return_value.__enter__().submit.side_effect = submit_and_run
+        mock_threadpool.return_value.__enter__().map.side_effect = lambda f, args: MagicMock(results=list(map(f, args)))
+
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
             BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
         )
+
         dependency_installer.install_maven_dependencies()
-        self.assertEqual(mock_threadpool.call_count, 4)
-        self.assertEqual(mock_threadpool().__enter__().submit.call_count, 2375)
+        self.assertEqual(mock_request.call_count, 2375)
         mock_makedirs.assert_called_with(
             os.path.realpath(
                 os.path.join(
@@ -75,10 +69,12 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             exist_ok=True
         )
         mock_copyfile.assert_not_called()
-        mock_request.assert_called_with(
-            "https://ci.opensearch.org/x/y/builds/maven/org/opensearch/notification/alerting-notification-1.2.0.0.jar",
-            os.path.realpath(os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"))
-        )
+        mock_request.assert_has_calls([
+            call(
+                "https://ci.opensearch.org/x/y/builds/opensearch/maven/org/opensearch/notification/alerting-notification-1.2.0.0.jar",
+                os.path.realpath(os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"))
+            )
+        ])
 
     @patch("os.makedirs")
     @patch("shutil.copyfile")
