@@ -22,8 +22,6 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
         mock_bundle_manifest_opensearch_dashboards = MagicMock()
         mock_bundle_manifest_opensearch_dashboards.build.version = "1.1.0"
-        mock_bundle_manifest_opensearch_dashboards.build.platform = "linux"
-        mock_bundle_manifest_opensearch_dashboards.build.architecture = "x64"
         self.mock_bundle_manifest_opensearch_dashboards = mock_bundle_manifest_opensearch_dashboards
 
         dependency_installer_opensearch = MagicMock()
@@ -83,8 +81,6 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
         mock_service_opensearch_dashboards.assert_called_once_with(
             "1.1.0",
-            "linux",
-            "x64",
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer_opensearch_dashboards,

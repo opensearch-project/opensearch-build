@@ -19,20 +19,13 @@ class ServiceOpenSearchDashboards(Service):
     def __init__(
         self,
         version,
-        platform,
-        architecture,
         additional_config,
         security_enabled,
         dependency_installer,
         work_dir
     ):
         super().__init__(work_dir, version, security_enabled, additional_config, dependency_installer)
-
-        self.platform = platform
-        self.architecture = architecture
-
-        self.install_dir = os.path.join(
-            self.work_dir, f"opensearch-dashboards-{self.version}-{self.platform}-{self.architecture}")
+        self.install_dir = os.path.join(self.work_dir, f"opensearch-dashboards-{self.version}")
 
     def start(self):
         logging.info(f"Starting OpenSearch Dashboards service from {self.work_dir}")
