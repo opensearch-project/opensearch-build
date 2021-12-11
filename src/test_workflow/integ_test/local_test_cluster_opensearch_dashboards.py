@@ -54,8 +54,6 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
 
         self.service_opensearch_dashboards = ServiceOpenSearchDashboards(
             build.version,
-            build.platform,
-            build.architecture,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer_opensearch_dashboards,
