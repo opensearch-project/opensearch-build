@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-
 import os
 import unittest
 from unittest.mock import MagicMock, patch

@@ -33,7 +33,7 @@ class TestIntegTestRunners(unittest.TestCase):
             runner = IntegTestRunners.from_test_manifest(mock_args)
 
             self.assertEqual(runner, mock_opensearch_runner_object)
-            mock_opensearch_runner.assert_called_once_with(mock_args, mock_test_manifest)
+            mock_opensearch_runner.assert_called_once_with(mock_args)
 
     def test_opensearch_dashboards(self):
 
@@ -56,4 +56,4 @@ class TestIntegTestRunners(unittest.TestCase):
             runner = IntegTestRunners.from_test_manifest(mock_args)
 
             self.assertEqual(runner, mock_opensearch_dashboards_runner_object)
-            mock_opensearch_dashboards_runner.assert_called_once_with(mock_args, mock_test_manifest)
+            mock_opensearch_dashboards_runner.assert_called_once_with(mock_args)

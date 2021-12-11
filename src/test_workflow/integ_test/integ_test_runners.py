@@ -18,4 +18,4 @@ class IntegTestRunners:
 
     @classmethod
     def from_test_manifest(cls, args: TestArgs):
-        return cls.RUNNERS[args.test_manifest.name](args, args.test_manifest)
+        return cls.RUNNERS[args.test_manifest.name](args)

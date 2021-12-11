@@ -27,6 +27,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
         self.test_manifest.components = {"sql": mock_test_config}
+        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -57,7 +58,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         mock_test_recorder_object = MagicMock()
         mock_test_recorder.return_value = mock_test_recorder_object
 
-        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
+        runner = IntegTestRunnerOpenSearch(self.args)
 
         # call the test target
         results = runner.run()
@@ -84,6 +85,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         mock_test_config = MagicMock()
         mock_test_config.integ_test = None
         self.test_manifest.components = {"sql": mock_test_config}
+        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -102,7 +104,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
         mock_properties.return_value = mock_properties_object
 
-        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
+        runner = IntegTestRunnerOpenSearch(self.args)
 
         # call the test target
         results = runner.run()
@@ -120,6 +122,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
         self.test_manifest.components = {"alerting": mock_test_config}
+        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -145,7 +148,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
         mock_suite.return_value = mock_suite_object
 
-        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
+        runner = IntegTestRunnerOpenSearch(self.args)
 
         # call the test target
         results = runner.run()

@@ -14,8 +14,8 @@ from test_workflow.test_args import TestArgs
 
 class IntegTestRunnerOpenSearch(IntegTestRunner):
 
-    def __init__(self, args: TestArgs, test_manifest):
-        super().__init__(args, test_manifest)
+    def __init__(self, args: TestArgs):
+        super().__init__(args)
         self.properties = IntegTestStartPropertiesOpenSearch(args.opensearch_path)
 
         self.properties.dependency_installer.install_maven_dependencies()

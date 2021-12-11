@@ -15,8 +15,8 @@ from test_workflow.test_args import TestArgs
 
 class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
 
-    def __init__(self, args: TestArgs, test_manifest):
-        super().__init__(args, test_manifest)
+    def __init__(self, args: TestArgs):
+        super().__init__(args)
 
         self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.opensearch_path)
         self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.opensearch_dashboards_path)
