@@ -15,8 +15,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     def setUp(self):
         self.version = "1.1.0"
-        self.platform = "linux"
-        self.architecture = "x64"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.dependency_installer = ""
@@ -32,8 +30,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             mock_dependency_installer,
@@ -80,8 +76,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             {},
             False,
             mock_dependency_installer,
@@ -126,8 +120,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_endpoint_port_url(self):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -143,8 +135,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_get_service_response_with_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -164,8 +154,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_get_service_response_without_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -184,8 +172,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -205,8 +191,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -226,8 +210,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_red_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
