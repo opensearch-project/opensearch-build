@@ -1,6 +1,7 @@
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
+from urllib.error import HTTPError
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
@@ -13,13 +14,10 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "opensearch", "manifest.yml")
     DIST_MANIFEST_REMOTE = os.path.join(DATA, "remote", "dist", "opensearch", "manifest.yml")
 
-    @patch("concurrent.futures.ThreadPoolExecutor", return_value=MagicMock())
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs, mock_threadpool):
-        mock_threadpool.return_value.__enter__().map.side_effect = lambda f, args: MagicMock(results=list(map(f, args)))
-
+    def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
         dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -45,13 +43,10 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             )
         ])
 
-    @patch("concurrent.futures.ThreadPoolExecutor", return_value=MagicMock())
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs, mock_threadpool):
-        mock_threadpool.return_value.__enter__().map.side_effect = lambda f, args: MagicMock(results=list(map(f, args)))
-
+    def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -75,6 +70,25 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
                 os.path.realpath(os.path.join(dependency_installer.maven_local_path, "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"))
             )
         ])
+
+    @patch("os.makedirs")
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_maven_dependencies_remote_failure(self, mock_request, mock_copyfile, mock_makedirs):
+        def mock_retrieve(source, dest):
+            raise HTTPError(url=source, hdrs={}, fp=None, msg="Not Found", code=404)
+
+        mock_request.side_effect = mock_retrieve
+
+        dependency_installer = DependencyInstallerOpenSearch(
+            "https://ci.opensearch.org/x/y",
+            BuildManifest.from_path(self.BUILD_MANIFEST),
+            BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
+        )
+
+        with self.assertRaises(HTTPError) as ctx:
+            dependency_installer.install_maven_dependencies()
+        self.assertEqual(str(ctx.exception), "HTTP Error 404: Not Found")
 
     @patch("os.makedirs")
     @patch("shutil.copyfile")
