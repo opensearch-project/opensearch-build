@@ -5,6 +5,7 @@
 # compatible open source license.
 
 
+import os
 import unittest
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -21,4 +22,10 @@ class TestTestKwargs(unittest.TestCase):
 
         kwargs.__call__(parser=mock_parser, namespace=namespace, values=values)
 
-        self.assertEqual(namespace.__getattribute__("test"), {'key1': 'value1', 'key2': 'value2'})
+        self.assertEqual(
+            namespace.__getattribute__("test"),
+            {
+                'key1': os.path.join(os.getcwd(), 'value1'),
+                'key2': os.path.join(os.getcwd(), 'value2')
+            }
+        )

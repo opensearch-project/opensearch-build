@@ -7,6 +7,7 @@
 
 from test_workflow.integ_test.integ_test_runner_opensearch import IntegTestRunnerOpenSearch
 from test_workflow.integ_test.integ_test_runner_opensearch_dashboards import IntegTestRunnerOpenSearchDashboards
+from test_workflow.test_args import TestArgs
 
 
 class IntegTestRunners:
@@ -16,5 +17,5 @@ class IntegTestRunners:
     }
 
     @classmethod
-    def from_test_manifest(cls, args, test_manifest):
-        return cls.RUNNERS[test_manifest.name](args, test_manifest)
+    def from_test_manifest(cls, args: TestArgs):
+        return cls.RUNNERS[args.test_manifest.name](args, args.test_manifest)

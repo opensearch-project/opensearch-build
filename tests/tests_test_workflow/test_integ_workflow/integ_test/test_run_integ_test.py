@@ -4,12 +4,14 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+
 import os
 import unittest
 from unittest.mock import MagicMock, patch
 
 from run_integ_test import main
 from test_workflow.integ_test.integ_test_runners import IntegTestRunners
+from test_workflow.test_args import TestArgs
 
 
 class TestRunIntegTest(unittest.TestCase):
@@ -33,6 +35,11 @@ class TestRunIntegTest(unittest.TestCase):
         IntegTestRunners.from_test_manifest = mock_from_test_manifest
 
         main()
+
+        args, kwargs = mock_from_test_manifest.call_args
+        self.assertEqual(len(args), 1)
+        self.assertEqual(len(kwargs), 0)
+        self.assertIsInstance(args[0], TestArgs)
 
         mock_result.log.assert_called_once_with()
         mock_result.failed.assert_called_once_with()
