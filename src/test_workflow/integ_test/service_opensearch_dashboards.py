@@ -31,8 +31,7 @@ class ServiceOpenSearchDashboards(Service):
         self.platform = platform
         self.architecture = architecture
 
-        self.install_dir = os.path.join(
-            self.work_dir, f"opensearch-dashboards-{self.version}-{self.platform}-{self.architecture}")
+        self.install_dir = os.path.join(self.work_dir, f"opensearch-dashboards-{self.version}")
 
     def start(self):
         logging.info(f"Starting OpenSearch Dashboards service from {self.work_dir}")
