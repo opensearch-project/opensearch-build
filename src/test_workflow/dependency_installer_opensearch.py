@@ -22,7 +22,8 @@ class DependencyInstallerOpenSearch(DependencyInstaller):
         for component in self.build_manifest.components.values():
             maven_artifacts = component.artifacts.get("maven", None)
             if maven_artifacts:
-                self.download(maven_artifacts, "builds", self.maven_local_path)
+                print(f"install_maven_dependencies {component.name}")
+                self.download(maven_artifacts, "builds", self.maven_local_path, {component.name})
 
     def install_build_dependencies(self, dependency_dict, dest):
         """

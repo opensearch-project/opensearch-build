@@ -33,10 +33,10 @@ class DependencyInstaller(abc.ABC):
         dest = os.path.realpath(os.path.join(dest, "/".join(path.split("/")[1:])))
         return (source, dest)
 
-    def download(self, paths, category, dest):
+    def download(self, paths, category, dest, name):
         logging.info(f"Downloading to {dest} ...")
 
-        print(f"inside download, paths has len {len(paths)}")
+        print(f"inside download {name}, paths has len {len(paths)}")
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             for result in executor.map(
                 lambda args: self.download_or_copy(*args),
@@ -46,6 +46,8 @@ class DependencyInstaller(abc.ABC):
                 logging.debug(f"Written {result}")
                 # logging.info(f"Written {result}")
                 # print(f"Written {result}")
+
+        print(f"exiting inside download {name}, paths has len {len(paths)}")
 
     def download_or_copy(self, source, dest):
         # print("calling download_or_copy")
