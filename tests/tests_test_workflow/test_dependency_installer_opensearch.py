@@ -15,19 +15,25 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     DIST_MANIFEST_LOCAL = os.path.join(DATA, "local", "dist", "opensearch", "manifest.yml")
     DIST_MANIFEST_REMOTE = os.path.join(DATA, "remote", "dist", "opensearch", "manifest.yml")
 
+    class ThreadSafeCounter:
+        def __init__(self):
+            self.lock = threading.Lock()
+            self.__call_count__ = 0
+
+        def thread_safe_count(self, *args, **kwargs):
+            with self.lock:
+                self.__call_count__ += 1
+
+        @property
+        def call_count(self):
+            return self.__call_count__
+
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
-        lock_side_effect = threading.Lock()
-
-        def thread_safe_count(*args, **kwargs):
-            with lock_side_effect:
-                thread_safe_count.call_count += 1
-
-        thread_safe_count.call_count = 0
-
-        mock_copyfile.side_effect = thread_safe_count
+        counter = self.ThreadSafeCounter()
+        mock_copyfile.side_effect = counter.thread_safe_count
 
         dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
@@ -46,8 +52,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             exist_ok=True
         )
         mock_request.assert_not_called()
-        # self.assertEqual(mock_copyfile.call_count, 2375)
-        self.assertEqual(thread_safe_count.call_count, 2375)
+        self.assertEqual(counter.call_count, 2375)
         mock_copyfile.assert_has_calls([
             call(
                 os.path.join(self.DATA, "builds", "opensearch", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
@@ -59,15 +64,8 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
-        lock_side_effect = threading.Lock()
-
-        def thread_safe_count(*args, **kwargs):
-            with lock_side_effect:
-                thread_safe_count.call_count += 1
-
-        thread_safe_count.call_count = 0
-
-        mock_request.side_effect = thread_safe_count
+        counter = self.ThreadSafeCounter()
+        mock_request.side_effect = counter.thread_safe_count
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -76,7 +74,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
 
         dependency_installer.install_maven_dependencies()
         # self.assertEqual(mock_request.call_count, 2375)
-        self.assertEqual(thread_safe_count.call_count, 2375)
+        self.assertEqual(counter.call_count, 2375)
 
         mock_makedirs.assert_called_with(
             os.path.realpath(
