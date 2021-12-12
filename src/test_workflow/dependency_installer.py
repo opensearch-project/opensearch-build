@@ -42,6 +42,7 @@ class DependencyInstaller(abc.ABC):
                         paths)
             ):
                 logging.debug(f"Written {result}")
+                logging.info(f"Written {result}")
 
     def download_or_copy(self, source, dest):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
