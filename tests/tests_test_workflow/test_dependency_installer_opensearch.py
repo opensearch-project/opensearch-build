@@ -65,7 +65,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
 
         thread_safe_count.call_count = 0
 
-        mock_copyfile.side_effect = thread_safe_count
+        mock_request.side_effect = thread_safe_count
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),

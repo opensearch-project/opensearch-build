@@ -19,14 +19,10 @@ class DependencyInstallerOpenSearch(DependencyInstaller):
         return os.path.join(os.path.expanduser("~"), ".m2", "repository")
 
     def install_maven_dependencies(self):
-        artifacts = []
-
         for component in self.build_manifest.components.values():
             maven_artifacts = component.artifacts.get("maven", None)
             if maven_artifacts:
-                artifacts.extend(maven_artifacts)
-
-        self.download(artifacts, "builds", self.maven_local_path)
+                self.download(maven_artifacts, "builds", self.maven_local_path)
 
     def install_build_dependencies(self, dependency_dict, dest):
         """
