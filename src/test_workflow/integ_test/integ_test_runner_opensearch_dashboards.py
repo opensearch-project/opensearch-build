@@ -5,7 +5,9 @@
 # compatible open source license.
 
 import logging
+import os
 
+from manifests.test_manifest import TestManifest
 from test_workflow.integ_test.integ_test_runner import IntegTestRunner
 from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
 from test_workflow.integ_test.integ_test_start_properties_opensearch_dashboards import IntegTestStartPropertiesOpenSearchDashboards
@@ -15,11 +17,11 @@ from test_workflow.test_args import TestArgs
 
 class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
 
-    def __init__(self, args: TestArgs, test_manifest):
+    def __init__(self, args: TestArgs, test_manifest: TestManifest):
         super().__init__(args, test_manifest)
 
-        self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.opensearch_path)
-        self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.opensearch_dashboards_path)
+        self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.paths.get("opensearch", os.getcwd()))
+        self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.paths.get("opensearch-dashboards", os.getcwd()))
 
         self.components = self.properties.build_manifest.components
 

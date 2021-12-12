@@ -20,7 +20,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
     def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
@@ -77,7 +77,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
     def test_without_integ_test(self, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
@@ -113,7 +113,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
     def test_component_not_in_test_manifest(self, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
