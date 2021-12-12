@@ -48,10 +48,10 @@ class DependencyInstaller(abc.ABC):
                 print(f"Written {result}")
 
     def download_or_copy(self, source, dest):
-        print(f"calling download_or_copy")
+        print("calling download_or_copy")
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if validators.url(source):
-            print("calling urlretrieve")
+            print(f"calling urlretrieve {source}")
             logging.info(f"Downloading {source} into {dest} ...")
             urllib.request.urlretrieve(source, dest)
         else:
