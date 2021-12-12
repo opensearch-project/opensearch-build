@@ -5,6 +5,7 @@ from urllib.error import HTTPError
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
+from system.thread_safe_counter import ThreadSafeCounter
 from test_workflow.dependency_installer_opensearch import DependencyInstallerOpenSearch
 
 
@@ -18,6 +19,9 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
+        counter = ThreadSafeCounter()
+        mock_copyfile.side_effect = counter.thread_safe_count
+
         dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -35,7 +39,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             exist_ok=True
         )
         mock_request.assert_not_called()
-        self.assertEqual(mock_copyfile.call_count, 2375)
+        self.assertEqual(counter.call_count, 2375)
         mock_copyfile.assert_has_calls([
             call(
                 os.path.join(self.DATA, "builds", "opensearch", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
@@ -47,6 +51,8 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
+        counter = ThreadSafeCounter()
+        mock_request.side_effect = counter.thread_safe_count
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y",
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -54,7 +60,8 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
         )
 
         dependency_installer.install_maven_dependencies()
-        self.assertEqual(mock_request.call_count, 2375)
+        self.assertEqual(counter.call_count, 2375)
+
         mock_makedirs.assert_called_with(
             os.path.realpath(
                 os.path.join(
