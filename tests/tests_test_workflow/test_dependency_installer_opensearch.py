@@ -73,7 +73,6 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
         )
 
         dependency_installer.install_maven_dependencies()
-        # self.assertEqual(mock_request.call_count, 2375)
         self.assertEqual(counter.call_count, 2375)
 
         mock_makedirs.assert_called_with(
