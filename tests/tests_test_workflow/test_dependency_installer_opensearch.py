@@ -46,7 +46,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
         )
         mock_request.assert_not_called()
         # self.assertEqual(mock_copyfile.call_count, 2375)
-        self.assertEqual(thread_safe_count, 2375)
+        self.assertEqual(thread_safe_count.call_count, 2375)
         mock_copyfile.assert_has_calls([
             call(
                 os.path.join(self.DATA, "builds", "opensearch", "maven", "org", "opensearch", "notification", "alerting-notification-1.2.0.0.jar"),
@@ -74,7 +74,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
 
         dependency_installer.install_maven_dependencies()
         # self.assertEqual(mock_request.call_count, 2375)
-        self.assertEqual(thread_safe_count, 2375)
+        self.assertEqual(thread_safe_count.call_count, 2375)
 
         mock_makedirs.assert_called_with(
             os.path.realpath(
