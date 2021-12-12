@@ -14,9 +14,9 @@ from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 
 class IntegTestRunner(abc.ABC):
-    def __init__(self, args):
+    def __init__(self, args, test_manifest):
         self.args = args
-        self.test_manifest = args.test_manifest
+        self.test_manifest = test_manifest
 
         self.tests_dir = os.path.join(os.getcwd(), "test-results")
         os.makedirs(self.tests_dir, exist_ok=True)

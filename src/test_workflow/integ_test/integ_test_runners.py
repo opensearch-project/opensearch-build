@@ -5,6 +5,7 @@
 # compatible open source license.
 
 
+from manifests.test_manifest import TestManifest
 from test_workflow.integ_test.integ_test_runner_opensearch import IntegTestRunnerOpenSearch
 from test_workflow.integ_test.integ_test_runner_opensearch_dashboards import IntegTestRunnerOpenSearchDashboards
 from test_workflow.test_args import TestArgs
@@ -17,5 +18,5 @@ class IntegTestRunners:
     }
 
     @classmethod
-    def from_test_manifest(cls, args: TestArgs):
-        return cls.RUNNERS[args.test_manifest.name](args)
+    def from_test_manifest(cls, args: TestArgs, test_manifest: TestManifest):
+        return cls.RUNNERS[test_manifest.name](args, test_manifest)

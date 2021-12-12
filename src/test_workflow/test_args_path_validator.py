@@ -10,7 +10,7 @@
 
 import os
 
-import validators
+import validators  # type:ignore
 
 
 class TestArgsPathValidator:

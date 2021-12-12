@@ -8,6 +8,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
+from manifests.test_manifest import TestManifest
 from run_integ_test import main
 from test_workflow.integ_test.integ_test_runners import IntegTestRunners
 from test_workflow.test_args import TestArgs
@@ -36,9 +37,10 @@ class TestRunIntegTest(unittest.TestCase):
         main()
 
         args, kwargs = mock_from_test_manifest.call_args
-        self.assertEqual(len(args), 1)
+        self.assertEqual(len(args), 2)
         self.assertEqual(len(kwargs), 0)
         self.assertIsInstance(args[0], TestArgs)
+        self.assertIsInstance(args[1], TestManifest)
 
         mock_result.log.assert_called_once_with()
         mock_result.failed.assert_called_once_with()

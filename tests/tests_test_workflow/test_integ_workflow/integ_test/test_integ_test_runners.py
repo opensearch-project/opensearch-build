@@ -18,8 +18,6 @@ class TestIntegTestRunners(unittest.TestCase):
         mock_test_manifest = MagicMock()
         mock_test_manifest.name = "OpenSearch"
 
-        mock_args.test_manifest = mock_test_manifest
-
         mock_opensearch_runner_object = MagicMock()
         mock_opensearch_runner = MagicMock()
         mock_opensearch_runner.return_value = mock_opensearch_runner_object
@@ -30,18 +28,17 @@ class TestIntegTestRunners(unittest.TestCase):
             "OpenSearch": mock_opensearch_runner,
             "OpenSearch Dashboards": mock_opensearch_dashboards_runner,
         }):
-            runner = IntegTestRunners.from_test_manifest(mock_args)
+            runner = IntegTestRunners.from_test_manifest(mock_args, mock_test_manifest)
 
             self.assertEqual(runner, mock_opensearch_runner_object)
-            mock_opensearch_runner.assert_called_once_with(mock_args)
+
+            mock_opensearch_runner.assert_called_once_with(mock_args, mock_test_manifest)
 
     def test_opensearch_dashboards(self):
 
         mock_args = MagicMock()
         mock_test_manifest = MagicMock()
         mock_test_manifest.name = "OpenSearch Dashboards"
-
-        mock_args.test_manifest = mock_test_manifest
 
         mock_opensearch_runner = MagicMock()
 
@@ -53,7 +50,7 @@ class TestIntegTestRunners(unittest.TestCase):
             "OpenSearch": mock_opensearch_runner,
             "OpenSearch Dashboards": mock_opensearch_dashboards_runner,
         }):
-            runner = IntegTestRunners.from_test_manifest(mock_args)
+            runner = IntegTestRunners.from_test_manifest(mock_args, mock_test_manifest)
 
             self.assertEqual(runner, mock_opensearch_dashboards_runner_object)
-            mock_opensearch_dashboards_runner.assert_called_once_with(mock_args)
+            mock_opensearch_dashboards_runner.assert_called_once_with(mock_args, mock_test_manifest)

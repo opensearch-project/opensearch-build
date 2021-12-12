@@ -20,14 +20,13 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
     def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
         self.test_manifest.components = {"sql": mock_test_config}
-        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -58,7 +57,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
         mock_test_recorder_object = MagicMock()
         mock_test_recorder.return_value = mock_test_recorder_object
 
-        runner = IntegTestRunnerOpenSearch(self.args)
+        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
 
         # call the test target
         results = runner.run()
@@ -78,14 +77,13 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
     def test_without_integ_test(self, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = None
         self.test_manifest.components = {"sql": mock_test_config}
-        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -104,7 +102,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
         mock_properties.return_value = mock_properties_object
 
-        runner = IntegTestRunnerOpenSearch(self.args)
+        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
 
         # call the test target
         results = runner.run()
@@ -115,14 +113,13 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
     def test_component_not_in_test_manifest(self, mock_suite, mock_properties):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
         self.test_manifest.components = {"alerting": mock_test_config}
-        self.args.test_manifest = self.test_manifest
 
         mock_bundle_manifest = MagicMock()
         mock_components = MagicMock()
@@ -148,7 +145,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
         mock_suite.return_value = mock_suite_object
 
-        runner = IntegTestRunnerOpenSearch(self.args)
+        runner = IntegTestRunnerOpenSearch(self.args, self.test_manifest)
 
         # call the test target
         results = runner.run()

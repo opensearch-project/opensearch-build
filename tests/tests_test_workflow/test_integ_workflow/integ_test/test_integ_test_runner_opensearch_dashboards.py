@@ -21,14 +21,13 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
     def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties, mock_properties_dependency):
-        self.args.path = "test-path"
+        self.args.paths = {"opensearch-dashboards": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
 
         mock_test_config = MagicMock()
         mock_test_config.integ_test = MagicMock()
         self.test_manifest.components = {"sql": mock_test_config}
-        self.args.test_manifest = self.test_manifest
 
         mock_build_manifest = MagicMock()
         mock_components = MagicMock()
@@ -65,7 +64,7 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         mock_test_recorder_object = MagicMock()
         mock_test_recorder.return_value = mock_test_recorder_object
 
-        runner = IntegTestRunnerOpenSearchDashboards(self.args)
+        runner = IntegTestRunnerOpenSearchDashboards(self.args, self.test_manifest)
 
         # call the test target
         results = runner.run()
