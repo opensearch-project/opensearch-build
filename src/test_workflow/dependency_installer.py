@@ -47,8 +47,6 @@ class DependencyInstaller(abc.ABC):
                 # logging.info(f"Written {result}")
                 # print(f"Written {result}")
 
-        print(f"exiting inside download {name}, paths has len {len(paths)}")
-
     def download_or_copy(self, source, dest):
         # print("calling download_or_copy")
         os.makedirs(os.path.dirname(dest), exist_ok=True)
