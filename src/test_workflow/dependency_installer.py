@@ -44,8 +44,8 @@ class DependencyInstaller(abc.ABC):
                         paths)
             ):
                 logging.debug(f"Written {result}")
-                logging.info(f"Written {result}")
-                print(f"Written {result}")
+                # logging.info(f"Written {result}")
+                # print(f"Written {result}")
 
     def download_or_copy(self, source, dest):
         print("calling download_or_copy")
