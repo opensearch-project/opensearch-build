@@ -20,7 +20,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
 
-        def thread_safe_count():
+        def thread_safe_count(*args, **kwargs):
             with threading.Lock():
                 thread_safe_count.call_count += 1
 
@@ -59,7 +59,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("urllib.request.urlretrieve")
     def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
 
-        def thread_safe_count():
+        def thread_safe_count(*args, **kwargs):
             with threading.Lock():
                 thread_safe_count.call_count += 1
 
