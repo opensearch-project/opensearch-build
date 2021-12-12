@@ -4,6 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 
 from test_workflow.dependency_installer import DependencyInstaller
@@ -25,10 +26,16 @@ class DependencyInstallerOpenSearch(DependencyInstaller):
             maven_artifacts = component.artifacts.get("maven", None)
             if maven_artifacts:
                 # print(f"install_maven_dependencies {component.name}")
-                artifacts.append(maven_artifacts)
+                logging.info(f"maven_artifacts is {maven_artifacts}")
+                if len(maven_artifacts) < 100:
+                    logging.info(f"maven_artifacts is {maven_artifacts}")
+
+                artifacts.extend(maven_artifacts)
+
                 # self.download(maven_artifacts, "builds", self.maven_local_path, {component.name})
                 # print(f"exiting inside download {component.name}, paths has len {len(maven_artifacts)}")
 
+        # logging.info(f"artifacts is {artifacts}")
         self.download(artifacts, "builds", self.maven_local_path, "test")
 
     def install_build_dependencies(self, dependency_dict, dest):
