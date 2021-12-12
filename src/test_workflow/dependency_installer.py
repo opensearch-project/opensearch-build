@@ -48,7 +48,7 @@ class DependencyInstaller(abc.ABC):
                 # print(f"Written {result}")
 
     def download_or_copy(self, source, dest):
-        print("calling download_or_copy")
+        # print("calling download_or_copy")
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if validators.url(source):
             print(f"calling urlretrieve {source}")
@@ -57,6 +57,6 @@ class DependencyInstaller(abc.ABC):
         else:
             logging.info(f"Copying {source} into {dest} ...")
             source = os.path.realpath(source)
-            print("calling shutil.copyfile")
+            # print("calling shutil.copyfile")
             shutil.copyfile(os.path.realpath(source), dest)
         return dest
