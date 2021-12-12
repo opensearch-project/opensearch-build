@@ -30,7 +30,7 @@ class TestTestArgs(unittest.TestCase):
     def test_opensearch_default_with_opensearch_test_manifest(self):
         test_args = TestArgs()
         self.assertFalse(hasattr(test_args, "opensearch"))
-        self.assertFalse(hasattr(test_args, "opensearch_dashboards_path"))
+        self.assertFalse(hasattr(test_args, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
         self.assertIsNone(test_args.component)
@@ -42,7 +42,7 @@ class TestTestArgs(unittest.TestCase):
     def test_opensearch_file_with_opensearch_test_manifest(self):
         test_args = TestArgs()
         self.assertEqual(test_args.paths.get("opensearch"), os.path.realpath(self.TEST_MANIFEST_PATH))
-        self.assertFalse(hasattr(test_args.paths, "opensearch_dashboards_path"))
+        self.assertFalse(hasattr(test_args.paths, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
         self.assertIsNone(test_args.component)
@@ -54,7 +54,7 @@ class TestTestArgs(unittest.TestCase):
     def test_opensearch_url_with_opensearch_test_manifest(self):
         test_args = TestArgs()
         self.assertEqual(test_args.paths.get("opensearch"), "https://ci.opensearch.org/x/y")
-        self.assertFalse(hasattr(test_args.paths, "opensearch_dashboards_path"))
+        self.assertFalse(hasattr(test_args.paths, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
         self.assertIsNone(test_args.component)
@@ -65,7 +65,7 @@ class TestTestArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH, "--paths", "opensearch=" + TEST_MANIFEST_PATH])
     def test_opensearch_dashboards_default_with_opensearch_dashboards_test_manifest(self):
         test_args = TestArgs()
-        self.assertFalse(hasattr(test_args.paths, "opensearch_dashboards_path"))
+        self.assertFalse(hasattr(test_args.paths, "opensearch-dashboards"))
         self.assertEqual(test_args.paths.get("opensearch"), self.TEST_MANIFEST_PATH)
 
         self.assertIsNotNone(test_args.test_run_id)
