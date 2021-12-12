@@ -43,6 +43,7 @@ class DependencyInstaller(abc.ABC):
             ):
                 logging.debug(f"Written {result}")
                 logging.info(f"Written {result}")
+                print(f"Written {result}")
 
     def download_or_copy(self, source, dest):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
