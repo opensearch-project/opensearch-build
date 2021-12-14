@@ -67,7 +67,7 @@ components:
       - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: "1.2"
+    ref: tag/1.2.1.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
