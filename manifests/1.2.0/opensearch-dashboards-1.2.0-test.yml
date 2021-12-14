@@ -1,0 +1,8 @@
+name: OpenSearch Dashboards
+components:
+  - name: functionalTestDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+schema-version: '1.0'
