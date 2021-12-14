@@ -9,13 +9,13 @@ pipeline {
         string(
             name: 'REPOSITORY',
             description: 'Repository to release, e.g. https://github.com/opensearch-project/opensearch-ruby.git',
-            require: true
+            require: true,
             trim: true
         ),
         string(
             name: 'RELEASE_BRANCH',
             description: 'Branch name to release, e.g. 1.2.0',
-            require: true
+            require: true,
             trim: true
         ),
         string(
