@@ -9,21 +9,24 @@ pipeline {
         string(
             name: 'REPOSITORY',
             description: 'Repository to release, e.g. https://github.com/opensearch-project/opensearch-ruby.git',
-            require: true,
             trim: true
-        ),
+        )
+        string(
+            name: 'REPOSITORY_NAME',
+            description: 'Repository to release, e.g. opensearch-ruby',
+            trim: true
+        )
         string(
             name: 'RELEASE_BRANCH',
             description: 'Branch name to release, e.g. 1.2.0',
-            require: true,
             trim: true
-        ),
+        )
         string(
             name: 'RUBY_INTERPRETER',
             description: 'ruby, jruby, etc',
-            default: 'ruby',
+            defaultValue: 'ruby',
             trim: true
-        ),
+        )
     }
     stages {
         stage('ruby-build-sign-upload') {
@@ -31,6 +34,7 @@ pipeline {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+                    args '-u root' // Needed for installing RUBY_INTERPRETER 
                     alwaysPull true
                 }
             }
@@ -44,17 +48,17 @@ pipeline {
                         rvm install $RUBY_INTERPRETER
                         rvm use $RUBY_INTERPRETER
                         gem cert --add certs/opensearch-rubygems.pem
-                        bash build.sh
+                        echo 'bash build.sh'
                     '''
-                    artifacts_path = [
+                    artifacts_path = ([
                         "${JOB_NAME}",
-                        sh('basename `git rev-parse --show-toplevel`'), // name of the repository
+                        "${REPOSITORY_NAME}",
                         "${RELEASE_BRANCH}",
                         "${BUILD_NUMBER}",
                         "builds"
                     ].join('/'))
                     withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                        s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifacts_path}")
+                        echo '''s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifacts_path}")'''
                     }
                     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Built artifacts into ${PUBLIC_ARTIFACT_URL}/${artifacts_path}.")
                 }
@@ -65,7 +69,7 @@ pipeline {
                 }
             }
         }
-    },
+    }
     post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
