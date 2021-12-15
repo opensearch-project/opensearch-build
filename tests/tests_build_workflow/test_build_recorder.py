@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import yaml
 
@@ -19,7 +19,7 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestBuildRecorder(unittest.TestCase):
-    def __mock(self, snapshot=True):
+    def __mock(self, snapshot: bool = True) -> BuildRecorder:
         return BuildRecorder(
             BuildTarget(
                 build_id="1",
@@ -34,7 +34,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    def test_record_component_and_artifact(self, mock_makedirs, mock_copyfile):
+    def test_record_component_and_artifact(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         recorder = self.__mock(snapshot=False)
 
         recorder.record_component(
@@ -79,7 +79,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    def test_record_artifact(self, mock_makedirs, mock_copyfile):
+    def test_record_artifact(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         recorder = self.__mock(snapshot=False)
 
         recorder.record_component(
@@ -99,7 +99,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    def test_record_artifact_check_plugin(self, *mocks):
+    def test_record_artifact_check_plugin(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         recorder = self.__mock(snapshot=False)
 
         recorder.record_component("security", MagicMock())
@@ -108,10 +108,12 @@ class TestBuildRecorder(unittest.TestCase):
             recorder.record_artifact("security", "plugins", "../file1.zip", "invalid.file")
 
         mock_check.assert_called_with("invalid.file")
+        mock_copyfile.assert_called()
+        mock_makedirs.assert_called()
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
-    def test_record_artifact_check_maven(self, *mocks):
+    def test_record_artifact_check_maven(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         recorder = self.__mock(snapshot=False)
 
         recorder.record_component("security", MagicMock())
@@ -120,8 +122,10 @@ class TestBuildRecorder(unittest.TestCase):
             recorder.record_artifact("security", "maven", "../file1.zip", "valid.jar")
 
         mock_check.assert_called_with("valid.jar")
+        mock_copyfile.assert_called()
+        mock_makedirs.assert_called()
 
-    def test_get_manifest(self):
+    def test_get_manifest(self) -> None:
         manifest = self.__mock(snapshot=False).get_manifest()
         self.assertIs(type(manifest), BuildManifest)
         self.assertEqual(
@@ -138,7 +142,7 @@ class TestBuildRecorder(unittest.TestCase):
             },
         )
 
-    def test_write_manifest(self):
+    def test_write_manifest(self) -> None:
         with TemporaryDirectory() as dest_dir:
             mock = self.__mock(snapshot=False)
             mock.target.output_dir = dest_dir.name
@@ -152,7 +156,7 @@ class TestBuildRecorder(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties(self, *mocks):
+    def test_record_artifact_check_plugin_version_properties(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=False)
         mock.record_component(
             "security",
@@ -166,11 +170,14 @@ class TestBuildRecorder(unittest.TestCase):
         manifest_dict = mock.get_manifest().to_dict()
         self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
         self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0")
+        mock_plugin_check.assert_called()
+        mock_copyfile.assert_called()
+        mock_makedirs.assert_called()
 
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties_snapshot(self, *mocks):
+    def test_record_artifact_check_plugin_version_properties_snapshot(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=True)
         mock.record_component(
             "security",
@@ -184,3 +191,6 @@ class TestBuildRecorder(unittest.TestCase):
         manifest_dict = mock.get_manifest().to_dict()
         self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
         self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")
+        mock_plugin_check.assert_called()
+        mock_copyfile.assert_called()
+        mock_makedirs.assert_called()
