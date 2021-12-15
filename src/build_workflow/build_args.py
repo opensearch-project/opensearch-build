@@ -7,7 +7,6 @@
 import argparse
 import logging
 import sys
-from typing import IO
 
 
 class BuildArgs:
@@ -17,14 +16,14 @@ class BuildArgs:
         "arm64",
     ]
 
-    manifest: IO
+    manifest: str
     snapshot: bool
     component: str
     keep: bool
     platform: str
     architecture: str
 
-    def __init__(self) -> None:
+    def __init__(self):
         parser = argparse.ArgumentParser(description="Build an OpenSearch Bundle")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
@@ -72,7 +71,7 @@ class BuildArgs:
         self.architecture = args.architecture
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
 
-    def component_command(self, name: str) -> str:
+    def component_command(self, name):
         return " ".join(
             filter(
                 None,

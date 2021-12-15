@@ -6,7 +6,6 @@
 
 import logging
 import os
-from typing import Any, List
 from zipfile import ZipFile
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
@@ -14,7 +13,7 @@ from system.properties_file import PropertiesFile
 
 
 class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
-    def check(self, path: str) -> None:
+    def check(self, path):
         ext = os.path.splitext(path)[1]
         if ext not in [
             ".asc",
@@ -35,7 +34,7 @@ class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
                 data = zip.read("META-INF/MANIFEST.MF").decode("UTF-8")
                 properties = PropertiesFile(data)
                 try:
-                    versions: List[Any] = [None]
+                    versions = [None]
                     versions.extend(self.target.compatible_component_versions)
                     versions.extend(self.target.compatible_opensearch_versions)
                     properties.check_value_in("Implementation-Version", versions)

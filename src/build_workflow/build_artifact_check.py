@@ -7,18 +7,16 @@
 import os
 from abc import ABC, abstractmethod
 
-from build_workflow.build_target import BuildTarget
-
 
 class BuildArtifactCheck(ABC):
     class BuildArtifactInvalidError(Exception):
-        def __init__(self, path: str, message: str) -> None:
+        def __init__(self, path, message):
             self.path = path
             super().__init__(f"Artifact {os.path.basename(path)} is invalid. {message}")
 
-    def __init__(self, target: BuildTarget) -> None:
+    def __init__(self, target):
         self.target = target
 
     @abstractmethod
-    def check(self, path: str) -> None:
+    def check(self, path):
         pass

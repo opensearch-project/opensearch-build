@@ -7,21 +7,18 @@
 import logging
 import os
 import shutil
-from typing import Any, Dict
 
 from build_workflow.build_artifact_checks import BuildArtifactChecks
-from build_workflow.build_target import BuildTarget
-from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 
 
 class BuildRecorder:
-    def __init__(self, target: BuildTarget):
+    def __init__(self, target):
         self.build_manifest = self.BuildManifestBuilder(target)
         self.target = target
         self.name = target.name
 
-    def record_component(self, component_name: str, git_repo: GitRepository) -> None:
+    def record_component(self, component_name, git_repo):
         self.build_manifest.append_component(
             component_name,
             self.target.component_version,
@@ -30,7 +27,7 @@ class BuildRecorder:
             git_repo.sha,
         )
 
-    def record_artifact(self, component_name: str, artifact_type: str, artifact_path: str, artifact_file: str) -> None:
+    def record_artifact(self, component_name, artifact_type, artifact_path, artifact_file):
         logging.info(f"Recording {artifact_type} artifact for {component_name}: {artifact_path} (from {artifact_file})")
         # Ensure the target directory exists
         dest_file = os.path.join(self.target.output_dir, artifact_path)
@@ -43,17 +40,17 @@ class BuildRecorder:
         # Notify the recorder
         self.build_manifest.append_artifact(component_name, artifact_type, artifact_path)
 
-    def get_manifest(self) -> BuildManifest:
+    def get_manifest(self):
         return self.build_manifest.to_manifest()
 
-    def write_manifest(self) -> None:
+    def write_manifest(self):
         manifest_path = os.path.join(self.target.output_dir, "manifest.yml")
         self.get_manifest().to_file(manifest_path)
         logging.info(f"Created build manifest {manifest_path}")
 
     class BuildManifestBuilder:
-        def __init__(self, target: BuildTarget):
-            self.data: Dict[str, Any] = {}
+        def __init__(self, target):
+            self.data = {}
             self.data["build"] = {}
             self.data["build"]["id"] = target.build_id
             self.data["build"]["name"] = target.name
@@ -61,9 +58,9 @@ class BuildRecorder:
             self.data["build"]["platform"] = target.platform
             self.data["build"]["architecture"] = target.architecture
             self.data["schema-version"] = "1.2"
-            self.components_hash: Dict[str, Dict[str, Any]] = {}
+            self.components_hash = {}
 
-        def append_component(self, name: str, version: str, repository_url: str, ref: str, commit_id: str) -> None:
+        def append_component(self, name, version, repository_url, ref, commit_id):
             component = {
                 "name": name,
                 "repository": repository_url,
@@ -74,14 +71,14 @@ class BuildRecorder:
             }
             self.components_hash[name] = component
 
-        def append_artifact(self, component: str, type: str, path: str) -> None:
+        def append_artifact(self, component, type, path):
             artifacts = self.components_hash[component]["artifacts"]
             list = artifacts.get(type, [])
             if len(list) == 0:
                 artifacts[type] = list
             list.append(path)
 
-        def to_manifest(self) -> 'BuildManifest':
+        def to_manifest(self):
             # The build manifest expects `components` to be a list, not a hash, so we need to munge things a bit
             components = self.components_hash.values()
             if len(components):

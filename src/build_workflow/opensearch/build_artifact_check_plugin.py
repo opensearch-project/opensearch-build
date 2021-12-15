@@ -13,7 +13,7 @@ from system.properties_file import PropertiesFile
 
 
 class BuildArtifactOpenSearchCheckPlugin(BuildArtifactCheck):
-    def check(self, path: str) -> None:
+    def check(self, path):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
         if not self.valid_path(path):
@@ -28,5 +28,5 @@ class BuildArtifactOpenSearchCheckPlugin(BuildArtifactCheck):
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
             logging.info(f'Checked {path} ({properties.get_value("version", "N/A")})')
 
-    def valid_path(self, path: str) -> bool:
+    def valid_path(self, path):
         return any(map(lambda version: path.endswith(f"-{version}.zip"), self.target.compatible_component_versions))

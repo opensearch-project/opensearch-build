@@ -6,7 +6,6 @@
 
 import os
 import uuid
-from typing import List
 
 from system.os import current_architecture, current_platform
 
@@ -22,14 +21,14 @@ class BuildTarget:
 
     def __init__(
         self,
-        version: str,
-        patches: List[str] = [],
-        platform: str = None,
-        architecture: str = None,
-        name: str = None,
-        snapshot: bool = True,
-        build_id: str = None,
-        output_dir: str = "artifacts",
+        version,
+        patches=[],
+        platform=None,
+        architecture=None,
+        name=None,
+        snapshot=True,
+        build_id=None,
+        output_dir="artifacts"
     ):
         self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
@@ -41,11 +40,11 @@ class BuildTarget:
         self.output_dir = output_dir
 
     @property
-    def opensearch_version(self) -> str:
+    def opensearch_version(self):
         return self.version + "-SNAPSHOT" if self.snapshot else self.version
 
     @property
-    def compatible_opensearch_versions(self) -> List[str]:
+    def compatible_opensearch_versions(self):
         return (
             [self.version + "-SNAPSHOT" if self.snapshot else self.version]
             + self.patches
@@ -53,12 +52,12 @@ class BuildTarget:
         )
 
     @property
-    def component_version(self) -> str:
+    def component_version(self):
         # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
         return self.version + ".0-SNAPSHOT" if self.snapshot else f"{self.version}.0"
 
     @property
-    def compatible_component_versions(self) -> List[str]:
+    def compatible_component_versions(self):
         return (
             [self.version + ".0-SNAPSHOT" if self.snapshot else f"{self.version}.0"]
             + list(map(lambda version: version + ".0", self.patches))
@@ -66,7 +65,7 @@ class BuildTarget:
         )
 
     @property
-    def compatible_versions(self) -> List[str]:
+    def compatible_versions(self):
         versions = [self.version]
         versions.extend(self.patches)
         return versions

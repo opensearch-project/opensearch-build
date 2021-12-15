@@ -5,7 +5,6 @@
 # compatible open source license.
 
 import json
-from typing import Any, List
 
 
 class ConfigFile:
@@ -13,13 +12,13 @@ class ConfigFile:
         pass
 
     class UnexpectedKeyValueError(CheckError):
-        def __init__(self, key: str, expected: str, current: str = None) -> None:
+        def __init__(self, key, expected, current=None):
             super().__init__(
                 f"Expected to have {key}='{expected}', but was '{current}'." if current else f"Expected to have {key}='{expected}', but none was found."
             )
 
     class UnexpectedKeyValuesError(CheckError):
-        def __init__(self, key: str, expected: List[str], current: str = None) -> None:
+        def __init__(self, key, expected, current=None):
             super().__init__(
                 f"Expected to have {key}=any of {expected}, but was '{current}'."
                 if current
@@ -27,15 +26,15 @@ class ConfigFile:
             )
 
     @property
-    def data(self) -> Any:
+    def data(self):
         return self.__data
 
     @classmethod
-    def from_file(cls, path: str) -> 'ConfigFile':
+    def from_file(cls, path):
         with open(path, "r") as f:
             return cls(json.load(f))
 
-    def __init__(self, data: Any = None) -> None:
+    def __init__(self, data=None):
         if type(data) is str:
             self.__data = json.loads(data)
         elif type(data) is dict:
@@ -45,13 +44,13 @@ class ConfigFile:
         else:
             self.__data = {}
 
-    def get_value(self, key: str, default_value: str = None) -> Any:
+    def get_value(self, key, default_value=None):
         try:
             return self.__data[key]
         except KeyError:
             return default_value
 
-    def check_value(self, key: str, expected: str) -> None:
+    def check_value(self, key, expected):
         try:
             value = self.__data[key]
             if value != expected:
@@ -59,7 +58,7 @@ class ConfigFile:
         except KeyError:
             raise ConfigFile.UnexpectedKeyValueError(key, expected)
 
-    def check_value_in(self, key: str, expected: List[str]) -> None:
+    def check_value_in(self, key, expected):
         try:
             value = self.__data[key]
             if value not in expected:

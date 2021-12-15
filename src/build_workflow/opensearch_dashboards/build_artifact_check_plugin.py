@@ -7,7 +7,6 @@
 import logging
 import os
 import re
-from typing import List
 from zipfile import ZipFile
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
@@ -15,7 +14,7 @@ from system.config_file import ConfigFile
 
 
 class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
-    def check(self, path: str) -> None:
+    def check(self, path):
         if os.path.splitext(path)[1] != ".zip":
             raise BuildArtifactCheck.BuildArtifactInvalidError(path, "Not a zip file.")
 
@@ -38,5 +37,5 @@ class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
             logging.info(f'Checked {path} ({config.get_value("version", "N/A")})')
 
-    def __valid_paths(self, pluginName: str) -> List[str]:
+    def __valid_paths(self, pluginName):
         return list(map(lambda version: f"{pluginName}-{version}.zip", self.target.compatible_versions))

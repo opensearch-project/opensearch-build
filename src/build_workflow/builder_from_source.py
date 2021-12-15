@@ -6,7 +6,6 @@
 
 import os
 
-from build_workflow.build_recorder import BuildRecorder
 from build_workflow.builder import Builder
 from git.git_repository import GitRepository
 from paths.script_finder import ScriptFinder
@@ -19,7 +18,7 @@ Artifacts found in "<build root>/artifacts/<maven|plugins|libs|dist|core-plugins
 
 
 class BuilderFromSource(Builder):
-    def checkout(self, work_dir: str) -> None:
+    def checkout(self, work_dir):
         self.git_repo = GitRepository(
             self.component.repository,
             self.component.ref,
@@ -27,7 +26,7 @@ class BuilderFromSource(Builder):
             self.component.working_directory,
         )
 
-    def build(self, build_recorder: BuildRecorder) -> None:
+    def build(self, build_recorder):
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
 
         build_command = " ".join(
@@ -50,7 +49,7 @@ class BuilderFromSource(Builder):
         self.git_repo.execute(build_command)
         build_recorder.record_component(self.component.name, self.git_repo)
 
-    def export_artifacts(self, build_recorder: BuildRecorder) -> None:
+    def export_artifacts(self, build_recorder):
         artifacts_path = os.path.join(self.git_repo.working_directory, self.output_path)
         for artifact_type in ["maven", "dist", "plugins", "libs", "core-plugins"]:
             for dir, _, files in os.walk(os.path.join(artifacts_path, artifact_type)):
