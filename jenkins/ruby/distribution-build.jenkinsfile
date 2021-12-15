@@ -35,7 +35,7 @@ pipeline {
             }
             steps {
                 script {
-                    git url: "https://github.com/opensearch-project/$REPOSITORY.git", branch: "$RELEASE_BRANCH"
+                    git url: "https://github.com/opensearch-project/${REPOSITORY_NAME}.git", branch: "$RELEASE_BRANCH"
                     withCredentials([string(credentialsId: 'opensearchproject-rubygems-private-key', variable: 'RUBYGEMS_PRIVATE_KEY')]) {
                         writeFile file: 'gem-private_key.pem', text: RUBYGEMS_PRIVATE_KEY
                     }
