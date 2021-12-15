@@ -7,8 +7,8 @@ pipeline {
     agent none
     parameters {
         string(
-            name: 'REPOSITORY',
-            description: 'Repository to release, e.g. https://github.com/opensearch-project/opensearch-ruby.git',
+            name: 'REPOSITORY_NAME',
+            description: 'Repository to release, e.g. opensearch-ruby',
             trim: true
         )
         string(
@@ -19,7 +19,7 @@ pipeline {
         string(
             name: 'RUBY_INTERPRETER',
             description: 'ruby, jruby, etc',
-            defaultValue: 'ruby',
+            defaultValue: 'ruby-2.7.0',
             trim: true
         )
     }
@@ -35,19 +35,19 @@ pipeline {
             }
             steps {
                 script {
-                    git url: "$REPOSITORY", branch: "$RELEASE_BRANCH"
+                    git url: "https://github.com/opensearch-project/$REPOSITORY.git", branch: "$RELEASE_BRANCH"
                     withCredentials([string(credentialsId: 'opensearchproject-rubygems-private-key', variable: 'RUBYGEMS_PRIVATE_KEY')]) {
                         writeFile file: 'gem-private_key.pem', text: RUBYGEMS_PRIVATE_KEY
                     }
                     sh'''
                         rvm install $RUBY_INTERPRETER
-                        rvm use $RUBY_INTERPRETER
+                        rvm --default use $RUBY_INTERPRETER
                         gem cert --add certs/opensearch-rubygems.pem
                         ./build.sh
                     '''
                     artifacts_path = ([
                         "${JOB_NAME}",
-                        "${getRepositoryName("$REPOSITORY")}",
+                        "${REPOSITORY_NAME}",
                         "${RELEASE_BRANCH}",
                         "${BUILD_NUMBER}",
                         "builds"
