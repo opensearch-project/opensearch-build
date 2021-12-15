@@ -1,0 +1,15 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+ node() {
+     script {
+        echo "Next line should blow up"
+        echo "This function call should blow up, ${getRepositoryName("")}"
+        echo "This string should not be printed in the .txt file"
+     }
+}
