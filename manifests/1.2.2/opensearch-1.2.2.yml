@@ -32,12 +32,68 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: "1.2"
+    platforms:
+      - darwin
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: "1.2"
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: plugin
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: "1.2"
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability
+    ref: "1.2"
+    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
