@@ -6,7 +6,8 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from typing import Any, List
+from unittest.mock import MagicMock, Mock, call, patch
 
 from build_workflow.build_target import BuildTarget
 from build_workflow.builder_from_source import BuilderFromSource
@@ -15,7 +16,7 @@ from paths.script_finder import ScriptFinder
 
 
 class TestBuilderFromSource(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.builder = BuilderFromSource(
             InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
             BuildTarget(
@@ -27,11 +28,11 @@ class TestBuilderFromSource(unittest.TestCase):
             ),
         )
 
-    def test_builder(self):
+    def test_builder(self) -> None:
         self.assertEqual(self.builder.component.name, "common-utils")
 
     @patch("build_workflow.builder_from_source.GitRepository")
-    def test_build(self, mock_git_repo):
+    def test_build(self, mock_git_repo: Mock) -> None:
         mock_git_repo.return_value = MagicMock(working_directory="dir")
         build_recorder = MagicMock()
         self.builder.checkout("dir")
@@ -52,7 +53,7 @@ class TestBuilderFromSource(unittest.TestCase):
         build_recorder.record_component.assert_called_with("common-utils", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
-    def test_build_snapshot(self, mock_git_repo):
+    def test_build_snapshot(self, mock_git_repo: Mock) -> None:
         self.builder.target.snapshot = True
         mock_git_repo.return_value = MagicMock(working_directory="dir")
         build_recorder = MagicMock()
@@ -73,7 +74,7 @@ class TestBuilderFromSource(unittest.TestCase):
         )
         build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
 
-    def mock_os_walk(self, artifact_path):
+    def mock_os_walk(self, artifact_path: str) -> List[Any]:
         if artifact_path.endswith(os.path.join("dir", "builds", "core-plugins")):
             return [["core-plugins", [], ["plugin1.zip"]]]
         if artifact_path.endswith(os.path.join("dir", "builds", "maven")):
@@ -83,7 +84,7 @@ class TestBuilderFromSource(unittest.TestCase):
 
     @patch("os.walk")
     @patch("build_workflow.builder_from_source.GitRepository")
-    def test_export_artifacts(self, mock_git_repo, mock_walk):
+    def test_export_artifacts(self, mock_git_repo: Mock, mock_walk: Mock) -> None:
         build_recorder = MagicMock()
         mock_git_repo.return_value = MagicMock(working_directory="dir")
         mock_walk.side_effect = self.mock_os_walk
