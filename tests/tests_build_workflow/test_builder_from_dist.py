@@ -15,7 +15,7 @@ from manifests.input_manifest import InputComponentFromDist
 
 
 class TestBuilderFromDist(unittest.TestCase):
-    def __mock_builder(self, component_name):
+    def __mock_builder(self, component_name: str) -> BuilderFromDist:
         return BuilderFromDist(
             InputComponentFromDist({"name": component_name, "dist": "url"}),
             BuildTarget(
@@ -27,26 +27,26 @@ class TestBuilderFromDist(unittest.TestCase):
             ),
         )
 
-    def test_builder(self):
+    def test_builder(self) -> None:
         self.assertEqual(self.__mock_builder("common-utils").component.name, "common-utils")
 
     @patch("manifests.distribution.find_build_root")
     @patch("build_workflow.builder_from_dist.BuildManifest")
-    def test_checkout(self, mock_manifest: Mock, find_build_root: Mock):
+    def test_checkout(self, mock_manifest: Mock, find_build_root: Mock) -> None:
         builder = self.__mock_builder("common-utils")
         builder.checkout("dir")
         mock_manifest.from_url.assert_called_once()
         find_build_root.assert_called_once()
         self.assertIsNotNone(builder.distribution_url)
 
-    def test_build(self):
+    def test_build(self) -> None:
         build_recorder = MagicMock()
         self.__mock_builder("common-utils").build(build_recorder)
 
     @patch("os.makedirs")
     @patch("urllib.request.urlretrieve")
     @patch("build_workflow.builder_from_dist.BuilderFromDist.ManifestGitRepository")
-    def test_export_artifacts(self, mock_manifest_git_repository, mock_urllib: Mock, mock_makedirs, *mocks):
+    def test_export_artifacts(self, mock_manifest_git_repository: Mock, mock_urllib: Mock, mock_makedirs: Mock) -> None:
         build_recorder = MagicMock()
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
         mock_builder = self.__mock_builder("notifications")
@@ -68,7 +68,7 @@ class TestBuilderFromDist(unittest.TestCase):
     @patch("os.makedirs")
     @patch("urllib.request.urlretrieve")
     @patch("build_workflow.builder_from_dist.BuilderFromDist.ManifestGitRepository")
-    def test_export_artifacts_skips_maven_artifacts(self, mock_manifest_git_repository, mock_urllib, mock_makedirs, *mocks):
+    def test_export_artifacts_skips_maven_artifacts(self, mock_manifest_git_repository: Mock, mock_urllib: Mock, mock_makedirs: Mock) -> None:
         build_recorder = MagicMock()
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
         mock_builder = self.__mock_builder("common-utils")
