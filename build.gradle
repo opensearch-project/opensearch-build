@@ -35,6 +35,15 @@ dependencies {
     compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
     compile group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    constraints {
+        implementation("org.apache.logging.log4j:log4j-core") {
+            version {
+                strictly("[2.16, 3[")
+                prefer("2.16.0")
+            }
+            because("CVE-2021-44228: Log4j vulnerable to remote code execution")
+        }
+    }
 }
 
 sourceSets {
