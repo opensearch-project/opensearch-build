@@ -33,7 +33,7 @@ void call(Map args = [:]) {
             String pluginNameWithExt = pluginSubPath.split('/')[1]
             String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
-            s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/$pluginFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/"
+            s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$pluginFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/"
                 , includePathPattern: "**/${pluginName}*")
         }
 
@@ -42,9 +42,9 @@ void call(Map args = [:]) {
         println("Start Tar Core/Bundle Promotion to artifacts.opensearch.org Bucket")
         String coreFullPath = ['core', filename, version].join('/')
         String bundleFullPath = ['bundle', filename, version].join('/')
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/$coreFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/"
+        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$coreFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/"
                 , includePathPattern: "**/${filename}-min-${version}*")
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/$bundleFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/"
+        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$bundleFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/"
                 , includePathPattern: "**/${filename}*-${version}*")
 
 

@@ -12,13 +12,13 @@ pipeline {
             description: 'What platform is this distribution build for?.'
         )
         string(
-            defaultValue: '98',
+            defaultValue: '',
             name: 'DISTRIBUTION_BUILD_NUMBER',
             description: 'What is the build id of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 123, 136)',
             trim: true
         )
         string(
-            defaultValue: '1.2.2/opensearch-1.2.2.yml',
+            defaultValue: '',
             name: 'INPUT_MANIFEST',
             description: 'What is the input manifest of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 1.2.2/opensearch-1.2.2.yml)',
             trim: true
