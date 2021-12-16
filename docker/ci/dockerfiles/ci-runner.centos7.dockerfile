@@ -27,7 +27,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl git gnupg2 awscli tar net-tools procps-ng python3 python3-devel python3-pip
+    yum install -y adoptopenjdk-14-hotspot which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
