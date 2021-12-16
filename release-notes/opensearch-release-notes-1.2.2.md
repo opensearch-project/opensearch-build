@@ -1,4 +1,4 @@
-# OpenSearch 1.2.1 Release Notes
+# OpenSearch 1.2.2 Release Notes
 
 ## Release Highlights
 
@@ -9,4 +9,3 @@ This patch releases updates the version of Log4j used in OpenSearch to Log4j 2.1
 
 ### OpenSearch Security
 * Bumping log4j to 2.16.0 ([#1525](https://github.com/opensearch-project/security/pull/1525))
-
