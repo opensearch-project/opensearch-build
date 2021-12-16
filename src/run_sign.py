@@ -11,8 +11,7 @@ import logging
 import sys
 from pathlib import Path
 
-from sign_workflow.sign_existing_artifacts import SignExistingArtifacts
-from sign_workflow.sign_with_manifest import SignWithManifest
+from sign_workflow.sign_artifacts import SignArtifacts
 from system import console
 
 ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
@@ -37,15 +36,10 @@ def main():
 
     console.configure(level=args.logging_level)
 
-    file_extension = args.target.suffix
+    sign = SignArtifacts.from_path(path=args.target, component=args.component,
+                                   artifact_type=args.type, signature_type=args.sigtype)
 
-    if file_extension == ".yml":
-        sign_with_manifest = SignWithManifest(manifest_path=args.target, component=args.component,
-                                              artifact_type=args.type, signature_type=args.sigtype)
-        sign_with_manifest.sign_using_manifest()
-    else:
-        sign_existing_artifacts = SignExistingArtifacts(artifact_path=args.target, signature_type=args.sigtype)
-        sign_existing_artifacts.sign_existing_manifest()
+    sign.sign()
 
 
 if __name__ == "__main__":

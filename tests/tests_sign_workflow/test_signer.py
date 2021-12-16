@@ -7,7 +7,7 @@ from sign_workflow.signer import Signer
 
 class TestSigner(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
-    def test_accepted_file_types(self, git_repo):
+    def test_accepted_file_types_asc(self, git_repo):
         artifacts = [
             "bad-xml.xml",
             "the-jar.jar",
@@ -33,6 +33,33 @@ class TestSigner(unittest.TestCase):
         signer.sign_artifacts(artifacts, "path", ".asc")
         self.assertEqual(signer.sign.call_args_list, expected)
 
+    @patch("sign_workflow.signer.GitRepository")
+    def test_accepted_file_types_sig(self, git_repo):
+        artifacts = [
+            "bad-xml.xml",
+            "the-jar.jar",
+            "the-zip.zip",
+            "the-war.war",
+            "the-pom.pom",
+            "the-module.module",
+            "the-tar.tar.gz",
+            "random-file.txt",
+            "something-1.0.0.0.jar",
+        ]
+        expected = [
+            call(os.path.join("path", "the-jar.jar"), ".sig"),
+            call(os.path.join("path", "the-zip.zip"), ".sig"),
+            call(os.path.join("path", "the-war.war"), ".sig"),
+            call(os.path.join("path", "the-pom.pom"), ".sig"),
+            call(os.path.join("path", "the-module.module"), ".sig"),
+            call(os.path.join("path", "the-tar.tar.gz"), ".sig"),
+            call(os.path.join("path", "something-1.0.0.0.jar"), ".sig"),
+        ]
+        signer = Signer()
+        signer.sign = MagicMock()
+        signer.sign_artifacts(artifacts, "path", ".sig")
+        self.assertEqual(signer.sign.call_args_list, expected)
+
     @patch(
         "sign_workflow.signer.Signer.get_repo_url",
         return_value="https://github.com/opensearch-project/.github",
@@ -50,7 +77,19 @@ class TestSigner(unittest.TestCase):
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.asc")])
 
     @patch("sign_workflow.signer.GitRepository")
+    def test_signer_verify_sig(self, mock_repo):
+        signer = Signer()
+        signer.verify("/path/the-jar.jar.sig")
+        mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.sig")])
+
+    @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar", ".asc")
         mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_signer_sign(self, mock_repo):
+        signer = Signer()
+        signer.sign("/path/the-jar.jar", ".sig")
+        mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
