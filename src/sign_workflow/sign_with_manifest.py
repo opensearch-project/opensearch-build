@@ -7,7 +7,6 @@
 # compatible open source license.
 
 import logging
-import os
 
 from manifests.build_manifest import BuildManifest
 from sign_workflow.signer import Signer

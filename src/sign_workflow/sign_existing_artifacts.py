@@ -14,14 +14,9 @@ from sign_workflow.signer import Signer
 
 class SignExistingArtifacts:
 
-    def __init__(self, artifact_path, signature_type):
+    def __init__(self, artifact_path: Path, signature_type):
         self.artifact_path = artifact_path
         self.signature_type = signature_type
-
-    def __setattr__(self, name, value):
-        if name == 'artifact_path' and not isinstance(value, Path):
-            raise TypeError('SignExistingArtifacts.artifact_path must of type Path')
-        super().__setattr__(name, value)
 
     def sign_existing_manifest(self):
 
