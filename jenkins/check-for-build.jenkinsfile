@@ -57,11 +57,15 @@ pipeline {
                         if (sha.exists) {
                             echo "Skipping, ${sha.path} already exists."
                         } else {
-                            build job: "${TARGET_JOB_NAME}", parameters: [
+                            try {
+                                build job: "${TARGET_JOB_NAME}", parameters: [
                                 string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
-                            ], wait: true
-                            echo "Build succeeded, uploading build SHA for that job"
-                            buildUploadManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                                ], wait: true
+                                echo "Build succeeded, uploading build SHA for that job"
+                                buildUploadManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                            } catch (err) {
+                                echo "${TARGET_JOB_NAME} failed"
+                            }
                         }
                     }
                 }
