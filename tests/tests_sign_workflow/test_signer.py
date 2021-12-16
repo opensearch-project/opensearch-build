@@ -30,7 +30,7 @@ class TestSigner(unittest.TestCase):
         ]
         signer = Signer()
         signer.sign = MagicMock()
-        signer.sign_artifacts(artifacts, "path")
+        signer.sign_artifacts(artifacts, "path", ".asc")
         self.assertEqual(signer.sign.call_args_list, expected)
 
     @patch(
@@ -52,5 +52,5 @@ class TestSigner(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign(self, mock_repo):
         signer = Signer()
-        signer.sign("/path/the-jar.jar")
+        signer.sign("/path/the-jar.jar", ".asc")
         mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])

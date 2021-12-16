@@ -8,19 +8,22 @@
 
 import argparse
 import logging
-import os
 import sys
+from pathlib import Path
 
-from manifests.build_manifest import BuildManifest
-from sign_workflow.signer import Signer
+from sign_workflow.sign_existing_artifacts import SignExistingArtifacts
+from sign_workflow.sign_with_manifest import SignWithManifest
 from system import console
+
+ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
 
 
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
-    parser.add_argument("manifest", type=argparse.FileType("r"), help="Path to local manifest file.")
+    parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory")
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
+    parser.add_argument("--sigType", nargs="?", help="Type of Signature file", default=".asc")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -32,22 +35,20 @@ def main():
     )
     args = parser.parse_args()
 
+    if args.sigType not in ACCEPTED_SIGNATURE_FILE_TYPES:
+        raise Exception(f"Accepted types of signature files are ${ACCEPTED_SIGNATURE_FILE_TYPES}")
+
     console.configure(level=args.logging_level)
 
-    manifest = BuildManifest.from_file(args.manifest)
-    basepath = os.path.dirname(os.path.abspath(args.manifest.name))
-    signer = Signer()
+    file_extension = args.target.suffix
 
-    for component in manifest.components.select(focus=args.component):
-        logging.info(f"Signing {component.name}")
-
-        for artifact_type in component.artifacts:
-            if args.type and args.type != artifact_type:
-                continue
-
-            signer.sign_artifacts(component.artifacts[artifact_type], basepath)
-
-    logging.info("Done.")
+    if file_extension == ".yml":
+        sign_with_manifest = SignWithManifest(manifest_path=args.target, component=args.component,
+                                              artifact_type=args.type, signature_type=args.sigType)
+        sign_with_manifest.sign_using_manifest()
+    else:
+        sign_existing_artifacts = SignExistingArtifacts(artifact_path=args.target, signature_type=args.sigType)
+        sign_existing_artifacts.sign_using_manifest()
 
 
 if __name__ == "__main__":
