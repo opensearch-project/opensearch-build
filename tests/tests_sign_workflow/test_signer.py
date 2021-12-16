@@ -20,13 +20,13 @@ class TestSigner(unittest.TestCase):
             "something-1.0.0.0.jar",
         ]
         expected = [
-            call(os.path.join("path", "the-jar.jar")),
-            call(os.path.join("path", "the-zip.zip")),
-            call(os.path.join("path", "the-war.war")),
-            call(os.path.join("path", "the-pom.pom")),
-            call(os.path.join("path", "the-module.module")),
-            call(os.path.join("path", "the-tar.tar.gz")),
-            call(os.path.join("path", "something-1.0.0.0.jar")),
+            call(os.path.join("path", "the-jar.jar"), ".asc"),
+            call(os.path.join("path", "the-zip.zip"), ".asc"),
+            call(os.path.join("path", "the-war.war"), ".asc"),
+            call(os.path.join("path", "the-pom.pom"), ".asc"),
+            call(os.path.join("path", "the-module.module"), ".asc"),
+            call(os.path.join("path", "the-tar.tar.gz"), ".asc"),
+            call(os.path.join("path", "something-1.0.0.0.jar"), ".asc"),
         ]
         signer = Signer()
         signer.sign = MagicMock()
