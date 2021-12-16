@@ -20,10 +20,10 @@ ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
 
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
-    parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory")
+    parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
-    parser.add_argument("--sigType", nargs="?", help="Type of Signature file", default=".asc")
+    parser.add_argument("--sigtype", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -35,19 +35,16 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.sigType not in ACCEPTED_SIGNATURE_FILE_TYPES:
-        raise Exception(f"Accepted types of signature files are ${ACCEPTED_SIGNATURE_FILE_TYPES}")
-
     console.configure(level=args.logging_level)
 
     file_extension = args.target.suffix
 
     if file_extension == ".yml":
         sign_with_manifest = SignWithManifest(manifest_path=args.target, component=args.component,
-                                              artifact_type=args.type, signature_type=args.sigType)
+                                              artifact_type=args.type, signature_type=args.sigtype)
         sign_with_manifest.sign_using_manifest()
     else:
-        sign_existing_artifacts = SignExistingArtifacts(artifact_path=args.target, signature_type=args.sigType)
+        sign_existing_artifacts = SignExistingArtifacts(artifact_path=args.target, signature_type=args.sigtype)
         sign_existing_artifacts.sign_existing_manifest()
 
 

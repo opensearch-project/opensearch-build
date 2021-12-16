@@ -34,13 +34,8 @@ class SignExistingArtifacts:
 
     def sign_all_artifacts_in_dir(self):
         signer = Signer()
-        files_map = {}
         for subdir, dirs, files in os.walk(self.artifact_path):
+            artifacts = []
             for file in files:
-                if subdir in files_map:
-                    files_map[subdir].append(file)
-                else:
-                    files_map[subdir] = [file]
-
-        for basename, artifact_list in files_map.items():
-            signer.sign_artifacts(artifact_list, basename, self.signature_type)
+                artifacts.append(file)
+            signer.sign_artifacts(artifacts, subdir, self.signature_type)
