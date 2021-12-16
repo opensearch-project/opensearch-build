@@ -43,7 +43,7 @@ class Signer:
     def get_repo_url(self):
         if "GITHUB_TOKEN" in os.environ:
             return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-signer-client.git"
-        return "git@github.com:opensearch-project/opensearch-signer-client.git"
+        return "https://github.com/opensearch-project/opensearch-signer-client.git"
 
     def sign(self, filename, signature_type):
         signature_file = filename + signature_type
