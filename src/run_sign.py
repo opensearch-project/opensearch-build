@@ -48,7 +48,7 @@ def main():
         sign_with_manifest.sign_using_manifest()
     else:
         sign_existing_artifacts = SignExistingArtifacts(artifact_path=args.target, signature_type=args.sigType)
-        sign_existing_artifacts.sign_using_manifest()
+        sign_existing_artifacts.sign_existing_manifest()
 
 
 if __name__ == "__main__":

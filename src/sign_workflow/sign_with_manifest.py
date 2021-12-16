@@ -16,13 +16,14 @@ from sign_workflow.signer import Signer
 class SignWithManifest:
 
     def __init__(self, manifest_path, component, artifact_type, signature_type):
+        self.manifest_path = manifest_path
         self.manifest = BuildManifest.from_file(manifest_path.open("r"))
         self.component = component
         self.artifact_type = artifact_type
         self.signature_type = signature_type
 
     def sign_using_manifest(self):
-        basepath = os.path.dirname(os.path.abspath(self.manifest.name))
+        basepath = self.manifest_path.parent
         signer = Signer()
 
         for component in self.manifest.components.select(focus=self.component):

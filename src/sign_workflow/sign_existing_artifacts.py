@@ -23,7 +23,7 @@ class SignExistingArtifacts:
             raise TypeError('SignExistingArtifacts.artifact_path must of type Path')
         super().__setattr__(name, value)
 
-    def sign_using_manifest(self):
+    def sign_existing_manifest(self):
 
         if self.artifact_path.is_file():
             artifacts = [self.artifact_path.name]
