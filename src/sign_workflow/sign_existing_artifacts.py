@@ -7,8 +7,8 @@
 # compatible open source license.
 
 import logging
-from pathlib import Path
 import os
+from pathlib import Path
 
 from sign_workflow.signer import Signer
 
