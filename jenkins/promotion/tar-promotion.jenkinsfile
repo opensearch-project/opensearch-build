@@ -1,0 +1,60 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        choice(
+            choices: ['distribution-build-opensearch', 'distribution-build-opensearch-dashboards'],
+            name: 'DISTRIBUTION_JOB_NAME',
+            description: 'What platform is this distribution build for?.'
+        )
+        string(
+            defaultValue: '',
+            name: 'DISTRIBUTION_BUILD_NUMBER',
+            description: 'What is the build id of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 123, 136)',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'INPUT_MANIFEST',
+            description: 'What is the input manifest of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 1.2.2/opensearch-1.2.2.yml)',
+            trim: true
+        )
+        choice(
+            choices: ['linux', 'windows', 'darwin'],
+            name: 'DISTRIBUTION_PLATFORM',
+            description: 'What platform is this distribution build for?.'
+        )
+        choice(
+            choices: ['x64', 'arm64'],
+            name: 'DISTRIBUTION_ARCHITECTURE',
+            description: 'What architecture is this distribution build for?.'
+        )
+    }
+    stages {
+        stage('promote artifacts') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    promoteArtifacts()
+                }
+            }
+            post() {
+                always {
+                    script {
+                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                    }
+                }
+            }
+        }
+    }
+}
