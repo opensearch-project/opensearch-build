@@ -50,23 +50,27 @@ pipeline {
         )
     }
     stages {
-        stage('Choose Agent Node') {
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    alwaysPull true
+                }
+            }
             steps {
                 script {
-                    if ("${architecture}" == 'x64') {
-                        agentLabel = 'Jenkins-Agent-al2-x64-m5xlarge'
-                    } else if ("${architecture}" == 'arm64') {
-                        agentLabel = 'Jenkins-Agent-al2-arm64-m6gxlarge'
-                    } else {
-                        error('Unknown CPU architecture is provided')
-                    }
+                    dockerAgent = detectDockerAgent()
                 }
             }
         }
-        stage('integ-test') {
+        stage('integ-test-opensearch-dashboards') {
             agent {
-                node {
-                    label "${agentLabel}"
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
                 }
             }
             steps {
