@@ -1,0 +1,131 @@
+lib = library(identifier: 'jenkins@20211118', retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    environment {
+        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
+        AWS_ROLE_SESSION_NAME = 'jenkins-test-session'
+    }
+    tools {
+        jdk 'JDK14'
+        maven 'maven-3.8.2'
+    }
+    parameters {
+        string(
+            defaultValue: '',
+            name: 'opensearch_version',
+            description: 'OpenSearch version to run test on',
+            trim: true
+        )
+
+        string(
+            defaultValue: '',
+            name: 'opensearch_dashboards_version',
+            description: 'OpenSearch Dashboards version to run test on',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'opensearch_build_id',
+            description: 'The build number of OpenSearch for which tests should be run',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'opensearch_dashboards_build_id',
+            description: 'The build number of OpenSearch Dashboards for which tests should be run',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'architecture',
+            description: 'Architecture of the build of OpenSearch/OpenSearch Dashboards',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'platform',
+            description: 'Platform of the build of OpenSearch/OpenSearch Dashboards',
+            trim: true
+        )
+    }
+    stages {
+        stage('Choose Agent Node') {
+            steps {
+                script {
+                    if ("${architecture}" == 'x64') {
+                        agentLabel = 'Jenkins-Agent-al2-x64-m5xlarge'
+                    } else if ("${architecture}" == 'arm64') {
+                        agentLabel = 'Jenkins-Agent-al2-arm64-m6gxlarge'
+                    } else {
+                        error('Unknown CPU architecture is provided')
+                    }
+                }
+            }
+        }
+        stage('integ-test') {
+            agent {
+                node {
+                    label "${agentLabel}"
+                }
+            }
+            steps {
+                script {
+                    basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
+                    basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
+                    sh "wget ${basePath}/builds/opensearch/manifest.yml"
+                    sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearch} --test-run-id ${env.BUILD_NUMBER}"
+                }
+            }
+            post {
+                always {
+                    script {
+                        uploadTestResults(
+                            jobName: 'bundle-build',
+                            buildNumber: "${build_id}"
+                        )
+                    }
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+    post {
+        success {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Integration Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script  {
+                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Integration Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    cleanWs(
+                        disableDeferredWipeout: true,
+                        deleteDirs: true
+                    )
+                }
+            }
+        }
+    }
+}
