@@ -2,6 +2,10 @@ void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.manifest))
+    def yamlFile = readYaml(file: args.manifest)
+    def fileLocation = yamlFile.components.artifacts.dist[0]
+    def productName = buildManifest.build.getFilename()
+    def fileName = buildManifest.getPackageName("${productName}")
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
@@ -11,10 +15,15 @@ void call(Map args = [:]) {
         s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/dist")
     }
 
+    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC_REAL}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Upload(file: "builds/test-release-candidates/core/${productName}/${buildManifest.build.version}", bucket: "${ARTIFACT_PUBLIC_BUCKET_NAME}", path: "${artifactPath}/builds/${productName}/${fileLocation}")
+        s3Upload(file: "builds/test-release-candidates/bundle/${productName}/${buildManifest.build.version}", bucket: "${ARTIFACT_PUBLIC_BUCKET_NAME}", path: "${artifactPath}/dist/${productName}/${fileName}")
+    }
+
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/${buildManifest.build.getFilename()}/manifest.yml",
-            "${baseUrl}/dist/${buildManifest.build.getFilename()}/manifest.yml"
+            "${baseUrl}/builds/${productName}/manifest.yml",
+            "${baseUrl}/dist/${productName}/manifest.yml"
         ].join('\n')
     )
 }

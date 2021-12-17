@@ -49,6 +49,16 @@ class BuildManifest implements Serializable {
             this.getArtifactRoot(jobName, buildNumber)
         ].join('/')
     }
+
+    public String getPackageName(String productName) {
+        String packagePrefix = [
+            productName,
+            this.build.version,
+            this.build.platform,
+            this.build.architecture,       
+        ].join('/')
+        return packagePrefix + '.tar.gz'
+    }
 }
 
 
