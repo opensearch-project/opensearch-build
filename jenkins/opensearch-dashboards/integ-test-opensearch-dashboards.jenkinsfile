@@ -1,15 +1,7 @@
-lib = library(identifier: 'jenkins@20211118', retriever: legacySCM(scm))
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     agent none
-    environment {
-        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
-        AWS_ROLE_SESSION_NAME = 'jenkins-test-session'
-    }
-    tools {
-        jdk 'JDK14'
-        maven 'maven-3.8.2'
-    }
     parameters {
         string(
             defaultValue: '',
@@ -49,6 +41,10 @@ pipeline {
             trim: true
         )
     }
+    options {
+        copyArtifactPermission("${JOB_NAME}")
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    }
     stages {
         stage('detect docker image + args') {
             agent {
@@ -64,71 +60,77 @@ pipeline {
                 }
             }
         }
-        stage('integ-test-opensearch-dashboards') {
-            agent {
-                docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image dockerAgent.image
-                    args dockerAgent.args
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
-                    basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
-
-                    sh "wget ${basePathOpenSearchDashboards}/builds/opensearch-dashboards/manifest.yml"
-                    sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
-                }
-            }
-            post {
-                always {
-                    script {
-                        uploadTestResults(
-                            jobName: 'bundle-build',
-                            buildNumber: "${build_id}"
-                        )
+        stage('build') {
+            parallel {
+                stage('build-linux-x64') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
                     }
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                    steps {
+                        script {
+                            basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
+                            basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
+
+                            sh "wget ${basePathOpenSearchDashboards}/builds/opensearch-dashboards/manifest.yml"
+                            sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+            }
+        }
+        stage('docker build') {
+            steps {
+                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    script {
+                        buildDockerImage()
+                    }
                 }
             }
         }
     }
     post {
         success {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    def stashed = lib.jenkins.Messages.new(this).get([
+                        'build-linux-x64',
+                        'build-archive-linux-arm64',
+                        'assemble-archive-linux-arm64'
+                    ])
+
                     publishNotification(
                         icon: ':white_check_mark:',
-                        message: 'Integration Tests Successful',
+                        message: 'Successful Build',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }
         failure {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
-                script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
                     publishNotification(
                         icon: ':warning:',
-                        message: 'Failed Integration Tests',
-                        extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
                     )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
+                    postCleanup()
                 }
             }
         }
