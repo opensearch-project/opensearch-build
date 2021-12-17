@@ -8,11 +8,11 @@
 
 import logging
 import os
+from abc import abstractmethod
 from pathlib import Path
 
 from manifests.build_manifest import BuildManifest
 from sign_workflow.signer import Signer
-from abc import abstractmethod
 
 
 class SignArtifacts:

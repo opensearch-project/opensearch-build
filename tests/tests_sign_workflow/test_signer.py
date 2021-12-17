@@ -71,7 +71,7 @@ class TestSigner(unittest.TestCase):
         mock_execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])
 
     @patch("sign_workflow.signer.GitRepository")
-    def test_signer_verify(self, mock_repo):
+    def test_signer_verify_asc(self, mock_repo):
         signer = Signer()
         signer.verify("/path/the-jar.jar.asc")
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.asc")])
@@ -83,13 +83,13 @@ class TestSigner(unittest.TestCase):
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.sig")])
 
     @patch("sign_workflow.signer.GitRepository")
-    def test_signer_sign(self, mock_repo):
+    def test_signer_sign_asc(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar", ".asc")
         mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
 
     @patch("sign_workflow.signer.GitRepository")
-    def test_signer_sign(self, mock_repo):
+    def test_signer_sign_sig(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar", ".sig")
         mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
