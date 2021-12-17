@@ -29,7 +29,7 @@ Verify if you have Docker Desktop or Docker Buildx Standalone by running:
   ```
 
 
-You need to run both script within the `opensearch-build/release/docker` folder. Running them
+You need to run both script within the `opensearch-build/docker/release` folder. Running them
   within other path would cause the scripts to fail.
 
 #### Build single-arch image with these commands:
@@ -103,3 +103,8 @@ Here are three example scenarios of using above variables:
      $ docker run -it --network="host" -e opensearchproject/opensearch-dashboards:1.1.0
      ```
 
+#### Scenario 4: Generate and install self-signed certs/config + enable security on OpenSearch.
+  * OpenSearch:
+  ```
+  $ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node"  opensearchproject/opensearch:1.2.0 -g
+  ``` 

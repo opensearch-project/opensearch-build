@@ -8,6 +8,43 @@
 # If either process failed, the entire docker container will be removed
 # in favor of a newly started container
 
+function usage() {
+  echo ""
+  echo "This script serves as docker entrypoint and gets executed when a new container is created."
+  echo "--------------------------------------------------------------------------"
+  echo "Usage: $0 [args]"
+  echo "Optional arguments:"
+  echo -e "-h\t\tPrint this message."
+  echo -e "-g\t\tGenerates and installs self-signed certificates for SSL encryption."
+  echo "--------------------------------------------------------------------------"
+}
+
+function do_certificates_exist() {
+  echo ""
+  echo -e "Checking if certificates exist."
+  if ls $OPENSEARCH_HOME/config/*.pem > /dev/null 2>&1; then
+    true; return
+  else
+    false; return
+  fi
+}
+
+while getopts ":hg" option; do
+  case $option in
+  h)
+    usage
+    exit 1
+    ;;
+  g)
+    GENERATE_CERTS="true"
+    ;;
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    usage
+    ;;
+  esac
+done
+
 # Export OpenSearch Home
 export OPENSEARCH_HOME=/usr/share/opensearch
 
@@ -54,14 +91,14 @@ done < <(env)
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
+#&& [ "$GENERATE_CERTS" == "true" ]
 ##Security Plugin
 SECURITY_PLUGIN="opensearch-security"
 if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-    if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
-        echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
-    else
-        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
-        bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+    if (! do_certificates_exist && [ "$GENERATE_CERTS" == "true" ]); then
+      echo "Generating and installing new self-signed certificates..."
+      # TODO(#1633) Replace this with certs-manager tool in auto mode. Pending on #1633
+      bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
     fi
 
     if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then

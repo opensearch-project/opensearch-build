@@ -57,7 +57,7 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+RUN yum update -y && yum clean all && yum install -y tar gzip shadow-utils which openssl-devel openssl && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -85,7 +85,6 @@ USER $UID
 # Enable security plugin during image build, and allow user to disable during startup of the container
 ARG DISABLE_INSTALL_DEMO_CONFIG=true
 ARG DISABLE_SECURITY_PLUGIN=false
-RUN ./opensearch-onetime-setup.sh
 
 # Expose ports for the opensearch service (9200 for HTTP and 9300 for internal transport) and performance analyzer (9600 for the agent and 9650 for the root cause analysis component)
 EXPOSE 9200 9300 9600 9650
@@ -106,4 +105,4 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE"
 
 # CMD to run
-CMD ["./opensearch-docker-entrypoint.sh"]
+ENTRYPOINT ["./opensearch-docker-entrypoint.sh", "-g"]
