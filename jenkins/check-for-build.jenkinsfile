@@ -8,6 +8,7 @@ pipeline {
             H/10 * * * * %INPUT_MANIFEST=1.1.1/opensearch-dashboards-1.1.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H/10 * * * * %INPUT_MANIFEST=1.2.1/opensearch-1.2.1.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.2.2/opensearch-1.2.2.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H/10 * * * * %INPUT_MANIFEST=1.2.3/opensearch-1.2.3.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.3.0/opensearch-dashboards-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
