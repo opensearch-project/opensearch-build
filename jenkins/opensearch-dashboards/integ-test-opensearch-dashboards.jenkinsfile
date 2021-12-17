@@ -41,10 +41,6 @@ pipeline {
             trim: true
         )
     }
-    options {
-        copyArtifactPermission("${JOB_NAME}")
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
-    }
     stages {
         stage('detect docker image + args') {
             agent {
@@ -61,29 +57,27 @@ pipeline {
             }
         }
         stage('build') {
-            parallel {
-                stage('build-linux-x64') {
-                    agent {
-                        docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
-                        }
+            stage('build-linux-x64') {
+                agent {
+                    docker {
+                        label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                        image dockerAgent.image
+                        args dockerAgent.args
+                        alwaysPull true
                     }
-                    steps {
-                        script {
-                            basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
-                            basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
+                }
+                steps {
+                    script {
+                        basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
+                        basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
 
-                            sh "wget ${basePathOpenSearchDashboards}/builds/opensearch-dashboards/manifest.yml"
-                            sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
-                        }
+                        sh "wget ${basePathOpenSearchDashboards}/builds/opensearch-dashboards/manifest.yml"
+                        sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
                     }
-                    post {
-                        always {
-                            postCleanup()
-                        }
+                }
+                post {
+                    always {
+                        postCleanup()
                     }
                 }
             }
@@ -102,20 +96,6 @@ pipeline {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get([
-                        'build-linux-x64',
-                        'build-archive-linux-arm64',
-                        'assemble-archive-linux-arm64'
-                    ])
-
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
                     postCleanup()
                 }
             }
@@ -123,13 +103,6 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
                     postCleanup()
                 }
             }
