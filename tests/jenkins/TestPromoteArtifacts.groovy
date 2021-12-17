@@ -44,8 +44,11 @@ class TestPromoteArtifacts extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
+        helper.registerAllowedMethod('getPath', { args ->
+            return "workspace/file/found.zip"
+        })
         helper.registerAllowedMethod('findFiles', [Map], { args ->
-            return ["workspace/file/found.zip"]
+            return [{}]
         })
 
         Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
