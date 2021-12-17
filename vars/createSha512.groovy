@@ -1,8 +1,15 @@
 Closure call() {
+    allowedFileTypes = [".tar.gz", ".zip"]
+
     return { path -> body: {
-        // Only create checksums for archive files
-        if (path.endsWith(".tar.gz") || path.endsWith(".zip"))
-            sh("sha512sum ${path} > ${path}.sha512")
+        isAllowed = false
+        for (fileType in allowedFileTypes) {
+            isAllowed |= path.endsWith(fileType)
         }
-    }
+        if (isAllowed) {
+            sh("sha512sum ${path} > ${path}.sha512")
+        } else {
+            echo("Not generating sha for ${path}, doesn't match allowed types ${allowedFileTypes}")
+        }
+    } }
 }

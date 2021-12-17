@@ -40,8 +40,8 @@ void call(Map args = [:]) {
             String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
             for (Closure action : fileActions) {
-                for (file in findFiles(glob: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/**/${pluginName}*")) {
-                    action(file)
+                for (file in findFiles(glob: "**/${pluginName}*")) {
+                    action(file.getPath())
                 }
             } 
             s3Upload(
@@ -57,8 +57,8 @@ void call(Map args = [:]) {
         String coreFullPath = ['core', filename, version].join('/')
         String bundleFullPath = ['bundle', filename, version].join('/')
         for (Closure action : fileActions) {
-            for (file in findFiles(glob: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/**/${filename}-min-${version}*")) {
-                action(file)
+            for (file in findFiles(glob: "**/${filename}-min-${version}*")) {
+                action(file.getPath())
             }
         }
         s3Upload(
@@ -69,8 +69,8 @@ void call(Map args = [:]) {
 
         // Distribution Artifact
         for (Closure action : fileActions) {
-            for (file in findFiles(glob: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/**/${filename}*-${version}*")) {
-                action(file)
+            for (file in findFiles(glob: "**/${filename}*-${version}*")) {
+                action(file.getPath())
             }
         }
 
