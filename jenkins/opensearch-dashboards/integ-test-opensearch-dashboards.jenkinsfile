@@ -54,8 +54,6 @@ pipeline {
                 script {
                     basePathOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${opensearch_version}/${opensearch_build_id}/${platform}/${architecture}"
                     basePathOpenSearchDashboards = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/${opensearch_dashboards_version}/${opensearch_dashboards_build_id}/${platform}/${architecture}"
-
-                    sh "wget ${basePathOpenSearchDashboards}/builds/opensearch-dashboards/manifest.yml"
                     sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
