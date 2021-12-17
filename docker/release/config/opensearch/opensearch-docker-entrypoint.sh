@@ -91,7 +91,6 @@ done < <(env)
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
-#&& [ "$GENERATE_CERTS" == "true" ]
 ##Security Plugin
 SECURITY_PLUGIN="opensearch-security"
 if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then

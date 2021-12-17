@@ -73,14 +73,14 @@ There are 3 environment variables available for users to disable security relate
 
 Here are three example scenarios of using above variables:
 
-#### Scenario 1: Original behavior, install demo certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards:
+#### Scenario 1: Original behavior, generate and install self-signed certs/configs + enable security on both OpenSearch and OpenSearch-Dashboards:
   * OpenSearch:
      ```
-     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.1.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.2.0
      ```
   * OpenSearch-Dashboards:
      ```
-     $ docker run -it --network="host" opensearchproject/opensearch-dashboards:1.1.0
+     $ docker run -it --network="host" opensearchproject/opensearch-dashboards:1.2.0
      ```
 
 #### Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
@@ -102,9 +102,3 @@ Here are three example scenarios of using above variables:
      ```
      $ docker run -it --network="host" -e opensearchproject/opensearch-dashboards:1.1.0
      ```
-
-#### Scenario 4: Generate and install self-signed certs/config + enable security on OpenSearch.
-  * OpenSearch:
-  ```
-  $ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node"  opensearchproject/opensearch:1.2.0 -g
-  ``` 
