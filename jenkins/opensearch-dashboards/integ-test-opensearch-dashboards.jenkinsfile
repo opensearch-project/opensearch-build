@@ -52,9 +52,9 @@ pipeline {
             }
             steps {
                 script {
-                    basePathOpenSearch = getPublicUrl(name = 'Open Search', jobName = 'distribution-build-opensearch', architecture = architecture, platform = platform, buildName = opensearch_build_id)
+                    basePathOpenSearch = getPublicUrl([name = 'Open Search', jobName = 'distribution-build-opensearch', architecture = architecture, platform = platform, buildName = opensearch_build_id])
 
-                    basePathOpenSearchDashboards = getPublicUrl(name = 'Open Search Dashboards', jobName = 'distribution-build-opensearch-dashboards', architecture = architecture, platform = platform, buildName = opensearch_dashboards_build_id)
+                    basePathOpenSearchDashboards = getPublicUrl([name = 'Open Search Dashboards', jobName = 'distribution-build-opensearch-dashboards', architecture = architecture, platform = platform, buildName = opensearch_dashboards_build_id])
 
                     sh "./test.sh integ-test manifests/${opensearch_dashboards_version}/opensearch-dashboards-${opensearch_dashboards_version}-test.yml -p opensearch=${basePathOpenSearch} opensearch-dashboards=${basePathOpenSearchDashboards} --test-run-id ${env.BUILD_NUMBER}"
                 }
