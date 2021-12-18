@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from sign_workflow.sign_artifacts import SignArtifacts, SignArtifactsExistingArtifactFile, SignExistingArtifactsDir, SignWithManifest
+from sign_workflow.sign_artifacts import SignArtifacts, SignArtifactsExistingArtifactFile, SignExistingArtifactsDir, SignWithBuildManifest
 
 
 class TestSignArtifacts(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestSignArtifacts(unittest.TestCase):
         path = Path(r"/dummy/path/manifest.yml")
         klass = SignArtifacts.__signer_class__(path)
 
-        self.assertEqual(type(SignWithManifest), type(klass))
+        self.assertEqual(type(SignWithBuildManifest), type(klass))
 
         path = Path(r"/dummy/path/")
         klass = SignArtifacts.__signer_class__(path)
@@ -29,7 +29,7 @@ class TestSignArtifacts(unittest.TestCase):
         sigtype = '.asc'
 
         klass = SignArtifacts.from_path(path, component, artifact_type, sigtype)
-        self.assertEqual(type(SignWithManifest), type(klass.__class__))
+        self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
         path = Path(r"/dummy/path/")
         klass = SignArtifacts.from_path(path, component, artifact_type, sigtype)

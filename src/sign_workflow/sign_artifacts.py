@@ -31,15 +31,18 @@ class SignArtifacts:
         self.__sign__()
         logging.info("Done.")
 
-    def __sign_artifacts__(self, artifacts, basepath, signature_type):
-        self.signer.sign_artifacts(artifacts, basepath, signature_type)
+    def __sign_artifacts__(self, artifacts, basepath):
+        self.signer.sign_artifacts(artifacts, basepath, self.signature_type)
+
+    def __sign_artifact__(self, artifact, basepath):
+        self.signer.sign_artifact(artifact, basepath, self.signature_type)
 
     @classmethod
     def __signer_class__(self, path: Path):
         if path.is_dir():
             return SignExistingArtifactsDir
         elif path.suffix == ".yml":
-            return SignWithManifest
+            return SignWithBuildManifest
         else:
             return SignArtifactsExistingArtifactFile
 
@@ -49,7 +52,7 @@ class SignArtifacts:
         return klass(path, component, artifact_type, signature_type)
 
 
-class SignWithManifest(SignArtifacts):
+class SignWithBuildManifest(SignArtifacts):
 
     def __sign__(self):
         manifest = BuildManifest.from_file(self.target.open("r"))
@@ -61,19 +64,19 @@ class SignWithManifest(SignArtifacts):
                 if self.artifact_type and self.artifact_type != component_artifact_type:
                     continue
 
-                super().__sign_artifacts__(component.artifacts[component_artifact_type], basepath, self.signature_type)
+                super().__sign_artifacts__(component.artifacts[component_artifact_type], basepath)
 
 
 class SignArtifactsExistingArtifactFile(SignArtifacts):
 
     def __sign__(self):
-        artifacts = [self.target.name]
+        artifacts = self.target.name
         basename = self.target.parent
-        super().__sign_artifacts__(artifacts, basename, self.signature_type)
+        super().__sign_artifact__(artifacts, basename)
 
 
 class SignExistingArtifactsDir(SignArtifacts):
 
     def __sign__(self):
         for subdir, dirs, files in os.walk(self.target):
-            super().__sign_artifacts__(files, subdir, self.signature_type)
+            super().__sign_artifacts__(files, subdir)

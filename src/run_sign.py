@@ -36,8 +36,10 @@ def main():
 
     console.configure(level=args.logging_level)
 
-    sign = SignArtifacts.from_path(path=args.target, component=args.component,
-                                   artifact_type=args.type, signature_type=args.sigtype)
+    sign = SignArtifacts.from_path(path=args.target,
+                                   component=args.component,
+                                   artifact_type=args.type,
+                                   signature_type=args.sigtype)
 
     sign.sign()
 
