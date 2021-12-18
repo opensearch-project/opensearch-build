@@ -1,4 +1,5 @@
 Map call(Map args = [:]) {
+    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     def buildManifest = lib.jenkins.BuildManifest.new(
         [
