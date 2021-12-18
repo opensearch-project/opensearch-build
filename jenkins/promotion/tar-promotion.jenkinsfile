@@ -45,7 +45,9 @@ pipeline {
             }
             steps {
                 script {
-                    promoteArtifacts()
+                    promoteArtifacts(
+                        fileActions: [createSha512()]
+                    )
                 }
             }
             post() {

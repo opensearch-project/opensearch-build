@@ -10,6 +10,9 @@ void call(Map args = [:]) {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
+    // fileActions are a closure that accepts a String, filepath with return type void
+    List<Closure> fileActions = args.fileActions ?: []
+
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
     String filename = inputManifest.build.getFilename()
@@ -24,6 +27,8 @@ void call(Map args = [:]) {
     String build_manifest = "artifacts/$artifactPath/builds/$filename/manifest.yml"
     def buildManifest = readYaml(file: build_manifest)
 
+    print("Actions ${fileActions}")
+
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
         // Core Plugins
         println("Start Core Plugin Promotion to artifects.opensearch.org Bucket")
@@ -32,22 +37,47 @@ void call(Map args = [:]) {
             String pluginSubFolder = pluginSubPath.split('/')[0]
             String pluginNameWithExt = pluginSubPath.split('/')[1]
             String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
+            String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
-            s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$pluginFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/"
-                , includePathPattern: "**/${pluginName}*")
+            for (Closure action : fileActions) {
+                for (file in findFiles(glob: "**/${pluginName}*")) {
+                    action(file.getPath())
+                }
+            } 
+            s3Upload(
+                bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                path: "releases/$pluginFullPath/",
+                workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/",
+                includePathPattern: "**/${pluginName}*")
         }
 
 
-        // Tar Core/Bundle
+        // Core/Min Artifact
         println("Start Tar Core/Bundle Promotion to artifacts.opensearch.org Bucket")
         String coreFullPath = ['core', filename, version].join('/')
         String bundleFullPath = ['bundle', filename, version].join('/')
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$coreFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/"
-                , includePathPattern: "**/${filename}-min-${version}*")
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$bundleFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/"
-                , includePathPattern: "**/${filename}*-${version}*")
+        for (Closure action : fileActions) {
+            for (file in findFiles(glob: "**/${filename}-min-${version}*")) {
+                action(file.getPath())
+            }
+        }
+        s3Upload(
+            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+            path: "releases/$coreFullPath/",
+            workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
+            includePathPattern: "**/${filename}-min-${version}*")
 
+        // Distribution Artifact
+        for (Closure action : fileActions) {
+            for (file in findFiles(glob: "**/${filename}*-${version}*")) {
+                action(file.getPath())
+            }
+        }
 
+        s3Upload(
+            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+            path: "releases/$bundleFullPath/",
+            workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
+            includePathPattern: "**/${filename}*-${version}*")
     }
-
 }
