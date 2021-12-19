@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from sign_workflow.sign_artifacts import SignArtifacts
+from sign_workflow.signer import Signer
 from system import console
 
 ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
@@ -39,7 +40,8 @@ def main():
     sign = SignArtifacts.from_path(path=args.target,
                                    component=args.component,
                                    artifact_type=args.type,
-                                   signature_type=args.sigtype)
+                                   signature_type=args.sigtype,
+                                   signer=Signer())
 
     sign.sign()
 

@@ -12,16 +12,15 @@ from abc import abstractmethod
 from pathlib import Path
 
 from manifests.build_manifest import BuildManifest
-from sign_workflow.signer import Signer
 
 
 class SignArtifacts:
-    def __init__(self, target: Path, component, artifact_type, signature_type):
+    def __init__(self, target: Path, component, artifact_type, signature_type, signer):
         self.target = target
         self.component = component
         self.artifact_type = artifact_type
         self.signature_type = signature_type
-        self.signer = Signer()
+        self.signer = signer
 
     @abstractmethod
     def __sign__(self):
@@ -47,9 +46,9 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, component, artifact_type, signature_type):
+    def from_path(self, path: Path, component, artifact_type, signature_type, signer):
         klass = self.__signer_class__(path)
-        return klass(path, component, artifact_type, signature_type)
+        return klass(path, component, artifact_type, signature_type, signer)
 
 
 class SignWithBuildManifest(SignArtifacts):
