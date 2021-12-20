@@ -32,12 +32,14 @@ class TestRunSign(unittest.TestCase):
 
     @patch("os.getcwd", return_value="curdir")
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
-    @patch("sign_workflow.signer.Signer", return_value=MagicMock())
+    @patch("run_sign.Signer", return_value=MagicMock())
     @patch("sign_workflow.sign_artifacts.SignArtifacts", return_value=MagicMock())
-    def test_main(self, mock_signer, *mocks):
+    @patch("sign_workflow.signer.GitRepository")
+    def test_main(self, mock_signer, mock_sign_artifacts, *mocks):
         main()
 
-        self.assertEqual(mock_signer.return_value.sign_artifacts.call_count, 21)
+        self.assertEqual(mock_signer.return_value.sign_artifacts.call_count, 0)
+        self.assertEqual(mock_sign_artifacts.sign_artifacts.call_count, 21)
 
         mock_signer.return_value.sign_artifacts.assert_has_calls(
             [
