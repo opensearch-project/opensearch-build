@@ -34,12 +34,10 @@ class TestRunSign(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
     @patch("run_sign.Signer", return_value=MagicMock())
     @patch("sign_workflow.sign_artifacts.SignArtifacts", return_value=MagicMock())
-    @patch("sign_workflow.signer.GitRepository")
-    def test_main(self, mock_signer, mock_sign_artifacts, *mocks):
+    def test_main(self, mock_signer, *mocks):
         main()
 
-        self.assertEqual(mock_signer.return_value.sign_artifacts.call_count, 0)
-        self.assertEqual(mock_sign_artifacts.sign_artifacts.call_count, 21)
+        self.assertEqual(mock_signer.return_value.sign_artifacts.call_count, 21)
 
         mock_signer.return_value.sign_artifacts.assert_has_calls(
             [
