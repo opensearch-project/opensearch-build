@@ -34,6 +34,7 @@ class TestRunSign(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
     @patch("sign_workflow.signer.Signer", return_value=MagicMock())
     @patch("sign_workflow.sign_artifacts.SignArtifacts", return_value=MagicMock())
+    @patch("sign_workflow.signer.GitRepository")
     def test_main(self, mock_signer, mock_sign_artifacts, *mocks):
         main()
 
