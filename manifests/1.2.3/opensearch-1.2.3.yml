@@ -56,15 +56,6 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: "1.2"
-  - name: performance-analyzer
-    repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: "1.2"
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    platforms:
-      - darwin
-      - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: "1.2"
@@ -77,12 +68,6 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: sql
-    repository: https://github.com/opensearch-project/sql.git
-    ref: "1.2"
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: plugin
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
     ref: "1.2"
