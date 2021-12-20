@@ -37,3 +37,6 @@ components:
   checks:
     - gradle:properties:version
     - gradle:dependencies:opensearch.version
+- name: security
+  repository: https://github.com/opensearch-project/security.git
+  ref: 'main'
