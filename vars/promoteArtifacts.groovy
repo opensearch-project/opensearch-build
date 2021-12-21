@@ -33,14 +33,14 @@ void call(Map args = [:]) {
         // Core Plugins
         println("Start Core Plugin Promotion to artifects.opensearch.org Bucket")
         List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
+        argsMap = [:]
+        argsMap['signatureType'] = '.sig'
         for (String pluginSubPath : corePluginList) {
             String pluginSubFolder = pluginSubPath.split('/')[0]
             String pluginNameWithExt = pluginSubPath.split('/')[1]
             String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
             String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
-            def argsMap = [:]
-            argsMap['signatureType'] = '.sig'
             for (Closure action : fileActions) {
                 for (file in findFiles(glob: "**/${pluginName}*")) {
                     argsMap['artifactPath'] = file.getPath()
@@ -61,7 +61,8 @@ void call(Map args = [:]) {
         String bundleFullPath = ['bundle', filename, version].join('/')
         for (Closure action : fileActions) {
             for (file in findFiles(glob: "**/${filename}-min-${version}*")) {
-                action(file.getPath())
+                argsMap['artifactPath'] = file.getPath()
+                action(argsMap)
             }
         }
         s3Upload(
@@ -73,7 +74,8 @@ void call(Map args = [:]) {
         // Distribution Artifact
         for (Closure action : fileActions) {
             for (file in findFiles(glob: "**/${filename}*-${version}*")) {
-                action(file.getPath())
+                argsMap['artifactPath'] = file.getPath()
+                action(argsMap)
             }
         }
 
