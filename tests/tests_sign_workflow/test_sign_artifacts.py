@@ -11,20 +11,17 @@ class TestSignArtifacts(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
     @patch("sign_workflow.signer.Signer", return_value=MagicMock())
     def test_from_path_method(self, mock_signer, *mocks):
-        path = Path(r"/dummy/path/manifest.yml")
         component = 'maven'
         artifact_type = 'dummy'
         sigtype = '.asc'
 
-        klass = SignArtifacts.from_path(path, component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), component, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
-        path = Path(r"/dummy/path/")
-        klass = SignArtifacts.from_path(path, component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), component, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignExistingArtifactsDir), type(klass.__class__))
 
-        path = Path(r"/dummy/path/artifact.tar.gz")
-        klass = SignArtifacts.from_path(path, component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), component, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignArtifactsExistingArtifactFile), type(klass.__class__))
 
     def test_signer_class(self):
