@@ -39,3 +39,38 @@ class TestSignArtifacts(unittest.TestCase):
         self.assertIs(SignArtifacts.__signer_class__(
             Path(r"/dummy/path/artifact.tar.gz")),
             SignArtifactsExistingArtifactFile)
+
+    @patch("sign_workflow.sign_artifacts.BuildManifest.from_path")
+    def test_sign_with_build_manifest(self, *mocks):
+        path = Path(r"/dummy/path/manifest.yml")
+        component = 'maven'
+        artifact_type = 'dummy'
+        sigtype = '.asc'
+        signer = MagicMock()
+        signer_with_manifest = SignWithBuildManifest(path, component, artifact_type, sigtype, signer)
+        ## ToDo: path to manifest is not found, so how to mock?
+        signer_with_manifest.sign()
+        signer.sign_artifacts.assert_called_with()
+
+    def test_sign_existing_artifacts_file(self):
+        sigtype = '.sig'
+        signer = MagicMock()
+        signer_with_manifest = SignArtifactsExistingArtifactFile(target=Path(r"/dummy/path/file.tar.gz"),
+                                                                 component='maven',
+                                                                 artifact_type='dummy',
+                                                                 signature_type=sigtype,
+                                                                 signer=signer)
+        signer_with_manifest.sign()
+        signer.sign_artifact.assert_called_with("file.tar.gz", Path(r"/dummy/path"), sigtype)
+
+    def test_sign_existing_artifacts_folder(self):
+        sigtype = '.sig'
+        signer = MagicMock()
+        signer_with_manifest = SignExistingArtifactsDir(target=Path(r"/dummy/path/"),
+                                                                 component='maven',
+                                                                 artifact_type='dummy',
+                                                                 signature_type=sigtype,
+                                                                 signer=signer)
+        ## ToDo: path is not found, so how to mock?
+        signer_with_manifest.sign()
+        signer.sign_artifact.assert_called_with("file.tar.gz", Path(r"/dummy/path"), sigtype)
