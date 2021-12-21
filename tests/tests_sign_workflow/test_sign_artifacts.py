@@ -82,5 +82,5 @@ class TestSignArtifacts(unittest.TestCase):
                                                         signature_type=sigtype,
                                                         signer=signer)
         signer_with_manifest.sign()
-        expected = ["dummy_artifact_1.1.0.tar.gz", "dummy_artifact_1.0.0.tar.gz"]
+        expected = ["dummy_artifact_1.1.0.zip", "dummy_artifact_1.0.0.tar.gz"]
         signer.sign_artifacts.assert_called_with(expected, str(path), sigtype)
