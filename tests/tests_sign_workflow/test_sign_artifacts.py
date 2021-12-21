@@ -40,7 +40,6 @@ class TestSignArtifacts(unittest.TestCase):
             Path(r"/dummy/path/artifact.tar.gz")),
             SignArtifactsExistingArtifactFile)
 
-    @patch("sign_workflow.sign_artifacts.BuildManifest.from_path")
     def test_sign_with_build_manifest(self, *mocks):
         BUILD_MANIFEST = Path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
@@ -74,7 +73,6 @@ class TestSignArtifacts(unittest.TestCase):
                                                          artifact_type='dummy',
                                                          signature_type=sigtype,
                                                          signer=signer)
-        ## ToDo: assert not found but method is called
         signer_with_manifest.sign()
         expected = ["dummy_artifact_1.1.0.tar.gz", "dummy_artifact_1.0.0.tar.gz"]
-        signer.sign_artifact.assert_called_with(expected, path, sigtype)
+        signer.sign_artifacts.assert_called_with(expected, str(path), sigtype)
