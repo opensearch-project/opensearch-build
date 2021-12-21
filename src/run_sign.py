@@ -8,19 +8,22 @@
 
 import argparse
 import logging
-import os
 import sys
+from pathlib import Path
 
-from manifests.build_manifest import BuildManifest
+from sign_workflow.sign_artifacts import SignArtifacts
 from sign_workflow.signer import Signer
 from system import console
+
+ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
 
 
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
-    parser.add_argument("manifest", type=argparse.FileType("r"), help="Path to local manifest file.")
+    parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
+    parser.add_argument("--sigtype", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -34,20 +37,13 @@ def main():
 
     console.configure(level=args.logging_level)
 
-    manifest = BuildManifest.from_file(args.manifest)
-    basepath = os.path.dirname(os.path.abspath(args.manifest.name))
-    signer = Signer()
+    sign = SignArtifacts.from_path(path=args.target,
+                                   component=args.component,
+                                   artifact_type=args.type,
+                                   signature_type=args.sigtype,
+                                   signer=Signer())
 
-    for component in manifest.components.select(focus=args.component):
-        logging.info(f"Signing {component.name}")
-
-        for artifact_type in component.artifacts:
-            if args.type and args.type != artifact_type:
-                continue
-
-            signer.sign_artifacts(component.artifacts[artifact_type], basepath)
-
-    logging.info("Done.")
+    sign.sign()
 
 
 if __name__ == "__main__":

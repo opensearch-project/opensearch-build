@@ -8,7 +8,6 @@
 
 import logging
 import os
-import pathlib
 
 from git.git_repository import GitRepository
 
@@ -19,7 +18,6 @@ The signed artifacts will be found in the same location as the original artifact
 
 
 class Signer:
-
     ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz"]
 
     def __init__(self):
@@ -27,23 +25,24 @@ class Signer:
         self.git_repo.execute("./bootstrap")
         self.git_repo.execute("rm config.cfg")
 
-    def sign_artifacts(self, artifacts, basepath):
+    def sign_artifact(self, artifact, basepath, signature_type):
+        self.generate_signature_and_verify(artifact, basepath, signature_type)
+
+    def sign_artifacts(self, artifacts, basepath, signature_type):
         for artifact in artifacts:
             if not self.is_valid_file_type(artifact):
                 logging.info(f"Skipping signing of file ${artifact}")
                 continue
-            location = os.path.join(basepath, artifact)
-            self.sign(location)
-            self.verify(location + ".asc")
+            self.generate_signature_and_verify(artifact, basepath, signature_type)
+
+    def generate_signature_and_verify(self, artifact, basepath, signature_type):
+        location = os.path.join(basepath, artifact)
+        self.sign(location, signature_type)
+        self.verify(location + signature_type)
 
     def is_valid_file_type(self, file_name):
         return any(
-            x
-            in [
-                pathlib.Path(file_name).suffix,
-                "".join(pathlib.Path(file_name).suffixes),
-            ]
-            for x in Signer.ACCEPTED_FILE_TYPES
+            file_name.endswith(x) for x in Signer.ACCEPTED_FILE_TYPES
         )
 
     def get_repo_url(self):
@@ -51,8 +50,8 @@ class Signer:
             return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-signer-client.git"
         return "https://github.com/opensearch-project/opensearch-signer-client.git"
 
-    def sign(self, filename):
-        signature_file = filename + ".asc"
+    def sign(self, filename, signature_type):
+        signature_file = filename + signature_type
         signing_cmd = [
             "./opensearch-signer-client",
             "-i",
