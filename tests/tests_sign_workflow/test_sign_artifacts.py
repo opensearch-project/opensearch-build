@@ -1,7 +1,7 @@
 import os
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 
 from sign_workflow.sign_artifacts import SignArtifacts, SignArtifactsExistingArtifactFile, SignExistingArtifactsDir, SignWithBuildManifest
 
@@ -42,13 +42,15 @@ class TestSignArtifacts(unittest.TestCase):
 
     @patch("sign_workflow.sign_artifacts.BuildManifest.from_path")
     def test_sign_with_build_manifest(self, *mocks):
-        path = Path(r"/dummy/path/manifest.yml")
-        component = 'maven'
-        artifact_type = 'dummy'
+        BUILD_MANIFEST = Path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
         signer = MagicMock()
-        signer_with_manifest = SignWithBuildManifest(path, component, artifact_type, sigtype, signer)
-        ## ToDo: path to manifest is not found, so how to mock?
+        signer_with_manifest = SignWithBuildManifest(target=BUILD_MANIFEST,
+                                                     component="maven",
+                                                     artifact_type="artifacts",
+                                                     signature_type=sigtype,
+                                                     signer=signer)
+        ## ToDo: focus maven not found
         signer_with_manifest.sign()
         signer.sign_artifacts.assert_called_with()
 
@@ -64,13 +66,15 @@ class TestSignArtifacts(unittest.TestCase):
         signer.sign_artifact.assert_called_with("file.tar.gz", Path(r"/dummy/path"), sigtype)
 
     def test_sign_existing_artifacts_folder(self):
+        path = Path(os.path.join(os.path.dirname(__file__), "data/artifacts"))
         sigtype = '.sig'
         signer = MagicMock()
-        signer_with_manifest = SignExistingArtifactsDir(target=Path(r"/dummy/path/"),
-                                                                 component='maven',
-                                                                 artifact_type='dummy',
-                                                                 signature_type=sigtype,
-                                                                 signer=signer)
-        ## ToDo: path is not found, so how to mock?
+        signer_with_manifest = SignExistingArtifactsDir(target=path,
+                                                         component='maven',
+                                                         artifact_type='dummy',
+                                                         signature_type=sigtype,
+                                                         signer=signer)
+        ## ToDo: assert not found but method is called
         signer_with_manifest.sign()
-        signer.sign_artifact.assert_called_with("file.tar.gz", Path(r"/dummy/path"), sigtype)
+        expected = ["dummy_artifact_1.1.0.tar.gz", "dummy_artifact_1.0.0.tar.gz"]
+        signer.sign_artifact.assert_called_with(expected, path, sigtype)
