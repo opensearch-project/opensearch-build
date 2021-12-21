@@ -1,7 +1,7 @@
 import os
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 from sign_workflow.sign_artifacts import SignArtifacts, SignArtifactsExistingArtifactFile, SignExistingArtifactsDir, SignWithBuildManifest
 
@@ -49,7 +49,7 @@ class TestSignArtifacts(unittest.TestCase):
                                                      artifact_type="artifacts",
                                                      signature_type=sigtype,
                                                      signer=signer)
-        ## ToDo: focus maven not found
+        # ToDo: focus maven not found
         signer_with_manifest.sign()
         signer.sign_artifacts.assert_called_with()
 
@@ -69,10 +69,10 @@ class TestSignArtifacts(unittest.TestCase):
         sigtype = '.sig'
         signer = MagicMock()
         signer_with_manifest = SignExistingArtifactsDir(target=path,
-                                                         component='maven',
-                                                         artifact_type='dummy',
-                                                         signature_type=sigtype,
-                                                         signer=signer)
+                                                        component='maven',
+                                                        artifact_type='dummy',
+                                                        signature_type=sigtype,
+                                                        signer=signer)
         signer_with_manifest.sign()
         expected = ["dummy_artifact_1.1.0.tar.gz", "dummy_artifact_1.0.0.tar.gz"]
         signer.sign_artifacts.assert_called_with(expected, str(path), sigtype)

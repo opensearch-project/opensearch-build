@@ -6,12 +6,11 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 
 import pytest
 
 from run_sign import main
-from sign_workflow.sign_artifacts import SignArtifacts
 
 
 class TestRunSign(unittest.TestCase):
