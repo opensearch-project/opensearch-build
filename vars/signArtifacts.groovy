@@ -10,7 +10,7 @@ void call(Map args = [:]) {
     }
 
     if( !fileExists("$WORKSPACE/sign.sh")) {
-        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'temp-abhng-sign-artifact'
+        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     }
 
     if( !fileExists("$WORKSPACE/opensearch.pgp")) {
