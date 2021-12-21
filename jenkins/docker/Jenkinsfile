@@ -40,9 +40,6 @@ pipeline {
             }
             steps {
                 script {
-                    def upstream = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-                    echo upstream?.shortDescription
-                    currentBuild.description = "upstream?.shortDescription"
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
                     def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                     if (env.IS_STAGING == "false") {
