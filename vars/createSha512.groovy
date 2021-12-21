@@ -1,15 +1,15 @@
 Closure call() {
     allowedFileTypes = [".tar.gz", ".zip"]
 
-    return { path -> body: {
+    return { argsMap -> body: {
         isAllowed = false
         for (fileType in allowedFileTypes) {
-            isAllowed |= path.endsWith(fileType)
+            isAllowed |= argsMap.artifactPath.endsWith(fileType)
         }
         if (isAllowed) {
-            sh("sha512sum ${path} > ${path}.sha512")
+            sh("sha512sum ${argsMap.artifactPath} > ${argsMap.artifactPath}.sha512")
         } else {
-            echo("Not generating sha for ${path}, doesn't match allowed types ${allowedFileTypes}")
+            echo("Not generating sha for ${argsMap.artifactPath}, doesn't match allowed types ${allowedFileTypes}")
         }
     } }
 }

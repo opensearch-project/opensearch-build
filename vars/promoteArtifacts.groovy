@@ -39,11 +39,14 @@ void call(Map args = [:]) {
             String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
             String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
+            def argsMap = [:]
+            argsMap['signatureType'] = '.sig'
             for (Closure action : fileActions) {
                 for (file in findFiles(glob: "**/${pluginName}*")) {
-                    action(file.getPath())
+                    argsMap['artifactPath'] = file.getPath()
+                    action(argsMap)
                 }
-            } 
+            }
             s3Upload(
                 bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
                 path: "releases/$pluginFullPath/",
