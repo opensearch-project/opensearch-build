@@ -8,15 +8,6 @@
 
 void call(Map args = [:]) {
 
-    environment {
-        // These ENV variables are required by https://github.com/opensearch-project/opensearch-signer-client
-        // This client is invoked internally by the sign script.
-        ROLE = "${SIGNER_CLIENT_ROLE}"
-        EXTERNAL_ID = "${SIGNER_CLIENT_EXTERNAL_ID}"
-        UNSIGNED_BUCKET = "${SIGNER_CLIENT_UNSIGNED_BUCKET}"
-        SIGNED_BUCKET = "${SIGNER_CLIENT_SIGNED_BUCKET}"
-    }
-
     if( !fileExists("$WORKSPACE/sign.sh")) {
         git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     }
@@ -28,6 +19,15 @@ void call(Map args = [:]) {
 
     // Sign artifacts
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-        sh("$WORKSPACE/sign.sh ${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}")
+        sh """
+            #!/bin/bash
+            set +x
+            export ROLE=${SIGNER_CLIENT_ROLE}
+            export EXTERNAL_ID=${SIGNER_CLIENT_EXTERNAL_ID}
+            export UNSIGNED_BUCKET=${SIGNER_CLIENT_UNSIGNED_BUCKET}
+            export SIGNED_BUCKET=${SIGNER_CLIENT_SIGNED_BUCKET}
+
+            $WORKSPACE/sign.sh ${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}
+        """
     }
 }
