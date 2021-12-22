@@ -53,8 +53,14 @@ class Signer:
             return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-signer-client.git"
         return "https://github.com/opensearch-project/opensearch-signer-client.git"
 
+    def __remove_existing_signature__(self, signature_file):
+        if os.path.exists(signature_file):
+            logging.warning(f"Removing existing signature file {signature_file}")
+            os.remove(signature_file)
+
     def sign(self, filename, signature_type):
         signature_file = filename + signature_type
+        self.__remove_existing_signature__(signature_file)
         signing_cmd = [
             "./opensearch-signer-client",
             "-i",
