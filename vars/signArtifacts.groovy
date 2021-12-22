@@ -28,6 +28,6 @@ void call(Map args = [:]) {
 
     // Sign artifacts
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-        sh("$WORKSPACE/sign.sh $WORKSPACE/${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}")
+        sh("$WORKSPACE/sign.sh ${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}")
     }
 }
