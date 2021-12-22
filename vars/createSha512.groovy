@@ -48,7 +48,12 @@ Closure call() {
                    if echo $argsMap.artifactPath | grep -q \$file_type
                    then
                        echo Generating sha for $argsMap.artifactPath
-                        (echo -n $(sha512sum $argsMap.artifactPath | awk "{print $1}") && echo " $(basename $argsMap.artifactPath)") > ${argsMap.artifactPath}.sha512
+                       echo Generating sha for $argsMap.artifactPath
+                       sha512sum $argsMap.artifactPath | while read sum filename
+                       do
+                           filename2=`basename \$filename`
+                           echo -e "\$sum \$filename2" > ${argsMap.artifactPath}.sha512
+                       done
                    fi
                done
 
