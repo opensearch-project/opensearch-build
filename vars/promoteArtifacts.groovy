@@ -30,11 +30,11 @@ void call(Map args = [:]) {
     print("Actions ${fileActions}")
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+        argsMap = [:]
+        argsMap['signatureType'] = '.sig'
         // Core Plugins
         println("Start Core Plugin Promotion to artifects.opensearch.org Bucket")
         List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
-        argsMap = [:]
-        argsMap['signatureType'] = '.sig'
         for (String pluginSubPath : corePluginList) {
             String pluginSubFolder = pluginSubPath.split('/')[0]
             String pluginNameWithExt = pluginSubPath.split('/')[1]

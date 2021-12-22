@@ -22,12 +22,12 @@ void call(Map args = [:]) {
     }
 
     if( !fileExists("$WORKSPACE/opensearch.pgp")) {
-        sh('curl https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp')
+        sh('curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp')
         sh('gpg --import $WORKSPACE/opensearch.pgp')
     }
 
     // Sign artifacts
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-        sh("$WORKSPACE/sign.sh $WORKSPACE/${args.artifactPath} --sigType=${args.signatureType} --component=${args.component} --type=${args.type}")
+        sh("$WORKSPACE/sign.sh $WORKSPACE/${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}")
     }
 }
