@@ -27,13 +27,14 @@ Closure call() {
             file_type_list=".tar.gz .zip"
             if [ -d "$argsMap.artifactPath" ]
             then
-                for file_sub_path in `find $argsMap.artifactPath -type f`
+                for file_sub_path in $(find $argsMap.artifactPath -type f)
                 do
                     for file_type in \$file_type_list
                     do
                         if echo \$file_sub_path | grep -q \$file_type
                         then
                             echo Generating sha for \$file_sub_path
+                             (echo -n $(sha512sum \$file_sub_path | awk "{print $1}") && echo  " $(basename \$file_sub_path)") > \$file_sub_path.sha512
                         fi
                     done
                 done
@@ -43,6 +44,7 @@ Closure call() {
                    if echo $argsMap.artifactPath | grep -q \$file_type
                    then
                        echo Generating sha for $argsMap.artifactPath
+                        (echo -n $(sha512sum $argsMap.artifactPath | awk "{print $1}") && echo " $(basename $argsMap.artifactPath)") > ${argsMap.artifactPath}.sha512
                    fi
                done
 
