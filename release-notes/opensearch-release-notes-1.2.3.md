@@ -6,7 +6,9 @@ This patch releases updates the version of Log4j used in OpenSearch to Log4j 2.1
 
 ### OpenSearch
 
-* Increment version to 1.2.3 and backport log4j upgrade to 2.17.0 ([#1771](https://github.com/opensearch-project/OpenSearch/pull/1771))
+* Fix repository-azure plugin hanging, regression introduced in 1.2.0 ([#1734](https://github.com/opensearch-project/OpenSearch/issues/1734))
+* Increment version to 1.2.3 and upgrade log4j to 2.17.0 ([#1771](https://github.com/opensearch-project/OpenSearch/pull/1771))
+
 
 ### OpenSearch Security
 
