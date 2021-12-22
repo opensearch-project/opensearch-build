@@ -33,7 +33,7 @@ void call(Map args = [:]) {
 
     //////////// Signing Artifacts
     println("Signing Core Pluings")
-    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/"
+    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
     argsMap['artifactPath'] = corePluginDir
     for (Closure action : fileActions) {
         action(argsMap)
