@@ -26,12 +26,15 @@ class Signer:
         self.git_repo.execute("rm config.cfg")
 
     def sign_artifact(self, artifact, basepath, signature_type):
+        if not self.is_valid_file_type(artifact):
+            logging.info(f"Skipping signing of file {artifact}")
+            return
         self.generate_signature_and_verify(artifact, basepath, signature_type)
 
     def sign_artifacts(self, artifacts, basepath, signature_type):
         for artifact in artifacts:
             if not self.is_valid_file_type(artifact):
-                logging.info(f"Skipping signing of file ${artifact}")
+                logging.info(f"Skipping signing of file {artifact}")
                 continue
             self.generate_signature_and_verify(artifact, basepath, signature_type)
 
