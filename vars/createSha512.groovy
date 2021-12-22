@@ -34,7 +34,7 @@ Closure call() {
                         if echo \$file_sub_path | grep -q \$file_type
                         then
                             echo Generating sha for \$file_sub_path
-                            (echo -ne `sha512sum \$file_sub_path | awk '{print $1}'` && echo -e "\t `basename \$file_sub_path`") > \$file_sub_path.sha512
+                            (echo -ne `sha512sum \$file_sub_path | awk "{print $1}"` && echo -e "\t `basename \$file_sub_path`") > \$file_sub_path.sha512
                         fi
                     done
                 done
@@ -44,7 +44,7 @@ Closure call() {
                    if echo $argsMap.artifactPath | grep -q \$file_type
                    then
                        echo Generating sha for $argsMap.artifactPath
-                       (echo -ne `sha512sum $argsMap.artifactPath | awk '{print $1}'` && echo -e "\t `basename $argsMap.artifactPath`") > ${argsMap.artifactPath}.sha512
+                       (echo -ne `sha512sum $argsMap.artifactPath | awk "{print $1}"` && echo -e "\t `basename $argsMap.artifactPath`") > ${argsMap.artifactPath}.sha512
                    fi
                done
 
