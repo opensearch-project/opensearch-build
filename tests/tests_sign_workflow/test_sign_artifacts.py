@@ -61,23 +61,31 @@ class TestSignArtifacts(unittest.TestCase):
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
         signer = MagicMock()
-        signer_with_manifest = SignArtifactsExistingArtifactFile(target=path,
-                                                                 component='maven',
-                                                                 artifact_type='dummy',
-                                                                 signature_type=sigtype,
-                                                                 signer=signer)
+        signer_with_manifest = SignArtifactsExistingArtifactFile(
+            target=path,
+            component='maven',
+            artifact_type='dummy',
+            signature_type=sigtype,
+            signer=signer
+        )
         signer_with_manifest.sign()
         signer.sign_artifact.assert_called_with("file.tar.gz", path.parent, sigtype)
 
-    def test_sign_existing_artifacts_folder(self):
-        path = Path(os.path.join(os.path.dirname(__file__), "data/artifacts"))
+    @patch('os.walk')
+    def test_sign_existing_artifacts_folder(self, mock_os_walk):
+        mock_os_walk.return_value = [
+            ('/dummy/path', (), ['tar_dummy_artifact_1.0.0.tar.gz', 'zip_dummy_artifact_1.1.0.zip'])
+        ]
+        path = Path('/dummy/path')
         sigtype = '.sig'
         signer = MagicMock()
-        signer_with_manifest = SignExistingArtifactsDir(target=path,
-                                                        component='maven',
-                                                        artifact_type='dummy',
-                                                        signature_type=sigtype,
-                                                        signer=signer)
+        signer_with_manifest = SignExistingArtifactsDir(
+            target=path,
+            component='maven',
+            artifact_type='dummy',
+            signature_type=sigtype,
+            signer=signer
+        )
         signer_with_manifest.sign()
         expected = ["tar_dummy_artifact_1.0.0.tar.gz", "zip_dummy_artifact_1.1.0.zip"]
         signer.sign_artifacts.assert_called_with(expected, str(path), sigtype)
