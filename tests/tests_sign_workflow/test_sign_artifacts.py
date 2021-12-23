@@ -38,14 +38,16 @@ class TestSignArtifacts(unittest.TestCase):
             SignArtifactsExistingArtifactFile)
 
     def test_sign_with_build_manifest(self):
-        BUILD_MANIFEST = Path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-1.1.0.yml"))
+        manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
         signer = MagicMock()
-        signer_with_manifest = SignWithBuildManifest(target=BUILD_MANIFEST,
-                                                     component="",
-                                                     artifact_type="maven",
-                                                     signature_type=sigtype,
-                                                     signer=signer)
+        signer_with_manifest = SignWithBuildManifest(
+            target=manifest,
+            component="",
+            artifact_type="maven",
+            signature_type=sigtype,
+            signer=signer
+        )
         signer_with_manifest.sign()
         expected = [
             'maven/org/opensearch/opensearch-performance-analyzer/maven-metadata-local.xml',
@@ -55,7 +57,7 @@ class TestSignArtifacts(unittest.TestCase):
             'maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0.jar',
             'maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0-sources.jar'
         ]
-        signer.sign_artifacts.assert_called_with(expected, BUILD_MANIFEST.parent, sigtype)
+        signer.sign_artifacts.assert_called_with(expected, manifest.parent, sigtype)
 
     def test_sign_existing_artifacts_file(self):
         path = Path(r"/dummy/path/file.tar.gz")
@@ -74,9 +76,9 @@ class TestSignArtifacts(unittest.TestCase):
     @patch('os.walk')
     def test_sign_existing_artifacts_folder(self, mock_os_walk):
         mock_os_walk.return_value = [
-            ('/dummy/path', (), ['tar_dummy_artifact_1.0.0.tar.gz', 'zip_dummy_artifact_1.1.0.zip'])
+            ('dummy', (), ['tar_dummy_artifact_1.0.0.tar.gz', 'zip_dummy_artifact_1.1.0.zip'])
         ]
-        path = Path('/dummy/path')
+        path = Path('dummy')
         sigtype = '.sig'
         signer = MagicMock()
         signer_with_manifest = SignExistingArtifactsDir(
