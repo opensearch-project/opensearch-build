@@ -36,7 +36,12 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'artifactsAccount')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'prod-bucket-name')
         binding.setVariable('WORKSPACE', 'workspace')
-        
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        binding.setVariable('SIGNER_CLIENT_ROLE', 'dummy_signer_client_role')
+        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'signer_client_external_id')
+        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'signer_client_unsigned_bucket')
+        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
+
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -54,7 +59,7 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
         target = Path.of("artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml");
         Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
     }
 
     @After
