@@ -12,7 +12,7 @@ Closure call() {
                     echo("Creating sha for ${file}")
                     final sha512 = sh(script: "sha512sum ${file}", returnStdout: true).split()
                     // Reading the first index of array since sha512sum return [shasum, filename] as output
-                    writeFile file: "${file}_groovy_.sha512", text: "${sha512[0]}"
+                    writeFile file: "${file}.sha512", text: "${sha512[0]}"
                     acceptTypeFound = true
                     break
                 }
