@@ -1,0 +1,72 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder'
+            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+            alwaysPull true
+        }
+    }
+    parameters{
+        string(
+                name: 'ARTIFACT_PATH',
+                trim: true,
+                description: 'Path to the artifact or the artifact directory on s3'
+        )
+        choice(
+                choices: ['linux'],
+                name: 'DISTRIBUTION_PLATFORM',
+                description: 'What platform is this distribution build for?'
+        )
+        choice(
+                choices: ['.sig'],
+                name: 'SIGNATURE_TYPE',
+                description: 'What is signature file type?'
+        )
+    }
+    stages {
+        stage('sign') {
+            steps {
+                script {
+                    if (params.ARTIFACT_PATH == '') {
+                        currentBuild.result = 'ABORTED'
+                        error('ARTIFACT_PATH is not set')
+                    }
+                    env.ARTIFACT_PATH = env.ARTIFACT_PATH.replaceAll('/$', "")
+                    set_up()
+                    argsMap = [:]
+                    argsMap['artifactPath'] = "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
+                    argsMap['signatureType'] = "${SIGNATURE_TYPE}"
+                    argsMap['distributionPlatform'] = "${DISTRIBUTION_PLATFORM}"
+                    signArtifacts(argsMap)
+                    upload_artifacts()
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+}
+
+void upload_artifacts(){
+    // Upload signature files to S3
+    withAWS(role: "${ARTIFACT_UPLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName:
+            'jenkins-session') {
+        // upload signature files to S3
+        s3Upload(file: "$WORKSPACE/artifacts/${ARTIFACT_PATH}", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${ARTIFACT_PATH}/signed")
+    }
+}
+
+void set_up() {
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+
+    withAWS(role: "${ARTIFACT_DOWNLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        s3Download(file: "$WORKSPACE/artifacts/", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${ARTIFACT_PATH}/", force: true)
+    }
+}
