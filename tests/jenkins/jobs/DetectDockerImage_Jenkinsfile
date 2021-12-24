@@ -4,6 +4,7 @@ pipeline {
         stage('opensearch-1.1.0') {
             steps {
                 script { 
+                    currentBuild.description = "1.1.0/opensearch-1.1.0.yml"
                     dockerAgent = detectDockerAgent(
                         manifest: 'manifests/1.1.0/opensearch-1.1.0.yml'
                     )
