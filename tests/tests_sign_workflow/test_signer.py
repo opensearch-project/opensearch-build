@@ -114,12 +114,12 @@ class TestSigner(unittest.TestCase):
     def test_remove_existing_signature_found(self, mock_repo):
         signer = Signer()
         os.remove = MagicMock()
-        signer.__remove_existing_signature__("tests/tests_sign_workflow/data/artifacts/tar_dummy_artifact_1.0.0.tar.gz.sig")
+        signer.sign("tests/tests_sign_workflow/data/artifacts/tar_dummy_artifact_1.0.0.tar.gz", ".sig")
         os.remove.assert_called_with("tests/tests_sign_workflow/data/artifacts/tar_dummy_artifact_1.0.0.tar.gz.sig")
 
     @patch("sign_workflow.signer.GitRepository")
     def test_remove_existing_signature_not_found(self, mock_repo):
         signer = Signer()
         os.remove = MagicMock()
-        signer.__remove_existing_signature__("data/not_found.tar.gz.sig")
+        signer.sign("tests/tests_sign_workflow/data/artifacts/not_found.tar.gz", ".sig")
         os.remove.assert_not_called()
