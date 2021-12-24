@@ -12,10 +12,7 @@ void call(Map args = [:]) {
         git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     }
 
-    if( !fileExists("$WORKSPACE/opensearch.pgp")) {
-        sh('curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp')
-        sh('gpg --import $WORKSPACE/opensearch.pgp')
-    }
+    importPGPKey()
 
     // Sign artifacts
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
@@ -29,5 +26,12 @@ void call(Map args = [:]) {
 
             $WORKSPACE/sign.sh ${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}
         """
+    }
+}
+
+void importPGPKey(){
+    if( !fileExists("$WORKSPACE/opensearch.pgp")) {
+        sh('curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp')
+        sh('gpg --import $WORKSPACE/opensearch.pgp')
     }
 }

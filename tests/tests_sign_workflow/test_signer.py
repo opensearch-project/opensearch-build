@@ -86,10 +86,40 @@ class TestSigner(unittest.TestCase):
     def test_signer_sign_asc(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar", ".asc")
-        mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
+        mock_repo.assert_has_calls(
+            [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_sig(self, mock_repo):
         signer = Signer()
         signer.sign("/path/the-jar.jar", ".sig")
-        mock_repo.assert_has_calls([call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
+        mock_repo.assert_has_calls(
+            [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_sign_artifact_not_called(self, mock_repo):
+        signer = Signer()
+        signer.generate_signature_and_verify = MagicMock()
+        signer.sign_artifact("the-jar.notvalid", "/path", ".sig")
+        signer.generate_signature_and_verify.assert_not_called()
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_sign_artifact_called(self, mock_repo):
+        signer = Signer()
+        signer.generate_signature_and_verify = MagicMock()
+        signer.sign_artifact("the-jar.zip", "/path", ".sig")
+        signer.generate_signature_and_verify.assert_called_with("the-jar.zip", "/path", ".sig")
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_remove_existing_signature_found(self, mock_repo):
+        signer = Signer()
+        os.remove = MagicMock()
+        signer.__remove_existing_signature__("tests/tests_sign_workflow/data/artifacts/tar_dummy_artifact_1.0.0.tar.gz.sig")
+        os.remove.assert_called_with("tests/tests_sign_workflow/data/artifacts/tar_dummy_artifact_1.0.0.tar.gz.sig")
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_remove_existing_signature_not_found(self, mock_repo):
+        signer = Signer()
+        os.remove = MagicMock()
+        signer.__remove_existing_signature__("data/not_found.tar.gz.sig")
+        os.remove.assert_not_called()
