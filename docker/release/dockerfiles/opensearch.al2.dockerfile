@@ -34,7 +34,7 @@ RUN groupadd -g $GID opensearch && \
 
 # Prepare working directory
 # Copy artifacts and configurations to corresponding directories
-COPY * $TEMP_DIR
+COPY * $TEMP_DIR/
 RUN ls -l $TEMP_DIR && \
     tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && \
     mkdir -p $OPENSEARCH_HOME/data && chown -Rv $UID:$GID $OPENSEARCH_HOME/data && \
