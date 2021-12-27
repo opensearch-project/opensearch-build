@@ -18,7 +18,11 @@ Closure call() {
                 }
             }
             if (!acceptTypeFound) {
-                echo("Not generating sha for ${argsMap.artifactPath}, doesn't match allowed types ${allowedFileTypes}")
+                if(foundFiles.length == 1){
+                    echo("Not generating sha for ${file} with artifact Path ${argsMap.artifactPath}, doesn't match allowed types ${allowedFileTypes}")
+                } else {
+                    echo("Not generating sha for ${file} in ${argsMap.artifactPath}, doesn't match allowed types ${allowedFileTypes}")
+                }
             }
         }
 

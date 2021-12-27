@@ -12,7 +12,6 @@ import org.junit.*
 import java.util.*
 import java.nio.file.*
 
-
 class TestPromoteArtifacts extends BuildPipelineTest {
     private Path target;
 
@@ -55,6 +54,10 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         helper.registerAllowedMethod('findFiles', [Map], { args ->
             return [{}]
         })
+
+        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins -type f') { script ->
+            return [stdout: "tar_dummy_artifact_1.0.0.tar.gz zip_dummy_artifact_1.1.0.zip dummy_artifact_1.1.0.dummy", exitValue: 0]
+        }
 
         Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
         target = Path.of("artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml");
