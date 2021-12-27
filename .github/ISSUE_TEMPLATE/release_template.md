@@ -72,7 +72,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 - [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags.
 - [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
 - [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
-- [ ] Create an issue for, and conduct a postmortem, and publish its results.
+- [ ] Create an issue for a retrospective, solicit feedback, and publish a summary.
 
 ### Components
 
