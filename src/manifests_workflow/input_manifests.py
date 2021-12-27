@@ -26,6 +26,14 @@ class InputManifests(Manifests):
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod
+    def jenkins_path(self):
+        return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins"))
+
+    @classmethod
+    def cron_jenkinsfile(self):
+        return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
+
+    @classmethod
     def files(self, name):
         results = []
         for filename in glob.glob(os.path.join(self.manifests_path(), f"**/{name}-*.yml")):
@@ -52,6 +60,7 @@ class InputManifests(Manifests):
                     path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),
                     branch=branch,
                 )
+
                 version = c.version
                 logging.info(f"{self.name}#{branch} is version {version}")
                 if version not in main_versions.keys():
@@ -90,6 +99,7 @@ class InputManifests(Manifests):
             # generate new manifests
             for release_version in sorted(main_versions.keys() - known_versions):
                 self.write_manifest(release_version, main_versions[release_version])
+                self.add_to_cron(release_version)
 
     def create_manifest(self, version, components=[]):
         data = {
@@ -120,3 +130,24 @@ class InputManifests(Manifests):
         manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}.yml")
         manifest.to_file(manifest_path)
         logging.info(f"Wrote {manifest_path}")
+
+    def add_to_cron(self, version):
+        logging.info(f"Adding new version to cron: {version}")
+        jenkinsfile = self.cron_jenkinsfile()
+        with open(jenkinsfile, "r") as f:
+            data = f.read()
+
+        cron_entry = f"H/10 * * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;TARGET_JOB_NAME=distribution-build-{self.prefix}\n"
+
+        if cron_entry in data:
+            raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")
+
+        data = data.replace(
+            "parameterizedCron '''\n",
+            f"parameterizedCron '''\n{' ' * 12}{cron_entry}"
+        )
+
+        with open(jenkinsfile, "w") as f:
+            f.write(data)
+
+        logging.info(f"Wrote {jenkinsfile}")
