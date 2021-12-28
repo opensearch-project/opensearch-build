@@ -12,7 +12,6 @@ import org.junit.*
 import java.util.*
 import java.nio.file.*
 
-
 class TestPromoteArtifacts extends BuildPipelineTest {
     private Path target;
 
@@ -36,7 +35,12 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'artifactsAccount')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'prod-bucket-name')
         binding.setVariable('WORKSPACE', 'workspace')
-        
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        binding.setVariable('SIGNER_CLIENT_ROLE', 'dummy_signer_client_role')
+        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'signer_client_external_id')
+        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'signer_client_unsigned_bucket')
+        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
+
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -51,10 +55,26 @@ class TestPromoteArtifacts extends BuildPipelineTest {
             return [{}]
         })
 
+        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins -type f') { script ->
+            return [stdout: "tar_dummy_artifact_1.0.0.tar.gz zip_dummy_artifact_1.1.0.zip dummy_artifact_1.1.0.dummy", exitValue: 0]
+        }
+        helper.addShMock('sha512sum tar_dummy_artifact_1.0.0.tar.gz') { script ->
+            return [stdout: "shaHashDummy_tar_dummy_artifact_1.0.0.tar.gz  workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
+        }
+        helper.addShMock('sha512sum zip_dummy_artifact_1.1.0.zip') { script ->
+            return [stdout: "shaHashDummy_zip_dummy_artifact_1.1.0.zip  workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip", exitValue: 0]
+        }
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz') { script ->
+            return [stdout: "tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
+        }
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip') { script ->
+            return [stdout: "zip_dummy_artifact_1.1.0.zip", exitValue: 0]
+        }
+
         Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
         target = Path.of("artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml");
         Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
     }
 
     @After

@@ -7,7 +7,6 @@
  */
 
 void call(Map args = [:]) {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     // fileActions are a closure that accepts a String, filepath with return type void
@@ -29,9 +28,32 @@ void call(Map args = [:]) {
 
     print("Actions ${fileActions}")
 
+    argsMap = [:]
+    argsMap['signatureType'] = '.sig'
+
+    //////////// Signing Artifacts
+    println("Signing Core Pluings")
+    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
+    argsMap['artifactPath'] = corePluginDir
+    for (Closure action : fileActions) {
+        action(argsMap)
+    }
+
+    println("Signing TAR Artifacts")
+    String coreFullPath = ['core', filename, version].join('/')
+    String bundleFullPath = ['bundle', filename, version].join('/')
+    for (Closure action : fileActions) {
+        for (file in findFiles(glob: "**/${filename}-min-${version}*.tar.gz,**/${filename}-${version}*.tar.gz")) {
+            argsMap['artifactPath'] = "$WORKSPACE" + "/" + file.getPath()
+            action(argsMap)
+        }
+    }
+
+
+
+
+    //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        // Core Plugins
-        println("Start Core Plugin Promotion to artifects.opensearch.org Bucket")
         List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
         for (String pluginSubPath : corePluginList) {
             String pluginSubFolder = pluginSubPath.split('/')[0]
@@ -39,45 +61,24 @@ void call(Map args = [:]) {
             String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
             String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
             String pluginFullPath = ['plugins', pluginName, version].join('/')
-            for (Closure action : fileActions) {
-                for (file in findFiles(glob: "**/${pluginName}*")) {
-                    action(file.getPath())
-                }
-            } 
             s3Upload(
                 bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
                 path: "releases/$pluginFullPath/",
-                workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/",
+                workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
                 includePathPattern: "**/${pluginName}*")
         }
 
-
-        // Core/Min Artifact
-        println("Start Tar Core/Bundle Promotion to artifacts.opensearch.org Bucket")
-        String coreFullPath = ['core', filename, version].join('/')
-        String bundleFullPath = ['bundle', filename, version].join('/')
-        for (Closure action : fileActions) {
-            for (file in findFiles(glob: "**/${filename}-min-${version}*")) {
-                action(file.getPath())
-            }
-        }
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases/$coreFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
             includePathPattern: "**/${filename}-min-${version}*")
 
-        // Distribution Artifact
-        for (Closure action : fileActions) {
-            for (file in findFiles(glob: "**/${filename}*-${version}*")) {
-                action(file.getPath())
-            }
-        }
 
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases/$bundleFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
-            includePathPattern: "**/${filename}*-${version}*")
+            includePathPattern: "**/${filename}-${version}*")
     }
 }

@@ -26,12 +26,15 @@ class Signer:
         self.git_repo.execute("rm config.cfg")
 
     def sign_artifact(self, artifact, basepath, signature_type):
+        if not self.is_valid_file_type(artifact):
+            logging.info(f"Skipping signing of file {artifact}")
+            return
         self.generate_signature_and_verify(artifact, basepath, signature_type)
 
     def sign_artifacts(self, artifacts, basepath, signature_type):
         for artifact in artifacts:
             if not self.is_valid_file_type(artifact):
-                logging.info(f"Skipping signing of file ${artifact}")
+                logging.info(f"Skipping signing of file {artifact}")
                 continue
             self.generate_signature_and_verify(artifact, basepath, signature_type)
 
@@ -50,8 +53,14 @@ class Signer:
             return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-signer-client.git"
         return "https://github.com/opensearch-project/opensearch-signer-client.git"
 
+    def __remove_existing_signature__(self, signature_file):
+        if os.path.exists(signature_file):
+            logging.warning(f"Removing existing signature file {signature_file}")
+            os.remove(signature_file)
+
     def sign(self, filename, signature_type):
         signature_file = filename + signature_type
+        self.__remove_existing_signature__(signature_file)
         signing_cmd = [
             "./opensearch-signer-client",
             "-i",
