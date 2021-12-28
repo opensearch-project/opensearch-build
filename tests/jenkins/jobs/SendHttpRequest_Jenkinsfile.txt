@@ -1,0 +1,7 @@
+   SendHttpRequest_Jenkinsfile.run()
+      SendHttpRequest_Jenkinsfile.pipeline(groovy.lang.Closure)
+         SendHttpRequest_Jenkinsfile.echo(Executing on agent [label:none])
+         SendHttpRequest_Jenkinsfile.stage(http request, groovy.lang.Closure)
+            SendHttpRequest_Jenkinsfile.script(groovy.lang.Closure)
+               SendHttpRequest_Jenkinsfile.sendHttpRequest({name=John, age=1}, https://example.com, GET, APPLICATION_JSON, 200, true)
+                  sendHttpRequest.httpRequest({consoleLogResponseBody=true, contentType=APPLICATION_JSON, httpMode=GET, requestBody={"name":"John","age":"1"}, url=https://example.com, validResponseCodes=200})

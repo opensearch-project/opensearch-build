@@ -1,0 +1,12 @@
+pipeline {
+    agent none
+    stages {
+        stage('http request') {
+            steps {
+                script {
+                    whitesourceRequest()
+                }
+            }
+        }
+    }
+}

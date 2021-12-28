@@ -1,0 +1,23 @@
+pipeline {
+    agent none
+    stages {
+        stage('http request') {
+            steps {
+                script {
+                    test_payload = [
+                        "name": "John",
+                        "age": "1"
+                    ]
+                    sendHttpRequest(
+                        test_payload,
+                        'https://example.com',
+                        'GET',
+                        'APPLICATION_JSON',
+                        '200',
+                        true
+                    )
+                }
+            }
+        }
+    }
+}
