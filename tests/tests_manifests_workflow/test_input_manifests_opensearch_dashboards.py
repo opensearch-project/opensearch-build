@@ -29,10 +29,11 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch("os.chdir")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
     @patch("manifests_workflow.input_manifests.InputManifest")
-    def test_update(self, mock_input_manifest, mock_component_opensearch_min, mock_input_manifest_from_path, *mocks):
+    def test_update(self, mock_input_manifest, mock_component_opensearch_min, mock_input_manifest_from_path, mock_add_to_cron, *mocks):
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
         mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
@@ -50,3 +51,6 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
             )
         ]
         mock_input_manifest().to_file.assert_has_calls(calls)
+        mock_add_to_cron.assert_has_calls([
+            call('0.9.0')
+        ])
