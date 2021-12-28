@@ -12,10 +12,9 @@ Closure call() {
                     echo("Creating sha for ${file}")
                     final sha512 = sh(script: "sha512sum ${file}", returnStdout: true).split()
                     //sha512 is an array [shasum, filename]
-                    final basename = sh(script: "basename ${sha512[1]}", returnStdout: true).split()
-                    //basename is an array [basename]
+                    final basename = sh(script: "basename ${sha512[1]}", returnStdout: true)
                     // writing to file accroding to opensearch requirement - "512shaHash<space><space>basename"
-                    writeFile file: "${file}.sha512", text: "${sha512[0]}  ${basename[0]}"
+                    writeFile file: "${file}.sha512", text: "${sha512[0]}  ${basename}"
                     acceptTypeFound = true
                     break
                 }
