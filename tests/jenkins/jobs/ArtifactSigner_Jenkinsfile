@@ -1,30 +1,5 @@
-lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-
 pipeline {
-    agent {
-        docker {
-            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
-            alwaysPull true
-        }
-    }
-    parameters{
-        string(
-                name: 'ARTIFACT_PATH',
-                trim: true,
-                description: 'Path to the artifact or the artifact directory on s3'
-        )
-        choice(
-                choices: ['linux'],
-                name: 'DISTRIBUTION_PLATFORM',
-                description: 'What platform is this distribution build for?'
-        )
-        choice(
-                choices: ['.sig'],
-                name: 'SIGNATURE_TYPE',
-                description: 'What is signature file type?'
-        )
-    }
+    agent none
     stages {
         stage('sign') {
             steps {
@@ -41,13 +16,6 @@ pipeline {
                     argsMap['distributionPlatform'] = "${DISTRIBUTION_PLATFORM}"
                     signArtifacts(argsMap)
                     upload_artifacts()
-                }
-            }
-            post() {
-                always {
-                    script {
-                        postCleanup()
-                    }
                 }
             }
         }
