@@ -39,14 +39,14 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
                     alwaysPull true
                 }
             }
             steps {
                 script {
                     promoteArtifacts(
-                        fileActions: [createSha512()]
+                        fileActions: [createSha512Checksums(), createSignatureFiles()]
                     )
                 }
             }
