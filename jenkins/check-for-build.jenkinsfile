@@ -4,6 +4,7 @@ pipeline {
     agent none
     triggers {
         parameterizedCron '''
+            H/10 * * * * %INPUT_MANIFEST=1.2.4/opensearch-1.2.4.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.1.1/opensearch-1.1.1.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.1.1/opensearch-dashboards-1.1.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H/10 * * * * %INPUT_MANIFEST=1.2.1/opensearch-1.2.1.yml;TARGET_JOB_NAME=distribution-build-opensearch
