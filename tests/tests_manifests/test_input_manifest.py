@@ -25,6 +25,7 @@ class TestInputManifest(unittest.TestCase):
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch Dashboards")
+        self.assertEqual(manifest.build.filename, "opensearch-dashboards")
         self.assertEqual(manifest.build.version, "1.1.1")
         self.assertEqual(len(list(manifest.components.select(focus="alertingDashboards"))), 1)
         opensearch_component: InputComponentFromDist = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
@@ -45,6 +46,7 @@ class TestInputManifest(unittest.TestCase):
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.0.0")
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
@@ -63,6 +65,7 @@ class TestInputManifest(unittest.TestCase):
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
         # opensearch component
@@ -90,6 +93,7 @@ class TestInputManifest(unittest.TestCase):
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.2.0")
         self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028")
         self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
@@ -170,13 +174,13 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch.ref, "updated")
 
     @patch("subprocess.check_output")
-    def test_stable_override_build(self, mock_output: Mock) -> None:
+    @patch("git.git_repository.GitRepository.stable_ref", return_value=('abcd', '1234'))
+    def test_stable_override_build(self, git_repo: Mock, mock_output: Mock) -> None:
         mock_output.return_value.decode.return_value = "updated\tHEAD"
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
-        manifest = InputManifest.from_path(path).stable(platform="windows", architecture="arm64", snapshot=True)
-        self.assertEqual(manifest.build.platform, "windows")
-        self.assertEqual(manifest.build.architecture, "arm64")
-        self.assertTrue(manifest.build.snapshot)
+        manifest = InputManifest.from_path(path).stable()
+        opensearch: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        self.assertEqual(opensearch.ref, "abcd")
 
     def test_eq(self) -> None:
         path = os.path.join(self.manifests_path, "1.0.0", "opensearch-1.0.0.yml")

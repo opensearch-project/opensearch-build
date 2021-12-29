@@ -62,7 +62,7 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
 mkdir -p $OUTPUT/plugins
-# For hybrid plugin it actually resides in 'trace-analytics/dashboards-observability'
+# For hybrid plugin it actually resides in 'observability/dashboards-observability'
 PLUGIN_FOLDER=$(basename "$PWD")
 PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins

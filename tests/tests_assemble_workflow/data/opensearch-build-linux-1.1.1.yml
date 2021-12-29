@@ -1,0 +1,119 @@
+build:
+  architecture: x64
+  id: f49ffcf2c1b341d1b29e147093689c6d
+  name: OpenSearch
+  platform: linux
+  version: 1.1.1-SNAPSHOT
+components:
+- artifacts:
+    dist:
+    - dist/opensearch-min-1.1.0-linux-x64.tar.gz
+  commit_id: 15e9f137622d878b79103df8f82d78d782b686a1
+  name: OpenSearch
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/OpenSearch.git
+  version: 1.1.1.0-SNAPSHOT
+- commit_id: 8d05d8a55ac0e70ba68569f872ad32f8aa32c0ea
+  name: common-utils
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/common-utils.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-job-scheduler-1.1.0.0.zip
+  commit_id: 0a4ce10a812165e95801b77ede689064ffee2188
+  name: job-scheduler
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/job-scheduler.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-reports-scheduler-1.1.1.0-SNAPSHOT.zip
+  commit_id: d33924fb14086ebb47df8cafce528393a4aaa015
+  name: dashboards-reports
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/dashboards-reports.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-sql-1.1.0.0.zip
+  commit_id: ceedf9a1da2c35f64e5aa95077098baa71df46f0
+  name: sql
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/sql.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-alerting-1.1.0.0.zip
+  commit_id: 3a8b8748e0dc01c3418f50143cdd651e66b78557
+  name: alerting
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/alerting.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-security-1.1.0.0.zip
+  commit_id: 6436c155347355292ed91c108eade5f6f119c40b
+  name: security
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/security.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-cross-cluster-replication-1.1.0.0.zip
+  commit_id: 7e16c39ab0197acd865e1b501955306cb32a0150
+  name: cross-cluster-replication
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/cross-cluster-replication.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-performance-analyzer-1.1.0.0.zip
+  commit_id: e921d570d9af4a82aafc981e6a41591ded4fa7d3
+  name: performance-analyzer
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/performance-analyzer.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-index-management-1.1.0.0.zip
+  commit_id: 1d8fbd404a7a4b226cd1d42877b51776ba127cdb
+  name: index-management
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/index-management.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    libs:
+    - libs/libKNNIndexV2_0_11.so
+    plugins:
+    - plugins/opensearch-knn-1.1.0.0.zip
+  commit_id: 9fa629073365d34b2450428b33405c8d36fb6c5b
+  name: k-NN
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/k-NN.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-anomaly-detection-1.1.0.0.zip
+  commit_id: 569cedeedab46167614fb0148db37b35cd648712
+  name: anomaly-detection
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/anomaly-detection.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-asynchronous-search-1.1.0.0.zip
+  commit_id: 83492829b92b222d25551375ba5277c28bf13005
+  name: asynchronous-search
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/asynchronous-search.git
+  version: 1.1.1.0-SNAPSHOT
+- artifacts:
+    plugins:
+    - plugins/opensearch-notebooks-1.1.0.0.zip
+  commit_id: 0d498b10f62f0cc3896b736651af5103132200e1
+  name: dashboards-notebooks
+  ref: '1.1'
+  repository: https://github.com/opensearch-project/dashboards-notebooks.git
+  version: 1.1.1.0-SNAPSHOT
+schema-version: '1.2'

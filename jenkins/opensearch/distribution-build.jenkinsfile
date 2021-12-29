@@ -2,12 +2,6 @@ lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
-    triggers {
-        parameterizedCron '''
-            H */2 * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml
-            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml
-        '''
-    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
@@ -27,6 +21,7 @@ pipeline {
             steps {
                 script { 
                     dockerAgent = detectDockerAgent()
+                    currentBuild.description = "$INPUT_MANIFEST"
                 }
             }
         }
@@ -50,8 +45,12 @@ pipeline {
                             buildManifest(
                                 snapshot: true
                             )
-                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                            if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
+                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                                }
+                            } else {
+                                echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
                         }
                     }

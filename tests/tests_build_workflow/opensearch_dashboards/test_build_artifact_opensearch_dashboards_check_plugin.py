@@ -6,6 +6,7 @@
 
 import unittest
 from contextlib import contextmanager
+from typing import Generator
 from unittest.mock import patch
 
 from build_workflow.build_artifact_check import BuildArtifactCheck
@@ -15,7 +16,7 @@ from build_workflow.opensearch_dashboards.build_artifact_check_plugin import Bui
 
 class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
     @contextmanager
-    def __mock(self, props={}, snapshot=True):
+    def __mock(self, props: dict = {}, snapshot: bool = True) -> Generator[BuildArtifactOpenSearchDashboardsCheckPlugin, None, None]:
         with patch("build_workflow.opensearch_dashboards.build_artifact_check_plugin.ZipFile") as mock_zipfile:
             mock_zipfile.return_value.__enter__.return_value.read.return_value.decode.return_value = props
             yield BuildArtifactOpenSearchDashboardsCheckPlugin(
@@ -30,7 +31,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
                 )
             )
 
-    def test_check_plugin_invalid_zip_version_snapshot(self):
+    def test_check_plugin_invalid_zip_version_snapshot(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock() as mock:
                 mock.check("invalid.zip")
@@ -39,7 +40,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_check_plugin_invalid_zip_version(self):
+    def test_check_plugin_invalid_zip_version(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock(snapshot=False) as mock:
                 mock.check("invalid.zip")
@@ -48,7 +49,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_check_plugin_missing_name(self):
+    def test_check_plugin_missing_name(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock() as mock:
                 mock.check("-1.1.0.zip")
@@ -57,7 +58,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_check_plugin_invalid_version_in_filename(self):
+    def test_check_plugin_invalid_version_in_filename(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock(snapshot=False) as mock:
                 mock.check("pluginName-1.2.3.zip")
@@ -66,16 +67,16 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_check_plugin_version_properties_missing(self, *mocks):
+    def test_check_plugin_version_properties_missing(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock(snapshot=False) as mock:
                 mock.check("pluginName-1.1.0.zip")
         self.assertEqual(
-            "Artifact pluginName-1.1.0.zip is invalid. Expected to have version=any of ['1.1.0.0', '1.0.0.0'], but none was found.",
+            "Artifact pluginName-1.1.0.zip is invalid. Expected to have version=any of ['1.1.0.0', '1.0.0.0', '1.0.0.0-SNAPSHOT'], but none was found.",
             str(context.exception),
         )
 
-    def test_check_plugin_version_properties_mismatch(self, *mocks):
+    def test_check_plugin_version_properties_mismatch(self) -> None:
         with self.assertRaises(BuildArtifactCheck.BuildArtifactInvalidError) as context:
             with self.__mock({"version": "1.2.3.4"}) as mock:
                 mock.check("pluginName-1.1.0.zip")
@@ -84,10 +85,10 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
                 str(context.exception),
             )
 
-    def test_check_plugin_version_properties(self, *mocks):
+    def test_check_plugin_version_properties(self) -> None:
         with self.__mock({"opensearchDashboardsVersion": "1.1.0", "version": "1.1.0.0"}, snapshot=False) as mock:
             mock.check("pluginName-1.1.0.zip")
 
-    def test_check_plugin_version_properties_patches(self, *mocks):
+    def test_check_plugin_version_properties_patches(self) -> None:
         with self.__mock({"opensearchDashboardsVersion": "1.0.0", "version": "1.0.0.0"}, snapshot=False) as mock:
             mock.check("pluginName-1.0.0.zip")

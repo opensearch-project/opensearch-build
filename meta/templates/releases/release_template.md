@@ -28,15 +28,15 @@ Steps have completion dates for coordinating efforts between the components of a
 
 ### CI/CD - __REPLACE_DATE___
 
-- [ ] Increment version on main to `__REPLACE_MAJOR_MINOR_PATCH_BUILD__`.
-- [ ] Ensure working and passing CI.
-- [ ] Re(add) this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
+- [ ] Check that the previous post-release action items incremented the version to `__REPLACE_MAJOR_MINOR_PATCH_BUILD__` and that CI is passing.
+- [ ] Check that this repo is included in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
 
 ### Pre-Release
 
 - [ ] Branch and build from a `__REPLACE_MAJOR_MINOR__` branch.
-- [ ] Update your branch in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
-- [ ] Increment the version on the parent branch.
+- [ ] Increment the version on the parent branch to the next development iteration.
+- [ ] Update your branch in the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__) for this release.
+- [ ] Add this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/) for the next developer iteration.
 - [ ] Feature complete, pencils down.
 - [ ] Fix bugs that target this release.
 
@@ -54,5 +54,8 @@ Steps have completion dates for coordinating efforts between the components of a
 ### Post Release
 
 - [ ] Create [a release tag](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging).
+- [ ] Update the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__) to use the release tag.
+- [ ] Prepare for an eventual security fix development iteration by incrementing the version on the release branch to the next eventual patch version.
+- [ ] Add this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/) of the next eventual security patch version.
 - [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/meta/templates/releases/release_template.md).
 - [ ] Conduct a postmortem, and publish its results.

@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import sys
 
 from manifests.bundle_manifest import BundleManifest
@@ -18,7 +19,7 @@ def main():
     args = TestArgs()
     console.configure(level=args.logging_level)
     with TemporaryDirectory(keep=args.keep) as work_dir:
-        bundle_manifest = BundleManifest.from_urlpath(args.path)
+        bundle_manifest = BundleManifest.from_urlpath(args.paths.get("opensearch", os.getcwd()))
         BwcTestSuite(bundle_manifest, work_dir.name, args.component, args.keep).execute()
 
 

@@ -5,6 +5,7 @@ pipeline {
             steps {
                 script {
                     archiveAssembleUpload(
+                        manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
                         platform: 'linux',
                         architecture: 'x64'
                     )

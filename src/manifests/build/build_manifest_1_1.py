@@ -5,7 +5,8 @@
 # compatible open source license.
 
 from typing import Any
-from manifests.component_manifest import ComponentManifest, Components, Component
+
+from manifests.component_manifest import Component, ComponentManifest, Components
 
 """
 A BuildManifest is an immutable view of the outputs from a build step
@@ -89,7 +90,7 @@ class BuildManifest_1_1(ComponentManifest['BuildManifest_1_1', 'BuildComponents_
 
     class Build:
         def __init__(self, data: Any):
-            self.name = data["name"]
+            self.name: str = data["name"]
             self.version = data["version"]
             self.architecture = data["architecture"]
             self.id = data["id"]
@@ -101,6 +102,10 @@ class BuildManifest_1_1(ComponentManifest['BuildManifest_1_1', 'BuildComponents_
                 "architecture": self.architecture,
                 "id": self.id
             }
+
+        @property
+        def filename(self) -> str:
+            return self.name.lower().replace(" ", "-")
 
 
 class BuildComponents_1_1(Components['BuildComponent_1_1']):

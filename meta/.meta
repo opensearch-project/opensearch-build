@@ -14,7 +14,7 @@
     "security-dashboards-plugin": "git@github.com:opensearch-project/security-dashboards-plugin.git",
     "security": "git@github.com:opensearch-project/security.git",
     "sql": "git@github.com:opensearch-project/sql.git",
-    "trace-analytics": "git@github.com:opensearch-project/trace-analytics.git",
+    "observability": "git@github.com:opensearch-project/observability.git",
     "alerting-dashboards-plugin": "git@github.com:opensearch-project/alerting-dashboards-plugin.git",
     "notifications": "git@github.com:opensearch-project/notifications.git",
     "index-management-dashboards-plugin": "git@github.com:opensearch-project/index-management-dashboards-plugin.git",

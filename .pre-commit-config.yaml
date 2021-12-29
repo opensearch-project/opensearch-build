@@ -18,7 +18,7 @@ repos:
   - id: mypy
     stages: [commit]
     name: mypy
-    entry: bash -c 'pipenv run mypy src/run_assemble.py tests/test_run_assemble.py src/assemble_workflow tests/tests_assemble_workflow src/manifests tests/tests_manifests'
+    entry: bash -c 'pipenv run mypy src/build_workflow tests/tests_build_workflow src/checkout_workflow tests/tests_checkout_workflow src/run_assemble.py tests/test_run_assemble.py src/assemble_workflow tests/tests_assemble_workflow src/manifests tests/tests_manifests'
     language: system
   - id: pytest
     stages: [commit]

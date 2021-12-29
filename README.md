@@ -71,6 +71,8 @@ See [assemble workflow](src/assemble_workflow) for more information.
 
 A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.1.1.yml](/manifests/1.1.1/opensearch-1.1.1.yml) for an example.
 
+OpenSearch is often released with changes in `opensearch-min`, and no changes to plugins other than a version bump. This can be performed by a solo Engineer following [a cookbook](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin). See also [opensearch-build#1375](https://github.com/opensearch-project/opensearch-build/issues/1375) which aims to automate incrementing versions for the next development iteration.
+
 #### CI/CD Environment
 
 We build, assemble, and test our artifacts on docker containers. We provide docker files in [docker/ci](docker/ci) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/). All Jenkins pipelines can be found in [jenkins](./jenkins/). Jenkins itself is in the process of being made public and its CDK open-sourced.

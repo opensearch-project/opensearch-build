@@ -21,17 +21,9 @@ class TestBuildArchive extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
 
-        helper.registerAllowedMethod("sha1", [String], { filename ->
-            return 'sha1'
-        })
-
         helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
-        })
-
-        helper.registerAllowedMethod("sha1", [String], { filename ->
-            return 'sha1'
         })
 
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
@@ -44,26 +36,7 @@ class TestBuildArchive extends BuildPipelineTest {
     }
 
     @Test
-    public void testIncremental() {
-        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
-            return true
-        })
-
-        super.testPipeline(
-            "tests/jenkins/jobs/BuildArchive_Jenkinsfile",
-            "tests/jenkins/jobs/BuildArchive_Jenkinsfile_incremental"
-        )
-    }
-
-    @Test
-    public void testNotIncremental() {
-        helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
-            return false
-        })
-
-        super.testPipeline(
-            "tests/jenkins/jobs/BuildArchive_Jenkinsfile",
-            "tests/jenkins/jobs/BuildArchive_Jenkinsfile_not_incremental"
-        )
+    public void testJenkinsfile() {
+        super.testPipeline("tests/jenkins/jobs/BuildArchive_Jenkinsfile")
     }
 }

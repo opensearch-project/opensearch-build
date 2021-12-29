@@ -15,8 +15,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     def setUp(self):
         self.version = "1.1.0"
-        self.platform = "linux"
-        self.architecture = "x64"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.dependency_installer = ""
@@ -32,8 +30,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             mock_dependency_installer,
@@ -56,16 +52,16 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_tarfile_open.assert_called_once_with(bundle_full_name, "r")
         mock_bundle_tar.extractall.assert_called_once_with(self.work_dir)
 
-        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "a")
+        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")
         mock_dump.assert_called_once_with(
             {
                 "script.context.field.max_compilations_rate": "1000/1m",
-                "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")
+                "logging.dest": os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log")
             }
         )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
-        mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "bin"))
+        mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"))
         self.assertEqual(mock_pid.call_count, 1)
 
     @patch("subprocess.check_call")
@@ -80,8 +76,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             {},
             False,
             mock_dependency_installer,
@@ -107,18 +101,18 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         service.start()
 
         mock_file.assert_has_calls(
-            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "w")],
-            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "config", "opensearch_dashboards.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")],
         )
 
         mock_check_call.assert_called_once_with(
             "./opensearch-dashboards-plugin remove securityDashboards",
-            cwd=os.path.join("test_work_dir", "opensearch-dashboards-1.1.0-linux-x64", "bin"),
+            cwd=os.path.join("test_work_dir", "opensearch-dashboards-1.1.0", "bin"),
             shell=True
         )
 
         mock_dump.assert_called_once_with({"logging.dest": os.path.join(
-            self.work_dir, "opensearch-dashboards-1.1.0-linux-x64", "logs", "opensearch_dashboards.log")})
+            self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log")})
 
         mock_file_hanlder_for_security.close.assert_called_once()
         mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result)
@@ -126,8 +120,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_endpoint_port_url(self):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -143,8 +135,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_get_service_response_with_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -164,8 +154,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_get_service_response_without_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -184,8 +172,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -205,8 +191,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -226,8 +210,6 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     def test_service_alive_red_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
             self.version,
-            self.platform,
-            self.architecture,
             self.additional_config,
             True,
             self.dependency_installer,

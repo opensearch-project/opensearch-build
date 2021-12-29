@@ -45,6 +45,7 @@ export class Identities {
     props.buildBucket.grantRead(bundleRole, '*/shas/*');
     props.buildBucket.grantPut(bundleRole, '*/shas/*');
 
+    props.buildBucket.grantRead(bundleRole, '*/dist/*');
     props.buildBucket.grantPut(bundleRole, '*/dist/*');
 
     props.buildBucket.grantRead(testRole, '*/dist/*');

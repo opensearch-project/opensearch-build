@@ -31,7 +31,7 @@ jobs:
           pipenv run flake8 .
       - name: Run Type Checker
         run: |
-          pipenv run mypy src/manifests tests/tests_manifests
+          pipenv run mypy src/build_workflow tests/tests_build_workflow src/checkout_workflow tests/tests_checkout_workflow src/run_assemble.py tests/test_run_assemble.py src/assemble_workflow tests/tests_assemble_workflow src/manifests tests/tests_manifests
       - name: Run Tests with Coverage
         run: |
           pipenv run coverage run -m pytest --cov=./src --cov-report=xml

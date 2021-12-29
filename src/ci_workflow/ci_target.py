@@ -7,10 +7,12 @@
 
 class CiTarget:
     version: str
+    name: str
     snapshot: bool
 
-    def __init__(self, version, snapshot=True):
+    def __init__(self, version, name, snapshot=True):
         self.version = version
+        self.name = name
         self.snapshot = snapshot
 
     @property
