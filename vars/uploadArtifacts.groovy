@@ -4,7 +4,7 @@ void call(Map args = [:]) {
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.manifest))
     def fileLocation = buildManifest.components.getDistPackageLocation()
     def productName = buildManifest.build.getFilename()
-    def fileName = buildManifest.getPackageName("${productName}")
+    def fileName = buildManifest.getPackageName()
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"

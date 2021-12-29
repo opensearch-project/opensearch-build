@@ -35,7 +35,12 @@ class BuildManifest implements Serializable {
         }
 
         String getDistPackageLocation() {
-            return this.dist[0]
+            try {
+                return this.dist[0]
+            } catch (Exception e) {
+                echo "Exception: ${e}"
+            }
+            
         }
     }
 
@@ -64,9 +69,9 @@ class BuildManifest implements Serializable {
         ].join('/')
     }
 
-    public String getPackageName(String productName) {
+    public String getPackageName() {
         String packagePrefix = [
-            productName,
+            this.buid.getFilename(),
             this.build.version,
             this.build.platform,
             this.build.architecture,       
