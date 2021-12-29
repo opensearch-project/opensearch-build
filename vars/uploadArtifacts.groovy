@@ -2,8 +2,7 @@ void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.manifest))
-    def yamlFile = readYaml(file: args.manifest)
-    def fileLocation = yamlFile.components.artifacts.dist[0]
+    def fileLocation = buildManifest.components.getDistPackageLocation()
     def productName = buildManifest.build.getFilename()
     def fileName = buildManifest.getPackageName("${productName}")
 

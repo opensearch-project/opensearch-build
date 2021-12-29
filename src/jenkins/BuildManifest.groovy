@@ -27,10 +27,24 @@ class BuildManifest implements Serializable {
         }
     }
 
+    class Components implements Serializable {
+        String dist
+
+        Components(Map data) {
+            this.dist = data.artifacts.dist
+        }
+
+        String getDistPackageLocation() {
+            return this.dist[0]
+        }
+    }
+
     Build build
+    Components components
 
     BuildManifest(Map data) {
         this.build = new BuildManifest.Build(data.build)
+        this.components = new BuildManifest.Components(data.components)
     }
 
     public String getArtifactRoot(String jobName, String buildNumber) {
@@ -56,9 +70,7 @@ class BuildManifest implements Serializable {
             this.build.version,
             this.build.platform,
             this.build.architecture,       
-        ].join('/')
+        ].join('-')
         return packagePrefix + '.tar.gz'
     }
 }
-
-
