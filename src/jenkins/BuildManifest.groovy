@@ -25,6 +25,16 @@ class BuildManifest implements Serializable {
         String getFilename() {
             return this.name.toLowerCase().replaceAll(' ', '-')
         }
+
+        String getPackageName() {
+            String packagePrefix = [
+                this.getFilename(),
+                this.version,
+                this.platform,
+                this.architecture,       
+            ].join('-')
+            return packagePrefix + '.tar.gz'
+        }
     }
 
     class Components implements Serializable {
@@ -67,15 +77,5 @@ class BuildManifest implements Serializable {
             publicArtifactUrl,
             this.getArtifactRoot(jobName, buildNumber)
         ].join('/')
-    }
-
-    public String getPackageName() {
-        String packagePrefix = [
-            this.buid.getFilename(),
-            this.build.version,
-            this.build.platform,
-            this.build.architecture,       
-        ].join('-')
-        return packagePrefix + '.tar.gz'
     }
 }
