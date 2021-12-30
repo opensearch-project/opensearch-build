@@ -40,12 +40,6 @@ components:
 - name: security
   repository: https://github.com/opensearch-project/security.git
   ref: 'main'
-- name: sql
-  repository: https://github.com/opensearch-project/sql.git
-  ref: 'main'
-  checks:
-    - gradle:properties:version
-    - gradle:dependencies:opensearch.version: plugin
 - name: dashboards-reports
   repository: https://github.com/opensearch-project/dashboards-reports.git
   ref: 'main'
