@@ -11,7 +11,7 @@ pipeline {
                     sendHttpRequest(
                         test_payload,
                         'https://example.com',
-                        'GET',
+                        'POST',
                         'APPLICATION_JSON',
                         '200',
                         true
