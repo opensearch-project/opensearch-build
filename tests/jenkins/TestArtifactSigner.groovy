@@ -40,12 +40,6 @@ class TestArtifactSigner extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-        helper.registerAllowedMethod('getPath', { args ->
-            return "workspace/file/found.zip"
-        })
-        helper.registerAllowedMethod('findFiles', [Map], { args ->
-            return [{}]
-        })
     }
 
     @Test
