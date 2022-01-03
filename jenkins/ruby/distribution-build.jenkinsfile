@@ -40,8 +40,10 @@ pipeline {
                         writeFile file: 'gem-private_key.pem', text: RUBYGEMS_PRIVATE_KEY
                     }
                     sh'''
+                        [[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm"
                         rvm install $RUBY_INTERPRETER
-                        rvm --default use $RUBY_INTERPRETER
+                        rvm get stable --auto-dotfiles
+                        . /usr/local/rvm/gems/$RUBY_INTERPRETER/environment
                         gem cert --add certs/opensearch-rubygems.pem
                         ./build.sh
                     '''
@@ -56,6 +58,9 @@ pipeline {
                         s3Upload(file: 'builds', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifacts_path}")
                     }
                     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "Built artifacts into ${PUBLIC_ARTIFACT_URL}/${artifacts_path}.")
+                    sh """
+                        rm -rf $WORKSPACE/*
+                    """
                 }
             }
             post {
