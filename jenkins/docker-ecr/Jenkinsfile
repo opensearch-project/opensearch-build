@@ -121,7 +121,7 @@ pipeline {
                             sh '''
                                 docker logout
                                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/a5n0l3m1
-                                gcrane cp public.ecr.aws/a5n0l3m1/opensearch-test:1.3.0 public.ecr.aws/a5n0l3m1/opensearch-copy:1.3.0
+                                gcrane cp opensearchstaging/opensearch:latest public.ecr.aws/a5n0l3m1/opensearch-copy:latest
                             '''
                         }
                     }
