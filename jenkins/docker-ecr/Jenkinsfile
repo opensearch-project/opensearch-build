@@ -128,12 +128,12 @@ pipeline {
                         }
                     }
                 }
-                post() {
-                    always {
-                        script {
-                            postCleanup()
-                            sh "docker logout && docker image prune -f --all"
-                        }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker logout && docker image prune -f --all"
                     }
                 }
             }
