@@ -133,7 +133,7 @@ pipeline {
                 always {
                     script {
                         postCleanup()
-                        sh "docker logout && docker image prune -f --all"
+                        sh "docker logout"
                     }
                 }
             }
