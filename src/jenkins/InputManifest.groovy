@@ -78,6 +78,17 @@ class InputManifest {
         ].join("/")
     }
 
+    String getPublicDistBasePath(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
+        return [
+            publicArtifactUrl,
+            jobName,
+            this.build.version,
+            buildNumber,
+            platform ?: this.build.platform,
+            architecture ?: this.build.architecture
+        ].join("/")
+    }
+
     String getSHAsRoot(String jobName) {
         return [
             jobName,

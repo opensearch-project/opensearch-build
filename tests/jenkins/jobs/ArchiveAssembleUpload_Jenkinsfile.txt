@@ -52,4 +52,6 @@ https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64/dist/opensearch/mani
                      assembleUpload.readYaml({file=builds/opensearch/manifest.yml})
                      BuildManifest.asBoolean()
                      InputManifest.getPublicDistUrl(https://ci.opensearch.org/dbc, vars-build, 33, linux, x64)
+                     InputManifest.getPublicDistBasePath(https://ci.opensearch.org/dbc, vars-build, 33, linux, x64)
                      assembleUpload.echo(Setting env."ARTIFACT_URL_linux_x64"=https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64/dist/opensearch/opensearch-1.1.0-linux-x64.tar.gz)
+                     assembleUpload.echo(Setting env."ARTIFACT_BASE_PATH_linux_x64"=https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64)

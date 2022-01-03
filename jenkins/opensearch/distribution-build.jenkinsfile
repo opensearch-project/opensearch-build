@@ -111,38 +111,64 @@ pipeline {
                 }
             }
         }
-    }
-    post {
-        success {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
-
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
-                    postCleanup()
+        stage('run integ tests') {
+            parallel {
+                stage('x64 integ tests') {
+                    steps {
+                        node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                            script {
+                                runIntegTests(
+                                    architecture: "x64"
+                                )
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        failure {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
-                    postCleanup()
+                stage('arm64 integ tests') {
+                    steps {
+                        node('Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host') {
+                            script {
+                                runIntegTests(
+                                    architecture: "arm64"
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+    // post {
+    //     success {
+    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+    //             script {
+    //                 def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+
+    //                 publishNotification(
+    //                     icon: ':white_check_mark:',
+    //                     message: 'Successful Build',
+    //                     extra: stashed,
+    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+    //                     manifest: "${INPUT_MANIFEST}"
+    //                 )
+
+    //                 postCleanup()
+    //             }
+    //         }
+    //     }
+    //     failure {
+    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+    //             script {
+    //                 publishNotification(
+    //                     icon: ':warning:',
+    //                     message: 'Failed Build',
+    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+    //                     manifest: "${INPUT_MANIFEST}"
+    //                 )
+
+    //                 postCleanup()
+    //             }
+    //         }
+    //     }
+    // }
 }
