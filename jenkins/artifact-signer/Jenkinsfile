@@ -39,7 +39,10 @@ pipeline {
                     argsMap['artifactPath'] = "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
                     argsMap['signatureType'] = "${SIGNATURE_TYPE}"
                     argsMap['distributionPlatform'] = "${DISTRIBUTION_PLATFORM}"
-                    signArtifacts(argsMap)
+                    signArtifacts(
+                       artifactPath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
+                       signatureType: SIGNATURE_TYPE
+                       distributionPlatform: DISTRIBUTION_PLATFORM
                     upload_artifacts()
                 }
             }
