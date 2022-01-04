@@ -35,11 +35,14 @@ pipeline {
                     }
                     ARTIFACT_PATH = ARTIFACT_PATH.replaceAll('/$', "")
                     set_up()
+                    argsMap = [:]
+                    argsMap['artifactPath'] = "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
+                    argsMap['signatureType'] = "${SIGNATURE_TYPE}"
+                    argsMap['distributionPlatform'] = "${DISTRIBUTION_PLATFORM}"
                     signArtifacts(
-                       artifactPath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
-                       signatureType: SIGNATURE_TYPE,
+                       artifactPath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
+                       signatureType: SIGNATURE_TYPE
                        distributionPlatform: DISTRIBUTION_PLATFORM
-                    )
                     upload_artifacts()
                 }
             }
