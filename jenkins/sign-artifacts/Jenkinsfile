@@ -40,7 +40,13 @@ pipeline {
                             signatureType: SIGNATURE_TYPE,
                             distributionPlatform: DISTRIBUTION_PLATFORM
                     )
-                    uploadArtifactsWithSignatures()
+
+                    // uploading artifacts with signatures on s3
+                    uploadToS3(
+                            sourcePath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
+                            artifactBucket: "${ARTIFACT_BUCKET_NAME}",
+                            destinationOnS3: "${ARTIFACT_PATH}/signed"
+                    )
                 }
             }
             post() {
@@ -51,14 +57,6 @@ pipeline {
                 }
             }
         }
-    }
-}
-
-void uploadArtifactsWithSignatures(){
-    withAWS(role: "${ARTIFACT_UPLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName:
-            'jenkins-session') {
-        // uploading to ARTIFACT_PATH/signed on S3
-        s3Upload(file: "$WORKSPACE/artifacts/${ARTIFACT_PATH}", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${ARTIFACT_PATH}/signed")
     }
 }
 
