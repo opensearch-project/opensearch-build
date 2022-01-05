@@ -12,7 +12,7 @@ import org.junit.*
 import java.util.*
 import java.nio.file.*
 
-class TestArtifactSigner extends BuildPipelineTest {
+class TestSignArtifacts extends BuildPipelineTest {
 
     @Before
     void setUp() {
@@ -43,7 +43,7 @@ class TestArtifactSigner extends BuildPipelineTest {
     }
 
     @Test
-    void testArtifactSigner() {
-        super.testPipeline("tests/jenkins/jobs/ArtifactSigner_Jenkinsfile")
+    void testSignArtifacts() {
+        super.testPipeline("tests/jenkins/jobs/SignArtifacts_Jenkinsfile")
     }
 }

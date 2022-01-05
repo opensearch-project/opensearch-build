@@ -9,20 +9,20 @@ pipeline {
                         error('ARTIFACT_PATH is not set')
                     }
                     ARTIFACT_PATH = ARTIFACT_PATH.replaceAll('/$', "")
-                    set_up()
-                    argsMap = [:]
-                    argsMap['artifactPath'] = "$WORKSPACE/artifacts/${ARTIFACT_PATH}"
-                    argsMap['signatureType'] = "${SIGNATURE_TYPE}"
-                    argsMap['distributionPlatform'] = "${DISTRIBUTION_PLATFORM}"
-                    signArtifacts(argsMap)
-                    upload_artifacts()
+                    setUpSignArtifacts()
+                    signArtifacts(
+                        artifactPath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
+                        signatureType: SIGNATURE_TYPE,
+                        distributionPlatform: DISTRIBUTION_PLATFORM
+                    )
+                    uploadArtifactsWithSignatures()
                 }
             }
         }
     }
 }
 
-void upload_artifacts(){
+void uploadArtifactsWithSignatures(){
     // Upload signature files to S3
     withAWS(role: "${ARTIFACT_UPLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName:
             'jenkins-session') {
@@ -31,7 +31,7 @@ void upload_artifacts(){
     }
 }
 
-void set_up() {
+void setUpSignArtifacts() {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
     withAWS(role: "${ARTIFACT_DOWNLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
