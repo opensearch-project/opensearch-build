@@ -37,3 +37,26 @@ components:
   checks:
     - gradle:properties:version
     - gradle:dependencies:opensearch.version
+- name: security
+  repository: https://github.com/opensearch-project/security.git
+  ref: 'main'
+- name: sql
+  repository: https://github.com/opensearch-project/sql.git
+  ref: 'main'
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version: plugin
+- name: dashboards-reports
+  repository: https://github.com/opensearch-project/dashboards-reports.git
+  ref: 'main'
+  working_directory: reports-scheduler
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version
+- name: observability
+  repository: https://github.com/opensearch-project/observability.git
+  ref: 'main'
+  working_directory: opensearch-observability
+  checks:
+    - gradle:properties:version
+    - gradle:dependencies:opensearch.version

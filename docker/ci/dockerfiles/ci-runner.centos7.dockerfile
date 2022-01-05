@@ -140,6 +140,7 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
 RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
 RUN pip3 install pip==21.3.1
 RUN pip3 install cmake==3.21.3
+RUN pip3 install awscli==1.22.12
 
 # Change User
 USER 1000

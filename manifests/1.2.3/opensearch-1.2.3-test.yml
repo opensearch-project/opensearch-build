@@ -79,8 +79,8 @@ components:
       test-configs:
         - without-security
 
-  - name: observability
-    working-directory: opensearch-observability
+  - name: dashboards-notebooks
+    working-directory: opensearch-notebooks
     integ-test:
       test-configs:
         - without-security

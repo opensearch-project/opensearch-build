@@ -1,0 +1,32 @@
+schema-version: "1.0"
+build:
+  name: OpenSearch
+  version: 1.2.4
+ci:
+  image:
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
+components:
+  - name: OpenSearch
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+    ref: "1.2"
+    repository: https://github.com/opensearch-project/OpenSearch.git
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: "1.2"
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: "1.2"
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
