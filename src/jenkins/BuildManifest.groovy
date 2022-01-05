@@ -31,7 +31,7 @@ class BuildManifest implements Serializable {
                 this.getFilename(),
                 this.version,
                 this.platform,
-                this.architecture,       
+                this.architecture,
             ].join('-')
             return packagePrefix + '.tar.gz'
         }
@@ -44,13 +44,14 @@ class BuildManifest implements Serializable {
             this.dist = data.artifacts.dist
         }
 
-        String getDistPackageLocation() {
+        String getDistPackageLocation(){
             try {
-                return this.dist[0]
-            } catch (Exception e) {
-                echo "Exception: ${e}"
+                if (this.dist.size() == 1 && this.dist[0].length() != 0){
+                    return this.dist[0]
+                }
+            } catch (Exception ex){
+                throw new Exception("The number of items found in dist is either 0 or more than one", ex.printStackTrace())
             }
-            
         }
     }
 
