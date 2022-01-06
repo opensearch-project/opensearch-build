@@ -37,42 +37,44 @@ class BuildManifest implements Serializable {
         }
     }
 
-    class Components extends ArrayList {
-        Map artifacts
+
+
+    class Components extends HashMap<String , Component> {
 
         Components(ArrayList data) {
-            this.artifacts = data[0].artifacts
+            data.each {
+                item ->
+                    Component component = new Component(item)
+                    (this[component.name] = component)
+            }
         }
-
     }
 
     class Component implements Serializable{
-        String dist
+        String name
+        String version
+        String ref
+        String commit_id
+        String repository
+        Map<String, ArrayList> artifacts
 
         Component(Map data) {
-            this.dist = data.dist
-        }
-
-        String getDistPackageLocation(){
-            try {
-                if (this.dist.size() == 1 && this.dist[0].length() != 0){
-                    return this.dist[0]
-                }
-            } catch (Exception ex){
-                throw new Exception("The number of items found in dist is either 0 or more than one", ex.printStackTrace())
-            }
+            this.name = data.name
+            this.version = data.version
+            this.ref = data.ref
+            this.commit_id = data.commit_id
+            this.repository = data.repository
+            this.artifacts = new HashMap<>(data.artifacts)
         }
 
     }
 
     Build build
     Components components
-    Component component
 
     BuildManifest(Map data) {
         this.build = new BuildManifest.Build(data.build)
         this.components = new BuildManifest.Components(data.components)
-        this.component = new BuildManifest.Component(this.components.artifacts)
     }
 
     public String getArtifactRoot(String jobName, String buildNumber) {

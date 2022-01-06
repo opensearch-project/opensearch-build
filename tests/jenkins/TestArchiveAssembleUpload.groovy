@@ -24,6 +24,9 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
         binding.setVariable('STAGE_NAME', 'stage')
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('BUILD_NUMBER', '33')
+        binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'role')
+        binding.setVariable('AWS_ACCOUNT_PUBLIC_REAL', 'dummy')
+        binding.setVariable('ARTIFACT_PUBLIC_BUCKET_NAME', 'bucket')
 
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
@@ -36,7 +39,7 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
         Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
         Path target = Path.of("builds/opensearch/manifest.yml");
         Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);    
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
     }
 
     @Test
