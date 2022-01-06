@@ -18,7 +18,11 @@ class TestSignArtifacts extends BuildPipelineTest {
     void setUp() {
         super.setUp()
 
-        binding.setVariable('ARTIFACT_PATH', '/dummy/path/to/Artifacts')
+        binding.setVariable('URLs', 'https://www.dummy.com/dummy_1_artifact.tar.gz,' +
+                ' https://www.dummy.com/dummy_2_artifact.tar.gz')
+        binding.setVariable('UPLOAD_PATH', '/dummy/upload/path/')
+        binding.setVariable('JOB_NAME', 'sign_artifacts_job')
+        binding.setVariable('BUILD_NUMBER', '20')
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('ARTIFACT_UPLOAD_ROLE_NAME', 'Dummy_Upload_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
@@ -34,7 +38,6 @@ class TestSignArtifacts extends BuildPipelineTest {
         binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
 
         helper.registerAllowedMethod("git", [Map])
-        helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate

@@ -4,32 +4,70 @@ pipeline {
         stage('sign') {
             steps {
                 script {
-                    if (ARTIFACT_PATH == '') {
+                    if (URLs == '' || UPLOAD_PATH == '') {
                         currentBuild.result = 'ABORTED'
-                        error('ARTIFACT_PATH is not set')
+                        error('URLs or UPLOAD_PATH params are not set')
                     }
-                    ARTIFACT_PATH = ARTIFACT_PATH.replaceAll('/$', "")
-                    setUpSignArtifacts()
+                    UPLOAD_PATH = UPLOAD_PATH.replaceAll('/$', "")
+                    UPLOAD_PATH = UPLOAD_PATH.replaceAll('^/+', "")
+                    downloadedFiles = downloadArtifactsFromUrls()
                     signArtifacts(
-                        artifactPath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
-                        signatureType: SIGNATURE_TYPE,
-                        distributionPlatform: DISTRIBUTION_PLATFORM
+                            artifactPath: "$WORKSPACE/artifacts/",
+                            signatureType: SIGNATURE_TYPE,
+                            distributionPlatform: DISTRIBUTION_PLATFORM
                     )
+
+                    finalUploadPath = ([
+                            "${JOB_NAME}",
+                            "${UPLOAD_PATH}",
+                            "${BUILD_NUMBER}",
+                            "dist",
+                            "signed"
+                    ].join('/'))
+
+                    // uploading artifacts with signatures on s3
                     uploadToS3(
-                            sourcePath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
+                            sourcePath: "$WORKSPACE/artifacts",
                             bucket: "${ARTIFACT_BUCKET_NAME}",
-                            path: "${ARTIFACT_PATH}/dist/signed"
+                            path: finalUploadPath
                     )
+
+                    printUrls(downloadedFiles)
+
                 }
             }
         }
     }
 }
 
-void setUpSignArtifacts() {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+void printUrls(downloadedFiles){
 
-    withAWS(role: "${ARTIFACT_DOWNLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Download(file: "$WORKSPACE/artifacts/", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${ARTIFACT_PATH}/", force: true)
+    println("Note: only supported file types will be signed")
+
+    for(filename in downloadedFiles){
+
+        println("Artifacts can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}" )
+        println("Signatures can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}${SIGNATURE_TYPE}" )
+
     }
+
+}
+
+List downloadArtifactsFromUrls() {
+
+    listOfURls = URLs.split(",")
+
+    def downloadedFiles = []
+
+    sh "mkdir ${WORKSPACE}/artifacts"
+
+    for (url in listOfURls) {
+        trimmedUrl = url.trim()
+        filename = trimmedUrl.substring(trimmedUrl.lastIndexOf('/') + 1)
+        downloadedFiles.add(filename)
+        sh "curl -SL ${trimmedUrl} -o ${WORKSPACE}/artifacts/${filename}"
+    }
+
+    return downloadedFiles
+
 }
