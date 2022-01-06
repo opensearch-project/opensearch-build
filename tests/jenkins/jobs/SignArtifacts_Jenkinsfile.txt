@@ -24,6 +24,6 @@
 
             workspace/sign.sh workspace/artifacts//dummy/path/to/Artifacts --sigtype=.sig --component=null --type=null
         )
-               SignArtifacts_Jenkinsfile.uploadToS3({sourcePath=workspace/artifacts//dummy/path/to/Artifacts, artifactBucket=dummy_bucket_name, destinationOnS3=/dummy/path/to/Artifacts/dist/signed})
+               SignArtifacts_Jenkinsfile.uploadToS3({sourcePath=workspace/artifacts//dummy/path/to/Artifacts, bucket=dummy_bucket_name, path=/dummy/path/to/Artifacts/dist/signed})
                   uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      uploadToS3.s3Upload({file=workspace/artifacts//dummy/path/to/Artifacts, bucket=dummy_bucket_name, path=/dummy/path/to/Artifacts/dist/signed})

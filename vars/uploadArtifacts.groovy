@@ -8,14 +8,14 @@ void call(Map args = [:]) {
 
     uploadToS3(
             sourcePath: 'builds',
-            artifactBucket: "${ARTIFACT_BUCKET_NAME}",
-            destinationOnS3: "${artifactPath}/builds"
+            bucket: "${ARTIFACT_BUCKET_NAME}",
+            path: "${artifactPath}/builds"
     )
 
     uploadToS3(
             sourcePath: 'dist',
-            artifactBucket: "${ARTIFACT_BUCKET_NAME}",
-            destinationOnS3: "${artifactPath}/dist"
+            bucket: "${ARTIFACT_BUCKET_NAME}",
+            path: "${artifactPath}/dist"
     )
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")

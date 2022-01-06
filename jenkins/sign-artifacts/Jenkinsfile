@@ -44,8 +44,8 @@ pipeline {
                     // uploading artifacts with signatures on s3
                     uploadToS3(
                             sourcePath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}",
-                            artifactBucket: "${ARTIFACT_BUCKET_NAME}",
-                            destinationOnS3: "${ARTIFACT_PATH}/dist/signed"
+                            bucket: "${ARTIFACT_BUCKET_NAME}",
+                            path: "${ARTIFACT_PATH}/dist/signed"
                     )
                 }
             }

@@ -43,8 +43,8 @@ pipeline {
                     '''
                     uploadToS3(
                             sourcePath: 'dist',
-                            artifactBucket: "${ARTIFACT_BUCKET_NAME}",
-                            destinationOnS3: "${JOB_NAME}/branch_${RELEASE_BRANCH}/${BUILD_NUMBER}/builds"
+                            bucket: "${ARTIFACT_BUCKET_NAME}",
+                            path: "${JOB_NAME}/branch_${RELEASE_BRANCH}/${BUILD_NUMBER}/builds"
                     )
                 }
             }
