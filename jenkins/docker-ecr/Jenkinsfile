@@ -114,9 +114,9 @@ pipeline {
                     } else if (env.ENVIRONMENT == 'staging') {
                         copyDockerImage(
                             sourceImagePath: "opensearchstaging/opensearch:latest",
-                            destinationImagePath: "public.ecr.aws/m0o1u6w1/opensearch:latest",
+                            destinationImagePath: "public.ecr.aws/s7t2w0j3/opensearch:latest",
                             destinationType: "ecr",
-                            destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1"
+                            destinationCredentialIdentifier: "public.ecr.aws/s7t2w0j3"
                         )
                     }
                 }
