@@ -19,7 +19,7 @@ pipeline {
                 }
             }
             steps {
-                script { 
+                script {
                     dockerAgent = detectDockerAgent()
                     currentBuild.description = "$INPUT_MANIFEST"
                 }
@@ -45,13 +45,6 @@ pipeline {
                             buildManifest(
                                 snapshot: true
                             )
-                            if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
-                                }
-                            } else {
-                                echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
-                            }
                         }
                     }
                     post {
@@ -102,30 +95,11 @@ pipeline {
                 }
             }
         }
-        stage('docker build') {
-            steps {
-                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                    script {
-                        buildDockerImage()
-                    }
-                }
-            }
-        }
     }
     post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
-
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
                     postCleanup()
                 }
             }
@@ -133,13 +107,6 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
-
                     postCleanup()
                 }
             }
