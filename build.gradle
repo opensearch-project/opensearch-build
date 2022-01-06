@@ -30,11 +30,12 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.21'
-    compile group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
-    compile group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
-    compile group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9', ext: 'pom'
+    implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
+    testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 sourceSets {
@@ -62,8 +63,8 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.176.2'
-    testHarnessVersion = '2.54'
+    coreVersion = '2.326' //  https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core
+    testHarnessVersion = '2.72' //  https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness
     pluginDependencies {
         workflowCpsGlobalLibraryPluginVersion = '2.16'
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '2.8')
