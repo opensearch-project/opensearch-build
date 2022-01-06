@@ -45,12 +45,9 @@ pipeline {
             agent none
             steps {
                 script {
-                    if (env.ENVIRONMENT == 'production' && (params.SOURCE_IMAGE_IN_STAGING == '' || params.DESTINATION_IMAGE_IN_PROD == '')) {
+                    if (env.ENVIRONMENT == 'production' && (params.SOURCE_IMAGE_IN_STAGING == null || params.DESTINATION_IMAGE_IN_PROD == null)) {
                         currentBuild.result = 'ABORTED'
                         error('SOURCE_IMAGE_IN_STAGING parameter or DESTINATION_IMAGE_IN_PROD is incorrect')
-                    }
-                    if (env.ENVIRONMENT == 'staging' && !params.SOURCE_IMAGE_IN_STAGING.contains(":")) {
-
                     }
                 }
             }
@@ -117,7 +114,7 @@ pipeline {
                     } else if (env.ENVIRONMENT == 'staging') {
                         copyDockerImage(
                             sourceImagePath: "opensearchstaging/opensearch:latest",
-                            destinationImagePath: "public.ecr.aws/m0o1u6w1/opensearch-copy:latest",
+                            destinationImagePath: "public.ecr.aws/a5n0l3m1/opensearch-copy:latest",
                             destinationType: "ecr",
                             destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1"
                         )
