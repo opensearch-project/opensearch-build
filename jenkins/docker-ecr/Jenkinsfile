@@ -69,17 +69,13 @@ pipeline {
                     install_gcrane()
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
                     if (env.ENVIRONMENT == 'production') {
-                        def CREDENTIAL_ID = "jenkins-staging-docker-prod-token"
-                        sh "echo Switch to Production"
-                        withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                            sh '''
-                                set -ex
-                                echo Login to $CREDENTIAL_ID
-                                docker logout && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                                gcrane cp opensearchstaging:${SOURCE_IMAGE_TAG_IN_STAGING} opensearchproject:${DESTINATION_IMAGE_TAG_IN_PROD}
-                            '''
-                        }
-                    } else {
+                        copyDockerImage(
+                            sourceImagePath: "opensearchstaging:${SOURCE_IMAGE_TAG_IN_STAGING}",
+                            destinationImagePath: "opensearchproject:${DESTINATION_IMAGE_TAG_IN_PROD}",
+                            destinationType: "docker",
+                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                        )
+                    } else if (env.ENVIRONMENT == 'staging') {
                         def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                         withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
@@ -95,7 +91,7 @@ pipeline {
                 always {
                     script {
                         postCleanup()
-                        sh "docker logout"
+                        sh "docker logout && docker image prune -f --all"
                     }
                 }
             }
@@ -111,21 +107,20 @@ pipeline {
             steps {
                 script {
                     install_gcrane()
-                    if (env.ENVIRONMENT == 'production')
-                        withAWS(role: 'abhng-ecr-role', roleAccount: "${ABHNG_ACCOUNT}", duration: 900, roleSessionName: 'jenkins-session') {
-                            sh '''
-                                docker logout
-                                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/a5n0l3m1
-                                gcrane cp public.ecr.aws/a5n0l3m1/opensearch:${SOURCE_IMAGE_TAG_IN_STAGING} public.ecr.aws/a5n0l3m1/opensearch:${DESTINATION_IMAGE_TAG_IN_PROD}
-                            '''
-                        } else {
-                        withAWS(role: 'abhng-ecr-role', roleAccount: "${ABHNG_ACCOUNT}", duration: 900, roleSessionName: 'jenkins-session') {
-                            sh '''
-                                docker logout
-                                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/a5n0l3m1
-                                gcrane cp opensearchstaging/opensearch:latest public.ecr.aws/a5n0l3m1/opensearch-copy:latest
-                            '''
-                        }
+                    if (env.ENVIRONMENT == 'production') {
+                        copyDockerImage(
+                            sourceImagePath: "opensearchstaging/opensearch:latest",
+                            destinationImagePath: "public.ecr.aws/a5n0l3m1/opensearch-copy:latest",
+                            destinationType: "ecr",
+                            destinationCredentialIdentifier: ""
+                        )
+                    } else if (env.ENVIRONMENT == 'staging') {
+                        copyDockerImage(
+                            sourceImagePath: "opensearchstaging/opensearch:latest",
+                            destinationImagePath: "public.ecr.aws/a5n0l3m1/opensearch-copy:latest",
+                            destinationType: "ecr",
+                            destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1"
+                        )
                     }
                 }
             }
