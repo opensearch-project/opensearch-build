@@ -4,12 +4,12 @@ pipeline {
         stage('sign') {
             steps {
                 script {
-                    if (URLs == '' || UPLOAD_PATH == '') {
+                    if (URLs == '' || S3_FILE_UPLOAD_PATH == '') {
                         currentBuild.result = 'ABORTED'
-                        error('URLs or UPLOAD_PATH params are not set')
+                        error('URLs or S3_FILE_UPLOAD_PATH params are not set')
                     }
-                    UPLOAD_PATH = UPLOAD_PATH.replaceAll('/$', "")
-                    UPLOAD_PATH = UPLOAD_PATH.replaceAll('^/+', "")
+                    S3_FILE_UPLOAD_PATH = S3_FILE_UPLOAD_PATH.replaceAll('/$', "")
+                    S3_FILE_UPLOAD_PATH = S3_FILE_UPLOAD_PATH.replaceAll('^/+', "")
                     downloadedFiles = downloadArtifactsFromUrls()
                     signArtifacts(
                             artifactPath: "$WORKSPACE/artifacts/",
@@ -19,7 +19,7 @@ pipeline {
 
                     finalUploadPath = ([
                             "${JOB_NAME}",
-                            "${UPLOAD_PATH}",
+                            "${S3_FILE_UPLOAD_PATH}",
                             "${BUILD_NUMBER}",
                             "dist",
                             "signed"

@@ -20,7 +20,7 @@ class TestSignArtifacts extends BuildPipelineTest {
 
         binding.setVariable('URLs', 'https://www.dummy.com/dummy_1_artifact.tar.gz,' +
                 ' https://www.dummy.com/dummy_2_artifact.tar.gz')
-        binding.setVariable('UPLOAD_PATH', '/dummy/upload/path/')
+        binding.setVariable('S3_FILE_UPLOAD_PATH', '/dummy/upload/path/')
         binding.setVariable('JOB_NAME', 'sign_artifacts_job')
         binding.setVariable('BUILD_NUMBER', '20')
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
