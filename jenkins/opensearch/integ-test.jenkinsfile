@@ -13,48 +13,42 @@ pipeline {
     parameters {
         string(
             defaultValue: '',
-            name: 'OPENSEARCH_VERSION',
-            description: 'The OpenSearch version',
-            trim: true
-        )
-        string(
-            defaultValue: '',
-            name: 'ARCHITECTURE',
-            description: 'Architecture of the build',
-            trim: true
-        )
-        string(
-            defaultValue: '',
-            name: 'BUILD_ID',
-            description: 'The artifact build number',
-            trim: true
-        )
-        string(
-            defaultValue: '',
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. manifests/2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
         string(
             defaultValue: '',
-            name: 'BUILD_MANIFEST',
-            description: 'The build manifest URL, e.g. <artifact_url>/dist/opensearch/manifest.yml.',
-            trim: true
-        )
-        string(
-            defaultValue: '',
-            name: 'ARTIFACT_BASE_PATH',
-            description: 'The artifact base path, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64',
+            name: 'BUILD_MANIFEST_URL',
+            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/dist/opensearch/manifest.yml.',
             trim: true
         )
     }
     stages {
+        stage('Extract build information from build manifest') {
+            steps {
+                node('Jenkins-Agent-al2-x64-m5xlarge') {
+                    script {
+                        String buildManifestFileName = 'manifest.yml'
+                        env.BUILD_MANIFEST = buildManifestFileName
+                        sh "wget ${BUILD_MANIFEST_URL} -O ${buildManifestFileName}"
+                        def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "${buildManifestFileName}"))
+                        String architecture = buildManifest.getArtifactArchitecture()
+                        String buildId = buildManifest.getArtifactBuildId()
+                        echo "Setting env.ARCHITECTURE=${architecture}"
+                        env.ARCHITECTURE = architecture
+                        echo "Setting env.BUILD_ID=${buildId}"
+                        env.BUILD_ID = buildId
+                    }
+                }
+            }
+        }
         stage('Choose Agent Node') {
             steps {
                 script {
-                    if ("${ARCHITECTURE}" == 'x64') {
+                    if ("${env.ARCHITECTURE}" == 'x64') {
                         agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
-                    } else if ("${ARCHITECTURE}" == 'arm64') {
+                    } else if ("${env.ARCHITECTURE}" == 'arm64') {
                         agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
                     } else {
                         error("Unknown CPU architecture is provided")
@@ -71,7 +65,7 @@ pipeline {
             steps {
                 script {
                     runIntegTestScript(
-                        artifactBasePath: "${ARTIFACT_BASE_PATH}",
+                        buildManifest: "${BUILD_MANIFEST}",
                         testManifest: "${TEST_MANIFEST}"
                     )
                 }
@@ -79,12 +73,10 @@ pipeline {
             post {
                 always {
                     script {
-                        def buildManifestFileName = "manifest.yml"
-                        sh "wget ${BUILD_MANIFEST} -O ${buildManifestFileName}"
                         uploadTestResults(
-                            buildManifestFileName: "${buildManifestFileName}",
+                            buildManifestFileName: "${env.BUILD_MANIFEST}",
                             jobName: 'integ-test',
-                            buildNumber: "${BUILD_ID}"
+                            buildNumber: "${env.BUILD_ID}"
                         )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
