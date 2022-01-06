@@ -37,11 +37,20 @@ class BuildManifest implements Serializable {
         }
     }
 
-    class Components implements Serializable {
+    class Components extends ArrayList {
+        Map artifacts
+
+        Components(ArrayList data) {
+            this.artifacts = data[0].artifacts
+        }
+
+    }
+
+    class Component implements Serializable{
         String dist
 
-        Components(Map data) {
-            this.dist = data.artifacts.dist
+        Component(Map data) {
+            this.dist = data.dist
         }
 
         String getDistPackageLocation(){
@@ -53,14 +62,17 @@ class BuildManifest implements Serializable {
                 throw new Exception("The number of items found in dist is either 0 or more than one", ex.printStackTrace())
             }
         }
+
     }
 
     Build build
     Components components
+    Component component
 
     BuildManifest(Map data) {
         this.build = new BuildManifest.Build(data.build)
         this.components = new BuildManifest.Components(data.components)
+        this.component = new BuildManifest.Component(this.components.artifacts)
     }
 
     public String getArtifactRoot(String jobName, String buildNumber) {

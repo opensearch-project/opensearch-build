@@ -2,9 +2,9 @@ void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.manifest))
-    def fileLocation = buildManifest.components.getDistPackageLocation()
+    def fileLocation = buildManifest.component.getDistPackageLocation()
     def productName = buildManifest.build.getFilename()
-    def fileName = buildManifest.getPackageName()
+    def fileName = buildManifest.build.getPackageName()
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
