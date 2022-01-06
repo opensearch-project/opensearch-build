@@ -114,7 +114,7 @@ pipeline {
                     } else if (env.ENVIRONMENT == 'staging') {
                         copyDockerImage(
                             sourceImagePath: "opensearchstaging/opensearch:latest",
-                            destinationImagePath: "public.ecr.aws/a5n0l3m1/opensearch-copy:latest",
+                            destinationImagePath: "public.ecr.aws/m0o1u6w1/opensearch-copy:latest",
                             destinationType: "ecr",
                             destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1"
                         )
