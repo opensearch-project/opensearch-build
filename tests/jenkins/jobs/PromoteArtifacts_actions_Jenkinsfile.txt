@@ -29,8 +29,8 @@
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                      signArtifacts.fileExists(workspace/opensearch.pgp)
-                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp)
-                     signArtifacts.sh(gpg --import $WORKSPACE/opensearch.pgp)
+                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o workspace/opensearch.pgp)
+                     signArtifacts.sh(gpg --import workspace/opensearch.pgp)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                         signArtifacts.sh(
@@ -54,8 +54,8 @@
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                      signArtifacts.fileExists(workspace/opensearch.pgp)
-                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp)
-                     signArtifacts.sh(gpg --import $WORKSPACE/opensearch.pgp)
+                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o workspace/opensearch.pgp)
+                     signArtifacts.sh(gpg --import workspace/opensearch.pgp)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                         signArtifacts.sh(
