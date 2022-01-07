@@ -40,7 +40,7 @@ pipeline {
                     uploadToS3(
                         sourcePath: "$WORKSPACE/release/archives/linux/build/distributions/",
                         bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "data-prepper/${VERSION}/${BUILD_NUMBER}/builds/signed"
+                        path: "${JOB_NAME}/${VERSION}/${BUILD_NUMBER}/builds/signed"
                     )
                 }
             }
