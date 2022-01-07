@@ -41,9 +41,11 @@ pipeline {
                             gem install $f -P HighSecurity;\\
                         done
                     '''
-                    withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                        s3Upload(file: 'dist', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${JOB_NAME}/branch_${RELEASE_BRANCH}/${BUILD_NUMBER}/builds")
-                    }
+                    uploadToS3(
+                            sourcePath: 'dist',
+                            bucket: "${ARTIFACT_BUCKET_NAME}",
+                            path: "${JOB_NAME}/branch_${RELEASE_BRANCH}/${BUILD_NUMBER}/builds"
+                    )
                 }
             }
             post {
