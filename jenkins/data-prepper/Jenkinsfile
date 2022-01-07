@@ -45,4 +45,11 @@ pipeline {
             }
         }
     }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
 }
