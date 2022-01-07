@@ -25,7 +25,7 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('STAGE_NAME', 'stage')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'role')
-        binding.setVariable('AWS_ACCOUNT_PUBLIC_REAL', 'dummy')
+        binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'dummy')
         binding.setVariable('ARTIFACT_PUBLIC_BUCKET_NAME', 'bucket')
 
         helper.registerAllowedMethod("withCredentials", [List, Closure], { list, closure ->
