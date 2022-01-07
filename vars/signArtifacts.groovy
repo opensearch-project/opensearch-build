@@ -30,8 +30,9 @@ void call(Map args = [:]) {
 }
 
 void importPGPKey(){
+    keyPath = "$WORKSPACE/opensearch.pgp"
     if( !fileExists("$WORKSPACE/opensearch.pgp")) {
-        sh("curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp")
-        sh("gpg --import $WORKSPACE/opensearch.pgp")
+        sh("curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o ${keyPath}")
     }
+    sh("gpg --import ${keyPath}")
 }
