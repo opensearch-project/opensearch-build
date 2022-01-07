@@ -32,7 +32,6 @@ void call(Map args = [:]) {
 void importPGPKey(){
     println("******** calling function to download key **********")
     sh "ls $WORKSPACE"
-    sh "ls $WORKSPACE/opensearch.pgp"
     if( !fileExists("$WORKSPACE/opensearch.pgp")) {
         sh("curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o $WORKSPACE/opensearch.pgp")
         sh("gpg --import $WORKSPACE/opensearch.pgp")
