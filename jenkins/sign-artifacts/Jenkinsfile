@@ -1,0 +1,110 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+            alwaysPull true
+        }
+    }
+    parameters{
+        string(
+                name: 'URLs',
+                trim: true,
+                description: 'comma separated list of urls of artifacts to be signed'
+        )
+        string(
+                name: 'S3_FILE_UPLOAD_PATH',
+                trim: true,
+                description: 'Path to upload to artifacts and signatures on s3. Eg: dummy_project/1.0'
+        )
+        choice(
+                choices: ['linux'],
+                name: 'DISTRIBUTION_PLATFORM',
+                description: 'What platform is this distribution build for?'
+        )
+        choice(
+                choices: ['.sig'],
+                name: 'SIGNATURE_TYPE',
+                description: 'What is signature file type?'
+        )
+    }
+    stages {
+        stage('sign') {
+            steps {
+                script {
+                    if (URLs == '' || S3_FILE_UPLOAD_PATH == '') {
+                        currentBuild.result = 'ABORTED'
+                        error('URLs or S3_FILE_UPLOAD_PATH params are not set')
+                    }
+                    S3_FILE_UPLOAD_PATH = S3_FILE_UPLOAD_PATH.replaceAll('/$', "")
+                    S3_FILE_UPLOAD_PATH = S3_FILE_UPLOAD_PATH.replaceAll('^/+', "")
+                    downloadedFiles = downloadArtifactsFromUrls()
+                    signArtifacts(
+                            artifactPath: "$WORKSPACE/artifacts/",
+                            signatureType: SIGNATURE_TYPE,
+                            distributionPlatform: DISTRIBUTION_PLATFORM
+                    )
+
+                    finalUploadPath = ([
+                            "${JOB_NAME}",
+                            "${S3_FILE_UPLOAD_PATH}",
+                            "${BUILD_NUMBER}",
+                            "dist",
+                            "signed"
+                    ].join('/'))
+
+                    // uploading artifacts with signatures on s3
+                    uploadToS3(
+                            sourcePath: "$WORKSPACE/artifacts",
+                            bucket: "${ARTIFACT_BUCKET_NAME}",
+                            path: finalUploadPath
+                    )
+
+                    printUrls(downloadedFiles)
+
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+}
+
+void printUrls(downloadedFiles){
+
+    println("Note: only supported file types will be signed")
+
+    for(filename in downloadedFiles){
+
+        println("Artifacts can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}" )
+        println("Signatures can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}${SIGNATURE_TYPE}" )
+
+    }
+
+}
+
+List downloadArtifactsFromUrls() {
+
+    listOfURls = URLs.split(",")
+
+    def downloadedFiles = []
+
+    sh "mkdir ${WORKSPACE}/artifacts"
+
+    for (url in listOfURls) {
+        trimmedUrl = url.trim()
+        filename = trimmedUrl.substring(trimmedUrl.lastIndexOf('/') + 1)
+        downloadedFiles.add(filename)
+        sh "curl -SL ${trimmedUrl} -o ${WORKSPACE}/artifacts/${filename}"
+    }
+
+    return downloadedFiles
+
+}

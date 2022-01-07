@@ -26,6 +26,7 @@ class TestAssembleUpload extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'dummy')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'bucket')
         binding.setVariable('BUILD_NUMBER', '33')
+        binding.setVariable('ARTIFACT_UPLOAD_ROLE_NAME', 'upload_role')
 
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
