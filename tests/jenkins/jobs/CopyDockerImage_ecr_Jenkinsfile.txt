@@ -1,0 +1,12 @@
+   CopyDockerImage_ecr_Jenkinsfile.run()
+      CopyDockerImage_ecr_Jenkinsfile.pipeline(groovy.lang.Closure)
+         CopyDockerImage_ecr_Jenkinsfile.echo(Executing on agent [label:none])
+         CopyDockerImage_ecr_Jenkinsfile.stage(upload manifest SHA, groovy.lang.Closure)
+            CopyDockerImage_ecr_Jenkinsfile.script(groovy.lang.Closure)
+               CopyDockerImage_ecr_Jenkinsfile.copyDockerImage({sourceImagePath=opensearchstaging:latest, destinationImagePath=opensearchproject:latest, destinationType=ecr, destinationCredentialIdentifier=path_to_ecr/repo_id/})
+                  copyDockerImage.withAWS({role=Upload_ECR_Image, roleAccount=account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     copyDockerImage.sh(
+                docker logout
+                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin path_to_ecr/repo_id/
+                gcrane cp opensearchstaging:latest opensearchproject:latest
+            )

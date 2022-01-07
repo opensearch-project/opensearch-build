@@ -1,0 +1,14 @@
+   CopyDockerImage_docker_Jenkinsfile.run()
+      CopyDockerImage_docker_Jenkinsfile.pipeline(groovy.lang.Closure)
+         CopyDockerImage_docker_Jenkinsfile.echo(Executing on agent [label:none])
+         CopyDockerImage_docker_Jenkinsfile.stage(upload manifest SHA, groovy.lang.Closure)
+            CopyDockerImage_docker_Jenkinsfile.script(groovy.lang.Closure)
+               CopyDockerImage_docker_Jenkinsfile.copyDockerImage({sourceImagePath=opensearchstaging:latest, destinationImagePath=opensearchproject:latest, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
+                  copyDockerImage.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyDockerImage.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyDockerImage.sh(
+                set -ex
+                echo Login to dummy_credentials_id
+                docker logout && docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
+                gcrane cp opensearchstaging:latest opensearchproject:latest
+            )

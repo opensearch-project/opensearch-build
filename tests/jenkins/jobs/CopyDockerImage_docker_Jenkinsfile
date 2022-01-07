@@ -1,0 +1,17 @@
+pipeline {
+    agent none
+    stages {
+        stage('upload manifest SHA') {
+            steps {
+                script {
+                    copyDockerImage(
+                        sourceImagePath: "opensearchstaging:latest",
+                        destinationImagePath: "opensearchproject:latest",
+                        destinationType: "docker",
+                        destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                    )
+                }
+            }
+        }
+    }
+}
