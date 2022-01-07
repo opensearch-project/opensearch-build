@@ -29,16 +29,7 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-m5xlarge') {
                     script {
-                        String buildManifestFileName = 'manifest.yml'
-                        env.BUILD_MANIFEST = buildManifestFileName
-                        sh "wget ${BUILD_MANIFEST_URL} -O ${buildManifestFileName}"
-                        def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "${buildManifestFileName}"))
-                        String architecture = buildManifest.getArtifactArchitecture()
-                        String buildId = buildManifest.getArtifactBuildId()
-                        echo "Setting env.ARCHITECTURE=${architecture}"
-                        env.ARCHITECTURE = architecture
-                        echo "Setting env.BUILD_ID=${buildId}"
-                        env.BUILD_ID = buildId
+                        getBuildManifestInfo()
                     }
                 }
             }

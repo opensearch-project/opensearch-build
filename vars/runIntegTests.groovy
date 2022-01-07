@@ -3,7 +3,6 @@ void call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
 
     String tarball = args.architecture == "x64" ? env.ARTIFACT_URL_linux_x64 : env.ARTIFACT_URL_linux_arm64
     String artifactRootUrl = args.architecture == "x64" ? env.ARTIFACT_ROOT_URL_linux_x64 : env.ARTIFACT_ROOT_URL_linux_arm64
