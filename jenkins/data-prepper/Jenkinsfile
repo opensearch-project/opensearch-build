@@ -1,0 +1,49 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(name: 'VERSION', description: 'The version of Data Prepper', trim: true)
+        string(name: 'BRANCH', description: 'Can be: <branchName>, <commitId>, refs/tags/<tagName>', trim: true)
+    }
+    stages {
+        stage('Build Data Prepper') {
+            steps {
+                cleanWs()
+                checkout changelog: false, poll: false, scm:
+                    [$class: 'GitSCM', branches: [[name: BRANCH]], userRemoteConfigs: [[url: 'https://github.com/opensearch-project/data-prepper.git']]]
+                script {
+                    sh './gradlew clean :release:archives:linux:linuxTar -Prelease'
+                }
+            }
+        }
+        stage('Sign Artifacts') {
+            steps {
+                script {
+                    signArtifacts(
+                        artifactPath: "$WORKSPACE/release/archives/linux/build/distributions/",
+                        signatureType: '.sig',
+                        distributionPlatform: 'linux'
+                    )
+                }
+            }
+        }
+        stage('Upload Artifacts to Staging Distribution Bucket') {
+            steps {
+                script {
+                    uploadToS3(
+                        sourcePath: "$WORKSPACE/release/archives/linux/build/distributions/",
+                        bucket: "${ARTIFACT_BUCKET_NAME}",
+                        path: "data-prepper/${VERSION}/${BUILD_NUMBER}/builds/signed"
+                    )
+                }
+            }
+        }
+    }
+}
