@@ -39,6 +39,7 @@ class TestSignArtifacts extends BuildPipelineTest {
 
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("cleanWs", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
@@ -48,5 +49,16 @@ class TestSignArtifacts extends BuildPipelineTest {
     @Test
     void testSignArtifacts() {
         super.testPipeline("tests/jenkins/jobs/SignArtifacts_Jenkinsfile")
+    }
+
+    @Test
+    void testSignArtifactsWithPgpKey() {
+        helper.addFileExistsMock('workspace/opensearch.pgp', true)
+        super.testPipeline("tests/jenkins/jobs/SignArtifacts_WithPGP_Jenkinsfile")
+    }
+
+    @Test
+    void testSignArtifactsJob() {
+        super.testPipeline("jenkins/sign-artifacts/sign-standalone-artifacts.jenkinsfile")
     }
 }
