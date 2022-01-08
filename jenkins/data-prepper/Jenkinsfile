@@ -19,7 +19,8 @@ pipeline {
                     checkout changelog: false, poll: false, scm:
                             [$class: 'GitSCM', branches: [[name: BRANCH]], userRemoteConfigs: [[url: 'https://github.com/opensearch-project/data-prepper.git']]]
                     sh './gradlew clean :release:archives:linux:linuxTar -Prelease'
-                    artifactFileNames = sh(script: "find $WORKSPACE/release/archives/linux/build/distributions/ -type f", returnStdout: true).split()
+                    artifactsPath = "$WORKSPACE/release/archives/linux/build/distributions"
+                    artifactFileNames = sh(script: "find ${artifactsPath} | sed -n \"s|^${artifactsPath}/||p\"", returnStdout: true).split()
                 }
             }
         }
@@ -28,9 +29,9 @@ pipeline {
                 script {
                     signatureType = '.sig'
                     signArtifacts(
-                        artifactPath: "$WORKSPACE/release/archives/linux/build/distributions/",
-                        signatureType: signatureType,
-                        distributionPlatform: 'linux'
+                            artifactPath: "${artifactsPath}",
+                            signatureType: signatureType,
+                            distributionPlatform: 'linux'
                     )
                 }
             }
@@ -47,9 +48,9 @@ pipeline {
                     ].join('/'))
 
                     uploadToS3(
-                        sourcePath: "$WORKSPACE/release/archives/linux/build/distributions/",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: finalUploadPath
+                            sourcePath: "${artifactsPath}",
+                            bucket: "${ARTIFACT_BUCKET_NAME}",
+                            path: finalUploadPath
                     )
                     printUrls(artifactFileNames)
                 }
