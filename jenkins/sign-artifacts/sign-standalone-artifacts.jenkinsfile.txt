@@ -29,6 +29,7 @@
                sign-standalone-artifacts.uploadToS3({sourcePath=workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
                   uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      uploadToS3.s3Upload({file=workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
+               sign-standalone-artifacts.printArtifactDownloadUrlsForStaging({artifactFileNames=[dummy_1_artifact.tar.gz, dummy_1_artifact.tar.gz.sig, dummy_2_artifact.tar.gz, dummy_2_artifact.tar.gz.sig], uploadPath=sign_artifacts_job/dummy/upload/path/20/dist/signed})
          sign-standalone-artifacts.script(groovy.lang.Closure)
             sign-standalone-artifacts.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
