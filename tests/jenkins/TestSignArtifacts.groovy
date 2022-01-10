@@ -39,12 +39,6 @@ class TestSignArtifacts extends BuildPipelineTest {
     }
 
     @Test
-    void testSignArtifactsWithPgpKey() {
-        helper.addFileExistsMock('workspace/opensearch.pgp', true)
-        super.testPipeline("tests/jenkins/jobs/SignArtifacts_WithPGP_Jenkinsfile")
-    }
-
-    @Test
     void testSignArtifactsJob() {
         binding.setVariable('URLs', 'https://www.dummy.com/dummy_1_artifact.tar.gz,' +
                 ' https://www.dummy.com/dummy_2_artifact.tar.gz')
