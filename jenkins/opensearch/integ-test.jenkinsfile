@@ -37,9 +37,9 @@ pipeline {
         stage('Choose Agent Node') {
             steps {
                 script {
-                    if ("${env.ARCHITECTURE}" == 'x64') {
+                    if ("${ARCHITECTURE}" == 'x64') {
                         agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
-                    } else if ("${env.ARCHITECTURE}" == 'arm64') {
+                    } else if ("${ARCHITECTURE}" == 'arm64') {
                         agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
                     } else {
                         error("Unknown CPU architecture is provided")
@@ -65,9 +65,9 @@ pipeline {
                 always {
                     script {
                         uploadTestResults(
-                            buildManifestFileName: "${env.BUILD_MANIFEST}",
+                            buildManifestFileName: "${BUILD_MANIFEST}",
                             jobName: 'integ-test',
-                            buildNumber: "${env.BUILD_ID}"
+                            buildNumber: "${BUILD_ID}"
                         )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
@@ -75,42 +75,48 @@ pipeline {
             }
         }
     }
-    // post {
-    //     success {
-    //         node('Jenkins-Agent-al2-x64-m5xlarge') {
-    //             script {
-    //                 def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-    //                 publishNotification(
-    //                     icon: ':white_check_mark:',
-    //                     message: 'Integration Tests Successful',
-    //                     extra: stashed,
-    //                     credentialsId: 'INTEG_TEST_WEBHOOK',
-    //                 )
 
-    //                 cleanWs(
-    //                     disableDeferredWipeout: true,
-    //                     deleteDirs: true
-    //                 )
-    //             }
-    //         }
-    //     }
-    //     failure {
-    //         node('Jenkins-Agent-al2-x64-m5xlarge') {
-    //             script  {
-    //                 def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-    //                 publishNotification(
-    //                     icon: ':warning:',
-    //                     message: 'Failed Integration Tests',
-    //                     extra: stashed,
-    //                     credentialsId: 'INTEG_TEST_WEBHOOK',
-    //                 )
+    // TODO: remove echo, uncomment existing code
+    post {
+        success {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script {
+                    echo 'This step is stubbed. It publishes successful test results'
 
-    //                 cleanWs(
-    //                     disableDeferredWipeout: true,
-    //                     deleteDirs: true
-    //                 )
-    //             }
-    //         }
-    //     }
-    // }
+                    // def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    // publishNotification(
+                    //     icon: ':white_check_mark:',
+                    //     message: 'Integration Tests Successful',
+                    //     extra: stashed,
+                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
+                    // )
+
+                    // cleanWs(
+                    //     disableDeferredWipeout: true,
+                    //     deleteDirs: true
+                    // )
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-m5xlarge') {
+                script  {
+                    echo 'This step is stubbed. It publishes failed test results'
+
+                    // def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    // publishNotification(
+                    //     icon: ':warning:',
+                    //     message: 'Failed Integration Tests',
+                    //     extra: stashed,
+                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
+                    // )
+
+                    // cleanWs(
+                    //     disableDeferredWipeout: true,
+                    //     deleteDirs: true
+                    // )
+                }
+            }
+        }
+    }
 }

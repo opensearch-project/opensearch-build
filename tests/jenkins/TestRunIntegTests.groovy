@@ -38,6 +38,7 @@ class TestRunIntegTests extends BuildPipelineTest {
     @Test
     public void testBuilds_x64() {
         binding.env.ARTIFACT_URL_linux_x64 = 'opensearch.linux.x64'
+        binding.env.BUILD_MANIFEST_URL_linux_x64 = 'build.manifest.x64'
         super.testPipeline(
             "tests/jenkins/jobs/RunIntegTests_x64_Jenkinsfile",
         )
@@ -46,6 +47,7 @@ class TestRunIntegTests extends BuildPipelineTest {
     @Test
     public void testBuilds_arm64() {
         binding.env.ARTIFACT_URL_linux_arm64 = 'opensearch.linux.arm64'
+        binding.env.BUILD_MANIFEST_URL_linux_arm64 = 'build.manifest.arm64'
         super.testPipeline(
             "tests/jenkins/jobs/RunIntegTests_arm64_Jenkinsfile",
         )
