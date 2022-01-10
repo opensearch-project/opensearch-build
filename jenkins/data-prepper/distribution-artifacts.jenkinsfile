@@ -39,7 +39,7 @@ pipeline {
         stage('Upload Artifacts to Staging Distribution Bucket') {
             steps {
                 script {
-                    finalUploadPath = ([
+                    uploadPath = ([
                             "${JOB_NAME}",
                             "${VERSION}",
                             "${BUILD_NUMBER}",
@@ -50,7 +50,7 @@ pipeline {
                     uploadToS3(
                             sourcePath: "${artifactsPath}",
                             bucket: "${ARTIFACT_BUCKET_NAME}",
-                            path: finalUploadPath
+                            path: uploadPath
                     )
                     printUrls(artifactFileNames)
                 }
@@ -72,8 +72,8 @@ void printUrls(artifactFileNames){
 
     for(filename in artifactFileNames){
 
-        println("Artifacts can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}" )
-        println("Signatures can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}${signatureType}" )
+        println("Artifacts can be accessed using the url - https://ci.opensearch.org/ci/dbc/${uploadPath}/${filename}" )
+        println("Signatures can be accessed using the url - https://ci.opensearch.org/ci/dbc/${uploadPath}/${filename}${signatureType}" )
 
     }
 
