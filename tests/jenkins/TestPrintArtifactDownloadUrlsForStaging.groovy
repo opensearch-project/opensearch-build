@@ -18,7 +18,6 @@ class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
         super.setUp()
         binding.setVariable('filenamesForUrls', ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig'])
         binding.setVariable('UPLOAD_PATH', 'dummy/upload/path')
-
     }
 
     @Test
