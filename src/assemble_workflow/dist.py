@@ -18,10 +18,11 @@ from system.zip_file import ZipFile
 
 
 class Dist(ABC):
-    def __init__(self, name: str, path: str, min_path: str) -> None:
+    def __init__(self, name: str, path: str, min_path: str, distribution: str) -> None:
         self.name = name
         self.path = path
         self.min_path = min_path
+        self.distribution = distribution
 
     @abstractmethod
     def __extract__(self, dest: str) -> None:
@@ -31,9 +32,9 @@ class Dist(ABC):
     def __build__(self, name: str, dest: str) -> None:
         pass
 
-    @property
-    def distribution(self) -> None:
-        pass
+    #@property
+    #def distribution(self) -> None:
+    #    pass
 
     def __find_min_archive_path(self, dest: str) -> str:
         '''
@@ -100,9 +101,9 @@ class DistZip(Dist):
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
 
-    @property
-    def distribution(self):
-        return "zip"
+    #@property
+    #def distribution(self):
+    #    return "zip"
 
 class DistTar(Dist):
     def __extract__(self, dest: str) -> None:
@@ -114,9 +115,9 @@ class DistTar(Dist):
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
 
-    @property
-    def distribution(self):
-        return "tar"
+    #@property
+    #def distribution(self):
+    #    return "tar"
 
 
 class DistRpm(Dist):
@@ -128,6 +129,6 @@ class DistRpm(Dist):
         logging.info("build for rpm distribution.")
         FpmBuilder().build(bundle_recorder, self.archive_path, self.distribution)
 
-    @property
-    def distribution(self):
-        return "rpm"
+    #@property
+    #def distribution(self):
+    #    return "rpm"

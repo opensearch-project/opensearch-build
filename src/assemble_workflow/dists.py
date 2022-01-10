@@ -14,8 +14,8 @@ class Dists:
     }  
 
     @classmethod
-    def create_dist(cls, name: str, path: str, distribution: str) -> Dist:
+    def create_dist(cls, name: str, path: str, min_path: str, distribution: str) -> Dist:
         if distribution not in cls.DISTRIBUTIONS:
             raise ValueError("Distribution not specified or invalid distribution")
         else:
-            return cls.DISTRIBUTIONS[distribution](name, path)        
+            return cls.DISTRIBUTIONS[distribution](name, path, min_path, distribution)        
