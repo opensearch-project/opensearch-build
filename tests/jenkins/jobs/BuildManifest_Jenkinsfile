@@ -23,7 +23,7 @@ pipeline {
                     echo buildManifest.getArtifactRoot('bundle-build', '1')
                     echo buildManifest.getArtifactRootUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.build.getPackageName()
-                    echo buildManifest.components.get("OpenSearch").artifacts.get("dist").first()
+                    echo buildManifest.components.getMinArtifact()
                 }
             }
         }

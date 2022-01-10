@@ -27,30 +27,34 @@ class BuildManifest implements Serializable {
         }
 
         String getPackageName() {
-            String packagePrefix = [
-                this.getFilename(),
-                this.version,
-                this.platform,
-                this.architecture,
-            ].join('-')
-            return packagePrefix + '.tar.gz'
+            return [
+                    this.getFilename(),
+                    this.version,
+                    this.platform,
+                    this.architecture,
+            ].join('-') + '.tar.gz'
         }
     }
 
-
-
-    class Components extends HashMap<String , Component> {
+    class Components extends HashMap<String, Component> {
 
         Components(ArrayList data) {
-            data.each {
-                item ->
-                    Component component = new Component(item)
-                    (this[component.name] = component)
+            data.each { item ->
+                Component component = new Component(item)
+                this[component.name] = component
+            }
+        }
+
+        public String getMinArtifact(){
+            try {
+                this.get("OpenSearch").artifacts.get("dist").first()
+            } catch (Exception ex){
+                echo("Min artifact cannot be found", ex.getMessage())
             }
         }
     }
 
-    class Component implements Serializable{
+    class Component implements Serializable {
         String name
         String version
         String ref
@@ -79,18 +83,18 @@ class BuildManifest implements Serializable {
 
     public String getArtifactRoot(String jobName, String buildNumber) {
         return [
-            jobName,
-            this.build.version,
-            buildNumber,
-            this.build.platform,
-            this.build.architecture
+                jobName,
+                this.build.version,
+                buildNumber,
+                this.build.platform,
+                this.build.architecture
         ].join("/")
     }
 
     public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
-            publicArtifactUrl,
-            this.getArtifactRoot(jobName, buildNumber)
+                publicArtifactUrl,
+                this.getArtifactRoot(jobName, buildNumber)
         ].join('/')
     }
 }
