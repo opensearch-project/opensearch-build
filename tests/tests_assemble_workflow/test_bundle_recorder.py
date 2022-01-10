@@ -22,7 +22,7 @@ class TestBundleRecorder(unittest.TestCase):
         self.maxDiff = None
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         self.manifest = BuildManifest.from_path(manifest_path)
-        self.bundle_recorder = BundleRecorder(self.manifest.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch"))
+        self.bundle_recorder = BundleRecorder(self.manifest.build, "output_dir", "artifacts_dir", BundleFileLocation("bundle_output_dir", "opensearch"), "tar")
 
     def test_record_component(self) -> None:
         component = BuildComponent(
@@ -96,7 +96,8 @@ class TestBundleRecorder(unittest.TestCase):
             BundleUrlLocation(
                 "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/",
                 "opensearch"
-            )
+            ),
+            "tar"
         )
 
         component = BuildComponent(
@@ -150,7 +151,8 @@ class TestBundleRecorderDashboards(unittest.TestCase):
             self.manifest.build,
             "output_dir",
             "artifacts_dir",
-            BundleFileLocation("bundle_output_dir", "opensearch-dashboards")
+            BundleFileLocation("bundle_output_dir", "opensearch-dashboards"),
+            "tar"
         )
 
     def test_record_component(self) -> None:
@@ -225,7 +227,8 @@ class TestBundleRecorderDashboards(unittest.TestCase):
             BundleUrlLocation(
                 "https://ci.opensearch.org/ci/ci-env-prod/job-name-dashboards/1.2.0/build-123/platform-mac/arch-amd64/",
                 "opensearch-dashboards"
-            )
+            ),
+            "tar"
         )
 
         component = BuildComponent(

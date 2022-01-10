@@ -26,6 +26,6 @@ class Bundles:
         return klass  # type: ignore[return-value]
 
     @classmethod
-    def create(cls, build_manifest: BuildManifest, artifacts_dir: str, bundle_recorder: BundleRecorder, keep: bool) -> Bundle:
+    def create(cls, build_manifest: BuildManifest, artifacts_dir: str, bundle_recorder: BundleRecorder, distribution: str, keep: bool) -> Bundle:
         klass = cls.from_name(build_manifest.build.name)
-        return klass(build_manifest, artifacts_dir, bundle_recorder, keep)  # type: ignore[no-any-return, operator]
+        return klass(build_manifest, artifacts_dir, bundle_recorder, distribution, keep)  # type: ignore[no-any-return, operator]

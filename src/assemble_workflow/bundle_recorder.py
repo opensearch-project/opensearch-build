@@ -13,11 +13,18 @@ from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
-    def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
+    EXTENSIONS = {
+        "rpm": ".rpm",
+        "zip": ".zip",
+        "tar": ".tar.gz",
+    }
+
+    def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation, distribution: str) -> None:
         self.output_dir = output_dir
         self.build_id = build.id
         self.bundle_location = bundle_location
         self.version = build.version
+        self.distribution = distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
         self.architecture = build.architecture
@@ -37,7 +44,7 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
+        return "-".join(parts) + self.EXTENSIONS[self.distribution]
 
     # Assembled output are expected to be served from a separate "dist" folder
     # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/dist/

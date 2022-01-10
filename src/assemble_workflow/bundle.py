@@ -13,7 +13,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 from assemble_workflow.bundle_recorder import BundleRecorder
-from assemble_workflow.dist import Dist
+from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildComponents, BuildManifest
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
@@ -32,7 +32,7 @@ class Bundle(ABC):
     def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         self.tmp_dir.__exit__(exc_type, exc_value, exc_traceback)
 
-    def __init__(self, build_manifest: BuildManifest, artifacts_dir: str, bundle_recorder: BundleRecorder, keep: bool = False) -> None:
+    def __init__(self, build_manifest: BuildManifest, artifacts_dir: str, bundle_recorder: BundleRecorder, distribution: str, keep: bool = False) -> None:
         """
         Construct a new Bundle instance.
         :param build_manifest: A BuildManifest created from the build workflow.
@@ -43,6 +43,7 @@ class Bundle(ABC):
         self.plugins = self.__get_plugins(build_manifest.components)
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
+        self.distribution = distribution
         self.tmp_dir = TemporaryDirectory(keep=keep)
         self.min_dist = self.__get_min_dist(build_manifest.components)
         self.installed_plugins: List[str] = []
@@ -97,7 +98,8 @@ class Bundle(ABC):
         self._execute(install_command)
 
     def package(self, dest: str) -> None:
-        self.min_dist.build(self.bundle_recorder.package_name, dest)
+        #self.min_dist.build(self.bundle_recorder.package_name, dest)
+        self.min_dist.build(self.bundle_recorder, dest)
 
     def _execute(self, command: str) -> None:
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')
@@ -132,7 +134,8 @@ class Bundle(ABC):
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
-        min_dist = Dist.from_path(min_bundle.name, min_dist_path, min_path)
+        #min_dist = Dist.from_path(min_bundle.name, min_dist_path, min_path)
+        min_dist = Dists.create_dist(min_bundle.name, min_dist_path, self.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")

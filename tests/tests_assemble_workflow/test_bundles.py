@@ -6,6 +6,7 @@
 
 import os
 import unittest
+import zipfile
 from unittest.mock import MagicMock
 
 from assemble_workflow.bundle_opensearch import BundleOpenSearch
@@ -18,21 +19,40 @@ class TestBundles(unittest.TestCase):
     def test_bundle_opensearch(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
-        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), False)
+        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "tar", False)
         self.assertIs(type(bundle), BundleOpenSearch)
 
     def test_bundle_opensearch_dashboards(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-build-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
-        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), False)
+        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "tar", False)
         self.assertIs(type(bundle), BundleOpenSearchDashboards)
         self.assertFalse(bundle.tmp_dir.keep)
 
     def test_bundle_keep(self) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
-        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), True)
+        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "tar", True)
         self.assertTrue(bundle.tmp_dir.keep)
+
+    def test_bundle_distribution_tar(self) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "tar", False)
+        self.assertEqual(bundle.distribution, "tar")
+
+    def test_bundle_distribution_zip(self) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        with self.assertRaises(zipfile.BadZipFile) as bad_zip_file_error:
+            Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "zip", False)
+        self.assertEqual(str(bad_zip_file_error.exception), "File is not a zip file")
+
+    def test_bundle_distribution_rpm(self) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        bundle = Bundles.create(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock(), "rpm", False)
+        self.assertEqual(bundle.distribution, "rpm")
 
     def test_bundle_opensearch_invalid(self) -> None:
         manifest = BuildManifest(
@@ -48,5 +68,5 @@ class TestBundles(unittest.TestCase):
             }
         )
         with self.assertRaises(ValueError) as ctx:
-            Bundles.create(manifest, "path", MagicMock(), False)
+            Bundles.create(manifest, "path", MagicMock(), "distribution", False)
         self.assertEqual(str(ctx.exception), "Unsupported bundle: invalid")

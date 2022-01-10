@@ -8,10 +8,12 @@ import errno
 import logging
 import os
 import shutil
+import subprocess
 import tarfile
 import zipfile
 from abc import ABC, abstractmethod
-
+from assemble_workflow.bundle_recorder import BundleRecorder
+from assemble_workflow.fpm_builder import FpmBuilder
 from system.zip_file import ZipFile
 
 
@@ -27,6 +29,10 @@ class Dist(ABC):
 
     @abstractmethod
     def __build__(self, name: str, dest: str) -> None:
+        pass
+
+    @property
+    def distribution(self) -> None:
         pass
 
     def __find_min_archive_path(self, dest: str) -> str:
@@ -63,8 +69,9 @@ class Dist(ABC):
         )
         return self.archive_path
 
-    def build(self, name: str, dest: str) -> None:
-        self.__build__(name, dest)
+    def build(self, bundle_recorder: BundleRecorder, dest: str):
+        name = bundle_recorder.package_name
+        self.__build__(bundle_recorder, dest)
         path = os.path.join(dest, name)
         shutil.copyfile(name, path)
         logging.info(f"Published {path}.")
@@ -85,20 +92,42 @@ class DistZip(Dist):
         with ZipFile(self.path, "r") as zip:
             zip.extractall(dest)
 
-    def __build__(self, name: str, dest: str) -> None:
-        with ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
+    def __build__(self, bundle_recorder: BundleRecorder, dest: str):
+        with ZipFile(bundle_recorder.package_name, "w", zipfile.ZIP_DEFLATED) as zip:
             rootlen = len(self.archive_path) + 1
             for base, _, files in os.walk(self.archive_path):
                 for file in files:
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
 
+    @property
+    def distribution(self):
+        return "zip"
 
 class DistTar(Dist):
     def __extract__(self, dest: str) -> None:
         with tarfile.open(self.path, "r:gz") as tar:
             tar.extractall(dest)
 
-    def __build__(self, name: str, dest: str) -> None:
-        with tarfile.open(name, "w:gz") as tar:
+    def __build__(self, bundle_recorder: BundleRecorder, dest: str):
+        with tarfile.open(bundle_recorder.package_name, "w:gz") as tar:
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
+            tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
+
+    @property
+    def distribution(self):
+        return "tar"
+
+
+class DistRpm(Dist):
+    def __extract__(self, dest: str) -> None:
+        with tarfile.open(self.path, "r:gz") as tar:
+            tar.extractall(dest)
+
+    def __build__(self, bundle_recorder: BundleRecorder, dest: str):
+        logging.info("build for rpm distribution.")
+        FpmBuilder().build(bundle_recorder, self.archive_path, self.distribution)
+
+    @property
+    def distribution(self):
+        return "rpm"

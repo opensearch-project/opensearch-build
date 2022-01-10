@@ -32,9 +32,17 @@ class AssembleArgs:
             const=logging.DEBUG,
             dest="logging_level",
         )
+        parser.add_argument(
+            "-d",
+            "--distribution",
+            dest="distribution",
+            help="Choose distribution.",
+            default="tar",
+        )
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.manifest = args.manifest
         self.keep = args.keep
         self.base_url = args.base_url
+        self.distribution = args.distribution

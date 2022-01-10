@@ -41,3 +41,11 @@ class TestAssembleArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST, "--base-url", "url"])
     def test_base_url(self) -> None:
         self.assertEqual(AssembleArgs().base_url, "url")
+
+    @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST])
+    def test_distribution_default(self) -> None:
+        self.assertEqual(AssembleArgs().distribution, "tar")
+
+    @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST, "--distribution", "rpm"])
+    def test_distribution_rpm(self) -> None:
+        self.assertEqual(AssembleArgs().distribution, "rpm")   
