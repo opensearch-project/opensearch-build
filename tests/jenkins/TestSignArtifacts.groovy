@@ -57,6 +57,6 @@ class TestSignArtifacts extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
 
-        super.testPipeline("jenkins/sign-artifacts/sign-standalone-artifacts.jenkinsfile")
+        super.testPipeline("jenkins/sign-artifacts/sign-standalone-artifacts.jenkinsfile", "tests/jenkins/jenkinsjob-regression-files/sign-standalone-artifacts.jenkinsfile")
     }
 }
