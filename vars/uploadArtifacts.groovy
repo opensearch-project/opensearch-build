@@ -24,8 +24,8 @@ void call(Map args = [:]) {
     echo "Uploading to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "builds/${productName}/${fileLocation}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/core/${productName}/${buildManifest.build.version}/")
-        s3Upload(file: "dist/${productName}/${fileName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/bundle/${productName}/${buildManifest.build.version}/")
+        s3Upload(file: "builds/${productName}/${fileLocation}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/core/${productName}/${buildManifest.build.version}/")
+        s3Upload(file: "dist/${productName}/${fileName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/bundle/${productName}/${buildManifest.build.version}/")
     }
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
