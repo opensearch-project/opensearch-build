@@ -24,52 +24,60 @@ class TestCiCheckPackageVersion(unittest.TestCase):
             )
 
     def test_has_version(self):
-        self.__mock_check({"version": "1.1.0.0-SNAPSHOT"}).check()
+        self.__mock_check({"version": "1.1.0.0"}).check()
 
     def test_missing_version(self):
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check().check()
         self.assertEqual(
             str(err.exception),
-            "Expected to have version='1.1.0.0-SNAPSHOT', but none was found.",
+            "Expected to have version='1.1.0.0', but none was found.",
         )
 
     def test_invalid_version(self):
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
-            self.__mock_check({"version": "1.2.0-SNAPSHOT"}).check()
+            self.__mock_check({"version": "1.2.0"}, component=None, snapshot=False).check()
         self.assertEqual(
             str(err.exception),
-            "Expected to have version='1.1.0.0-SNAPSHOT', but was '1.2.0-SNAPSHOT'.",
+            "Expected to have version='1.1.0.0', but was '1.2.0'.",
         )
 
-    def test_component_version_opensearch(self):
+    def test_invalid_version_snapshot(self):
+        with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
+            self.__mock_check({"version": "1.2.0"}, component=None, snapshot=True).check()
+        self.assertEqual(
+            str(err.exception),
+            "Expected to have version='1.1.0.0', but was '1.2.0'.",
+        )
+
+    def test_component_version_opensearch_dashboards(self):
         check = self.__mock_check(
-            props={"version": "1.1.0.0-SNAPSHOT"},
+            props={"version": "1.1.0.0"},
             component=Component({"name": "OpenSearch-Dashboards", "repository": "", "ref": ""}),
         )
 
-        self.assertEqual(check.checked_version, "1.1.0-SNAPSHOT")
+        self.assertEqual(check.checked_version, "1.1.0")
 
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             check.check()
 
         self.assertEqual(
             str(err.exception),
-            "Expected to have version='1.1.0-SNAPSHOT', but was '1.1.0.0-SNAPSHOT'.",
+            "Expected to have version='1.1.0', but was '1.1.0.0'.",
         )
 
     def test_component_version(self):
         check = self.__mock_check(
-            props={"version": "1.1.0-SNAPSHOT"},
+            props={"version": "1.1.0"},
             component=Component({"name": "Plugin", "repository": "", "ref": ""}),
         )
 
-        self.assertEqual(check.checked_version, "1.1.0.0-SNAPSHOT")
+        self.assertEqual(check.checked_version, "1.1.0.0")
 
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             check.check()
 
         self.assertEqual(
             str(err.exception),
-            "Expected to have version='1.1.0.0-SNAPSHOT', but was '1.1.0-SNAPSHOT'.",
+            "Expected to have version='1.1.0.0', but was '1.1.0'.",
         )

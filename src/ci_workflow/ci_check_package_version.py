@@ -13,9 +13,9 @@ class CiCheckPackageVersion(CiCheckPackage):
     @property
     def checked_version(self):
         if self.component.name == "OpenSearch-Dashboards":
-            return self.target.opensearch_version
+            return self.target.opensearch_version.replace('-SNAPSHOT', '')
         else:
-            return self.target.component_version
+            return self.target.component_version.replace('-SNAPSHOT', '')
 
     def check(self):
         self.properties.check_value("version", self.checked_version)
