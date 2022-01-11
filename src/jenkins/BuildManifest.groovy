@@ -44,14 +44,6 @@ class BuildManifest implements Serializable {
                 this[component.name] = component
             }
         }
-
-        public String getMinArtifact(){
-            try {
-                this.get("OpenSearch").artifacts.get("dist").first()
-            } catch (Exception ex){
-                echo("Min artifact cannot be found", ex.getMessage())
-            }
-        }
     }
 
     class Component implements Serializable {
@@ -96,5 +88,9 @@ class BuildManifest implements Serializable {
                 publicArtifactUrl,
                 this.getArtifactRoot(jobName, buildNumber)
         ].join('/')
+    }
+
+    public String getMinArtifact() {
+        components.get(build.name.replace(' ','-'))?.artifacts?.get("dist")?.first()
     }
 }

@@ -18,6 +18,7 @@
                      uploadArtifacts.library({identifier=jenkins@20211123, retriever=null})
                      uploadArtifacts.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
                      BuildManifest.asBoolean()
+                     BuildManifest.getMinArtifact()
                      BuildManifest.getArtifactRoot(vars-build, 33)
                      uploadArtifacts.echo(Uploading to s3://artifact-bucket/vars-build/1.1.0/33/linux/x64)
                      uploadArtifacts.uploadToS3({sourcePath=builds, bucket=artifact-bucket, path=vars-build/1.1.0/33/linux/x64/builds})
