@@ -28,9 +28,7 @@
                   createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins})
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
-                     signArtifacts.fileExists(workspace/opensearch.pgp)
-                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o workspace/opensearch.pgp)
-                     signArtifacts.sh(gpg --import workspace/opensearch.pgp)
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                         signArtifacts.sh(
@@ -53,9 +51,7 @@
                   createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/workspace/file/found.zip})
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
-                     signArtifacts.fileExists(workspace/opensearch.pgp)
-                     signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o workspace/opensearch.pgp)
-                     signArtifacts.sh(gpg --import workspace/opensearch.pgp)
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                         signArtifacts.sh(

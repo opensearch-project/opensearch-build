@@ -47,6 +47,15 @@ pipeline {
                             distributionPlatform: DISTRIBUTION_PLATFORM
                     )
 
+                    filenamesForUrls = []
+
+                    println("Note: only supported file types will be signed")
+
+                    for(filename in downloadedFiles){
+                        filenamesForUrls.add(filename)
+                        filenamesForUrls.add(filename + SIGNATURE_TYPE)
+                    }
+
                     finalUploadPath = ([
                             "${JOB_NAME}",
                             "${S3_FILE_UPLOAD_PATH}",
@@ -62,7 +71,10 @@ pipeline {
                             path: finalUploadPath
                     )
 
-                    printUrls(downloadedFiles)
+                    printArtifactDownloadUrlsForStaging(
+                            artifactFileNames: filenamesForUrls,
+                            uploadPath: finalUploadPath
+                    )
 
                 }
             }
@@ -75,19 +87,6 @@ pipeline {
             }
         }
     }
-}
-
-void printUrls(downloadedFiles){
-
-    println("Note: only supported file types will be signed")
-
-    for(filename in downloadedFiles){
-
-        println("Artifacts can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}" )
-        println("Signatures can be accessed using the url - https://ci.opensearch.org/ci/dbc/${finalUploadPath}/${filename}${SIGNATURE_TYPE}" )
-
-    }
-
 }
 
 List downloadArtifactsFromUrls() {

@@ -1,0 +1,15 @@
+pipeline {
+    agent none
+    stages {
+        stage('print_urls') {
+            steps {
+                script {
+                    printArtifactDownloadUrlsForStaging(
+                            artifactFileNames: filenamesForUrls,
+                            uploadPath: UPLOAD_PATH
+                    )
+                }
+            }
+        }
+    }
+}
