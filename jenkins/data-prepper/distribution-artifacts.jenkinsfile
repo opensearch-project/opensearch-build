@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     uploadPath = ([
-                            "${JOB_NAME}",
+                            "${JOB_BASE_NAME}",
                             "${VERSION}",
                             "${BUILD_NUMBER}",
                             "builds",
