@@ -23,72 +23,56 @@ pipeline {
             description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/dist/opensearch/manifest.yml.',
             trim: true
         )
+        string(
+            defaultValue: '',
+            name: 'AGENT_LABEL',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-m5xlarge.',
+            trim: true
+        )
     }
     stages {
-        stage('Extract build information from build manifest') {
-            steps {
-                node('Jenkins-Agent-al2-x64-m5xlarge') {
-                    script {
-                        getBuildManifestInfo()
-                    }
-                }
-            }
-        }
-        stage('Choose Agent Node') {
-            steps {
-                script {
-                    echo "Architecture: ${ARCHITECTURE}"
-                    if ("${ARCHITECTURE}" == 'x64') {
-                        agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
-                    } else if ("${ARCHITECTURE}" == 'arm64') {
-                        agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
-                    } else {
-                        error("Unknown CPU architecture is provided")
-                    }
-                }
-            }
-        }
         stage('integ-test') {
             agent {
                 node {
-                    label "${agentLabel}"
+                    label "${AGENT_LABEL}"
                 }
             }
             steps {
                 script {
-                    runIntegTestScript(
-                        buildManifest: "${BUILD_MANIFEST}",
-                        testManifest: "${TEST_MANIFEST}"
+                    (BUILD_MANIFEST, BUILD_ID) = getBuildManifestInfo()
+                    try {
+                        runIntegTestScript(
+                            buildManifest: "${BUILD_MANIFEST}",
+                            testManifest: "${TEST_MANIFEST}",
+                            buildId: "${BUILD_ID}"
+                        )
+                    } catch (err) {
+                        echo "Error running integ test script: ${err.getMessage()}"
+                    }
+
+                    uploadTestResults(
+                        buildManifestFileName: "${BUILD_MANIFEST}",
+                        jobName: 'integ-test',
+                        buildNumber: "${BUILD_ID}"
                     )
                 }
-            }
-            post {
-                always {
-                    script {
-                        uploadTestResults(
-                            buildManifestFileName: "${BUILD_MANIFEST}",
-                            jobName: 'integ-test',
-                            buildNumber: "${BUILD_ID}"
-                        )
-                    }
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
-                }
+                cleanWs disableDeferredWipeout: true, deleteDirs: true
             }
         }
     }
 
-    // TODO: remove echo, uncomment existing code
+    // TODO: enable publishNotification() later
     post {
         success {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Integration Tests Successful',
-                        extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
-                    )
+                    // publishNotification(
+                    //     icon: ':white_check_mark:',
+                    //     message: 'Integration Tests Successful',
+                    //     extra: stashed,
+                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
+                    // )
 
                     cleanWs(
                         disableDeferredWipeout: true,
@@ -101,12 +85,12 @@ pipeline {
             node('Jenkins-Agent-al2-x64-m5xlarge') {
                 script  {
                     def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Integration Tests',
-                        extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
-                    )
+                    // publishNotification(
+                    //     icon: ':warning:',
+                    //     message: 'Failed Integration Tests',
+                    //     extra: stashed,
+                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
+                    // )
 
                     cleanWs(
                         disableDeferredWipeout: true,
