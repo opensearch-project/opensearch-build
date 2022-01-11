@@ -1,0 +1,6 @@
+   PrintArtifactDownloadUrlsForStaging_Jenkinsfile.run()
+      PrintArtifactDownloadUrlsForStaging_Jenkinsfile.pipeline(groovy.lang.Closure)
+         PrintArtifactDownloadUrlsForStaging_Jenkinsfile.echo(Executing on agent [label:none])
+         PrintArtifactDownloadUrlsForStaging_Jenkinsfile.stage(print_urls, groovy.lang.Closure)
+            PrintArtifactDownloadUrlsForStaging_Jenkinsfile.script(groovy.lang.Closure)
+               PrintArtifactDownloadUrlsForStaging_Jenkinsfile.printArtifactDownloadUrlsForStaging({artifactFileNames=[dummy_file.tar.gz, dummy_file.tar.gz.sig], uploadPath=dummy/upload/path})

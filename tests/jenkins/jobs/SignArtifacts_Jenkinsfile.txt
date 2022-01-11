@@ -3,15 +3,10 @@
          SignArtifacts_Jenkinsfile.echo(Executing on agent [label:none])
          SignArtifacts_Jenkinsfile.stage(sign, groovy.lang.Closure)
             SignArtifacts_Jenkinsfile.script(groovy.lang.Closure)
-               SignArtifacts_Jenkinsfile.sh(mkdir workspace/artifacts)
-               SignArtifacts_Jenkinsfile.sh(curl -SL https://www.dummy.com/dummy_1_artifact.tar.gz -o workspace/artifacts/dummy_1_artifact.tar.gz)
-               SignArtifacts_Jenkinsfile.sh(curl -SL https://www.dummy.com/dummy_2_artifact.tar.gz -o workspace/artifacts/dummy_2_artifact.tar.gz)
                SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=workspace/artifacts/, signatureType=.sig, distributionPlatform=linux})
                   signArtifacts.fileExists(workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
-                  signArtifacts.fileExists(workspace/opensearch.pgp)
-                  signArtifacts.sh(curl -SL https://artifacts.opensearch.org/publickeys/opensearch.pgp -o workspace/opensearch.pgp)
-                  signArtifacts.sh(gpg --import workspace/opensearch.pgp)
+                  signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      signArtifacts.sh(
@@ -24,6 +19,3 @@
 
             workspace/sign.sh workspace/artifacts/ --sigtype=.sig --component=null --type=null
         )
-               SignArtifacts_Jenkinsfile.uploadToS3({sourcePath=workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
-                  uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     uploadToS3.s3Upload({file=workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
