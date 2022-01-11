@@ -12,7 +12,7 @@ import org.junit.Before
  * Base class for testing jobs which do not need the implementation
  * details of the Jenkins library exposed.
  */
-class BaseJobPipelineTest extends CommonPipelineTest {
+abstract class BaseJobPipelineTest extends CommonPipelineTest {
     @Override
     @Before
     void setUp() {

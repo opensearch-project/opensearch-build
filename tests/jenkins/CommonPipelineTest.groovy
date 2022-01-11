@@ -15,7 +15,7 @@ import org.junit.Before
  * any additional setup. Test authors can extend from this class if
  * they don't need common setup. Otherwise, please see the sub-classes.
  */
-class CommonPipelineTest extends DeclarativePipelineTest {
+abstract class CommonPipelineTest extends DeclarativePipelineTest {
     @Override
     @Before
     void setUp() {
