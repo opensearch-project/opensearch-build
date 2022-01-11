@@ -13,34 +13,36 @@ pipeline {
     parameters {
         string(
             defaultValue: '',
-            name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. manifests/2.0.0/opensearch-2.0.0-test.yml.',
+            name: 'opensearch_version',
+            description: 'OpenSearch version to run test on',
             trim: true
         )
         string(
             defaultValue: '',
-            name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/dist/opensearch/manifest.yml.',
+            name: 'build_id',
+            description: 'The build number for which tests should be run',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'architecture',
+            description: 'Architecture of the build',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'platform',
+            description: 'Platform of the build',
             trim: true
         )
     }
     stages {
-        stage('Extract build information from build manifest') {
-            steps {
-                node('Jenkins-Agent-al2-x64-m5xlarge') {
-                    script {
-                        getBuildManifestInfo()
-                    }
-                }
-            }
-        }
         stage('Choose Agent Node') {
             steps {
                 script {
-                    echo "Architecture: ${ARCHITECTURE}"
-                    if ("${ARCHITECTURE}" == 'x64') {
+                    if ("${architecture}" == 'x64') {
                         agentLabel = "Jenkins-Agent-al2-x64-m5xlarge"
-                    } else if ("${ARCHITECTURE}" == 'arm64') {
+                    } else if ("${architecture}" == 'arm64') {
                         agentLabel = "Jenkins-Agent-al2-arm64-m6gxlarge"
                     } else {
                         error("Unknown CPU architecture is provided")
@@ -56,19 +58,17 @@ pipeline {
             }
             steps {
                 script {
-                    runIntegTestScript(
-                        buildManifest: "${BUILD_MANIFEST}",
-                        testManifest: "${TEST_MANIFEST}"
-                    )
+                    basePath = "https://ci.opensearch.org/ci/dbc/bundle-build/${opensearch_version}/${build_id}/${platform}/${architecture}"
+                    sh "wget ${basePath}/builds/opensearch/manifest.yml"
+                    sh "./test.sh ${JOB_NAME} manifests/${opensearch_version}/opensearch-${opensearch_version}-test.yml ${basePath} --test-run-id ${env.BUILD_NUMBER}"
                 }
             }
             post {
                 always {
                     script {
                         uploadTestResults(
-                            buildManifestFileName: "${BUILD_MANIFEST}",
-                            jobName: 'integ-test',
-                            buildNumber: "${BUILD_ID}"
+                            jobName: 'bundle-build',
+                            buildNumber: "${build_id}"
                         )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
@@ -76,8 +76,6 @@ pipeline {
             }
         }
     }
-
-    // TODO: remove echo, uncomment existing code
     post {
         success {
             node('Jenkins-Agent-al2-x64-m5xlarge') {

@@ -1,50 +1,44 @@
 pipeline {
     agent none
+    environment {
+        TEST_RUN_ID = "${BUILD_NUMBER}"
+    }
     parameters {
-        string(
-            name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. manifests/2.0.0/opensearch-2.0.0-test.yml.',
-            trim: true
-        )
-        string(
-            name: 'BUILD_MANIFEST_URL',
-            description: 'URL to dist build manifest, e.g. https://<artifact-root-url>/dist/opensearch/manifest.yml',
-            trim: true
-        )
+        string(name: 'opensearch_version')
+        string(name: 'build_id')
+        string(name: 'architecture')
     }
     stages {
         stage('Execute Tests') {
             steps {
                 parallel (
                     IntegTests: {
-                        // TODO: will need to override integ-test in Jenkins with the new workflow in jenkins/opensearch/integ-test.jenkinsfile
-                        build job: 'Playground/ohltyler-integ-test',
+                        build job: 'integ-test',
                         parameters: [
-                            string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}"),
-                            string(name: 'BUILD_MANIFEST_URL', value: "${BUILD_MANIFEST_URL}"),
+                            string(name: 'opensearch_version', value: "${params.opensearch_version}"),
+                            string(name: 'build_id', value: "${params.build_id}"),
+                            string(name: 'architecture', value: "${params.architecture}"),
+                            string(name: 'test_run_id', value: "${TEST_RUN_ID}")
                         ]
-                    }
-                    // TODO: the below test jobs are using deprecated parameters and don't currently work.
-                    // They should be updated to use similar parameters as IntegTests
-
-                    // PerfTests: {
-                    //     build job: 'perf-test',
-                    //     parameters: [
-                    //         string(name: 'opensearch_version', value: "${params.opensearch_version}"),
-                    //         string(name: 'build_id', value: "${params.build_id}"),
-                    //         string(name: 'architecture', value: "${params.architecture}"),
-                    //         string(name: 'test_run_id', value: "${TEST_RUN_ID}")
-                    //     ]
-                    // },
-                    // BwcTests: {
-                    //     build job: 'bwc-test',
-                    //     parameters: [
-                    //         string(name: 'opensearch_version', value: "${params.opensearch_version}"),
-                    //         string(name: 'build_id', value: "${params.build_id}"),
-                    //         string(name: 'architecture', value: "${params.architecture}"),
-                    //         string(name: 'test_run_id', value: "${TEST_RUN_ID}")
-                    //     ]
-                    // },
+                    },
+                    PerfTests: {
+                        build job: 'perf-test',
+                        parameters: [
+                            string(name: 'opensearch_version', value: "${params.opensearch_version}"),
+                            string(name: 'build_id', value: "${params.build_id}"),
+                            string(name: 'architecture', value: "${params.architecture}"),
+                            string(name: 'test_run_id', value: "${TEST_RUN_ID}")
+                        ]
+                    },
+                    BwcTests: {
+                        build job: 'bwc-test',
+                        parameters: [
+                            string(name: 'opensearch_version', value: "${params.opensearch_version}"),
+                            string(name: 'build_id', value: "${params.build_id}"),
+                            string(name: 'architecture', value: "${params.architecture}"),
+                            string(name: 'test_run_id', value: "${TEST_RUN_ID}")
+                        ]
+                    },
                     failFast: false)
             }
         }

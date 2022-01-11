@@ -8,11 +8,6 @@ pipeline {
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
         )
-        string(
-            name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
-            trim: true
-        )
     }
     stages {
         stage('detect docker image + args') {
@@ -116,68 +111,36 @@ pipeline {
                 }
             }
         }
-        stage('run integ tests') {
-            parallel {
-                stage('x64 integ tests') {
-                    steps {
-                        node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                            script {
-                                runIntegTests(
-                                    architecture: "x64"
-                                )
-                            }
-                        }
-                    }
-                }
-                stage('arm64 integ tests') {
-                    steps {
-                        node('Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host') {
-                            script {
-                                runIntegTests(
-                                    architecture: "arm64"
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
-
-    // TODO: remove echo, uncomment existing code
     post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    echo 'This step is stubbed. It publishes successful build results'
+                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
 
-                    // def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-                    // publishNotification(
-                    //     icon: ':white_check_mark:',
-                    //     message: 'Successful Build',
-                    //     extra: stashed,
-                    //     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                    //     manifest: "${INPUT_MANIFEST}"
-                    // )
-
-                    // postCleanup()
+                    postCleanup()
                 }
             }
         }
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    echo 'This step is stubbed. It publishes successful build results'
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-                    // publishNotification(
-                    //     icon: ':warning:',
-                    //     message: 'Failed Build',
-                    //     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                    //     manifest: "${INPUT_MANIFEST}"
-                    // )
-
-                    // postCleanup()
+                    postCleanup()
                 }
             }
         }
