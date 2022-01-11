@@ -99,7 +99,6 @@ class Bundle(ABC):
         self._execute(install_command)
 
     def package(self, dest: str) -> None:
-        #self.min_dist.build(self.bundle_recorder.package_name, dest)
         self.min_dist.build(self.bundle_recorder, dest)
 
     def _execute(self, command: str) -> None:
@@ -135,10 +134,7 @@ class Bundle(ABC):
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
-        print("min_bundle.name: " + min_bundle.name)
-        print("min_dist_path: " + min_dist_path)
-        print("min_path: " + min_path)
-        print("self.distribution: " + self.distribution)
+        logging.info(f"Start creating distribution {self.distribution} for {min_bundle.name}.")
         min_dist = Dists.create_dist(min_bundle.name, min_dist_path, min_path, self.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)

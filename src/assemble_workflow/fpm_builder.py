@@ -14,9 +14,9 @@ class FpmBuilder:
     def build(self, bundle_recorder: BundleRecorder, archive_path: str, distribution: str) -> None:
         manifest_data = bundle_recorder.bundle_manifest.data["build"]
         product_name = product_name_alt = manifest_data["name"].lower()
-        if product_name == "opensearch dashboards":
-            product_name = "-".join(product_name.split())
-            product_name_alt = "_".join(product_name.split("-"))
+        product_name = "-".join(product_name.split())
+        # OpenSearch Dashboards has its config file name hardcoded to opensearch_dashboards.yml
+        product_name_alt = "_".join(product_name.split("-"))
         root = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
         scripts_path = os.path.join(root, "scripts", "pkg")
         architecture_alt = "x86_64" if manifest_data["architecture"] == "x64" else "aarch64"

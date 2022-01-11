@@ -25,4 +25,4 @@ class TestDist(unittest.TestCase):
     def test_create_dist_invalid(self) -> None:
         with self.assertRaises(ValueError) as ctx:
             Dist.create_dist("opensearch", "filename.invalid", "invalid")
-        self.assertEqual(str(ctx.exception), 'Distribution not specificed or invalid distribution')
+        self.assertEqual(str(ctx.exception), 'Distribution not specified or invalid distribution')

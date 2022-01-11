@@ -14,5 +14,6 @@ set -e
 echo start pre install
 
 if command -v systemctl >/dev/null && systemctl is-active "<%= product %>".service >/dev/null; then
+    echo "Stop existing <%= product %>.service"
     systemctl --no-reload stop "<%= product %>".service
 fi

@@ -12,6 +12,8 @@ Description=OpenSearch
 Documentation=https://opensearch.org/
 
 [Service]
+# As of 2021/12 notify type will timeout
+# So use simple type for now
 #Type=notify
 Type=simple
 RuntimeDirectory=opensearch

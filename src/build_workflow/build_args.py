@@ -16,7 +16,6 @@ class BuildArgs:
         "x64",
         "arm64",
     ]
-    SUPPORTED_DISTRIBUTIONS = ["tar", "zip", "rpm"]
 
     manifest: IO
     snapshot: bool
@@ -24,7 +23,6 @@ class BuildArgs:
     keep: bool
     platform: str
     architecture: str
-    distribution: str
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Build an OpenSearch Bundle")
@@ -62,15 +60,6 @@ class BuildArgs:
             const=logging.DEBUG,
             dest="logging_level",
         )
-        parser.add_argument(
-            "-d",
-            "--distribution",
-            type=str,
-            choices=self.SUPPORTED_DISTRIBUTIONS,
-            help="Distribution to build.",
-            default="tar",
-            dest="distribution"
-        )
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
@@ -82,7 +71,6 @@ class BuildArgs:
         self.platform = args.platform
         self.architecture = args.architecture
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
-        self.distribution = args.distribution
 
     def component_command(self, name: str) -> str:
         return " ".join(

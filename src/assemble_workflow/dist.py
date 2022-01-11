@@ -32,10 +32,6 @@ class Dist(ABC):
     def __build__(self, name: str, dest: str) -> None:
         pass
 
-    #@property
-    #def distribution(self) -> None:
-    #    pass
-
     def __find_min_archive_path(self, dest: str) -> str:
         '''
         Return the single folder at the top level of the tar.
@@ -101,10 +97,6 @@ class DistZip(Dist):
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
 
-    #@property
-    #def distribution(self):
-    #    return "zip"
-
 class DistTar(Dist):
     def __extract__(self, dest: str) -> None:
         with tarfile.open(self.path, "r:gz") as tar:
@@ -115,10 +107,6 @@ class DistTar(Dist):
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
             tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
 
-    #@property
-    #def distribution(self):
-    #    return "tar"
-
 
 class DistRpm(Dist):
     def __extract__(self, dest: str) -> None:
@@ -128,7 +116,3 @@ class DistRpm(Dist):
     def __build__(self, bundle_recorder: BundleRecorder, dest: str):
         logging.info("build for rpm distribution.")
         FpmBuilder().build(bundle_recorder, self.archive_path, self.distribution)
-
-    #@property
-    #def distribution(self):
-    #    return "rpm"
