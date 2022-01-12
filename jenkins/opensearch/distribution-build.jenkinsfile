@@ -19,7 +19,7 @@ pipeline {
                 }
             }
             steps {
-                script { 
+                script {
                     dockerAgent = detectDockerAgent()
                     currentBuild.description = "$INPUT_MANIFEST"
                 }
