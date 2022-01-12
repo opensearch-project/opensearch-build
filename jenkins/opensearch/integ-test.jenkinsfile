@@ -40,23 +40,24 @@ pipeline {
             steps {
                 script {
                     (BUILD_MANIFEST, BUILD_ID) = getBuildManifestInfo()
-                    try {
-                        runIntegTestScript(
-                            buildManifest: "${BUILD_MANIFEST}",
-                            testManifest: "${TEST_MANIFEST}",
-                            buildId: "${BUILD_ID}"
-                        )
-                    } catch (err) {
-                        echo "Error running integ test script: ${err.getMessage()}"
-                    }
-
-                    uploadTestResults(
-                        buildManifestFileName: "${BUILD_MANIFEST}",
-                        jobName: 'integ-test',
-                        buildNumber: "${BUILD_ID}"
+                    runIntegTestScript(
+                        buildManifest: "${BUILD_MANIFEST}",
+                        testManifest: "${TEST_MANIFEST}",
+                        buildId: "${BUILD_ID}"
                     )
                 }
-                cleanWs disableDeferredWipeout: true, deleteDirs: true
+            }
+            post {
+                always {
+                    script {
+                        uploadTestResults(
+                            buildManifestFileName: "${BUILD_MANIFEST}",
+                            jobName: 'integ-test',
+                            buildNumber: "${BUILD_ID}"
+                        )
+                    }
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
             }
         }
     }
