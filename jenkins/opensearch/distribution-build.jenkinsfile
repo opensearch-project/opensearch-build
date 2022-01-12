@@ -27,7 +27,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshot') {
+                stage('build-snapshot-x64') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
@@ -45,12 +45,19 @@ pipeline {
                             buildManifest(
                                 snapshot: true
                             )
-                            if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
-                                }
+                            // if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
+                            //     withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                            //         sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                            //     }
+                            // } else {
+                            //     echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
+                            // }
+
+
+                            if (fileExists("$WORKSPACE/builds/opensearch/dist")){
+                                uploadMinSnapshotsToS3()
                             } else {
-                                echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
+                                echo "dist not found, skipping snapshots upload to s3"
                             }
                         }
                     }
@@ -60,27 +67,7 @@ pipeline {
                         }
                     }
                 }
-                stage('build-x64') {
-                    agent {
-                        docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            buildAssembleUpload()
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
-                        }
-                    }
-                }
-                stage('build-arm64') {
+                stage('build-snapshot-arm64') {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -91,7 +78,15 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildAssembleUpload()
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            buildManifest(
+                                snapshot: true
+                            )
+                            if (fileExists("$WORKSPACE/builds/opensearch/dist")){
+                                uploadMinSnapshotsToS3()
+                            } else {
+                                echo "Dist folder not found, skipping snapshots upload to s3"
+                            }
                         }
                     }
                     post {
@@ -100,31 +95,71 @@ pipeline {
                         }
                     }
                 }
+                // stage('build-x64') {
+                //     agent {
+                //         docker {
+                //             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                //             image dockerAgent.image
+                //             args dockerAgent.args
+                //             alwaysPull true
+                //         }
+                //     }
+                //     steps {
+                //         script {
+                //             buildAssembleUpload()
+                //         }
+                //     }
+                //     post {
+                //         always {
+                //             postCleanup()
+                //         }
+                //     }
+                // }
+                // stage('build-arm64') {
+                //     agent {
+                //         docker {
+                //             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                //             image dockerAgent.image
+                //             args dockerAgent.args
+                //             alwaysPull true
+                //         }
+                //     }
+                //     steps {
+                //         script {
+                //             buildAssembleUpload()
+                //         }
+                //     }
+                //     post {
+                //         always {
+                //             postCleanup()
+                //         }
+                //     }
+                // }
             }
         }
-        stage('docker build') {
-            steps {
-                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                    script {
-                        buildDockerImage()
-                    }
-                }
-            }
-        }
+        // stage('docker build') {
+        //     steps {
+        //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+        //             script {
+        //                 buildDockerImage()
+        //             }
+        //         }
+        //     }
+        // }
     }
     post {
         success {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+                    // def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
 
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    // publishNotification(
+                    //     icon: ':white_check_mark:',
+                    //     message: 'Successful Build',
+                    //     extra: stashed,
+                    //     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                    //     manifest: "${INPUT_MANIFEST}"
+                    // )
 
                     postCleanup()
                 }
@@ -133,12 +168,12 @@ pipeline {
         failure {
             node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    // publishNotification(
+                    //     icon: ':warning:',
+                    //     message: 'Failed Build',
+                    //     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                    //     manifest: "${INPUT_MANIFEST}"
+                    // )
 
                     postCleanup()
                 }
