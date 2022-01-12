@@ -25,6 +25,7 @@
                         uploadArtifacts.library({identifier=jenkins@20211123, retriever=null})
                         uploadArtifacts.readYaml({file=builds/opensearch/manifest.yml})
                         BuildManifest.asBoolean()
+                        BuildManifest.getMinArtifact()
                         BuildManifest.getArtifactRoot(vars-build, 33)
                         uploadArtifacts.echo(Uploading to s3://artifact-bucket/vars-build/1.1.0/33/linux/x64)
                         uploadArtifacts.uploadToS3({sourcePath=builds, bucket=artifact-bucket, path=vars-build/1.1.0/33/linux/x64/builds})
@@ -33,6 +34,10 @@
                         uploadArtifacts.uploadToS3({sourcePath=dist, bucket=artifact-bucket, path=vars-build/1.1.0/33/linux/x64/dist})
                            uploadToS3.withAWS({role=upload_role, roleAccount=account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                               uploadToS3.s3Upload({file=dist, bucket=artifact-bucket, path=vars-build/1.1.0/33/linux/x64/dist})
+                        uploadArtifacts.echo(Uploading to s3://bucket/vars-build/1.1.0/33/linux/x64)
+                        uploadArtifacts.withAWS({role=role, roleAccount=dummy, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                           uploadArtifacts.s3Upload({file=builds/opensearch/dist/opensearch-min-1.1.0-linux-x64.tar.gz, bucket=bucket, path=release-candidates/core/opensearch/1.1.0/})
+                           uploadArtifacts.s3Upload({file=dist/opensearch/opensearch-1.1.0-linux-x64.tar.gz, bucket=bucket, path=release-candidates/bundle/opensearch/1.1.0/})
                         BuildManifest.getArtifactRootUrl(https://ci.opensearch.org/dbc, vars-build, 33)
                         Messages.asBoolean()
                         Messages.add(stage, https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64/builds/opensearch/manifest.yml
