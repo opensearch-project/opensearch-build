@@ -64,20 +64,6 @@ class InputManifest {
         this.ci = data.ci ? new InputManifest.Ci(data.ci) : null
     }
 
-    String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
-        return [
-            publicArtifactUrl,
-            jobName,
-            this.build.version,
-            buildNumber,
-            platform ?: this.build.platform,
-            architecture ?: this.build.architecture,
-            'dist',
-            this.build.getFilename(),
-            this.build.getFilenameWithExtension(platform, architecture)
-        ].join("/")
-    }
-
     String getSHAsRoot(String jobName) {
         return [
             jobName,

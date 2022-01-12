@@ -1,21 +1,21 @@
 Map call(Map args = [:]) {
-    String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
+    String inputManifest = args.inputManifest ?: "manifests/${INPUT_MANIFEST}"
     String jobName = args.jobName ?: "${JOB_NAME}"
 
     buildManifest(
         args + [
-            manifest: manifest,
+            inputManifest: inputManifest,
             lock: true
         ]
     )
 
-    String manifestLock = "${manifest}.lock"
+    String manifestLock = "${inputManifest}.lock"
     String manifestSHA = sha1(manifestLock)
     echo "Manifest SHA: ${manifestSHA}"
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
-    String shasRoot = inputManifest.getSHAsRoot(jobName)
+    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: manifestLock))
+    String shasRoot = inputManifestObj.getSHAsRoot(jobName)
     String manifestSHAPath = "${shasRoot}/${manifestSHA}.yml"
     echo "Manifest lock: ${manifestLock}"
     echo "Manifest SHA path: ${manifestSHAPath}"

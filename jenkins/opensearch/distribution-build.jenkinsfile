@@ -2,10 +2,19 @@ lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
     agent none
+    environment {
+        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+        string(
+            name: 'TEST_MANIFEST',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
     }
@@ -21,7 +30,7 @@ pipeline {
             steps {
                 script {
                     dockerAgent = detectDockerAgent()
-                    currentBuild.description = "$INPUT_MANIFEST"
+                    currentBuild.description = INPUT_MANIFEST
                 }
             }
         }
@@ -43,6 +52,7 @@ pipeline {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
                             )
                             if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
@@ -75,6 +85,7 @@ pipeline {
                         script {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
                             )
                             echo("Uploading min snapshots to S3")
@@ -87,10 +98,10 @@ pipeline {
                         }
                     }
                 }
-                stage('build-x64') {
+                stage('build-and-test-x64') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -98,7 +109,24 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildAssembleUpload()
+                            def buildManifestObj = buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}"
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+
+                            echo "buildManifestUrl (x64): ${buildManifestUrl}"
+
+                            String testManifest = "manifests/${TEST_MANIFEST}"
+                            if (fileExists(testManifest)) {
+                                echo "Running x64 integ tests using test manifest found in path ${testManifest}"
+                                runIntegTests(
+                                    testManifest: testManifest,
+                                    buildManifestUrl: buildManifestUrl,
+                                    agentLabel: AGENT_X64
+                                )
+                            } else {
+                                echo "Skipping x64 integ tests since no test manifest was found in path ${testManifest}"
+                            }
                         }
                     }
                     post {
@@ -107,10 +135,10 @@ pipeline {
                         }
                     }
                 }
-                stage('build-arm64') {
+                stage('build-and-test-arm64') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            label AGENT_ARM64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -118,7 +146,24 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildAssembleUpload()
+                            def buildManifestObj = buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}"
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+
+                            echo "buildManifestUrl (arm64): ${buildManifestUrl}"
+
+                            String testManifest = "manifests/${TEST_MANIFEST}"
+                            if (fileExists(testManifest)) {
+                                echo "Running arm64 integ tests using test manifest found in path ${testManifest}"
+                                runIntegTests(
+                                    testManifest: testManifest,
+                                    buildManifestUrl: buildManifestUrl,
+                                    agentLabel: AGENT_ARM64
+                                )
+                            } else {
+                                echo "Skipping arm64 integ tests since no test manifest was found in path ${testManifest}"
+                            }
                         }
                     }
                     post {
@@ -139,37 +184,37 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+    // post {
+    //     success {
+    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+    //             script {
+    //                 def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
 
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+    //                 publishNotification(
+    //                     icon: ':white_check_mark:',
+    //                     message: 'Successful Build',
+    //                     extra: stashed,
+    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+    //                     manifest: "${INPUT_MANIFEST}"
+    //                 )
 
-                    postCleanup()
-                }
-            }
-        }
-        failure {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+    //                 postCleanup()
+    //             }
+    //         }
+    //     }
+    //     failure {
+    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+    //             script {
+    //                 publishNotification(
+    //                     icon: ':warning:',
+    //                     message: 'Failed Build',
+    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
+    //                     manifest: "${INPUT_MANIFEST}"
+    //                 )
 
-                    postCleanup()
-                }
-            }
-        }
-    }
+    //                 postCleanup()
+    //             }
+    //         }
+    //     }
+    // }
 }

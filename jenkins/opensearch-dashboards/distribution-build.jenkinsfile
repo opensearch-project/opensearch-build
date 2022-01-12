@@ -43,6 +43,7 @@ pipeline {
                     steps {
                         script {
                             buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64'
                             )
@@ -69,6 +70,7 @@ pipeline {
                             steps {
                                 script {
                                     buildArchive(
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
