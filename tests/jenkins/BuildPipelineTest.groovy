@@ -17,7 +17,12 @@ import com.lesfurets.jenkins.unit.declarative.*
 import static org.junit.Assert.*
 import org.yaml.snakeyaml.Yaml
 
-abstract class BuildPipelineTest extends DeclarativePipelineTest {
+/**
+ * Base test class for testing Jenkins library code. This base test
+ * sets up the project directory as the library and will execute
+ * library code.
+ */
+abstract class BuildPipelineTest extends CommonPipelineTest {
     @Override
     @Before
     void setUp() {
@@ -45,12 +50,5 @@ abstract class BuildPipelineTest extends DeclarativePipelineTest {
             helper.getLibLoader().loadLibrary(args["identifier"])
             return new LibClassLoader(helper, null)
         })
-    }
-
-    void testPipeline(String jenkinsScript, String regressionFilename = null) {
-        runScript(jenkinsScript)
-        RegressionTestHelper.testNonRegression(helper, regressionFilename ?: jenkinsScript)
-        assertJobStatusSuccess()
-        printCallStack()
     }
 }
