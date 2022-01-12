@@ -5,8 +5,6 @@ pipeline {
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
         AWS_ROLE_SESSION_NAME = "jenkins-test-session"
-        BUILD_MANIFEST = ''
-        BUILD_ID = ''
     }
     tools {
         jdk "JDK14"
@@ -43,8 +41,8 @@ pipeline {
                 script {
                     // Fetching the build-specific values and assigning to their env vars
                     (buildManifestPath, buildId) = getBuildManifestInfo()
-                    BUILD_MANIFEST = "${buildManifestPath}"
-                    BUILD_ID = "${buildId}"
+                    env.BUILD_MANIFEST = buildManifestPath
+                    env.BUILD_ID = buildId
                     echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
 
@@ -71,42 +69,42 @@ pipeline {
     }
 
     // TODO: enable publishNotification() later
-    post {
-        success {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    // publishNotification(
-                    //     icon: ':white_check_mark:',
-                    //     message: 'Integration Tests Successful',
-                    //     extra: stashed,
-                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
-                    // )
+    // post {
+    //     success {
+    //         node('Jenkins-Agent-al2-x64-m5xlarge') {
+    //             script {
+    //                 def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+    //                 // publishNotification(
+    //                 //     icon: ':white_check_mark:',
+    //                 //     message: 'Integration Tests Successful',
+    //                 //     extra: stashed,
+    //                 //     credentialsId: 'INTEG_TEST_WEBHOOK',
+    //                 // )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
-                }
-            }
-        }
-        failure {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
-                script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
-                    // publishNotification(
-                    //     icon: ':warning:',
-                    //     message: 'Failed Integration Tests',
-                    //     extra: stashed,
-                    //     credentialsId: 'INTEG_TEST_WEBHOOK',
-                    // )
+    //                 cleanWs(
+    //                     disableDeferredWipeout: true,
+    //                     deleteDirs: true
+    //                 )
+    //             }
+    //         }
+    //     }
+    //     failure {
+    //         node('Jenkins-Agent-al2-x64-m5xlarge') {
+    //             script  {
+    //                 def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+    //                 // publishNotification(
+    //                 //     icon: ':warning:',
+    //                 //     message: 'Failed Integration Tests',
+    //                 //     extra: stashed,
+    //                 //     credentialsId: 'INTEG_TEST_WEBHOOK',
+    //                 // )
 
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
-                }
-            }
-        }
-    }
+    //                 cleanWs(
+    //                     disableDeferredWipeout: true,
+    //                     deleteDirs: true
+    //                 )
+    //             }
+    //         }
+    //     }
+    // }
 }

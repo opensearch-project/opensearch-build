@@ -10,12 +10,14 @@ package jenkins
 
 class BuildManifest implements Serializable {
     class Build implements Serializable {
+        String id
         String name
         String version
         String platform
         String architecture
 
         Build(Map data) {
+            this.id = data.id
             this.name = data.name
             this.version = data.version
             this.platform = data.platform
@@ -106,6 +108,10 @@ class BuildManifest implements Serializable {
     public String getArtifactBuildId() {
         return this.build.id
     }
+    public String getArtifactBuildId() {
+        return this.build.id
+    }
+}
 
     public String getMinArtifact() {
         components.get(build.name.replace(' ','-'))?.artifacts?.get("dist")?.first()
