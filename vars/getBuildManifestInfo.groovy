@@ -7,8 +7,5 @@ String[] call(Map args = [:]) {
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: buildManifestPath))
     String buildId = buildManifest.getArtifactBuildId()
 
-    echo "buildManifestPath: ${buildManifestPath}"
-    echo "buildId: ${buildId}"
-
     return [buildManifestPath, buildId]
 }

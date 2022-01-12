@@ -108,11 +108,11 @@ class BuildManifest implements Serializable {
     public String getArtifactBuildId() {
         return this.build.id
     }
+
     public String getArtifactBuildId() {
         return this.build.id
     }
-}
-
+    
     public String getMinArtifact() {
         components.get(build.name.replace(' ','-'))?.artifacts?.get("dist")?.first()
     }
