@@ -6,7 +6,6 @@
   - [Avoiding Rebuilding](#avoiding-rebuilding)
   - [Publishing Notifications](#publishing-notifications)
   - [Cleanup](#cleanup)
-  - [Running Integration Tests](#running-integration-tests)
   - [Uploading Test Results](#uploading-test-results)
 
 ## Jenkins Shared Library
@@ -43,10 +42,6 @@ See [publishNotification](./publishNotification.groovy).
 ### Cleanup 
 
 See [postCleanup](./postCleanup.groovy).
-
-### Running Integration Tests
-
-See [runIntegTests](./runIntegTests.groovy).
 
 ### Uploading Test Results
 
