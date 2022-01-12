@@ -5,6 +5,8 @@ pipeline {
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
         AWS_ROLE_SESSION_NAME = "jenkins-test-session"
+        BUILD_MANIFEST = ''
+        BUILD_ID = ''
     }
     tools {
         jdk "JDK14"
@@ -39,7 +41,13 @@ pipeline {
             }
             steps {
                 script {
-                    (BUILD_MANIFEST, BUILD_ID) = getBuildManifestInfo()
+                    // Fetching the build-specific values and assigning to their env vars
+                    (buildManifestPath, buildId) = getBuildManifestInfo()
+                    BUILD_MANIFEST = "${buildManifestPath}"
+                    BUILD_ID = "${buildId}"
+                    echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
+                    echo "BUILD_ID: ${BUILD_ID}"
+
                     runIntegTestScript(
                         buildManifest: "${BUILD_MANIFEST}",
                         testManifest: "${TEST_MANIFEST}",
