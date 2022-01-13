@@ -93,6 +93,10 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
                 "id": self.id,
             }
 
+        @property
+        def filename(self) -> str:
+            return self.name.lower().replace(" ", "-")
+
 
 class BundleComponents(Components['BundleComponent']):
     @classmethod
