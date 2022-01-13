@@ -53,18 +53,18 @@ pipeline {
                     )
                 }
             }
-            post {
-                always {
-                    script {
-                        uploadTestResults(
-                            buildManifestFileName: "${BUILD_MANIFEST}",
-                            jobName: 'integ-test',
-                            buildNumber: "${BUILD_ID}"
-                        )
-                    }
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
-                }
-            }
+            // post {
+            //     always {
+            //         script {
+            //             uploadTestResults(
+            //                 buildManifestFileName: "${BUILD_MANIFEST}",
+            //                 jobName: 'integ-test',
+            //                 buildNumber: "${BUILD_ID}"
+            //             )
+            //         }
+            //         cleanWs disableDeferredWipeout: true, deleteDirs: true
+            //     }
+            // }
         }
     }
 
