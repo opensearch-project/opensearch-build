@@ -41,7 +41,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            git url: 'https://github.com/gaiksaya/opensearch-build.git', branch: 'snapshots'
                             buildManifest(
                                 snapshot: true
                             )
