@@ -57,7 +57,7 @@ pipeline {
                             if (fileExists("$WORKSPACE/builds/opensearch/dist")){
                                 uploadMinSnapshotsToS3()
                             } else {
-                                echo "dist not found, skipping snapshots upload to s3"
+                                echo "Dist folder not found, skipping snapshots upload to s3"
                             }
                         }
                     }
