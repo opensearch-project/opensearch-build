@@ -26,10 +26,10 @@ pipeline {
                     ].join('/'))
 
                     sh 'mkdir distribution'
-                    sh "wget -P distribution 'https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz'"
-                    sh "wget -P distribution 'https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz.sig'"
-                    sh "wget -P distribution 'https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz'"
-                    sh "wget -P distribution 'https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz.sig'"
+                    sh "curl -SL https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o distribution/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
+                    sh "curl -SL https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz.sig -o distribution/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz.sig"
+                    sh "curl -SL https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o distribution/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                    sh "curl -SL https://ci.opensearch.org/ci/dbc/${downloadPath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz.sig -o distribution/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz.sig"
                 }
             }
         }
