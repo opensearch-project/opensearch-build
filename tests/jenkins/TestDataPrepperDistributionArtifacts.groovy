@@ -8,7 +8,7 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 
-class TestDataPrepperDistributionArtifactsJob extends BuildPipelineTest {
+class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
     @Before
     void setUp() {
