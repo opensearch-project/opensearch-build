@@ -177,8 +177,8 @@ if [ -d "$OPENSEARCH_DASHBOARDS_HOME/plugins/$SECURITY_DASHBOARDS_PLUGIN" ]; the
     if [ "$DISABLE_SECURITY_DASHBOARDS_PLUGIN" = "true" ]; then
         echo "Disabling OpenSearch Security Dashboards Plugin"
         ./bin/opensearch-dashboards-plugin remove securityDashboards
-        sed "/^opensearch_security/d" $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | tee $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
-        sed "s/https/http/" $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | tee $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
+        cat $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | sed "/^opensearch_security/d" | tee $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
+        cat $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | sed "s/https/http/g" | tee $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
     fi
 fi
 
