@@ -3,9 +3,10 @@ void call(Map args = [:]) {
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
-    version = inputManifest.build.version
-    architecture = inputManifest.build.architecture
-    platform = inputManifest.build.platform
+    def buildManifest = lib.jenkins.buildManifest..new(readYaml(file: "builds/${inputManifest.build.getFilename()}/manifest.yml"))
+    version = buildManifest.build.version
+    architecture = buildManifest.build.architecture
+    platform = buildManifest.build.platform
     minArtifactName = "opensearch-min-${version}-SNAPSHOT-${platform}-${architecture}-latest.tar.gz"
 
 
