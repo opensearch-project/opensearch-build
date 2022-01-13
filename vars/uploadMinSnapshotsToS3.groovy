@@ -3,7 +3,7 @@ void call(Map args = [:]) {
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
-    def buildManifest = lib.jenkins.buildManifest.new(readYaml(file: "$WORKSPACE/builds/${inputManifest.build.getFilename()}/manifest.yml"))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/builds/${inputManifest.build.getFilename()}/manifest.yml"))
     version = buildManifest.build.version
     architecture = buildManifest.build.architecture
     platform = buildManifest.build.platform
