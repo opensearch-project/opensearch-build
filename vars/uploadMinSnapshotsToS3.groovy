@@ -11,6 +11,6 @@ void call(Map args = [:]) {
 
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "$WORKSPACE/builds/opensearch/dist/", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "builds/test-release-candidates/snapshots/core/opensearch/${version}/${minArtifactName}")
+        s3Upload(file: "$WORKSPACE/builds/opensearch/dist/", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "snapshots/core/opensearch/${version}/${minArtifactName}")
         }
 }
