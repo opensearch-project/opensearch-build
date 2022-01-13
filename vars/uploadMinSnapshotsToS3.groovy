@@ -6,7 +6,7 @@ void call(Map args = [:]) {
     version = inputManifest.build.version
     architecture = inputManifest.build.architecture
     platform = inputManifest.build.platform
-    minArtifactName = opensearch-min-${version}-SNAPSHOT-${platform}-${architecture}-latest.tar.gz
+    minArtifactName = "opensearch-min-${version}-SNAPSHOT-${platform}-${architecture}-latest.tar.gz"
 
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
