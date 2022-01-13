@@ -1,6 +1,9 @@
 lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
 
 pipeline {
+    options {
+        buildDiscarder(logRotator(daysToKeepStr: '7'))
+    }
     agent none
     triggers {
         parameterizedCron '''
