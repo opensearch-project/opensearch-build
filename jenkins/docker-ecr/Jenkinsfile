@@ -134,9 +134,9 @@ pipeline {
                     install_gcrane()
                     copyDockerImage(
                         sourceImagePath: "opensearchstaging/opensearch:latest",
-                        destinationImagePath: "public.ecr.aws/s7t2w0j3/opensearch:latest",
+                        destinationImagePath: "public.ecr.aws/k8e0v8t4/opensearch:latest",
                         destinationType: "ecr",
-                        destinationCredentialIdentifier: "public.ecr.aws/s7t2w0j3"
+                        destinationCredentialIdentifier: "public.ecr.aws/k8e0v8t4"
                     )
                 }
             }
