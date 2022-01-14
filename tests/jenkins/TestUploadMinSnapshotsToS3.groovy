@@ -29,10 +29,10 @@ class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
     }
+
     @Test
     public void test() {
         super.testPipeline("tests/jenkins/jobs/uploadSnapshotsToS3_Jenkinsfile")
-    }
-    
+    }  
 }
 
