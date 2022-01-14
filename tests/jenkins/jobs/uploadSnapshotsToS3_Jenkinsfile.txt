@@ -8,6 +8,7 @@
                   uploadMinSnapshotsToS3.library({identifier=jenkins@20211123, retriever=null})
                   uploadMinSnapshotsToS3.readYaml({file=tests/jenkins/data/opensearch-1.3.0.yml})
                   InputManifest.asBoolean()
+                  uploadMinSnapshotsToS3.echo(Retreving build manifest from: workspace/builds/opensearch/manifest.yml)
                   uploadMinSnapshotsToS3.readYaml({file=workspace/builds/opensearch/manifest.yml})
                   BuildManifest.asBoolean()
                   uploadMinSnapshotsToS3.withAWS({role=dummy_role, roleAccount=1234, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
