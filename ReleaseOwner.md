@@ -62,6 +62,9 @@ One can simply reuse the message with updated values for the following -
 - Holds the number of issues that are linked to the current release. 
 - The number can be viewed using the links from the "State, Bug and Enhancement"
 
+### Run Integration Tests
+- Use the jenkins job to run integration tests for `arm64` and `x64`
+
 ### Recurring Tasks
 1. Keep the Issue tracking table updated as much as possible.
 2. Circle back to make sure all the component versions are bumped up correctly
