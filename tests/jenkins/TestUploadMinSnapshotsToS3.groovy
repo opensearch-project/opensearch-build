@@ -12,7 +12,7 @@ import org.junit.*
 import java.util.*
 import java.nio.file.*
 
-class UploadMinSnapshotsToS3 extends BuildPipelineTest {
+class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
     private Path target;
 
     @Before
@@ -25,7 +25,7 @@ class UploadMinSnapshotsToS3 extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'dummy_bucket')
 
-        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
+        Path source = Path.of("tests/data/opensearch-build-snapshot-manifest.yml");
         target = Path.of("workspace/builds/opensearch/manifest.yml");
         Files.createDirectories(target.getParent());
         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
