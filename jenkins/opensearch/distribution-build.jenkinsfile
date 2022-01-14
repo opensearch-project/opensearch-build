@@ -52,13 +52,8 @@ pipeline {
                             } else {
                                 echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
-
-
-                            if (fileExists("$WORKSPACE/builds/opensearch/dist")){
-                                uploadMinSnapshotsToS3()
-                            } else {
-                                echo "Dist folder not found, skipping snapshots upload to s3"
-                            }
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3()
                         }
                     }
                     post {
@@ -82,11 +77,8 @@ pipeline {
                             buildManifest(
                                 snapshot: true
                             )
-                            if (fileExists("$WORKSPACE/builds/opensearch/dist")){
-                                uploadMinSnapshotsToS3()
-                            } else {
-                                echo "Dist folder not found, skipping snapshots upload to s3"
-                            }
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3()
                         }
                     }
                     post {
