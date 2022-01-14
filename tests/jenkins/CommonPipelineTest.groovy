@@ -9,6 +9,11 @@ import com.lesfurets.jenkins.unit.RegressionTestHelper
 import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
 import org.junit.Before
 
+import static org.hamcrest.CoreMatchers.anyOf
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.hamcrest.MatcherAssert.assertThat
+
 
 /**
  * This base test class holds common functions, but does not perform
@@ -27,5 +32,19 @@ abstract class CommonPipelineTest extends DeclarativePipelineTest {
         RegressionTestHelper.testNonRegression(helper, regressionFilename ?: jenkinsScript)
         assertJobStatusSuccess()
         printCallStack()
+    }
+
+    /**
+     * The author of signArtifacts is responsible for this method.
+     */
+    void verifySignArtifacts() {
+        def actualS3Upload = helper.callStack.findAll { call ->
+            call.methodName == 'signArtifacts'
+        }.each { call ->
+            assertThat(call.args.signatureType, notNullValue())
+            assertThat(call.args.signatureType.first(), anyOf(equalTo('.sig'), equalTo('.pgp')))
+            assertThat(call.args.distributionPlatform, notNullValue())
+            assertThat(call.args.distributionPlatform.first(), anyOf(equalTo('linux'), equalTo('macos')))
+        }
     }
 }

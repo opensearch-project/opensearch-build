@@ -33,5 +33,7 @@ class TestDataPrepperDistributionArtifacts extends BaseJobPipelineTest {
     void dataPrepperDistributionArtifacts_builds_consistently() {
         testPipeline('jenkins/data-prepper/distribution-artifacts.jenkinsfile',
                 'tests/jenkins/jobs/data-prepper/distribution-artifacts.jenkinsfile')
+
+        verifySignArtifacts()
     }
 }
