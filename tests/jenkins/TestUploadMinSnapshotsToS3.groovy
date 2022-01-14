@@ -10,10 +10,8 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
-import java.nio.file.*
 
 class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
-    private Path target;
 
     @Before
     void setUp() {
