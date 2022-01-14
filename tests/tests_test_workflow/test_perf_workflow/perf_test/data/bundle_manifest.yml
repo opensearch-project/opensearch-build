@@ -1,3 +1,4 @@
+---
 build:
   platform: linux
   architecture: x64
@@ -9,7 +10,7 @@ components:
   - commit_id: fb25458f38c30a7ab06de21b0068f1fe3ad56134
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/bundle/opensearch-min-1.0.0-linux-x64.tar.gz
     name: OpenSearch
-    ref: "1.0"
+    ref: '1.0'
     repository: https://github.com/saratvemulapalli/OpenSearch.git
   - commit_id: 7fad9529358259de529763c1c923fd947817a3bd
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/plugins/opensearch-job-scheduler-1.0.0.0.zip
@@ -44,7 +45,7 @@ components:
   - commit_id: 502c96e54fae1cec9fee1fafd77ad92fde9d2459
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/plugins/opensearch-anomaly-detection-1.0.0.0.zip
     name: anomaly-detection
-    ref: "1.0"
+    ref: '1.0'
     repository: https://github.com/opensearch-project/anomaly-detection.git
   - commit_id: bd31e80adf6d52c1b4662d0d2cc9b30d8ae14309
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/plugins/opensearch-asynchronous-search-1.0.0.0.zip

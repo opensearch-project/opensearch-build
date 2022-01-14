@@ -1,3 +1,4 @@
+---
 name: python-tests
 
 on: [push, pull_request]

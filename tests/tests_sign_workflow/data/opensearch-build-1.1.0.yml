@@ -1,3 +1,4 @@
+---
 build:
   platform: linux
   architecture: x64

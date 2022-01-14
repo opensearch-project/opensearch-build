@@ -1,3 +1,4 @@
+---
 build:
   platform: linux
   architecture: x64
@@ -5,20 +6,20 @@ build:
   name: OpenSearch Dashboards
   version: 1.1.0
 components:
-- artifacts:
-    dist:
-    - dist/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
-  commit_id: 635db6a8d42cb517109721e438d39500a8f453a9
-  name: OpenSearch-Dashboards
-  ref: '1.1'
-  repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-  version: 1.1.0.0
-- artifacts:
-    plugins:
-    - plugins/alertingDashboards-1.1.0.zip
-  commit_id: ae789280740d7000d1f13245019414abeedfc286
-  name: alertingDashboards
-  ref: main
-  repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-  version: 1.1.0.0
+  - artifacts:
+      dist:
+        - dist/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
+    commit_id: 635db6a8d42cb517109721e438d39500a8f453a9
+    name: OpenSearch-Dashboards
+    ref: '1.1'
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/alertingDashboards-1.1.0.zip
+    commit_id: ae789280740d7000d1f13245019414abeedfc286
+    name: alertingDashboards
+    ref: main
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin
+    version: 1.1.0.0
 schema-version: '1.2'

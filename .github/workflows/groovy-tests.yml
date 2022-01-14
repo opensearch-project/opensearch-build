@@ -1,3 +1,4 @@
+---
 name: groovy-tests
 
 on: [push, pull_request]

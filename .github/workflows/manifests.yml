@@ -1,3 +1,4 @@
+---
 name: manifests
 
 on:
@@ -6,7 +7,7 @@ on:
     paths:
       - manifests/**/*.yml
   schedule:
-    - cron: "0 0 * * *"
+    - cron: 0 0 * * *
 
 jobs:
 
@@ -17,7 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | jq
+          -R -s -c 'split("\n")[:-1]')"
 
   check:
     needs: list-manifests
@@ -42,5 +44,5 @@ jobs:
         run: |
           python -m pip install --upgrade pipenv wheel
       - name: OpenSearch Manifests
-        run: |
+        run: |-
           ./ci.sh ${{ matrix.manifest }} --snapshot

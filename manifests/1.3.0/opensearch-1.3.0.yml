@@ -1,52 +1,52 @@
 ---
-schema-version: "1.0"
+schema-version: '1.0'
 ci:
   image:
-     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
-     args: "-e JAVA_HOME=/opt/java/openjdk-11"
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
+    args: -e JAVA_HOME=/opt/java/openjdk-11
 build:
   name: OpenSearch
   version: 1.3.0
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: "1.x"
+    ref: 1.x
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: "main"
+    ref: main
     platforms:
       - darwin
       - linux
@@ -55,10 +55,10 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: "main"
+    ref: main
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -67,32 +67,32 @@ components:
       - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: "main"
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: "main"
+    ref: main
     working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability
-    ref: "main"
+    ref: main
     working_directory: opensearch-observability
     checks:
       - gradle:properties:version
