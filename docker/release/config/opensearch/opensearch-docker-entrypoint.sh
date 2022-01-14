@@ -39,6 +39,7 @@ do
         fi
     fi
 done < <(env)
+opensearch_opts+=("$@")
 
 # The virtual file /proc/self/cgroup should list the current cgroup
 # membership. For each hierarchy, you can follow the cgroup path from
