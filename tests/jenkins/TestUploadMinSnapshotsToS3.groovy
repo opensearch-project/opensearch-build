@@ -19,16 +19,11 @@ class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
     void setUp() {
         super.setUp()
 
-        binding.setVariable('WORKSPACE', 'workspace')
+        binding.setVariable('WORKSPACE', 'tests/data/')
 
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'dummy_role')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'dummy_bucket')
-
-        Path source = Path.of("tests/data/opensearch-build-snapshot-manifest.yml");
-        target = Path.of("workspace/builds/opensearch/manifest.yml");
-        Files.createDirectories(target.getParent());
-        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
 
         helper.registerAllowedMethod("s3Upload", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
@@ -41,10 +36,5 @@ class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
         super.testPipeline("tests/jenkins/jobs/uploadSnapshotsToS3_Jenkinsfile")
     }
     
-    @After
-    void after() {
-        super.setUp()
-        Files.delete(target) // Test file needs to be cleaned up
-    }
 }
 

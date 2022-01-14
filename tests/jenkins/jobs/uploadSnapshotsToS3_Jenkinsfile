@@ -6,7 +6,7 @@ pipeline {
                 script {
                     uploadMinSnapshotsToS3(
                         manifest: "tests/jenkins/data/opensearch-1.3.0.yml"
-                        )
+                    )
                 }
             }
         }
