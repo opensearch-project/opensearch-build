@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     signArtifacts(
-                            artifactPath: "$WORKSPACE/artifacts/",
+                            artifactPath: artifactPath,
                             signatureType: SIGNATURE_TYPE,
                             distributionPlatform: DISTRIBUTION_PLATFORM
                     )
