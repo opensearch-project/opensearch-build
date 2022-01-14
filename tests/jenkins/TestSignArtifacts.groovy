@@ -65,7 +65,7 @@ class TestSignArtifacts extends BuildPipelineTest {
         })
 
         super.testPipeline("jenkins/sign-artifacts/sign-standalone-artifacts.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/sign-standalone-artifacts.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/sign-standalone-artifacts/sign-standalone-artifacts.jenkinsfile")
 
         verifySignArtifactsParams(helper, '.sig', 'linux', 'workspace/artifacts/')
 
