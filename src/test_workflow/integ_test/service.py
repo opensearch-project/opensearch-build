@@ -83,7 +83,7 @@ class Service(abc.ABC):
     def wait_for_service(self):
         logging.info("Waiting for service to become available")
 
-        for attempt in range(50):
+        for attempt in range(10):
             try:
                 logging.info(f"Pinging service attempt {attempt}")
                 if self.service_alive():
@@ -97,7 +97,7 @@ class Service(abc.ABC):
                 if stderr:
                     logging.info("- stderr:\n{stderr}")
             time.sleep(10)
-        raise ClusterCreationException("Cluster is not available after 50 attempts")
+        raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     @property
     @abc.abstractmethod
