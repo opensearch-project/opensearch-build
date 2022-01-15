@@ -4,11 +4,12 @@ pipeline {
         stage('upload manifest SHA') {
             steps {
                 script {
-                    copyDockerImage(
-                        sourceImagePath: "opensearchstaging:latest",
-                        destinationImagePath: "opensearchproject:latest",
-                        destinationType: "ecr",
-                        destinationCredentialIdentifier: "path_to_ecr/repo_id/"
+                     copyDockerImage(
+                        sourceImagePath: sourceImagePath,
+                        destinationImagePath: destinationImagePath,
+                        destinationType: destinationType,
+                        destinationCredentialIdentifier: destinationCredentialIdentifier,
+                        accountName: accountName
                     )
                 }
             }

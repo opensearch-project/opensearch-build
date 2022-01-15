@@ -5,10 +5,10 @@ pipeline {
             steps {
                 script {
                     copyDockerImage(
-                        sourceImagePath: "opensearchstaging:latest",
-                        destinationImagePath: "opensearchproject:latest",
-                        destinationType: "docker",
-                        destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                        sourceImagePath: sourceImagePath,
+                        destinationImagePath: destinationImagePath,
+                        destinationType: destinationType,
+                        destinationCredentialIdentifier: destinationCredentialIdentifier
                     )
                 }
             }
