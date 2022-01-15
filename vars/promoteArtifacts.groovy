@@ -31,10 +31,13 @@ void call(Map args = [:]) {
     argsMap = [:]
     argsMap['signatureType'] = '.sig'
 
-    //////////// Signing Artifacts
-    println("Signing Core Pluings")
-    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
-    argsMap['artifactPath'] = corePluginDir
+    if(filename == "opensearch") {
+        //////////// Signing Artifacts
+        println("Signing Core Pluings")
+        String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
+        argsMap['artifactPath'] = corePluginDir
+    }
+
     for (Closure action : fileActions) {
         action(argsMap)
     }
