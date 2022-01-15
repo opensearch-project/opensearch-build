@@ -86,7 +86,7 @@ void call(Map args = [:]) {
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases-test/$version/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/",
-            includePathPattern: "**/${filename}-${version}*")
+            includePathPattern: "*")
 
     }
 }
