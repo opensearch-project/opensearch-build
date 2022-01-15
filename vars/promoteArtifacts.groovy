@@ -39,6 +39,8 @@ void call(Map args = [:]) {
         println("Signing Core Pluings")
         String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
         argsMap['artifactPath'] = corePluginDir
+    } else {
+        argsMap['artifactPath'] = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/plugins"
     }
 
     print("argsMap is ${argsMap}")
