@@ -55,7 +55,7 @@ class TestCopyDockerImage extends BuildPipelineTest {
 
     @Test
     public void testForEcr() {
-        def destinationCredentialIdentifier = 'jenkins-staging-docker-prod-token'
+        def destinationCredentialIdentifier = 'public.ecr.aws/p5f6l6i3'
         def accountName = 'DUMMY_NAME'
         def destinationType = 'ecr'
 
@@ -92,6 +92,8 @@ class TestCopyDockerImage extends BuildPipelineTest {
             if(call.args.destinationType.first() == "ecr"){
                 assertThat(call.args.accountName.first(), notNullValue())
                 assert call.args.accountName.first() == accountName
+                assertThat(call.args.destinationCredentialIdentifier.first(), anyOf(equalTo('public.ecr.aws/p5f6l6i3'),
+                        equalTo('public.ecr.aws/m0o1u6w1')))
             }
             assert call.args.sourceImagePath.first() == sourceImagePath
             assert call.args.destinationImagePath.first() == destinationImagePath
