@@ -80,5 +80,13 @@ void call(Map args = [:]) {
             path: "releases-test/$bundleFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
             includePathPattern: "**/${filename}-${version}*")
+
+        // upload build and dist manifest
+        s3Upload(
+            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+            path: "releases-test/$version/",
+            workingDir: "$WORKSPACE/artifacts/$artifactPath/",
+            includePathPattern: "**/${filename}-${version}*")
+
     }
 }
