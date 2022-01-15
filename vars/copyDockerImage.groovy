@@ -10,7 +10,7 @@ void call(Map args = [:]){
             """
         }
     } else if(args.destinationType == 'ecr'){
-        withAWS(role: 'Upload_ECR_Image', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+        withAWS(role: 'Upload_ECR_Image', roleAccount: "${args.accountName}", duration: 900, roleSessionName: 'jenkins-session') {
             sh """
                 docker logout
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}

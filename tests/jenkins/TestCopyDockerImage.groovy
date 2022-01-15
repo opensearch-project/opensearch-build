@@ -6,20 +6,15 @@
  * compatible open source license.
  */
 
-package jenkins.tests
 
+import jenkins.tests.BuildPipelineTest
 import org.junit.*
 import java.util.*
 import java.nio.file.*
 
 class TestCopyDockerImage extends BuildPipelineTest {
-    private Path target;
 
-    @Override
-    @Before
-    void setUp() {
-        super.setUp()
-
+    static void setUpVariables(binding, helper){
         binding.setVariable('CREDENTIAL_ID', 'dummy_credentials_id')
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')
@@ -29,6 +24,13 @@ class TestCopyDockerImage extends BuildPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
+    }
+
+    @Override
+    @Before
+    void setUp() {
+        super.setUp()
+        setUpVariables(binding, helper)
     }
 
     @Test

@@ -136,7 +136,8 @@ pipeline {
                         sourceImagePath: "opensearchstaging/opensearch:latest",
                         destinationImagePath: "public.ecr.aws/k8e0v8t4/opensearch:latest",
                         destinationType: "ecr",
-                        destinationCredentialIdentifier: "public.ecr.aws/k8e0v8t4"
+                        destinationCredentialIdentifier: "public.ecr.aws/k8e0v8t4",
+                        accountName: AWS_ACCOUNT_TESTING
                     )
                 }
             }
