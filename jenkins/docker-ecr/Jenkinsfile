@@ -134,10 +134,10 @@ pipeline {
                     install_gcrane()
                     copyDockerImage(
                         sourceImagePath: "opensearchstaging/opensearch:latest",
-                        destinationImagePath: "public.ecr.aws/k8e0v8t4/opensearch:latest",
+                        destinationImagePath: "public.ecr.aws/a5n0l3m1/opensearch:latest",
                         destinationType: "ecr",
-                        destinationCredentialIdentifier: "public.ecr.aws/k8e0v8t4",
-                        accountName: "${AWS_ACCOUNT_TESTING}"
+                        destinationCredentialIdentifier: "public.ecr.aws/a5n0l3m1",
+                        accountName: "${ABHNG_ACCOUNT}"
                     )
                 }
             }
