@@ -54,20 +54,25 @@ void call(Map args = [:]) {
 
     //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
-        for (String pluginSubPath : corePluginList) {
-            String pluginSubFolder = pluginSubPath.split('/')[0]
-            String pluginNameWithExt = pluginSubPath.split('/')[1]
-            String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
-            String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
-            String pluginFullPath = ['plugins', pluginName, version].join('/')
-            s3Upload(
-                bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-                path: "releases-test/$pluginFullPath/",
-                workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
-                includePathPattern: "**/${pluginName}*")
-        }
 
+        if(filename == "opensearch") {
+            List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
+            for (String pluginSubPath : corePluginList) {
+                String pluginSubFolder = pluginSubPath.split('/')[0]
+                String pluginNameWithExt = pluginSubPath.split('/')[1]
+                String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
+                String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
+                String pluginFullPath = ['plugins', pluginName, version].join('/')
+                s3Upload(
+                    bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                    path: "releases-test/$pluginFullPath/",
+                    workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
+                    includePathPattern: "**/${pluginName}*"
+                )
+            }
+
+        }
+      
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases-test/$coreFullPath/",
