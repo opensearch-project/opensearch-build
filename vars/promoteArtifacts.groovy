@@ -31,6 +31,9 @@ void call(Map args = [:]) {
     argsMap = [:]
     argsMap['signatureType'] = '.sig'
 
+    print("filename is ${filename}")
+
+
     if(filename == "opensearch") {
         //////////// Signing Artifacts
         println("Signing Core Pluings")
@@ -38,7 +41,10 @@ void call(Map args = [:]) {
         argsMap['artifactPath'] = corePluginDir
     }
 
+
+    print("before action")
     for (Closure action : fileActions) {
+        print("running action ${action}")
         action(argsMap)
     }
 
