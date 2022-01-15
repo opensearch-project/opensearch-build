@@ -54,7 +54,7 @@ void call(Map args = [:]) {
 
     //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-
+        println("filename is " + filename)
         if(filename == "opensearch") {
             List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
             for (String pluginSubPath : corePluginList) {
