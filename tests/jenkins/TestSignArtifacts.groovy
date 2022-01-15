@@ -84,11 +84,11 @@ class TestSignArtifacts extends BuildPipelineTest {
         helper.callStack.findAll { call ->
             call.methodName == 'signArtifacts'
         }.each { call ->
-            assertThat(call.args.signatureType, notNullValue())
+            assertThat(call.args.signatureType.first(), notNullValue())
             assertThat(call.args.signatureType.first(), anyOf(equalTo('.sig'), equalTo('.pgp')))
-            assertThat(call.args.distributionPlatform, notNullValue())
+            assertThat(call.args.distributionPlatform.first(), notNullValue())
             assertThat(call.args.distributionPlatform.first(), anyOf(equalTo('linux')))
-            assertThat(call.args.artifactPath, notNullValue())
+            assertThat(call.args.artifactPath.first(), notNullValue())
             assert call.args.signatureType.first() == signatureType
             assert call.args.distributionPlatform.first() == distributionPlatform
             assert call.args.artifactPath.first() == artifactPath

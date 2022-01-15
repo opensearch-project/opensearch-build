@@ -40,8 +40,8 @@ class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
         helper.callStack.findAll { call ->
             call.methodName == 'printArtifactDownloadUrlsForStaging'
         }.each { call ->
-            assertThat(call.args.artifactFileNames, notNullValue())
-            assertThat(call.args.uploadPath, notNullValue())
+            assertThat(call.args.artifactFileNames.first(), notNullValue())
+            assertThat(call.args.uploadPath.first(), notNullValue())
             assert call.args.artifactFileNames.size() > 0
             assert call.args.artifactFileNames.first().sort() == artifactFileNames.sort()
             assert call.args.uploadPath.first() == uploadPath
