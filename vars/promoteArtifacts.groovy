@@ -41,10 +41,13 @@ void call(Map args = [:]) {
         argsMap['artifactPath'] = corePluginDir
     }
 
+    print("argsMap is ${argsMap}")
+
 
     print("before action")
     for (Closure action : fileActions) {
-        print("running action ${action}")
+        // print("running action ${action}")
+        print("running action")        
         action(argsMap)
     }
 
