@@ -13,7 +13,8 @@ import java.util.*
 import java.nio.file.*
 
 class TestPromoteArtifacts extends BuildPipelineTest {
-    private Path target;
+    private Path targetOpenSearch;
+    private Path targetOpenSearchDashboards;
 
     @Override
     @Before
@@ -71,16 +72,32 @@ class TestPromoteArtifacts extends BuildPipelineTest {
             return [stdout: "zip_dummy_artifact_1.1.0.zip", exitValue: 0]
         }
 
-        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
-        target = Path.of("artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml");
+        targetOpenSearch = copy(
+            "tests/data/opensearch-build-1.1.0.yml", 
+            "artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml"
+        );
+
+        targetOpenSearchDashboards = copy(
+            "tests/data/opensearch-dashboards-build-1.2.0.yml", 
+            "artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/manifest.yml"
+        );
+    }
+
+    private Path copy(String sourcePath, String targetPath){
+        Path source = Path.of(sourcePath);
+        Path target = Path.of(targetPath);
         Files.createDirectories(target.getParent());
         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+        return target;
     }
 
     @After
     void after() {
         super.setUp()
-        Files.delete(target) // Test file needs to be cleaned up
+        // Test file needs to be cleaned up
+        Files.delete(targetOpenSearch)
+        Files.delete(targetOpenSearchDashboards)
     }
 
     @Test
@@ -89,7 +106,17 @@ class TestPromoteArtifacts extends BuildPipelineTest {
     }
 
     @Test
+    public void testDefault_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_OpenSearch_Dashboards_Jenkinsfile")
+    }
+
+    @Test
     public void testWithActions() {
         super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_Jenkinsfile")
+    }
+
+    @Test
+    public void testWithActions_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_OpenSearch_Dashboards_Jenkinsfile")
     }
 }
