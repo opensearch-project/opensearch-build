@@ -42,7 +42,6 @@ void call(Map args = [:]) {
     }
 
     for (Closure action : fileActions) {
-        print("running action ${action}")
         action(argsMap)
     }
 
@@ -55,9 +54,6 @@ void call(Map args = [:]) {
             action(argsMap)
         }
     }
-
-
-
 
     //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
@@ -76,7 +72,6 @@ void call(Map args = [:]) {
                     includePathPattern: "**/${pluginName}*"
                 )
             }
-
         }
       
         s3Upload(
@@ -92,12 +87,11 @@ void call(Map args = [:]) {
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
             includePathPattern: "**/${filename}-${version}*")
 
-        // upload build and dist manifest
+        // upload build and dist
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases/$version/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/",
             includePathPattern: "**/")
-
     }
 }
