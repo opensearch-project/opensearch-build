@@ -60,4 +60,4 @@
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/dist/, includePathPattern=**/opensearch-dashboards-min-1.2.0*})
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/dist/opensearch-dashboards/, includePathPattern=**/opensearch-dashboards-1.2.0*})
-                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/, includePathPattern=**/})
+                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/1.2.0/linux/x64/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/, includePathPattern=**/})
