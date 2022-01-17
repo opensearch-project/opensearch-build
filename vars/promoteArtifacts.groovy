@@ -67,7 +67,7 @@ void call(Map args = [:]) {
                 String pluginFullPath = ['plugins', pluginName, version].join('/')
                 s3Upload(
                     bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-                    path: "releases/$pluginFullPath/",
+                    path: "releases-test/$pluginFullPath/",
                     workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
                     includePathPattern: "**/${pluginName}*"
                 )
@@ -76,21 +76,21 @@ void call(Map args = [:]) {
       
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$coreFullPath/",
+            path: "releases-test/$coreFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
             includePathPattern: "**/${filename}-min-${version}*")
 
 
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$bundleFullPath/",
+            path: "releases-test/$bundleFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
             includePathPattern: "**/${filename}-${version}*")
 
         // upload build and dist
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$version/",
+            path: "releases-test/$version/${DISTRIBUTION_PLATFORM}/${DISTRIBUTION_ARCHITECTURE}/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/",
             includePathPattern: "**/")
     }
