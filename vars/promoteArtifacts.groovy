@@ -31,8 +31,6 @@ void call(Map args = [:]) {
     argsMap = [:]
     argsMap['signatureType'] = '.sig'
 
-    print("filename is ${filename}")
-
 
     if(filename == "opensearch") {
         //////////// Signing Artifacts
@@ -43,13 +41,8 @@ void call(Map args = [:]) {
         argsMap['artifactPath'] = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/plugins"
     }
 
-    print("argsMap is ${argsMap}")
-
-
-    print("before action")
     for (Closure action : fileActions) {
-        // print("running action ${action}")
-        print("running action")        
+        print("running action ${action}")
         action(argsMap)
     }
 
@@ -68,7 +61,6 @@ void call(Map args = [:]) {
 
     //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        println("filename is " + filename)
         if(filename == "opensearch") {
             List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
             for (String pluginSubPath : corePluginList) {
@@ -79,7 +71,7 @@ void call(Map args = [:]) {
                 String pluginFullPath = ['plugins', pluginName, version].join('/')
                 s3Upload(
                     bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-                    path: "releases-test/$pluginFullPath/",
+                    path: "releases/$pluginFullPath/",
                     workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
                     includePathPattern: "**/${pluginName}*"
                 )
@@ -89,21 +81,21 @@ void call(Map args = [:]) {
       
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases-test/$coreFullPath/",
+            path: "releases/$coreFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
             includePathPattern: "**/${filename}-min-${version}*")
 
 
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases-test/$bundleFullPath/",
+            path: "releases/$bundleFullPath/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
             includePathPattern: "**/${filename}-${version}*")
 
         // upload build and dist manifest
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases-test/$version/",
+            path: "releases/$version/",
             workingDir: "$WORKSPACE/artifacts/$artifactPath/",
             includePathPattern: "**/")
 
