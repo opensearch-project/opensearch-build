@@ -13,12 +13,12 @@
                   promoteArtifacts.readYaml({file=tests/jenkins/data/opensearch-dashboards-1.2.0.yml})
                   InputManifest.asBoolean()
                   promoteArtifacts.withAWS({role=downloadRoleName, roleAccount=publicAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     promoteArtifacts.s3Download({bucket=artifact-bucket, file=workspace/artifacts, path=vars-build/1.2.0/33/x64/linux/, force=true})
-                  promoteArtifacts.readYaml({file=artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/manifest.yml})
-                  createSha512Checksums.sh({script=find workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/plugins -type f, returnStdout=true})
-                  createSha512Checksums.echo(Not generating sha for bbb in workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])
-                  createSha512Checksums.echo(Not generating sha for ccc in workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])
-                  createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/plugins})
+                     promoteArtifacts.s3Download({bucket=artifact-bucket, file=workspace/artifacts, path=vars-build/1.2.0/33/linux/x64/, force=true})
+                  promoteArtifacts.readYaml({file=artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/manifest.yml})
+                  createSha512Checksums.sh({script=find workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins -type f, returnStdout=true})
+                  createSha512Checksums.echo(Not generating sha for bbb in workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])
+                  createSha512Checksums.echo(Not generating sha for ccc in workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])
+                  createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins})
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                      signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
@@ -32,7 +32,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/plugins --sigtype=.sig --component=null --type=null
+            workspace/sign.sh workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins --sigtype=.sig --component=null --type=null
         )
                   promoteArtifacts.findFiles({glob=**/opensearch-dashboards-min-1.2.0*.tar.gz,**/opensearch-dashboards-1.2.0*.tar.gz})
                   promoteArtifacts.getPath()
@@ -58,6 +58,6 @@
             workspace/sign.sh workspace/workspace/file/found.zip --sigtype=.sig --component=null --type=null
         )
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/builds/opensearch-dashboards/dist/, includePathPattern=**/opensearch-dashboards-min-1.2.0*})
-                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/dist/opensearch-dashboards/, includePathPattern=**/opensearch-dashboards-1.2.0*})
-                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/1.2.0/linux/x64/, workingDir=workspace/artifacts/vars-build/1.2.0/33/x64/linux/, includePathPattern=**/})
+                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/dist/, includePathPattern=**/opensearch-dashboards-min-1.2.0*})
+                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/linux/x64/dist/opensearch-dashboards/, includePathPattern=**/opensearch-dashboards-1.2.0*})
+                     promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/1.2.0/linux/x64/, workingDir=workspace/artifacts/vars-build/1.2.0/33/linux/x64/, includePathPattern=**/})
