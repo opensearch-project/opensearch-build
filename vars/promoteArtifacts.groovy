@@ -75,7 +75,7 @@ void call(Map args = [:]) {
                 )
             }
         }
-      
+
         s3Upload(
             bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
             path: "releases/$coreFullPath/",
@@ -89,11 +89,5 @@ void call(Map args = [:]) {
             workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
             includePathPattern: "**/${filename}-${version}*")
 
-        // upload build and dist
-        s3Upload(
-            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$version/${DISTRIBUTION_PLATFORM}/${DISTRIBUTION_ARCHITECTURE}/",
-            workingDir: "$WORKSPACE/artifacts/$artifactPath/",
-            includePathPattern: "**/")
     }
 }
