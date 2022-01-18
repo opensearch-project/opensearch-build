@@ -18,7 +18,7 @@
 ### OpenSearch Reports Scheduler
 
 * Update CVEs for 1.2 branch ([#270](https://github.com/opensearch-project/dashboards-reports/pull/270))
-* update yarn lock for cve fixes ([#273](https://github.com/opensearch-project/dashboards-reports/pull/273))
+* Update yarn lock for cve fixes ([#273](https://github.com/opensearch-project/dashboards-reports/pull/273))
 
 ### OpenSearch Job Scheduler
 
