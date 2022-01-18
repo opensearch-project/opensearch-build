@@ -28,7 +28,7 @@ The following checks are available.
 | gradle:properties:version                     | Check version of the component.                                                   |
 | gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch in gradle properties.       |
 | gradle:publish                                | Check that publishing to Maven local works, and publish.                          |
-| package:version                               | Check dependency on the correct version of OpenSearch Dashboards in package.json. |
+| npm:package:version                           | Check dependency on the correct version of OpenSearch Dashboards in package.json. |
 
 The following example sanity-checks components in the the OpenSearch 1.2.0 manifest.
 

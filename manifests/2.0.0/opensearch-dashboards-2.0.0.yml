@@ -7,7 +7,7 @@ components:
     ref: main
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     checks:
-      - package:version
+      - npm:package:version
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: "main"

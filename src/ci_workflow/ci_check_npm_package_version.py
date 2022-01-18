@@ -9,7 +9,7 @@ import logging
 from ci_workflow.ci_check_package import CiCheckPackage
 
 
-class CiCheckPackageVersion(CiCheckPackage):
+class CiCheckNpmPackageVersion(CiCheckPackage):
     @property
     def checked_version(self):
         if self.component.name == "OpenSearch-Dashboards":

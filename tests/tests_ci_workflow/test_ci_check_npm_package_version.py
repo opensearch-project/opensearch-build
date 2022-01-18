@@ -7,17 +7,17 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ci_workflow.ci_check_package_version import CiCheckPackageVersion
+from ci_workflow.ci_check_npm_package_version import CiCheckNpmPackageVersion
 from ci_workflow.ci_target import CiTarget
 from manifests.input_manifest import Component
 from system.properties_file import PropertiesFile
 
 
-class TestCiCheckPackageVersion(unittest.TestCase):
+class TestCiCheckNpmPackageVersion(unittest.TestCase):
     def __mock_check(self, props=None, component=None, snapshot=True):
-        with patch.object(CiCheckPackageVersion, "_CiCheckPackage__get_properties") as mock_properties:
+        with patch.object(CiCheckNpmPackageVersion, "_CiCheckPackage__get_properties") as mock_properties:
             mock_properties.return_value = PropertiesFile(props)
-            return CiCheckPackageVersion(
+            return CiCheckNpmPackageVersion(
                 component=component or MagicMock(),
                 git_repo=MagicMock(),
                 target=CiTarget(version="1.1.0", name="dashboards-plugin", snapshot=snapshot),
