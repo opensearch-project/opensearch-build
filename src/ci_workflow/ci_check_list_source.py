@@ -10,6 +10,7 @@ from ci_workflow.ci_check_gradle_dependencies_opensearch import CiCheckGradleDep
 from ci_workflow.ci_check_gradle_properties_version import CiCheckGradlePropertiesVersion
 from ci_workflow.ci_check_gradle_publish_to_maven_local import CiCheckGradlePublishToMavenLocal
 from ci_workflow.ci_check_list import CiCheckList
+from ci_workflow.ci_check_npm_package_version import CiCheckNpmPackageVersion
 from git.git_repository import GitRepository
 
 
@@ -25,6 +26,7 @@ class CiCheckListSource(CiCheckList):
         "gradle:properties:version": CiCheckGradlePropertiesVersion,
         "gradle:dependencies:opensearch.version": CiCheckGradleDependenciesOpenSearchVersion,
         "gradle:publish": CiCheckGradlePublishToMavenLocal,
+        "npm:package:version": CiCheckNpmPackageVersion,
     }
 
     class InvalidCheckError(Exception):
