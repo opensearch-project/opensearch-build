@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch
 import yaml
 
 from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestInputManifest(unittest.TestCase):
@@ -206,3 +207,40 @@ class TestInputManifest(unittest.TestCase):
             "dist": "dist"
         })
         self.assertNotEqual(manifest1, manifest2)
+
+    def test_to_file_formatted(self) -> None:
+        data_path = os.path.join(os.path.dirname(__file__), "data")
+        manifest = InputManifest({
+            "schema-version": "1.0",
+            "build": {
+                "name": "OpenSearch",
+                "version": "2.0.0"
+            },
+            "ci": {
+                "image": {
+                    "name": "image-name",
+                    "args": "-e JAVA_HOME=/opt/java/openjdk-11"
+                }
+            },
+            "components": [
+                {
+                    "name": "OpenSearch",
+                    "ref": "main",
+                    "repository": "https://github.com/opensearch-project/OpenSearch.git",
+                    "checks": [
+                        "gradle:publish",
+                        "gradle:properties:version"
+                    ]
+                }
+            ]
+        })
+
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "manifest.yml")
+            manifest.to_file(output_path)
+            with open(output_path) as f:
+                written_manifest = f.read()
+            with open(os.path.join(data_path, "formatted.yml")) as f:
+                formatted_manifest = f.read()
+
+        self.assertEqual(formatted_manifest, written_manifest)
