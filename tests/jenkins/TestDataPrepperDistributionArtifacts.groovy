@@ -10,6 +10,8 @@ import org.junit.Test
 
 class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
+    public String artifactsPath
+
     @Before
     void setUp() {
         super.setUp()
@@ -25,7 +27,7 @@ class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
         helper.registerAllowedMethod('checkout', [Map], {})
 
-        def artifactsPath = "$workspace/release/archives/linux/build/distributions"
+        artifactsPath = "$workspace/release/archives/linux/build/distributions"
         helper.addShMock("find ${artifactsPath} | sed -n \"s|^${artifactsPath}/||p\"") { script ->
             return [stdout: "tar_dummy_1_artifact_1.0.0.tar.gz tar_dummy_2_artifact_1.0.0.tar.gz", exitValue: 0]
         }
@@ -52,6 +54,8 @@ class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
                                 'tar_dummy_2_artifact_1.0.0.tar.gz', 'tar_dummy_2_artifact_1.0.0.tar.gz.sig']
         TestPrintArtifactDownloadUrlsForStaging.verifyPrintArtifactDownloadUrlsForStagingParams(helper, filenamesForUrls,
                 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed')
+
+        TestUploadToS3.verifyUploadToS3Params(helper, artifactsPath, 'dummy_bucket_name', 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed')
 
     }
 }
