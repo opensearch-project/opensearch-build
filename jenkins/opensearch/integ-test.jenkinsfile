@@ -5,6 +5,7 @@ pipeline {
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
         AWS_ROLE_SESSION_NAME = "jenkins-test-session"
+        BUILD_MANIFEST= "build-manifest.yml"
     }
     tools {
         jdk "JDK14"
@@ -39,9 +40,11 @@ pipeline {
             }
             steps {
                 script {
-                    // Fetching the build-specific values and assigning to their env vars
-                    (buildManifestPath, buildId) = getBuildManifestInfo()
-                    env.BUILD_MANIFEST = buildManifestPath
+                    def buildManifestObj = downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL,
+                        path: BUILD_MANIFEST
+                    )
+                    String buildId = buildManifestObj.getArtifactBuildId()
                     env.BUILD_ID = buildId
                     echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
