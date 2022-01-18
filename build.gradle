@@ -78,6 +78,8 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'script-security', '1.78')
         dependency('org.jenkins-ci.plugins', 'credentials', '2.6.2')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.10.1')
+        dependency('org.jenkins-ci.plugins', 'junit', '1.53')
+        dependency('org.jenkins-ci.plugins', 'mailer', '1.34.2')
     }
 }
 
