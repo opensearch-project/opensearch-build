@@ -3,7 +3,7 @@
 
 ### OpenSearch
 
-
+* Opensearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.2.4.md)
 
 ### OpenSearch Alerting
 
