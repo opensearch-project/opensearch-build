@@ -2,7 +2,7 @@
 yaml-files:
   - '*.yaml'
   - '*.yml'
-  - '.yamllint.yml'
+  - .yamllint.yml
 rules:
   document-start: enable
   line-length: disable
