@@ -89,9 +89,24 @@ class TestSignArtifacts extends BuildPipelineTest {
             assertThat(call.args.distributionPlatform.first(), notNullValue())
             assertThat(call.args.distributionPlatform.first(), anyOf(equalTo('linux')))
             assertThat(call.args.artifactPath.first(), notNullValue())
-            assert call.args.signatureType.first() == signatureType
-            assert call.args.distributionPlatform.first() == distributionPlatform
-            assert call.args.artifactPath.first() == artifactPath
         }
+
+        def callFound = false
+
+        def callList = helper.callStack.findAll { call ->
+            call.methodName == 'signArtifacts'
+        }
+
+        for(call in callList){
+            println("******** ${call.args} ************")
+            if( call.args.signatureType.first() == signatureType
+                    && call.args.distributionPlatform.first() == distributionPlatform
+                    && call.args.artifactPath.first() == artifactPath){
+                callFound = true
+            }
+        }
+
+        assert callFound
+
     }
 }

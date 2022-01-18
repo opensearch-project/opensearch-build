@@ -52,9 +52,22 @@ class TestUploadToS3 extends BuildPipelineTest {
             assertThat(call.args.sourcePath.first(), notNullValue())
             assertThat(call.args.bucket.first(), notNullValue())
             assertThat(call.args.path.first(), notNullValue())
-            assert call.args.sourcePath.first() == sourcePath
-            assert call.args.bucket.first() == bucket
-            assert call.args.path.first() == path
         }
+
+        def callFound = false
+
+        def callList = helper.callStack.findAll { call ->
+            call.methodName == 'uploadToS3'
+        }
+
+        for(call in callList){
+            if( call.args.sourcePath.first() == sourcePath
+                    && call.args.bucket.first() == bucket
+                    && call.args.path.first() == path){
+                callFound = true
+            }
+        }
+
+        assert callFound
     }
 }
