@@ -98,7 +98,6 @@ class TestSignArtifacts extends BuildPipelineTest {
         }
 
         for(call in callList){
-            println("******** ${call.args} ************")
             if( call.args.signatureType.first() == signatureType
                     && call.args.distributionPlatform.first() == distributionPlatform
                     && call.args.artifactPath.first() == artifactPath){
