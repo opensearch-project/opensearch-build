@@ -15,6 +15,7 @@
                   promoteArtifacts.withAWS({role=downloadRoleName, roleAccount=publicAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Download({bucket=artifact-bucket, file=workspace/artifacts, path=vars-build/1.2.0/33/linux/x64/, force=true})
                   promoteArtifacts.readYaml({file=artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/manifest.yml})
+                  promoteArtifacts.fileExists(workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/core-plugins)
                   createSha512Checksums.sh({script=find workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins -type f, returnStdout=true})
                   createSha512Checksums.echo(Not generating sha for bbb in workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])
                   createSha512Checksums.echo(Not generating sha for ccc in workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins, doesn't match allowed types [.tar.gz, .zip])

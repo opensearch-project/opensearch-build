@@ -11,6 +11,7 @@
                   promoteArtifacts.withAWS({role=downloadRoleName, roleAccount=publicAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Download({bucket=artifact-bucket, file=workspace/artifacts, path=vars-build/1.3.0/33/linux/x64/, force=true})
                   promoteArtifacts.readYaml({file=artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/manifest.yml})
+                  promoteArtifacts.fileExists(workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins)
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/plugins/discovery-ec2-1.1.0.zip/1.3.0/, workingDir=workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/, includePathPattern=**/discovery-ec2-1.1.0.zip*})
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/plugins/transport-nio-1.1.0.zip/1.3.0/, workingDir=workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/, includePathPattern=**/transport-nio-1.1.0.zip*})

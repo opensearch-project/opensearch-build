@@ -31,11 +31,13 @@ void call(Map args = [:]) {
     argsMap = [:]
     argsMap['signatureType'] = '.sig'
 
+    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
+    boolean corePluginDirExists = fileExists(corePluginDir)
 
-    if(filename == "opensearch") {
-        //////////// Signing Artifacts
-        println("Signing Core Pluings")
-        String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
+    //////////// Signing Artifacts
+    println("Signing Plugins")
+
+    if(corePluginDirExists) {
         argsMap['artifactPath'] = corePluginDir
     } else {
         argsMap['artifactPath'] = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/plugins"
@@ -57,7 +59,7 @@ void call(Map args = [:]) {
 
     //////////// Uploading Artifacts
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        if(filename == "opensearch") {
+        if(corePluginDirExists) {
             List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
             for (String pluginSubPath : corePluginList) {
                 String pluginSubFolder = pluginSubPath.split('/')[0]

@@ -55,6 +55,7 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         helper.registerAllowedMethod('findFiles', [Map], { args ->
             return [{}]
         })
+        helper.addFileExistsMock('workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins', true)
 
         helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins -type f') { script ->
             return [stdout: "tar_dummy_artifact_1.0.0.tar.gz zip_dummy_artifact_1.1.0.zip dummy_artifact_1.1.0.dummy", exitValue: 0]
