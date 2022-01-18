@@ -8,6 +8,7 @@ from abc import ABC
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
+from ci_workflow.ci_check_list_source_ref import CiCheckListSourceRef
 from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
 
 
@@ -17,6 +18,9 @@ class CiCheckLists(ABC):
         if type(component) is InputComponentFromDist:
             return CiCheckListDist(component, target)
         elif type(component) is InputComponentFromSource:
-            return CiCheckListSource(component, target)
+            if len(component.checks) > 0:
+                return CiCheckListSource(component, target)
+            else:
+                return CiCheckListSourceRef(component, target)
         else:
             raise ValueError(f"Invalid component type: {type(component)}")

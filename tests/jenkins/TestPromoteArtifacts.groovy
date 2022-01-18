@@ -13,7 +13,8 @@ import java.util.*
 import java.nio.file.*
 
 class TestPromoteArtifacts extends BuildPipelineTest {
-    private Path target;
+    private Path targetOpenSearch;
+    private Path targetOpenSearchDashboards;
 
     @Override
     @Before
@@ -27,8 +28,8 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         binding.setVariable('STAGE_NAME', 'stage')
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('DISTRIBUTION_BUILD_NUMBER', '33')
-        binding.setVariable('DISTRIBUTION_PLATFORM', 'x64')
-        binding.setVariable('DISTRIBUTION_ARCHITECTURE', 'linux')
+        binding.setVariable('DISTRIBUTION_PLATFORM', 'linux')
+        binding.setVariable('DISTRIBUTION_ARCHITECTURE', 'x64')
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'downloadRoleName')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'publicAccount')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'artifactPromotionRole')
@@ -54,33 +55,50 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         helper.registerAllowedMethod('findFiles', [Map], { args ->
             return [{}]
         })
+        helper.addFileExistsMock('workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins', true)
 
-        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins -type f') { script ->
+        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins -type f') { script ->
             return [stdout: "tar_dummy_artifact_1.0.0.tar.gz zip_dummy_artifact_1.1.0.zip dummy_artifact_1.1.0.dummy", exitValue: 0]
         }
         helper.addShMock('sha512sum tar_dummy_artifact_1.0.0.tar.gz') { script ->
-            return [stdout: "shaHashDummy_tar_dummy_artifact_1.0.0.tar.gz  workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
+            return [stdout: "shaHashDummy_tar_dummy_artifact_1.0.0.tar.gz  workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
         }
         helper.addShMock('sha512sum zip_dummy_artifact_1.1.0.zip') { script ->
-            return [stdout: "shaHashDummy_zip_dummy_artifact_1.1.0.zip  workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip", exitValue: 0]
+            return [stdout: "shaHashDummy_zip_dummy_artifact_1.1.0.zip  workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip", exitValue: 0]
         }
-        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz') { script ->
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz') { script ->
             return [stdout: "tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
         }
-        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip') { script ->
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip') { script ->
             return [stdout: "zip_dummy_artifact_1.1.0.zip", exitValue: 0]
         }
 
-        Path source = Path.of("tests/data/opensearch-build-1.1.0.yml");
-        target = Path.of("artifacts/vars-build/1.3.0/33/x64/linux/builds/opensearch/manifest.yml");
+        targetOpenSearch = copy(
+            "tests/data/opensearch-build-1.1.0.yml", 
+            "artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/manifest.yml"
+        );
+
+        targetOpenSearchDashboards = copy(
+            "tests/data/opensearch-dashboards-build-1.2.0.yml", 
+            "artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/manifest.yml"
+        );
+    }
+
+    private Path copy(String sourcePath, String targetPath){
+        Path source = Path.of(sourcePath);
+        Path target = Path.of(targetPath);
         Files.createDirectories(target.getParent());
         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+        return target;
     }
 
     @After
     void after() {
         super.setUp()
-        Files.delete(target) // Test file needs to be cleaned up
+        // Test file needs to be cleaned up
+        Files.delete(targetOpenSearch)
+        Files.delete(targetOpenSearchDashboards)
     }
 
     @Test
@@ -89,7 +107,17 @@ class TestPromoteArtifacts extends BuildPipelineTest {
     }
 
     @Test
+    public void testDefault_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_OpenSearch_Dashboards_Jenkinsfile")
+    }
+
+    @Test
     public void testWithActions() {
         super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_Jenkinsfile")
+    }
+
+    @Test
+    public void testWithActions_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_OpenSearch_Dashboards_Jenkinsfile")
     }
 }

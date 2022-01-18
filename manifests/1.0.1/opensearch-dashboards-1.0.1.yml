@@ -1,8 +1,9 @@
+---
 build:
   name: OpenSearch Dashboards
   version: 1.0.1
 components:
-- name: OpenSearch-Dashboards
-  ref: '1.0'
-  repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+  - name: OpenSearch-Dashboards
+    ref: '1.0'
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
 schema-version: '1.0'

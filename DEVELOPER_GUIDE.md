@@ -134,7 +134,7 @@ build.sh: error: the following arguments are required: manifest
 
 ### Code Linting
 
-This project uses a [pre-commit hook](https://pre-commit.com/) for linting Python code.
+This project uses a [pre-commit hook](https://pre-commit.com/) for linting Python code and YAML files.
 
 ```
 $ pipenv run pre-commit install
@@ -162,6 +162,14 @@ Use [black](https://black.readthedocs.io/en/stable/) to auto-format your code.
 $ pipenv run black .
 All done! ✨ 🍰 ✨
 23 files left unchanged.
+```
+
+This project uses [yamllint](https://yamllint.readthedocs.io/) to enforce formatting in YAML files.
+
+Use [yamlfix](https://github.com/lyz-code/yamlfix) to auto-format your YAML files.
+
+```
+$ git status -s | grep -e "[MA?]\s.*.y[a]*ml" | xargs pipenv run yamlfix 
 ```
 
 If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/tests.yml) will make sure to remind you. 

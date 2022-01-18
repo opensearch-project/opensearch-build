@@ -4,7 +4,7 @@
 
 ## Sanity Testing the Distribution
 
-This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](../../.github/workflows/manifests.yml) in this repository. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch version.
+This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](../../.github/workflows/manifests.yml) in this repository. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch or OpenSearch Dashboards versions.
 
 To use checks, nest them under `checks` in the manifest.
 
@@ -23,11 +23,12 @@ To use checks, nest them under `checks` in the manifest.
 
 The following checks are available.
 
-| name                                          | description                                                   |
-|-----------------------------------------------|---------------------------------------------------------------|
-| gradle:properties:version                     | Check version of the component.                               |
-| gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch.        |
-| gradle:publish                                | Check that publishing to Maven local works, and publish.      |
+| name                                          | description                                                                       |
+|-----------------------------------------------|-----------------------------------------------------------------------------------|
+| gradle:properties:version                     | Check version of the component.                                                   |
+| gradle:dependencies:opensearch.version        | Check dependency on the correct version of OpenSearch in gradle properties.       |
+| gradle:publish                                | Check that publishing to Maven local works, and publish.                          |
+| npm:package:version                           | Check dependency on the correct version of OpenSearch Dashboards in package.json. |
 
 The following example sanity-checks components in the the OpenSearch 1.2.0 manifest.
 

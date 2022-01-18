@@ -1,36 +1,36 @@
 ---
 manifest:
-  schema-version: "1.0"
+  schema-version: '1.0'
 build:
   version: 1.0.1
   platform: linux
   architecture: x64
 products:
-  opensearch: 
+  opensearch:
     opensearch-min: https://artifacts.opensearch.org/releases/core/opensearch/1.0.0/opensearch-min-1.0.0-linux-x64.tar.gz
     libs:
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knnlib-1.0.0.0-linux-x64.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knnlib-1.0.0.0-linux-x64.zip
     plugins:
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-sql-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-alerting-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-job-scheduler-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-security-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-performance-analyzer-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-index-management-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knn-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-anomaly-detection-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-reports-scheduler-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-asynchronous-search-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-notebooks-1.0.0.0.zip
-  opensearch-dashboards: 
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-sql-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-alerting-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-job-scheduler-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-security-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-performance-analyzer-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-index-management-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-knn-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-anomaly-detection-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-reports-scheduler-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-asynchronous-search-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/opensearch_plugins/opensearch-notebooks-1.0.0.0.zip
+  opensearch-dashboards:
     opensearch-dashboards-min: https://artifacts.opensearch.org/releases/core/opensearch-dashboards/1.0.0/opensearch-dashboards-min-1.0.0-linux-x64.tar.gz
     plugins:
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/query-workbench-dashboards-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/security-dashboards-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/alerting-dashboards-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/notebooks-dashboards-1.0.1.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/gantt-chart-dashboards-1.0.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/reports-dashboards-1.0.1.0-linux-x64.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/trace-analytics-dashboards-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/query-workbench-dashboards-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/security-dashboards-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/alerting-dashboards-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/notebooks-dashboards-1.0.1.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/gantt-chart-dashboards-1.0.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/reports-dashboards-1.0.1.0-linux-x64.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/trace-analytics-dashboards-1.0.0.0.zip

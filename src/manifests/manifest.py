@@ -12,6 +12,7 @@ from typing import IO, Any, Dict, Generic, Optional, Type, TypeVar
 
 import validators
 import yaml
+import yamlfix
 from cerberus import Validator
 
 T = TypeVar('T', bound='Manifest')
@@ -96,7 +97,14 @@ class Manifest(ABC, Generic[T]):
 
     def to_file(self, path: str) -> None:
         with open(path, "w") as file:
-            yaml.safe_dump(self.to_dict(), file)
+            file.write(
+                yamlfix.fix_code(
+                    yaml.safe_dump(
+                        self.to_dict(),
+                        sort_keys=False
+                    )
+                )
+            )
 
     @abstractmethod
     def __init__(self, data: Any) -> None:

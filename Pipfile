@@ -21,6 +21,8 @@ cerberus = "~=1.3.4"
 psutil = "~=5.8"
 atomicwrites = "*"
 validators = "*"
+yamlfix = "*"
+yamllint = "*"
 
 [dev-packages]
 
