@@ -1,0 +1,23 @@
+---
+name: yaml-lint
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: 3.7
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Pipenv and Dependencies
+        run: |
+          python -m pip install --upgrade pipenv wheel
+          pipenv install --deploy --dev
+      - name: Lint YAML files
+        run: |-
+          pipenv run yamllint .

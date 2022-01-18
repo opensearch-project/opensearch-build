@@ -1,0 +1,16 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 2.0.0
+ci:
+  image:
+    name: image-name
+    args: -e JAVA_HOME=/opt/java/openjdk-11
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: main
+    checks:
+      - gradle:publish
+      - gradle:properties:version

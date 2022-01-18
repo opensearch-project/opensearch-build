@@ -1,3 +1,4 @@
+---
 name: OpenSearch
 components:
   - name: index-management
@@ -8,7 +9,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        path.repo: ["/tmp"]
+        path.repo: [/tmp]
     bwc-test:
       test-configs:
         - with-security
@@ -42,7 +43,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        plugins.destination.host.deny_list : [10.0.0.0/8, 127.0.0.1]
+        plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
     bwc-test:
       test-configs:
         - with-security
