@@ -88,6 +88,17 @@ class TestManifest(unittest.TestCase):
             with open(output_path) as f:
                 self.assertEqual(yaml.safe_load(f), manifest.to_dict())
 
+    def test_to_file_formatted(self) -> None:
+        manifest_path = os.path.join(self.data_path, "min.yml")
+        manifest = TestManifest.SampleManifest.from_path(manifest_path)
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "manifest.yml")
+            manifest.to_file(output_path)
+            with open(output_path) as f:
+                written_manifest = f.read()
+
+        self.assertEqual("---\nschema-version: '1.0'\n", written_manifest)
+
     def test_invalid_version_no_value_3_14(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-no-value.yml")
 

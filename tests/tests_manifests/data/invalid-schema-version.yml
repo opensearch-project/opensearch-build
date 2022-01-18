@@ -1,1 +1,2 @@
-schema-version: 'invalid'
+---
+schema-version: invalid

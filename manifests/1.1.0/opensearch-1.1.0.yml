@@ -1,5 +1,5 @@
 ---
-schema-version: "1.0"
+schema-version: '1.0'
 build:
   name: OpenSearch
   version: 1.1.0
@@ -41,7 +41,7 @@ components:
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: tags/1.1.0.0
     checks:
-      - gradle:properties:version    
+      - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: performance-analyzer-rca
     repository: https://github.com/opensearch-project/performance-analyzer-rca.git
@@ -87,14 +87,14 @@ components:
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
     ref: tags/1.1.0.0
-    working_directory: "reports-scheduler"
+    working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     ref: tags/1.1.0.0
-    working_directory: "opensearch-notebooks"
+    working_directory: opensearch-notebooks
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
