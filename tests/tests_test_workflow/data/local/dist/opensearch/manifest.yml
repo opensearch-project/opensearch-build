@@ -1,3 +1,4 @@
+---
 build:
   architecture: x64
   id: 5a9c75147384451bae53a57631df8259
@@ -6,29 +7,29 @@ build:
   platform: linux
   version: 1.2.0
 components:
-- commit_id: c6e79ef3106166b258fe20a82811161effbef993
-  location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/dist/opensearch-min-1.2.0-linux-x64.tar.gz
-  name: OpenSearch
-  ref: 1.x
-  repository: https://github.com/opensearch-project/OpenSearch.git
-- commit_id: 515ce06b1437ee1da0a7b1e60b9e320ec870ccdb
-  location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-job-scheduler-1.2.0.0.zip
-  name: job-scheduler
-  ref: main
-  repository: https://github.com/opensearch-project/job-scheduler.git
-- commit_id: 657160f1de788f44f26102412cebad012309056c
-  location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-security-1.2.0.0.zip
-  name: security
-  ref: main
-  repository: https://github.com/opensearch-project/security.git
-- commit_id: e0e41df2b2e36c187edd3c45e214451208b10309
-  location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-alerting-1.2.0.0.zip
-  name: alerting
-  ref: main
-  repository: https://github.com/opensearch-project/alerting.git
-- commit_id: ab122799283a58bb3f5c6f6d8576c7ba5875f13b
-  location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-index-management-1.2.0.0.zip
-  name: index-management
-  ref: main
-  repository: https://github.com/opensearch-project/index-management.git
+  - commit_id: c6e79ef3106166b258fe20a82811161effbef993
+    location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/dist/opensearch-min-1.2.0-linux-x64.tar.gz
+    name: OpenSearch
+    ref: 1.x
+    repository: https://github.com/opensearch-project/OpenSearch.git
+  - commit_id: 515ce06b1437ee1da0a7b1e60b9e320ec870ccdb
+    location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-job-scheduler-1.2.0.0.zip
+    name: job-scheduler
+    ref: main
+    repository: https://github.com/opensearch-project/job-scheduler.git
+  - commit_id: 657160f1de788f44f26102412cebad012309056c
+    location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-security-1.2.0.0.zip
+    name: security
+    ref: main
+    repository: https://github.com/opensearch-project/security.git
+  - commit_id: e0e41df2b2e36c187edd3c45e214451208b10309
+    location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-alerting-1.2.0.0.zip
+    name: alerting
+    ref: main
+    repository: https://github.com/opensearch-project/alerting.git
+  - commit_id: ab122799283a58bb3f5c6f6d8576c7ba5875f13b
+    location: /home/ubuntu/source/opensearch-project/opensearch-build/opensearch-build/builds/plugins/opensearch-index-management-1.2.0.0.zip
+    name: index-management
+    ref: main
+    repository: https://github.com/opensearch-project/index-management.git
 schema-version: '1.1'

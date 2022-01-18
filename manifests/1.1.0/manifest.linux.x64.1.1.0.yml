@@ -1,20 +1,20 @@
 ---
 manifest:
-  schema-version: "1.0"
+  schema-version: '1.0'
 build:
   version: 1.1.0
   platform: linux
   architecture: x64
 products:
-  opensearch-dashboards: 
+  opensearch-dashboards:
     opensearch-dashboards-min: https://artifacts.opensearch.org/release-candidates/core/opensearch-dashboards/1.1.0/opensearch-dashboards-min-1.1.0-linux-x64.tar.gz
     plugins:
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/query-workbench-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/security-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/alerting-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/notebooks-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/gantt-chart-dashboards-1.1.0.0.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/reports-dashboards-1.1.0.0-linux-x64.zip
-        - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/trace-analytics-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/query-workbench-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/anomaly-detection-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/security-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/alerting-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/index-management-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/notebooks-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/gantt-chart-dashboards-1.1.0.0.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/reports-dashboards-1.1.0.0-linux-x64.zip
+      - s3://staging.opensearch.amazon.com/plugins-temp/dashboard_plugins/trace-analytics-dashboards-1.1.0.0.zip
