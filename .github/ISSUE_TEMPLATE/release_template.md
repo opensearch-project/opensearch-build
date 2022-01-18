@@ -69,7 +69,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 ### Post Release
 
 - [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/issues/378#issuecomment-999700848) for each component.
-- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags.
+- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
 - [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
 - [ ] Lower the [frequency of builds](https://github.com/opensearch-project/opensearch-build/pull/1475) for this version of OpenSearch and/or OpenSearch Dashboards.
 - [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
