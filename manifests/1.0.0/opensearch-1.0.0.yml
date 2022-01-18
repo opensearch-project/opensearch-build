@@ -1,8 +1,8 @@
 ---
-schema-version: "1.0"
+schema-version: '1.0'
 build:
   name: OpenSearch
-  version: "1.0.0"
+  version: 1.0.0
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
@@ -22,12 +22,12 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: tags/1.0.0.0
-#  - name: performance-analyzer-rca
-#    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
-#    ref: tags/1.0.0.0
-#  - name: performance-analyzer
-#    repository: https://github.com/opensearch-project/performance-analyzer.git
-#    ref: tags/1.0.0.0
+  # - name: performance-analyzer-rca
+  #   repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+  #   ref: tags/1.0.0.0
+  # - name: performance-analyzer
+  #   repository: https://github.com/opensearch-project/performance-analyzer.git
+  #   ref: tags/1.0.0.0
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: tags/1.0.0.0
@@ -43,8 +43,8 @@ components:
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
     ref: tags/1.0.0.0
-    working_directory: "reports-scheduler"
+    working_directory: reports-scheduler
   - name: dashboards-notebooks
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     ref: tags/1.0.0.0
-    working_directory: "opensearch-notebooks"
+    working_directory: opensearch-notebooks

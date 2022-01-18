@@ -1,27 +1,33 @@
+---
 default_stages: [commit]
 default_language_version:
   python: python3.7
 repos:
-- repo: local
-  hooks:
-  - id: isort
-    stages: [commit]
-    name: isort
-    entry: bash -c 'pipenv run isort --check .'
-    language: system
-    types: [python]
-  - id: flake8
-    stages: [commit]
-    name: flake8
-    entry: bash -c 'pipenv run flake8 .'
-    language: system
-  - id: mypy
-    stages: [commit]
-    name: mypy
-    entry: bash -c 'pipenv run mypy src/build_workflow tests/tests_build_workflow src/checkout_workflow tests/tests_checkout_workflow src/run_assemble.py tests/test_run_assemble.py src/assemble_workflow tests/tests_assemble_workflow src/manifests tests/tests_manifests'
-    language: system
-  - id: pytest
-    stages: [commit]
-    name: pytest
-    entry: bash -c 'pipenv run pytest'
-    language: system
+  - repo: local
+    hooks:
+      - id: isort
+        stages: [commit]
+        name: isort
+        entry: bash -c 'pipenv run isort --check .'
+        language: system
+        types: [python]
+      - id: flake8
+        stages: [commit]
+        name: flake8
+        entry: bash -c 'pipenv run flake8 .'
+        language: system
+      - id: mypy
+        stages: [commit]
+        name: mypy
+        entry: bash -c 'pipenv run mypy src/build_workflow tests/tests_build_workflow src/checkout_workflow tests/tests_checkout_workflow src/run_assemble.py tests/test_run_assemble.py src/assemble_workflow tests/tests_assemble_workflow src/manifests tests/tests_manifests'
+        language: system
+      - id: pytest
+        stages: [commit]
+        name: pytest
+        entry: bash -c 'pipenv run pytest'
+        language: system
+      - id: yamllint
+        stages: [commit]
+        name: yamllint
+        entry: bash -c 'pipenv run yamllint .'
+        language: system
