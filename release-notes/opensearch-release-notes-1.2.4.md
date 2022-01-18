@@ -11,9 +11,9 @@
 
 ### OpenSearch Anomaly-Detection
 
-* upgrade gson to 2.8.9 ([#354](https://github.com/opensearch-project/anomaly-detection/pull/354))
-* fix missing commons-lang3;update job scheduler plugin zip ([#364](https://github.com/opensearch-project/anomaly-detection/pull/364))
-* remove jcenter dependency ([#361](https://github.com/opensearch-project/anomaly-detection/pull/361))
+* Upgrade gson to 2.8.9 ([#354](https://github.com/opensearch-project/anomaly-detection/pull/354))
+* Fix missing commons-lang3;update job scheduler plugin zip ([#364](https://github.com/opensearch-project/anomaly-detection/pull/364))
+* Remove jcenter dependency ([#361](https://github.com/opensearch-project/anomaly-detection/pull/361))
 
 ### OpenSearch Reports Scheduler
 
@@ -35,8 +35,8 @@
     
 ### Opensearch Observability
 
-* Backporting CVE updates [#369](https://github.com/opensearch-project/observability/pull/369)
-* Incremented version to 1.2.4. [#362](https://github.com/opensearch-project/observability/pull/362)
+* Backporting CVE updates ([#369](https://github.com/opensearch-project/observability/pull/369))
+* Incremented version to 1.2.4. ([#362](https://github.com/opensearch-project/observability/pull/362))
 
 ### Opensearch Security
 
