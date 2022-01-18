@@ -24,19 +24,19 @@ pipeline {
                 description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
                 trim: true
         )
+        string(
+                name: 'IMAGE_IN_STAGING',
+                description: 'Image name on stating. Eg: ci-runner:1.3.0',
+                trim: true
+        )
         choice(
                 choices: ['staging', 'production'],
                 name: 'ENVIRONMENT',
                 description: 'Are we pushing docker images to staging (opensearchstaging) or production (opensearchproject) account.'
         )
         string(
-                name: 'SOURCE_IMAGE_IN_STAGING',
-                description: 'Only required when ENVIRONMENT is Production- Staging Image tag (Source to copy the image). Eg: ci-runner:1.3.0',
-                trim: true
-        )
-        string(
-                name: 'DESTINATION_IMAGE_IN_PROD',
-                description: 'Only required when ENVIRONMENT is Production - Production Image tag (Destination to copy the image to). Eg: ci-runner:1.3.0',
+                name: 'IMAGE_IN_PROD',
+                description: 'Only required when ENVIRONMENT is Production - Image in prod (Destination to copy the image to). Eg: ci-runner:1.3.0',
                 trim: true
         )
     }
@@ -45,23 +45,23 @@ pipeline {
             agent none
             steps {
                 script {
-                    if (env.ENVIRONMENT == 'production'
-                            && (!params.SOURCE_IMAGE_IN_STAGING.contains(":") || !params.DESTINATION_IMAGE_IN_PROD.contains(":"))) {
+                    if (ENVIRONMENT == 'production'
+                            && (!IMAGE_IN_STAGING.contains(":") || !IMAGE_IN_PROD.contains(":"))) {
                         currentBuild.result = 'ABORTED'
-                        error('SOURCE_IMAGE_IN_STAGING parameter or DESTINATION_IMAGE_IN_PROD is incorrect')
+                        error('IMAGE_IN_STAGING parameter or IMAGE_IN_PROD is incorrect')
                     }
-                    if(env.ENVIRONMENT == 'staging'
-                            && (params.DOCKER_BUILD_SCRIPT_WITH_COMMANDS == null
-                                   || params.DOCKER_BUILD_SCRIPT_WITH_COMMANDS == 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')) {
+                    if(ENVIRONMENT == 'staging'
+                            && (DOCKER_BUILD_SCRIPT_WITH_COMMANDS == null
+                            || DOCKER_BUILD_SCRIPT_WITH_COMMANDS == 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>')) {
                                 currentBuild.result = 'ABORTED'
-                                error('SOURCE_IMAGE_IN_STAGING parameter or DESTINATION_IMAGE_IN_PROD is incorrect')
+                                error('DOCKER_BUILD_SCRIPT_WITH_COMMANDS parameter is not set')
                     }
                 }
             }
         }
         stage('docker-build-dockerhub-staging') {
             when{
-                expression{ params.ENVIRONMENT ==  'staging'}
+                expression{ ENVIRONMENT ==  'staging'}
             }
             agent {
                 docker {
@@ -95,7 +95,7 @@ pipeline {
         }
         stage('docker-build-dockerhub-production') {
             when {
-                expression { params.ENVIRONMENT == 'production' }
+                expression { ENVIRONMENT == 'production' }
             }
             agent {
                 docker {
@@ -109,8 +109,8 @@ pipeline {
                 script {
                     install_gcrane()
                     copyDockerImage(
-                            sourceImagePath: "opensearchstaging/${SOURCE_IMAGE_IN_STAGING}",
-                            destinationImagePath: "opensearchproject/${DESTINATION_IMAGE_IN_PROD}",
+                            sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
+                            destinationImagePath: "opensearchproject/${IMAGE_IN_PROD}",
                             destinationType: "docker",
                             destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                     )
@@ -127,7 +127,7 @@ pipeline {
         }
         stage('docker-ecr-staging') {
             when {
-                expression { params.ENVIRONMENT == 'staging' }
+                expression { ENVIRONMENT == 'staging' }
             }
             agent {
                 docker {
@@ -140,8 +140,8 @@ pipeline {
                 script {
                     install_gcrane()
                     copyDockerImage(
-                        sourceImagePath: "opensearchstaging/${SOURCE_IMAGE_IN_STAGING}",
-                        destinationImagePath: "public.ecr.aws/m0o1u6w1/${SOURCE_IMAGE_IN_STAGING}",
+                        sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
+                        destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_IN_STAGING}",
                         destinationType: "ecr",
                         destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1",
                         accountName: "${AWS_ACCOUNT_PUBLIC}"
@@ -159,7 +159,7 @@ pipeline {
         }
         stage('docker-ecr-production') {
             when {
-                expression { params.ENVIRONMENT == 'production' }
+                expression { ENVIRONMENT == 'production' }
             }
             agent {
                 docker {
@@ -172,8 +172,8 @@ pipeline {
                 script {
                     install_gcrane()
                     copyDockerImage(
-                            sourceImagePath: "opensearchstaging/${SOURCE_IMAGE_IN_STAGING}",
-                            destinationImagePath: "public.ecr.aws/p5f6l6i3/${DESTINATION_IMAGE_IN_PROD}",
+                            sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
+                            destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_IN_PROD}",
                             destinationType: "ecr",
                             destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
                             accountName: "${AWS_ACCOUNT_ARTIFACT}"

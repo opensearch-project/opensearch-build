@@ -28,7 +28,6 @@ class TestCopyDockerImage extends BuildPipelineTest {
         })
     }
 
-    @Override
     @Before
     void setUp() {
         super.setUp()
@@ -95,10 +94,23 @@ class TestCopyDockerImage extends BuildPipelineTest {
                 assertThat(call.args.destinationCredentialIdentifier.first(), anyOf(equalTo('public.ecr.aws/p5f6l6i3'),
                         equalTo('public.ecr.aws/m0o1u6w1')))
             }
-            assert call.args.sourceImagePath.first() == sourceImagePath
-            assert call.args.destinationImagePath.first() == destinationImagePath
-            assert call.args.destinationCredentialIdentifier.first() == destinationCredentialIdentifier
-            assert call.args.destinationType.first() == destinationType
         }
+
+        def callList = helper.callStack.findAll { call ->
+            call.methodName == 'copyDockerImage'
+        }
+
+        def callFound = false
+
+        for(call in callList){
+            if( call.args.sourceImagePath.first().equals(sourceImagePath)
+                && call.args.destinationImagePath.first().equals(destinationImagePath)
+                && call.args.destinationCredentialIdentifier.first().equals(destinationCredentialIdentifier)
+                && call.args.destinationType.first().equals(destinationType)){
+                callFound = true
+            }
+        }
+
+        assert callFound
     }
 }

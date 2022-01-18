@@ -1,0 +1,55 @@
+   docker-build-ecr.run()
+      docker-build-ecr.legacySCM(groovy.lang.Closure)
+      docker-build-ecr.library({identifier=jenkins@20211123, retriever=null})
+      docker-build-ecr.pipeline(groovy.lang.Closure)
+         docker-build-ecr.timeout({time=3, unit=HOURS})
+         docker-build-ecr.echo(Executing on agent [label:none])
+         docker-build-ecr.stage(check-params, groovy.lang.Closure)
+            docker-build-ecr.echo(Executing on agent [label:none])
+            docker-build-ecr.script(groovy.lang.Closure)
+         docker-build-ecr.echo(Skipping stage docker-build-dockerhub-staging)
+         docker-build-ecr.stage(docker-build-dockerhub-production, groovy.lang.Closure)
+            docker-build-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder]])
+            docker-build-ecr.script(groovy.lang.Closure)
+               docker-build-ecr.sh(
+        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
+            -o go-containerregistry.tar.gz
+        tar -zxvf go-containerregistry.tar.gz
+        chmod +x gcrane
+        mv gcrane /usr/local/bin/
+      )
+               docker-build-ecr.copyDockerImage({sourceImagePath=opensearchstaging/ci-runner-staging:latest, destinationImagePath=opensearchproject/ci-runner-prod:latest, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
+                  copyDockerImage.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyDockerImage.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyDockerImage.sh(
+                set -ex
+                echo Login to dummy_credentials_id
+                docker logout && docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
+                gcrane cp opensearchstaging/ci-runner-staging:latest opensearchproject/ci-runner-prod:latest
+            )
+         docker-build-ecr.script(groovy.lang.Closure)
+            docker-build-ecr.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-build-ecr.sh(docker logout)
+         docker-build-ecr.echo(Skipping stage docker-ecr-staging)
+         docker-build-ecr.stage(docker-ecr-production, groovy.lang.Closure)
+            docker-build-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+            docker-build-ecr.script(groovy.lang.Closure)
+               docker-build-ecr.sh(
+        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
+            -o go-containerregistry.tar.gz
+        tar -zxvf go-containerregistry.tar.gz
+        chmod +x gcrane
+        mv gcrane /usr/local/bin/
+      )
+               docker-build-ecr.copyDockerImage({sourceImagePath=opensearchstaging/ci-runner-staging:latest, destinationImagePath=public.ecr.aws/p5f6l6i3/ci-runner-prod:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/p5f6l6i3, accountName=aws_account_artifact})
+                  copyDockerImage.withAWS({role=Upload_ECR_Image, roleAccount=aws_account_artifact, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     copyDockerImage.sh(
+                docker logout
+                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/p5f6l6i3
+                gcrane cp opensearchstaging/ci-runner-staging:latest public.ecr.aws/p5f6l6i3/ci-runner-prod:latest
+            )
+         docker-build-ecr.script(groovy.lang.Closure)
+            docker-build-ecr.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-build-ecr.sh(docker logout)
