@@ -61,6 +61,7 @@ pipeline {
                                 currentBuild.result = 'ABORTED'
                                 error('DOCKER_BUILD_SCRIPT_WITH_COMMANDS parameter is not set')
                     }
+                    install_gcrane()
                 }
             }
         }
@@ -93,7 +94,6 @@ pipeline {
             }
             steps {
                 script {
-                    install_gcrane()
                     copyDockerImage(
                         sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
                         destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_IN_STAGING}",
@@ -110,7 +110,6 @@ pipeline {
             }
             steps {
                 script {
-                    install_gcrane()
                     copyDockerImage(
                             sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
                             destinationImagePath: "opensearchproject/${IMAGE_IN_PROD}",
@@ -126,7 +125,6 @@ pipeline {
             }
             steps {
                 script {
-                    install_gcrane()
                     copyDockerImage(
                             sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
                             destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_IN_PROD}",

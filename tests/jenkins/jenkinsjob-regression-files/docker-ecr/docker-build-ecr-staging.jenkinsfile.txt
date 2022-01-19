@@ -3,10 +3,16 @@
       docker-build-ecr.library({identifier=jenkins@20211123, retriever=null})
       docker-build-ecr.pipeline(groovy.lang.Closure)
          docker-build-ecr.timeout({time=3, unit=HOURS})
-         docker-build-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         docker-build-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          docker-build-ecr.stage(check-params, groovy.lang.Closure)
-            docker-build-ecr.echo(Executing on agent [label:none])
             docker-build-ecr.script(groovy.lang.Closure)
+               docker-build-ecr.sh(
+        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
+            -o go-containerregistry.tar.gz
+        tar -zxvf go-containerregistry.tar.gz
+        chmod +x gcrane
+        mv gcrane /usr/local/bin/
+      )
          docker-build-ecr.stage(docker-build-dockerhub-staging, groovy.lang.Closure)
             docker-build-ecr.script(groovy.lang.Closure)
                docker-build-ecr.git({url=dummy_build_git_repository, branch=main})
@@ -19,13 +25,6 @@
             docker-build-ecr.sh(docker image prune -f --all)
          docker-build-ecr.stage(docker-ecr-staging, groovy.lang.Closure)
             docker-build-ecr.script(groovy.lang.Closure)
-               docker-build-ecr.sh(
-        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
-            -o go-containerregistry.tar.gz
-        tar -zxvf go-containerregistry.tar.gz
-        chmod +x gcrane
-        mv gcrane /usr/local/bin/
-      )
                docker-build-ecr.copyDockerImage({sourceImagePath=opensearchstaging/ci-runner-staging:latest, destinationImagePath=public.ecr.aws/m0o1u6w1/ci-runner-staging:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/m0o1u6w1, accountName=aws_account_public})
                   copyDockerImage.sh(docker logout)
                   copyDockerImage.withAWS({role=Upload_ECR_Image, roleAccount=aws_account_public, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
@@ -35,3 +34,7 @@
             )
          docker-build-ecr.echo(Skipping stage docker-build-dockerhub-production)
          docker-build-ecr.echo(Skipping stage docker-ecr-production)
+         docker-build-ecr.script(groovy.lang.Closure)
+            docker-build-ecr.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-build-ecr.sh(docker logout)
