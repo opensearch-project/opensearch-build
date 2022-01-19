@@ -15,7 +15,7 @@ pipeline {
         string(
                 defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
                 name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
-                description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
+                description: 'The script path of the docker build script',
                 trim: true
         )
         string(
