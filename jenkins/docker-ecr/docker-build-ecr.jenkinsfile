@@ -13,18 +13,6 @@ pipeline {
     }
     parameters {
         string(
-                defaultValue: 'https://github.com/opensearch-project/opensearch-build',
-                name: 'DOCKER_BUILD_GIT_REPOSITORY',
-                description: 'The git repository name that contains dockerfiles and the docker build script.',
-                trim: true
-        )
-        string(
-                defaultValue: 'main',
-                name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
-                description: 'The git reference (branch/tag/commit_id) of above repository.',
-                trim: true
-        )
-        string(
                 defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
                 name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
                 description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
@@ -71,7 +59,7 @@ pipeline {
             }
             steps {
                 script {
-                    git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
+                    git url: "https://github.com/opensearch-project/opensearch-build", branch: "main"
                     def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh '''

@@ -15,7 +15,7 @@
       )
          docker-build-ecr.stage(docker-build-dockerhub-staging, groovy.lang.Closure)
             docker-build-ecr.script(groovy.lang.Closure)
-               docker-build-ecr.git({url=dummy_build_git_repository, branch=main})
+               docker-build-ecr.git({url=https://github.com/opensearch-project/opensearch-build, branch=main})
                docker-build-ecr.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                docker-build-ecr.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                   docker-build-ecr.sh(
