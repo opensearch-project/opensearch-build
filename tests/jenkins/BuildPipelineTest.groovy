@@ -43,12 +43,14 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
         })
 
         binding.setVariable('scm', {})
-        
+
         helper.registerAllowedMethod("legacySCM", [Closure.class], null)
-        
+
         helper.registerAllowedMethod("library", [Map.class], { Map args ->
             helper.getLibLoader().loadLibrary(args["identifier"])
             return new LibClassLoader(helper, null)
         })
+
+        helper.registerAllowedMethod("cleanWs", [Map])
     }
 }

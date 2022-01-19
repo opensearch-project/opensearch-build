@@ -39,8 +39,6 @@ class TestDataPrepperPromoteDistributionArtifacts extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('s3Upload', [Map], {})
-
-        helper.registerAllowedMethod("cleanWs", [Map])
     }
 
     @Test

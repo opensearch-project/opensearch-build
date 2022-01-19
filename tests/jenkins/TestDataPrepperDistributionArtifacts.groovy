@@ -37,9 +37,6 @@ class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
         // Upload to s3
         TestUploadToS3.setUpVariables(binding, helper)
-
-        // Post cleanup
-        helper.registerAllowedMethod("cleanWs", [Map])
     }
 
     @Test
