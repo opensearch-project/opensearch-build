@@ -18,7 +18,6 @@ import static org.hamcrest.MatcherAssert.assertThat
 class TestCopyDockerImage extends BuildPipelineTest {
 
     static void setUpVariables(binding, helper){
-        binding.setVariable('CREDENTIAL_ID', 'dummy_credentials_id')
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')
 
