@@ -8,7 +8,7 @@ pipeline {
         docker {
             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
             image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-            args '-u root'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
     parameters {
@@ -48,7 +48,6 @@ pipeline {
     }
     stages {
         stage('check-params') {
-            agent none
             steps {
                 script {
                     if (ENVIRONMENT == 'production'
@@ -136,6 +135,14 @@ pipeline {
                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
                     )
                 }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+                sh "docker logout"
             }
         }
     }
