@@ -17,7 +17,6 @@ class TestDockerBuildEcrJob extends BuildPipelineTest {
 
         def accountName = 'aws_account_public'
 
-
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY', 'dummy_build_git_repository')
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', 'main')
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', 'dummy_command')
@@ -49,7 +48,6 @@ class TestDockerBuildEcrJob extends BuildPipelineTest {
         binding.setVariable('IMAGE_IN_PROD', imageInProd)
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', accountName)
         binding.setVariable('ENVIRONMENT', 'production')
-
 
         helper.registerAllowedMethod("cleanWs", [Map])
 

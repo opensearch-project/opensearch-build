@@ -4,7 +4,13 @@ pipeline {
     options {
         timeout(time: 3, unit: 'HOURS')
     }
-    agent none
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
+            args '-u root'
+        }
+    }
     parameters {
         string(
                 defaultValue: 'https://github.com/opensearch-project/opensearch-build',
@@ -63,64 +69,21 @@ pipeline {
             when{
                 expression{ ENVIRONMENT ==  'staging'}
             }
-            agent {
-                docker {
-                    label 'Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
-                    alwaysPull true
-                }
-            }
             steps {
                 script {
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
                     def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh '''
-                                set -ex
-                                echo Login to $CREDENTIAL_ID
                                 docker logout && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
-                            '''
+                           '''
                     }
                 }
             }
             post() {
                 always {
                     script {
-                        postCleanup()
-                        sh "docker logout && docker image prune -f --all"
-                    }
-                }
-            }
-        }
-        stage('docker-build-dockerhub-production') {
-            when {
-                expression { ENVIRONMENT == 'production' }
-            }
-            agent {
-                docker {
-                    label 'Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-                    args '-u root'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    install_gcrane()
-                    copyDockerImage(
-                            sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
-                            destinationImagePath: "opensearchproject/${IMAGE_IN_PROD}",
-                            destinationType: "docker",
-                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                    )
-                }
-                post() {
-                    always {
-                        script {
-                            postCleanup()
-                            sh "docker logout"
-                        }
+                        sh "docker image prune -f --all"
                     }
                 }
             }
@@ -128,13 +91,6 @@ pipeline {
         stage('docker-ecr-staging') {
             when {
                 expression { ENVIRONMENT == 'staging' }
-            }
-            agent {
-                docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-                    args '-u root'
-                }
             }
             steps {
                 script {
@@ -148,25 +104,26 @@ pipeline {
                     )
                 }
             }
-            post() {
-                always {
-                    script {
-                        postCleanup()
-                        sh "docker logout"
-                    }
+        }
+        stage('docker-build-dockerhub-production') {
+            when {
+                expression { ENVIRONMENT == 'production' }
+            }
+            steps {
+                script {
+                    install_gcrane()
+                    copyDockerImage(
+                            sourceImagePath: "opensearchstaging/${IMAGE_IN_STAGING}",
+                            destinationImagePath: "opensearchproject/${IMAGE_IN_PROD}",
+                            destinationType: "docker",
+                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                    )
                 }
             }
         }
         stage('docker-ecr-production') {
             when {
                 expression { ENVIRONMENT == 'production' }
-            }
-            agent {
-                docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-                    args '-u root'
-                }
             }
             steps {
                 script {
@@ -178,14 +135,6 @@ pipeline {
                             destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
                     )
-                }
-            }
-            post() {
-                always {
-                    script {
-                        postCleanup()
-                        sh "docker logout"
-                    }
                 }
             }
         }
