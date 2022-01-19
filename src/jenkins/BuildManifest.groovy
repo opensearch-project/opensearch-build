@@ -36,12 +36,6 @@ class BuildManifest implements Serializable {
                     this.architecture,
             ].join('-') + '.tar.gz'
         }
-
-        String getFilenameWithExtension(String platform = null, String architecture = null) {
-            String resolvedPlatform = platform ?: this.platform
-            String resolvedArchitecture = architecture ?: this.architecture
-            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${resolvedPlatform == 'windows' ? 'zip' : 'tar.gz'}"
-        }
     }
 
     class Components extends HashMap<String, Component> {
@@ -104,15 +98,6 @@ class BuildManifest implements Serializable {
             'builds',
             this.build.getFilename(),
             'manifest.yml'
-        ].join("/")
-    }
-
-    public String getArtifactUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
-        return [
-            this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
-            'dist',
-            this.build.getFilename(),
-            this.build.getFilenameWithExtension(platform, architecture)
         ].join("/")
     }
 
