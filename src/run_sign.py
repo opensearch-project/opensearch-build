@@ -15,13 +15,20 @@ from sign_workflow.sign_artifacts import SignArtifacts
 from sign_workflow.signer import Signer
 from system import console
 
-ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
+ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
+
+
+def null_str(val):
+    if not val:
+        return None
+    return val
+
 
 
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
     parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
-    parser.add_argument("--component", nargs="?", help="Component name")
+    parser.add_argument("--component", nargs="?", type=null_str, help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
     parser.add_argument("--sigtype", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
     parser.add_argument(
