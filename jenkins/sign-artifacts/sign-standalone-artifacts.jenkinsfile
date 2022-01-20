@@ -19,15 +19,17 @@ pipeline {
                 trim: true,
                 description: 'Path to upload to artifacts and signatures on s3. Eg: dummy_project/1.0'
         )
-        choice(
-                choices: ['linux'],
+        string(
+                defaultValue: 'linux',
                 name: 'DISTRIBUTION_PLATFORM',
+                trim: true,
                 description: 'What platform is this distribution build for?'
         )
-        choice(
-                choices: ['.sig'],
+        string(
+                defaultValue: '.sig',
                 name: 'SIGNATURE_TYPE',
-                description: 'What is signature file type?'
+                trim: true,
+                description: 'What is signature file type?  See https://github.com/opensearch-project/opensearch-build/blob/main/src/sign_workflow/README.md for all options'
         )
     }
     stages {

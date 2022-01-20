@@ -15,7 +15,7 @@ from sign_workflow.sign_artifacts import SignArtifacts
 from sign_workflow.signer import Signer
 from system import console
 
-ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
+ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
 
 
 def main():
