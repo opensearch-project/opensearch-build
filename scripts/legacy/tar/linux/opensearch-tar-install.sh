@@ -14,7 +14,7 @@ chmod 755 $OPENSEARCH_HOME/bin/performance-analyzer-agent-cli
 echo "done security"
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/log4j2.xml \
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
-              -XX:InitialBootClassLoaderMetaspaceSize=30720 -XX:MaxRAM=400m"
+              -XX:MaxRAM=400m"
 
 OPENSEARCH_MAIN_CLASS="org.opensearch.performanceanalyzer.PerformanceAnalyzerApp" \
 OPENSEARCH_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opensearch-performance-analyzer \
