@@ -16,13 +16,12 @@
          docker-build-ecr.stage(docker-build-dockerhub-staging, groovy.lang.Closure)
             docker-build-ecr.script(groovy.lang.Closure)
                docker-build-ecr.git({url=https://github.com/opensearch-project/opensearch-build, branch=main})
-               docker-build-ecr.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-               docker-build-ecr.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+               docker-build-ecr.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=dummy_docker_username, passwordVariable=docker_password})
+               docker-build-ecr.withCredentials([[dummy_docker_username, docker_password]], groovy.lang.Closure)
                   docker-build-ecr.sh(
+                                set -e
                                 docker logout && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
                            )
-         docker-build-ecr.script(groovy.lang.Closure)
-            docker-build-ecr.sh(docker image prune -f --all)
          docker-build-ecr.stage(docker-ecr-staging, groovy.lang.Closure)
             docker-build-ecr.script(groovy.lang.Closure)
                docker-build-ecr.copyDockerImage({sourceImagePath=opensearchstaging/ci-runner-staging:latest, destinationImagePath=public.ecr.aws/m0o1u6w1/ci-runner-staging:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/m0o1u6w1, accountName=aws_account_public})
@@ -32,9 +31,7 @@
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0o1u6w1
                 gcrane cp opensearchstaging/ci-runner-staging:latest public.ecr.aws/m0o1u6w1/ci-runner-staging:latest
             )
-         docker-build-ecr.echo(Skipping stage docker-build-dockerhub-production)
-         docker-build-ecr.echo(Skipping stage docker-ecr-production)
          docker-build-ecr.script(groovy.lang.Closure)
             docker-build-ecr.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-            docker-build-ecr.sh(docker logout)
+            docker-build-ecr.sh(docker logout && docker image prune -f --all)
