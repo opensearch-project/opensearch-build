@@ -24,7 +24,6 @@ def null_str(val):
     return val
 
 
-
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
     parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
