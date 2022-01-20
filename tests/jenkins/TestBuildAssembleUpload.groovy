@@ -44,6 +44,7 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
     }
 
     @Test
+    @Ignore("https://github.com/opensearch-project/opensearch-build/issues/1521")
     public void testJenkinsfile() {
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return true
