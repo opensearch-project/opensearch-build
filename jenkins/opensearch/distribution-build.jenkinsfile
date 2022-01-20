@@ -113,19 +113,20 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}"
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_X64 = artifactUrl
 
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
+                            echo "artifactUrl (x64): ${artifactUrl}"
 
-                            String testManifest = "manifests/${TEST_MANIFEST}"
-                            if (fileExists(testManifest)) {
-                                echo "Running x64 integ tests using test manifest found in path ${testManifest}"
-                                runIntegTests(
-                                    testManifest: testManifest,
-                                    buildManifestUrl: buildManifestUrl,
-                                    agentLabel: AGENT_X64
-                                )
-                            } else {
-                                echo "Skipping x64 integ tests since no test manifest was found in path ${testManifest}"
+                            IntegTestsX64: {
+                                // TODO: change back to integ-test when updated in Jenkins
+                                build job: 'Playground/ohltyler-integ-test',
+                                parameters: [
+                                    string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                ]
                             }
                         }
                     }
@@ -150,19 +151,20 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}"
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_ARM64 = artifactUrl
 
                             echo "buildManifestUrl (arm64): ${buildManifestUrl}"
+                            echo "artifactUrl (arm64): ${artifactUrl}"
 
-                            String testManifest = "manifests/${TEST_MANIFEST}"
-                            if (fileExists(testManifest)) {
-                                echo "Running arm64 integ tests using test manifest found in path ${testManifest}"
-                                runIntegTests(
-                                    testManifest: testManifest,
-                                    buildManifestUrl: buildManifestUrl,
-                                    agentLabel: AGENT_ARM64
-                                )
-                            } else {
-                                echo "Skipping arm64 integ tests since no test manifest was found in path ${testManifest}"
+                            IntegTestsArm64: {
+                                // TODO: change back to integ-test when updated in Jenkins
+                                build job: 'Playground/ohltyler-integ-test',
+                                parameters: [
+                                    string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                ]
                             }
                         }
                     }
@@ -178,7 +180,15 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
-                        buildDockerImage()
+
+                        echo "env.ARTIFACT_URL_X64: ${env.ARTIFACT_URL_X64}"
+                        echo "env.ARTIFACT_URL_ARM64: ${env.ARTIFACT_URL_ARM64}"
+                        
+                        buildDockerImage(
+                            inputManifest: "manifests/${INPUT_MANIFEST}",
+                            artifactUrlX64: env.ARTIFACT_URL_X64,
+                            artifactUrlArm64: env.ARTIFACT_URL_ARM64
+                        )
                     }
                 }
             }

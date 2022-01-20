@@ -1,8 +1,8 @@
-void call(Map args = [:]) {
+def call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
+    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
 
-    echo "Assembling ${manifest}"
+    echo "Assembling ${args.inputManifest}"
 
     copyArtifacts(
         filter: "*.zip",
@@ -13,12 +13,14 @@ void call(Map args = [:]) {
 
     unzip(zipFile: "archived-builds.zip")
 
-    def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: manifest))
     String buildManifest = "builds/${inputManifestObj.build.getFilename()}/manifest.yml"
+    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: buildManifest))
 
     assembleUpload(
         args + [
             buildManifest: buildManifest,
         ]
     )
+
+    return buildManifestObj
 }
