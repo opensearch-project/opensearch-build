@@ -249,6 +249,7 @@ All jenkins jobs should have a test case associated with it.
 - Add setups for all libraries used in the job using `this.registerLibTester` (Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
 
 ##### Tests for jenkins libraries
+All jenkins libraries should have a test case associated with it.
 - All tests for libraries should extend `BuildPipelineTest` and implement `LibFunctionTester`
 - implement `void configure(helper, bindings)` method which sets up all the variables used in the library 
 > - Note: This will not include the variables set using function arguments
