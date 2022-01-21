@@ -3,6 +3,12 @@ yaml-files:
   - '*.yaml'
   - '*.yml'
   - .yamllint.yml
+ignore: |
+  bin
+  builds
+  dist
+  test-results
+  deployment/node_modules
 rules:
   document-start: enable
   line-length: disable
