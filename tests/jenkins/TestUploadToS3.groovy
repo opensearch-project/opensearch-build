@@ -5,7 +5,7 @@ import org.junit.Test
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
-class TestUploadToS3 extends BuildPipelineTest implements LibFunctionTester{
+class TestUploadToS3 extends BuildPipelineTest implements LibFunctionTester {
 
     private String sourcePath
     private String bucket

@@ -234,7 +234,28 @@ BUILD SUCCESSFUL in 7s
 
 #### Regression Tests
 
-Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs). For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail. To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs). 
+For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) 
+and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail. 
+To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+
+To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
+
+##### Tests for jenkins job
+All jenkins jobs should have a test case associated with it.
+- Save the regression file for the `jenkins-job` in `tests/jenkins/jenkinsjob-regression-files/<job-name>`
+- All tests for jenkins job should extend `BuildPipelineTest`
+- All tests should have a `setUp()` which is used to set the variables associated with the job
+- Add setups for all libraries used in the job using `this.registerLibTester` (Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
+
+##### Tests for jenkins libraries
+- All tests for libraries should extend `BuildPipelineTest` and implement `LibFunctionTester`
+- implement `void configure(helper, bindings)` method which sets up all the variables used in the library 
+> - Note: This will not include the variables set using function arguments
+- implement `void verifyParams(helper)` method verifies if the params passed to the library are correct.
+- Add setup for the library used in the job using `this.registerLibTester` (Eg: [TestUploadToS3](tests/jenkins/TestUploadToS3.groovy)) in `setUp()` before `super.setUp()` is called.
+- Create a dummy job such as [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) to call and test the function
+  and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
 
 #### Testing in Jenkins
 
