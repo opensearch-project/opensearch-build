@@ -13,26 +13,40 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.core.IsNull.notNullValue
 
 
-class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
+class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest implements LibFunctionTester {
+
+    private List artifactFileNames
+    private String uploadPath
+
 
     @Before
     void setUp() {
+
+        this.artifactFileNames = ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig', 'a_dummy_file.tar.gz']
+        this.uploadPath = 'dummy/upload/path'
+
+        this.registerLibTester(new TestPrintArtifactDownloadUrlsForStaging(
+                artifactFileNames: artifactFileNames,
+                uploadPath: uploadPath
+        ))
+
         super.setUp()
     }
 
     @Test
     void testPrintArtifactDownloadUrlsForStaging() {
-        def filenamesForUrls = ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig', 'a_dummy_file.tar.gz']
-        def uploadPath = 'dummy/upload/path'
-        binding.setVariable('filenamesForUrls', filenamesForUrls)
+
+        binding.setVariable('filenamesForUrls', artifactFileNames)
         binding.setVariable('UPLOAD_PATH', uploadPath)
 
         super.testPipeline("tests/jenkins/jobs/PrintArtifactDownloadUrlsForStaging_Jenkinsfile")
 
-        verifyPrintArtifactDownloadUrlsForStagingParams(helper, filenamesForUrls, uploadPath)
     }
 
-    static void verifyPrintArtifactDownloadUrlsForStagingParams(helper, artifactFileNames, uploadPath) {
+    void configure(helper, bindings){
+    }
+
+    void verifyParams(helper) {
         assert helper.callStack.findAll { call ->
             call.methodName == 'printArtifactDownloadUrlsForStaging'
         }.size() > 0
@@ -52,8 +66,8 @@ class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
         }
 
         for(call in callList){
-            if( call.args.uploadPath.first() == uploadPath
-                    && call.args.artifactFileNames.first().sort() == artifactFileNames.sort() ){
+            if( call.args.uploadPath.first() == this.uploadPath
+                    && call.args.artifactFileNames.first().sort() == this.artifactFileNames.sort() ){
                 callFound = true
             }
         }

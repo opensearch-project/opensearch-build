@@ -5,9 +5,40 @@ import org.junit.Test
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
-class TestUploadToS3 extends BuildPipelineTest {
+class TestUploadToS3 extends BuildPipelineTest implements LibFunctionTester{
 
-    static void setUpVariables(binding, helper){
+    private String sourcePath
+    private String bucket
+    private String path
+
+    @Before
+    void setUp() {
+
+        this.sourcePath = '/tmp/src/path'
+        this.bucket = 'dummy_bucket'
+        this.path = '/upload/path'
+
+        this.registerLibTester(new TestUploadToS3(
+                sourcePath: sourcePath,
+                bucket: bucket,
+                path: path
+        ))
+
+        super.setUp()
+    }
+
+    @Test
+    void testSignArtifacts() {
+
+        binding.setVariable('sourcePath', sourcePath)
+        binding.setVariable('bucket', bucket)
+        binding.setVariable('path', path)
+
+        super.testPipeline("tests/jenkins/jobs/UploadToS3_Jenkinsfile")
+
+    }
+
+    void configure(helper, binding){
         binding.setVariable('ARTIFACT_UPLOAD_ROLE_NAME', 'Dummy_Upload_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
@@ -18,30 +49,7 @@ class TestUploadToS3 extends BuildPipelineTest {
         })
     }
 
-    @Before
-    void setUp() {
-        super.setUp()
-    }
-
-    @Test
-    void testSignArtifacts() {
-
-        def sourcePath = '/tmp/src/path'
-        def bucket = 'dummy_bucket'
-        def path = '/upload/path'
-
-        binding.setVariable('sourcePath', sourcePath)
-        binding.setVariable('bucket', bucket)
-        binding.setVariable('path', path)
-
-        setUpVariables(binding, helper)
-
-        super.testPipeline("tests/jenkins/jobs/UploadToS3_Jenkinsfile")
-
-        verifyUploadToS3Params(helper, sourcePath, bucket, path)
-    }
-
-    static void verifyUploadToS3Params(helper, sourcePath, bucket, path) {
+    void verifyParams(helper) {
         assert helper.callStack.findAll { call ->
             call.methodName == 'uploadToS3'
         }.size() > 0
@@ -61,9 +69,9 @@ class TestUploadToS3 extends BuildPipelineTest {
         }
 
         for(call in callList){
-            if( call.args.sourcePath.first() == sourcePath
-                    && call.args.bucket.first() == bucket
-                    && call.args.path.first() == path){
+            if( call.args.sourcePath.first() == this.sourcePath
+                    && call.args.bucket.first() == this.bucket
+                    && call.args.path.first() == this.path){
                 callFound = true
             }
         }
