@@ -35,7 +35,9 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: Updated manifests.
+          commit-message: |
+            Updated manifests.
+            Signed-off-by: Peter Nied <petern@amazon.com>
           delete-branch: true
           title: '[AUTO] Updated input manifests.'
           body: |
