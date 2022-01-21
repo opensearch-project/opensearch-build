@@ -121,7 +121,7 @@ pipeline {
 
                             IntegTestsX64: {
                                 // TODO: change back to integ-test when updated in Jenkins
-                                build job: 'Playground/ohltyler-integ-test',
+                                build job: 'Playground/ohltyler-integ-test-stable',
                                 parameters: [
                                     string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
@@ -159,7 +159,7 @@ pipeline {
 
                             IntegTestsArm64: {
                                 // TODO: change back to integ-test when updated in Jenkins
-                                build job: 'Playground/ohltyler-integ-test',
+                                build job: 'Playground/ohltyler-integ-test-stable',
                                 parameters: [
                                     string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
