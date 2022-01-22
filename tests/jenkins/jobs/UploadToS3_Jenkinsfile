@@ -5,9 +5,9 @@ pipeline {
             steps {
                 script {
                     uploadToS3(
-                            sourcePath: sourcePath,
-                            bucket: bucket,
-                            path: path
+                            sourcePath: '/tmp/src/path',
+                            bucket: 'dummy_bucket',
+                            path: '/upload/path'
                     )
                 }
             }

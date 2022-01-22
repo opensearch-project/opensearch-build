@@ -69,4 +69,5 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
     public void after() {
         testers.each(tester -> tester.verifyParams(helper))
     }
+
 }
