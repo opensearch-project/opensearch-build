@@ -18,12 +18,12 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
                 signatureType: signatureType,
                 distributionPlatform: distributionPlatform,
                 artifactPath: artifactPath
-        ))
+        ).libTester)
 
         this.registerLibTester(new TestPrintArtifactDownloadUrlsForStaging(
                 artifactFileNames: filenamesForUrls,
                 uploadPath: 'sign_artifacts_job/dummy/upload/path/20/dist/signed'
-        ))
+        ).libTester)
 
         super.setUp()
 

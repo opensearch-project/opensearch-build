@@ -5,9 +5,9 @@ pipeline {
             steps {
                 script {
                     signArtifacts(
-                            artifactPath: artifactPath,
-                            signatureType: SIGNATURE_TYPE,
-                            distributionPlatform: DISTRIBUTION_PLATFORM
+                            artifactPath: "${WORKSPACE}/artifacts/",
+                            signatureType: '.sig',
+                            distributionPlatform: 'linux'
                     )
                 }
             }

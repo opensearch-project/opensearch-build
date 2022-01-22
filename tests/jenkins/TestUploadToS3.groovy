@@ -7,14 +7,20 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 class TestUploadToS3 extends BuildPipelineTest {
 
+    private String sourcePath
+    private String bucket
+    private String path
+
+    public LibTester libTester = new LibTester()
+
     @Before
     void setUp() {
 
-        this.registerLibTester(new TestUploadToS3.LibTester(
+        this.registerLibTester(new TestUploadToS3(
                 sourcePath: '/tmp/src/path',
                 bucket: 'dummy_bucket',
                 path: '/upload/path'
-        ))
+        ).libTester)
 
         super.setUp()
     }
@@ -26,10 +32,6 @@ class TestUploadToS3 extends BuildPipelineTest {
 
     class LibTester extends LibFunctionTester {
 
-        private String sourcePath
-        private String bucket
-        private String path
-
         void parameterInvariantsAssertions(call){
             assertThat(call.args.sourcePath.first(), notNullValue())
             assertThat(call.args.bucket.first(), notNullValue())
@@ -37,9 +39,9 @@ class TestUploadToS3 extends BuildPipelineTest {
         }
 
         boolean expectedParametersMatcher(call) {
-            return call.args.sourcePath.first() == this.sourcePath
-                    && call.args.bucket.first() == this.bucket
-                    && call.args.path.first() == this.path
+            return call.args.sourcePath.first() == sourcePath
+                    && call.args.bucket.first() == bucket
+                    && call.args.path.first() == path
         }
 
         String libFunctionName(){

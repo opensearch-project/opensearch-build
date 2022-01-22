@@ -11,7 +11,7 @@ abstract class LibFunctionTester extends BuildPipelineTest {
     void verifyParams(helper){
 
         def callList = helper.callStack.findAll { call ->
-            call.methodName == this.libFunctionName()
+            call.methodName == libFunctionName()
         }
 
         assert callList.size() > 0
