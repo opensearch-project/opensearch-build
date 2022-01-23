@@ -25,7 +25,7 @@ pipeline {
     }
 
     stages {
-        stage('docker-build-dockerhub-production') {
+        stage('dockerhub-promote-to-prod') {
             steps {
                 script {
                     install_gcrane()
@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-        stage('docker-ecr-production') {
+        stage('ecr-promote-to-prod') {
             steps {
                 script {
                     copyDockerImage(
