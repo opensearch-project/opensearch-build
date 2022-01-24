@@ -11,35 +11,6 @@
 # Export OpenSearch Home
 export OPENSEARCH_HOME=/usr/share/opensearch
 
-# Files created by OpenSearch should always be group writable too
-umask 0002
-
-if [[ "$(id -u)" == "0" ]]; then
-    echo "OpenSearch cannot run as root. Please start your container as another user."
-    exit 1
-fi
-
-# Parse Docker env vars to customize OpenSearch
-#
-# e.g. Setting the env var cluster.name=testcluster
-#
-# will cause OpenSearch to be invoked with -Ecluster.name=testcluster
-
-declare -a opensearch_opts
-
-while IFS='=' read -r envvar_key envvar_value
-do
-    # OpenSearch settings need to have at least two dot separated lowercase
-    # words, e.g. `cluster.name`, except for `processors` which we handle
-    # specially
-    if [[ "$envvar_key" =~ ^[a-z0-9_]+\.[a-z0-9_]+ || "$envvar_key" == "processors" ]]; then
-        if [[ ! -z $envvar_value ]]; then
-          opensearch_opt="-E${envvar_key}=${envvar_value}"
-          opensearch_opts+=("${opensearch_opt}")
-        fi
-    fi
-done < <(env)
-
 # The virtual file /proc/self/cgroup should list the current cgroup
 # membership. For each hierarchy, you can follow the cgroup path from
 # this file to the cgroup filesystem (usually /sys/fs/cgroup/) and
@@ -54,29 +25,35 @@ done < <(env)
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
+# Holds the PID of opensearch and performance analyzer processes.
+declare OPENSEARCH_PID
+declare PA_PID
+
 ##Security Plugin
-SECURITY_PLUGIN="opensearch-security"
-if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-    if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
-        echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
-    else
-        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
-        bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+function setupSecurityPlugin {
+    SECURITY_PLUGIN="opensearch-security"
+
+    if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
+        if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+            echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+        else
+            echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+            bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+        fi
+
+        if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
+            echo "Disabling OpenSearch Security Plugin"
+            cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
+            echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
+        else
+            echo "Enabling OpenSearch Security Plugin"
+            cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
+        fi
     fi
+}
 
-    if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
-        echo "Disabling OpenSearch Security Plugin"
-        cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
-        echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
-    else
-        echo "Enabling OpenSearch Security Plugin"
-        cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
-    fi
-fi
-
-# Start up the opensearch and performance analyzer agent processes.
-# When either of them halts, this script exits, or we receive a SIGTERM or SIGINT signal then we want to kill both these processes.
-
+# Trap function that is used to terminate opensearch and performance analyzer
+# when a relevant signal is caught.
 function terminateProcesses {
     if kill -0 $OPENSEARCH_PID >& /dev/null; then
         echo "Killing opensearch process $OPENSEARCH_PID"
@@ -90,22 +67,75 @@ function terminateProcesses {
     fi
 }
 
-# Enable job control so we receive SIGCHLD when a child process terminates
-set -m
+# Start up the opensearch and performance analyzer agent processes.
+# When either of them halts, this script exits, or we receive a SIGTERM or SIGINT signal then we want to kill both these processes.
+function runOpensearch {
+    # Files created by OpenSearch should always be group writable too
+    umask 0002
 
-# Make sure we terminate the child processes in the event of us received TERM (e.g. "docker container stop"), INT (e.g. ctrl-C), EXIT (this script terminates for an unexpected reason), or CHLD (one of the processes terminated unexpectedly)
-trap terminateProcesses TERM INT EXIT CHLD
+    if [[ "$(id -u)" == "0" ]]; then
+        echo "OpenSearch cannot run as root. Please start your container as another user."
+        exit 1
+    fi
 
-# Start opensearch
-$OPENSEARCH_HOME/bin/opensearch "${opensearch_opts[@]}" &
-OPENSEARCH_PID=$!
+    # Parse Docker env vars to customize OpenSearch
+    #
+    # e.g. Setting the env var cluster.name=testcluster
+    # will cause OpenSearch to be invoked with -Ecluster.name=testcluster
+    local opensearch_opts=()
+    while IFS='=' read -r envvar_key envvar_value
+    do
+        # OpenSearch settings need to have at least two dot separated lowercase
+        # words, e.g. `cluster.name`, except for `processors` which we handle
+        # specially
+        if [[ "$envvar_key" =~ ^[a-z0-9_]+\.[a-z0-9_]+ || "$envvar_key" == "processors" ]]; then
+            if [[ ! -z $envvar_value ]]; then
+            opensearch_opt="-E${envvar_key}=${envvar_value}"
+            opensearch_opts+=("${opensearch_opt}")
+            fi
+        fi
+    done < <(env)
 
-# Start performance analyzer agent
-$OPENSEARCH_HOME/bin/performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/performance-analyzer.log 2>&1 &
-PA_PID=$!
+    setupSecurityPlugin
 
-# Wait for the child processes to terminate
-wait $OPENSEARCH_PID
-echo "OpenSearch exited with code $?"
-wait $PA_PID
-echo "Performance analyzer exited with code $?"
+    # Enable job control so we receive SIGCHLD when a child process terminates
+    set -m
+
+    # Make sure we terminate the child processes in the event of us received TERM (e.g. "docker container stop"), INT (e.g. ctrl-C), EXIT (this script terminates for an unexpected reason), or CHLD (one of the processes terminated unexpectedly)
+    trap terminateProcesses TERM INT EXIT CHLD
+
+    # Start opensearch
+    "$@" "${opensearch_opts[@]}" &
+    OPENSEARCH_PID=$!
+
+    # Start performance analyzer agent
+    performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/performance-analyzer.log 2>&1 &
+    PA_PID=$!
+
+    # Wait for the child processes to terminate
+    wait $OPENSEARCH_PID
+    local opensearch_exit_code=$?
+    echo "OpenSearch exited with code ${opensearch_exit_code}"
+
+    wait $PA_PID
+    echo "Performance analyzer exited with code $?"
+
+    # This script should exit with the same code as the opensearch command, but
+    # it would be a breaking change. Next line should be uncommented for the
+    # next major release.
+    # exit ${opensearch_exit_code}
+}
+
+# Prepend "opensearch" command if no argument was provided or if the first
+# argument looks like a flag (i.e. starts with a dash).
+if [ $# -eq 0 ] || [ "${1:0:1}" = '-' ]; then
+    set -- opensearch "$@"
+fi
+
+if [ "$1" = "opensearch" ]; then
+    # If the first argument is opensearch, then run the setup script.
+    runOpensearch "$@"
+else
+    # Otherwise, just exec the command.
+    exec "$@"
+fi

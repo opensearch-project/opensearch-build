@@ -62,6 +62,9 @@ COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_DASHBOARDS_HOME $OPENSEA
 # Setup OpenSearch-dashboards
 WORKDIR $OPENSEARCH_DASHBOARDS_HOME
 
+# Set PATH
+ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
+
 # Change user
 USER $UID
 
@@ -84,4 +87,5 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE"
 
 # CMD to run
-CMD ["./opensearch-dashboards-docker-entrypoint.sh"]
+ENTRYPOINT ["./opensearch-dashboards-docker-entrypoint.sh"]
+CMD ["opensearch-dashboards"]

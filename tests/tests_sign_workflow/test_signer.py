@@ -45,6 +45,7 @@ class TestSigner(unittest.TestCase):
             "the-tar.tar.gz",
             "random-file.txt",
             "something-1.0.0.0.jar",
+            "opensearch_sql_cli-1.0.0-py3-none-any.whl"
         ]
         expected = [
             call(os.path.join("path", "the-jar.jar"), ".sig"),
@@ -54,6 +55,7 @@ class TestSigner(unittest.TestCase):
             call(os.path.join("path", "the-module.module"), ".sig"),
             call(os.path.join("path", "the-tar.tar.gz"), ".sig"),
             call(os.path.join("path", "something-1.0.0.0.jar"), ".sig"),
+            call(os.path.join("path", "opensearch_sql_cli-1.0.0-py3-none-any.whl"), ".sig"),
         ]
         signer = Signer()
         signer.sign = MagicMock()
