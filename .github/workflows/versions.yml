@@ -37,7 +37,8 @@ jobs:
         with:
           commit-message: |
             Updated manifests.
-            Signed-off-by: Peter Nied <petern@amazon.com>
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
           delete-branch: true
           title: '[AUTO] Updated input manifests.'
           body: |
