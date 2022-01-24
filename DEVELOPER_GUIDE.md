@@ -72,11 +72,11 @@ On Windows, run `pyenv rehash` if `pipenv` cannot be found. This rehashes pyenv 
 
 #### NVM and Node
 
-Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node 10.24.1 version as it is required
+Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node 14.18.2 version as it is required
 
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-nvm install v10.24.1
+nvm install v14.18.2
 ```
 
 #### Yarn
