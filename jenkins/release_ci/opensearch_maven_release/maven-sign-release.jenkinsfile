@@ -10,16 +10,6 @@ pipeline {
     }
     parameters {
         string(
-            defaultValue: 'x64',
-            name: 'ARCH',
-            trim: true
-        )
-        string(
-            defaultValue: 'linux',
-            name: 'PLATFORM',
-            trim: true
-        )
-        string(
             name: 'BUILD_ID',
             trim: true
         )
@@ -29,7 +19,7 @@ pipeline {
         )
     }
     environment {
-        ARTIFACT_PATH = "distribution-build-opensearch/${params.VERSION}/${params.BUILD_ID}/${params.PLATFORM}/${params.ARCH}/builds"
+        ARTIFACT_PATH = "distribution-build-opensearch/${params.VERSION}/${params.BUILD_ID}/linux/x64/builds"
     }
     stages {
         stage('sign') {
@@ -50,11 +40,6 @@ pipeline {
                         component: '',
                         type: 'maven'
                     )
-                    uploadToS3(
-                        sourcePath: "$WORKSPACE/artifacts/${ARTIFACT_PATH}/opensearch/maven",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "${ARTIFACT_PATH}/maven-signed"
-                    )
                 }
             }
         }
@@ -69,17 +54,10 @@ pipeline {
             }
             steps {
                 script {
-                    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-                    downloadFromS3(
-                        sourcePath: "$WORKSPACE/artifacts",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "${ARTIFACT_PATH}/",
-                        force: true
-                    )
-                }
-                // stage artifacts for release with Sonatype
-                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                    sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed')
+                    // stage artifacts for release with Sonatype
+                    withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                        sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed')
+                    }
                 }
             }
         }
