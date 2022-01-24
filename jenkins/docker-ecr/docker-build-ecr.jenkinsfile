@@ -25,9 +25,8 @@ pipeline {
                 trim: true
         )
         string(
-                defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
                 name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
-                description: 'The script path of the docker build script',
+                description: 'The script path of the docker build script. Eg: bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
                 trim: true
         )
         string(
@@ -37,7 +36,7 @@ pipeline {
         )
         string(
                 name: 'IMAGE_TAG',
-                description: 'Image tag on stating. Eg: 1.3.0',
+                description: 'Image tag on staging. Eg: 1.3.0',
                 trim: true
         )
     }
@@ -46,7 +45,7 @@ pipeline {
             steps {
                 script {
                     if(DOCKER_BUILD_SCRIPT_WITH_COMMANDS == null
-                            || DOCKER_BUILD_SCRIPT_WITH_COMMANDS == 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>') {
+                            || DOCKER_BUILD_SCRIPT_WITH_COMMANDS == '') {
                                 currentBuild.result = 'ABORTED'
                                 error('DOCKER_BUILD_SCRIPT_WITH_COMMANDS parameter is not set')
                     }
