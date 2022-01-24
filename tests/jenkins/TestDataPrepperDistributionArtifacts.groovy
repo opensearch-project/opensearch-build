@@ -22,22 +22,11 @@ class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
         def bucketName = 'job-s3-bucket-name'
 
-        this.registerLibTester(new TestSignArtifacts(
-                signatureType: '.sig',
-                distributionPlatform: 'linux',
-                artifactPath: artifactsPath
-        ).libTester)
+        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  artifactsPath))
 
-        this.registerLibTester(new TestUploadToS3(
-                sourcePath: artifactsPath,
-                bucket: bucketName,
-                path: 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'
-        ).libTester)
+        this.registerLibTester(new TestUploadToS3LibTester( artifactsPath, bucketName, 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'))
 
-        this.registerLibTester(new TestPrintArtifactDownloadUrlsForStaging(
-                artifactFileNames: filenamesForUrls,
-                uploadPath: 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'
-        ).libTester)
+        this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester( filenamesForUrls, 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'))
 
         super.setUp()
 
