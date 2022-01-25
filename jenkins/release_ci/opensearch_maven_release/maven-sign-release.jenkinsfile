@@ -11,10 +11,12 @@ pipeline {
     parameters {
         string(
             name: 'BUILD_ID',
+            description: 'Build ID from Jenkins OpenSearch distribution build used for artifact path',
             trim: true
         )
         string(
             name: 'VERSION',
+            description: 'Version of the OpenSearch distribution build used for artifact path',
             trim: true
         )
     }
