@@ -14,6 +14,8 @@ void call(Map args = [:]) {
 
     importPGPKey()
 
+    String arguments = generateArguments(args)
+
     // Sign artifacts
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
         sh """
@@ -24,9 +26,19 @@ void call(Map args = [:]) {
             export UNSIGNED_BUCKET=${SIGNER_CLIENT_UNSIGNED_BUCKET}
             export SIGNED_BUCKET=${SIGNER_CLIENT_SIGNED_BUCKET}
 
-            $WORKSPACE/sign.sh ${args.artifactPath} --sigtype=${args.signatureType} --component=${args.component} --type=${args.type}
+            $WORKSPACE/sign.sh ${arguments}
         """
     }
+}
+
+String generateArguments(args) {
+    String arguments = args.artifactPath
+    for (entry in args) {
+        if (!entry.key.equals("artifactPath")) {
+            arguments += " --${entry.key}=${entry.value}"
+        }
+    }
+    return arguments
 }
 
 void importPGPKey(){

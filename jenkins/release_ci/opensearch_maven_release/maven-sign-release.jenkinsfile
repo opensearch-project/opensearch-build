@@ -35,11 +35,8 @@ pipeline {
                         force: true
                     )
                     sh 'echo "Signing Maven artifacts."'
-                    signatureType = '.asc'
                     signArtifacts(
                         artifactPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
-                        signatureType: signatureType,
-                        component: '',
                         type: 'maven'
                     )
                 }
