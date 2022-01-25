@@ -17,6 +17,7 @@ from system import console
 
 ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
 
+
 def main():
     parser = argparse.ArgumentParser(description="Sign artifacts")
     parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
