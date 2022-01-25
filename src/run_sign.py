@@ -24,6 +24,8 @@ def main():
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
     parser.add_argument("--signatureType", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
+    # This distributionPlatform argument is added for future use to extend the functionality of this library.
+    parser.add_argument("--distributionPlatform", nargs="?", help="The distribution platform")
     parser.add_argument(
         "-v",
         "--verbose",

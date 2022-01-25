@@ -6,6 +6,9 @@
  * compatible open source license.
  */
 
+/*
+This library will take in arguments Map with only these options as Keys [artifactPath, component, type, signatureType, distributionPlatform] with case-sensitive
+*/
 void call(Map args = [:]) {
 
     if( !fileExists("$WORKSPACE/sign.sh")) {
