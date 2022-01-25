@@ -29,7 +29,6 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
         testers.add(tester)
     }
 
-
     @Override
     @Before
     void setUp() {
