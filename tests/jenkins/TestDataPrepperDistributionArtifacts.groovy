@@ -24,7 +24,7 @@ class TestDataPrepperDistributionArtifacts extends BuildPipelineTest {
 
         this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  artifactsPath))
 
-        this.registerLibTester(new TestUploadToS3LibTester( artifactsPath, bucketName, 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'))
+        this.registerLibTester(new UploadToS3LibTester( artifactsPath, bucketName, 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'))
 
         this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester( filenamesForUrls, 'data-prepper-distribution-artifacts/0.22.1/51/builds/signed'))
 
