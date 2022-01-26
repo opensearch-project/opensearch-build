@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Tuple, Iterator
+from typing import Iterator, Tuple
 
 
 def walk(root: str) -> Iterator[Tuple[str, str]]:
