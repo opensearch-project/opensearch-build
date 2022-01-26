@@ -18,7 +18,7 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
 
         this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(filenamesForUrls, 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
 
-        this.registerLibTester(new TestUploadToS3LibTester(artifactPath, 'dummy_bucket_name', 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
+        this.registerLibTester(new UploadToS3LibTester(artifactPath, 'dummy_bucket_name', 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
 
         super.setUp()
 
