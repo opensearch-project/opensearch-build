@@ -242,19 +242,21 @@ and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). I
 
 - To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
 
-##### Tests for jenkins job
-All jenkins jobs should have a test case associated with it.
-- Save the regression file for the `jenkins-job` in `tests/jenkins/jenkinsjob-regression-files/<job-name>`
-- All tests for jenkins job should extend `BuildPipelineTest`
+#### Tests for jenkins job
+All jenkins jobs should have a test case associated with it. 
+Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArtifactsJob.groovy)
+- Save the regression file for the `jenkins-job` in `tests/jenkins/jenkinsjob-regression-files/<job-name>/<job-filename>`
+- All tests for jenkins job should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - All tests should have a `setUp()` which is used to set the variables associated with the job
 - Add setups for all libraries used in the job using `this.registerLibTester` with appropriate values
 (Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
 
-##### Tests for jenkins libraries
+#### Tests for jenkins libraries
 
-**Lib Tester** 
+##### Lib Tester
 
 All jenkins libraries should have a lib tester associated with it. Eg: [SignArtifactsLibTester](tests/jenkins/lib-testers/SignArtifactsLibTester.groovy)
+- Library tester should extend [LibFunctionTester.groovy](tests/jenkins/LibFunctionTester.groovy)
 - implement `void configure(helper, bindings)` method which sets up all the variables used in the library
   - Note: This will not include the variables set using function arguments
 - implement `void libFunctionName()`. This function will contain the name of function.
@@ -263,10 +265,10 @@ accepted values for the function parameters
 - implement `void expectedParametersMatcher()`. This function will match args called in the job to expected values from 
 the test
 
-**Library Test Case**
+##### Library Test Case
 
 All jenkins libraries should have a test case associated with it. Eg: [TestSignArtifacts](tests/jenkins/TestSignArtifacts.groovy) <br>
-- Jenkins' library test should extend `BuildPipelineTest`
+- Jenkins' library test should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - Create a dummy job such as [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) to call and test the function
   and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
 
