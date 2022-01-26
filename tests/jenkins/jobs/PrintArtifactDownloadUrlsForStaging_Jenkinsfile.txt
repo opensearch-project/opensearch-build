@@ -3,4 +3,7 @@
          PrintArtifactDownloadUrlsForStaging_Jenkinsfile.echo(Executing on agent [label:none])
          PrintArtifactDownloadUrlsForStaging_Jenkinsfile.stage(print_urls, groovy.lang.Closure)
             PrintArtifactDownloadUrlsForStaging_Jenkinsfile.script(groovy.lang.Closure)
-               PrintArtifactDownloadUrlsForStaging_Jenkinsfile.printArtifactDownloadUrlsForStaging({artifactFileNames=[dummy_file.tar.gz, dummy_file.tar.gz.sig], uploadPath=dummy/upload/path})
+               PrintArtifactDownloadUrlsForStaging_Jenkinsfile.printArtifactDownloadUrlsForStaging({artifactFileNames=[dummy_file.tar.gz, dummy_file.tar.gz.sig, a_dummy_file.tar.gz], uploadPath=dummy/upload/path})
+                  printArtifactDownloadUrlsForStaging.echo(File dummy_file.tar.gz can be accessed using the url - https://ci.opensearch.org/ci/dbc/dummy/upload/path/dummy_file.tar.gz)
+                  printArtifactDownloadUrlsForStaging.echo(File dummy_file.tar.gz.sig can be accessed using the url - https://ci.opensearch.org/ci/dbc/dummy/upload/path/dummy_file.tar.gz.sig)
+                  printArtifactDownloadUrlsForStaging.echo(File a_dummy_file.tar.gz can be accessed using the url - https://ci.opensearch.org/ci/dbc/dummy/upload/path/a_dummy_file.tar.gz)
