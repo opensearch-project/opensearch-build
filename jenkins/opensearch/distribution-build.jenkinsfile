@@ -27,7 +27,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshot') {
+                stage('build-snapshot-x64') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
@@ -52,6 +52,33 @@ pipeline {
                             } else {
                                 echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3()
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-snapshot-arm64') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            buildManifest(
+                                snapshot: true
+                            )
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3()
                         }
                     }
                     post {

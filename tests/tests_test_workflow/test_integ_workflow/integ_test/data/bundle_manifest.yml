@@ -1,3 +1,4 @@
+---
 build:
   platform: linux
   architecture: x64
@@ -9,7 +10,7 @@ components:
   - commit_id: b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583
     location: artifacts/bundle/opensearch-min-1.1.0-linux-x64.tar.gz
     name: OpenSearch
-    ref: !!str 1.1
+    ref: '1.1'
     repository: https://github.com/opensearch-project/OpenSearch.git
   - commit_id: 4504dabfc67dd5628c1451e91e9a1c3c4ca71525
     location: artifacts/plugins/opensearch-job-scheduler-1.1.0.0.zip

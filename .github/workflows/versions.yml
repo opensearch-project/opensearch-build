@@ -1,8 +1,9 @@
+---
 name: versions
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: 0 0 * * *
 
 jobs:
   update:
@@ -34,12 +35,15 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          commit-message: Updated manifests.
+          commit-message: |
+            Updated manifests.
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
           delete-branch: true
           title: '[AUTO] Updated input manifests.'
           body: |
             I've noticed that a repo has incremented a version and have made some updates to input manifests.
       - name: Check outputs
-        run: |
+        run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"

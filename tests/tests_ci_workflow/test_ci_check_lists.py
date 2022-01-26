@@ -8,6 +8,7 @@ import unittest
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
+from ci_workflow.ci_check_list_source_ref import CiCheckListSourceRef
 from ci_workflow.ci_check_lists import CiCheckLists
 from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
 
@@ -19,6 +20,19 @@ class TestCiCheckLists(unittest.TestCase):
             "repository": "url",
             "ref": "ref"
         }), None)
+        self.assertIs(type(check_list), CiCheckListSourceRef)
+
+    def test_from_component_source_with_checks(self):
+        check_list = CiCheckLists.from_component(
+            InputComponentFromSource({
+                "name": "common-utils",
+                "repository": "url",
+                "ref": "ref",
+                "checks": [
+                    "check1"
+                ]
+            }), None
+        )
         self.assertIs(type(check_list), CiCheckListSource)
 
     def test_from_component_dist(self):

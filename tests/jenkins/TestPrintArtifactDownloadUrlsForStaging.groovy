@@ -6,23 +6,28 @@
  * compatible open source license.
  */
 
-package jenkins.tests
-
+import jenkins.tests.BuildPipelineTest
 import org.junit.*
+
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.core.IsNull.notNullValue
 
 
 class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
 
     @Before
     void setUp() {
+
+        this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(
+                ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig', 'a_dummy_file.tar.gz'],
+                'dummy/upload/path'
+        ))
+
         super.setUp()
-        binding.setVariable('filenamesForUrls', ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig'])
-        binding.setVariable('UPLOAD_PATH', 'dummy/upload/path')
     }
 
     @Test
     void testPrintArtifactDownloadUrlsForStaging() {
         super.testPipeline("tests/jenkins/jobs/PrintArtifactDownloadUrlsForStaging_Jenkinsfile")
     }
-
 }

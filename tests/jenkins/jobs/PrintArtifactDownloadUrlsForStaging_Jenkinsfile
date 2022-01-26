@@ -5,8 +5,8 @@ pipeline {
             steps {
                 script {
                     printArtifactDownloadUrlsForStaging(
-                            artifactFileNames: filenamesForUrls,
-                            uploadPath: UPLOAD_PATH
+                            artifactFileNames: ['dummy_file.tar.gz', 'dummy_file.tar.gz.sig', 'a_dummy_file.tar.gz'],
+                            uploadPath: 'dummy/upload/path'
                     )
                 }
             }

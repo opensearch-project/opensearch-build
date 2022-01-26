@@ -1,8 +1,9 @@
+---
 name: releases
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: 0 0 * * *
 
 jobs:
   list-manifest-versions:

@@ -1,8 +1,8 @@
 ---
-schema-version: "1.0"
+schema-version: '1.0'
 ci:
   image:
-     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
 build:
   name: OpenSearch Dashboards
   version: 1.1.1
@@ -11,8 +11,8 @@ build:
 components:
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reports
-    ref: "1.1"
-    working_directory: "dashboards-reports"
+    ref: '1.1'
+    working_directory: dashboards-reports
     platforms:
       - linux
   - name: OpenSearch-Dashboards
@@ -35,4 +35,4 @@ components:
     dist: https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: "main"
+    ref: main

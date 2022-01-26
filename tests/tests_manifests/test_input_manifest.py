@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch
 import yaml
 
 from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
+from system.temporary_directory import TemporaryDirectory
 
 
 class TestInputManifest(unittest.TestCase):
@@ -36,7 +37,7 @@ class TestInputManifest(unittest.TestCase):
             "https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.1.0/20210930",
         )
         for component in manifest.components.values():
-            if component.name in ['reportsDashboards', 'functionalTestDashboards']:
+            if component.name in ["reportsDashboards", "functionalTestDashboards"]:
                 self.assertIsInstance(component, InputComponentFromSource)
             else:
                 self.assertIsInstance(component, InputComponentFromDist)
@@ -56,7 +57,7 @@ class TestInputManifest(unittest.TestCase):
             opensearch_component.repository,
             "https://github.com/opensearch-project/OpenSearch.git",
         )
-        self.assertEqual(opensearch_component.ref, "1.0")
+        self.assertEqual(opensearch_component.ref, "tags/1.0.0")
         for component in manifest.components.values():
             self.assertIsInstance(component, InputComponentFromSource)
 
@@ -89,7 +90,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(alerting_component.checks[1].args, "alerting")
 
     def test_1_2(self) -> None:
-        path = os.path.join(self.manifests_path, "1.2.0/opensearch-1.2.0.yml")
+        data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
+        path = os.path.join(data_path, "opensearch-1.2.0.yml")
         manifest = InputManifest.from_path(path)
         self.assertEqual(manifest.version, "1.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
@@ -174,7 +176,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch.ref, "updated")
 
     @patch("subprocess.check_output")
-    @patch("git.git_repository.GitRepository.stable_ref", return_value=('abcd', '1234'))
+    @patch("git.git_repository.GitRepository.stable_ref", return_value=("abcd", "1234"))
     def test_stable_override_build(self, git_repo: Mock, mock_output: Mock) -> None:
         mock_output.return_value.decode.return_value = "updated\tHEAD"
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
@@ -206,3 +208,40 @@ class TestInputManifest(unittest.TestCase):
             "dist": "dist"
         })
         self.assertNotEqual(manifest1, manifest2)
+
+    def test_to_file_formatted(self) -> None:
+        data_path = os.path.join(os.path.dirname(__file__), "data")
+        manifest = InputManifest({
+            "schema-version": "1.0",
+            "build": {
+                "name": "OpenSearch",
+                "version": "2.0.0"
+            },
+            "ci": {
+                "image": {
+                    "name": "image-name",
+                    "args": "-e JAVA_HOME=/opt/java/openjdk-11"
+                }
+            },
+            "components": [
+                {
+                    "name": "OpenSearch",
+                    "ref": "main",
+                    "repository": "https://github.com/opensearch-project/OpenSearch.git",
+                    "checks": [
+                        "gradle:publish",
+                        "gradle:properties:version"
+                    ]
+                }
+            ]
+        })
+
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "manifest.yml")
+            manifest.to_file(output_path)
+            with open(output_path) as f:
+                written_manifest = f.read()
+            with open(os.path.join(data_path, "formatted.yml")) as f:
+                formatted_manifest = f.read()
+
+        self.assertEqual(formatted_manifest, written_manifest)
