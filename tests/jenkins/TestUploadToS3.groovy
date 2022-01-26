@@ -8,7 +8,7 @@ class TestUploadToS3 extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        this.registerLibTester(new TestUploadToS3LibTester( '/tmp/src/path', 'dummy_bucket', '/upload/path' ))
+        this.registerLibTester(new UploadToS3LibTester( '/tmp/src/path', 'dummy_bucket', '/upload/path' ))
 
         super.setUp()
     }
