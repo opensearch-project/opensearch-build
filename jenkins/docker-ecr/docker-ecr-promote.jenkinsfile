@@ -28,7 +28,6 @@ pipeline {
         stage('dockerhub-promote-to-prod') {
             steps {
                 script {
-                    install_gcrane()
                     copyDockerImage(
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
@@ -60,14 +59,4 @@ pipeline {
             }
         }
     }
-}
-
-void install_gcrane(){
-    sh'''
-        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \\
-            -o go-containerregistry.tar.gz
-        tar -zxvf go-containerregistry.tar.gz
-        chmod +x gcrane
-        mv gcrane /usr/local/bin/
-      '''
 }

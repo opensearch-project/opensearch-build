@@ -49,7 +49,6 @@ pipeline {
                                 currentBuild.result = 'ABORTED'
                                 error('DOCKER_BUILD_SCRIPT_WITH_COMMANDS parameter is not set')
                     }
-                    install_gcrane()
                 }
             }
         }
@@ -89,14 +88,4 @@ pipeline {
             }
         }
     }
-}
-
-void install_gcrane(){
-    sh'''
-        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \\
-            -o go-containerregistry.tar.gz
-        tar -zxvf go-containerregistry.tar.gz
-        chmod +x gcrane
-        mv gcrane /usr/local/bin/
-      '''
 }

@@ -1,5 +1,10 @@
 void call(Map args = [:]){
 
+    res = sh(script: "test -f /usr/local/bin/gcrane && echo '1' || echo '0' ", returnStdout: true).trim()
+    if(res == '0') {
+        install_gcrane()
+    }
+
     sh "docker logout"
 
     if(args.destinationType == 'docker'){
@@ -17,5 +22,14 @@ void call(Map args = [:]){
             """
         }
     }
+}
 
+void install_gcrane(){
+    sh'''
+        curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \\
+            -o go-containerregistry.tar.gz
+        tar -zxvf go-containerregistry.tar.gz
+        chmod +x gcrane
+        mv gcrane /usr/local/bin/
+      '''
 }
