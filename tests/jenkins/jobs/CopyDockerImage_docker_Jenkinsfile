@@ -1,0 +1,25 @@
+pipeline {
+    agent none
+    stages {
+        stage('copyImage') {
+            steps {
+                script {
+                    copyDockerImage(
+                        sourceImagePath: 'opensearchstaging/ci-runner:latest',
+                        destinationImagePath: 'opensearchproject/ci-runner:latest',
+                        destinationType: 'docker',
+                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                    )
+
+                    copyDockerImage(
+                        sourceImagePath: 'opensearchstaging/ci-runner:latest',
+                        destinationImagePath: 'opensearchproject/ci-runner:latest',
+                        destinationType: 'ecr',
+                        destinationCredentialIdentifier: 'public.ecr.aws/p5f6l6i3',
+                        accountName: 'DUMMY_ACCOUNT_NAME'
+                    )
+                }
+            }
+        }
+    }
+}
