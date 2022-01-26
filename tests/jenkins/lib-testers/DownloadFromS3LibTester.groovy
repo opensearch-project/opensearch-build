@@ -1,14 +1,16 @@
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.CoreMatchers.anyOf
 
-class TestDownloadFromS3LibTester extends LibFunctionTester {
+
+class DownloadFromS3LibTester extends LibFunctionTester {
 
     private String sourcePath
     private String bucket
     private String path
     private boolean force
 
-    public TestDownloadFromS3LibTester(sourcePath, bucket, path, force){
+    public DownloadFromS3LibTester(sourcePath, bucket, path, force){
         this.sourcePath = sourcePath
         this.bucket = bucket
         this.path = path
@@ -20,6 +22,7 @@ class TestDownloadFromS3LibTester extends LibFunctionTester {
         assertThat(call.args.bucket.first(), notNullValue())
         assertThat(call.args.path.first(), notNullValue())
         assertThat(call.args.force.first(), notNullValue())
+        assertThat(call.args.force.first(), anyOf(is("true"), is("false")))
     }
 
     boolean expectedParametersMatcher(call) {
@@ -36,7 +39,6 @@ class TestDownloadFromS3LibTester extends LibFunctionTester {
     void configure(helper, binding){
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
-        binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate

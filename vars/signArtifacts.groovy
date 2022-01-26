@@ -16,7 +16,7 @@ void call(Map args = [:]) {
     }
 
     importPGPKey()
-
+    
     String arguments = generateArguments(args)
 
     // Sign artifacts
@@ -35,12 +35,10 @@ void call(Map args = [:]) {
 }
 
 String generateArguments(args) {
+    // artifactPath is mandatory and the first argument
     String arguments = args.artifactPath
-    for (entry in args) {
-        if (!entry.key.equals("artifactPath")) {
-            arguments += " --${entry.key}=${entry.value}"
-        }
-    }
+    // generation command line arguments
+    args.each{key, value -> !key.equals("artifactPath") ? arguments += " --${key}=${value}" : ""}
     return arguments
 }
 

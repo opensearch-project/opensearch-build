@@ -16,7 +16,7 @@ class TestDownloadFromS3 extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        this.registerLibTester(new TestDownloadFromS3LibTester('/tmp/src/path' , 'dummy_bucket', '/download/path', true))
+        this.registerLibTester(new DownloadFromS3LibTester('/tmp/src/path' , 'dummy_bucket', '/download/path', true))
 
         super.setUp()
     }
