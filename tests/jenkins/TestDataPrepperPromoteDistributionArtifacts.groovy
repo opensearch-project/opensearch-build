@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jenkins.tests.BaseJobPipelineTest
+import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 
@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
-class TestDataPrepperPromoteDistributionArtifacts extends BaseJobPipelineTest {
+class TestDataPrepperPromoteDistributionArtifacts extends BuildPipelineTest {
 
     private String version
 
@@ -37,9 +37,8 @@ class TestDataPrepperPromoteDistributionArtifacts extends BaseJobPipelineTest {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
-        helper.registerAllowedMethod('s3Upload', [Map], {})
 
-        helper.registerAllowedMethod('postCleanup', [], {})
+        helper.registerAllowedMethod('s3Upload', [Map], {})
     }
 
     @Test
