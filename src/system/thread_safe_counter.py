@@ -8,14 +8,14 @@ import threading
 
 
 class ThreadSafeCounter:
-    def __init__(self):
+    def __init__(self) -> None:
         self.lock = threading.Lock()
         self.__call_count__ = 0
 
-    def thread_safe_count(self, *args, **kwargs):
+    def thread_safe_count(self, *args, **kwargs) -> None:
         with self.lock:
             self.__call_count__ += 1
 
     @property
-    def call_count(self):
+    def call_count(self) -> int:
         return self.__call_count__

@@ -9,7 +9,7 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def WorkingDirectory(path):
+def WorkingDirectory(path) -> None:
     try:
         saved_path = os.getcwd()
         yield os.chdir(path)

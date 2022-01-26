@@ -3,6 +3,8 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
+from typing import Sequence, Text, Union
+from os import PathLike
 
 import logging
 import subprocess
@@ -10,18 +12,18 @@ import tempfile
 
 import psutil
 
+StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
+
 
 class Process:
-    def __init__(
-        self
-    ):
-        self.process = None
+    def __init__(self) -> None:
+        self.process: subprocess.Popen[bytes] = None
         self.stdout = None
         self.stderr = None
         self.__stdout_data__ = None
         self.__stderr_data__ = None
 
-    def start(self, command, cwd):
+    def start(self, command: Union[StrOrBytesPath, Sequence[StrOrBytesPath]], cwd: StrOrBytesPath) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
@@ -36,7 +38,7 @@ class Process:
             stderr=self.stderr,
         )
 
-    def terminate(self):
+    def terminate(self) -> int:
         if not self.started:
             raise ProcessNotStartedError()
 
@@ -70,19 +72,19 @@ class Process:
         return self.return_code
 
     @property
-    def started(self):
+    def started(self) -> bool:
         return True if self.process else False
 
     @property
-    def pid(self):
+    def pid(self) -> int:
         return self.process.pid if self.started else None
 
     @property
-    def stdout_data(self):
+    def stdout_data(self) -> Union[Text, bytes]:
         return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
-    def stderr_data(self):
+    def stderr_data(self) -> Union[Text, bytes]:
         return self.stderr.read() if self.stderr else self.__stderr_data__
 
 
@@ -91,7 +93,7 @@ class ProcessStartedError(Exception):
     Indicates that process already started.
     """
 
-    def __init__(self, pid):
+    def __init__(self, pid: int) -> None:
         self.pid = pid
         super().__init__(f"Process already started, pid: {pid}")
 
@@ -101,5 +103,5 @@ class ProcessNotStartedError(Exception):
     Indicates that process has not started.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Process has not started")
