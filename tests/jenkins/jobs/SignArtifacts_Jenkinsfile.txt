@@ -3,8 +3,8 @@
          SignArtifacts_Jenkinsfile.echo(Executing on agent [label:none])
          SignArtifacts_Jenkinsfile.stage(sign, groovy.lang.Closure)
             SignArtifacts_Jenkinsfile.script(groovy.lang.Closure)
-               SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=workspace/artifacts/, signatureType=.sig, distributionPlatform=linux})
-                  signArtifacts.fileExists(workspace/sign.sh)
+               SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=/tmp/workspace/artifacts, signatureType=.sig, distributionPlatform=linux})
+                  signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
@@ -17,5 +17,5 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/artifacts/ --sigtype=.sig --component=null --type=null
+            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --component=null --type=null
         )
