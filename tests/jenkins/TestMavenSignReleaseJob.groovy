@@ -27,14 +27,13 @@ class TestMavenSignReleaseJob extends BuildPipelineTest {
 
         super.setUp()
 
-        // Variables for Data-prepper-Distribution-Artifacts-job
+        // Variables for Maven Sign Release job
         binding.setVariable('VERSION', '1.0.0')
         binding.setVariable('BUILD_ID', '123')
         binding.setVariable('ARTIFACT_PATH', 'distribution-build-opensearch/1.0.0/123/linux/x64/builds')
         binding.setVariable('ARTIFACT_BUCKET_NAME', bucketName)
         binding.setVariable('SONATYPE_STAGING_PROFILE_ID', 'dummy_id')
 
-        
         helper.registerAllowedMethod('checkout', [Map], {})
 
     }
