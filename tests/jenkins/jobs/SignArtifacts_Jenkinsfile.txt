@@ -19,3 +19,19 @@
 
             /tmp/workspace/sign.sh /tmp/workspace/artifacts --signatureType=.sig --distributionPlatform=linux
         )
+               SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=/tmp/workspace/file.yml, distributionPlatform=linux, type=maven})
+                  signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                  signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                  signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                  signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            /tmp/workspace/sign.sh /tmp/workspace/file.yml --distributionPlatform=linux --type=maven
+        )

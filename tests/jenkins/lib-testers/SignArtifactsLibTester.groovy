@@ -7,11 +7,15 @@ class SignArtifactsLibTester extends LibFunctionTester {
     private String signatureType
     private String distributionPlatform
     private String artifactPath
+    private String type
+    private String component
 
-    public SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath){
+    public SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath, type, component){
         this.signatureType = signatureType
         this.distributionPlatform = distributionPlatform
         this.artifactPath = artifactPath
+        this.type = type
+        this.component = component
     }
 
     void configure(helper, binding) {
@@ -27,12 +31,25 @@ class SignArtifactsLibTester extends LibFunctionTester {
 
     void parameterInvariantsAssertions(call) {
         assertThat(call.args.artifactPath.first(), notNullValue())
+        assertThat(call.args.distributionPlatform.first(), notNullValue())
+        if(call.args.artifactPath.first().toString().endsWith(".yml")){
+            assertThat(call.args.type.first(), notNullValue())
+        } else {
+            assertThat(call.args.signatureType.first(), notNullValue())
+        }
     }
 
     boolean expectedParametersMatcher(call) {
-        return call.args.signatureType.first().toString().equals(this.signatureType)
-                && call.args.distributionPlatform.first().toString().equals(this.distributionPlatform)
-                && call.args.artifactPath.first().toString().equals(this.artifactPath)
+        if(call.args.artifactPath.first().toString().endsWith(".yml")){
+            return call.args.distributionPlatform.first().toString().equals(this.distributionPlatform)
+                    && call.args.artifactPath.first().toString().equals(this.artifactPath)
+                    && call.args.type.first().toString().equals(this.type)
+                    && (call.args.component.first() == null || call.args.component.first().toString().equals(this.component))
+        } else {
+            return call.args.signatureType.first().toString().equals(this.signatureType)
+                    && call.args.distributionPlatform.first().toString().equals(this.distributionPlatform)
+                    && call.args.artifactPath.first().toString().equals(this.artifactPath)
+        }
     }
 
     String libFunctionName() {

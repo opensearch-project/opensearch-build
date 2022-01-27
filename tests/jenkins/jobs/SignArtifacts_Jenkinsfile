@@ -9,6 +9,12 @@ pipeline {
                             signatureType: '.sig',
                             distributionPlatform: 'linux'
                     )
+
+                    signArtifacts(
+                            artifactPath: "${WORKSPACE}/file.yml",
+                            distributionPlatform: 'linux',
+                            type: 'maven'
+                    )
                 }
             }
         }

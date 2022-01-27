@@ -14,7 +14,7 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         def distributionPlatform = 'linux'
         def artifactPath = "${this.workspace}/artifacts"
 
-        this.registerLibTester(new SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath))
+        this.registerLibTester(new SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath, null, null))
 
         this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(filenamesForUrls, 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
 

@@ -37,7 +37,8 @@ pipeline {
                     sh 'echo "Signing Maven artifacts."'
                     signArtifacts(
                         artifactPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
-                        type: 'maven'
+                        type: 'maven',
+                        distributionPlatform: 'linux'
                     )
                 }
             }
