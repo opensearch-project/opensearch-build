@@ -7,20 +7,20 @@ import static org.hamcrest.CoreMatchers.equalTo
 
 class DownloadFromS3LibTester extends LibFunctionTester {
 
-    private String sourcePath
+    private String localPath
     private String bucket
     private String path
     private boolean force
 
-    public DownloadFromS3LibTester(sourcePath, bucket, path, force){
-        this.sourcePath = sourcePath
+    public DownloadFromS3LibTester(localPath, bucket, path, force){
+        this.localPath = localPath
         this.bucket = bucket
         this.path = path
         this.force = force
     }
 
     void parameterInvariantsAssertions(call){
-        assertThat(call.args.sourcePath.first(), notNullValue())
+        assertThat(call.args.localPath.first(), notNullValue())
         assertThat(call.args.bucket.first(), notNullValue())
         assertThat(call.args.path.first(), notNullValue())
         assertThat(call.args.force.first(), notNullValue())
@@ -28,7 +28,7 @@ class DownloadFromS3LibTester extends LibFunctionTester {
     }
 
     boolean expectedParametersMatcher(call) {
-        return call.args.sourcePath.first().toString().equals(this.sourcePath)
+        return call.args.localPath.first().toString().equals(this.localPath)
                 && call.args.bucket.first().toString().equals(this.bucket)
                 && call.args.path.first().toString().equals(this.path)
                 && call.args.force.first().toString().equals(this.force.toString())

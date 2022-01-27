@@ -21,7 +21,7 @@ pipeline {
         )
     }
     environment {
-        ARTIFACT_PATH = "distribution-build-opensearch/${params.VERSION}/${params.BUILD_ID}/linux/x64/builds"
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds"
     }
     stages {
         stage('sign') {
@@ -29,7 +29,7 @@ pipeline {
                 script {
                     sh 'echo "Downloading from S3."'
                     downloadFromS3(
-                        sourcePath: "$WORKSPACE/artifacts",
+                        localPath: "$WORKSPACE/artifacts",
                         bucket: "${ARTIFACT_BUCKET_NAME}",
                         path: "${ARTIFACT_PATH}/",
                         force: true
@@ -50,7 +50,7 @@ pipeline {
             environment {
                 REPO_URL = "https://aws.oss.sonatype.org/"
                 STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
-                BUILD_ID = "${params.BUILD_ID}"
+                BUILD_ID = "${BUILD_ID}"
             }
             steps {
                 script {
