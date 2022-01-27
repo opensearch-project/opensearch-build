@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import threading
+from typing import Any
 
 
 class ThreadSafeCounter:
@@ -12,7 +13,7 @@ class ThreadSafeCounter:
         self.lock = threading.Lock()
         self.__call_count__ = 0
 
-    def thread_safe_count(self, *args, **kwargs) -> None:
+    def thread_safe_count(self, *args: Any, **kwargs: Any) -> None:
         with self.lock:
             self.__call_count__ += 1
 

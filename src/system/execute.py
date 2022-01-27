@@ -6,10 +6,11 @@
 
 import logging
 import subprocess
-from typing import Tuple
+from os import PathLike
+from typing import Any, Tuple, Union
 
 
-def execute(command, dir, capture: bool = True, raise_on_failure: bool = True) -> Tuple(int, ):
+def execute(command: str, dir: Union[str, PathLike[str]], capture: bool = True, raise_on_failure: bool = True) -> Tuple[int, Any, Any]:
     """
     Execute a shell command inside a directory.
     :param capture:

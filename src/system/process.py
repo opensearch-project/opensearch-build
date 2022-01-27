@@ -3,12 +3,11 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
-from typing import Sequence, Text, Union
-from os import PathLike
-
 import logging
 import subprocess
 import tempfile
+from os import PathLike
+from typing import Any, Sequence, Text, Union
 
 import psutil
 
@@ -18,12 +17,12 @@ StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
 class Process:
     def __init__(self) -> None:
         self.process: subprocess.Popen[bytes] = None
-        self.stdout = None
-        self.stderr = None
-        self.__stdout_data__ = None
-        self.__stderr_data__ = None
+        self.stdout: Any = None
+        self.stderr: Any = None
+        self.__stdout_data__: Union[Text, bytes] = None
+        self.__stderr_data__: Union[Text, bytes] = None
 
-    def start(self, command: Union[StrOrBytesPath, Sequence[StrOrBytesPath]], cwd: StrOrBytesPath) -> None:
+    def start(self, command: Union[Union[bytes, str], Sequence[StrOrBytesPath]], cwd: Union[str, PathLike[str]]) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
