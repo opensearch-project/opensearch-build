@@ -4,12 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import abc
 import os
+from abc import ABC
 from typing import Union
 
 
-class OutputDir(abc.ABC):
+class OutputDir(ABC):
     def __init__(cls, parent_dir: str, filename: str, cwd: Union[str, os.PathLike[str]] = None, makedirs: bool = True) -> None:
         cls.dir = os.path.join(
             cwd or os.getcwd(),
