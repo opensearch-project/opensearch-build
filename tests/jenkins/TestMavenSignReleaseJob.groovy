@@ -13,17 +13,17 @@ class TestMavenSignReleaseJob extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        def localPath = "${this.workspace}/artifacts"
+        def destPath = "${this.workspace}/artifacts"
 
-        def artifactsPath = "${this.workspace}/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml"
+        def manifestPath = "${this.workspace}/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml"
 
-        def bucketPath = 'distribution-build-opensearch/1.0.0/123/linux/x64/builds'
+        def artifactsPath = 'distribution-build-opensearch/1.0.0/123/linux/x64/builds/'
 
         def bucketName = 'job-s3-bucket-name'
 
-        this.registerLibTester(new DownloadFromS3LibTester(localPath, bucketName, 'distribution-build-opensearch/1.0.0/123/linux/x64/builds/', true))
+        this.registerLibTester(new DownloadFromS3LibTester(destPath, bucketName, artifactsPath, true))
 
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  artifactsPath, 'maven', null))
+        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  manifestPath, 'maven', null))
 
         super.setUp()
 

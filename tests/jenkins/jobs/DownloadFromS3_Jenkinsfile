@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     downloadFromS3(
-                        localPath: '/tmp/src/path',
+                        destPath: '/tmp/src/path',
                         bucket: 'dummy_bucket',
                         path: '/download/path',
                         force: true
