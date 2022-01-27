@@ -10,7 +10,7 @@ from typing import Union
 
 
 class OutputDir(abc.ABC):
-    def __init__(cls, parent_dir: str, filename: str, cwd: Union[str, os.PathLike[str]] = None, makedirs: bool = True) -> None:
+    def __init__(cls, parent_dir: str, filename: str, cwd: Union[str, os.PathLike[str]] = None, makedirs: bool = True) -> abc.ABCMeta:
         cls.dir = os.path.join(
             cwd or os.getcwd(),
             parent_dir,
