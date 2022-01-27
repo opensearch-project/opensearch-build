@@ -26,8 +26,6 @@ class SignArtifactsLibTester extends LibFunctionTester {
     }
 
     void parameterInvariantsAssertions(call) {
-        assertThat(call.args.signatureType.first(), notNullValue())
-        assertThat(call.args.distributionPlatform.first(), notNullValue())
         assertThat(call.args.artifactPath.first(), notNullValue())
     }
 

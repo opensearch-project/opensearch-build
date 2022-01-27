@@ -17,5 +17,5 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --component=null --type=null
+            /tmp/workspace/sign.sh /tmp/workspace/artifacts --signatureType=.sig --distributionPlatform=linux
         )

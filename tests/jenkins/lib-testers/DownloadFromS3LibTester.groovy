@@ -1,6 +1,8 @@
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.CoreMatchers.anyOf
+import static org.hamcrest.CoreMatchers.equalTo
+
 
 
 class DownloadFromS3LibTester extends LibFunctionTester {
@@ -22,14 +24,14 @@ class DownloadFromS3LibTester extends LibFunctionTester {
         assertThat(call.args.bucket.first(), notNullValue())
         assertThat(call.args.path.first(), notNullValue())
         assertThat(call.args.force.first(), notNullValue())
-        assertThat(call.args.force.first(), anyOf(is("true"), is("false")))
+        assertThat(call.args.force.first().toString(), anyOf(equalTo('true'), equalTo('false')))
     }
 
     boolean expectedParametersMatcher(call) {
         return call.args.sourcePath.first().toString().equals(this.sourcePath)
                 && call.args.bucket.first().toString().equals(this.bucket)
                 && call.args.path.first().toString().equals(this.path)
-                && call.args.force.first() == (this.force)
+                && call.args.force.first().toString().equals(this.force.toString())
     }
 
     String libFunctionName(){

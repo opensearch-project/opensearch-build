@@ -33,7 +33,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins --sigtype=.sig --component=null --type=null
+            workspace/sign.sh workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/plugins --signatureType=.sig
         )
                   promoteArtifacts.findFiles({glob=**/opensearch-dashboards-min-1.2.0*.tar.gz,**/opensearch-dashboards-1.2.0*.tar.gz})
                   promoteArtifacts.getPath()
@@ -56,7 +56,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/workspace/file/found.zip --sigtype=.sig --component=null --type=null
+            workspace/sign.sh workspace/workspace/file/found.zip --signatureType=.sig
         )
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch-dashboards/1.2.0/, workingDir=workspace/artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/dist/, includePathPattern=**/opensearch-dashboards-min-1.2.0*})

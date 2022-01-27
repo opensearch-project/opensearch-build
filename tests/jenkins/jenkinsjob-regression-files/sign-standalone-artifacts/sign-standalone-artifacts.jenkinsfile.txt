@@ -22,7 +22,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --component=null --type=null
+            /tmp/workspace/sign.sh /tmp/workspace/artifacts --signatureType=.sig --distributionPlatform=linux
         )
                sign-standalone-artifacts.uploadToS3({sourcePath=/tmp/workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
                   uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
