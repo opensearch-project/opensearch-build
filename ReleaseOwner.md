@@ -1,7 +1,10 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
 ## Responsibilities
-
+Reponsibilities of a release manager includes but not limited to - 
+- ensuring completion of all tasks on the Release Issue
+- Keep track of any unresolved bugs and features that may affect the release timeline
+- complete the [Release Day](#release-day) Tasks
 
 ## Github issue for tracking the release
 We use a github issue (eg: issue [#1417](https://github.com/opensearch-project/opensearch-build/issues/1417)) to track 
@@ -64,7 +67,40 @@ One can simply reuse the message with updated values for the following -
 
 ### Run Integration Tests
 - Use the jenkins job to run integration tests for `arm64` and `x64`
+- Create an issue publish all test results of the tests Eg: [Integration tests for 1.2.4 OpenSearch Artifacts](https://github.com/opensearch-project/opensearch-build/issues/1479)
 
 ### Recurring Tasks
 1. Keep the Issue tracking table updated as much as possible.
 2. Circle back to make sure all the component versions are bumped up correctly
+
+### opensearch maven release
+Run the job `maven-bundle-build` with the build number and the version of the release. 
+This will release the candidated to sonatype staging. 
+
+This step should be executed one day before the release, since the artifacts on sonatype will otherwise expire.
+
+## Release Day
+1. Verify all issued labeled v1.2.4 in all projects have been resolved.
+2. Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release. 
+   - This will be done with the help of PMs
+3. Maven release 
+   - Release the maven artifacts from staging to prod. **This action is not reversible**
+4. Execute the `distribution-promotion` job to sign and promote opensearch, opensearch-dashboards and native plugins
+5. Publish Docker images
+   - Use the `dockerhub-ecr-promote` job to promote artifacts from dockerhub staging to dockerhub production
+6. Gather, review and publish release notes. [git-release-notes](https://github.com/ariatemplates/git-release-notes)
+7. Publish this release on [opensearch.org](https://opensearch.org/downloads.html)
+   - PMs will execute this step
+8. Publish forum posts - release is launched! Eg: https://discuss.opendistrocommunity.dev/t/opensearch-1-2-4-is-now-available/8330
+   - PMs will execute this step
+9. Publish [blog post](https://github.com/opensearch-project/project-website) - release is launched!
+   - PMs will execute this step
+
+## Post Release Tasks
+1. Create [release tags](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) for each component.
+2. Replace refs in manifests/<version> with tags. Eg:
+   - [manifests/1.2.4](/opensearch-project/opensearch-build/tree/main/manifests/1.2.4)
+   - [PR link](https://github.com/opensearch-project/opensearch-build/pull/1503)
+3. Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
+4. Conduct a retrospective, and publish its results on a github issue
+   - Eg: [1.2.4 Retrospective Issue](https://github.com/opensearch-project/opensearch-build/issues/1514)
