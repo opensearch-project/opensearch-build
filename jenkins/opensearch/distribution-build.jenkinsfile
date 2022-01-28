@@ -5,6 +5,8 @@ pipeline {
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+        // TODO: change to integ-test when updated in Jenkins
+        INTEG_TEST_JOB_NAME = 'Playground/ohltyler-integ-test-stable'
     }
     parameters {
         string(
@@ -119,15 +121,28 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
-                            IntegTestsX64: {
-                                // TODO: change back to integ-test when updated in Jenkins
-                                build job: 'Playground/ohltyler-integ-test-stable',
+                            def integTestResults = 
+                                build job: INTEG_TEST_JOB_NAME,
+                                propagate: false,
+                                wait: true,
                                 parameters: [
                                     string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_X64)
                                 ]
-                            }
+
+                            // Appending integ test results onto the existing output for this step
+                            String integTestUrl = integTestResults.getAbsoluteUrl()
+                            String integTestStatus = integTestResults.getResult()
+                            echo "integTestUrl: ${integTestUrl}"
+                            echo "integTestStatus: ${integTestStatus}"
+                            lib.jenkins.Messages.new(this).add(
+                                STAGE_NAME,
+                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
+                                    "\nInteg Test Job (x64): ${integTestUrl}",
+                                    "Integ Test Status (x64): ${integTestStatus}"
+                                ].join('\n')
+                            )
                         }
                     }
                     post {
@@ -157,15 +172,28 @@ pipeline {
                             echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                             echo "artifactUrl (arm64): ${artifactUrl}"
 
-                            IntegTestsArm64: {
-                                // TODO: change back to integ-test when updated in Jenkins
-                                build job: 'Playground/ohltyler-integ-test-stable',
+                            def integTestResults = 
+                                build job: INTEG_TEST_JOB_NAME,
+                                propagate: false,
+                                wait: true,
                                 parameters: [
                                     string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                 ]
-                            }
+
+                            // Appending integ test results onto the existing output for this step
+                            String integTestUrl = integTestResults.getAbsoluteUrl()
+                            String integTestStatus = integTestResults.getResult()
+                            echo "integTestUrl: ${integTestUrl}"
+                            echo "integTestStatus: ${integTestStatus}"
+                            lib.jenkins.Messages.new(this).add(
+                                STAGE_NAME,
+                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
+                                    "\nInteg Test Job (arm64): ${integTestUrl}",
+                                    "Integ Test Status (arm64): ${integTestStatus}"
+                                ].join('\n')
+                            )
                         }
                     }
                     post {
@@ -194,37 +222,37 @@ pipeline {
             }
         }
     }
-    // post {
-    //     success {
-    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-    //             script {
-    //                 def stashed = lib.jenkins.Messages.new(this).get(['build-x64', 'build-arm64'])
+    post {
+        success {
+            node(AGENT_X64) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['build-and-test-x64', 'build-and-test-arm64'])
 
-    //                 publishNotification(
-    //                     icon: ':white_check_mark:',
-    //                     message: 'Successful Build',
-    //                     extra: stashed,
-    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-    //                     manifest: "${INPUT_MANIFEST}"
-    //                 )
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-    //                 postCleanup()
-    //             }
-    //         }
-    //     }
-    //     failure {
-    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-    //             script {
-    //                 publishNotification(
-    //                     icon: ':warning:',
-    //                     message: 'Failed Build',
-    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-    //                     manifest: "${INPUT_MANIFEST}"
-    //                 )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_X64) {
+                script {
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-    //                 postCleanup()
-    //             }
-    //         }
-    //     }
-    // }
+                    postCleanup()
+                }
+            }
+        }
+    }
 }
