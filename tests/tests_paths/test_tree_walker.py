@@ -12,11 +12,11 @@ from paths.tree_walker import walk
 
 
 class TestTreeWalker(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.maxDiff = None
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
 
-    def test_walk(self):
+    def test_walk(self) -> None:
         paths = sorted(list(itertools.chain(walk(self.data_path))), key=lambda path: path[0])
         self.assertTrue(len(paths), 7)
         self.assertEqual(
