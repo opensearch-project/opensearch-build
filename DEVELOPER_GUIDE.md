@@ -243,7 +243,7 @@ and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). I
 - To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
 
 #### Tests for jenkins job
-All jenkins jobs should have a test case associated with it. 
+Each jenkins job should have a test case associated with it. 
 Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArtifactsJob.groovy)
 - Save the regression file for the `jenkins-job` in `tests/jenkins/jenkinsjob-regression-files/<job-name>/<job-filename>`
 - All tests for jenkins job should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
@@ -254,8 +254,7 @@ Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArti
 #### Tests for jenkins libraries
 
 ##### Lib Tester
-
-All jenkins libraries should have a lib tester associated with it. Eg: [SignArtifactsLibTester](tests/jenkins/lib-testers/SignArtifactsLibTester.groovy)
+Each jenkins library should have a lib tester associated with it. Eg: [SignArtifactsLibTester](tests/jenkins/lib-testers/SignArtifactsLibTester.groovy)
 - Library tester should extend [LibFunctionTester.groovy](tests/jenkins/LibFunctionTester.groovy)
 - implement `void configure(helper, bindings)` method which sets up all the variables used in the library
   - Note: This will not include the variables set using function arguments
@@ -266,15 +265,13 @@ accepted values for the function parameters
 the test
 
 ##### Library Test Case
-
-All jenkins libraries should have a test case associated with it. Eg: [TestSignArtifacts](tests/jenkins/TestSignArtifacts.groovy) <br>
+Each jenkins library should have a test case associated with it. Eg: [TestSignArtifacts](tests/jenkins/TestSignArtifacts.groovy) <br>
 - Jenkins' library test should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - Create a dummy job such as [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) to call and test the function
   and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
 
 
 #### Testing in Jenkins
-
 * [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): is similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.
 
 Make your code changes in a branch, e.g. `jenkins-changes`, including to any of the above jobs. Create a pipeline in Jenkins with the following settings.
