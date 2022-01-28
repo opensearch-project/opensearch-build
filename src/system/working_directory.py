@@ -13,6 +13,7 @@ from typing import Generator
 def WorkingDirectory(path: str) -> Generator[None, None, None]:
     try:
         saved_path = os.getcwd()
-        yield os.chdir(path)
+        os.chdir(path)
+        yield
     finally:
         os.chdir(saved_path)
