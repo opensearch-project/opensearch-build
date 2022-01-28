@@ -36,7 +36,7 @@ class TestProcess(unittest.TestCase):
     def test_file_open_mode(self, mock_tempfile: MagicMock) -> None:
         process_handler = Process()
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
-        tempfile.NamedTemporaryFile.assert_has_calls([call(mode="r+"), call(mode="r+")])
+        mock_tempfile.assert_has_calls([call(mode="r+"), call(mode="r+")])
 
     def test_start_twice(self) -> None:
         process_handler = Process()

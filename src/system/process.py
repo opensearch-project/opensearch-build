@@ -6,12 +6,9 @@
 import logging
 import subprocess
 import tempfile
-from os import PathLike
-from typing import Any, Sequence, Text, Union
+from typing import Any
 
 import psutil
-
-StrOrBytesPath = Union[str, bytes, PathLike[str], PathLike[bytes]]
 
 
 class Process:
@@ -19,10 +16,10 @@ class Process:
         self.process: subprocess.Popen[bytes] = None
         self.stdout: Any = None
         self.stderr: Any = None
-        self.__stdout_data__: Union[Text, bytes] = None
-        self.__stderr_data__: Union[Text, bytes] = None
+        self.__stdout_data__: str = None
+        self.__stderr_data__: str = None
 
-    def start(self, command: Union[Union[bytes, str], Sequence[StrOrBytesPath]], cwd: Union[str, PathLike[str]]) -> None:
+    def start(self, command: str, cwd: str) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
@@ -79,11 +76,11 @@ class Process:
         return self.process.pid if self.started else None
 
     @property
-    def stdout_data(self) -> Union[Text, bytes]:
+    def stdout_data(self) -> Any:
         return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
-    def stderr_data(self) -> Union[Text, bytes]:
+    def stderr_data(self) -> Any:
         return self.stderr.read() if self.stderr else self.__stderr_data__
 
 

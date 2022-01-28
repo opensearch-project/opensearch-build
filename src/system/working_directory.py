@@ -6,11 +6,11 @@
 
 import os
 from contextlib import contextmanager
-from typing import Union
+from typing import Generator
 
 
 @contextmanager
-def WorkingDirectory(path: Union[str, os.PathLike[str]]) -> None:
+def WorkingDirectory(path: str) -> Generator[None, None, None]:
     try:
         saved_path = os.getcwd()
         yield os.chdir(path)

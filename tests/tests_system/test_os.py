@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import subprocess
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -37,7 +36,7 @@ class TestOs(unittest.TestCase):
     @patch("subprocess.check_output", return_value="x86_64".encode())
     def test_subprocess_call(self, mock_subprocess: MagicMock) -> None:
         current_architecture()
-        subprocess.check_output.assert_called_with(["uname", "-m"])
+        mock_subprocess.assert_called_with(["uname", "-m"])
 
     # current_platform
     def test_current_platform(self) -> None:
