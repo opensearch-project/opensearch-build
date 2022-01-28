@@ -1,5 +1,17 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
+- [Responsibilities](#responsibilities)
+- [Github issue for tracking the release](#github-issue-for-tracking-the-release)
+- [Communication Channel](#communication-channel)
+- [Describing Tasks](#describing-tasks)
+  - [Preparation](#preparation)
+  - [Declare a release candidate build](#declare-a-release-candidate-build)
+  - [Issue tracking](#issue-tracking)
+  - [Run Integration Tests](#run-integration-tests)
+  - [Opensearch maven release](#opensearch-maven-release)
+- [Release Day](#release-day)
+- [Post Release Tasks](#post-release-tasks)
+  
 ## Responsibilities
 Reponsibilities of a release manager includes but not limited to - 
 - ensuring completion of all tasks on the Release Issue
@@ -12,8 +24,11 @@ the tasks and progress of the current release. This issue is assigned to the rel
 manager of the release. The release manager is responsible for executing or making sure 
 all the tasks listed on the issue are executed correctly. These components are further discussed below.
 
-## Describing Tasks
+## Communication Channel
+All communication will should be done through the github release issue and the release channel on slack. 
+Tag `@here` for any important updated regarding the releases, such as finalizing build number, integ test execution etc.
 
+## Describing Tasks
 ### Preparation
 1. Assign this issue to a release owner. 
 2. Make sure the issue is marked as "in progress" and is assigned to the release manager 
@@ -73,7 +88,7 @@ One can simply reuse the message with updated values for the following -
 1. Keep the Issue tracking table updated as much as possible.
 2. Circle back to make sure all the component versions are bumped up correctly
 
-### opensearch maven release
+### Opensearch maven release
 Run the job `maven-bundle-build` with the build number and the version of the release. 
 This will release the candidated to sonatype staging. 
 
