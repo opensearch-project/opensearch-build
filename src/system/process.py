@@ -14,8 +14,8 @@ import psutil
 class Process:
     def __init__(self) -> None:
         self.process: subprocess.Popen[bytes] = None
-        self.stdout: Any = None
-        self.stderr: Any = None
+        self.stdout: str = None
+        self.stderr: str = None
         self.__stdout_data__: str = None
         self.__stderr_data__: str = None
 

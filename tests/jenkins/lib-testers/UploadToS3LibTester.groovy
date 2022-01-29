@@ -1,13 +1,13 @@
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
-class TestUploadToS3LibTester extends LibFunctionTester {
+class UploadToS3LibTester extends LibFunctionTester {
 
     private String sourcePath
     private String bucket
     private String path
 
-    public TestUploadToS3LibTester(sourcePath, bucket, path){
+    public UploadToS3LibTester(sourcePath, bucket, path){
         this.sourcePath = sourcePath
         this.bucket = bucket
         this.path = path
