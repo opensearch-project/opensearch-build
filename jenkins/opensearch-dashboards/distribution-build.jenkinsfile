@@ -134,41 +134,41 @@ pipeline {
             }
         }
     }
-    // post {
-    //     success {
-    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-    //             script {
-    //                 def stashed = lib.jenkins.Messages.new(this).get([
-    //                     'build-linux-x64',
-    //                     'build-archive-linux-arm64',
-    //                     'assemble-archive-linux-arm64'
-    //                 ])
+    post {
+        success {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([
+                        'build-linux-x64',
+                        'build-archive-linux-arm64',
+                        'assemble-archive-linux-arm64'
+                    ])
 
-    //                 publishNotification(
-    //                     icon: ':white_check_mark:',
-    //                     message: 'Successful Build',
-    //                     extra: stashed,
-    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-    //                     manifest: "${INPUT_MANIFEST}"
-    //                 )
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Successful Build',
+                        extra: stashed,
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-    //                 postCleanup()
-    //             }
-    //         }
-    //     }
-    //     failure {
-    //         node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-    //             script {
-    //                 publishNotification(
-    //                     icon: ':warning:',
-    //                     message: 'Failed Build',
-    //                     credentialsId: 'BUILD_NOTICE_WEBHOOK',
-    //                     manifest: "${INPUT_MANIFEST}"
-    //                 )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                script {
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Build',
+                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        manifest: "${INPUT_MANIFEST}"
+                    )
 
-    //                 postCleanup()
-    //             }
-    //         }
-    //     }
-    // }
+                    postCleanup()
+                }
+            }
+        }
+    }
 }
