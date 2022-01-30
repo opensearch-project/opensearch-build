@@ -13,10 +13,10 @@ from system.zip_file import ZipFile
 
 
 class TestZipFile(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.data_path = os.path.join(os.path.dirname(__file__), "data")
 
-    def test_extractall_preserves_permissions(self):
+    def test_extractall_preserves_permissions(self) -> None:
         with TemporaryDirectory() as tmp:
             temp_file = os.path.join(tmp.name, "test.zip")
             with ZipFile(temp_file, "w", zipfile.ZIP_DEFLATED) as zip:

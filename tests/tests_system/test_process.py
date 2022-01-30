@@ -6,13 +6,13 @@
 
 import tempfile
 import unittest
-from unittest.mock import call, patch
+from unittest.mock import MagicMock, call, patch
 
 from system.process import Process, ProcessNotStartedError, ProcessStartedError
 
 
 class TestProcess(unittest.TestCase):
-    def test(self):
+    def test(self) -> None:
 
         process_handler = Process()
 
@@ -33,13 +33,12 @@ class TestProcess(unittest.TestCase):
         self.assertIsNone(process_handler.pid)
 
     @patch.object(tempfile, 'NamedTemporaryFile')
-    def test_file_open_mode(self, mock_tempfile):
+    def test_file_open_mode(self, mock_tempfile: MagicMock) -> None:
         process_handler = Process()
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
+        mock_tempfile.assert_has_calls([call(mode="r+"), call(mode="r+")])
 
-        tempfile.NamedTemporaryFile.assert_has_calls([call(mode="r+"), call(mode="r+")])
-
-    def test_start_twice(self):
+    def test_start_twice(self) -> None:
         process_handler = Process()
         process_handler.start("ls", ".")
 
@@ -48,7 +47,7 @@ class TestProcess(unittest.TestCase):
 
         self.assertTrue(str(ctx.exception).startswith("Process already started, pid: "))
 
-    def test_terminate_unstarted_process(self):
+    def test_terminate_unstarted_process(self) -> None:
         process_handler = Process()
 
         with self.assertRaises(ProcessNotStartedError) as ctx:
