@@ -16,7 +16,7 @@ void call(Map args = [:]) {
 
     // Setup src & dst variables for artifacts
     srcDir = "${WORKSPACE}/builds/${productName}/dist"
-    dstDir = "test/others/core/${productName}/${version}"
+    dstDir = "snapshots/core/${productName}/${version}"
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
     tarSrcName = "${baseName}.tar.gz"
     tarDstNameId = "${baseName}-${id}.tar.gz"
