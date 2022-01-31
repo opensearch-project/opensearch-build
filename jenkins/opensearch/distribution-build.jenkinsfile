@@ -53,7 +53,9 @@ pipeline {
                                 echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
                             echo("Uploading min snapshots to S3")
-                            uploadMinSnapshotsToS3()
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()]
+                            )
                         }
                     }
                     post {
@@ -78,7 +80,9 @@ pipeline {
                                 snapshot: true
                             )
                             echo("Uploading min snapshots to S3")
-                            uploadMinSnapshotsToS3()
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()]
+                            )
                         }
                     }
                     post {
