@@ -131,16 +131,11 @@ pipeline {
                                     string(name: 'AGENT_LABEL', value: AGENT_X64)
                                 ]
 
-                            // Appending integ test results onto the existing output for this step
-                            String integTestUrl = integTestResults.getAbsoluteUrl()
-                            String integTestStatus = integTestResults.getResult()
-                            echo "integTestUrl: ${integTestUrl}"
-                            echo "integTestStatus: ${integTestStatus}"
                             lib.jenkins.Messages.new(this).add(
                                 STAGE_NAME,
                                 lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
-                                    "\nInteg Test Job (x64): ${integTestUrl}",
-                                    "Integ Test Status (x64): ${integTestStatus}"
+                                    "\nInteg Test Job (x64): ${integTestResults.getAbsoluteUrl()}",
+                                    "Integ Test Status (x64): ${integTestResults.getResult()}"
                                 ].join('\n')
                             )
                         }
@@ -182,16 +177,11 @@ pipeline {
                                     string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                 ]
 
-                            // Appending integ test results onto the existing output for this step
-                            String integTestUrl = integTestResults.getAbsoluteUrl()
-                            String integTestStatus = integTestResults.getResult()
-                            echo "integTestUrl: ${integTestUrl}"
-                            echo "integTestStatus: ${integTestStatus}"
                             lib.jenkins.Messages.new(this).add(
                                 STAGE_NAME,
                                 lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
-                                    "\nInteg Test Job (arm64): ${integTestUrl}",
-                                    "Integ Test Status (arm64): ${integTestStatus}"
+                                    "\nInteg Test Job (arm64): ${integTestResults.getAbsoluteUrl()}",
+                                    "Integ Test Status (arm64): ${integTestResults.getResult()}"
                                 ].join('\n')
                             )
                         }
