@@ -44,11 +44,15 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
     }
 
     @Test
-    @Ignore("https://github.com/opensearch-project/opensearch-build/issues/1521")
     public void testJenkinsfile() {
         helper.registerAllowedMethod("s3DoesObjectExist", [Map], { args ->
             return true
         })
+
+        Path sourceBuildManifest = Path.of("tests/data/opensearch-build-1.1.0.yml")
+        Path targetBuildManifest = Path.of("builds/opensearch/manifest.yml")
+        Files.createDirectories(targetBuildManifest.getParent())
+        Files.copy(sourceBuildManifest, targetBuildManifest, StandardCopyOption.REPLACE_EXISTING)
 
         super.testPipeline("tests/jenkins/jobs/BuildAssembleUpload_Jenkinsfile")
     }
