@@ -62,7 +62,7 @@ class BuildManifest implements Serializable {
             this.ref = data.ref
             this.commit_id = data.commit_id
             this.repository = data.repository
-            this.artifacts = new HashMap<>(data.artifacts)
+            this.artifacts = data.artifacts ? new HashMap<>(data.artifacts) : new HashMap<>()
         }
 
     }

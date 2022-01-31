@@ -29,7 +29,7 @@ Fork this repository on GitHub, and clone locally with `git clone`.
 
 ## Build Tools
 
-This project contains a collection of tools to build, test and release OpenSearch and OpenSearch Dashboards. 
+This project contains a collection of tools to build, test and release OpenSearch and OpenSearch Dashboards.
 
 ### Install Prerequisites
 
@@ -89,7 +89,7 @@ npm install -g yarn
 
 ### Install Dependencies
 
-Install dependencies. 
+Install dependencies.
 
 ```
 $ pipenv install
@@ -142,7 +142,7 @@ $ pipenv run pre-commit run --all-files
 ```
 Pre-commit hook will run isort, flake8, mypy and pytest before making a commit.
 
-This project uses [isort](https://github.com/PyCQA/isort) to ensure that imports are sorted, and [flake8](https://flake8.pycqa.org/en/latest/) to enforce code style. 
+This project uses [isort](https://github.com/PyCQA/isort) to ensure that imports are sorted, and [flake8](https://flake8.pycqa.org/en/latest/) to enforce code style.
 
 ```
 $ pipenv run flake8
@@ -172,7 +172,7 @@ Use [yamlfix](https://github.com/lyz-code/yamlfix) to auto-format your YAML file
 $ git status -s | grep -e "[MA?]\s.*.y[a]*ml" | xargs pipenv run yamlfix 
 ```
 
-If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/tests.yml) will make sure to remind you. 
+If your code isn't properly formatted, don't worry, [a CI workflow](./github/workflows/tests.yml) will make sure to remind you.
 
 ### Type Checking
 
@@ -234,14 +234,48 @@ BUILD SUCCESSFUL in 7s
 
 #### Regression Tests
 
-Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs). For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail. To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+Jenkins workflow regression tests typically output a .txt file into [tests/jenkins/jobs](tests/jenkins/jobs).
+For example, [TestHello.groovy](tests/jenkins/TestHello.groovy) executes [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile)
+and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). If the job execution changes, the regression test will fail.
+
+- To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
+
+- To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
+
+#### Tests for jenkins job
+Each jenkins job should have a test case associated with it. 
+Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArtifactsJob.groovy)
+- Save the regression file for the `jenkins-job` in `tests/jenkins/jenkinsjob-regression-files/<job-name>/<job-filename>`
+- All tests for jenkins job should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
+- All tests should have a `setUp()` which is used to set the variables associated with the job
+- Add setups for all libraries used in the job using `this.registerLibTester` with appropriate values
+(Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
+
+#### Tests for jenkins libraries
+
+##### Lib Tester
+Each jenkins library should have a lib tester associated with it. Eg: [SignArtifactsLibTester](tests/jenkins/lib-testers/SignArtifactsLibTester.groovy)
+- Library tester should extend [LibFunctionTester.groovy](tests/jenkins/LibFunctionTester.groovy)
+- implement `void configure(helper, bindings)` method which sets up all the variables used in the library
+  - Note: This will not include the variables set using function arguments
+- implement `void libFunctionName()`. This function will contain the name of function.
+- implement `void parameterInvariantsAssertions()`. This function will contain assertions verifying the type and 
+accepted values for the function parameters
+- implement `void expectedParametersMatcher()`. This function will match args called in the job to expected values from 
+the test
+
+##### Library Test Case
+Each jenkins library should have a test case associated with it. Eg: [TestSignArtifacts](tests/jenkins/TestSignArtifacts.groovy) <br>
+- Jenkins' library test should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
+- Create a dummy job such as [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) to call and test the function
+  and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
+
 
 #### Testing in Jenkins
-
 * [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): is similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.
- 
+
 Make your code changes in a branch, e.g. `jenkins-changes`, including to any of the above jobs. Create a pipeline in Jenkins with the following settings.
- 
+
 * GitHub Project: `https://github.com/[your username]/opensearch-build/`.
 * Pipeline repository URL: `https://github.com/[your username]/opensearch-build`.
 * Branch specifier: `refs/heads/jenkins-changes`.
