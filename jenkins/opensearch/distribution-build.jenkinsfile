@@ -135,10 +135,8 @@ pipeline {
                             String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
                             lib.jenkins.Messages.new(this).add(
                                 STAGE_NAME,
-                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
-                                    "\nInteg Test Job (x64): ${integTestResults.getAbsoluteUrl()}",
-                                    "Integ Test Status (x64): ${icon} ${status}"
-                                ].join('\n')
+                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
+                                    "\nInteg Tests (x64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
                             )
                         }
                     }
@@ -183,10 +181,8 @@ pipeline {
                             String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
                             lib.jenkins.Messages.new(this).add(
                                 STAGE_NAME,
-                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + [
-                                    "\nInteg Test Job (arm64): ${integTestResults.getAbsoluteUrl()}",
-                                    "Integ Test Status (arm64): ${icon} ${status}"
-                                ].join('\n')
+                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
+                                    "\nInteg Tests (arm64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
                             )
                         }
                     }
