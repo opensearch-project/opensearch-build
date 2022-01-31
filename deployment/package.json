@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "postbuild": "eslint --fix \"bin/**/*.ts\" \"lib/**/*.ts\" \"test/**/*.ts\" --ignore-pattern \"**/*.d.ts\" && jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "test": "jest"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.123.0",
