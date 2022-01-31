@@ -1,3 +1,5 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
 pipeline {
     agent none
     stages {
@@ -5,7 +7,8 @@ pipeline {
             steps {
                 script {
                     uploadMinSnapshotsToS3(
-                        manifest: "tests/jenkins/data/opensearch-1.3.0.yml"
+                        fileActions: [createSha512Checksums()],
+                        manifest: 'tests/jenkins/data/opensearch-1.3.0.yml'
                     )
                 }
             }

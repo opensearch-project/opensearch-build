@@ -2,6 +2,7 @@ build:
   architecture: x64
   name: OpenSearch
   version: 1.3.0
+  id: '717'
 ci:
   image:
     args: -e JAVA_HOME=/opt/java/openjdk-11
