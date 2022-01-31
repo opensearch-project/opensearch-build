@@ -18,12 +18,6 @@ void call(Map args = [:]) {
     srcDir = "${WORKSPACE}/builds/${productName}/dist"
     dstDir = "snapshots/core/${productName}/${version}"
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
-    tarSrcName = "${baseName}.tar.gz"
-    tarDstNameId = "${baseName}-${id}.tar.gz"
-    tarDstNameLatest = "${baseName}-latest.tar.gz"
-    shaSrcName = "${tarSrcName}.sha512"
-    shaDstNameId = "${tarDstNameId}.sha512"
-    shaDstNameLatest = "${tarDstNameLatest}.sha512"
 
     // Create checksums
     echo("Create .sha512 for Min Snapshots Artifacts")
@@ -34,9 +28,9 @@ void call(Map args = [:]) {
     }
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "${srcDir}/${tarSrcName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${tarDstNameId}")
-        s3Upload(file: "${srcDir}/${tarSrcName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${tarDstNameLatest}")
-        s3Upload(file: "${srcDir}/${shaSrcName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${shaDstNameId}")
-        s3Upload(file: "${srcDir}/${shaSrcName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${shaDstNameLatest}")
+        s3Upload(file: "${srcDir}/${baseName}.tar.gz", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-${id}.tar.gz")
+        s3Upload(file: "${srcDir}/${baseName}.tar.gz", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz")
+        s3Upload(file: "${srcDir}/${baseName}.tar.gz.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-${id}.tar.gz.sha512")
+        s3Upload(file: "${srcDir}/${baseName}.tar.gz.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz.sha512")
     }
 }
