@@ -76,6 +76,10 @@ One can simply reuse the message with updated values for the following -
 - update the urls for manifest and tar.gz files for arm64
 - update the urls for manifest and tar.gz files for x64
 
+**Note:** The release candidate can be updated in future if there is another merge related to the release. Make sure to 
+select the release candidate for integration tests after all the merges for the release are completed. As a release manager,
+raise concerns over any delayed merges that can potentially change the release timeline.
+
 ### Issue tracking
 - Holds the number of issues that are linked to the current release. 
 - The number can be viewed using the links from the "State, Bug and Enhancement"
@@ -99,7 +103,7 @@ This step should be executed one day before the release, since the artifacts on 
 2. Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release. 
    - This will be done with the help of PMs
 3. Maven release 
-   - Release the maven artifacts from staging to prod. **This action is not reversible**
+   - Release the maven artifacts from staging to prod on sonatype. **This action is not reversible**
 4. Execute the `distribution-promotion` job to sign and promote opensearch, opensearch-dashboards and native plugins
 5. Publish Docker images
    - Use the `dockerhub-ecr-promote` job to promote artifacts from dockerhub staging to dockerhub production
@@ -117,5 +121,10 @@ This step should be executed one day before the release, since the artifacts on 
    - [manifests/1.2.4](/opensearch-project/opensearch-build/tree/main/manifests/1.2.4)
    - [PR link](https://github.com/opensearch-project/opensearch-build/pull/1503)
 3. Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
-4. Conduct a retrospective, and publish its results on a github issue
+4. Conduct a retrospective meeting with everyone involved and publish its results on a github issue
    - Eg: [1.2.4 Retrospective Issue](https://github.com/opensearch-project/opensearch-build/issues/1514)
+
+## FAQs
+1. How to get help on a critical issue?
+> Narrow down the issue source. Reach out the respective component's release engineer/manager for the issue. Create an issue 
+> in the respective component's repository. Also list the issue on the release issue for visibility. Eg: [issue comment](https://github.com/opensearch-project/opensearch-build/issues/1417#issuecomment-1011675002)
