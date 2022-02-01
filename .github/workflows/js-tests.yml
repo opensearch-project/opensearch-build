@@ -17,4 +17,6 @@ jobs:
           node-version: 12.x
           cache: npm
       - run: yarn install
-      - run: yarn test
+      - run: yarn test -- --coverage
+      - name: Upload Coverage Report
+        uses: codecov/codecov-action@v2
