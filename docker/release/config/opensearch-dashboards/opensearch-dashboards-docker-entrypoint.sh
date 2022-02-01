@@ -164,8 +164,8 @@ function setupSecurityDashboardsPlugin {
             # Remove all security related parameters as well as changing HTTPS to HTTP
             # Temporary fix before security-dashboards plugin implement a parameter to disable the plugin entirely
             # https://github.com/opensearch-project/security-dashboards-plugin/issues/896
-            NEW_CONFIG=`cat $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | sed "/^opensearch_security/d" | sed "s/https/http/g"`
-            echo "$NEW_CONFIG" > $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
+            UPDATED_CONFIG=`cat $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml | sed "/^opensearch_security/d" | sed "s/https/http/g"`
+            echo "$UPDATED_CONFIG" > $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml
         fi
     fi
 }
