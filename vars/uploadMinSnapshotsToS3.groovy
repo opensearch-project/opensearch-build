@@ -27,12 +27,12 @@ void call(Map args = [:]) {
         action(argsMap)
     }
 
+    sh """
+        cp ${srcDir}/${baseName}.tar.gz ${srcDir}/${baseName}-latest.tar.gz
+        cp ${srcDir}/${baseName}.tar.gz.sha512 ${srcDir}/${baseName}-latest.tar.gz.sha512
+        sed -i "s/.tar.gz/-latest.tar.gz/g" ${srcDir}/${baseName}-latest.tar.gz.sha512
+    """
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        sh """
-            cp ${srcDir}/${baseName}.tar.gz ${srcDir}/${baseName}-latest.tar.gz
-            cp ${srcDir}/${baseName}.tar.gz.sha512 ${srcDir}/${baseName}-latest.tar.gz.sha512
-            sed -i "s/.tar.gz/-latest.tar.gz/g" ${srcDir}/${baseName}-latest.tar.gz.sha512
-        """
         s3Upload(file: "${srcDir}/${baseName}-latest.tar.gz", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz")
         s3Upload(file: "${srcDir}/${baseName}-latest.tar.gz.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz.sha512")
     }
