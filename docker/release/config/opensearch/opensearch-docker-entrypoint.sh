@@ -43,11 +43,10 @@ function setupSecurityPlugin {
 
         if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
             echo "Disabling OpenSearch Security Plugin"
-            cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
-            echo "plugins.security.disabled: true" >> $OPENSEARCH_HOME/config/opensearch.yml
+            opensearch_opt="-Eplugins.security.disabled=true"
+            opensearch_opts+=("${opensearch_opt}")
         else
             echo "Enabling OpenSearch Security Plugin"
-            cat $OPENSEARCH_HOME/config/opensearch.yml | sed "/plugins.security.disabled/d" | tee $OPENSEARCH_HOME/config/opensearch.yml
         fi
     fi
 }
@@ -82,7 +81,7 @@ function runOpensearch {
     #
     # e.g. Setting the env var cluster.name=testcluster
     # will cause OpenSearch to be invoked with -Ecluster.name=testcluster
-    local opensearch_opts=()
+    opensearch_opts=()
     while IFS='=' read -r envvar_key envvar_value
     do
         # OpenSearch settings need to have at least two dot separated lowercase
