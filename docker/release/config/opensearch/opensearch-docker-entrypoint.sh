@@ -15,7 +15,6 @@ function usage() {
   echo "Usage: $0 [args]"
   echo "Optional arguments:"
   echo -e "-h\t\tPrint this message."
-  echo -e "-g\t\tGenerates and installs self-signed certificates for SSL encryption."
   echo "--------------------------------------------------------------------------"
 }
 
@@ -29,14 +28,11 @@ function do_certificates_exist() {
   fi
 }
 
-while getopts ":hg" option; do
+while getopts ":h" option; do
   case $option in
   h)
     usage
     exit 1
-    ;;
-  g)
-    GENERATE_CERTS="true"
     ;;
   \?)
     echo "Invalid option -$OPTARG" >&2
@@ -94,9 +90,8 @@ export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEAR
 ##Security Plugin
 SECURITY_PLUGIN="opensearch-security"
 if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-    if (! do_certificates_exist && [ "$GENERATE_CERTS" == "true" ]); then
+    if (! do_certificates_exist && [ "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]); then
       echo "Generating and installing new self-signed certificates..."
-      # TODO(#1633) Replace this with certs-manager tool in auto mode. Pending on #1633
       bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
     fi
 
