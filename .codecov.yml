@@ -6,3 +6,5 @@ coverage:
         target: 98%
 ignore:
   - '**/tests/*.py'
+  - '**/test/*.js'
+  - '**/test/*.ts'
