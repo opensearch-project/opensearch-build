@@ -40,7 +40,7 @@ class TestMavenSignReleaseJob extends BuildPipelineTest {
 
     @Test
     void MavenSignRelease_test() {
-        super.testPipeline('jenkins/opensearch_maven_release/maven-sign-release.jenkinsfile',
+        super.testPipeline('jenkins/opensearch-maven-release/maven-sign-release.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/maven-sign-release/maven-sign-release.jenkinsfile')
     }
 }
