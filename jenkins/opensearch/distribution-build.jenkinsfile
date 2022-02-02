@@ -5,8 +5,7 @@ pipeline {
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-        // TODO: change to integ-test when updated in Jenkins
-        INTEG_TEST_JOB_NAME = 'Playground/ohltyler-integ-test-stable'
+        INTEG_TEST_JOB_NAME = 'integ-test'
     }
     parameters {
         string(
