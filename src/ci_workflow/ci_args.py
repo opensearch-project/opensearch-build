@@ -5,15 +5,16 @@
 # compatible open source license.
 
 import argparse
+import io
 import logging
 import sys
 
 
 class CiArgs:
-    manifest: str
+    manifest: io.TextIOWrapper
     snapshot: bool
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Sanity test the OpenSearch Bundle")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
@@ -47,7 +48,7 @@ class CiArgs:
         self.logging_level = args.logging_level
         self.script_path = sys.argv[0].replace("/src/run_ci.py", "/ci.sh")
 
-    def component_command(self, name):
+    def component_command(self, name: str) -> str:
         return " ".join(
             filter(
                 None,

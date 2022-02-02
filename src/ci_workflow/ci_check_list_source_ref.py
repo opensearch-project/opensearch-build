@@ -15,10 +15,10 @@ class CiCheckListSourceRef(CiCheckList):
         def __init__(self, url: str, ref: str) -> None:
             super().__init__(f"Missing {url}@{ref}.")
 
-    def checkout(self, work_dir):
+    def checkout(self, work_dir: str) -> None:
         return super().checkout(work_dir)
 
-    def check(self):
+    def check(self) -> None:
         logging.info(f"Checking {self.component.repository} at {self.component.ref}.")
         results = subprocess.check_output(f"git ls-remote {self.component.repository} {self.component.ref}", shell=True).decode().strip().split("\t")
         if len(results) != 2:

@@ -13,7 +13,7 @@ from manifests.input_manifest import InputComponentFromSource
 
 class TestCiCheckListsSourceRef(unittest.TestCase):
     @patch("subprocess.check_output", return_value="invalid".encode())
-    def test_ref_does_not_exist(self, mock_check_output):
+    def test_ref_does_not_exist(self, mock_check_output: MagicMock) -> None:
         component = InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"})
         with self.assertRaises(CiCheckListSourceRef.MissingRefError) as ctx:
             list = CiCheckListSourceRef(component, MagicMock())
@@ -22,7 +22,7 @@ class TestCiCheckListsSourceRef(unittest.TestCase):
         mock_check_output.assert_called_with("git ls-remote url ref", shell=True)
 
     @patch("subprocess.check_output", return_value="valid\tref".encode())
-    def test_ref_exists(self, mock_check_output):
+    def test_ref_exists(self, mock_check_output: MagicMock) -> None:
         component = InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"})
         list = CiCheckListSourceRef(component, MagicMock())
         list.check()
