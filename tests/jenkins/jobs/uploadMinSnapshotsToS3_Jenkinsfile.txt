@@ -30,8 +30,11 @@ ccc
 bbb
 ccc
 })
+                  uploadMinSnapshotsToS3.sh(
+        cp tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz
+        cp tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512 tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
+        sed -i "s/.tar.gz/-latest.tar.gz/g" tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
+    )
                   uploadMinSnapshotsToS3.withAWS({role=dummy_role, roleAccount=1234, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-29.tar.gz})
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz})
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-29.tar.gz.sha512})
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512})
+                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz})
+                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512})
