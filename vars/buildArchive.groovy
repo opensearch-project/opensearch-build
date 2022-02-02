@@ -2,7 +2,7 @@ void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     buildManifest(args)
 
-    echo "Archiving into zip: builds/**, ${args.manifest}"
+    echo "Archiving into zip: builds/**, ${args.inputManifest}"
 
     zip(
         zipFile: "archived-builds.zip",

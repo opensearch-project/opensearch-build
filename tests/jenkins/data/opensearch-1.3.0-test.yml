@@ -1,0 +1,91 @@
+---
+name: OpenSearch
+components:
+  - name: index-management
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        path.repo: [/tmp]
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: anomaly-detection
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: asynchronous-search
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: alerting
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: sql
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        script.context.field.max_compilations_rate: 1000/1m
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: k-NN
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
+
+  - name: dashboards-notebooks
+    working-directory: opensearch-notebooks
+    integ-test:
+      test-configs:
+        - without-security
+    bwc-test:
+      test-configs:
+        - without-security
+schema-version: '1.0'

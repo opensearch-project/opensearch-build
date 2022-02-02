@@ -48,12 +48,6 @@ class InputManifest {
         String getFilename() {
             return this.name.toLowerCase().replaceAll(' ', '-')
         }
-
-        String getFilenameWithExtension(String platform = null, String architecture = null) {
-            String resolvedPlatform = platform ?: this.platform
-            String resolvedArchitecture = architecture ?: this.architecture
-            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${resolvedPlatform == 'windows' ? 'zip' : 'tar.gz'}"
-        }
     }
 
     Build build
@@ -62,20 +56,6 @@ class InputManifest {
     InputManifest(Map data) {
         this.build = new InputManifest.Build(data.build)
         this.ci = data.ci ? new InputManifest.Ci(data.ci) : null
-    }
-
-    String getPublicDistUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber, String platform = null, String architecture = null) {
-        return [
-            publicArtifactUrl,
-            jobName,
-            this.build.version,
-            buildNumber,
-            platform ?: this.build.platform,
-            architecture ?: this.build.architecture,
-            'dist',
-            this.build.getFilename(),
-            this.build.getFilenameWithExtension(platform, architecture)
-        ].join("/")
     }
 
     String getSHAsRoot(String jobName) {
