@@ -42,7 +42,7 @@ pipeline {
                     S3_FILE_UPLOAD_PATH = S3_FILE_UPLOAD_PATH.replaceAll('^/+', "")
                     downloadedFiles = downloadArtifactsFromUrls()
                     signArtifacts(
-                            artifactPath: "$WORKSPACE/artifacts/",
+                            artifactPath: "$WORKSPACE/artifacts",
                             signatureType: SIGNATURE_TYPE,
                             distributionPlatform: DISTRIBUTION_PLATFORM
                     )

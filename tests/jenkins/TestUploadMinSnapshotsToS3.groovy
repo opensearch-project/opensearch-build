@@ -8,31 +8,21 @@
 
 package jenkins.tests
 
+import com.kenai.jffi.Closure
+import jenkins.tests.BuildPipelineTest
 import org.junit.*
-import java.util.*
 
 class TestUploadMinSnapshotsToS3 extends BuildPipelineTest {
 
     @Before
     void setUp() {
+        List <Closure> fileActions = ['createSha512Checksums']
+        this.registerLibTester(new UploadMinSnapshotsToS3LibTester( fileActions, 'tests/jenkins/data/opensearch-1.3.0.yml' ))
         super.setUp()
-
-        binding.setVariable('WORKSPACE', 'tests/data/')
-
-        binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'dummy_role')
-        binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234')
-        binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'dummy_bucket')
-
-        helper.registerAllowedMethod("s3Upload", [Map])
-        helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
     }
 
     @Test
     public void test() {
-        super.testPipeline("tests/jenkins/jobs/uploadSnapshotsToS3_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/uploadMinSnapshotsToS3_Jenkinsfile")
     }  
 }
-
