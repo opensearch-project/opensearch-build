@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from typing import Any
 from unittest.mock import MagicMock
 
 from ci_workflow.ci_check_gradle_dependencies import CiCheckGradleDependencies
@@ -14,10 +15,10 @@ from ci_workflow.ci_target import CiTarget
 
 class TestCiCheckGradleDependencies(unittest.TestCase):
     class DummyDependencies(CiCheckGradleDependencies):
-        def check(self):
+        def check(self) -> None:
             pass
 
-    def __mock_dependencies(self, props="", snapshot=False, gradle_project=None):
+    def __mock_dependencies(self, props: str = "", snapshot: bool = False, gradle_project: Any = None) -> DummyDependencies:
         git_repo = MagicMock()
         git_repo.output.return_value = props
 
@@ -28,25 +29,26 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
             args=gradle_project,
         )
 
-    def test_executes_gradle_dependencies(self):
+    def test_executes_gradle_dependencies(self) -> None:
         check = self.__mock_dependencies()
-        check.git_repo.output.assert_called_once_with(
-            './gradlew :dependencies -Dopensearch.version=1.1.0 -Dbuild.snapshot=false --configuration compileOnly | grep -e "---"'
-        )
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with('./gradlew :dependencies -Dopensearch.version=1.1.0 -Dbuild.snapshot=false --configuration compileOnly | grep -e "---"')
 
-    def test_executes_gradle_dependencies_snapshot(self):
+    def test_executes_gradle_dependencies_snapshot(self) -> None:
         check = self.__mock_dependencies(snapshot=True)
-        check.git_repo.output.assert_called_once_with(
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
-    def test_executes_gradle_dependencies_project(self):
+    def test_executes_gradle_dependencies_project(self) -> None:
         check = self.__mock_dependencies(snapshot=True, gradle_project="project")
-        check.git_repo.output.assert_called_once_with(
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
             './gradlew project:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
-    def test_loads_tree(self):
+    def test_loads_tree(self) -> None:
         data_path = os.path.join(os.path.dirname(__file__), "data", "job_scheduler_dependencies.txt")
         with open(data_path) as f:
             check = self.__mock_dependencies(props=f.read())

@@ -20,33 +20,35 @@ class TestCiCheckManifestComponent(unittest.TestCase):
 
     @patch("manifests.distribution.find_build_root")
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
-    def test_retrieves_manifests(self, mock_manifest: Mock, find_build_root: Mock):
-        find_build_root.return_value = 'url/linux/ARCH/builds/opensearch'
-        check = CiCheckManifestComponent(InputComponentFromDist({
-            "name": "common-utils",
-            "dist": "url"
-        }), CiTarget(version="1.1.0", name="opensearch", snapshot=True))
+    def test_retrieves_manifests(self, mock_manifest: Mock, find_build_root: Mock) -> None:
+        find_build_root.return_value = "url/linux/ARCH/builds/opensearch"
+        check = CiCheckManifestComponent(
+            InputComponentFromDist({"name": "common-utils", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", snapshot=True)
+        )
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
 
         check.check()
-        mock_manifest.from_url.assert_has_calls([
-            call("url/linux/ARCH/builds/opensearch/manifest.yml"),
-            call("url/linux/ARCH/builds/opensearch/manifest.yml"),
-        ])
-        find_build_root.assert_has_calls([
-            call('url', 'linux', 'x64', 'opensearch'),
-            call('url', 'linux', 'arm64', 'opensearch'),
-        ])
+        mock_manifest.from_url.assert_has_calls(
+            [
+                call("url/linux/ARCH/builds/opensearch/manifest.yml"),
+                call("url/linux/ARCH/builds/opensearch/manifest.yml"),
+            ]
+        )
+        find_build_root.assert_has_calls(
+            [
+                call("url", "linux", "x64", "opensearch"),
+                call("url", "linux", "arm64", "opensearch"),
+            ]
+        )
 
     @patch("manifests.distribution.find_build_root")
     @patch("ci_workflow.ci_check_manifest_component.BuildManifest")
-    def test_missing_component(self, mock_manifest: Mock, find_build_root: Mock):
-        find_build_root.return_value = 'url/linux/x64/builds/opensearch'
-        check = CiCheckManifestComponent(InputComponentFromDist({
-            "name": "does-not-exist",
-            "dist": "url"
-        }), CiTarget(version="1.1.0", name="opensearch", snapshot=True))
+    def test_missing_component(self, mock_manifest: Mock, find_build_root: Mock) -> None:
+        find_build_root.return_value = "url/linux/x64/builds/opensearch"
+        check = CiCheckManifestComponent(
+            InputComponentFromDist({"name": "does-not-exist", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", snapshot=True)
+        )
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
 

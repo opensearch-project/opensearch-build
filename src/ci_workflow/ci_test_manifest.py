@@ -6,16 +6,18 @@
 
 
 import logging
+from io import TextIOWrapper
 
+from ci_workflow.ci_args import CiArgs
 from ci_workflow.ci_manifest import CiManifest
 from manifests.test_manifest import TestManifest
 
 
 class CiTestManifest(CiManifest):
-    def __init__(self, file, args):
+    def __init__(self, file: TextIOWrapper, args: CiArgs) -> None:
         super().__init__(TestManifest.from_file(file), args)
 
-    def __check__(self):
+    def __check__(self) -> None:
         assert self.manifest
         logging.info("TestManifest schema validation succeeded")
         logging.info("Done.")

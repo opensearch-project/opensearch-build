@@ -4,18 +4,25 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import abc
 import logging
+from abc import ABC, abstractmethod
+from typing import Any
+
+from ci_workflow.ci_args import CiArgs
 
 
-class CiManifest(abc.ABC):
-    def __init__(self, manifest, args):
+class CiManifest(ABC):
+    def __init__(self, manifest: Any, args: CiArgs) -> None:
         self.manifest = manifest
         self.args = args
 
-    def check(self):
+    def check(self) -> None:
         try:
             self.__check__()
         except:
             logging.error("CI Manifest check failed")
             raise
+
+    @abstractmethod
+    def __check__(self) -> None:
+        pass
