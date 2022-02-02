@@ -40,10 +40,11 @@ void call(Map args = [:]) {
 }
 
 String generateArguments(args) {
+    String artifactPath = args.remove("artifactPath")
     // artifactPath is mandatory and the first argument
-    String arguments = args.artifactPath
+    String arguments = artifactPath
     // generation command line arguments
-    args.each{key, value -> !key.equals("artifactPath") ? arguments += " --${key}=${value}" : ""}
+    args.each{key, value -> arguments += " --${key}=${value}"}
     return arguments
 }
 
