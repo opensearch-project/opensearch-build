@@ -29,46 +29,46 @@ class TestCiArgs(unittest.TestCase):
     )
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
-    def test_manifest(self):
+    def test_manifest(self) -> None:
         self.assertEqual(CiArgs().manifest.name, TestCiArgs.OPENSEARCH_MANIFEST)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
-    def test_keep_default(self):
+    def test_keep_default(self) -> None:
         self.assertFalse(CiArgs().keep)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--keep"])
-    def test_keep_true(self):
+    def test_keep_true(self) -> None:
         self.assertTrue(CiArgs().keep)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
-    def test_snapshot_default(self):
+    def test_snapshot_default(self) -> None:
         self.assertFalse(CiArgs().snapshot)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--snapshot"])
-    def test_snapshot_true(self):
+    def test_snapshot_true(self) -> None:
         self.assertTrue(CiArgs().snapshot)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
-    def test_component_default(self):
+    def test_component_default(self) -> None:
         self.assertIsNone(CiArgs().component)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
-    def test_component(self):
+    def test_component(self) -> None:
         self.assertEqual(CiArgs().component, "xyz")
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
-    def test_script_path(self):
+    def test_script_path(self) -> None:
         self.assertEqual(CiArgs().script_path, self.CI_SH)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
-    def test_component_command(self):
+    def test_component_command(self) -> None:
         self.assertEqual(
             CiArgs().component_command("component"),
             f"{self.CI_SH} {self.OPENSEARCH_MANIFEST} --component component",
         )
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--snapshot"])
-    def test_component_command_with_snapshot(self):
+    def test_component_command_with_snapshot(self) -> None:
         self.assertEqual(
             CiArgs().component_command("component"),
             f"{self.CI_SH} {self.OPENSEARCH_MANIFEST} --component component --snapshot",

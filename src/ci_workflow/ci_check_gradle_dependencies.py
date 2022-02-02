@@ -6,18 +6,22 @@
 
 import logging
 import re
+from typing import Any
 
 from ci_workflow.ci_check import CiCheckSource
+from ci_workflow.ci_target import CiTarget
+from git.git_repository import GitRepository
+from manifests.input_manifest import InputComponent
 from system.properties_file import PropertiesFile
 
 
 class CiCheckGradleDependencies(CiCheckSource):
-    def __init__(self, component, git_repo, target, args):
+    def __init__(self, component: InputComponent, git_repo: GitRepository, target: CiTarget, args: Any) -> None:
         super().__init__(component, git_repo, target, args)
         self.gradle_project = args if args else None
         self.dependencies = self.__get_dependencies()
 
-    def __get_dependencies(self):
+    def __get_dependencies(self) -> PropertiesFile:
         cmd = " ".join(
             [
                 f"./gradlew {self.gradle_project or ''}:dependencies",

@@ -14,35 +14,21 @@ from manifests.input_manifest import InputComponentFromDist, InputComponentFromS
 
 
 class TestCiCheckLists(unittest.TestCase):
-    def test_from_component_source(self):
-        check_list = CiCheckLists.from_component(InputComponentFromSource({
-            "name": "common-utils",
-            "repository": "url",
-            "ref": "ref"
-        }), None)
+    def test_from_component_source(self) -> None:
+        check_list = CiCheckLists.from_component(InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}), None)
         self.assertIs(type(check_list), CiCheckListSourceRef)
 
-    def test_from_component_source_with_checks(self):
+    def test_from_component_source_with_checks(self) -> None:
         check_list = CiCheckLists.from_component(
-            InputComponentFromSource({
-                "name": "common-utils",
-                "repository": "url",
-                "ref": "ref",
-                "checks": [
-                    "check1"
-                ]
-            }), None
+            InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref", "checks": ["check1"]}), None
         )
         self.assertIs(type(check_list), CiCheckListSource)
 
-    def test_from_component_dist(self):
-        check_list = CiCheckLists.from_component(InputComponentFromDist({
-            "name": "common-utils",
-            "dist": "url"
-        }), None)
+    def test_from_component_dist(self) -> None:
+        check_list = CiCheckLists.from_component(InputComponentFromDist({"name": "common-utils", "dist": "url"}), None)
         self.assertIs(type(check_list), CiCheckListDist)
 
-    def test_from_component_invalid(self):
+    def test_from_component_invalid(self) -> None:
         with self.assertRaises(ValueError) as ctx:
             CiCheckLists.from_component(self, None)
         self.assertTrue(str(ctx.exception).startswith("Invalid component type: "))

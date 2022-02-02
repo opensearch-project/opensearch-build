@@ -16,10 +16,10 @@ class TestCiCheckPackage(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
 
     class DummyProperties(CiCheckPackage):
-        def check(self):
+        def check(self) -> None:
             pass
 
-    def test_loads_package_json(self):
+    def test_loads_package_json(self) -> None:
         props = TestCiCheckPackage.DummyProperties(
             component=MagicMock(),
             git_repo=MagicMock(working_directory=self.DATA),

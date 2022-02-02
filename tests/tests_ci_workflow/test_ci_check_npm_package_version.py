@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 from ci_workflow.ci_check_npm_package_version import CiCheckNpmPackageVersion
@@ -14,7 +15,7 @@ from system.properties_file import PropertiesFile
 
 
 class TestCiCheckNpmPackageVersion(unittest.TestCase):
-    def __mock_check(self, props=None, component=None, snapshot=True):
+    def __mock_check(self, props: Any = None, component: Component = None, snapshot: bool = True) -> CiCheckNpmPackageVersion:
         with patch.object(CiCheckNpmPackageVersion, "_CiCheckPackage__get_properties") as mock_properties:
             mock_properties.return_value = PropertiesFile(props)
             return CiCheckNpmPackageVersion(
@@ -23,10 +24,10 @@ class TestCiCheckNpmPackageVersion(unittest.TestCase):
                 target=CiTarget(version="1.1.0", name="dashboards-plugin", snapshot=snapshot),
             )
 
-    def test_has_version(self):
+    def test_has_version(self) -> None:
         self.__mock_check({"version": "1.1.0.0"}).check()
 
-    def test_missing_version(self):
+    def test_missing_version(self) -> None:
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check().check()
         self.assertEqual(
@@ -34,7 +35,7 @@ class TestCiCheckNpmPackageVersion(unittest.TestCase):
             "Expected to have version='1.1.0.0', but none was found.",
         )
 
-    def test_invalid_version(self):
+    def test_invalid_version(self) -> None:
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check({"version": "1.2.0"}, component=None, snapshot=False).check()
         self.assertEqual(
@@ -42,7 +43,7 @@ class TestCiCheckNpmPackageVersion(unittest.TestCase):
             "Expected to have version='1.1.0.0', but was '1.2.0'.",
         )
 
-    def test_invalid_version_snapshot(self):
+    def test_invalid_version_snapshot(self) -> None:
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check({"version": "1.2.0"}, component=None, snapshot=True).check()
         self.assertEqual(
@@ -50,7 +51,7 @@ class TestCiCheckNpmPackageVersion(unittest.TestCase):
             "Expected to have version='1.1.0.0', but was '1.2.0'.",
         )
 
-    def test_component_version_opensearch_dashboards(self):
+    def test_component_version_opensearch_dashboards(self) -> None:
         check = self.__mock_check(
             props={"version": "1.1.0.0"},
             component=Component({"name": "OpenSearch-Dashboards", "repository": "", "ref": ""}),
@@ -66,7 +67,7 @@ class TestCiCheckNpmPackageVersion(unittest.TestCase):
             "Expected to have version='1.1.0', but was '1.1.0.0'.",
         )
 
-    def test_component_version(self):
+    def test_component_version(self) -> None:
         check = self.__mock_check(
             props={"version": "1.1.0"},
             component=Component({"name": "Plugin", "repository": "", "ref": ""}),

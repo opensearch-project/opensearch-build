@@ -10,6 +10,6 @@ from ci_workflow.ci_check_gradle_dependencies import CiCheckGradleDependencies
 
 
 class CiCheckGradleDependenciesOpenSearchVersion(CiCheckGradleDependencies):
-    def check(self):
+    def check(self) -> None:
         self.dependencies.check_value("org.opensearch:opensearch", self.target.opensearch_version)
         logging.info(f"Checked {self.component.name} OpenSearch dependency ({self.target.opensearch_version}).")

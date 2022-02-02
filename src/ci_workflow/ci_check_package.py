@@ -6,27 +6,31 @@
 
 import json
 import os
+from typing import Any
 
 from ci_workflow.ci_check import CiCheckSource
+from ci_workflow.ci_target import CiTarget
+from git.git_repository import GitRepository
+from manifests.input_manifest import Component
 from system.properties_file import PropertiesFile
 
 
 class CiCheckPackage(CiCheckSource):
-    def __init__(self, component, git_repo, target, args=None):
+    def __init__(self, component: Component, git_repo: GitRepository, target: CiTarget, args: Any = None) -> None:
         super().__init__(component, git_repo, target, args)
         self.properties = self.__get_properties()
 
     @property
-    def package_json_path(self):
+    def package_json_path(self) -> str:
         return os.path.join(self.git_repo.working_directory, "package.json")
 
-    def __get_properties(self):
+    def __get_properties(self) -> PropertiesFile:
         with open(self.package_json_path, "r") as f:
             return PropertiesFile(CiCheckPackage.__flattenDict(json.load(f)))
 
     # https://gist.github.com/higarmi/6708779
     @classmethod
-    def __flattenDict(cls, d, result=None, index=None, parent_key=None):
+    def __flattenDict(cls, d: dict, result: dict = None, index: int = None, parent_key: str = None) -> dict:
         if result is None:
             result = {}
         if isinstance(d, (list, tuple)):
