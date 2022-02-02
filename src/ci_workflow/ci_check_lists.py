@@ -5,7 +5,7 @@
 # compatible open source license.
 
 from abc import ABC
-from typing import Any, Union
+from typing import Any
 
 from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource

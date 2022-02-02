@@ -9,7 +9,6 @@ import unittest
 from typing import Any
 from unittest.mock import MagicMock
 
-from ci_workflow.ci_args import CiArgs
 from ci_workflow.ci_check_gradle_dependencies import CiCheckGradleDependencies
 from ci_workflow.ci_target import CiTarget
 
