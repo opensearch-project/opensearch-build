@@ -9,9 +9,6 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.*
 
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.core.IsNull.notNullValue
-
 
 class TestPrintArtifactDownloadUrlsForStaging extends BuildPipelineTest {
 
