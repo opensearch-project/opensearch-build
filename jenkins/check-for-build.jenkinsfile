@@ -8,15 +8,15 @@ pipeline {
     triggers {
         parameterizedCron '''
             H/10 * * * * %INPUT_MANIFEST=1.3.0/opensearch-dashboards-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
-            H/10 * * * * %INPUT_MANIFEST=1.2.5/opensearch-1.2.5.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H/10 * * * * %INPUT_MANIFEST=1.2.4/opensearch-1.2.4.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H/10 * * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=1.1.1/opensearch-1.1.1.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H/10 * * * * %INPUT_MANIFEST=1.2.4/opensearch-1.2.5.yml;TEST_MANIFEST=1.2.5/opensearch-1.2.5-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H/10 * * * * %INPUT_MANIFEST=1.2.4/opensearch-1.2.4.yml;TEST_MANIFEST=1.2.4/opensearch-1.2.4-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H/10 * * * * %INPUT_MANIFEST=1.3.0/opensearch-1.3.0.yml;TEST_MANIFEST=1.3.0/opensearch-1.3.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=1.1.1/opensearch-1.1.1.yml;TEST_MANIFEST=1.1.1/opensearch-1.1.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=1.1.1/opensearch-dashboards-1.1.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
-            H 1 * * * %INPUT_MANIFEST=1.2.1/opensearch-1.2.1.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=1.2.2/opensearch-1.2.2.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=1.2.3/opensearch-1.2.3.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=1.2.1/opensearch-1.2.1.yml;TEST_MANIFEST=1.2.1/opensearch-1.2.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=1.2.2/opensearch-1.2.2.yml;TEST_MANIFEST=1.2.2/opensearch-1.2.2-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=1.2.3/opensearch-1.2.3.yml;TEST_MANIFEST=1.2.3/opensearch-1.2.3-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
+            H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;TEST_MANIFEST=2.0.0/opensearch-2.0.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=2.0.0/opensearch-dashboards-2.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
         '''
     }
@@ -59,7 +59,10 @@ pipeline {
             steps {
                 script {
                     lock(resource: "CheckForBuild-${INPUT_MANIFEST}-${TARGET_JOB_NAME}", skipIfLocked: true) {
-                        def sha = getManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                        def sha = getManifestSHA(
+                            inputManifest: "manifests/${INPUT_MANIFEST}",
+                            jobName: "${TARGET_JOB_NAME}"
+                        )
                         if (sha.exists) {
                             echo "Skipping, ${sha.path} already exists."
                         } else {
@@ -68,7 +71,10 @@ pipeline {
                                 string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
                                 ], wait: true
                                 echo "Build succeeded, uploading build SHA for that job"
-                                buildUploadManifestSHA(jobName: "${TARGET_JOB_NAME}")
+                                buildUploadManifestSHA(
+                                    inputManifest: "manifests/${INPUT_MANIFEST}",
+                                    jobName: "${TARGET_JOB_NAME}"
+                                )
                             } catch (err) {
                                 echo "${TARGET_JOB_NAME} failed"
                             }

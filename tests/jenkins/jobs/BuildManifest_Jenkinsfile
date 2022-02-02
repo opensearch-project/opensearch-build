@@ -20,8 +20,11 @@ pipeline {
                     echo buildManifest.build.platform
                     echo buildManifest.build.architecture
                     echo buildManifest.build.getFilename()
+                    echo buildManifest.build.getFilenameWithExtension('windows', 'x86')
                     echo buildManifest.getArtifactRoot('bundle-build', '1')
                     echo buildManifest.getArtifactRootUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
+                    echo buildManifest.getUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
+                    echo buildManifest.getArtifactUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.build.getPackageName()
                     echo buildManifest.components.getMinArtifact()
                 }

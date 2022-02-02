@@ -2,18 +2,11 @@ void call(Map args = [:]) {
     git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
-    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
+    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
 
     String filename = inputManifest.build.getFilename()
-    String x64TarGz = env.ARTIFACT_URL_linux_x64
-    String arm64TarGz = env.ARTIFACT_URL_linux_arm64
 
-    echo "filename: ${filename}"
-    echo "x64TarGz: ${env.ARTIFACT_URL_linux_x64}"
-    echo "arm64TarGz: ${env.ARTIFACT_URL_linux_arm64}"
-
-    if (x64TarGz == null || arm64TarGz ==  null) {
+    if (args.artifactUrlX64 == null || args.artifactUrlArm64 ==  null) {
         echo 'Skipping docker build, one of x64 or arm64 artifacts was not built.'
     } else {
         dockerBuild: {
@@ -25,8 +18,8 @@ void call(Map args = [:]) {
                         'id',
                         'pwd',
                         'cd docker/release',
-                        "curl -sSL ${x64TarGz} -o ${filename}-x64.tgz",
-                        "curl -sSL ${arm64TarGz} -o ${filename}-arm64.tgz",
+                        "curl -sSL ${args.artifactUrlX64} -o ${filename}-x64.tgz",
+                        "curl -sSL ${args.artifactUrlArm64} -o ${filename}-arm64.tgz",
                         [
                             'bash',
                             'build-image-multi-arch.sh',

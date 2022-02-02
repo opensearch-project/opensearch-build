@@ -43,10 +43,15 @@ pipeline {
                     }
                     steps {
                         script {
-                            buildAssembleUpload(
+                            def buildManifestObj = archiveAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64'
                             )
+
+                            String artifactUrl = buildManifestObj.getArtifactUrl('bundle-build', '1')
+                            env.ARTIFACT_URL_X64 = artifactUrl
+                            echo "artifactUrl (x64): ${artifactUrl}"
                         }
                     }
                     post {
@@ -70,6 +75,7 @@ pipeline {
                             steps {
                                 script {
                                     buildArchive(
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
@@ -92,10 +98,15 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    archiveAssembleUpload(
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64'
                                     )
+
+                                    String artifactUrl = buildManifestObj.getArtifactUrl('bundle-build', '1')
+                                    env.ARTIFACT_URL_ARM64 = artifactUrl
+                                    echo "artifactUrl (arm64): ${artifactUrl}"
                                 }
                             }
                             post {
@@ -112,7 +123,11 @@ pipeline {
             steps {
                 node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
                     script {
-                        buildDockerImage()
+                        buildDockerImage(
+                            inputManifest: "manifests/${INPUT_MANIFEST}",
+                            artifactUrlX64: env.ARTIFACT_URL_X64,
+                            artifactUrlArm64: env.ARTIFACT_URL_ARM64
+                        )
                     }
                 }
             }
