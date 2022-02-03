@@ -26,6 +26,11 @@ pipeline {
             trim: true
         )
         string(
+            name: 'TEST_MANIFEST',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml. Currently only applicable for distribution-build-opensearch job',
+            trim: true
+        )
+        string(
             name: 'TARGET_JOB_NAME',
             description: 'Job to trigger if build has changed',
             trim: true
@@ -66,9 +71,17 @@ pipeline {
                             echo "Skipping, ${sha.path} already exists."
                         } else {
                             try {
-                                build job: "${TARGET_JOB_NAME}", parameters: [
-                                string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
-                                ], wait: true
+                                // Currently only opensearch build takes an additional test manifest parameter
+                                if (TARGET_JOB_NAME == 'distribution-build-opensearch') {
+                                    build job: "${TARGET_JOB_NAME}", parameters: [
+                                    string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
+                                    string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}")
+                                    ], wait: true
+                                } else if (TARGET_JOB_NAME == 'distribution-build-opensearch-dashboards') {
+                                    build job: "${TARGET_JOB_NAME}", parameters: [
+                                    string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}")
+                                    ], wait: true
+                                }
                                 echo "Build succeeded, uploading build SHA for that job"
                                 buildUploadManifestSHA(
                                     inputManifest: "manifests/${INPUT_MANIFEST}",
