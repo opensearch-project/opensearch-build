@@ -1,6 +1,6 @@
 ---
 name: Release
-title: "[RELEASE] Release version {{ env.VERSION }}"
+title: "[RELEASE] Release proposal version {{ env.VERSION }}"
 labels: untriaged, release, v{{ env.VERSION }}
 ---
 
