@@ -59,19 +59,21 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 
 - [ ] Declare a release candidate build, and publish all test results.
-- [ ] Verify all issued labeled `v{{ env.VERSION }}` in all projects have been resolved.
+- [ ] Verify [all issues labeled `v{{ env.VERSION }}` in all projects](https://github.com/opensearch-project/project-meta#find-labeled-issues) have been resolved.
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
 - [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
 - [ ] Gather, review and publish release notes. [git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
-- [ ] __REPLACE_RELEASE-day - Publish [blog post](https://github.com/opensearch-project/project-website) - release is launched!
+- [ ] __REPLACE_RELEASE-day - Publish a [blog post](https://github.com/opensearch-project/project-website) - release is launched!
 
 ### Post Release
 
-- [ ] Create [release tags](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) for each component.
-- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags.
+- [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/issues/378#issuecomment-999700848) for each component.
+- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
+- [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
+- [ ] Lower the [frequency of builds](https://github.com/opensearch-project/opensearch-build/pull/1475) for this version of OpenSearch and/or OpenSearch Dashboards.
 - [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
-- [ ] Conduct a postmortem, and publish its results.
+- [ ] Create an issue for a retrospective, solicit feedback, and publish a summary.
 
 ### Components
 

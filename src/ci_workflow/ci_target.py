@@ -10,16 +10,16 @@ class CiTarget:
     name: str
     snapshot: bool
 
-    def __init__(self, version, name, snapshot=True):
+    def __init__(self, version: str, name: str, snapshot: bool = True) -> None:
         self.version = version
         self.name = name
         self.snapshot = snapshot
 
     @property
-    def opensearch_version(self):
+    def opensearch_version(self) -> str:
         return self.version + "-SNAPSHOT" if self.snapshot else self.version
 
     @property
-    def component_version(self):
+    def component_version(self) -> str:
         # BUG: the 4th digit is dictated by the component, it's not .0, this will break for 1.1.0.1
         return self.version + ".0-SNAPSHOT" if self.snapshot else f"{self.version}.0"

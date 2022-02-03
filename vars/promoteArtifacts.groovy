@@ -7,8 +7,10 @@
  */
 
 void call(Map args = [:]) {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+    // fileActions are a closure that accepts a String, filepath with return type void
+    List<Closure> fileActions = args.fileActions ?: []
 
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
@@ -24,30 +26,68 @@ void call(Map args = [:]) {
     String build_manifest = "artifacts/$artifactPath/builds/$filename/manifest.yml"
     def buildManifest = readYaml(file: build_manifest)
 
-    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        // Core Plugins
-        println("Start Core Plugin Promotion to artifects.opensearch.org Bucket")
-        List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
-        for (String pluginSubPath : corePluginList) {
-            String pluginSubFolder = pluginSubPath.split('/')[0]
-            String pluginNameWithExt = pluginSubPath.split('/')[1]
-            String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
-            String pluginFullPath = ['plugins', pluginName, version].join('/')
-            s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$pluginFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/$pluginSubFolder/"
-                , includePathPattern: "**/${pluginName}*")
-        }
+    print("Actions ${fileActions}")
 
+    argsMap = [:]
+    argsMap['signatureType'] = '.sig'
 
-        // Tar Core/Bundle
-        println("Start Tar Core/Bundle Promotion to artifacts.opensearch.org Bucket")
-        String coreFullPath = ['core', filename, version].join('/')
-        String bundleFullPath = ['bundle', filename, version].join('/')
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$coreFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/"
-                , includePathPattern: "**/${filename}-min-${version}*")
-        s3Upload(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "releases/$bundleFullPath/", workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/"
-                , includePathPattern: "**/${filename}*-${version}*")
+    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
+    boolean corePluginDirExists = fileExists(corePluginDir)
 
+    //////////// Signing Artifacts
+    println("Signing Plugins")
 
+    if(corePluginDirExists) {
+        argsMap['artifactPath'] = corePluginDir
+    } else {
+        argsMap['artifactPath'] = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/plugins"
     }
 
+    for (Closure action : fileActions) {
+        action(argsMap)
+    }
+
+    println("Signing TAR Artifacts")
+    String coreFullPath = ['core', filename, version].join('/')
+    String bundleFullPath = ['bundle', filename, version].join('/')
+    for (Closure action : fileActions) {
+        for (file in findFiles(glob: "**/${filename}-min-${version}*.tar.gz,**/${filename}-${version}*.tar.gz")) {
+            argsMap['artifactPath'] = "$WORKSPACE" + "/" + file.getPath()
+            action(argsMap)
+        }
+    }
+
+    //////////// Uploading Artifacts
+    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+        if(corePluginDirExists) {
+            List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
+            for (String pluginSubPath : corePluginList) {
+                String pluginSubFolder = pluginSubPath.split('/')[0]
+                String pluginNameWithExt = pluginSubPath.split('/')[1]
+                String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
+                String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
+                String pluginFullPath = ['plugins', pluginName, version].join('/')
+                s3Upload(
+                    bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                    path: "releases/$pluginFullPath/",
+                    workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
+                    includePathPattern: "**/${pluginName}*"
+                )
+            }
+        }
+
+        s3Upload(
+            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+            path: "releases/$coreFullPath/",
+            workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
+            includePathPattern: "**/${filename}-min-${version}*")
+
+
+        s3Upload(
+            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+            path: "releases/$bundleFullPath/",
+            workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
+            includePathPattern: "**/${filename}-${version}*")
+
+    }
 }

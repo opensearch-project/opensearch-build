@@ -12,20 +12,22 @@ from ci_workflow.ci_target import CiTarget
 
 
 class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
-    def test_executes_gradle_command(self):
+    def test_executes_gradle_command(self) -> None:
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", name="opensearch", snapshot=False),
         )
         check.check()
-        check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
+        exec_command = unittest.mock.create_autospec(check.git_repo.execute)
+        exec_command.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
 
-    def test_executes_gradle_command_snapshot(self):
+    def test_executes_gradle_command_snapshot(self) -> None:
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
         )
         check.check()
-        check.git_repo.execute.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")
+        exec_command = unittest.mock.create_autospec(check.git_repo.execute)
+        exec_command.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")

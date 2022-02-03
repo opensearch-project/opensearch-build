@@ -13,10 +13,10 @@ from ci_workflow.ci_target import CiTarget
 
 class TestCiCheckGradleProperties(unittest.TestCase):
     class DummyProperties(CiCheckGradleProperties):
-        def check(self):
+        def check(self) -> None:
             pass
 
-    def test_executes_gradle_properties(self):
+    def test_executes_gradle_properties(self) -> None:
         git_repo = MagicMock()
         git_repo.output.return_value = ""
 
@@ -28,7 +28,7 @@ class TestCiCheckGradleProperties(unittest.TestCase):
 
         git_repo.output.assert_called_once_with("./gradlew properties -Dopensearch.version=1.1.0 -Dbuild.snapshot=false")
 
-    def test_executes_gradle_properties_snapshot(self):
+    def test_executes_gradle_properties_snapshot(self) -> None:
         git_repo = MagicMock()
         git_repo.output.return_value = ""
 

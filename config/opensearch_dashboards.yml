@@ -1,3 +1,4 @@
+---
 # Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -5,14 +6,14 @@
 # Description:
 # Default configuration for OpenSearch Dashboards
 
-opensearch.hosts: ["https://localhost:9200"]
+opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
-opensearch.username: "kibanaserver"
-opensearch.password: "kibanaserver"
-opensearch.requestHeadersWhitelist: [ authorization,securitytenant ]
+opensearch.username: kibanaserver
+opensearch.password: kibanaserver
+opensearch.requestHeadersWhitelist: [authorization, securitytenant]
 
 opensearch_security.multitenancy.enabled: true
-opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
-opensearch_security.readonly_mode.roles: ["kibana_read_only"]
+opensearch_security.multitenancy.tenants.preferred: [Private, Global]
+opensearch_security.readonly_mode.roles: [kibana_read_only]
 # Use this setting if you are running kibana without https
 opensearch_security.cookie.secure: false

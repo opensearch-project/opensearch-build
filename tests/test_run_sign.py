@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -30,25 +30,11 @@ class TestRunSign(unittest.TestCase):
 
     BUILD_MANIFEST = os.path.join(DATA_PATH, "opensearch-build-1.1.0.yml")
 
-    @patch("os.getcwd", return_value="curdir")
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
-    @patch("run_sign.Signer", return_value=MagicMock())
-    def test_main(self, mock_signer, *mocks):
+    @patch("run_sign.SignArtifacts")
+    @patch("run_sign.Signer")
+    def test_main(self, mock_signer, mock_sign_artifacts, *mocks):
         main()
 
-        self.assertEqual(mock_signer.return_value.sign_artifacts.call_count, 21)
-        mock_signer.return_value.sign_artifacts.assert_has_calls(
-            [
-                call(
-                    [
-                        "maven/org/opensearch/common-utils/maven-metadata-local.xml",
-                        "maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-javadoc.jar",
-                        "maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-sources.jar",
-                        "maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.pom",
-                        "maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar",
-                    ],
-                    self.DATA_PATH,
-                )
-            ]
-        )
-        mock_signer.return_value.sign_artifacts.assert_has_calls([call(["plugins/opensearch-index-management-1.1.0.0.zip"], self.DATA_PATH)])
+        mock_sign_artifacts.from_path.assert_called_once()
+        mock_sign_artifacts.from_path.return_value.sign.assert_called_once()

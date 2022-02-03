@@ -4,16 +4,21 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any
+
 from ci_workflow.ci_check import CiCheckSource
+from ci_workflow.ci_target import CiTarget
+from git.git_repository import GitRepository
+from manifests.input_manifest import Component
 from system.properties_file import PropertiesFile
 
 
 class CiCheckGradleProperties(CiCheckSource):
-    def __init__(self, component, git_repo, target, args=None):
+    def __init__(self, component: Component, git_repo: GitRepository, target: CiTarget, args: Any = None) -> None:
         super().__init__(component, git_repo, target, args)
         self.properties = self.__get_properties()
 
-    def __get_properties(self):
+    def __get_properties(self) -> PropertiesFile:
         cmd = " ".join(
             [
                 "./gradlew properties",

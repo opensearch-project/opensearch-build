@@ -34,7 +34,7 @@ RUN groupadd -g $GID opensearch && \
 
 # Prepare working directory
 # Copy artifacts and configurations to corresponding directories
-COPY * $TEMP_DIR
+COPY * $TEMP_DIR/
 RUN ls -l $TEMP_DIR && \
     tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && \
     mkdir -p $OPENSEARCH_HOME/data && chown -Rv $UID:$GID $OPENSEARCH_HOME/data && \
@@ -72,7 +72,7 @@ RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh 
     echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile.d/java_home.sh
 
 ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
-ENV PATH=$PATH:$JAVA_HOME/bin
+ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin
 
 # Add k-NN lib directory to library loading path variable
 ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/knnlib"
@@ -106,3 +106,4 @@ LABEL org.label-schema.schema-version="1.0" \
 
 # CMD to run
 ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
+CMD ["opensearch"]

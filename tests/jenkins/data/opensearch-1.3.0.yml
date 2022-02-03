@@ -1,15 +1,17 @@
+---
 schema-version: '1.0'
 build:
   name: OpenSearch
   version: 1.3.0
+  id: '717'
 ci:
   image:
-     name: "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028"
-     args: "-e JAVA_HOME=/opt/java/openjdk-11"
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
+    args: -e JAVA_HOME=/opt/java/openjdk-11
 components:
-- name: OpenSearch
-  ref: '1.x'
-  repository: https://github.com/opensearch-project/OpenSearch.git
-  checks:
-    - gradle:publish
-    - gradle:properties:version
+  - name: OpenSearch
+    ref: 1.x
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    checks:
+      - gradle:publish
+      - gradle:properties:version

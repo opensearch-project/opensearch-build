@@ -5,6 +5,7 @@
 # compatible open source license.
 
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 from ci_workflow.ci_check_gradle_dependencies_opensearch import CiCheckGradleDependenciesOpenSearchVersion
@@ -13,7 +14,7 @@ from system.properties_file import PropertiesFile
 
 
 class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
-    def __mock_check(self, props=None):
+    def __mock_check(self, props: Any = None) -> CiCheckGradleDependenciesOpenSearchVersion:
         with patch.object(
             CiCheckGradleDependenciesOpenSearchVersion,
             "_CiCheckGradleDependencies__get_dependencies",
@@ -26,13 +27,13 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
                 args=None,
             )
 
-    def test_gradle_project(self):
+    def test_gradle_project(self) -> None:
         self.assertIsNone(self.__mock_check().gradle_project)
 
-    def test_has_version(self):
+    def test_has_version(self) -> None:
         self.__mock_check({"org.opensearch:opensearch": "1.1.0-SNAPSHOT"}).check()
 
-    def test_missing_version(self):
+    def test_missing_version(self) -> None:
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check({}).check()
         self.assertEqual(
@@ -40,7 +41,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             "Expected to have org.opensearch:opensearch='1.1.0-SNAPSHOT', but none was found.",
         )
 
-    def test_invalid_version(self):
+    def test_invalid_version(self) -> None:
         with self.assertRaises(PropertiesFile.UnexpectedKeyValueError) as err:
             self.__mock_check({"org.opensearch:opensearch": "1.2.0-SNAPSHOT"}).check()
         self.assertEqual(
@@ -48,24 +49,26 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             "Expected to have org.opensearch:opensearch='1.1.0-SNAPSHOT', but was '1.2.0-SNAPSHOT'.",
         )
 
-    def test_executes_gradle_command(self):
+    def test_executes_gradle_command(self) -> None:
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
             args=None,
         )
-        check.git_repo.output.assert_called_once_with(
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
-    def test_executes_gradle_command_with_arg(self):
+    def test_executes_gradle_command_with_arg(self) -> None:
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
             target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
             args="plugin",
         )
-        check.git_repo.output.assert_called_once_with(
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
             './gradlew plugin:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )

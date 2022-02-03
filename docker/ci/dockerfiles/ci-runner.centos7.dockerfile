@@ -140,6 +140,7 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
 RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
 RUN pip3 install pip==21.3.1
 RUN pip3 install cmake==3.21.3
+RUN pip3 install awscli==1.22.12
 
 # Change User
 USER 1000
@@ -148,7 +149,7 @@ WORKDIR /usr/share/opensearch
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 10.24.1
+ENV NODE_VERSION 14.18.2
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash

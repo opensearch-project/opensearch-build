@@ -15,4 +15,9 @@ class TestBuildManifest extends BuildPipelineTest {
     void testBuildManifest() {
         super.testPipeline("tests/jenkins/jobs/BuildManifest_Jenkinsfile")
     }
+
+    @Test
+    void testBuildManifestWithComponentWithNoArtifact() {
+        super.testPipeline("tests/jenkins/jobs/BuildManifest_Jenkinsfile_component_no_artifact")
+    }
 }

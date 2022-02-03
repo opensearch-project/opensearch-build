@@ -1,0 +1,190 @@
+---
+build:
+  platform: linux
+  architecture: x64
+  id: c3ff7a232d25403fa8cc14c97799c323
+  name: OpenSearch
+  version: 1.1.0
+components:
+  - artifacts:
+      dist:
+        - dist/opensearch-min-1.1.0-linux-x64.tar.gz
+      core-plugins:
+        - core-plugins/discovery-ec2-1.1.0.zip
+        - core-plugins/transport-nio-1.1.0.zip
+        - core-plugins/discovery-gce-1.1.0.zip
+        - core-plugins/analysis-ukrainian-1.1.0.zip
+        - core-plugins/discovery-azure-classic-1.1.0.zip
+        - core-plugins/analysis-phonetic-1.1.0.zip
+        - core-plugins/mapper-murmur3-1.1.0.zip
+        - core-plugins/analysis-kuromoji-1.1.0.zip
+        - core-plugins/analysis-stempel-1.1.0.zip
+        - core-plugins/mapper-annotated-text-1.1.0.zip
+        - core-plugins/repository-hdfs-1.1.0.zip
+        - core-plugins/analysis-icu-1.1.0.zip
+        - core-plugins/mapper-size-1.1.0.zip
+        - core-plugins/ingest-attachment-1.1.0.zip
+        - core-plugins/repository-azure-1.1.0.zip
+        - core-plugins/repository-s3-1.1.0.zip
+        - core-plugins/analysis-nori-1.1.0.zip
+        - core-plugins/store-smb-1.1.0.zip
+        - core-plugins/analysis-smartcn-1.1.0.zip
+        - core-plugins/repository-gcs-1.1.0.zip
+      maven:
+        - maven/org/opensearch/common-utils/maven-metadata-local.xml
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-javadoc.jar
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-sources.jar
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.pom
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar
+    commit_id: b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583
+    name: OpenSearch
+    ref: 1.x
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    version: 1.1.0.0
+  - artifacts:
+      maven:
+        - maven/org/opensearch/common-utils/maven-metadata-local.xml
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-javadoc.jar
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0-sources.jar
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.pom
+        - maven/org/opensearch/common-utils/1.1.0.0/common-utils-1.1.0.0.jar
+    commit_id: 3913d7097934cbfe1fdcf919347f22a597d00b76
+    name: common-utils
+    ref: main
+    repository: https://github.com/opensearch-project/common-utils.git
+    version: 1.1.0.0
+  - artifacts:
+      maven:
+        - maven/org/opensearch/opensearch-job-scheduler/maven-metadata-local.xml
+        - maven/org/opensearch/opensearch-job-scheduler/1.1.0.0/opensearch-job-scheduler-1.1.0.0.jar
+        - maven/org/opensearch/opensearch-job-scheduler/1.1.0.0/opensearch-job-scheduler-1.1.0.0.module
+        - maven/org/opensearch/opensearch-job-scheduler/1.1.0.0/opensearch-job-scheduler-1.1.0.0-sources.jar
+        - maven/org/opensearch/opensearch-job-scheduler/1.1.0.0/opensearch-job-scheduler-1.1.0.0-javadoc.jar
+        - maven/org/opensearch/opensearch-job-scheduler/1.1.0.0/opensearch-job-scheduler-1.1.0.0.pom
+        - maven/org/opensearch/opensearch-job-scheduler-spi/maven-metadata-local.xml
+        - maven/org/opensearch/opensearch-job-scheduler-spi/1.1.0.0/opensearch-job-scheduler-spi-1.1.0.0-javadoc.jar
+        - maven/org/opensearch/opensearch-job-scheduler-spi/1.1.0.0/opensearch-job-scheduler-spi-1.1.0.0-sources.jar
+        - maven/org/opensearch/opensearch-job-scheduler-spi/1.1.0.0/opensearch-job-scheduler-spi-1.1.0.0.pom
+        - maven/org/opensearch/opensearch-job-scheduler-spi/1.1.0.0/opensearch-job-scheduler-spi-1.1.0.0.jar
+      plugins:
+        - plugins/opensearch-job-scheduler-1.1.0.0.zip
+    commit_id: 4504dabfc67dd5628c1451e91e9a1c3c4ca71525
+    name: job-scheduler
+    ref: main
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-sql-1.1.0.0.zip
+    commit_id: d68547d585092af1e053d01e1b834259723cd304
+    name: sql
+    ref: main
+    repository: https://github.com/opensearch-project/sql.git
+    version: 1.1.0.0
+  - artifacts:
+      maven:
+        - maven/org/opensearch/notification/maven-metadata-local.xml
+        - maven/org/opensearch/notification/1.1.0.0/notification-1.1.0.0-sources.jar
+        - maven/org/opensearch/notification/1.1.0.0/notification-1.1.0.0.pom
+        - maven/org/opensearch/notification/1.1.0.0/notification-1.1.0.0.jar
+        - maven/org/opensearch/notification/1.1.0.0/notification-1.1.0.0-javadoc.jar
+      plugins:
+        - plugins/opensearch-alerting-1.1.0.0.zip
+    commit_id: 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d
+    name: alerting
+    ref: main
+    repository: https://github.com/opensearch-project/alerting.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-notifications-1.1.0.0.zip
+    commit_id: d0d3e485c4a850f73652a989eeec795b7347fbb6
+    name: notifications
+    ref: main
+    repository: https://github.com/opensearch-project/notifications.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-security-1.1.0.0.zip
+    commit_id: 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d
+    name: security
+    ref: main
+    repository: https://github.com/opensearch-project/security.git
+    version: 1.1.0.0
+  - artifacts:
+      maven:
+        - maven/org/opensearch/performanceanalyzer-rca/maven-metadata-local.xml
+        - maven/org/opensearch/performanceanalyzer-rca/1.1.0.0/performanceanalyzer-rca-1.1.0.0.module
+        - maven/org/opensearch/performanceanalyzer-rca/1.1.0.0/performanceanalyzer-rca-1.1.0.0.jar
+        - maven/org/opensearch/performanceanalyzer-rca/1.1.0.0/performanceanalyzer-rca-1.1.0.0.pom
+    commit_id: 345a10fd4f4e94d6392c925ad95503ba8addd152
+    name: performance-analyzer-rca
+    ref: main
+    repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+    version: 1.1.0.0
+  - artifacts:
+      maven:
+        - maven/org/opensearch/opensearch-performance-analyzer/maven-metadata-local.xml
+        - maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0-javadoc.jar
+        - maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0.pom
+        - maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0.module
+        - maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0.jar
+        - maven/org/opensearch/opensearch-performance-analyzer/1.1.0.0/opensearch-performance-analyzer-1.1.0.0-sources.jar
+      plugins:
+        - plugins/opensearch-performance-analyzer-1.1.0.0.zip
+    commit_id: f184f0bc39302ac38af2585c663d619048f6cffe
+    name: performance-analyzer
+    ref: main
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-index-management-1.1.0.0.zip
+    commit_id: 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24
+    name: index-management
+    ref: main
+    repository: https://github.com/opensearch-project/index-management.git
+    version: 1.1.0.0
+  - artifacts:
+      libs:
+        - libs/libKNNIndexV2_0_11.so
+      plugins:
+        - plugins/opensearch-knn-1.1.0.0.zip
+    commit_id: 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6
+    name: k-NN
+    ref: main
+    repository: https://github.com/opensearch-project/k-NN.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-anomaly-detection-1.1.0.0.zip
+    commit_id: bedc5b620384163abe272e913705fa23cfd3b3a3
+    name: anomaly-detection
+    ref: main
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-asynchronous-search-1.1.0.0.zip
+    commit_id: aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132
+    name: asynchronous-search
+    ref: main
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-reports-scheduler-1.1.0.0.zip
+    commit_id: 622f334b0724e47f7ffd21cf7e7d521a9f6c949e
+    name: dashboards-reports
+    ref: main
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    version: 1.1.0.0
+  - artifacts:
+      plugins:
+        - plugins/opensearch-notebooks-1.1.0.0.zip
+    commit_id: 5a996eb8ec8c92e7469cd5e5f87b237352f60f61
+    name: dashboards-notebooks
+    ref: main
+    repository: https://github.com/opensearch-project/dashboards-notebooks.git
+    version: 1.1.0.0
+schema-version: '1.2'

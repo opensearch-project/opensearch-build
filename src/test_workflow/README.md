@@ -4,7 +4,7 @@
   - [Backwards Compatibility Tests](#backwards-compatibility-tests)
   - [Performance Tests](#performance-tests)
 - [Testing in CI/CD](#testing-in-cicd)
-  - [Test Workflow](#test-workflow)
+  - [Test Workflow (in development)](#test-workflow-in-development)
   - [Component-Level Details](#component-level-details)
     - [test-orchestrator pipeline](#test-orchestrator-pipeline)
     - [integTest job](#integtest-job)
@@ -23,15 +23,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name                 | description                                                             |
-|----------------------|-------------------------------------------------------------------------|
-| test-type            | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
-| test-manifest-path   | Specify a test manifest path.                                           |
-| --paths              | Location of manifest(s).                                                |
-| --test-run-id        | Unique identifier for a test run.                                       |
-| --component          | Test a specific component in a manifest.                                |
-| --keep               | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose        | Show more verbose output.                                               |
+| name               | description                                                             |
+| ------------------ | ----------------------------------------------------------------------- |
+| test-type          | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| test-manifest-path | Specify a test manifest path.                                           |
+| --paths            | Location of manifest(s).                                                |
+| --test-run-id      | Unique identifier for a test run.                                       |
+| --component        | Test a specific component in a manifest.                                |
+| --keep             | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose      | Show more verbose output.                                               |
 
 ### Integration Tests
 
@@ -84,30 +84,25 @@ TODO
 
 The CI/CD infrastructure is divided into two main workflows - `build` and `test`. The `build` workflow automates the process to generate all OpenSearch and OpenSearch Dashboards artifacts, and provide them as distributions to the `test` workflow, which runs exhaustive testing on the artifacts based on the artifact type. The next section talks in detail about the test workflow.
 
-### Test Workflow
+### Test Workflow (in development)
 
-Once a new distribution is ready, the `build-job` kicks off the [test-orchestrator-pipeline](../../jenkins_workflow/test/orchestrator/Jenkinsfile) with input parameters `(build_id, architecture, opensearch_version)` that uniquely identify the bundle. The test orchestrator-pipeline generate a unique `test_run_id`, that uniquely identifies the test execution and invokes all three test jobs - `integ-test, bwc-test, perf-test` in parallel.
+The test workflow development is in progress. To see a previously-unfinished prototype design, see [#609](https://github.com/opensearch-project/opensearch-build/pull/609).
 
-The [integ-test job](../../jenkins_workflow/test/testsuite/Jenkinsfile) starts by pulling the manifest files and installing the required dependencies for running plugin integration tests. It then kicks off the integration test for each plugin based on the `test-configs` defined in [opensearch-1.3.0-test.yml](manifests/1.3.0/opensearch-1.3.0-test.yml). It executes each configuration separately from others by spinning up a dedicated local test cluster. It uses `integtest.sh` script to run the integration test. There is a [default](../../scripts/default/integtest.sh) version of this script present in opensearch-build repo and also allows plugins to override the default by having a custom integtest.sh in plugin repo.
-
-Once all tests complete, the notifications job can send out the notifications to the subscribed channels. Below figure illustrates how different components of the test workflow would interact with each other. 
-
-![Image: test_workflow.png](img/test_workflow.png)
-**Figure 1**: `test_workflow` components and request flow explained  
+The progress of this design is tracked in meta issue [#123](https://github.com/opensearch-project/opensearch-build/issues/123).
 
 ### Component-Level Details
 
 #### test-orchestrator pipeline
 
-The `test-orchestration-pipeline` is a [Jenkins pipeline](https://www.jenkins.io/doc/book/pipeline/) that orchestrates the `test` workflow after the `build` artifacts are ready. The orchestrator pipeline consists of two stages - execute and notifications, in the same order. Once the build job has build artifacts ready, it will kick off the pipeline (currently it is manual) which runs the test executor stage. In test executor stage, the pipeline kicks off `integTest` Job test, `BwCTest` Job and `perfTest` Job in parallel. When all the test jobs complete, the pipeline moves to the notification stage. In this stage, it kicks off a notification job to send out notifications to all subscribed channels.
+This pipeline is in development. To see a previously-unfinished prototype design, see [#423](https://github.com/opensearch-project/opensearch-build/pull/423), [#523](https://github.com/opensearch-project/opensearch-build/pull/523).
 
-The development of `test-orchestration-pipeline` is tracked by [meta issue #122](https://github.com/opensearch-project/opensearch-build/issues/122) 
+The development of `test-orchestration-pipeline` is tracked by meta issue [#123](https://github.com/opensearch-project/opensearch-build/issues/123) 
 
 #### integTest job
 
-It is a Jenkins job that runs integration tests on a build artifact. It reads the build artifact composition from the associated manifest files and spins up parallel, independent integrationTest runs for each component built inside the artifact. For instance, if the artifact is a full distribution, which has all OpenSearch plugins, the job will kick off integration test suite for each individual plugin. Each plugin integration tests would run against a dedicated single node cluster, which is created from the built artifact. Once all integration tests complete, this job publishes the test results to an S3 bucket. 
+It is a Jenkins job that runs integration tests on a build artifact. It reads the build artifact composition from the associated manifest files and spins up parallel, independent integrationTest runs for each component built inside the artifact. For instance, if the artifact is a full distribution, which has all OpenSearch plugins, the job will kick off integration test suite for each individual plugin. Each plugin integration tests would run against a dedicated single node cluster, which is created from the built artifact. Once all integration tests complete, this job publishes the test results to an S3 bucket.
 
-The development of `integTest` job is tracked by [meta issue #124](https://github.com/opensearch-project/opensearch-build/issues/124)
+The development of `integTest` job is tracked by meta issue [#818](https://github.com/opensearch-project/opensearch-build/issues/818)
 
 #### bwcTest job 
 
@@ -128,7 +123,7 @@ Conversion of Performance Test results to HTML file and JSON file:
 The result conversion of the perf-test is as follows-
 After the performance test completes, it will report back the test results as well as the test-id. The results here will be in JSON format where they are converted into a tabular HTML string using a template library which is json2html. They will be then written to a HTML file where the file-name’s format is in <test-id>.html. Along with generating a HTML file, a JSON file having the raw JSON data will also be generated whose filename’s format is in <test-id>.json. The reason for creating a JSON file is to give the user the option to view both the JSON data in tabular format in the HTML file and the raw JSON data in the JSON file. The .html as well as .json file generated, will be stored in the path given by the user during the test-suite flow as a command-line args. These will be then taken and published in the S3 bucket.   
 
-The development is tracked by [meta issue #126](https://github.com/opensearch-project/opensearch-build/issues/126)
+The development is tracked by meta issue [#126](https://github.com/opensearch-project/opensearch-build/issues/126)
 
 ## Manifest Files
 
