@@ -22,4 +22,4 @@ class InputManifestsOpenSearch(InputManifests):
     def update(self, min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]] =
                ComponentOpenSearchMin, component_klass: Type[ComponentOpenSearch] = ComponentOpenSearch,
                keep: bool = False) -> None:
-        super().update(min_klass, component_klass, keep)
+        super().update(min_klass=ComponentOpenSearchMin, component_klass=ComponentOpenSearch, keep=keep)
