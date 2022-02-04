@@ -2,6 +2,7 @@
 name: versions
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: 0 0 * * *
 
@@ -35,6 +36,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
+          author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
             Updated manifests.
 
