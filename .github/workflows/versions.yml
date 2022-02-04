@@ -38,7 +38,7 @@ jobs:
           commit-message: |
             Updated manifests.
 
-            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
+            Signed-off-by: dblock <dblock@users.noreply.github.com>
           delete-branch: true
           title: '[AUTO] Updated input manifests.'
           body: |
