@@ -6,6 +6,7 @@
 
 import logging
 import subprocess
+from typing import Any
 
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
@@ -16,13 +17,13 @@ class ComponentOpenSearch(Component):
     @classmethod
     def checkout(
         self,
-        name,
-        path,
-        opensearch_version,
-        branch="main",
-        snapshot=False,
-        working_directory=None,
-    ):
+        name: str,
+        path: str,
+        opensearch_version: str,
+        branch: str = "main",
+        snapshot: bool = False,
+        working_directory: str = None,
+    ) -> 'ComponentOpenSearch':
         with GitRepository(
             f"https://github.com/opensearch-project/{name}.git",
             branch,
@@ -36,12 +37,12 @@ class ComponentOpenSearch(Component):
                 snapshot,
             )
 
-    def __init__(self, name, repo, opensearch_version, snapshot=False):
+    def __init__(self, name: str, repo: GitRepository, opensearch_version: str, snapshot: bool = False) -> None:
         super().__init__(name, repo, snapshot)
         self.opensearch_version = opensearch_version
 
     @property
-    def properties(self):
+    def properties(self) -> PropertiesFile:
         cmd = ComponentOpenSearch.gradle_cmd(
             "properties",
             {
@@ -52,7 +53,7 @@ class ComponentOpenSearch(Component):
         return PropertiesFile(self.git_repo.output(cmd))
 
     @property
-    def version(self):
+    def version(self) -> Any:
         try:
             return self.properties.get_value("version")
         except subprocess.CalledProcessError as err:
@@ -60,7 +61,7 @@ class ComponentOpenSearch(Component):
             return None
 
     @classmethod
-    def gradle_cmd(self, target, props={}):
+    def gradle_cmd(self, target: str, props: dict = {}) -> str:
         cmd = [f"./gradlew {target}"]
         cmd.extend([f"-D{k}={v}" for k, v in props.items()])
         return " ".join(cmd)

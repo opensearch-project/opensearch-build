@@ -6,26 +6,28 @@
 
 import re
 import subprocess
+from typing import Any, List
 
+from git.git_repository import GitRepository
 from manifests.manifest import Manifest
 
 
 class Component:
-    def __init__(self, name, repo, snapshot=False, checks=[]):
+    def __init__(self, name: str, repo: GitRepository, snapshot: bool = False, checks: List = []) -> None:
         self.name = name
         self.git_repo = repo
         self.snapshot = snapshot
         self.checks = checks
 
     @classmethod
-    def branches(self, uri):
+    def branches(self, url: str) -> List[str]:
         """Return main or any x.y branches."""
         branches = ["main"]
-        remote_branches = subprocess.check_output(f"git ls-remote {uri} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True).decode().split("\n")
+        remote_branches = subprocess.check_output(f"git ls-remote {url} refs/heads/* | cut -f2 | cut -d/ -f3", shell=True).decode().split("\n")
         branches.extend(filter(lambda b: re.match(r"[\d]+.[\dx]*", b), remote_branches))
         return branches
 
-    def to_dict(self):
+    def to_dict(self) -> Any:
         return Manifest.compact({
             "name": self.name,
             "repository": self.git_repo.url,
