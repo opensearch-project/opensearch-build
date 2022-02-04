@@ -4,6 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+from typing import Any, List
+
 from git.git_repository import GitRepository
 from manifests_workflow.component import Component
 from manifests_workflow.component_opensearch import ComponentOpenSearch
@@ -11,7 +13,7 @@ from system.properties_file import PropertiesFile
 
 
 class ComponentOpenSearchMin(Component):
-    def __init__(self, repo, snapshot=False):
+    def __init__(self, repo: GitRepository, snapshot: bool = False) -> None:
         super().__init__(
             "OpenSearch",
             repo,
@@ -20,34 +22,26 @@ class ComponentOpenSearchMin(Component):
         )
 
     @classmethod
-    def branches(self):
-        return Component.branches("https://github.com/opensearch-project/OpenSearch.git")
+    def branches(self, url: str = "https://github.com/opensearch-project/OpenSearch.git") -> List[str]:
+        return Component.branches(url)
 
     @classmethod
-    def versions(self, work_dir=None):
-        return Component.versions(
-            "OpenSearch",
-            "https://github.com/opensearch-project/OpenSearch.git",
-            work_dir,
-        )
-
-    @classmethod
-    def checkout(self, path, branch="main", snapshot=False):
+    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> 'ComponentOpenSearchMin':
         return ComponentOpenSearchMin(
             GitRepository("https://github.com/opensearch-project/OpenSearch.git", branch, path),
             snapshot,
         )
 
-    def publish_to_maven_local(self):
+    def publish_to_maven_local(self) -> None:
         cmd = ComponentOpenSearch.gradle_cmd("publishToMavenLocal", {"build.snapshot": str(self.snapshot).lower()})
         self.git_repo.execute_silent(cmd)
 
     @property
-    def properties(self):
+    def properties(self) -> PropertiesFile:
         cmd = ComponentOpenSearch.gradle_cmd("properties", {"build.snapshot": str(self.snapshot).lower()})
         return PropertiesFile(self.git_repo.output(cmd))
 
     @property
-    def version(self):
+    def version(self) -> Any:
         self.publish_to_maven_local()
         return self.properties.get_value("version")

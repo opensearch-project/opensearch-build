@@ -14,7 +14,7 @@ from system.config_file import ConfigFile
 
 class TestComponentOpenSearchDashboardsMin(unittest.TestCase):
     @patch("subprocess.check_output")
-    def test_branches(self, mock):
+    def test_branches(self, mock: MagicMock) -> None:
         mock.return_value = "\n".join(["main", "1.x", "1.21", "20.1", "something", "else"]).encode()
         self.assertEqual(ComponentOpenSearchDashboardsMin.branches(), ["main", "1.x", "1.21", "20.1"])
         mock.assert_called_with(
@@ -24,25 +24,25 @@ class TestComponentOpenSearchDashboardsMin(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch.object(GitRepository, "__checkout__")
-    def test_checkout(self, *mocks):
+    def test_checkout(self, *mocks: MagicMock) -> None:
         component = ComponentOpenSearchDashboardsMin.checkout("path")
         self.assertEqual(component.name, "OpenSearch-Dashboards")
         self.assertFalse(component.snapshot)
 
     @patch.object(ConfigFile, "from_file")
-    def test_version(self, mock_config):
+    def test_version(self, mock_config: MagicMock) -> None:
         mock_config.return_value = ConfigFile('{"version":"2.1"}')
         component = ComponentOpenSearchDashboardsMin(MagicMock(working_directory="path"))
         self.assertEqual(component.version, "2.1")
 
     @patch.object(ConfigFile, "from_file")
-    def test_properties(self, mock_config):
+    def test_properties(self, mock_config: MagicMock) -> None:
         mock_config.return_value = ConfigFile('{"version":"2.1"}')
         component = ComponentOpenSearchDashboardsMin(MagicMock(working_directory="path"))
         self.assertEqual(component.properties.get_value("version"), "2.1")
 
     @patch.object(ConfigFile, "from_file")
-    def test_to_dict(self, mock_config):
+    def test_to_dict(self, mock_config: MagicMock) -> None:
         mock_config.return_value = ConfigFile('{"version":"2.1"}')
         repo = MagicMock(ref="ref", url="repo")
         component = ComponentOpenSearchDashboardsMin(repo)

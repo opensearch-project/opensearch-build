@@ -6,13 +6,14 @@
 
 import argparse
 import logging
+from typing import Any, Optional
 
 from manifests_workflow.input_manifests_opensearch import InputManifestsOpenSearch
 from manifests_workflow.input_manifests_opensearch_dashboards import InputManifestsOpenSearchDashboards
 
 
 class ManifestsArgs:
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Manifest management")
         parser.add_argument("action", choices=["list", "update"], help="Operation to perform.")
         parser.add_argument(
@@ -43,7 +44,7 @@ class ManifestsArgs:
         self.manifests = ManifestsArgs.__get_manifests(args.type)
 
     @classmethod
-    def __get_manifests(self, type):
+    def __get_manifests(self, type: Optional[str]) -> Any:
         if type == "opensearch":
             return [InputManifestsOpenSearch]
         elif type == "opensearch-dashboards":

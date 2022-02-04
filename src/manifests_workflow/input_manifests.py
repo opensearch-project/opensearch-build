@@ -9,32 +9,36 @@ import logging
 import os
 import re
 from abc import abstractmethod
+from typing import Dict, List, Type, Union
 
 from manifests.input_manifest import InputManifest
 from manifests.manifests import Manifests
+from manifests_workflow.component_opensearch import ComponentOpenSearch
+from manifests_workflow.component_opensearch_dashboards_min import ComponentOpenSearchDashboardsMin
+from manifests_workflow.component_opensearch_min import ComponentOpenSearchMin
 from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifests(Manifests):
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.prefix = name.lower().replace(" ", "-")
         super().__init__(InputManifest, InputManifests.files(self.prefix))
 
     @classmethod
-    def manifests_path(self):
+    def manifests_path(self) -> str:
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod
-    def jenkins_path(self):
+    def jenkins_path(self) -> str:
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins"))
 
     @classmethod
-    def cron_jenkinsfile(self):
+    def cron_jenkinsfile(self) -> str:
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
 
     @classmethod
-    def files(self, name):
+    def files(self, name: str) -> List:
         results = []
         for filename in glob.glob(os.path.join(self.manifests_path(), f"**/{name}-*.yml")):
             # avoids the -maven manifest
@@ -44,10 +48,10 @@ class InputManifests(Manifests):
         return results
 
     @abstractmethod
-    def update(self, min_klass, component_klass, keep=False):
+    def update(self, min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]], component_klass: Type[ComponentOpenSearch], keep: bool = False) -> None:
         known_versions = self.versions
         logging.info(f"Known versions: {known_versions}")
-        main_versions = {}
+        main_versions: Dict = {}
         with TemporaryDirectory(keep=keep, chdir=True) as work_dir:
             logging.info(f"Checking out components into {work_dir.name}")
 
@@ -78,7 +82,7 @@ class InputManifests(Manifests):
                     component = component_klass.checkout(
                         name=component.name,
                         path=os.path.join(work_dir.name, component.name),
-                        version=manifest.build.version,
+                        opensearch_version=manifest.build.version,
                         branch="main",
                     )
 
@@ -101,8 +105,8 @@ class InputManifests(Manifests):
                 self.write_manifest(release_version, main_versions[release_version])
                 self.add_to_cron(release_version)
 
-    def create_manifest(self, version, components=[]):
-        data = {
+    def create_manifest(self, version: str, components: List = []) -> InputManifest:
+        data: Dict = {
             "schema-version": "1.0",
             "build": {
                 "name": self.name,
@@ -122,7 +126,7 @@ class InputManifests(Manifests):
 
         return InputManifest(data)
 
-    def write_manifest(self, version, components=[]):
+    def write_manifest(self, version: str, components: List = []) -> None:
         logging.info(f"Creating new version: {version}")
         manifest = self.create_manifest(version, components)
         manifest_dir = os.path.join(self.manifests_path(), version)
@@ -131,7 +135,7 @@ class InputManifests(Manifests):
         manifest.to_file(manifest_path)
         logging.info(f"Wrote {manifest_path}")
 
-    def add_to_cron(self, version):
+    def add_to_cron(self, version: str) -> None:
         logging.info(f"Adding new version to cron: {version}")
         jenkinsfile = self.cron_jenkinsfile()
         with open(jenkinsfile, "r") as f:
