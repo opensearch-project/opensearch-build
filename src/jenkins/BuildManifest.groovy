@@ -98,6 +98,13 @@ class BuildManifest implements Serializable {
         ].join("/")
     }
 
+    public String getIndexYamlRoot(String jobName) {
+        return [
+                jobName,
+                this.build.version
+        ].join("/")
+    }
+
     public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
                 publicArtifactUrl,
