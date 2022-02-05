@@ -12,9 +12,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.0.0.md).
 
-
-## BREAKING CHANGES
-
 ## FEATURES
 
 ### Opensearch Index Management
