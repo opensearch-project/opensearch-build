@@ -5,22 +5,28 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
 import sys
 
-from manifests.bundle_manifest import BundleManifest
+from manifests.test_manifest import TestManifest
 from system import console
-from system.temporary_directory import TemporaryDirectory
-from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
+from test_workflow.bwc_test.bwc_test_runners import BwcTestRunners
 from test_workflow.test_args import TestArgs
 
 
 def main():
     args = TestArgs()
+
+    # Any logging.info call preceding to next line in the execution chain will make the console output not displaying logs in console.
     console.configure(level=args.logging_level)
-    with TemporaryDirectory(keep=args.keep) as work_dir:
-        bundle_manifest = BundleManifest.from_urlpath(args.paths.get("opensearch", os.getcwd()))
-        BwcTestSuite(bundle_manifest, work_dir.name, args.component, args.keep).execute()
+
+    test_manifest = TestManifest.from_path(args.test_manifest_path)
+
+    all_results = BwcTestRunners.from_test_manifest(args, test_manifest).run()
+
+    all_results.log()
+
+    if all_results.failed():
+        sys.exit(1)
 
 
 if __name__ == "__main__":
