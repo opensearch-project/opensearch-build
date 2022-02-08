@@ -28,8 +28,9 @@ class BwcTestSuiteOpenSearch(BwcTestSuite):
             manifest
         )
 
+    # TODO: enable OpenSearch scripts to accept more arguments
     def get_cmd(self, script, security, manifest_build_location):
-        return f"{script}"
+        return script
 
     @property
     def test_artifact_files(self):
