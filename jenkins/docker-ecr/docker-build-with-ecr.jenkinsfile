@@ -69,7 +69,7 @@ pipeline {
         stage('docker-ecr-staging') {
             steps {
                 script {
-                    copyDockerImage(
+                    copyContainer(
                         sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationType: "ecr",
