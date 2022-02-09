@@ -41,7 +41,7 @@ def main():
     sign = SignArtifacts.from_path(path=args.target,
                                    component=args.component,
                                    artifact_type=args.type,
-                                   signature_type=args.signatureType,
+                                   signature_type=args.sigtype,
                                    signer=Signer())
 
     sign.sign()

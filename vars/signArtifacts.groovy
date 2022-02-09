@@ -11,8 +11,8 @@ SignArtifacts signs the given artifacts and saves the signature in the same dire
 @param Map[artifactPath] <Required> - Path to yml or artifact file.
 @param Map[component] <Optional> - Path to yml or artifact file.
 @param Map[type] <Optional> - Artifact type in the manifest, [type] is required for signing yml.
-@param Map[signatureType] <Optional> - The signature type of signing artifacts. e.g. '.sig'. Required for non-yml artifacts signing.
-@param Map[distributionPlatform] <Required> - The distribution platform for signing.
+@param Map[sigtype] <Optional> - The signature type of signing artifacts. e.g. '.sig'. Required for non-yml artifacts signing.
+@param Map[platform] <Required> - The distribution platform for signing.
 */
 void call(Map args = [:]) {
 
