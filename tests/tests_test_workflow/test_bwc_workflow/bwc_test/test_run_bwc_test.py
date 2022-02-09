@@ -6,9 +6,12 @@
 
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
+from manifests.test_manifest import TestManifest
 from run_bwc_test import main
+from test_workflow.bwc_test.bwc_test_runners import BwcTestRunners
+from test_workflow.test_args import TestArgs
 
 
 class TestRunBwcTest(unittest.TestCase):
@@ -18,9 +21,26 @@ class TestRunBwcTest(unittest.TestCase):
             "run_bwc_test.py",
             os.path.join(os.path.dirname(__file__), "..", "..", "data", "test_manifest.yml"),
             "--paths",
-            "opensearch=" + os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote", "dist", "opensearch", "manifest.yml")
+            "opensearch=" + os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote")
         ])
-    @ patch("run_bwc_test.BwcTestSuite")
-    def test_run_bwc_test(self, mock_bwc_suite, *mock):
+    def test_run_bwc_test(self, *mock):
+
+        mock_runner = MagicMock()
+        mock_result = MagicMock()
+        mock_result.failed.return_value = False
+
+        mock_runner.run.return_value = mock_result
+        mock_from_test_manifest = MagicMock()
+        mock_from_test_manifest.return_value = mock_runner
+        BwcTestRunners.from_test_manifest = mock_from_test_manifest
+
         main()
-        self.assertEqual(mock_bwc_suite.return_value.execute.call_count, 1)
+
+        args, kwargs = mock_from_test_manifest.call_args
+        self.assertEqual(len(args), 2)
+        self.assertEqual(len(kwargs), 0)
+        self.assertIsInstance(args[0], TestArgs)
+        self.assertIsInstance(args[1], TestManifest)
+
+        mock_result.log.assert_called_once_with()
+        mock_result.failed.assert_called_once_with()

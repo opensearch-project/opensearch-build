@@ -1,0 +1,13 @@
+---
+name: OpenSearch Dashboards
+components:
+  - name: OpenSearch-Dashboards
+    bwc-test:
+      test-configs:
+        - without-security
+  - name: functionalTestDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+schema-version: '1.0'
