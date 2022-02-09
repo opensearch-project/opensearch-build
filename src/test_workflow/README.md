@@ -76,6 +76,27 @@ Usage:
 ./test.sh bwc-test <test-manifest-path> <target>
 ```
 
+For example, build locally and run BWC tests.
+
+```bash
+./build.sh manifests/1.3.0/opensearch-1.3.0.yml
+./assemble.sh builds/opensearch/manifest.yml
+./test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+```
+
+Or run BWC tests against an existing build.
+
+```bash
+./test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64 # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+```
+
+To run OpenSearch Dashboards BWC tests.
+
+```bash
+./test.sh bwc-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths 
+opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
+```
+
 ### Performance Tests
 
 TODO
