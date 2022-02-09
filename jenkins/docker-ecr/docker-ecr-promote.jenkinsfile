@@ -28,7 +28,7 @@ pipeline {
         stage('dockerhub-promote-to-prod') {
             steps {
                 script {
-                    copyDockerImage(
+                    copyContainer(
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "docker",
@@ -40,7 +40,7 @@ pipeline {
         stage('ecr-promote-to-prod') {
             steps {
                 script {
-                    copyDockerImage(
+                    copyContainer(
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "ecr",

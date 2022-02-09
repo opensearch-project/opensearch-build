@@ -11,18 +11,18 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.*
 
 
-class TestCopyDockerImage extends BuildPipelineTest {
+class TestCopyContainer extends BuildPipelineTest {
 
     @Before
     void setUp() {
 
-        this.registerLibTester(new CopyDockerImageLibTester('opensearchstaging/ci-runner:latest',
+        this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
                 'opensearchproject/ci-runner:latest',
                 'ecr',
                 'public.ecr.aws/p5f6l6i3',
                 'DUMMY_ACCOUNT_NAME'))
 
-        this.registerLibTester(new CopyDockerImageLibTester('opensearchstaging/ci-runner:latest',
+        this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
                 'opensearchproject/ci-runner:latest',
                 'docker',
                 'jenkins-staging-docker-prod-token'))
@@ -32,6 +32,6 @@ class TestCopyDockerImage extends BuildPipelineTest {
 
     @Test
     public void testForDockerhub() {
-        super.testPipeline("tests/jenkins/jobs/CopyDockerImage_docker_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/CopyContainer_docker_Jenkinsfile")
     }
 }
