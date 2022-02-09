@@ -11,7 +11,7 @@ class TestDockerBuildWithEcrJob extends BuildPipelineTest {
         String accountName = 'aws_account_public'
 
 
-        this.registerLibTester(new CopyDockerImageLibTester("opensearchstaging/${imageRepository}:${imageTag}",
+        this.registerLibTester(new CopyContainerLibTester("opensearchstaging/${imageRepository}:${imageTag}",
                 "public.ecr.aws/m0o1u6w1/${imageRepository}:${imageTag}",
                 'ecr',
                 'public.ecr.aws/m0o1u6w1',

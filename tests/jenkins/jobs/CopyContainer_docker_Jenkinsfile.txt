@@ -1,0 +1,22 @@
+   CopyContainer_docker_Jenkinsfile.run()
+      CopyContainer_docker_Jenkinsfile.pipeline(groovy.lang.Closure)
+         CopyContainer_docker_Jenkinsfile.echo(Executing on agent [label:none])
+         CopyContainer_docker_Jenkinsfile.stage(copyImage, groovy.lang.Closure)
+            CopyContainer_docker_Jenkinsfile.script(groovy.lang.Closure)
+               CopyContainer_docker_Jenkinsfile.copyContainer({sourceImagePath=opensearchstaging/ci-runner:latest, destinationImagePath=opensearchproject/ci-runner:latest, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
+                  copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
+                  copyContainer.sh(docker logout)
+                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyContainer.sh(
+                docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
+                gcrane cp opensearchstaging/ci-runner:latest opensearchproject/ci-runner:latest
+            )
+               CopyContainer_docker_Jenkinsfile.copyContainer({sourceImagePath=opensearchstaging/ci-runner:latest, destinationImagePath=opensearchproject/ci-runner:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/p5f6l6i3, accountName=DUMMY_ACCOUNT_NAME})
+                  copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
+                  copyContainer.sh(docker logout)
+                  copyContainer.withAWS({role=Upload_ECR_Image, roleAccount=DUMMY_ACCOUNT_NAME, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     copyContainer.sh(
+                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/p5f6l6i3
+                gcrane cp opensearchstaging/ci-runner:latest opensearchproject/ci-runner:latest
+            )

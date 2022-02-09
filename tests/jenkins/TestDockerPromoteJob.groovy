@@ -11,13 +11,13 @@ class TestDockerPromoteJob extends BuildPipelineTest {
         String accountName = 'aws_account_artifact'
         String sourceImagePath = "opensearchstaging/${imageRepository}:${imageTag}"
 
-        this.registerLibTester(new CopyDockerImageLibTester(sourceImagePath,
+        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
                 "public.ecr.aws/p5f6l6i3/${imageRepository}:${imageTag}",
                 'ecr',
                 'public.ecr.aws/p5f6l6i3',
                 accountName))
 
-        this.registerLibTester(new CopyDockerImageLibTester(sourceImagePath,
+        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
                 "opensearchproject/${imageRepository}:${imageTag}",
                 'docker',
                 'jenkins-staging-docker-prod-token'))
