@@ -4,15 +4,15 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 class SignArtifactsLibTester extends LibFunctionTester {
 
-    private String signatureType
-    private String distributionPlatform
+    private String sigtype
+    private String platform
     private String artifactPath
     private String type
     private String component
 
-    public SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath, type, component){
-        this.signatureType = signatureType
-        this.distributionPlatform = distributionPlatform
+    public SignArtifactsLibTester(sigtype, platform, artifactPath, type, component){
+        this.sigtype = sigtype
+        this.platform = platform
         this.artifactPath = artifactPath
         this.type = type
         this.component = component
@@ -31,23 +31,23 @@ class SignArtifactsLibTester extends LibFunctionTester {
 
     void parameterInvariantsAssertions(call) {
         assertThat(call.args.artifactPath.first(), notNullValue())
-        assertThat(call.args.distributionPlatform.first(), notNullValue())
+        assertThat(call.args.platform.first(), notNullValue())
         if(call.args.artifactPath.first().toString().endsWith(".yml")){
             assertThat(call.args.type.first(), notNullValue())
         } else {
-            assertThat(call.args.signatureType.first(), notNullValue())
+            assertThat(call.args.sigtype.first(), notNullValue())
         }
     }
 
     boolean expectedParametersMatcher(call) {
         if(call.args.artifactPath.first().toString().endsWith(".yml")){
-            return call.args.distributionPlatform.first().toString().equals(this.distributionPlatform)
+            return call.args.platform.first().toString().equals(this.platform)
                     && call.args.artifactPath.first().toString().equals(this.artifactPath)
                     && call.args.type.first().toString().equals(this.type)
                     && (call.args.component.first() == null || call.args.component.first().toString().equals(this.component))
         } else {
-            return call.args.signatureType.first().toString().equals(this.signatureType)
-                    && call.args.distributionPlatform.first().toString().equals(this.distributionPlatform)
+            return call.args.sigtype.first().toString().equals(this.sigtype)
+                    && call.args.platform.first().toString().equals(this.platform)
                     && call.args.artifactPath.first().toString().equals(this.artifactPath)
         }
     }

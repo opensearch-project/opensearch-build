@@ -38,7 +38,7 @@ pipeline {
                     signArtifacts(
                         artifactPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
                         type: 'maven',
-                        distributionPlatform: 'linux'
+                        platform: 'linux'
                     )
                 }
             }

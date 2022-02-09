@@ -6,13 +6,13 @@ pipeline {
                 script {
                     signArtifacts(
                             artifactPath: "${WORKSPACE}/artifacts",
-                            signatureType: '.sig',
-                            distributionPlatform: 'linux'
+                            sigtype: '.sig',
+                            platform: 'linux'
                     )
 
                     signArtifacts(
                             artifactPath: "${WORKSPACE}/file.yml",
-                            distributionPlatform: 'linux',
+                            platform: 'linux',
                             type: 'maven'
                     )
                 }

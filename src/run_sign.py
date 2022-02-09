@@ -23,8 +23,8 @@ def main():
     parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory.")
     parser.add_argument("--component", nargs="?", help="Component name")
     parser.add_argument("--type", nargs="?", help="Artifact type")
-    parser.add_argument("--signatureType", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
-    parser.add_argument("--distributionPlatform", nargs="?", help="The distribution platform", default="linux")
+    parser.add_argument("--sigtype", choices=ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of Signature file", default=".asc")
+    parser.add_argument("--platform", nargs="?", help="The distribution platform", default="linux")
     parser.add_argument(
         "-v",
         "--verbose",
