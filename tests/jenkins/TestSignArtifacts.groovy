@@ -16,8 +16,8 @@ class TestSignArtifacts extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${this.workspace}/artifacts" ))
-
+        this.registerLibTester(new SignArtifactsLibTester('.sig', 'linux', "${this.workspace}/artifacts", null, null))
+        this.registerLibTester(new SignArtifactsLibTester(null, 'linux', "${this.workspace}/file.yml", 'maven', null))
         super.setUp()
     }
 

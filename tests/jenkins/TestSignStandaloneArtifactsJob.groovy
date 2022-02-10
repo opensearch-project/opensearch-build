@@ -10,11 +10,11 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         def filenamesForUrls = ['dummy_1_artifact.tar.gz', 'dummy_1_artifact.tar.gz.sig',
                                 'dummy_2_artifact.tar.gz', 'dummy_2_artifact.tar.gz.sig']
 
-        def signatureType = '.sig'
-        def distributionPlatform = 'linux'
+        def sigtype = '.sig'
+        def platform = 'linux'
         def artifactPath = "${this.workspace}/artifacts"
 
-        this.registerLibTester(new SignArtifactsLibTester(signatureType, distributionPlatform, artifactPath))
+        this.registerLibTester(new SignArtifactsLibTester(sigtype, platform, artifactPath, null, null))
 
         this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(filenamesForUrls, 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
 
@@ -26,8 +26,8 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         binding.setVariable('URLs', 'https://www.dummy.com/dummy_1_artifact.tar.gz,' +
                 ' https://www.dummy.com/dummy_2_artifact.tar.gz')
         binding.setVariable('S3_FILE_UPLOAD_PATH', '/dummy/upload/path/')
-        binding.setVariable('DISTRIBUTION_PLATFORM', distributionPlatform)
-        binding.setVariable('SIGNATURE_TYPE', signatureType)
+        binding.setVariable('DISTRIBUTION_PLATFORM', platform)
+        binding.setVariable('SIGNATURE_TYPE', sigtype)
     }
 
     @Test

@@ -1,0 +1,36 @@
+   maven-sign-release.run()
+      maven-sign-release.legacySCM(groovy.lang.Closure)
+      maven-sign-release.library({identifier=jenkins@20211123, retriever=null})
+      maven-sign-release.pipeline(groovy.lang.Closure)
+         maven-sign-release.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         maven-sign-release.stage(sign, groovy.lang.Closure)
+            maven-sign-release.script(groovy.lang.Closure)
+               maven-sign-release.echo(Downloading from S3.)
+               maven-sign-release.downloadFromS3({destPath=/tmp/workspace/artifacts, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.0.0/123/linux/x64/builds/, force=true})
+                  downloadFromS3.withAWS({role=Dummy_Download_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     downloadFromS3.s3Download({file=/tmp/workspace/artifacts, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.0.0/123/linux/x64/builds/, force=true})
+               maven-sign-release.echo(Signing Maven artifacts.)
+               maven-sign-release.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml, type=maven, platform=linux})
+                  signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                  signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                  signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                  signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
+        )
+         maven-sign-release.stage(stage maven artifacts, groovy.lang.Closure)
+            maven-sign-release.script(groovy.lang.Closure)
+               maven-sign-release.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
+               maven-sign-release.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
+                  maven-sign-release.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed)
+         maven-sign-release.script(groovy.lang.Closure)
+            maven-sign-release.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
