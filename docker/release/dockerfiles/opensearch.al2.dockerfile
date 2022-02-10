@@ -58,7 +58,7 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum clean all && yum install -y tar gzip shadow-utils which openssl-devel openssl && yum clean all
+RUN yum update -y && yum install -y tar gzip shadow-utils which openssl-devel openssl && yum clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
