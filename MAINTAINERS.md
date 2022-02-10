@@ -35,37 +35,33 @@
 [This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Release Owner
-The release owner is a temporary role for the duration of a given OpenSearch / OpenSearch Dashboards release.  This owner is tracked by assigning a release ticket to the individual taking on this responsibility.  The release owner oversees the release ticket and make sure that it completes.  While tactical release actions should always be a part of the release ticket, see the [template](./.github/ISSUE_TEMPLATE/release_template.md). The purpose of the Release owner is to be responsible for following the release process.
+The release owner is a temporary role for the duration of a given OpenSearch / OpenSearch Dashboards release.  This owner is tracked by the assignment of a release ticket an individual.  The release owner oversees the release ticket, makes sure the activities are completed, and closed the release.  Release activities are documented in the release ticket, see the [template](./.github/ISSUE_TEMPLATE/release_template.md). The purpose of the release owner is to be responsible for following the release process.
 
 ### Release Activities
-There are many activities associated with the release, and the release owner should not be a bottleneck to accomplish those tasks - to prevent this they should only be performing the tactical actions described in the release ticket.
-
-Component teams need to balance the execution of their own release activities.  This includes running tests or reviewing PRs or filling in for the functions of that team.  The release owner does not need to know the quality requirements and considerations for each component - they should not be expected to enforce or bypass them.
+The release owner performs the activities described in the overall release ticket.  Other activities associated with the release are managed by the component release owners or are be delegation to the most appropriate area owner.  Keeping the release owner's activities well document and predicable ensures the release process avoids bottlenecks.
 
 ### Dealing with Ambiguity 
-There will be release tasks that do not have a clear path for completion, the release owner role is to make sure that a path can be found by involving those that are needed and communicating that out via the primary release issue and on the component release issues.
-
-Sometimes ambiguity will arise if deadlines are missed - what the result will be to the release, or an exception request from a component to a part of the prescribed release process. For these events the release owner will determine the stakeholders and work with them to a resolution.
+Tasks will become unclear to complete, the release owner’s role is to make sure that a path to resolution is found by involving those that are needed and communicating via the primary release issue and on the component release issues.
 
 ### Managing Critical Issues
-GitHub should have as much information as is possible to have for what the current state of the release is and the items that are being tracked for it.  When something occurs that can impact a release an issue should always be created so there is an independent tracking mechanism.
+Create a new issue in GitHub any time the release schedule is impacted.  For transparency GitHub has all the information pertaining to state of the release.
 
 #### General Guidelines
-- For issues only impacting a single component, those should be created in that components GitHub repository, with the release version tag and referenced on the component release issue.
-- For issues impacting multiple components, it should be created in the root causes GitHub repository, with the release version tag and referenced in the components release issues.
-- For issues impacting all / blocking any productivity, those should be created as quickly as possible in this repository, with the release version tag, and referenced in the general release ticket.  As soon as this is done, there should be a call to action from the stakeholders to make sure it is addressed and resolved as soon as possible.
+- For issues impacting a single component, created an issue in the component’s GitHub repository, with the release version tag and referenced on the component's release issue.
+- For issues impacting multiple components, create an issue in the root cause's GitHub repository, with the release version tag and referenced in the component's release issues.
+- For issues impacting all / blocking any productivity, create an issue immediately in this repository, with the release version tag, and post a comment in the general release ticket.  Make a broad call to action for stakeholders to engage in the issue.  Closely monitor the issue until the release can resume as planned.
 
 ### Correcting Mistakes
-Mistakes will happen, correcting these transparently is paramount.  Use markdown strike-through when making edits to correct incorrect information instead of deleting.
+Mistakes happen, correcting these transparently is paramount.  Use markdown strike-through when making edits to correct incorrect information instead of deleting. 
 
-Some mistakes will be larger, such as a process that was thought was completed, was not completed or invalidated.  Create an issue to track and drive it as a campaign, making sure that notifications and confirmations the correction was completed have occurred.  This is important to confirm that the process was completed as expected, see an [example](https://github.com/opensearch-project/opensearch-build/issues/954).
+Some mistakes are larger, such as a process that was marked completed was done so incorrectly, these corrections need additional tracking as a campaign. Create an issue to drive the campaign with a list of components to track statuses such as notifications and confirmation of the correction.  This is important to confirm that the process was completed as expected, see an [example](https://github.com/opensearch-project/opensearch-build/issues/954).
 
 ### Retrospectives
-There will be things that can be improved and invested in, running a retrospective and communicating the synthesis of its results is necessary to achieve this.  Retrospectives are always encouraged at the component level.
+The release process will be improved and invested in, running a retrospective and communicating an summary of its results is necessary to achieve this.  Retrospectives are encouraged at the component level in the component release issues template. 
 
-Feedback will primarily come from the retro issue created during the release and component level retrospectives.  A synchronous meeting has benefits to capture many ideas and get additional context, but it is not required.  Note, this process is not an exercise in assigning blame but recording what happened so a remedy can be made.
-
-After the retro items are in a final comment should be written that includes important areas of consideration for the project and the action items with owners to drive them, [example](https://github.com/opensearch-project/opensearch-build/issues/880) with reflection. 
+Feedback comes from the retro issue created during the release and component level retrospectives.  A meeting could be run to capture additional feedback if desired.  This process is focused on recording what happened to make remedies.
+ 
+After the retro items are in, a final summary is written as a comment on the retrospective issue.  The comment includes areas of consideration for the project alongside action items with owners to drive them, [example](https://github.com/opensearch-project/opensearch-build/issues/880) summary.
 
 ## ZenHub Process Workflow
 We follow agile methodologies for our development and release process. We use GitHub issues with annotations via ZenHub to manage and track our stories and issues to effectively manage them over the sprint.
