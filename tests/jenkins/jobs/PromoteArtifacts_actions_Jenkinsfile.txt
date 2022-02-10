@@ -26,7 +26,7 @@
                   createSha512Checksums.sh({script=basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip, returnStdout=true})
                   createSha512Checksums.writeFile({file=zip_dummy_artifact_1.1.0.zip.sha512, text=shaHashDummy_zip_dummy_artifact_1.1.0.zip  zip_dummy_artifact_1.1.0.zip})
                   createSha512Checksums.echo(Not generating sha for dummy_artifact_1.1.0.dummy in workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins, doesn't match allowed types [.tar.gz, .zip])
-                  createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins})
+                  createSignatureFiles.signArtifacts({sigtype=.sig, artifactPath=workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins})
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                      signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
@@ -40,7 +40,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins --sigtype=.sig --component=null --type=null
+            workspace/sign.sh workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins --sigtype=.sig
         )
                   promoteArtifacts.findFiles({glob=**/opensearch-min-1.3.0*.tar.gz,**/opensearch-1.3.0*.tar.gz})
                   promoteArtifacts.getPath()
@@ -49,7 +49,7 @@
                   createSha512Checksums.echo(Not generating sha for ccc in workspace/workspace/file/found.zip, doesn't match allowed types [.tar.gz, .zip])
                   promoteArtifacts.findFiles({glob=**/opensearch-min-1.3.0*.tar.gz,**/opensearch-1.3.0*.tar.gz})
                   promoteArtifacts.getPath()
-                  createSignatureFiles.signArtifacts({signatureType=.sig, artifactPath=workspace/workspace/file/found.zip})
+                  createSignatureFiles.signArtifacts({sigtype=.sig, artifactPath=workspace/workspace/file/found.zip})
                      signArtifacts.fileExists(workspace/sign.sh)
                      signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                      signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
@@ -63,7 +63,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            workspace/sign.sh workspace/workspace/file/found.zip --sigtype=.sig --component=null --type=null
+            workspace/sign.sh workspace/workspace/file/found.zip --sigtype=.sig
         )
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/plugins/discovery-ec2-1.1.0.zip/1.3.0/, workingDir=workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/, includePathPattern=**/discovery-ec2-1.1.0.zip*})

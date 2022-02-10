@@ -5,7 +5,7 @@ pipeline {
             steps {
                 script {
                     assembleUpload(
-                        manifest: 'tests/data/opensearch-build-1.1.0.yml',
+                        buildManifest: 'tests/data/opensearch-build-1.1.0.yml',
                     )
                 }
             }

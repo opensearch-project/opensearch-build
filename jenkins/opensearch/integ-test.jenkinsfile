@@ -5,7 +5,7 @@ pipeline {
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
         AWS_ROLE_SESSION_NAME = "jenkins-test-session"
-        BUILD_MANIFEST= "build-manifest.yml"
+        BUILD_MANIFEST = "build-manifest.yml"
     }
     tools {
         jdk "JDK14"

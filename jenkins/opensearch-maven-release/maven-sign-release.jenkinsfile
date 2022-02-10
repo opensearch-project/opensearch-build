@@ -1,0 +1,72 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'BUILD_ID',
+            description: 'Build ID of the OpenSearch distribution artifacts to be staged.',
+            trim: true
+        )
+        string(
+            name: 'VERSION',
+            description: 'Version of the OpenSearch distribution artifacts to be staged.',
+            trim: true
+        )
+    }
+    environment {
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds"
+    }
+    stages {
+        stage('sign') {
+            steps {
+                script {
+                    echo "Downloading from S3."
+                    downloadFromS3(
+                        destPath: "$WORKSPACE/artifacts",
+                        bucket: "${ARTIFACT_BUCKET_NAME}",
+                        path: "${ARTIFACT_PATH}/",
+                        force: true
+                    )
+                    echo "Signing Maven artifacts."
+                    signArtifacts(
+                        artifactPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
+                        type: 'maven',
+                        platform: 'linux'
+                    )
+                }
+            }
+        }
+        stage('stage maven artifacts') {
+            tools {
+                maven "maven-3.8.2"
+            }
+            environment {
+                REPO_URL = "https://aws.oss.sonatype.org/"
+                STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
+                BUILD_ID = "${BUILD_ID}"
+            }
+            steps {
+                script {
+                    // stage artifacts for release with Sonatype
+                    withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                        sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed')
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}

@@ -43,8 +43,8 @@ pipeline {
                     downloadedFiles = downloadArtifactsFromUrls()
                     signArtifacts(
                             artifactPath: "$WORKSPACE/artifacts",
-                            signatureType: SIGNATURE_TYPE,
-                            distributionPlatform: DISTRIBUTION_PLATFORM
+                            sigtype: SIGNATURE_TYPE,
+                            platform: DISTRIBUTION_PLATFORM
                     )
 
                     filenamesForUrls = []

@@ -30,8 +30,8 @@ pipeline {
                     signatureType = '.sig'
                     signArtifacts(
                             artifactPath: "${artifactsPath}",
-                            signatureType: signatureType,
-                            distributionPlatform: 'linux'
+                            sigtype: signatureType,
+                            platform: 'linux'
                     )
                     filenamesForUrls = []
                     for(artifactFilename in artifactFilenames){

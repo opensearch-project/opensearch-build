@@ -8,7 +8,7 @@
                sign-standalone-artifacts.sh(mkdir /tmp/workspace/artifacts)
                sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_1_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_1_artifact.tar.gz)
                sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_2_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_2_artifact.tar.gz)
-               sign-standalone-artifacts.signArtifacts({artifactPath=/tmp/workspace/artifacts, signatureType=.sig, distributionPlatform=linux})
+               sign-standalone-artifacts.signArtifacts({artifactPath=/tmp/workspace/artifacts, sigtype=.sig, platform=linux})
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
@@ -22,7 +22,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --component=null --type=null
+            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --platform=linux
         )
                sign-standalone-artifacts.uploadToS3({sourcePath=/tmp/workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
                   uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
