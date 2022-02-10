@@ -1,15 +1,21 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
 - [Maintainers](#maintainers)
+- [Release Owner](#release-owner)
+  - [Release Activities](#release-activities)
+  - [Dealing with Ambiguity](#dealing-with-ambiguity)
+  - [Managing critical issues](#managing-critical-issues)
+    - [General guidelines](#general-guidelines)
+  - [Correcting mistakes](#correcting-mistakes)
+  - [Retrospectives](#retrospectives)
 - [ZenHub Process Workflow](#zenhub-process-workflow)
-  - [What is ZenHub](#what-is-zenhubhttpswwwzenhubcom)
-  - [Dev Deployment](#dev-deployment)
+  - [What is ZenHub?](#what-is-zenhub)
   - [Setting up ZenHub](#setting-up-zenhub)
   - [Sprint Board](#sprint-board)
     - [Pipelines](#pipelines)
   - [Creating Issues](#creating-issues)
   - [Managing issues/stories](#managing-issuesstories)
-  - [Spillovers](#spillovers)
+    - [Spillovers](#spillovers)
   - [Epics](#epics)
   - [Recurring Team Meetings](#recurring-team-meetings)
   - [On-Call](#on-call)
@@ -27,6 +33,39 @@
 | Yilin Zhang | [zylzulu](https://github.com/zylzulu) | Amazon |
 
 [This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).
+
+## Release Owner
+Release owner is a temporary role for the duration of a given OpenSearch / OpenSearch Dashboard release, it is made concrete by assigning a release ticket to them.  They oversee the release ticket and make sure that it completes.  While tactical release actions should always be a part of the release ticket, see the [template](./.github/ISSUE_TEMPLATE/release_template.md), the purpose of the Release owner is to be responsible for following the release process.
+
+### Release Activities
+There are many, many activities associated with the release, and the release owner should not be a bottleneck to accomplish those tasks - to prevent this they should only be performing the tactical actions described in the release ticket.
+
+Component teams need to balance the execution their own release activities.  This includes running tests or reviewing PRs or filling in for the functions of that team.  The release owner does not need to know the quality requirements and considerations for each component - they should not be expected to enforce or bypass them.
+
+### Dealing with Ambiguity 
+There will be release tasks that do not have a clear path for completion, the release owner role is to make sure that a path can be found by involving those that are needed and communicating that out via the primary release issue and on the component release issues.
+
+Sometimes ambiguity will arise if deadlines are missed - what the result will be to the release, or an exception request from a component to part of the prescribed release process. For these events the release owner will determined the stakeholders and work with them to a resolution.
+
+### Managing critical issues
+GitHub should have as much information as is possible to have for what the current state of the release is and the items that are being tracked for it.  When something occurs that can impact a release an issue should always be created so there is an independent tracking mechanism.
+
+#### General guidelines
+- For issues only impacting a single component, those should be created in that components GitHub repository, with the release version tag and referenced on the component release issue.
+- For issues impacting multiple components, it should be created in in the root causes GitHub repository, with the release version tag and referenced in the components release issues.
+- For issues impacting all / blocking any productivity, those should be created as quickly as possible in this repository, with the release version tag, and referenced in the general release ticket.  As soon as this is done, there should be a call to action from the stakeholders to make sure it is addressed and resolved as soon as possible.
+
+### Correcting mistakes
+Mistakes will happen, correcting these transparently is paramount.  Use markdown strike-through when making edits to correct incorrect information instead of deleting.
+
+Some mistakes will be larger, such as a process that was thought was completed, was not completed or invalidated.  Create an issue to track and drive it as a campaign, making sure that notifications and confirmation the correction was completed have occurred.  This is overhead and undesired but important to account that the process was completed as expected, see an [example](https://github.com/opensearch-project/opensearch-build/issues/954).
+
+### Retrospectives
+There will be things that should be improved and invested in, running a retrospective and communicating the synthesis of its results is necessary to achieve this.  Retrospectives are always encouraged at the component level.
+
+The release itself needs a retrospective, generated off of an issue created during the release and filled with feedback throughout the process.  A synchronous meeting has benefits to capture many ideas and get context, but it is not required.  This process is not an exercise in assigning blame but accepting what happened so a remedy can be made.
+
+After the retro items are in a final comment should be generated that includes important areas of consideration for the project and the action items with owners to drive them, [example](https://github.com/opensearch-project/opensearch-build/issues/880) with reflection. 
 
 ## ZenHub Process Workflow
 We follow agile methodologies for our development and release process. We use GitHub issues with annotations via ZenHub to manage and track our stories and issues to effectively manage them over the sprint.
@@ -115,3 +154,4 @@ This would ensure that all the tasks the an individual is working on is correctl
 
 ### On-Call
 Since on-call is a weekly rotation, we do not create an issue for on-call. However, if on-call requires you to work on a bug, please make sure that we have issue associated with the task for tracking.
+
