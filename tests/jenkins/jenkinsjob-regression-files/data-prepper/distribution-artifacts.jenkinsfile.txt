@@ -10,7 +10,7 @@
                distribution-artifacts.sh({script=find /tmp/workspace/release/archives/linux/build/distributions | sed -n "s|^/tmp/workspace/release/archives/linux/build/distributions/||p", returnStdout=true})
          distribution-artifacts.stage(Sign Artifacts, groovy.lang.Closure)
             distribution-artifacts.script(groovy.lang.Closure)
-               distribution-artifacts.signArtifacts({artifactPath=/tmp/workspace/release/archives/linux/build/distributions, signatureType=.sig, distributionPlatform=linux})
+               distribution-artifacts.signArtifacts({artifactPath=/tmp/workspace/release/archives/linux/build/distributions, sigtype=.sig, platform=linux})
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
@@ -24,7 +24,7 @@
             export UNSIGNED_BUCKET=signer_client_unsigned_bucket
             export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/release/archives/linux/build/distributions --sigtype=.sig --component=null --type=null
+            /tmp/workspace/sign.sh /tmp/workspace/release/archives/linux/build/distributions --sigtype=.sig --platform=linux
         )
          distribution-artifacts.stage(Upload Artifacts to Staging Distribution Bucket, groovy.lang.Closure)
             distribution-artifacts.script(groovy.lang.Closure)

@@ -29,7 +29,7 @@ void call(Map args = [:]) {
     print("Actions ${fileActions}")
 
     argsMap = [:]
-    argsMap['signatureType'] = '.sig'
+    argsMap['sigtype'] = '.sig'
 
     String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
     boolean corePluginDirExists = fileExists(corePluginDir)
