@@ -18,16 +18,6 @@ function usage() {
   echo "--------------------------------------------------------------------------"
 }
 
-function do_certificates_exist() {
-  echo ""
-  echo -e "Checking if certificates exist."
-  if ls $OPENSEARCH_HOME/config/*.pem > /dev/null 2>&1; then
-    true; return
-  else
-    false; return
-  fi
-}
-
 while getopts ":h" option; do
   case $option in
   h)
@@ -67,11 +57,12 @@ function setupSecurityPlugin {
     SECURITY_PLUGIN="opensearch-security"
 
     if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-        if ( do_certificates_exist || [ "$DISABLE_INSTALL_DEMO_CONFIG" == "true" ]); then
+        if [ "$DISABLE_INSTALL_DEMO_CONFIG" == "true" ]; then
             echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
         else
-            echo "Generating and installing new self-signed certificates..."
+            echo -e "Executing install_demo_configuration.sh to install self-signed certificates and related settings for OpenSearch security plugin..."
             bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+            echo "install_demo_configuration.sh exited with code $?"
         fi
 
         if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then

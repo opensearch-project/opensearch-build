@@ -19,7 +19,7 @@ services:
         soft: 65536  # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
         hard: 65536
     volumes:
-      - opensearch-config:/usr/share/opensearch/config
+      - opensearch-certs:/usr/share/opensearch/config/certs
       - opensearch-data1:/usr/share/opensearch/data
     ports:
       - 9200:9200
@@ -44,7 +44,7 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - opensearch-config:/usr/share/opensearch/config
+      - opensearch-certs:/usr/share/opensearch/config/certs
       - opensearch-data2:/usr/share/opensearch/data
     networks:
       - opensearch-net
@@ -63,7 +63,7 @@ services:
 volumes:
   opensearch-data1:
   opensearch-data2:
-  opensearch-config:
+  opensearch-certs:
 
 networks:
   opensearch-net:

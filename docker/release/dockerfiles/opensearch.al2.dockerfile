@@ -38,6 +38,7 @@ COPY * $TEMP_DIR/
 RUN ls -l $TEMP_DIR && \
     tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && \
     mkdir -p $OPENSEARCH_HOME/data && chown -Rv $UID:$GID $OPENSEARCH_HOME/data && \
+    mkdir -p $OPENSEARCH_HOME/config/certs && chown -Rv $UID:$GID $OPENSEARCH_HOME/config/certs && \
     if [[ -d $SECURITY_PLUGIN_DIR ]] ; then chmod -v 750 $SECURITY_PLUGIN_DIR/tools/* ; fi && \
     if [[ -d $PERFORMANCE_ANALYZER_PLUGIN_DIR ]] ; then cp -v $TEMP_DIR/performance-analyzer.properties $PERFORMANCE_ANALYZER_PLUGIN_DIR/pa_config/; fi && \
     cp -v $TEMP_DIR/opensearch-docker-entrypoint.sh $TEMP_DIR/opensearch-onetime-setup.sh $OPENSEARCH_HOME/ && \
