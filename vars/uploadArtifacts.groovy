@@ -32,7 +32,6 @@ void call(Map args = [:]) {
             bucket: "${ARTIFACT_BUCKET_NAME}",
             path: "${indexFilePath}/index.json"
     )
-        
 
     echo "Uploading to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${artifactPath}"
 

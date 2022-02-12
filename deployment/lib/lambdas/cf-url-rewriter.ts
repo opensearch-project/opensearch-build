@@ -1,66 +1,70 @@
 import { CloudFrontRequestEvent, CloudFrontRequest } from 'aws-lambda';
 
-const aws = require('aws-sdk');
+const https = require('https');
 
-const s3 = new aws.S3({ apiVersion: '2006-03-01' });
+export async function handler(event: CloudFrontRequestEvent, context, callback): Promise<CloudFrontRequest> {
+  const request = event.Records[0].cf.request;
 
-export async function handler(event: CloudFrontRequestEvent): Promise<CloudFrontRequest> {
-  const { request } = event.Records[0].cf;
-  request.uri = request.uri.replace(/^\/ci\/...\//, '/');
+  console.log('request', JSON.stringify(request));
 
-  // Below is the working in progress logic to get the max build number under a version with pagination support.
-  // Hardcode the version to be 1.7.1 and bucket name to test-access-1-20 for demo purpose.
-  console.log('Received event:', JSON.stringify(event, null, 2));
+  if (request.uri.includes("latest")) {
 
-  const bucket = 'test-access-1-20';
+    const indexUri = request.uri.replace(/latest.*/, 'dist/index.json');
 
-  const bucketParams = {
-    Bucket: bucket,
-    Prefix: '1.7.1/',
-    Delimiter: '/',
-    ContinuationToken: undefined,
-  };
+    const data = await httpGet('https://' + request.headers.host[0].value + indexUri);
 
-  try {
-    let isTruncated = true;
-    let continuationToken = null;
+    const redirectResponse = {
+      status: '302',
+      statusDescription: 'Moved temporarily',
+      headers: {
+        'location': [{
+          key: 'Location',
+          value: request.uri.replace('latest', data.latest),
+        }],
+        'cache-control': [{
+          key: 'Cache-Control',
+          value: "max-age=3600"
+        }],
+      },
+    };
 
-    const commonPrefixesAll = [];
+    console.log('update request', redirectResponse);
 
-    while (isTruncated) {
-      if (continuationToken) {
-        bucketParams.ContinuationToken = continuationToken;
-      }
-
-      const s3Response = s3.listObjectsV2(bucketParams).promise();
-      const commonPrefixes = s3Response.CommonPrefixes;
-
-      commonPrefixesAll.push(...commonPrefixes);
-
-      isTruncated = s3Response.IsTruncated;
-      continuationToken = s3Response.NextContinuationToken;
-    }
-
-    let maxBuildNumber = 0;
-
-    commonPrefixesAll.forEach((prefix) => {
-      // e.g '1.7.1/21/'
-      const value = prefix.Prefix;
-
-      const reg = /\/(\d+)/;
-      const result = value.match(reg);
-
-      if (result) {
-        const number = parseInt(result[1], 10);
-        if (number > maxBuildNumber) {
-          maxBuildNumber = number;
-        }
-      }
-    });
-
-    console.log('maxBuildNumber', maxBuildNumber);
-  } catch (ex) {
-    console.error(ex);
+    callback(null, redirectResponse);
+  } else {
+    request.uri = request.uri.replace(/^\/ci\/...\//, '\/');
+    callback(null, request);
   }
-  return request;
+}
+
+async function httpGet(url) {
+  return new Promise((resolve, reject) => {
+
+    https.get(url, (res) => {
+      let body = "";
+
+      res.on("data", (chunk) => {
+        body += chunk;
+      });
+
+      res.on("end", () => {
+        try {
+          let json = JSON.parse(body);
+
+          console.log("json ", json);
+          resolve(json);
+
+          // do something with JSON
+        } catch (error) {
+          console.error(error.message);
+          reject(error);
+        };
+      });
+
+    }).on("error", (error) => {
+      console.error(error.message);
+      reject(error);
+
+    });
+  });
 }
