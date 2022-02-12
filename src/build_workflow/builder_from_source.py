@@ -40,6 +40,8 @@ class BuilderFromSource(Builder):
                 self.target.platform,
                 "-a",
                 self.target.architecture,
+                "-d",
+                self.target.distribution,
                 "-s",
                 str(self.target.snapshot).lower(),
                 "-o",

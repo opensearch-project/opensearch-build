@@ -16,11 +16,12 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:s:o:p:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -40,6 +41,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
+            ;;
+        d)
+            DISTRIBUTION=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
@@ -77,19 +81,54 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
 case $PLATFORM in
     linux*)
-        PACKAGE="tar"
-        EXT="tar.gz"
+        case $DISTRIBUTION in
+            tar)
+                PACKAGE="tar"
+                EXT="tar.gz"
+                TYPE="archives"
+                ;;
+            rpm)
+                PACKAGE="rpm"
+                EXT="rpm"
+                TYPE="packages"
+                ;;
+            *)
+                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
+                exit 1
+                ;;
+        esac
         ;;
+
     darwin*)
-        PACKAGE="tar"
-        EXT="tar.gz"
+        case $DISTRIBUTION in
+            tar)
+                PACKAGE="tar"
+                EXT="tar.gz"
+                TYPE="archives"
+                ;;
+            *)
+                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
+                exit 1
+                ;;
+        esac
         ;;
+
     windows*)
-        PACKAGE="zip"
-        EXT="zip"
+        case $DISTRIBUTION in
+            zip)
+                PACKAGE="zip"
+                EXT="zip"
+                TYPE="archives"
+                ;;
+            *)
+                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
+                exit 1
+                ;;
+        esac
         ;;
     *)
         echo "Unsupported platform: $PLATFORM"
@@ -99,12 +138,29 @@ esac
 
 case $ARCHITECTURE in
     x64)
-        TARGET="$PLATFORM-$PACKAGE"
-        QUALIFIER="$PLATFORM-x64"
+       case $DISTRIBUTION in
+            rpm)
+                TARGET="$DISTRIBUTION"
+                QUALIFIER="x86_64"
+                ;;
+            *)
+                TARGET="$PLATFORM-$PACKAGE"
+                QUALIFIER="$PLATFORM-x64"
+                ;;
+        esac
         ;;
+
     arm64)
-        TARGET="$PLATFORM-arm64-$PACKAGE"
-        QUALIFIER="$PLATFORM-arm64"
+       case $DISTRIBUTION in
+            rpm)
+                TARGET="$DISTRIBUTION"
+                QUALIFIER="aarch64"
+                ;;
+            *)
+                TARGET="$PLATFORM-arm64-$PACKAGE"
+                QUALIFIER="$PLATFORM-arm64"
+                ;;
+        esac
         ;;
     *)
         echo "Unsupported architecture: $ARCHITECTURE"
@@ -112,13 +168,13 @@ case $ARCHITECTURE in
         ;;
 esac
 
-./gradlew :distribution:archives:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
+./gradlew :distribution:$TYPE:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
 
 # Copy artifact to dist folder in bundle build output
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
-ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
+ARTIFACT_BUILD_NAME=`ls distribution/$TYPE/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
 mkdir -p "${OUTPUT}/dist"
-cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
+cp distribution/$TYPE/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
 
 echo "Building core plugins..."
 mkdir -p "${OUTPUT}/core-plugins"

@@ -55,6 +55,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
             "schema": {
                 "platform": {"required": True, "type": "string"},  # added in 1.2
                 "architecture": {"required": True, "type": "string"},
+                "distribution": {"required": True, "type": "string"},
                 "id": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
