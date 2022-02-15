@@ -25,14 +25,6 @@ void call(Map args = [:]) {
     def latestBuildData = ['latest': "${BUILD_NUMBER}"]
     writeJSON file: 'index.json', json: latestBuildData
 
-    def read = readJSON file: 'index.json'
-
-    echo "file content is ${read}"
-
-    def ret = sh(script: 'ls -l', returnStdout: true)
-
-    println ret
-
     echo "Uploading index.json to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${indexFilePath}"
 
     uploadToS3(
