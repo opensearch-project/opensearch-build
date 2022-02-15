@@ -1,6 +1,7 @@
 ---
 build:
   architecture: x64
+  distribution: None
   id: f49ffcf2c1b341d1b29e147093689c6d
   name: OpenSearch
   platform: linux
