@@ -68,7 +68,7 @@ class BuildArgs:
             type=str,
             choices=self.SUPPORTED_DISTRIBUTIONS,
             help="Distribution to build.",
-            default="tar",
+            default=None,
             dest="distribution"
         )
 

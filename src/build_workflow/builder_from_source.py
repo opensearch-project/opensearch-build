@@ -29,24 +29,27 @@ class BuilderFromSource(Builder):
 
     def build(self, build_recorder: BuildRecorder) -> None:
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
+        distribution_parameter = "-d" + " " + self.target.distribution if self.target.distribution else None
 
         build_command = " ".join(
-            [
-                "bash",
-                build_script,
-                "-v",
-                self.target.version,
-                "-p",
-                self.target.platform,
-                "-a",
-                self.target.architecture,
-                "-d",
-                self.target.distribution,
-                "-s",
-                str(self.target.snapshot).lower(),
-                "-o",
-                self.output_path,
-            ]
+            filter(
+                None,
+                [
+                    "bash",
+                    build_script,
+                    "-v",
+                    self.target.version,
+                    "-p",
+                    self.target.platform,
+                    "-a",
+                    self.target.architecture,
+                    distribution_parameter,
+                    "-s",
+                    str(self.target.snapshot).lower(),
+                    "-o",
+                    self.output_path,
+                ]
+            )
         )
 
         self.git_repo.execute(build_command)

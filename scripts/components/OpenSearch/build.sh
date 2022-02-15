@@ -81,12 +81,12 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
-[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="None"
 
 case $PLATFORM in
     linux*)
         case $DISTRIBUTION in
-            tar)
+            tar|None)
                 PACKAGE="tar"
                 EXT="tar.gz"
                 TYPE="archives"
@@ -105,7 +105,7 @@ case $PLATFORM in
 
     darwin*)
         case $DISTRIBUTION in
-            tar)
+            tar|None)
                 PACKAGE="tar"
                 EXT="tar.gz"
                 TYPE="archives"
@@ -119,7 +119,7 @@ case $PLATFORM in
 
     windows*)
         case $DISTRIBUTION in
-            zip)
+            zip|None)
                 PACKAGE="zip"
                 EXT="zip"
                 TYPE="archives"
