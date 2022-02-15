@@ -90,6 +90,13 @@ class BuildManifest implements Serializable {
                 this.build.architecture
         ].join("/")
     }
+    
+    public String getIndexFileRoot(String jobName) {
+        return [
+                jobName,
+                this.build.version
+        ].join("/")
+    }
 
     public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
