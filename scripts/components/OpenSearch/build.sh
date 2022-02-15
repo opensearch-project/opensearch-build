@@ -16,7 +16,7 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
-    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'None'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
