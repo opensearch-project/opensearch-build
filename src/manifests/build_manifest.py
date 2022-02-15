@@ -105,6 +105,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
             self.version: str = data["version"]
             self.platform: str = data["platform"]
             self.architecture: str = data["architecture"]
+            self.distribution: str = data["distribution"]
             self.id: str = data["id"]
 
         def __to_dict__(self) -> dict:
@@ -113,6 +114,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
                 "version": self.version,
                 "platform": self.platform,
                 "architecture": self.architecture,
+                "distribution": self.distribution,
                 "id": self.id
             }
 
