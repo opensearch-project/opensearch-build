@@ -16,7 +16,7 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
-    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'None'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
@@ -81,92 +81,58 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
-[ -z "$DISTRIBUTION" ] && DISTRIBUTION="None"
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
-case $PLATFORM in
-    linux*)
-        case $DISTRIBUTION in
-            tar|None)
-                PACKAGE="tar"
-                EXT="tar.gz"
-                TYPE="archives"
-                ;;
-            rpm)
-                PACKAGE="rpm"
-                EXT="rpm"
-                TYPE="packages"
-                ;;
-            *)
-                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
-                exit 1
-                ;;
-        esac
+case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
+    linux-tar-x64|darwin-tar-x64)
+        PACKAGE="tar"
+        EXT="tar.gz"
+        TYPE="archives"
+        TARGET="$PLATFORM-$PACKAGE"
+        QUALIFIER="$PLATFORM-x64"
         ;;
-
-    darwin*)
-        case $DISTRIBUTION in
-            tar|None)
-                PACKAGE="tar"
-                EXT="tar.gz"
-                TYPE="archives"
-                ;;
-            *)
-                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
-                exit 1
-                ;;
-        esac
+    linux-tar-arm64|darwin-tar-arm64)
+        PACKAGE="tar"
+        EXT="tar.gz"
+        TYPE="archives"
+        TARGET="$PLATFORM-arm64-$PACKAGE"
+        QUALIFIER="$PLATFORM-arm64"
         ;;
-
-    windows*)
-        case $DISTRIBUTION in
-            zip|None)
-                PACKAGE="zip"
-                EXT="zip"
-                TYPE="archives"
-                ;;
-            *)
-                echo "Unsupported platform and distribution combo: $PLATFORM-$DISTRIBUTION"
-                exit 1
-                ;;
-        esac
+    linux-rpm-x64)
+        PACKAGE="rpm"
+        EXT="rpm"
+        TYPE="packages"
+        TARGET="rpm"
+        QUALIFIER="x86_64"
+        ;;
+    linux-rpm-arm64)
+        PACKAGE="rpm"
+        EXT="rpm"
+        TYPE="packages"
+        TARGET="arm64-rpm"
+        QUALIFIER="aarch64"
+        ;;
+    windows-zip-x64)
+        PACKAGE="zip"
+        EXT="zip"
+        TYPE="archives"
+        TARGET="$PLATFORM-$PACKAGE"
+        QUALIFIER="$PLATFORM-x64"
+        ;;
+    windows-zip-arm64)
+        PACKAGE="zip"
+        EXT="zip"
+        TYPE="archives"
+        TARGET="$PLATFORM-arm64-$PACKAGE"
+        QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
-        echo "Unsupported platform: $PLATFORM"
+        echo "Unsupported platform-distribution-architecture combo: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
         exit 1
         ;;
 esac
 
-case $ARCHITECTURE in
-    x64)
-       case $DISTRIBUTION in
-            rpm)
-                TARGET="$DISTRIBUTION"
-                QUALIFIER="x86_64"
-                ;;
-            *)
-                TARGET="$PLATFORM-$PACKAGE"
-                QUALIFIER="$PLATFORM-x64"
-                ;;
-        esac
-        ;;
-
-    arm64)
-       case $DISTRIBUTION in
-            rpm)
-                TARGET="$DISTRIBUTION"
-                QUALIFIER="aarch64"
-                ;;
-            *)
-                TARGET="$PLATFORM-arm64-$PACKAGE"
-                QUALIFIER="$PLATFORM-arm64"
-                ;;
-        esac
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCHITECTURE"
-        exit 1
-        ;;
-esac
+echo "Building OpenSearch for $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 
 ./gradlew :distribution:$TYPE:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
 

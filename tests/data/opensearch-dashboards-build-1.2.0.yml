@@ -1,7 +1,6 @@
 ---
 build:
   architecture: x64
-  distribution: None
   id: 25b38c278cdd45efa583765d8ba76346
   name: OpenSearch Dashboards
   platform: linux

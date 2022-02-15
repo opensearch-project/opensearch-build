@@ -56,7 +56,6 @@ class TestBuildRecorder(unittest.TestCase):
                 "build": {
                     "platform": "linux",
                     "architecture": "x64",
-                    "distribution": "None",
                     "id": "1",
                     "name": "OpenSearch",
                     "version": "1.1.0",
@@ -135,7 +134,6 @@ class TestBuildRecorder(unittest.TestCase):
                 "build": {
                     "platform": "linux",
                     "architecture": "x64",
-                    "distribution": "None",
                     "id": "1",
                     "name": "OpenSearch",
                     "version": "1.1.0",
