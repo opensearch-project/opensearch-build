@@ -27,6 +27,7 @@ pipeline {
                     echo buildManifest.getArtifactUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.build.getPackageName()
                     echo buildManifest.components.getMinArtifact()
+                    echo buildManifest.getIndexFileRoot("distribution-build-opensearch")
                 }
             }
         }

@@ -23,3 +23,5 @@
                BuildManifest_Jenkinsfile.echo(opensearch-1.1.0-linux-x64.tar.gz)
                BuildManifest.getMinArtifact()
                BuildManifest_Jenkinsfile.echo(dist/opensearch-min-1.1.0-linux-x64.tar.gz)
+               BuildManifest.getIndexFileRoot(distribution-build-opensearch)
+               BuildManifest_Jenkinsfile.echo(distribution-build-opensearch/1.1.0)
