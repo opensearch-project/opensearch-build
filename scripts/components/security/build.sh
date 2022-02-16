@@ -17,6 +17,7 @@ function usage() {
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
+    echo -e "-d DASHBOARDS\t[Optional] Build OpenSearch Dashboards, default is 'false'."
     echo -e "-h help"
 }
 
@@ -59,22 +60,16 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-OPENSEARCH_RELEASE=$VERSION
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-# see https://github.com/opensearch-project/security/pull/1409
-PLUGIN_VERSION=$(cat plugin-descriptor.properties | grep ^version= | cut -d= -f2 | sed "s/-SNAPSHOT//")
-[[ "$SNAPSHOT" == "true" ]] && PLUGIN_VERSION=$PLUGIN_VERSION-SNAPSHOT
+mkdir -p $OUTPUT
 
-sed -i -e "s/\(^opensearch\.version=\).*\$/\1${OPENSEARCH_RELEASE}/" plugin-descriptor.properties
-sed -i -e "s/\(^version=\).*\$/\1${PLUGIN_VERSION}/" plugin-descriptor.properties
-sed -i -e "s/\(<opensearch.version>\).*\(<\/opensearch.version>\)/\1${VERSION}\2/g" pom.xml
-sed -i -e "1,/<version>/s/\(<version>\).*\(<\/version>\)/\1${PLUGIN_VERSION}\2/g" pom.xml
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dopensearch_version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
-mvn -B clean package -Padvanced -DskipTests
-artifact_zip=$(ls $(pwd)/target/releases/opensearch-security-*.zip | grep -v admin-standalone)
-./gradlew assemble --no-daemon -ParchivePath=$artifact_zip -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
+zipPath=$(find . -path \*build/distributions/*.zip -not -name "*standalone.zip")
+distributions="$(dirname "${zipPath}")"
 
+echo "COPY ${zipPath}"
 mkdir -p $OUTPUT/plugins
-cp $artifact_zip $OUTPUT/plugins
+cp $zipPath ./$OUTPUT/plugins
