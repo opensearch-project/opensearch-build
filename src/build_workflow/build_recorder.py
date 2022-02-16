@@ -60,6 +60,7 @@ class BuildRecorder:
             self.data["build"]["version"] = target.opensearch_version
             self.data["build"]["platform"] = target.platform
             self.data["build"]["architecture"] = target.architecture
+            self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
             self.data["schema-version"] = "1.2"
             self.components_hash: Dict[str, Dict[str, Any]] = {}
 
@@ -87,3 +88,4 @@ class BuildRecorder:
             if len(components):
                 self.data["components"] = list(components)
             return BuildManifest(self.data)
+

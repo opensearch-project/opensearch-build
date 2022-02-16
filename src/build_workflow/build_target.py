@@ -17,6 +17,7 @@ class BuildTarget:
     version: str
     platform: str
     architecture: str
+    distribution: str
     snapshot: bool
     output_dir: str
 
@@ -26,6 +27,7 @@ class BuildTarget:
         patches: List[str] = [],
         platform: str = None,
         architecture: str = None,
+        distribution: str = None,
         name: str = None,
         snapshot: bool = True,
         build_id: str = None,
@@ -37,6 +39,7 @@ class BuildTarget:
         self.patches = patches
         self.snapshot = snapshot
         self.architecture = architecture or current_architecture()
+        self.distribution = distribution
         self.platform = platform or current_platform()
         self.output_dir = output_dir
 
