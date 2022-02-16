@@ -1,32 +1,65 @@
 <img src="https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg" height="64px"/>
 
 - [Maintainers](#maintainers)
+- [Release Owner](#release-owner)
+  - [Release Activities](#release-activities)
+  - [Dealing with Ambiguity](#dealing-with-ambiguity)
+  - [Managing Critical Issues](#managing-critical-issues)
+    - [General Guidelines](#general-guidelines)
+  - [Correcting Mistakes](#correcting-mistakes)
+  - [Retrospectives](#retrospectives)
 - [ZenHub Process Workflow](#zenhub-process-workflow)
-  - [What is ZenHub](#what-is-zenhubhttpswwwzenhubcom)
-  - [Dev Deployment](#dev-deployment)
+  - [What is ZenHub?](#what-is-zenhub)
   - [Setting up ZenHub](#setting-up-zenhub)
   - [Sprint Board](#sprint-board)
     - [Pipelines](#pipelines)
   - [Creating Issues](#creating-issues)
   - [Managing issues/stories](#managing-issuesstories)
-  - [Spillovers](#spillovers)
+    - [Spillovers](#spillovers)
   - [Epics](#epics)
   - [Recurring Team Meetings](#recurring-team-meetings)
   - [On-Call](#on-call)
 
 ## Maintainers
 
-| Maintainer | GitHub ID | Affiliation |
-| --------------- | --------- | ----------- |
-| Peter Zhu | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon |
-| Peter Nied | [peternied](https://github.com/peternied) | Amazon |
-| Barani Bikshandi | [bbarani](https://github.com/bbarani) | Amazon |
-| Sayali Gaikawad | [gaiksaya](https://github.com/gaiksaya) | Amazon |
-| Abhinav Gupta | [abhinavGupta16](https://github.com/abhinavGupta16) | Amazon |
-| Zelin Hao | [zelinh](https://github.com/zelinh) | Amazon |
-| Yilin Zhang | [zylzulu](https://github.com/zylzulu) | Amazon |
+| Maintainer       | GitHub ID                                           | Affiliation |
+| ---------------- | --------------------------------------------------- | ----------- |
+| Peter Zhu        | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon      |
+| Barani Bikshandi | [bbarani](https://github.com/bbarani)               | Amazon      |
+| Sayali Gaikawad  | [gaiksaya](https://github.com/gaiksaya)             | Amazon      |
+| Abhinav Gupta    | [abhinavGupta16](https://github.com/abhinavGupta16) | Amazon      |
+| Zelin Hao        | [zelinh](https://github.com/zelinh)                 | Amazon      |
 
 [This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).
+
+## Release Owner
+The release owner is a temporary role for the duration of a given OpenSearch / OpenSearch Dashboards release.  This owner is tracked by the assignment of a release ticket an individual.  The release owner oversees the release ticket, makes sure the activities are completed, and closed the release.  Release activities are documented in the release ticket, see the [template](./.github/ISSUE_TEMPLATE/release_template.md). The purpose of the release owner is to be responsible for following the release process.
+
+### Release Activities
+The release owner performs the activities described in the overall release ticket.  Other activities associated with the release are managed by the component release owners or are be delegation to the most appropriate area owner.  Keeping the release owner's activities well document and predicable ensures the release process avoids bottlenecks.
+
+### Dealing with Ambiguity 
+Tasks will become unclear to complete, the release owner’s role is to make sure that a path to resolution is found by involving those that are needed and communicating via the primary release issue and on the component release issues.
+
+### Managing Critical Issues
+Create a new issue in GitHub any time the release schedule is impacted.  For transparency GitHub has all the information pertaining to state of the release.
+
+#### General Guidelines
+- For issues impacting a single component, created an issue in the component’s GitHub repository, with the release version tag and referenced on the component's release issue.
+- For issues impacting multiple components, create an issue in the root cause's GitHub repository, with the release version tag and referenced in the component's release issues.
+- For issues impacting all / blocking any productivity, create an issue immediately in this repository, with the release version tag, and post a comment in the general release ticket.  Make a broad call to action for stakeholders to engage in the issue.  Closely monitor the issue until the release can resume as planned.
+
+### Correcting Mistakes
+Mistakes happen, correcting these transparently is paramount.  Use markdown strike-through when making edits to correct incorrect information instead of deleting. 
+
+Some mistakes are larger, such as a process that was marked completed was done so incorrectly, these corrections need additional tracking as a campaign. Create an issue to drive the campaign with a list of components to track statuses such as notifications and confirmation of the correction.  This is important to confirm that the process was completed as expected, see an [example](https://github.com/opensearch-project/opensearch-build/issues/954).
+
+### Retrospectives
+The release process will be improved and invested in, running a retrospective and communicating an summary of its results is necessary to achieve this.  Retrospectives are encouraged at the component level in the component release issues template. 
+
+Feedback comes from the retro issue created during the release and component level retrospectives.  A meeting could be run to capture additional feedback if desired.  This process is focused on recording what happened to make remedies.
+ 
+After the retro items are in, a final summary is written as a comment on the retrospective issue.  The comment includes areas of consideration for the project alongside action items with owners to drive them, [example](https://github.com/opensearch-project/opensearch-build/issues/880) summary.
 
 ## ZenHub Process Workflow
 We follow agile methodologies for our development and release process. We use GitHub issues with annotations via ZenHub to manage and track our stories and issues to effectively manage them over the sprint.
@@ -115,3 +148,4 @@ This would ensure that all the tasks the an individual is working on is correctl
 
 ### On-Call
 Since on-call is a weekly rotation, we do not create an issue for on-call. However, if on-call requires you to work on a bug, please make sure that we have issue associated with the task for tracking.
+
