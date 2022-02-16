@@ -73,10 +73,9 @@ pipeline {
                                 error "Job ${TARGET_JOB_NAME} is invalid"
                             }
                             build job: "${TARGET_JOB_NAME}", parameters: [
-                            string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
-                            string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}")
-                            ], wait: true
-                            
+                                string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
+                                string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}")
+                            ], wait: true, propagate: false
                             echo "Build succeeded, uploading build SHA for that job"
                             buildUploadManifestSHA(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
