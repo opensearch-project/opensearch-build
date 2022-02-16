@@ -214,6 +214,18 @@ pipeline {
                 }
             }
         }
+        stage('SHA upload') {
+            steps {
+                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    script {
+                        buildUploadManifestSHA(
+                            inputManifest: "manifests/${INPUT_MANIFEST}",
+                            jobName: "${env.JOB_BASE_NAME}"
+                        )
+                    }
+                }
+            }
+        }
     }
     post {
         success {
