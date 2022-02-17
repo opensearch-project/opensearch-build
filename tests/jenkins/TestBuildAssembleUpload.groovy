@@ -35,6 +35,7 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("writeJSON", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)

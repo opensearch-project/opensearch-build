@@ -21,6 +21,18 @@ void call(Map args = [:]) {
             path: "${artifactPath}/dist"
     )
 
+    def indexFilePath = buildManifest.getIndexFileRoot("${JOB_NAME}")
+    def latestBuildData = ['latest': "${BUILD_NUMBER}"]
+    writeJSON file: 'index.json', json: latestBuildData
+
+    echo "Uploading index.json to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${indexFilePath}"
+
+    uploadToS3(
+            sourcePath: 'index.json',
+            bucket: "${ARTIFACT_BUCKET_NAME}",
+            path: "${indexFilePath}/index.json"
+    )
+
     echo "Uploading to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {

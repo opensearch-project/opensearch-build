@@ -30,6 +30,7 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
         binding.setVariable('ARTIFACT_UPLOAD_ROLE_NAME', 'upload_role')
 
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("writeJSON", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
