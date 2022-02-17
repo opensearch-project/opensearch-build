@@ -25,6 +25,9 @@ class TestBuildTarget(unittest.TestCase):
     def test_build_id_from_arg(self) -> None:
         self.assertEqual(BuildTarget(version="1.1.0", architecture="x86", build_id="id").build_id, "id")
 
+    def test_distribution_from_arg(self) -> None:
+        self.assertEqual(BuildTarget(version="1.3.0", architecture="x86", distribution="rpm").distribution, "rpm")
+
     def test_opensearch_version(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.0", architecture="x86", snapshot=False).opensearch_version,
