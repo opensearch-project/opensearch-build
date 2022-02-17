@@ -68,9 +68,6 @@ OPENSEARCH_RELEASE=$VERSION
 PLUGIN_VERSION=$(cat plugin-descriptor.properties | grep ^version= | cut -d= -f2 | sed "s/-SNAPSHOT//")
 [[ "$SNAPSHOT" == "true" ]] && PLUGIN_VERSION=$PLUGIN_VERSION-SNAPSHOT
 
-sed -i -e "s/\(^opensearch\.version=\).*\$/\1${OPENSEARCH_RELEASE}/" plugin-descriptor.properties
-sed -i -e "s/\(^version=\).*\$/\1${PLUGIN_VERSION}/" plugin-descriptor.properties
-
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dopensearch_version=$VERSION -Dbuild.snapshot=$SNAPSHOT
 
 zipPath=$(find . -path \*build/distributions/*.zip -not -name "*standalone.zip")
