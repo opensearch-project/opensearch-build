@@ -31,20 +31,19 @@ class BuilderFromSource(Builder):
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
 
         build_command = " ".join(
-            [
-                "bash",
-                build_script,
-                "-v",
-                self.target.version,
-                "-p",
-                self.target.platform,
-                "-a",
-                self.target.architecture,
-                "-s",
-                str(self.target.snapshot).lower(),
-                "-o",
-                self.output_path,
-            ]
+            filter(
+                None,
+                [
+                    "bash",
+                    build_script,
+                    f"-v {self.target.version}",
+                    f"-p {self.target.platform}",
+                    f"-a {self.target.architecture}",
+                    f"-d {self.target.distribution}" if self.target.distribution else None,
+                    f"-s {str(self.target.snapshot).lower()}",
+                    f"-o {self.output_path}",
+                ]
+            )
         )
 
         self.git_repo.execute(build_command)
