@@ -32,3 +32,9 @@ components:
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
     ref: "main"
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: "main"
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin
+    ref: "main"
