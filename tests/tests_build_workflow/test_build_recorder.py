@@ -32,6 +32,20 @@ class TestBuildRecorder(unittest.TestCase):
             )
         )
 
+    def __mock_distribution(self, snapshot: bool = True) -> BuildRecorder:
+        return BuildRecorder(
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.3.0",
+                platform="linux",
+                architecture="x64",
+                distribution="rpm",
+                snapshot=snapshot,
+            )
+        )
+
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     def test_record_component_and_artifact(self, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
@@ -136,6 +150,24 @@ class TestBuildRecorder(unittest.TestCase):
                     "platform": "linux",
                     "architecture": "x64",
                     "distribution": "tar",
+                    "id": "1",
+                    "name": "OpenSearch",
+                    "version": "1.3.0",
+                },
+                "schema-version": "1.2",
+            },
+        )
+
+    def test_get_manifest_distribution(self) -> None:
+        manifest = self.__mock_distribution(snapshot=False).get_manifest()
+        self.assertIs(type(manifest), BuildManifest)
+        self.assertEqual(
+            manifest.to_dict(),
+            {
+                "build": {
+                    "platform": "linux",
+                    "architecture": "x64",
+                    "distribution": "rpm",
                     "id": "1",
                     "name": "OpenSearch",
                     "version": "1.3.0",

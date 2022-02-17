@@ -81,6 +81,14 @@ class TestBuildArgs(unittest.TestCase):
     def test_architecture(self) -> None:
         self.assertEqual(BuildArgs().architecture, "arm64")
 
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_distribution_default(self) -> None:
+        self.assertIsNone(BuildArgs().distribution)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--distribution", "rpm"])
+    def test_distribution(self) -> None:
+        self.assertEqual(BuildArgs().distribution, "rpm")
+
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_script_path(self) -> None:
         self.assertEqual(BuildArgs().script_path, self.BUILD_SH)
