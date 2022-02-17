@@ -127,7 +127,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
-        echo "Unsupported platform-distribution-architecture combo: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
+        echo "Unsupported platform-distribution-architecture combination: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
         exit 1
         ;;
 esac

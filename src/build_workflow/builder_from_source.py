@@ -31,7 +31,8 @@ class BuilderFromSource(Builder):
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
 
         build_command = " ".join(
-            filter(None,
+            filter(
+                None,
                 [
                     "bash",
                     build_script,
