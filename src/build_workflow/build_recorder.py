@@ -88,4 +88,3 @@ class BuildRecorder:
             if len(components):
                 self.data["components"] = list(components)
             return BuildManifest(self.data)
-

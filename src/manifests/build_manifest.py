@@ -55,7 +55,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
             "schema": {
                 "platform": {"required": True, "type": "string"},  # added in 1.2
                 "architecture": {"required": True, "type": "string"},
-                "distribution": {"required": False, "type": "string"},
+                "distribution": {"type": "string"},
                 "id": {"required": True, "type": "string"},
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
@@ -105,7 +105,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
             self.version: str = data["version"]
             self.platform: str = data["platform"]
             self.architecture: str = data["architecture"]
-            self.distribution: str = data["distribution"]
+            self.distribution: str = data.get('distribution', None)
             self.id: str = data["id"]
 
         def __to_dict__(self) -> dict:

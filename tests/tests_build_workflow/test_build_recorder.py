@@ -25,7 +25,7 @@ class TestBuildRecorder(unittest.TestCase):
                 build_id="1",
                 output_dir="output_dir",
                 name="OpenSearch",
-                version="1.1.0",
+                version="1.3.0",
                 platform="linux",
                 architecture="x64",
                 snapshot=snapshot,
@@ -56,9 +56,10 @@ class TestBuildRecorder(unittest.TestCase):
                 "build": {
                     "platform": "linux",
                     "architecture": "x64",
+                    "distribution": "tar",
                     "id": "1",
                     "name": "OpenSearch",
-                    "version": "1.1.0",
+                    "version": "1.3.0",
                 },
                 "components": [
                     {
@@ -67,7 +68,7 @@ class TestBuildRecorder(unittest.TestCase):
                         "name": "common-utils",
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/common-utils",
-                        "version": "1.1.0.0",
+                        "version": "1.3.0.0",
                     }
                 ],
                 "schema-version": "1.2",
@@ -134,9 +135,10 @@ class TestBuildRecorder(unittest.TestCase):
                 "build": {
                     "platform": "linux",
                     "architecture": "x64",
+                    "distribution": "tar",
                     "id": "1",
                     "name": "OpenSearch",
-                    "version": "1.1.0",
+                    "version": "1.3.0",
                 },
                 "schema-version": "1.2",
             },
@@ -166,10 +168,10 @@ class TestBuildRecorder(unittest.TestCase):
                 sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
             ),
         )
-        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.1.0.0.zip")
+        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.3.0.0.zip")
         manifest_dict = mock.get_manifest().to_dict()
-        self.assertEqual(manifest_dict["build"]["version"], "1.1.0")
-        self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0")
+        self.assertEqual(manifest_dict["build"]["version"], "1.3.0")
+        self.assertEqual(manifest_dict["components"][0]["version"], "1.3.0.0")
         mock_plugin_check.assert_called()
         mock_copyfile.assert_called()
         mock_makedirs.assert_called()
@@ -187,10 +189,10 @@ class TestBuildRecorder(unittest.TestCase):
                 sha="3913d7097934cbfe1fdcf919347f22a597d00b76",
             ),
         )
-        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.1.0.0-SNAPSHOT.zip")
+        mock.record_artifact("security", "plugins", "../file1.zip", "valid-1.3.0.0-SNAPSHOT.zip")
         manifest_dict = mock.get_manifest().to_dict()
-        self.assertEqual(manifest_dict["build"]["version"], "1.1.0-SNAPSHOT")
-        self.assertEqual(manifest_dict["components"][0]["version"], "1.1.0.0-SNAPSHOT")
+        self.assertEqual(manifest_dict["build"]["version"], "1.3.0-SNAPSHOT")
+        self.assertEqual(manifest_dict["components"][0]["version"], "1.3.0.0-SNAPSHOT")
         mock_plugin_check.assert_called()
         mock_copyfile.assert_called()
         mock_makedirs.assert_called()
