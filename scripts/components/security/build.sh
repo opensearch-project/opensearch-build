@@ -17,7 +17,6 @@ function usage() {
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
-    echo -e "-d DASHBOARDS\t[Optional] Build OpenSearch Dashboards, default is 'false'."
     echo -e "-h help"
 }
 
