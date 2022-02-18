@@ -13,11 +13,12 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:s:o:p:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -37,6 +38,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
+            ;;
+        d)
+            DISTRIBUTION=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
@@ -59,35 +63,46 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
+[[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
+[[ "$SNAPSHOT" != "true" ]] && RELEASE="--release"
 
 # Assemble distribution artifact
 # see https://github.com/opensearch-project/OpenSearch/blob/main/settings.gradle#L34 for other distribution targets
-case $ARCHITECTURE in
-    x64)
+case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
+    linux-tar-x64)
         TARGET="--$PLATFORM"
+        EXT="tar.gz"
+        EXTRA_PARAMS="--skip-os-packages"
         QUALIFIER="$PLATFORM-x64"
         ;;
-    arm64)
+    linux-tar-arm64)
         TARGET="--$PLATFORM-arm"
+        EXT="tar.gz"
+        EXTRA_PARAMS="--skip-os-packages"
         QUALIFIER="$PLATFORM-arm64"
         ;;
+    linux-rpm-x64)
+        TARGET="--$DISTRIBUTION"
+        EXT="$DISTRIBUTION"
+        EXTRA_PARAMS="--all-platforms --skip-archives"
+        QUALIFIER="x64"
+        ;;
     *)
-        echo "Unsupported architecture: ${ARCHITECTURE}"
+        echo "Unsupported platform-distribution-architecture combination: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
         exit 1
         ;;
 esac
 
-echo "Building node modules for core"
+echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap
 
 echo "Building artifact"
-[[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
-[[ "$SNAPSHOT" != "true" ]] && RELEASE="--release"
 
-yarn build-platform $TARGET --skip-os-packages $RELEASE
+yarn build-platform $TARGET $EXTRA_PARAMS $RELEASE
 
 mkdir -p "${OUTPUT}/dist"
 # Copy artifact to dist folder in bundle build output
-ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
-ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$IDENTIFIER-$QUALIFIER.tar.gz
+ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$IDENTIFIER-$QUALIFIER.$EXT
+ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$IDENTIFIER-$QUALIFIER.$EXT
 cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME
