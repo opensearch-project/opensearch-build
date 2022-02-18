@@ -40,6 +40,18 @@ class TestBuilderFromSource(unittest.TestCase):
             ),
         )
 
+        self.builder_distribution_support = BuilderFromSource(
+            InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
+            BuildTarget(
+                name="OpenSearch",
+                version="1.3.0",
+                platform="linux",
+                architecture="x64",
+                distribution="rpm",
+                snapshot=False,
+            ),
+        )
+
     def test_builder(self) -> None:
         self.assertEqual(self.builder.component.name, "common-utils")
 
@@ -85,6 +97,27 @@ class TestBuilderFromSource(unittest.TestCase):
             )
         )
         build_recorder.record_component.assert_called_with("OpenSearch", mock_git_repo.return_value)
+
+    @patch("build_workflow.builder_from_source.GitRepository")
+    def test_build_distribution_support(self, mock_git_repo: Mock) -> None:
+        mock_git_repo.return_value = MagicMock(working_directory="dir")
+        build_recorder = MagicMock()
+        self.builder_distribution_support.checkout("dir")
+        self.builder_distribution_support.build(build_recorder)
+        mock_git_repo.return_value.execute.assert_called_with(
+            " ".join(
+                [
+                    "bash",
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    "-v 1.3.0",
+                    "-p linux",
+                    "-a x64",
+                    "-s false",
+                    "-o builds",
+                ]
+            )
+        )
+        build_recorder.record_component.assert_called_with("common-utils", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot(self, mock_git_repo: Mock) -> None:
