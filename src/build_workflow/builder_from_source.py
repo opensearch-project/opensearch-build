@@ -19,8 +19,6 @@ Artifacts found in "<build root>/artifacts/<maven|plugins|libs|dist|core-plugins
 
 
 class BuilderFromSource(Builder):
-
-
     def checkout(self, work_dir: str) -> None:
         self.git_repo = GitRepository(
             self.component.repository,
