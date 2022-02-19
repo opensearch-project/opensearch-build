@@ -82,6 +82,7 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 [ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
+[[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
 
 case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
     linux-tar-x64|darwin-tar-x64)
@@ -104,6 +105,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         TYPE="packages"
         TARGET="rpm"
         QUALIFIER="x86_64"
+        QUALIFIER_ALT="x64"
         ;;
     linux-rpm-arm64)
         PACKAGE="rpm"
@@ -111,6 +113,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         TYPE="packages"
         TARGET="arm64-rpm"
         QUALIFIER="aarch64"
+        QUALIFIER_ALT="arm64"
         ;;
     windows-zip-x64)
         PACKAGE="zip"
@@ -137,10 +140,11 @@ echo "Building OpenSearch for $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 ./gradlew :distribution:$TYPE:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
 
 # Copy artifact to dist folder in bundle build output
-[[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
 ARTIFACT_BUILD_NAME=`ls distribution/$TYPE/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
+ARTIFACT_TARGET_BUILD_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER.$EXT
+[ ! -z "$QUALIFIER_ALT" ] && ARTIFACT_TARGET_BUILD_NAME=opensearch-min-$VERSION$IDENTIFIER-$QUALIFIER_ALT.$EXT
 mkdir -p "${OUTPUT}/dist"
-cp distribution/$TYPE/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
+cp distribution/$TYPE/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_TARGET_BUILD_NAME
 
 echo "Building core plugins..."
 mkdir -p "${OUTPUT}/core-plugins"
