@@ -20,11 +20,10 @@ export class ArtifactsPublicAccess {
       principals: [new CanonicalUserPrincipal(originAccessIdentity.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
     }));
 
-    // // Incoming URLs from ci.opensearch.org will have a '/ci/123/' prefix, remove the prefix path from requests into S3.
     const urlRewriter = new NodejsFunction(stack, 'CfUrlRewriter', {
       runtime: Runtime.NODEJS_14_X,
       entry: `${__dirname}/../lambdas/cf-url-rewriter/cf-url-rewriter.ts`,
-      handler: 'cf-url-rewriter.handler',
+      handler: 'handler',
       memorySize: 128,
       architecture: Architecture.X86_64,
       bundling: {
