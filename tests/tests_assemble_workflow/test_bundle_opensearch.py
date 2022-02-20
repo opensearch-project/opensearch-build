@@ -184,7 +184,7 @@ class TestBundleOpenSearch(unittest.TestCase):
                 self.assertEqual(mock_copyfile.call_count, 1)
 
     def test_bundle_package_zip(self) -> None:
-        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.1.0.yml")
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.3.0.yml")
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(
             BuildManifest.from_path(manifest_path),
@@ -198,5 +198,5 @@ class TestBundleOpenSearch(unittest.TestCase):
             with patch("shutil.copyfile") as mock_copyfile:
                 bundle.package(os.path.dirname(__file__))
                 mock_zipfile_open.assert_called_with("opensearch.zip", "w", zipfile.ZIP_DEFLATED)
-                mock_zipfile_write.assert_called_with(os.path.join(bundle.tmp_dir.name, "opensearch-1.1.0", "opensearch.txt"), "opensearch.txt")
+                mock_zipfile_write.assert_called_with(os.path.join(bundle.tmp_dir.name, "opensearch-1.3.0", "opensearch.txt"), "opensearch.txt")
                 self.assertEqual(mock_copyfile.call_count, 1)

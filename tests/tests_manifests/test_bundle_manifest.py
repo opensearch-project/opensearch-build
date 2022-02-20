@@ -18,6 +18,9 @@ class TestBundleManifest(unittest.TestCase):
         self.manifest_filename = os.path.join(self.data_path, "opensearch-bundle-1.1.0.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
 
+        self.manifest_distribution_filename = os.path.join(self.data_path, "opensearch-bundle-1.3.0.yml")
+        self.manifest_distribution = BundleManifest.from_path(self.manifest_distribution_filename)
+
     def test_build(self) -> None:
         self.assertEqual(self.manifest.version, "1.1")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
@@ -26,6 +29,9 @@ class TestBundleManifest(unittest.TestCase):
         self.assertEqual(self.manifest.build.platform, "linux")
         self.assertEqual(self.manifest.build.architecture, "x64")
         self.assertEqual(len(self.manifest.components), 13)
+
+        self.assertEqual(self.manifest_distribution.build.version, "1.3.0")
+        self.assertEqual(self.manifest_distribution.build.distribution, "tar")
 
     def test_component(self) -> None:
         opensearch_min_component = self.manifest.components["OpenSearch"]

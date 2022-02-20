@@ -1,0 +1,76 @@
+---
+build:
+  platform: linux
+  architecture: x64
+  distribution: tar
+  id: c3ff7a232d25403fa8cc14c97799c323
+  location: bundle/opensearch-1.3.0-linux-x64.tar.gz
+  name: OpenSearch
+  version: 1.3.0
+components:
+  - commit_id: b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583
+    location: artifacts/dist/opensearch-min-1.3.0-linux-x64.tar.gz
+    name: OpenSearch
+    ref: '1.1'
+    repository: https://github.com/opensearch-project/OpenSearch.git
+  - commit_id: 4504dabfc67dd5628c1451e91e9a1c3c4ca71525
+    location: artifacts/plugins/opensearch-job-scheduler-1.3.0.0.zip
+    name: job-scheduler
+    ref: main
+    repository: https://github.com/opensearch-project/job-scheduler.git
+  - commit_id: 9ada74383a812baf534af8984a276303e4619574
+    location: artifacts/plugins/opensearch-sql-1.3.0.0.zip
+    name: sql
+    ref: main
+    repository: https://github.com/opensearch-project/sql.git
+  - commit_id: ecd283f5c7eac51902a43ef577e44fdccdc0e5ae
+    location: artifacts/plugins/opensearch-alerting-1.3.0.0.zip
+    name: alerting
+    ref: main
+    repository: https://github.com/opensearch-project/alerting.git
+  - commit_id: 7efc43a0a2f6829b170909ede56d70434d32ab1d
+    location: artifacts/plugins/opensearch-notifications-1.3.0.0.zip
+    name: notifications
+    ref: main
+    repository: https://github.com/opensearch-project/notifications.git
+  - commit_id: 25383effb9b7eeb3718e1fd7288e388a074568bf
+    location: artifacts/plugins/opensearch-security-1.3.0.0.zip
+    name: security
+    ref: fix-snapshot-build
+    repository: https://github.com/dblock/security.git
+  - commit_id: 95c2b6c7054f3e52df5d31d7859515b19bc95b59
+    location: artifacts/plugins/opensearch-performance-analyzer-1.3.0.0.zip
+    name: performance-analyzer
+    ref: main
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+  - commit_id: ec0578934bae1fdee31ead07500ae8cee633c6d7
+    location: artifacts/plugins/opensearch-index-management-1.3.0.0.zip
+    name: index-management
+    ref: main
+    repository: https://github.com/opensearch-project/index-management.git
+  - commit_id: 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6
+    location: artifacts/plugins/opensearch-knn-1.3.0.0.zip
+    name: k-NN
+    ref: main
+    repository: https://github.com/opensearch-project/k-NN.git
+  - commit_id: b5d02ebfffab35a3918c3b603da328584497b589
+    location: artifacts/plugins/opensearch-anomaly-detection-1.3.0.0.zip
+    name: anomaly-detection
+    ref: main
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+  - commit_id: aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132
+    location: artifacts/plugins/opensearch-asynchronous-search-1.3.0.0.zip
+    name: asynchronous-search
+    ref: main
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+  - commit_id: edc55c09fc337117c04adeef51f5d2ddc54bd9df
+    location: artifacts/plugins/opensearch-reports-scheduler-1.3.0.0.zip
+    name: dashboards-reports
+    ref: main
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+  - commit_id: 0016edddcb670b9ae93693623d37af5944921794
+    location: artifacts/plugins/opensearch-notebooks-1.3.0.0.zip
+    name: dashboards-notebooks
+    ref: main
+    repository: https://github.com/opensearch-project/dashboards-notebooks.git
+schema-version: '1.1'

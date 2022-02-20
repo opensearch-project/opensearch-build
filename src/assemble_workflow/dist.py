@@ -69,16 +69,6 @@ class Dist(ABC):
         shutil.copyfile(name, path)
         logging.info(f"Published {path}.")
 
-    @classmethod
-    def from_path(cls, name: str, path: str, min_path: str) -> 'Dist':
-        ext = os.path.splitext(path)[1]
-        if ext == ".gz":
-            return DistTar(name, path, min_path)
-        elif ext == ".zip":
-            return DistZip(name, path, min_path)
-        else:
-            raise ValueError(f'Invalid min "dist" extension in input artifacts: {ext} ({path}).')
-
 
 class DistZip(Dist):
     def __extract__(self, dest: str) -> None:
