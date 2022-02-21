@@ -13,8 +13,8 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 from assemble_workflow.bundle_recorder import BundleRecorder
-from assemble_workflow.dists import Dists
 from assemble_workflow.dist import Dist
+from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildComponents, BuildManifest
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory

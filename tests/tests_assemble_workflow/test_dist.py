@@ -6,9 +6,9 @@
 
 import os
 import unittest
+from unittest.mock import Mock, patch
 
 from assemble_workflow.dist import DistTar
-from unittest.mock import Mock, patch
 
 
 class TestDist(unittest.TestCase):
