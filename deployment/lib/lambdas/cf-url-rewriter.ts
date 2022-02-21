@@ -5,11 +5,9 @@ const https = require('https');
 export async function handler(event: CloudFrontRequestEvent, context, callback): Promise<CloudFrontRequest> {
   const request = event.Records[0].cf.request;
 
-  console.log('request', JSON.stringify(request));
+  if (request.uri.includes("/latest/")) {
 
-  if (request.uri.includes("latest")) {
-
-    const indexUri = request.uri.replace(/latest.*/, 'dist/index.json');
+    const indexUri = request.uri.replace(/\/latest\/.*/, 'dist/index.json');
 
     const data = await httpGet('https://' + request.headers.host[0].value + indexUri);
 
