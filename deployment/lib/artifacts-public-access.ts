@@ -27,8 +27,7 @@ export class ArtifactsPublicAccess {
       memorySize: 128,
       architecture: Architecture.X86_64,
       bundling: {
-        minify: true,
-        // tsconfig: `${__dirname}/../lambda-fns/hello-world/tsconfig.json` // if you want to override defaults
+        minify: true
       }
     });
 
