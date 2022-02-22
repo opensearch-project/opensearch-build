@@ -4,10 +4,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import argparse
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_suite import PerfTestSuite
@@ -15,12 +14,11 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 class TestPerfTestSuite(unittest.TestCase):
     def setUp(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--workload")
-        parser.add_argument("--workload-options")
-        parser.add_argument("--warmup-iters")
-        parser.add_argument("--test-iters")
-        self.args = parser.parse_args()
+        self.args = Mock()
+        self.args.workload = "nyc_taxis"
+        self.args.workload_options = "{}"
+        self.args.warmup_iters = 0
+        self.args.test_iters = 1
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
         self.manifest_filename = os.path.join(self.data_path, "bundle_manifest.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
