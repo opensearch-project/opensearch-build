@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_suite import PerfTestSuite
