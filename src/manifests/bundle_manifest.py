@@ -23,7 +23,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
           version: string
           platform: linux, darwin or windows
           architecture: x64 or arm64
-          distribution: tar, zip, or more
+          distribution: tar, zip, and rpm
           id: build id
           location: /relative/path/to/tarball
         components:
