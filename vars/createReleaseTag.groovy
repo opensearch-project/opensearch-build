@@ -3,7 +3,7 @@ def call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
 
-    def componentsName = buildManifestObj.getComponets()
+    def componentsName = buildManifestObj.getComponents()
     def componetsNumber = componentsName.size()
     def version = args.tagVersion
     echo "Creating $version release tag for $componetsNumber components in ths manifest"

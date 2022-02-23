@@ -139,7 +139,7 @@ class BuildManifest implements Serializable {
         return this.components.get(name).commit_id
     }
 
-    public ArrayList getComponets() {
+    public ArrayList getComponents() {
         def componentsName = []
         this.components.each{key, value -> componentsName.add(key)}
         return componentsName

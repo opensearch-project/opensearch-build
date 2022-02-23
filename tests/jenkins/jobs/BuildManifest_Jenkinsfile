@@ -28,6 +28,9 @@ pipeline {
                     echo buildManifest.build.getPackageName()
                     echo buildManifest.components.getMinArtifact()
                     echo buildManifest.getIndexFileRoot("distribution-build-opensearch")
+                    echo buildManifest.getCommitId("OpenSearch")
+                    echo buildManifest.getComponents()
+                    echo buildManifest.getRepo("OpenSearch")
                 }
             }
         }
