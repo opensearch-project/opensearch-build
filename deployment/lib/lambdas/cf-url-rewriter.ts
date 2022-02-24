@@ -36,7 +36,7 @@ function redirectResponse(request, latestNumber) {
     headers: {
       'location': [{
         key: 'Location',
-        value: request.uri.replace('latest', latestNumber),
+        value: request.uri.replace(/\/latest\/.*/, '/' + latestNumber + '/'),
       }],
       'cache-control': [{
         key: 'Cache-Control',
