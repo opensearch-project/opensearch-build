@@ -7,32 +7,52 @@ export async function handler(event: CloudFrontRequestEvent, context, callback):
 
   if (request.uri.includes("/latest/")) {
 
-    const indexUri = request.uri.replace(/\/latest\/.*/, 'dist/index.json');
+    const indexUri = request.uri.replace(/\/latest\/.*/, '/index.json');
 
-    const data = await httpGet('https://' + request.headers.host[0].value + indexUri);
+    try {
 
-    const redirectResponse = {
-      status: '302',
-      statusDescription: 'Moved temporarily',
-      headers: {
-        'location': [{
-          key: 'Location',
-          value: request.uri.replace('latest', data.latest),
-        }],
-        'cache-control': [{
-          key: 'Cache-Control',
-          value: "max-age=3600"
-        }],
-      },
-    };
+      const data = await httpGet('https://' + request.headers.host[0].value + indexUri);
 
-    console.log('update request', redirectResponse);
+      if (data && data.latest) {
+        callback(null, redirectResponse(request, data.latest));
+      } else {
+        callback(null, errorResponse());
+      }
+    } catch (e) {
+      console.error(e);
+      callback(null, errorResponse());
+    }
 
-    callback(null, redirectResponse);
   } else {
     request.uri = request.uri.replace(/^\/ci\/...\//, '\/');
     callback(null, request);
   }
+}
+
+function redirectResponse(request, latestNumber) {
+  return {
+    status: '302',
+    statusDescription: 'Moved temporarily',
+    headers: {
+      'location': [{
+        key: 'Location',
+        value: request.uri.replace('latest', latestNumber),
+      }],
+      'cache-control': [{
+        key: 'Cache-Control',
+        value: "max-age=3600"
+      }],
+    },
+  };
+
+}
+
+function errorResponse() {
+  return {
+    body: 'The page is not found!',
+    status: '404',
+    statusDescription: 'Not found',
+  };
 }
 
 async function httpGet(url) {
