@@ -9,6 +9,7 @@
 import argparse
 import os
 import sys
+import time
 
 import yaml
 
@@ -35,19 +36,29 @@ def main():
     parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.", required=True)
     parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
     parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
+    parser.add_argument("--security", dest="security", action="store_true",
+                        help="Security of the cluster should be True/False",
+                        default=False)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
     args = parser.parse_args()
 
     manifest = BundleManifest.from_file(args.bundle_manifest)
     config = yaml.safe_load(args.config)
 
+    tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test")
+    os.makedirs(tests_dir, exist_ok=True)
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
-            security = "security" in manifest.components
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) \
+                        as (test_cluster_endpoint, test_cluster_port):
+                    # Stack creation returns control before user-data script execution is complete and the server starts
+                    # Sleep helps with consistent service discovery and test initialization success.
+                    time.sleep(120)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security, current_workspace,
+                                                    tests_dir)
                     perf_test_suite.execute()
 
 

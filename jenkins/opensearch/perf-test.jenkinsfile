@@ -1,0 +1,100 @@
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    environment {
+        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
+        AWS_ROLE_SESSION_NAME = "jenkins-test-session"
+        BUNDLE_MANIFEST = "bundle-manifest.yml"
+    }
+    tools {
+        jdk "JDK14"
+        maven "maven-3.8.2"
+    }
+    parameters {
+        string(
+            defaultValue: '',
+            name: 'GITHUB_TOKEN',
+            description: 'Github token for account access.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'BUNDLE_MANIFEST_URL',
+            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'AGENT_LABEL',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'TEST_WORKLOAD',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'TEST_ITERATIONS',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'WARMUP_ITERATIONS',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+    }
+
+    stages {
+        stage('perf-test') {
+            agent {
+                node {
+                    label "${AGENT_LABEL}"
+                }
+            }
+            steps {
+                script {
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                    )
+                    String buildId = bundleManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                    echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                    echo "BUILD_ID: ${BUILD_ID}"
+                    echo "Security: ${HAS_SECURITY}"
+
+                    runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                        buildId: "${BUILD_ID}",
+                        security: false)
+
+                    if(env.HAS_SECURITY) {
+                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                        buildId: "${BUILD_ID}",
+                        security: true)
+                    }
+
+                }
+            }
+
+            post {
+                success {
+                    script {
+                        uploadTestResults(
+                                buildManifestFileName: "${BUNDLE_MANIFEST}",
+                                jobName: 'perf-test',
+                                buildNumber: "${BUILD_ID}"
+                        )
+                    }
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+}
