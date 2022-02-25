@@ -68,6 +68,14 @@ fi
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 ## Setup Performance Analyzer Agent
-mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
+PA_PLUGIN_PATH=$OUTPUT/plugins/opensearch-performance-analyzer
+RCA_LIB_PATH=$OUTPUT/plugins/opensearch-performance-analyzer/rca_lib
+# Remove common lib files between PA plugin and RCA reader process
+for f in `ls -1 $PA_PLUGIN_PATH`; do
+    if [[ $(diff $RCA_LIB_PATH/$f $PA_PLUGIN_PATH/$f | wc -c) -eq 0 ]]; then
+        rm -rf $RCA_LIB_PATH/$f;
+    fi
+done;
+
 mv $OUTPUT/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $OUTPUT/bin
 rm -rf $OUTPUT/bin/opensearch-performance-analyzer
