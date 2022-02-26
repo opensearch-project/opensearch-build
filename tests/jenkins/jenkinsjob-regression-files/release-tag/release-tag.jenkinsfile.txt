@@ -1,0 +1,383 @@
+   release-tag.run()
+      release-tag.legacySCM(groovy.lang.Closure)
+      release-tag.library({identifier=jenkins@20211123, retriever=null})
+      release-tag.pipeline(groovy.lang.Closure)
+         release-tag.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         release-tag.stage(Create Release Tag, groovy.lang.Closure)
+            release-tag.script(groovy.lang.Closure)
+               release-tag.downloadFromS3({destPath=tmp/workspace/tests/data/opensearch-build-1.1.0.yml, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.1.0/123/linux/x64/builds/opensearch/manifest.yml, force=true})
+                  downloadFromS3.withAWS({role=Dummy_Download_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     downloadFromS3.s3Download({file=tmp/workspace/tests/data/opensearch-build-1.1.0.yml, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.1.0/123/linux/x64/builds/opensearch/manifest.yml, force=true})
+               release-tag.echo(Distribution build manifest is downloaded to tests/data/opensearch-build-1.1.0.yml)
+               release-tag.createReleaseTag({buildManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
+                  createReleaseTag.legacySCM(groovy.lang.Closure)
+                  createReleaseTag.library({identifier=jenkins@20211123, retriever=null})
+                  createReleaseTag.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
+                  BuildManifest.asBoolean()
+                  BuildManifest.getNames()
+                  createReleaseTag.echo(Creating 1.1.0 release tag for 15 components in ths manifest)
+                  createReleaseTag.usernamePassword({credentialsId=dummy_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  createReleaseTag.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     BuildManifest.getCommitId(index-management)
+                     BuildManifest.getRepo(index-management)
+                     createReleaseTag.echo(Tagging index-management at 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ...)
+                     createReleaseTag.sh(
+                mkdir index-management
+                cd index-management
+                git init
+                git remote add origin https://github.com/opensearch-project/index-management.git
+                git fetch --depth 1 origin 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24
+                git checkout FETCH_HEAD
+                if [ "index-management" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/index-management.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/index-management.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/index-management.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(job-scheduler)
+                     BuildManifest.getRepo(job-scheduler)
+                     createReleaseTag.echo(Tagging job-scheduler at 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ...)
+                     createReleaseTag.sh(
+                mkdir job-scheduler
+                cd job-scheduler
+                git init
+                git remote add origin https://github.com/opensearch-project/job-scheduler.git
+                git fetch --depth 1 origin 4504dabfc67dd5628c1451e91e9a1c3c4ca71525
+                git checkout FETCH_HEAD
+                if [ "job-scheduler" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/job-scheduler.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/job-scheduler.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/job-scheduler.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(anomaly-detection)
+                     BuildManifest.getRepo(anomaly-detection)
+                     createReleaseTag.echo(Tagging anomaly-detection at bedc5b620384163abe272e913705fa23cfd3b3a3 ...)
+                     createReleaseTag.sh(
+                mkdir anomaly-detection
+                cd anomaly-detection
+                git init
+                git remote add origin https://github.com/opensearch-project/anomaly-detection.git
+                git fetch --depth 1 origin bedc5b620384163abe272e913705fa23cfd3b3a3
+                git checkout FETCH_HEAD
+                if [ "anomaly-detection" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/anomaly-detection.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/anomaly-detection.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/anomaly-detection.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(performance-analyzer)
+                     BuildManifest.getRepo(performance-analyzer)
+                     createReleaseTag.echo(Tagging performance-analyzer at f184f0bc39302ac38af2585c663d619048f6cffe ...)
+                     createReleaseTag.sh(
+                mkdir performance-analyzer
+                cd performance-analyzer
+                git init
+                git remote add origin https://github.com/opensearch-project/performance-analyzer.git
+                git fetch --depth 1 origin f184f0bc39302ac38af2585c663d619048f6cffe
+                git checkout FETCH_HEAD
+                if [ "performance-analyzer" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(common-utils)
+                     BuildManifest.getRepo(common-utils)
+                     createReleaseTag.echo(Tagging common-utils at 3913d7097934cbfe1fdcf919347f22a597d00b76 ...)
+                     createReleaseTag.sh(
+                mkdir common-utils
+                cd common-utils
+                git init
+                git remote add origin https://github.com/opensearch-project/common-utils.git
+                git fetch --depth 1 origin 3913d7097934cbfe1fdcf919347f22a597d00b76
+                git checkout FETCH_HEAD
+                if [ "common-utils" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/common-utils.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/common-utils.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/common-utils.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(asynchronous-search)
+                     BuildManifest.getRepo(asynchronous-search)
+                     createReleaseTag.echo(Tagging asynchronous-search at aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ...)
+                     createReleaseTag.sh(
+                mkdir asynchronous-search
+                cd asynchronous-search
+                git init
+                git remote add origin https://github.com/opensearch-project/asynchronous-search.git
+                git fetch --depth 1 origin aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132
+                git checkout FETCH_HEAD
+                if [ "asynchronous-search" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/asynchronous-search.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/asynchronous-search.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/asynchronous-search.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(dashboards-notebooks)
+                     BuildManifest.getRepo(dashboards-notebooks)
+                     createReleaseTag.echo(Tagging dashboards-notebooks at 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ...)
+                     createReleaseTag.sh(
+                mkdir dashboards-notebooks
+                cd dashboards-notebooks
+                git init
+                git remote add origin https://github.com/opensearch-project/dashboards-notebooks.git
+                git fetch --depth 1 origin 5a996eb8ec8c92e7469cd5e5f87b237352f60f61
+                git checkout FETCH_HEAD
+                if [ "dashboards-notebooks" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-notebooks.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-notebooks.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(OpenSearch)
+                     BuildManifest.getRepo(OpenSearch)
+                     createReleaseTag.echo(Tagging OpenSearch at b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ...)
+                     createReleaseTag.sh(
+                mkdir OpenSearch
+                cd OpenSearch
+                git init
+                git remote add origin https://github.com/opensearch-project/OpenSearch.git
+                git fetch --depth 1 origin b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583
+                git checkout FETCH_HEAD
+                if [ "OpenSearch" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/OpenSearch.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/OpenSearch.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/OpenSearch.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(sql)
+                     BuildManifest.getRepo(sql)
+                     createReleaseTag.echo(Tagging sql at d68547d585092af1e053d01e1b834259723cd304 ...)
+                     createReleaseTag.sh(
+                mkdir sql
+                cd sql
+                git init
+                git remote add origin https://github.com/opensearch-project/sql.git
+                git fetch --depth 1 origin d68547d585092af1e053d01e1b834259723cd304
+                git checkout FETCH_HEAD
+                if [ "sql" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/sql.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/sql.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/sql.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(alerting)
+                     BuildManifest.getRepo(alerting)
+                     createReleaseTag.echo(Tagging alerting at 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ...)
+                     createReleaseTag.sh(
+                mkdir alerting
+                cd alerting
+                git init
+                git remote add origin https://github.com/opensearch-project/alerting.git
+                git fetch --depth 1 origin 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d
+                git checkout FETCH_HEAD
+                if [ "alerting" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/alerting.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/alerting.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/alerting.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(security)
+                     BuildManifest.getRepo(security)
+                     createReleaseTag.echo(Tagging security at 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ...)
+                     createReleaseTag.sh(
+                mkdir security
+                cd security
+                git init
+                git remote add origin https://github.com/opensearch-project/security.git
+                git fetch --depth 1 origin 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d
+                git checkout FETCH_HEAD
+                if [ "security" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/security.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/security.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/security.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(k-NN)
+                     BuildManifest.getRepo(k-NN)
+                     createReleaseTag.echo(Tagging k-NN at 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ...)
+                     createReleaseTag.sh(
+                mkdir k-NN
+                cd k-NN
+                git init
+                git remote add origin https://github.com/opensearch-project/k-NN.git
+                git fetch --depth 1 origin 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6
+                git checkout FETCH_HEAD
+                if [ "k-NN" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/k-NN.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/k-NN.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/k-NN.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(dashboards-reports)
+                     BuildManifest.getRepo(dashboards-reports)
+                     createReleaseTag.echo(Tagging dashboards-reports at 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ...)
+                     createReleaseTag.sh(
+                mkdir dashboards-reports
+                cd dashboards-reports
+                git init
+                git remote add origin https://github.com/opensearch-project/dashboards-reports.git
+                git fetch --depth 1 origin 622f334b0724e47f7ffd21cf7e7d521a9f6c949e
+                git checkout FETCH_HEAD
+                if [ "dashboards-reports" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-reports.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-reports.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-reports.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(notifications)
+                     BuildManifest.getRepo(notifications)
+                     createReleaseTag.echo(Tagging notifications at d0d3e485c4a850f73652a989eeec795b7347fbb6 ...)
+                     createReleaseTag.sh(
+                mkdir notifications
+                cd notifications
+                git init
+                git remote add origin https://github.com/opensearch-project/notifications.git
+                git fetch --depth 1 origin d0d3e485c4a850f73652a989eeec795b7347fbb6
+                git checkout FETCH_HEAD
+                if [ "notifications" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/notifications.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/notifications.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/notifications.git --tags
+                cd ..
+            )
+                     BuildManifest.getCommitId(performance-analyzer-rca)
+                     BuildManifest.getRepo(performance-analyzer-rca)
+                     createReleaseTag.echo(Tagging performance-analyzer-rca at 345a10fd4f4e94d6392c925ad95503ba8addd152 ...)
+                     createReleaseTag.sh(
+                mkdir performance-analyzer-rca
+                cd performance-analyzer-rca
+                git init
+                git remote add origin https://github.com/opensearch-project/performance-analyzer-rca.git
+                git fetch --depth 1 origin 345a10fd4f4e94d6392c925ad95503ba8addd152
+                git checkout FETCH_HEAD
+                if [ "performance-analyzer-rca" == "OpenSearch" ]; then
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer-rca.git 1.1.0
+                    fi
+                    git tag 1.1.0
+                else
+                    if [[ -n $(git ls-remote --tags | grep refs/tags/1.1.0.0) ]]; then
+                        git push --delete https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0
+                    fi
+                    git tag 1.1.0.0
+                fi
+                git push https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer-rca.git --tags
+                cd ..
+            )
+         release-tag.script(groovy.lang.Closure)
+            release-tag.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
