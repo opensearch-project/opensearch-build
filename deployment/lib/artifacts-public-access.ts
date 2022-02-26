@@ -1,5 +1,5 @@
 import {
-  CloudFrontAllowedMethods, CloudFrontWebDistribution, LambdaEdgeEventType, OriginAccessIdentity,
+  CloudFrontAllowedMethods, CloudFrontWebDistribution, LambdaEdgeEventType, OriginAccessIdentity
 } from '@aws-cdk/aws-cloudfront';
 import { CanonicalUserPrincipal, PolicyStatement } from '@aws-cdk/aws-iam';
 import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
@@ -30,23 +30,6 @@ export class ArtifactsPublicAccess {
         minify: true
       }
     });
-
-    urlRewriter.addToRolePolicy(new PolicyStatement({
-      actions: [
-        'cloudfront:UpdateDistribution',
-        'cloudfront:CreateDistribution',
-      ],
-      resources: ['arn:aws:cloudfront:::*'],
-    }));
-    urlRewriter.addToRolePolicy(new PolicyStatement({
-      actions: [
-        'lambda:GetFunction',
-        'lambda:EnableReplication*',
-        'iam:PassRole',
-        'iam:CreateServiceLinkedRole',
-      ],
-      resources: ['*'],
-    }));
 
     const distro = new CloudFrontWebDistribution(stack, 'CloudFrontBuildBucket', {
       originConfigs: [

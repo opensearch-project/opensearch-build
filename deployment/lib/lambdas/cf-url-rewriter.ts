@@ -1,8 +1,8 @@
-import { CloudFrontRequestEvent, CloudFrontRequest } from 'aws-lambda';
+import { CloudFrontRequest, CloudFrontRequestCallback, CloudFrontRequestEvent, Context } from 'aws-lambda';
 
 const https = require('https');
 
-export async function handler(event: CloudFrontRequestEvent, context, callback): Promise<CloudFrontRequest> {
+export async function handler(event: CloudFrontRequestEvent, context: Context, callback: CloudFrontRequestCallback) {
   const request = event.Records[0].cf.request;
 
   if (request.uri.includes("/latest/")) {
