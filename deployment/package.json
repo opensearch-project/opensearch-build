@@ -4,6 +4,7 @@
   "bin": {
     "infra": "bin/build-artifact-stack.js"
   },
+  "depsFileLockPath": "package-lock.json",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
