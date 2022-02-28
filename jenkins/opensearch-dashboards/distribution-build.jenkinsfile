@@ -3,7 +3,7 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 pipeline {
     options {
         timeout(time: 3, unit: 'HOURS')
-        copyArtifactPermission("${JOB_NAME}")
+        copyArtifactPermission("${JOB_BASE_NAME}")
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     agent none
