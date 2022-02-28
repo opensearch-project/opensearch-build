@@ -16,11 +16,12 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:s:o:p:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -40,6 +41,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
+            ;;
+        d)
+            DISTRIBUTION=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
@@ -77,48 +81,66 @@ cp -r ./build/local-test-repo/org/opensearch "${OUTPUT}"/maven/org
 
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
-case $PLATFORM in
-    linux*)
+case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
+    linux-tar-x64|darwin-tar-x64)
         PACKAGE="tar"
         EXT="tar.gz"
-        ;;
-    darwin*)
-        PACKAGE="tar"
-        EXT="tar.gz"
-        ;;
-    windows*)
-        PACKAGE="zip"
-        EXT="zip"
-        ;;
-    *)
-        echo "Unsupported platform: $PLATFORM"
-        exit 1
-        ;;
-esac
-
-case $ARCHITECTURE in
-    x64)
+        TYPE="archives"
         TARGET="$PLATFORM-$PACKAGE"
         QUALIFIER="$PLATFORM-x64"
         ;;
-    arm64)
+    linux-tar-arm64|darwin-tar-arm64)
+        PACKAGE="tar"
+        EXT="tar.gz"
+        TYPE="archives"
+        TARGET="$PLATFORM-arm64-$PACKAGE"
+        QUALIFIER="$PLATFORM-arm64"
+        ;;
+    linux-rpm-x64)
+        PACKAGE="rpm"
+        EXT="rpm"
+        TYPE="packages"
+        TARGET="rpm"
+        QUALIFIER="x86_64"
+        ;;
+    linux-rpm-arm64)
+        PACKAGE="rpm"
+        EXT="rpm"
+        TYPE="packages"
+        TARGET="arm64-rpm"
+        QUALIFIER="aarch64"
+        ;;
+    windows-zip-x64)
+        PACKAGE="zip"
+        EXT="zip"
+        TYPE="archives"
+        TARGET="$PLATFORM-$PACKAGE"
+        QUALIFIER="$PLATFORM-x64"
+        ;;
+    windows-zip-arm64)
+        PACKAGE="zip"
+        EXT="zip"
+        TYPE="archives"
         TARGET="$PLATFORM-arm64-$PACKAGE"
         QUALIFIER="$PLATFORM-arm64"
         ;;
     *)
-        echo "Unsupported architecture: $ARCHITECTURE"
+        echo "Unsupported platform-distribution-architecture combination: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
         exit 1
         ;;
 esac
 
-./gradlew :distribution:archives:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
+echo "Building OpenSearch for $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
+
+./gradlew :distribution:$TYPE:$TARGET:assemble -Dbuild.snapshot=$SNAPSHOT
 
 # Copy artifact to dist folder in bundle build output
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
-ARTIFACT_BUILD_NAME=`ls distribution/archives/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
+ARTIFACT_BUILD_NAME=`ls distribution/$TYPE/$TARGET/build/distributions/ | grep "opensearch-min.*$QUALIFIER.$EXT"`
 mkdir -p "${OUTPUT}/dist"
-cp distribution/archives/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
+cp distribution/$TYPE/$TARGET/build/distributions/$ARTIFACT_BUILD_NAME "${OUTPUT}"/dist/$ARTIFACT_BUILD_NAME
 
 echo "Building core plugins..."
 mkdir -p "${OUTPUT}/core-plugins"

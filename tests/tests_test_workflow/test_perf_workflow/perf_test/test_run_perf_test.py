@@ -21,6 +21,14 @@ class TestRunPerfTest(unittest.TestCase):
             os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
             "--config",
             os.path.join(os.path.dirname(__file__), "data", "cluster_config.yml"),
+            "--workload",
+            "nyc_taxis",
+            "--workload-options",
+            "{\"workload-params\":\"number_of_shards:5,number_of_replicas:0,bulk_size:2500\"}",
+            "--warmup-iters",
+            "2",
+            "--test-iters",
+            "3"
         ],
     )
     @patch("os.chdir")

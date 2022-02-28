@@ -49,6 +49,7 @@ def main():
             patches=manifest.build.patches,
             snapshot=args.snapshot if args.snapshot is not None else manifest.build.snapshot,
             output_dir=output_dir,
+            distribution=args.distribution,
             platform=args.platform or manifest.build.platform,
             architecture=args.architecture or manifest.build.architecture,
         )

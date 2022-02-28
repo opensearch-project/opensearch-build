@@ -19,12 +19,18 @@ class TestBuildManifest(unittest.TestCase):
         self.manifest_filename = os.path.join(self.data_path, "opensearch-build-1.1.0.yml")
         self.manifest = BuildManifest.from_path(self.manifest_filename)
 
+        self.manifest_filename_distribution = os.path.join(self.data_path, "opensearch-build-1.3.0.yml")
+        self.manifest_distribution = BuildManifest.from_path(self.manifest_filename_distribution)
+
     def test_build(self) -> None:
         self.assertEqual(self.manifest.version, "1.2")
         self.assertEqual(self.manifest.build.name, "OpenSearch")
         self.assertEqual(self.manifest.build.filename, "opensearch")
         self.assertEqual(self.manifest.build.version, "1.1.0")
         self.assertEqual(len(self.manifest.components), 15)
+
+        self.assertEqual(self.manifest_distribution.build.version, "1.3.0")
+        self.assertEqual(self.manifest_distribution.build.distribution, "tar")
 
     def test_component(self) -> None:
         opensearch_component = self.manifest.components["OpenSearch"]

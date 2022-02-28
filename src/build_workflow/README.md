@@ -65,7 +65,10 @@ The following options are available in `build.sh`.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| --snapshot         | Build a snapshot instead of a release artifact, default is `false`.     |
+| -s, --snapshot     | Build a snapshot instead of a release artifact, default is `false`.     |
+| -a, --architecture | Specify architecture to build, default is architecture of build system. |
+| -d, --distribution | Specify distribution to build, default is `tar`.                        |
+| -p, --platform     | Specify platform to build, default is platform of build system.         |
 | --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
 | --keep             | Do not delete the temporary working directory on both success or error. |
 | -l, --lock         | Generate a stable reference manifest.                                   |

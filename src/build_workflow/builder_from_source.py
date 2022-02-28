@@ -28,23 +28,27 @@ class BuilderFromSource(Builder):
         )
 
     def build(self, build_recorder: BuildRecorder) -> None:
+
+        # List of components whose build scripts support `-d` parameter
+        # Bundled plugins do not need `-d` as they are java based zips
+        DISTRIBUTION_SUPPORTED_COMPONENTS = ["OpenSearch", "OpenSearch-Dashboards"]
+
         build_script = ScriptFinder.find_build_script(self.target.name, self.component.name, self.git_repo.working_directory)
 
         build_command = " ".join(
-            [
-                "bash",
-                build_script,
-                "-v",
-                self.target.version,
-                "-p",
-                self.target.platform,
-                "-a",
-                self.target.architecture,
-                "-s",
-                str(self.target.snapshot).lower(),
-                "-o",
-                self.output_path,
-            ]
+            filter(
+                None,
+                [
+                    "bash",
+                    build_script,
+                    f"-v {self.target.version}",
+                    f"-p {self.target.platform}",
+                    f"-a {self.target.architecture}",
+                    f"-d {self.target.distribution}" if self.target.distribution and (self.component.name in DISTRIBUTION_SUPPORTED_COMPONENTS) else None,
+                    f"-s {str(self.target.snapshot).lower()}",
+                    f"-o {self.output_path}",
+                ]
+            )
         )
 
         self.git_repo.execute(build_command)
