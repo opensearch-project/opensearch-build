@@ -29,7 +29,7 @@ class Dist(ABC):
     def __build__(self, name: str, dest: str) -> None:
         pass
 
-    def __find_min_archive_path(self, dest: str) -> str:
+    def find_min_archive_path(self, dest: str) -> str:
         '''
         Return the single folder at the top level of the tar.
         '''
@@ -41,7 +41,7 @@ class Dist(ABC):
 
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.path.join(dest, "*"))
 
-    def __rename_archive_path(self, path: str) -> str:
+    def rename_archive_path(self, path: str) -> str:
         '''
         Rename the single folder at the top level of the tar that contains the min distribution to match current version.
         For example, when OpenSearch 1.1.1 is built using the 1.1.0 artifact, we rename opensearch-1.1.0 to opensearch-1.1.1.
@@ -58,8 +58,8 @@ class Dist(ABC):
 
     def extract(self, dest: str) -> str:
         self.__extract__(dest)
-        self.archive_path = self.__rename_archive_path(
-            self.__find_min_archive_path(dest)
+        self.archive_path = self.rename_archive_path(
+            self.find_min_archive_path(dest)
         )
         return self.archive_path
 
