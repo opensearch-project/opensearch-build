@@ -1,45 +1,170 @@
-import { CloudFrontRequest, CloudFrontRequestCallback } from 'aws-lambda';
-import { errorResponse, process, redirectResponse } from "../../../lambdas/cf-url-rewriter/cf-url-rewriter";
+import { CloudFrontEvent, CloudFrontHeaders, CloudFrontRequest, CloudFrontRequestCallback, CloudFrontRequestEvent, Context } from 'aws-lambda';
+import { handler } from '../../../lambdas/cf-url-rewriter/cf-url-rewriter';
+import { httpsGet } from '../../../lambdas/cf-url-rewriter/https-get';
+jest.mock('../../../lambdas/cf-url-rewriter/https-get');
 
-test('Lmabda handle uri with ci string', () => {
-
-    // let request = { uri: '/ci/dbc/bundle-build-dashboards/1.2.0/428/linux/x64/' } as CloudFrontRequest;
-    // let callback = {} as CloudFrontRequestCallback;
-
-    // process(request, callback);
-
-    // expect(request.uri).toBe('/bundle-build-dashboards/1.2.0/428/linux/x64/');
+beforeEach(() => {
+    jest.resetAllMocks();
 });
 
-test('errorResponse', () => {
-    const response = errorResponse();
+test('handler with latest url and valid latest field', async () => {
 
-    expect(response.body).toBe('The page is not found!');
-    expect(response.status).toBe('404');
-    expect(response.statusDescription).toBe('Not found');
+    const event = createTestEvent('/bundle-build-dashboards/1.2.0/latest/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
+
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '123' });
+
+    await handler(event, context, callback);
+
+    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/bundle-build-dashboards/1.2.0/index.json');
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "headers": {
+                "cache-control": [{ "key": "Cache-Control", "value": "max-age=3600" }],
+                "location": [{ "key": "Location", "value": "/bundle-build-dashboards/1.2.0/123/linux/x64/" }]
+            },
+            "status": "302",
+            "statusDescription": "Moved temporarily"
+        }
+    );
 });
 
-test('redirectResponse', () => {
-    let request = { uri: '/ci/dbc/bundle-build-dashboards/1.2.0/latest/linux/x64/' } as CloudFrontRequest;
-    const buildNumber = 123;
+test('handler with latest url and with ci keyword and valid latest field', async () => {
 
-    const response = redirectResponse(request, buildNumber);
-    console.log(response);
-    console.log(JSON.stringify(response));
+    const event = createTestEvent('/ci/dbc/bundle-build-dashboards/1.2.0/latest/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
 
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '123' });
 
-    expect(response.status).toBe('302');
-    expect(response.statusDescription).toBe('Moved temporarily');
-    expect(response.headers.location).toStrictEqual([{ "key": "Location", "value": "/ci/dbc/bundle-build-dashboards/1.2.0/123/linux/x64/" }]);
-    expect(response.headers['cache-control']).toStrictEqual([{ "key": "Cache-Control", "value": "max-age=3600" }]);
+    await handler(event, context, callback);
 
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "headers": {
+                "cache-control": [{ "key": "Cache-Control", "value": "max-age=3600" }],
+                "location": [{ "key": "Location", "value": "/bundle-build-dashboards/1.2.0/123/linux/x64/" }]
+            },
+            "status": "302",
+            "statusDescription": "Moved temporarily"
+        }
+    );
 });
 
-// test('Lmabda handle uri without ci string', () => {
+test('handler with latest url and empty latest field', async () => {
 
-//     let request = { uri: '/bundle-build-dashboards/1.2.0/428/linux/x64/' } as CloudFrontRequest;
+    const event = createTestEvent('/bundle-build-dashboards/1.2.0/latest/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
 
-//     handle(request);
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '' });
 
-//     expect(request.uri).toBe('/bundle-build-dashboards/1.2.0/428/linux/x64/');
-// });
+    await handler(event, context, callback);
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "body": "The page is not found!",
+            "status": "404",
+            "statusDescription": "Not found"
+        }
+    );
+});
+
+test('handler with latest url and exception when getting index.json', async () => {
+
+    const event = createTestEvent('/bundle-build-dashboards/1.2.0/latest/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
+
+    (httpsGet as unknown as jest.Mock).mockImplementation(() => {
+        throw new Error('Error getting!');
+    });
+
+    await handler(event, context, callback);
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "body": "The page is not found!",
+            "status": "404",
+            "statusDescription": "Not found"
+        }
+    );
+});
+
+test('handler without latest url and without ci keyword', async () => {
+
+    const event = createTestEvent('/bundle-build-dashboards/1.2.0/456/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
+
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '123' });
+
+    await handler(event, context, callback);
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "headers": { "host": [{ "key": "Host", "value": "test.cloudfront.net" }] },
+            "uri": "/bundle-build-dashboards/1.2.0/456/linux/x64/"
+        }
+    );
+
+    expect(httpsGet).not.toHaveBeenCalled();
+})
+
+test('handler without latest url and with ci keyword', async () => {
+
+    const event = createTestEvent('/ci/dbc/bundle-build-dashboards/1.2.0/456/linux/x64/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
+
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '123' });
+
+    await handler(event, context, callback);
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "headers": { "host": [{ "key": "Host", "value": "test.cloudfront.net" }] },
+            "uri": "/bundle-build-dashboards/1.2.0/456/linux/x64/"
+        }
+    );
+
+    expect(httpsGet).not.toHaveBeenCalled();
+})
+
+function createTestEvent(uri: string): CloudFrontRequestEvent {
+    const event = {} as CloudFrontRequestEvent;
+
+    const headers = {
+        "host": [
+            {
+                "key": "Host",
+                "value": "test.cloudfront.net"
+            }
+        ]
+    } as CloudFrontHeaders;
+
+    const request = {
+        uri: uri,
+        headers: headers
+
+    } as CloudFrontRequest;
+
+    const cf: CloudFrontEvent & {
+        request: CloudFrontRequest;
+    } = {
+        config: {} as CloudFrontEvent["config"],
+        request: request
+    };
+
+    event.Records = [{ cf: cf }];
+
+    return event;
+}
