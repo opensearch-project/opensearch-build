@@ -42,6 +42,8 @@ test('handler with latest url and with ci keyword and valid latest field', async
 
     await handler(event, context, callback);
 
+    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/bundle-build-dashboards/1.2.0/index.json');
+
     expect(callback).toHaveBeenCalledWith(
         null,
         {
@@ -65,6 +67,8 @@ test('handler with latest url and empty latest field', async () => {
 
     await handler(event, context, callback);
 
+    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/bundle-build-dashboards/1.2.0/index.json');
+
     expect(callback).toHaveBeenCalledWith(
         null,
         {
@@ -86,6 +90,8 @@ test('handler with latest url and exception when getting index.json', async () =
     });
 
     await handler(event, context, callback);
+
+    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/bundle-build-dashboards/1.2.0/index.json');
 
     expect(callback).toHaveBeenCalledWith(
         null,
@@ -133,6 +139,27 @@ test('handler without latest url and with ci keyword', async () => {
         {
             "headers": { "host": [{ "key": "Host", "value": "test.cloudfront.net" }] },
             "uri": "/bundle-build-dashboards/1.2.0/456/linux/x64/"
+        }
+    );
+
+    expect(httpsGet).not.toHaveBeenCalled();
+})
+
+test('handler with /fool(latest)bar/ keyword', async () => {
+
+    const event = createTestEvent('/bundle-build-dashboards/1.2.0/456/linux/x64/foollatestbar/');
+    const context = {} as Context;
+    const callback = jest.fn() as CloudFrontRequestCallback;
+
+    (httpsGet as unknown as jest.Mock).mockReturnValue({ latest: '123' });
+
+    await handler(event, context, callback);
+
+    expect(callback).toHaveBeenCalledWith(
+        null,
+        {
+            "headers": { "host": [{ "key": "Host", "value": "test.cloudfront.net" }] },
+            "uri": "/bundle-build-dashboards/1.2.0/456/linux/x64/foollatestbar/"
         }
     );
 
