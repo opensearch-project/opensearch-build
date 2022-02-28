@@ -53,14 +53,14 @@ class TestDist(unittest.TestCase):
     @patch("os.path.basename", return_value="opensearch-1.3.0")
     def test_rename_archive_path_norename(self, os_path_basename: Mock) -> None:
         self.assertEqual(
-            self.distTar.rename_archive_path("temp_path/opensearch-1.3.0"),
-            "temp_path/opensearch-1.3.0"
+            self.distTar.rename_archive_path(os.path.join("temp_path", "opensearch-1.3.0")),
+            os.path.join("temp_path", "opensearch-1.3.0")
         )
 
     @patch("os.path.dirname", return_value="temp_path")
     @patch("os.rename")
     def test_rename_archive_path_rename(self, os_path_dirname: Mock, os_rename: Mock) -> None:
         self.assertEqual(
-            self.distTar.rename_archive_path("temp_path/opensearch-x.y.z"),
-            "temp_path/opensearch-1.3.0"
+            self.distTar.rename_archive_path(os.path.join("temp_path", "opensearch-x.y.z")),
+            os.path.join("temp_path", "opensearch-1.3.0")
         )
