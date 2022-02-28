@@ -15,7 +15,7 @@
                   createReleaseTag.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
                   BuildManifest.asBoolean()
                   BuildManifest.getNames()
-                  createReleaseTag.echo(Creating 1.1.0 release tag for 15 components in ths manifest)
+                  createReleaseTag.echo(Creating 1.1.0 release tag for 15 components in the manifest)
                   createReleaseTag.usernamePassword({credentialsId=dummy_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   createReleaseTag.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      BuildManifest.getCommitId(index-management)
