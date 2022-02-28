@@ -6,7 +6,7 @@ def call(Map args = [:]) {
     def componentsName = buildManifestObj.getNames()
     def componetsNumber = componentsName.size()
     def version = args.tagVersion
-    echo "Creating $version release tag for $componetsNumber components in ths manifest"
+    echo "Creating $version release tag for $componetsNumber components in the manifest"
 
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
         for (component in componentsName) {
