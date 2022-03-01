@@ -23,15 +23,27 @@ def call(Map args = [:]) {
                 git fetch --depth 1 origin $commitID
                 git checkout FETCH_HEAD
                 if [ "$component" == "OpenSearch" ]; then
-                    if [[ -n \$(git ls-remote --tags | grep refs/tags/$version) ]]; then
-                        git push --delete $push_url $version
+                    if [[ -n \$(git ls-remote --tags $repo $version) ]]; then
+                        if [ \$(git ls-remote --tags $repo $version | awk 'NR==1{print \$1}') != $commitID ]; then
+                            echo "Tag $version already existed with a different commit ID. Please check this." 
+                            exit 1
+                        else
+                            echo "Tag $version has been created with identical commit ID. Skipping creating new tag for $component."
+                        fi
+                    else
+                        git tag $version
                     fi
-                    git tag $version
                 else
-                    if [[ -n \$(git ls-remote --tags | grep refs/tags/$version.0) ]]; then
-                        git push --delete $push_url $version.0
+                    if [[ -n \$(git ls-remote --tags $repo $version.0) ]]; then
+                        if [ \$(git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}') != $commitID ]; then
+                            echo "Tag $version.0 already existed with a different commit ID. Please check this." 
+                            exit 1
+                        else
+                            echo "Tag $version.0 has been created with identical commit ID. Skipping creating new tag for $component."
+                        fi
+                    else
+                        git tag $version.0
                     fi
-                    git tag $version.0
                 fi
                 git push $push_url --tags
                 cd ..

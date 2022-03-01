@@ -1,6 +1,9 @@
 lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
     agent {
         docker {
             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
