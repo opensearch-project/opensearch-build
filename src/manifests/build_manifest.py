@@ -22,6 +22,8 @@ build:
   version: string
   platform: linux, darwin or windows
   architecture: x64 or arm64
+  distribution: tar, zip, and rpm
+  id: build id
 components:
   - name: string
     repository: URL of git repository
