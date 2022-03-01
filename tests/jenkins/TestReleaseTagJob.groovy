@@ -23,7 +23,7 @@ class TestReleaseTagJob extends BuildPipelineTest {
 
         this.registerLibTester(new DownloadFromS3LibTester(destPath, bucketName, artifactsPath, true))
 
-        this.registerLibTester(new CreateReleaseTagLibTester('tests/data/opensearch-build-1.1.0.yml', '1.1.0'))
+        this.registerLibTester(new CreateReleaseTagLibTester(buildManifest, '1.1.0'))
 
         super.setUp()
 
@@ -31,7 +31,7 @@ class TestReleaseTagJob extends BuildPipelineTest {
         binding.setVariable('VERSION', '1.1.0')
         binding.setVariable('BUILD_ID', '123')
         binding.setVariable('ARTIFACT_BUCKET_NAME', bucketName)
-        binding.setVariable('BUILD_MANIFEST', 'tests/data/opensearch-build-1.1.0.yml')
+        binding.setVariable('BUILD_MANIFEST', buildManifest)
         binding.setVariable('WORKSPACE', 'tmp/workspace')
 
         helper.registerAllowedMethod('checkout', [Map], {})
