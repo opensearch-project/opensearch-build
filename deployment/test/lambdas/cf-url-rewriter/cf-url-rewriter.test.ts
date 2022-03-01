@@ -42,14 +42,14 @@ test('handler with latest url and with ci keyword and valid latest field', async
 
     await handler(event, context, callback);
 
-    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/bundle-build-dashboards/1.2.0/index.json');
+    expect(httpsGet).toBeCalledWith('https://test.cloudfront.net/ci/dbc/bundle-build-dashboards/1.2.0/index.json');
 
     expect(callback).toHaveBeenCalledWith(
         null,
         {
             "headers": {
                 "cache-control": [{ "key": "Cache-Control", "value": "max-age=3600" }],
-                "location": [{ "key": "Location", "value": "/bundle-build-dashboards/1.2.0/123/linux/x64/" }]
+                "location": [{ "key": "Location", "value": "/ci/dbc/bundle-build-dashboards/1.2.0/123/linux/x64/" }]
             },
             "status": "302",
             "statusDescription": "Moved temporarily"
