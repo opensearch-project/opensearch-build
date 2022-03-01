@@ -46,25 +46,6 @@ pipeline {
                 }
             }
         }
-        stage('download-manifest') {
-            agent {
-                node {
-                    label AGENT_LABEL
-                }
-            }
-            steps {
-                script {
-                    def buildManifestObj = downloadBuildManifest(
-                        url: BUILD_MANIFEST_URL,
-                        path: BUILD_MANIFEST
-                    )
-                    String buildId = buildManifestObj.getArtifactBuildId()
-                    env.BUILD_ID = buildId
-
-                    stash name: BUILD_MANIFEST, includes: BUILD_MANIFEST
-                }
-            }
-        }
         stage('integ-test') {
             agent {
                 docker {
@@ -75,7 +56,12 @@ pipeline {
             }
             steps {
                 script {
-                    unstash BUILD_MANIFEST
+                    def buildManifestObj = downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL,
+                        path: BUILD_MANIFEST
+                    )
+                    String buildId = buildManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
                     echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
 
