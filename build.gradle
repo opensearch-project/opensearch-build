@@ -75,6 +75,7 @@ sharedLibrary {
         workflowCpsGlobalLibraryPluginVersion = '2.21.1' // https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-cps-global-lib?repo=jenkins-releases
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2.94.1')
+        dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '2.12')
         dependency('org.jenkins-ci.plugins', 'script-security', '1.78')
         dependency('org.jenkins-ci.plugins', 'credentials', '2.6.2')
