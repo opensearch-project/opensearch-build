@@ -4,6 +4,11 @@ import { httpsGet } from './https-get';
 export async function handler(event: CloudFrontRequestEvent, context: Context, callback: CloudFrontRequestCallback) {
     const request = event.Records[0].cf.request;
 
+    if (!request.uri.includes('/ci/dbc/')) {
+        callback(null, errorResponse());
+        return;
+    }
+
     if (request.uri.includes("/latest/")) {
 
         const indexUri = request.uri.replace(/\/latest\/.*/, '/index.json');
