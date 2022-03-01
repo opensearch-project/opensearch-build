@@ -12,8 +12,14 @@ from assemble_workflow.dist import Dist, DistTar, DistZip
 class Dists:
 
     DISTRIBUTIONS_MAP = {
-        "tar": [DistTar, ".tar.gz"],
-        "zip": [DistZip, ".zip"],
+        "tar": {
+            "klass": DistTar,
+            "extension": ".tar.gz"
+        },
+        "zip": {
+            "klass": DistZip,
+            "extension": ".zip"
+        }
     }
 
     @classmethod
@@ -22,4 +28,6 @@ class Dists:
             logging.info("Distribution not specified, default to tar")
             distribution = 'tar'
 
-        return cls.DISTRIBUTIONS_MAP[distribution][0](name, path, min_path)
+        dist_cls = cls.DISTRIBUTIONS_MAP[distribution]['klass']
+
+        return dist_cls(name, path, min_path)

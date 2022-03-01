@@ -41,7 +41,7 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        extension = Dists().DISTRIBUTIONS_MAP[self.distribution][1] if self.distribution else Dists().DISTRIBUTIONS_MAP['tar'][1]
+        extension = Dists.DISTRIBUTIONS_MAP[self.distribution]['extension'] if self.distribution else Dists().DISTRIBUTIONS_MAP['tar']['extension']
         return "-".join(parts) + extension
 
     # Assembled output are expected to be served from a separate "dist" folder
