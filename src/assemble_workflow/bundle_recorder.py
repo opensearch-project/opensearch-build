@@ -8,15 +8,12 @@ import os
 from typing import Any, Dict
 
 from assemble_workflow.bundle_location import BundleLocation
+from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildManifest
 from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
-    EXTENSIONS = {
-        "tar": ".tar.gz",
-        "zip": ".zip",
-    }
 
     def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
         self.output_dir = output_dir
@@ -44,7 +41,7 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        extension = self.EXTENSIONS[self.distribution] if self.distribution else self.EXTENSIONS['tar']
+        extension = Dists.DISTRIBUTIONS_MAP[self.distribution].extension if self.distribution else Dists.DISTRIBUTIONS_MAP['tar'].extension
         return "-".join(parts) + extension
 
     # Assembled output are expected to be served from a separate "dist" folder
