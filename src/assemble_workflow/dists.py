@@ -7,19 +7,21 @@
 import logging
 
 from assemble_workflow.dist import Dist, DistTar, DistZip
+from mypy_extensions import TypedDict
+from typing import Dict, Type
+
+class Distribution:
+
+    def __init__(self, klass: Type[Dist], extension: str) -> None:
+        self.klass = klass
+        self.extension = extension
 
 
 class Dists:
 
     DISTRIBUTIONS_MAP = {
-        "tar": {
-            "klass": DistTar,
-            "extension": ".tar.gz"
-        },
-        "zip": {
-            "klass": DistZip,
-            "extension": ".zip"
-        }
+        "tar": Distribution(klass=DistTar, extension=".tar.gz"),
+        "zip": Distribution(klass=DistZip, extension=".zip"),
     }
 
     @classmethod
@@ -28,6 +30,6 @@ class Dists:
             logging.info("Distribution not specified, default to tar")
             distribution = 'tar'
 
-        dist_cls = cls.DISTRIBUTIONS_MAP[distribution]['klass']
+        dist_cls = cls.DISTRIBUTIONS_MAP[distribution].klass
 
         return dist_cls(name, path, min_path)
