@@ -1,6 +1,4 @@
-import {
-  expect, countResources, haveOutput, not, haveResourceLike, haveResource,
-} from '@aws-cdk/assert';
+import { countResources, expect, haveOutput, haveResourceLike, not } from '@aws-cdk/assert';
 import { App } from '@aws-cdk/core';
 import { BuildArtifactStack } from '../lib/build-artifact-stack';
 
