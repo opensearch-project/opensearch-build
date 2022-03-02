@@ -1,5 +1,5 @@
 import {
-  expect, countResources, haveOutput, not,
+  expect, countResources, haveOutput, not, haveResourceLike, haveResource,
 } from '@aws-cdk/assert';
 import { App } from '@aws-cdk/core';
 import { BuildArtifactStack } from '../lib/build-artifact-stack';
@@ -14,7 +14,16 @@ test('Fresh BuildArtifact Stack', () => {
   expect(stack).to(countResources('AWS::S3::Bucket', 1));
   expect(stack).to(countResources('AWS::IAM::Role', 4));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
+
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
+  expect(stack).to(haveResourceLike('AWS::CloudFront::Distribution', {
+    DistributionConfig: {
+      DefaultCacheBehavior: {
+        DefaultTTL: 300
+      }
+    }
+  }));
+
   expect(stack).to(countResources('AWS::Lambda::Function', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));
   expect(stack).to(not(haveOutput({ outputName: 'OriginAccessIdentityS3Identifier' })));
@@ -30,7 +39,16 @@ test('Existing BuildArtifact Stack', () => {
   expect(stack).to(countResources('AWS::S3::Bucket', 0));
   expect(stack).to(countResources('AWS::IAM::Role', 1));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
+
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
+  expect(stack).to(haveResourceLike('AWS::CloudFront::Distribution', {
+    DistributionConfig: {
+      DefaultCacheBehavior: {
+        DefaultTTL: 300
+      }
+    }
+  }));
+
   expect(stack).to(countResources('AWS::Lambda::Function', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));
   expect(stack).to(haveOutput({ outputName: 'OriginAccessIdentityS3Identifier' }));
