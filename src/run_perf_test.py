@@ -40,6 +40,10 @@ def main():
                         help="Security of the cluster should be True/False",
                         default=False)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
+    parser.add_argument("--workload", default="nyc_taxis", help="Mensor (internal client) param - Workload name from OpenSeach Benchmark Workloads")
+    parser.add_argument("--workload-options", default="{}", help="Mensor (internal client) param - Json object with OpenSearch Benchmark arguments")
+    parser.add_argument("--warmup-iters", default=0, help="Mensor (internal client) param - Number of times to run a workload before collecting data")
+    parser.add_argument("--test-iters", default=1, help="Mensor (internal client) param - Number of times to run a workload")
     args = parser.parse_args()
 
     manifest = BundleManifest.from_file(args.bundle_manifest)
@@ -52,13 +56,12 @@ def main():
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) \
-                        as (test_cluster_endpoint, test_cluster_port):
+                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
                     # Stack creation returns control before user-data script execution is complete and the server starts
                     # Sleep helps with consistent service discovery and test initialization success.
                     time.sleep(120)
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security, current_workspace,
-                                                    tests_dir)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security,
+                                                    current_workspace, tests_dir, args)
                     perf_test_suite.execute()
 
 

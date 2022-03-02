@@ -15,6 +15,7 @@ test('Fresh BuildArtifact Stack', () => {
   expect(stack).to(countResources('AWS::IAM::Role', 4));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
+  expect(stack).to(countResources('AWS::Lambda::Function', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));
   expect(stack).to(not(haveOutput({ outputName: 'OriginAccessIdentityS3Identifier' })));
 });
@@ -30,6 +31,7 @@ test('Existing BuildArtifact Stack', () => {
   expect(stack).to(countResources('AWS::IAM::Role', 1));
   expect(stack).to(countResources('AWS::CloudFront::CloudFrontOriginAccessIdentity', 1));
   expect(stack).to(countResources('AWS::CloudFront::Distribution', 1));
+  expect(stack).to(countResources('AWS::Lambda::Function', 1));
   expect(stack).to(haveOutput({ outputName: 'BuildDistributionDomainName' }));
   expect(stack).to(haveOutput({ outputName: 'OriginAccessIdentityS3Identifier' }));
 });
