@@ -5,9 +5,7 @@
 # compatible open source license.
 
 import logging
-from typing import Dict, Type
-
-from mypy_extensions import TypedDict
+from typing import Type
 
 from assemble_workflow.dist import Dist, DistTar, DistZip
 
