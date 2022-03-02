@@ -21,10 +21,8 @@ String generatePaths(buildManifest, artifactRootUrl) {
     String version = buildManifest.build.version
     String platform = buildManifest.build.platform
     String architecture = buildManifest.build.architecture
-
-    // TODO: Needs to be latest
-    String tempBuildId = "740"
-    String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/${tempBuildId}/${platform}/${architecture}"
+    
+    String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/latest/${platform}/${architecture}"
     return name == 'OpenSearch' ? 
         "opensearch=${artifactRootUrl}" :
         "opensearch=${latestOpenSearchArtifactRootUrl} opensearch-dashboards=${artifactRootUrl}"
