@@ -19,7 +19,7 @@ RUN echo -e "[AdoptOpenJDK]\nname=AdoptOpenJDK\nbaseurl=http://adoptopenjdk.jfro
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y adoptopenjdk-14-hotspot which curl python git gnupg2 tar net-tools procps-ng python3 python3-pip python3-devel && \
+    yum install -y adoptopenjdk-14-hotspot which curl python git gnupg2 tar net-tools procps-ng python3 python3-pip python3-devel wget && \
     ln -sfn `which pip3` /usr/bin/pip && pip3 install pipenv && pipenv --version 
 
 # Create user group
