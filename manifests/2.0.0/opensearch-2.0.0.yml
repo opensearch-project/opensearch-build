@@ -14,7 +14,7 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
-    - name: common-utils
+  - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: main
     checks:
