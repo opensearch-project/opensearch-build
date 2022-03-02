@@ -12,7 +12,7 @@ pipeline {
     parameters {
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. manifests/2.0.0/opensearch-2.0.0-test.yml.',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
         )
         string(
@@ -56,7 +56,7 @@ pipeline {
 
                     runIntegTestScript(
                         buildManifest: BUILD_MANIFEST,
-                        testManifest: TEST_MANIFEST,
+                        testManifest: "manifests/${TEST_MANIFEST}",
                         buildId: BUILD_ID
                     )
                 }

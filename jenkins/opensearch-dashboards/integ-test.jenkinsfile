@@ -12,7 +12,7 @@ pipeline {
     parameters {
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml.',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
         )
         string(
@@ -26,8 +26,8 @@ pipeline {
             trim: true
         )
         string(
-            name: 'AGENT_IMAGE',
-            description: 'The agent label where the tests should be executed, e.g. opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028.',
+            name: 'CONTAINER_IMAGE',
+            description: 'The container image running on the agent where the tests should be executed, e.g. opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028.',
             trim: true
         )
     }
@@ -39,9 +39,9 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
                     }
-                    if (AGENT_IMAGE == '') {
+                    if (CONTAINER_IMAGE == '') {
                         currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Missing parameter: AGENT_IMAGE.")
+                        error("Integration Tests failed to start. Missing parameter: CONTAINER_IMAGE.")
                     }
                 }
             }
@@ -50,7 +50,7 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image AGENT_IMAGE
+                    image CONTAINER_IMAGE
                     alwaysPull true
                 }
             }
@@ -68,7 +68,7 @@ pipeline {
                     runIntegTestScript(
                         jobName: BUILD_JOB_NAME,
                         buildManifest: BUILD_MANIFEST,
-                        testManifest: TEST_MANIFEST,
+                        testManifest: "manifests/${TEST_MANIFEST}",
                         buildId: BUILD_ID
                     )
                 }

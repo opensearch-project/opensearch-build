@@ -63,17 +63,16 @@ pipeline {
                             env.ARTIFACT_URL_X64 = artifactUrl
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
-                            echo "agent image: ${dockerAgent.image}"
 
                             def integTestResults = 
                                 build job: INTEG_TEST_JOB_NAME,
                                 propagate: false,
                                 wait: true,
                                 parameters: [
-                                    string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_X64),
-                                    string(name: 'AGENT_IMAGE', value: dockerAgent.image)
+                                    string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
                                 ]
 
                             String status = integTestResults.getResult()
@@ -146,10 +145,10 @@ pipeline {
                                         propagate: false,
                                         wait: true,
                                         parameters: [
-                                            string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                            string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                             string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_ARM64),
-                                            string(name: 'AGENT_IMAGE', value: dockerAgent.image)
+                                            string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
                                         ]
 
                                     // TODO: consume results once ARM64 works
