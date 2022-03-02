@@ -1,17 +1,28 @@
 lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
+    options {
+        timeout(time: 3, unit: 'HOURS')
+        copyArtifactPermission("${JOB_BASE_NAME}")
+        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+    }
     agent none
+    environment {
+        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'       
+        INTEG_TEST_JOB_NAME = 'integ-test-opensearch-dashboards'
+    }
     parameters {
         string(
             name: 'INPUT_MANIFEST',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0.yml.',
             trim: true
         )
-    }
-    options {
-        copyArtifactPermission("${JOB_NAME}")
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
+        string(
+            name: 'TEST_MANIFEST',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
+            trim: true
+        )
     }
     stages {
         stage('detect docker image + args') {
@@ -31,10 +42,10 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-linux-x64') {
+                stage('build-and-test-linux-x64') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -47,9 +58,30 @@ pipeline {
                                 platform: 'linux',
                                 architecture: 'x64'
                             )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_X64 = artifactUrl
+                            echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
+
+                            def integTestResults = 
+                                build job: INTEG_TEST_JOB_NAME,
+                                propagate: false,
+                                wait: true,
+                                parameters: [
+                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_X64),
+                                    string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
+                                ]
+
+                            String status = integTestResults.getResult()
+                            String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
+                            lib.jenkins.Messages.new(this).add(
+                                STAGE_NAME,
+                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
+                                    "\nInteg Tests (x64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
+                            )
                         }
                     }
                     post {
@@ -58,13 +90,13 @@ pipeline {
                         }
                     }
                 }
-                stage('build-linux-arm64') {
+                stage('build-and-test-linux-arm64') {
                     agent none
                     stages {
                         stage('build-archive-linux-arm64') {
                             agent {
                                 docker {
-                                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                                    label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     alwaysPull true
@@ -85,10 +117,10 @@ pipeline {
                                 }
                             }
                         }
-                        stage('assemble-archive-linux-arm64') {
+                        stage('assemble-archive-and-test-linux-arm64') {
                             agent {
                                 docker {
-                                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                                    label AGENT_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     alwaysPull true
@@ -102,9 +134,27 @@ pipeline {
                                         architecture: 'arm64'
                                     )
 
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_ARM64 = artifactUrl
+                                    echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64): ${artifactUrl}"
+
+                                    def integTestResults = 
+                                        build job: INTEG_TEST_JOB_NAME,
+                                        propagate: false,
+                                        wait: true,
+                                        parameters: [
+                                            string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                            string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                            string(name: 'AGENT_LABEL', value: AGENT_ARM64),
+                                            string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
+                                        ]
+
+                                    // TODO: consume results once ARM64 works
+                                    // https://github.com/opensearch-project/opensearch-build/issues/1381
+                                    String status = integTestResults.getResult()
+                                    echo "${status}"
                                 }
                             }
                             post {
@@ -119,7 +169,7 @@ pipeline {
         }
         stage('docker build') {
             steps {
-                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                node(AGENT_X64) {
                     script {
                         echo "env.ARTIFACT_URL_X64: ${env.ARTIFACT_URL_X64}"
                         echo "env.ARTIFACT_URL_ARM64: ${env.ARTIFACT_URL_ARM64}"
@@ -136,12 +186,12 @@ pipeline {
     }
     post {
         success {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+            node(AGENT_X64) {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([
-                        'build-linux-x64',
+                        'build-and-test-linux-x64',
                         'build-archive-linux-arm64',
-                        'assemble-archive-linux-arm64'
+                        'assemble-archive-and-test-linux-arm64'
                     ])
 
                     publishNotification(
@@ -157,7 +207,7 @@ pipeline {
             }
         }
         failure {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+            node(AGENT_X64) {
                 script {
                     publishNotification(
                         icon: ':warning:',
