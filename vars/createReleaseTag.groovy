@@ -24,7 +24,8 @@ def call(Map args = [:]) {
                 git checkout FETCH_HEAD
                 if [ "$component" == "OpenSearch" ]; then
                     if [[ -n \$(git ls-remote --tags $repo $version) ]]; then
-                        if [ \$(git ls-remote --tags $repo $version | awk 'NR==1{print \$1}') != $commitID ]; then
+                        tag_id=\$(git ls-remote --tags $repo $version | awk 'NR==1{print \$1}')
+                        if [[ \${tag_id} != $commitID ]]; then
                             echo "Tag $version already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -35,7 +36,8 @@ def call(Map args = [:]) {
                     fi
                 else
                     if [[ -n \$(git ls-remote --tags $repo $version.0) ]]; then
-                        if [ \$(git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}') != $commitID ]; then
+                        tag_id=\$(git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}')
+                        if [[ \${tag_id} != $commitID ]]; then
                             echo "Tag $version.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else

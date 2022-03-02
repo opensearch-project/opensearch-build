@@ -31,7 +31,8 @@
                 git checkout FETCH_HEAD
                 if [ "index-management" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0 | awk 'NR==1{print $1}') != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -42,7 +43,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0 | awk 'NR==1{print $1}') != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -67,7 +69,8 @@
                 git checkout FETCH_HEAD
                 if [ "job-scheduler" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0 | awk 'NR==1{print $1}') != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -78,7 +81,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0 | awk 'NR==1{print $1}') != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -103,7 +107,8 @@
                 git checkout FETCH_HEAD
                 if [ "anomaly-detection" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0 | awk 'NR==1{print $1}') != bedc5b620384163abe272e913705fa23cfd3b3a3 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != bedc5b620384163abe272e913705fa23cfd3b3a3 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -114,7 +119,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0 | awk 'NR==1{print $1}') != bedc5b620384163abe272e913705fa23cfd3b3a3 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != bedc5b620384163abe272e913705fa23cfd3b3a3 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -139,7 +145,8 @@
                 git checkout FETCH_HEAD
                 if [ "performance-analyzer" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0 | awk 'NR==1{print $1}') != f184f0bc39302ac38af2585c663d619048f6cffe ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != f184f0bc39302ac38af2585c663d619048f6cffe ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -150,7 +157,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0 | awk 'NR==1{print $1}') != f184f0bc39302ac38af2585c663d619048f6cffe ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != f184f0bc39302ac38af2585c663d619048f6cffe ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -175,7 +183,8 @@
                 git checkout FETCH_HEAD
                 if [ "common-utils" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0 | awk 'NR==1{print $1}') != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -186,7 +195,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0 | awk 'NR==1{print $1}') != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -211,7 +221,8 @@
                 git checkout FETCH_HEAD
                 if [ "asynchronous-search" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0 | awk 'NR==1{print $1}') != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -222,7 +233,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0 | awk 'NR==1{print $1}') != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -247,7 +259,8 @@
                 git checkout FETCH_HEAD
                 if [ "dashboards-notebooks" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0 | awk 'NR==1{print $1}') != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -258,7 +271,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0 | awk 'NR==1{print $1}') != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -283,7 +297,8 @@
                 git checkout FETCH_HEAD
                 if [ "OpenSearch" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0 | awk 'NR==1{print $1}') != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -294,7 +309,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0.0 | awk 'NR==1{print $1}') != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -319,7 +335,8 @@
                 git checkout FETCH_HEAD
                 if [ "sql" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0 | awk 'NR==1{print $1}') != d68547d585092af1e053d01e1b834259723cd304 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != d68547d585092af1e053d01e1b834259723cd304 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -330,7 +347,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0 | awk 'NR==1{print $1}') != d68547d585092af1e053d01e1b834259723cd304 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != d68547d585092af1e053d01e1b834259723cd304 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -355,7 +373,8 @@
                 git checkout FETCH_HEAD
                 if [ "alerting" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0 | awk 'NR==1{print $1}') != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -366,7 +385,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0 | awk 'NR==1{print $1}') != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -391,7 +411,8 @@
                 git checkout FETCH_HEAD
                 if [ "security" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0 | awk 'NR==1{print $1}') != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -402,7 +423,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0 | awk 'NR==1{print $1}') != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -427,7 +449,8 @@
                 git checkout FETCH_HEAD
                 if [ "k-NN" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0 | awk 'NR==1{print $1}') != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -438,7 +461,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0 | awk 'NR==1{print $1}') != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -463,7 +487,8 @@
                 git checkout FETCH_HEAD
                 if [ "dashboards-reports" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0 | awk 'NR==1{print $1}') != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -474,7 +499,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0 | awk 'NR==1{print $1}') != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -499,7 +525,8 @@
                 git checkout FETCH_HEAD
                 if [ "notifications" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0 | awk 'NR==1{print $1}') != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -510,7 +537,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0 | awk 'NR==1{print $1}') != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -535,7 +563,8 @@
                 git checkout FETCH_HEAD
                 if [ "performance-analyzer-rca" == "OpenSearch" ]; then
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0 | awk 'NR==1{print $1}') != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]]; then
                             echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
@@ -546,7 +575,8 @@
                     fi
                 else
                     if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0) ]]; then
-                        if [ $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0 | awk 'NR==1{print $1}') != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]; then
+                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0 | awk 'NR==1{print $1}')
+                        if [[ ${tag_id} != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]]; then
                             echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
                             exit 1
                         else
