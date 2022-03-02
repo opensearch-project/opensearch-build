@@ -16,9 +16,9 @@ class TestDists(unittest.TestCase):
         self.dists = Dists
 
     def test_distribution_map(self) -> None:
-        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['tar'].klass.__name__, 'DistTar')
+        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['tar'].cls.__name__, 'DistTar')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['tar'].extension, '.tar.gz')
-        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['zip'].klass.__name__, 'DistZip')
+        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['zip'].cls.__name__, 'DistZip')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['zip'].extension, '.zip')
 
     def test_create_dist(self) -> None:
