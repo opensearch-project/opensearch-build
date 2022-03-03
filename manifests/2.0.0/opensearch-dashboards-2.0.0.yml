@@ -18,6 +18,3 @@ components:
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin
     ref: main
-  - name: indexManagementDashboards
-    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-    ref: main
