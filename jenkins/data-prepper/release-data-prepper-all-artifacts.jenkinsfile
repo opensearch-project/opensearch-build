@@ -1,0 +1,56 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(name: 'VERSION', description: 'The version of Data Prepper', trim: true)
+        string(name: 'DATA_PREPPER_BUILD_NUMBER', description: 'The build number of the Data Prepper build from GitHub to release.', trim: true)
+    }
+    stages {
+        stage('Download Archives') {
+            steps {
+                script {
+                    archivePath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/archive"
+
+                    sh 'mkdir archive'
+                    sh "curl -sSL ${archivePath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o archive/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
+                    sh "curl -sSL ${archivePath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                }
+            }
+        }
+        stage('Sign Artifacts') {
+            steps {
+                script {
+                    signatureType = '.sig'
+                    signArtifacts(
+                            artifactPath: 'archive',
+                            sigtype: signatureType,
+                            platform: 'linux'
+                    )
+                }
+            }
+        }
+        stage('Upload Artifacts to Production Distribution Bucket') {
+            steps {
+                script {
+                    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                        s3Upload(file: 'archive/', bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "data-prepper/${VERSION}/")
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
