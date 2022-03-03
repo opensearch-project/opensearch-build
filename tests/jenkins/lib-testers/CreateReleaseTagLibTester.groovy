@@ -28,7 +28,6 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
 
     void configure(helper, binding){
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'dummy_token_name')
-        binding.setVariable('WORKSPACE', 'tmp/workspace/')
         binding.setVariable('GITHUB_USER', 'dummy_user')
         binding.setVariable('GITHUB_TOKEN', 'dummy_token')
     }

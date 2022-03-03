@@ -24,7 +24,7 @@ pipeline {
         )
     }
     environment {
-            BUILD_MANIFEST = "builds/opensearch/manifest.yml"
+        BUILD_MANIFEST = "builds/opensearch/manifest.yml"
     }
     stages {
         stage('Create Release Tag') {
