@@ -24,7 +24,7 @@ pipeline {
                 }
             }
         }
-        stage('Sign Artifacts') {
+        stage('Sign Archives') {
             steps {
                 script {
                     signatureType = '.sig'
@@ -36,12 +36,24 @@ pipeline {
                 }
             }
         }
-        stage('Upload Artifacts to Production Distribution Bucket') {
+        stage('Release Archives to Production Distribution Bucket') {
             steps {
                 script {
                     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
                         s3Upload(file: 'archive/', bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "data-prepper/${VERSION}/")
                     }
+                }
+            }
+        }
+        stage('Release Docker Image to DockerHub') {
+            steps {
+                script {
+                    copyContainer(
+                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}",
+                        destinationImagePath: "opensearchproject/data-prepper:${VERSION}",
+                        destinationType: 'docker',
+                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                    )
                 }
             }
         }

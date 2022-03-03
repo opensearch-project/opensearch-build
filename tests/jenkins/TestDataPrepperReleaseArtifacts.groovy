@@ -19,16 +19,25 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
     @Before
     void setUp() {
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  'archive', null, null))
-
-        super.setUp()
 
         version = '0.22.1'
+
+        String sourceImageRepository = 'http://public.ecr.aws/data-prepper-container-repository'
+
+        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  'archive', null, null))
+
+        this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}",
+                "opensearchproject/data-prepper:${version}",
+                'docker',
+                'jenkins-staging-docker-prod-token'))
+
+        super.setUp()
 
         binding.setVariable('VERSION', version)
         binding.setVariable('DATA_PREPPER_BUILD_NUMBER', '997908')
 
-        binding.setVariable('DATA_PREPPER_ARTIFACT_STAGING_SITE', 'http://data-prepper-staging-artifacts')
+        binding.setVariable('DATA_PREPPER_ARTIFACT_STAGING_SITE', 'http://staging-artifacts.cloudfront.net')
+        binding.setVariable('DATA_PREPPER_STAGING_CONTAINER_REPOSITORY', sourceImageRepository)
 
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'production-s3-bucket-name')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'production-role-name')
@@ -61,10 +70,10 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
         }
 
         assertThat(curlCommands, hasItem(
-                "curl -sSL http://data-prepper-staging-artifacts/${version}/997908/archive/opensearch-data-prepper-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-${version}-linux-x64.tar.gz".toString()
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-${version}-linux-x64.tar.gz".toString()
         ))
         assertThat(curlCommands, hasItem(
-                "curl -sSL http://data-prepper-staging-artifacts/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
         ))
     }
 
