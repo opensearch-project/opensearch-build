@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+from system.working_directory import WorkingDirectory
+
 
 class PerfTestSuite:
     """
@@ -26,18 +28,14 @@ class PerfTestSuite:
                 f" -a {self.manifest.build.architecture} -p {test_results_path}"
             )
 
-        print(self.command)
-
     def execute(self):
         try:
-            os.chdir(os.path.join(self.current_workspace, self.work_dir))
-            dir = os.getcwd()
-            subprocess.check_call("python3 -m pipenv install", cwd=dir, shell=True)
-            subprocess.check_call("pipenv install", cwd=dir, shell=True)
-
-            if self.security:
-                subprocess.check_call(f"{self.command} -s", cwd=dir, shell=True)
-            else:
-                subprocess.check_call(f"{self.command}", cwd=dir, shell=True)
+            current_workspace = os.path.join(self.current_workspace, self.work_dir)
+            with WorkingDirectory(current_workspace):
+                subprocess.check_call("pipenv install", cwd=current_workspace, shell=True)
+                if self.security:
+                    subprocess.check_call(f"{self.command} -s", cwd=current_workspace, shell=True)
+                else:
+                    subprocess.check_call(f"{self.command}", cwd=current_workspace, shell=True)
         finally:
             os.chdir(self.current_workspace)

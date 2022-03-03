@@ -2,48 +2,39 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
-    environment {
-        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
-        AWS_ROLE_SESSION_NAME = "jenkins-test-session"
-        BUNDLE_MANIFEST = "bundle-manifest.yml"
+     options {
+        timeout(time: 10, unit: 'HOURS')
     }
-    tools {
-        jdk "JDK14"
-        maven "maven-3.8.2"
+    environment {
+        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+        BUNDLE_MANIFEST = "bundle-manifest.yml"
     }
     parameters {
         string(
-            defaultValue: '',
             name: 'GITHUB_TOKEN',
             description: 'Github token for account access.',
             trim: true
         )
         string(
-            defaultValue: '',
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
             trim: true
         )
         string(
-            defaultValue: '',
-            name: 'AGENT_LABEL',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
-            trim: true
-        )
-        string(
-            defaultValue: '',
+            defaultValue: 'nyc_taxis',
             name: 'TEST_WORKLOAD',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
         string(
-            defaultValue: '',
+            defaultValue: '1',
             name: 'TEST_ITERATIONS',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
         string(
-            defaultValue: '',
+            defaultValue: '0',
             name: 'WARMUP_ITERATIONS',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
@@ -51,10 +42,26 @@ pipeline {
     }
 
     stages {
+        stage('validate-parameters') {
+            steps {
+                script {
+                    if (BUNDLE_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
+                    }
+                    if (GITHUB_TOKEN == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                    }
+                }
+            }
+        }
         stage('perf-test') {
             agent {
-                node {
-                    label "${AGENT_LABEL}"
+                docker {
+                    label AGENT_X64
+                    image AGENT_IMAGE
+                    alwaysPull true
                 }
             }
             steps {
@@ -70,14 +77,25 @@ pipeline {
                     echo "BUILD_ID: ${BUILD_ID}"
                     echo "Security: ${HAS_SECURITY}"
 
+                    lib.jenkins.Messages.new(this).add('perf-test', "[Test]Executing performance tests for #${BUILD_ID}")
+
                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                         buildId: "${BUILD_ID}",
-                        security: false)
+                        security: false,
+                        workload: TEST_WORKLOAD,
+                        testIterations: TEST_ITERATIONS,
+                        warmupIterations: WARMUP_ITERATIONS)
+
+                    lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests without security for ${BUILD_ID} completed")
 
                     if(env.HAS_SECURITY) {
-                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                        buildId: "${BUILD_ID}",
-                        security: true)
+                         runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                            buildId: "${BUILD_ID}",
+                            security: true,
+                            workload: TEST_WORKLOAD,
+                            testIterations: TEST_ITERATIONS,
+                            warmupIterations: WARMUP_ITERATIONS)
+                         lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests with security for ${BUILD_ID} completed")
                     }
 
                 }
@@ -92,7 +110,42 @@ pipeline {
                                 buildNumber: "${BUILD_ID}"
                         )
                     }
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+                always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            node(AGENT_X64) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Performance Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_X64) {
+                script  {
+                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Performance Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    postCleanup()
                 }
             }
         }

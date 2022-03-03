@@ -9,9 +9,9 @@
 import argparse
 import os
 import sys
-import time
 
 import yaml
+from retry.api import retry_call
 
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
@@ -57,12 +57,9 @@ def main():
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
             with WorkingDirectory(current_workspace):
                 with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
-                    # Stack creation returns control before user-data script execution is complete and the server starts
-                    # Sleep helps with consistent service discovery and test initialization success.
-                    time.sleep(120)
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security,
                                                     current_workspace, tests_dir, args)
-                    perf_test_suite.execute()
+                    retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)
 
 
 if __name__ == "__main__":

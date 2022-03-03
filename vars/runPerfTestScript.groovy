@@ -4,7 +4,6 @@ void call(Map args = [:]) {
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
 
-    install_npm()
     install_dependencies()
     install_opensearch_infra_dependencies()
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
@@ -18,9 +17,14 @@ void call(Map args = [:]) {
         "--stack test-single-${args.buildId}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
-        args.security ? "--security" : ""
+        args.security ? "--security" : "",
+        isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
+        isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
+        isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
     ].join(' '))
 }
+
+boolean isNullOrEmpty(String str) { return (str == null || str.allWhitespace) }
 
 void install_opensearch_infra_dependencies() {
     sh'''
@@ -30,18 +34,12 @@ void install_opensearch_infra_dependencies() {
     '''
 }
 
-void install_npm(){
-    sh'''
-        sudo yum install -y gcc-c++ make
-        curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
-        sudo yum install -y nodejs --enablerepo=nodesource
-        node -v
-      '''
-}
-
 void install_dependencies() {
     sh '''
-        sudo npm install -g aws-cdk
-        sudo npm install -g cdk-assume-role-credential-plugin
+        npm install -g fs-extra
+        npm install -g chalk@4.1.2
+        npm install -g @aws-cdk/cloudformation-diff
+        npm install -g aws-cdk
+        npm install -g cdk-assume-role-credential-plugin@1.4.0
     '''
 }
