@@ -73,20 +73,30 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
     linux-tar-x64)
         TARGET="--$PLATFORM"
         EXT="tar.gz"
+        BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
         QUALIFIER="$PLATFORM-x64"
         ;;
     linux-tar-arm64)
         TARGET="--$PLATFORM-arm"
         EXT="tar.gz"
+        BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
         QUALIFIER="$PLATFORM-arm64"
         ;;
     linux-rpm-x64)
         TARGET="--$DISTRIBUTION"
         EXT="$DISTRIBUTION"
-        EXTRA_PARAMS="--all-platforms --skip-archives"
+        BUILD_PARAMS="build"
+        EXTRA_PARAMS="--skip-archives"
         QUALIFIER="x64"
+        ;;
+    linux-rpm-arm64)
+        TARGET="--$DISTRIBUTION-arm"
+        EXT="$DISTRIBUTION"
+        BUILD_PARAMS="build"
+        EXTRA_PARAMS="--skip-archives"
+        QUALIFIER="arm64"
         ;;
     *)
         echo "Unsupported platform-distribution-architecture combination: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
@@ -99,7 +109,7 @@ yarn osd bootstrap
 
 echo "Building artifact"
 
-yarn build-platform $TARGET $EXTRA_PARAMS $RELEASE
+yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE
 
 mkdir -p "${OUTPUT}/dist"
 # Copy artifact to dist folder in bundle build output
