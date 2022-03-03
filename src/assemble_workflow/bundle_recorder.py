@@ -8,16 +8,19 @@ import os
 from typing import Any, Dict
 
 from assemble_workflow.bundle_location import BundleLocation
+from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildManifest
 from manifests.bundle_manifest import BundleManifest
 
 
 class BundleRecorder:
+
     def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
         self.output_dir = output_dir
         self.build_id = build.id
         self.bundle_location = bundle_location
         self.version = build.version
+        self.distribution = build.distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir
         self.architecture = build.architecture
@@ -27,6 +30,7 @@ class BundleRecorder:
             build.version,
             build.platform,
             build.architecture,
+            build.distribution,
             self.__get_package_location(),
         )
 
@@ -37,7 +41,8 @@ class BundleRecorder:
             build.platform,
             build.architecture,
         ]
-        return "-".join(parts) + (".zip" if build.platform == "windows" else ".tar.gz")
+        extension = Dists.DISTRIBUTIONS_MAP[self.distribution].extension if self.distribution else Dists.DISTRIBUTIONS_MAP['tar'].extension
+        return "-".join(parts) + extension
 
     # Assembled output are expected to be served from a separate "dist" folder
     # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/dist/
@@ -66,7 +71,7 @@ class BundleRecorder:
         self.get_manifest().to_file(manifest_path)
 
     class BundleManifestBuilder:
-        def __init__(self, build_id: str, name: str, version: str, platform: str, architecture: str, location: str) -> None:
+        def __init__(self, build_id: str, name: str, version: str, platform: str, architecture: str, distribution: str, location: str) -> None:
             self.data: Dict[str, Any] = {}
             self.data["build"] = {}
             self.data["build"]["id"] = build_id
@@ -74,6 +79,7 @@ class BundleRecorder:
             self.data["build"]["version"] = str(version)
             self.data["build"]["platform"] = platform
             self.data["build"]["architecture"] = architecture
+            self.data["build"]["distribution"] = distribution if distribution else "tar"
             self.data["build"]["location"] = location
             self.data["schema-version"] = "1.1"
             # We need to store components as a hash so that we can append artifacts by component name

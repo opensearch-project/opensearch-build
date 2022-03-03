@@ -36,6 +36,10 @@ def main():
     parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
     parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
+    parser.add_argument("--workload", default="nyc_taxis", help="Mensor (internal client) param - Workload name from OpenSeach Benchmark Workloads")
+    parser.add_argument("--workload-options", default="{}", help="Mensor (internal client) param - Json object with OpenSearch Benchmark arguments")
+    parser.add_argument("--warmup-iters", default=0, help="Mensor (internal client) param - Number of times to run a workload before collecting data")
+    parser.add_argument("--test-iters", default=1, help="Mensor (internal client) param - Number of times to run a workload")
     args = parser.parse_args()
 
     manifest = BundleManifest.from_file(args.bundle_manifest)
@@ -47,7 +51,7 @@ def main():
             security = "security" in manifest.components
             with WorkingDirectory(current_workspace):
                 with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace, args)
                     perf_test_suite.execute()
 
 

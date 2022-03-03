@@ -14,6 +14,7 @@ from typing import Any, List
 
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.dist import Dist
+from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildComponents, BuildManifest
 from paths.script_finder import ScriptFinder
 from system.temporary_directory import TemporaryDirectory
@@ -132,7 +133,8 @@ class Bundle(ABC):
         min_dist_path = self._copy_component(min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
-        min_dist = Dist.from_path(min_bundle.name, min_dist_path, min_path)
+        logging.info(f"Start creating distribution {self.build.distribution} for {min_bundle.name}.")
+        min_dist = Dists.create_dist(min_bundle.name, min_dist_path, min_path, self.build.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")
