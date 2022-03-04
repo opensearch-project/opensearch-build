@@ -41,7 +41,7 @@ class Bundle(ABC):
         :param bundle_recorder: The bundle recorder that will capture and build a BundleManifest
         """
         self.build = build_manifest.build
-        self.plugins = self.__get_plugins(build_manifest.components)
+        self.components = build_manifest.components
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory(keep=keep)
@@ -68,10 +68,14 @@ class Bundle(ABC):
         )
         self._execute(install_command)
 
-    def install_plugins(self) -> None:
-        for plugin in self.plugins:
-            logging.info(f"Installing {plugin.name}")
-            self.install_plugin(plugin)
+    def install_components(self) -> None:
+        for c in self.components.values():
+            if "plugins" in c.artifacts:
+                logging.info(f"Installing {c.name}")
+                self.install_plugin(c)
+            else:
+                logging.info(f"Recording {c.name}")
+                self.bundle_recorder.record_component(c)
         plugins_path = os.path.join(self.min_dist.archive_path, "plugins")
         if os.path.isdir(plugins_path):
             self.installed_plugins = os.listdir(plugins_path)
