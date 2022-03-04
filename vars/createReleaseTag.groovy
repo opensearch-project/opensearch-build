@@ -18,35 +18,24 @@ def call(Map args = [:]) {
             dir (component) {
                 checkout([$class: 'GitSCM', branches: [[name: commitID]],
                           userRemoteConfigs: [[url: repo]]])
+                def tag_version
                 if (component == "OpenSearch") {
-                    def tag_id = sh (
-                            script: "git ls-remote --tags $repo $version | awk 'NR==1{print \$1}'",
-                            returnStdout: true
-                    ).trim()
-                    if (tag_id == "") {
-                        echo "Creating $version tag for $component"
-                        sh "git tag $version"
-                        sh "git push $push_url $version"
-                    } else if (tag_id == commitID) {
-                        echo "Tag $version has been created with identical commit ID. Skipping creating new tag for $component."
-                    } else {
-                        error "Tag $version already existed in $component with a different commit ID. Please check this."
-                    }
+                    tag_version = version
                 } else {
-                    def tag_id = sh (
-                            script: "git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}'",
-                            returnStdout: true
-                    ).trim()
-                    echo "$tag_id"
-                    if (tag_id == "") {
-                        echo "Creating $version.0 tag for $component"
-                        sh "git tag $version.0"
-                        sh "git push $push_url $version.0"
-                    } else if (tag_id == commitID) {
-                        echo "Tag $version.0 has been created with identical commit ID. Skipping creating new tag for $component."
-                    } else {
-                        error "Tag $version.0 already existed in $component with a different commit ID. Please check this."
-                    }
+                    tag_version = "$version.0"
+                }
+                def tag_id = sh (
+                        script: "git ls-remote --tags $repo $version | awk 'NR==1{print \$1}'",
+                        returnStdout: true
+                ).trim()
+                if (tag_id == "") {
+                    echo "Creating $tag_version tag for $component"
+                    sh "git tag $tag_version"
+                    sh "git push $push_url $tag_version"
+                } else if (tag_id == commitID) {
+                    echo "Tag $tag_version has been created with identical commit ID. Skipping creating new tag for $component."
+                } else {
+                    error "Tag $tag_version already existed in $component with a different commit ID. Please check this."
                 }
             }
         }
