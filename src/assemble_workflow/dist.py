@@ -13,11 +13,13 @@ import zipfile
 from abc import ABC, abstractmethod
 
 from system.zip_file import ZipFile
+from assemble_workflow.bundle_rpm import BundleRpm
 
 
 class Dist(ABC):
     def __init__(self, name: str, path: str, min_path: str) -> None:
         self.name = name
+        self.filename = name.lower()
         self.path = path
         self.min_path = min_path
 
@@ -35,7 +37,7 @@ class Dist(ABC):
         '''
 
         for file in os.scandir(dest):
-            if file.is_dir():
+            if self.filename in file.name and file.is_dir():
                 self.archive_path = file.path
                 return self.archive_path
 
@@ -92,3 +94,12 @@ class DistZip(Dist):
                 for file in files:
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
+
+
+class DistRpm(Dist):
+
+    def __extract__(self, dest: str) -> None:
+        BundleRpm(self.filename, self.path, self.min_path).extract(dest)
+
+    def __build__(self, name: str, dest: str) -> None:
+        BundleRpm(self.filename, self.path, self.min_path).build(dest, self.archive_path)
