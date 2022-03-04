@@ -25,7 +25,7 @@ def call(Map args = [:]) {
                     tag_version = "$version.0"
                 }
                 def tag_id = sh (
-                        script: "git ls-remote --tags $repo $version | awk 'NR==1{print \$1}'",
+                        script: "git ls-remote --tags $repo $tag_version | awk 'NR==1{print \$1}'",
                         returnStdout: true
                 ).trim()
                 if (tag_id == "") {
