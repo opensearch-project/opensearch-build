@@ -45,6 +45,7 @@ class Bundle(ABC):
         self.artifacts_dir = artifacts_dir
         self.bundle_recorder = bundle_recorder
         self.tmp_dir = TemporaryDirectory(keep=keep)
+        self.min_bundle = self.__get_min_bundle(build_manifest.components)
         self.min_dist = self.__get_min_dist(build_manifest.components)
         self.installed_plugins: List[str] = []
 
@@ -70,7 +71,9 @@ class Bundle(ABC):
 
     def install_components(self) -> None:
         for c in self.components.values():
-            if "plugins" in c.artifacts:
+            if self.min_bundle == c:
+                pass
+            elif "plugins" in c.artifacts:
                 logging.info(f"Installing {c.name}")
                 self.install_plugin(c)
             else:
@@ -127,18 +130,18 @@ class Bundle(ABC):
         else:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), local_path)
 
-    def __get_plugins(self, build_components: BuildComponents) -> List[BuildComponent]:
-        return [c for c in build_components.values() if "plugins" in c.artifacts]
-
-    def __get_min_dist(self, build_components: BuildComponents) -> Dist:
+    def __get_min_bundle(self, build_components: BuildComponents) -> BuildComponent:
         min_bundle = next(iter([c for c in build_components.values() if "dist" in c.artifacts]), None)
         if min_bundle is None:
             raise ValueError('Missing min "dist" in input artifacts.')
-        min_dist_path = self._copy_component(min_bundle, "dist")
+        return min_bundle
+
+    def __get_min_dist(self, build_components: BuildComponents) -> Dist:
+        min_dist_path = self._copy_component(self.min_bundle, "dist")
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
-        logging.info(f"Start creating distribution {self.build.distribution} for {min_bundle.name}.")
-        min_dist = Dists.create_dist(min_bundle.name, min_dist_path, min_path, self.build.distribution)
+        logging.info(f"Start creating distribution {self.build.distribution} for {self.min_bundle.name}.")
+        min_dist = Dists.create_dist(self.min_bundle.name, min_dist_path, min_path, self.build.distribution)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")

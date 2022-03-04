@@ -70,6 +70,9 @@ class TestBundleOpenSearch(unittest.TestCase):
         with patch("shutil.copyfile"):
             bundle.install_components()
         bundle_recorder.record_component.assert_has_calls([
+            call(bundle.components["OpenSearch"], "dist/opensearch-min-1.1.0-linux-x64.tar.gz"),
+        ])
+        bundle_recorder.record_component.assert_has_calls([
             call(bundle.components["common-utils"]),
             call(bundle.components["job-scheduler"], "plugins/opensearch-job-scheduler-1.1.0.0.zip"),
         ])
