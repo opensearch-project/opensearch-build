@@ -15,570 +15,145 @@
                      BuildManifest.getCommitId(index-management)
                      BuildManifest.getRepo(index-management)
                      createReleaseTag.echo(Tagging index-management at 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ...)
-                     createReleaseTag.sh(
-                mkdir index-management
-                cd index-management
-                git init
-                git remote add origin https://github.com/opensearch-project/index-management.git
-                git fetch --depth 1 origin 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24
-                git checkout FETCH_HEAD
-                if [ "index-management" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for index-management."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for index-management."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/index-management.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(index-management, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=7897e9ae9cd5b49535e6a8bbf4c2f73cb458af24}], userRemoteConfigs=[{url=https://github.com/opensearch-project/index-management.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/index-management.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for index-management)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/index-management.git 1.1.0.0)
                      BuildManifest.getCommitId(job-scheduler)
                      BuildManifest.getRepo(job-scheduler)
                      createReleaseTag.echo(Tagging job-scheduler at 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ...)
-                     createReleaseTag.sh(
-                mkdir job-scheduler
-                cd job-scheduler
-                git init
-                git remote add origin https://github.com/opensearch-project/job-scheduler.git
-                git fetch --depth 1 origin 4504dabfc67dd5628c1451e91e9a1c3c4ca71525
-                git checkout FETCH_HEAD
-                if [ "job-scheduler" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for job-scheduler."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 4504dabfc67dd5628c1451e91e9a1c3c4ca71525 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for job-scheduler."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/job-scheduler.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(job-scheduler, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=4504dabfc67dd5628c1451e91e9a1c3c4ca71525}], userRemoteConfigs=[{url=https://github.com/opensearch-project/job-scheduler.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/job-scheduler.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo(4504dabfc67dd5628c1451e91e9a1c3c4ca71525)
+                        createReleaseTag.echo(Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for job-scheduler.)
                      BuildManifest.getCommitId(anomaly-detection)
                      BuildManifest.getRepo(anomaly-detection)
                      createReleaseTag.echo(Tagging anomaly-detection at bedc5b620384163abe272e913705fa23cfd3b3a3 ...)
-                     createReleaseTag.sh(
-                mkdir anomaly-detection
-                cd anomaly-detection
-                git init
-                git remote add origin https://github.com/opensearch-project/anomaly-detection.git
-                git fetch --depth 1 origin bedc5b620384163abe272e913705fa23cfd3b3a3
-                git checkout FETCH_HEAD
-                if [ "anomaly-detection" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != bedc5b620384163abe272e913705fa23cfd3b3a3 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for anomaly-detection."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != bedc5b620384163abe272e913705fa23cfd3b3a3 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for anomaly-detection."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/anomaly-detection.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(anomaly-detection, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=bedc5b620384163abe272e913705fa23cfd3b3a3}], userRemoteConfigs=[{url=https://github.com/opensearch-project/anomaly-detection.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/anomaly-detection.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for anomaly-detection)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/anomaly-detection.git 1.1.0.0)
                      BuildManifest.getCommitId(performance-analyzer)
                      BuildManifest.getRepo(performance-analyzer)
                      createReleaseTag.echo(Tagging performance-analyzer at f184f0bc39302ac38af2585c663d619048f6cffe ...)
-                     createReleaseTag.sh(
-                mkdir performance-analyzer
-                cd performance-analyzer
-                git init
-                git remote add origin https://github.com/opensearch-project/performance-analyzer.git
-                git fetch --depth 1 origin f184f0bc39302ac38af2585c663d619048f6cffe
-                git checkout FETCH_HEAD
-                if [ "performance-analyzer" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != f184f0bc39302ac38af2585c663d619048f6cffe ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for performance-analyzer."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != f184f0bc39302ac38af2585c663d619048f6cffe ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for performance-analyzer."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(performance-analyzer, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=f184f0bc39302ac38af2585c663d619048f6cffe}], userRemoteConfigs=[{url=https://github.com/opensearch-project/performance-analyzer.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/performance-analyzer.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for performance-analyzer)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer.git 1.1.0.0)
                      BuildManifest.getCommitId(common-utils)
                      BuildManifest.getRepo(common-utils)
                      createReleaseTag.echo(Tagging common-utils at 3913d7097934cbfe1fdcf919347f22a597d00b76 ...)
-                     createReleaseTag.sh(
-                mkdir common-utils
-                cd common-utils
-                git init
-                git remote add origin https://github.com/opensearch-project/common-utils.git
-                git fetch --depth 1 origin 3913d7097934cbfe1fdcf919347f22a597d00b76
-                git checkout FETCH_HEAD
-                if [ "common-utils" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for common-utils."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 3913d7097934cbfe1fdcf919347f22a597d00b76 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for common-utils."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/common-utils.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(common-utils, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=3913d7097934cbfe1fdcf919347f22a597d00b76}], userRemoteConfigs=[{url=https://github.com/opensearch-project/common-utils.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/common-utils.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for common-utils)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/common-utils.git 1.1.0.0)
                      BuildManifest.getCommitId(asynchronous-search)
                      BuildManifest.getRepo(asynchronous-search)
                      createReleaseTag.echo(Tagging asynchronous-search at aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ...)
-                     createReleaseTag.sh(
-                mkdir asynchronous-search
-                cd asynchronous-search
-                git init
-                git remote add origin https://github.com/opensearch-project/asynchronous-search.git
-                git fetch --depth 1 origin aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132
-                git checkout FETCH_HEAD
-                if [ "asynchronous-search" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for asynchronous-search."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for asynchronous-search."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/asynchronous-search.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(asynchronous-search, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=aa344cc1ecdf9ad21d6cb8d9e368361e6a0f3132}], userRemoteConfigs=[{url=https://github.com/opensearch-project/asynchronous-search.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/asynchronous-search.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for asynchronous-search)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/asynchronous-search.git 1.1.0.0)
                      BuildManifest.getCommitId(dashboards-notebooks)
                      BuildManifest.getRepo(dashboards-notebooks)
                      createReleaseTag.echo(Tagging dashboards-notebooks at 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ...)
-                     createReleaseTag.sh(
-                mkdir dashboards-notebooks
-                cd dashboards-notebooks
-                git init
-                git remote add origin https://github.com/opensearch-project/dashboards-notebooks.git
-                git fetch --depth 1 origin 5a996eb8ec8c92e7469cd5e5f87b237352f60f61
-                git checkout FETCH_HEAD
-                if [ "dashboards-notebooks" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for dashboards-notebooks."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 5a996eb8ec8c92e7469cd5e5f87b237352f60f61 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for dashboards-notebooks."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-notebooks.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(dashboards-notebooks, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=5a996eb8ec8c92e7469cd5e5f87b237352f60f61}], userRemoteConfigs=[{url=https://github.com/opensearch-project/dashboards-notebooks.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for dashboards-notebooks)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-notebooks.git 1.1.0.0)
                      BuildManifest.getCommitId(OpenSearch)
                      BuildManifest.getRepo(OpenSearch)
                      createReleaseTag.echo(Tagging OpenSearch at b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ...)
-                     createReleaseTag.sh(
-                mkdir OpenSearch
-                cd OpenSearch
-                git init
-                git remote add origin https://github.com/opensearch-project/OpenSearch.git
-                git fetch --depth 1 origin b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583
-                git checkout FETCH_HEAD
-                if [ "OpenSearch" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for OpenSearch."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for OpenSearch."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/OpenSearch.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(OpenSearch, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=b7334f49d530ffd1a3f7bd0e5832b9b2a9caa583}], userRemoteConfigs=[{url=https://github.com/opensearch-project/OpenSearch.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/OpenSearch.git 1.1.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo(Creating 1.1.0 tag for OpenSearch)
+                        createReleaseTag.sh(git tag 1.1.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/OpenSearch.git 1.1.0)
                      BuildManifest.getCommitId(sql)
                      BuildManifest.getRepo(sql)
                      createReleaseTag.echo(Tagging sql at d68547d585092af1e053d01e1b834259723cd304 ...)
-                     createReleaseTag.sh(
-                mkdir sql
-                cd sql
-                git init
-                git remote add origin https://github.com/opensearch-project/sql.git
-                git fetch --depth 1 origin d68547d585092af1e053d01e1b834259723cd304
-                git checkout FETCH_HEAD
-                if [ "sql" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != d68547d585092af1e053d01e1b834259723cd304 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for sql."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != d68547d585092af1e053d01e1b834259723cd304 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for sql."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/sql.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(sql, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=d68547d585092af1e053d01e1b834259723cd304}], userRemoteConfigs=[{url=https://github.com/opensearch-project/sql.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/sql.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for sql)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/sql.git 1.1.0.0)
                      BuildManifest.getCommitId(alerting)
                      BuildManifest.getRepo(alerting)
                      createReleaseTag.echo(Tagging alerting at 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ...)
-                     createReleaseTag.sh(
-                mkdir alerting
-                cd alerting
-                git init
-                git remote add origin https://github.com/opensearch-project/alerting.git
-                git fetch --depth 1 origin 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d
-                git checkout FETCH_HEAD
-                if [ "alerting" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for alerting."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 8024b8b9195f837e49e5bebd7f4a31dfc333eb4d ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for alerting."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/alerting.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(alerting, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=8024b8b9195f837e49e5bebd7f4a31dfc333eb4d}], userRemoteConfigs=[{url=https://github.com/opensearch-project/alerting.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/alerting.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for alerting)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/alerting.git 1.1.0.0)
                      BuildManifest.getCommitId(security)
                      BuildManifest.getRepo(security)
                      createReleaseTag.echo(Tagging security at 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ...)
-                     createReleaseTag.sh(
-                mkdir security
-                cd security
-                git init
-                git remote add origin https://github.com/opensearch-project/security.git
-                git fetch --depth 1 origin 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d
-                git checkout FETCH_HEAD
-                if [ "security" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for security."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for security."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/security.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(security, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=534fffe0e6cf2b33b9abcbc6508e98fc2d077a3d}], userRemoteConfigs=[{url=https://github.com/opensearch-project/security.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/security.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for security)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/security.git 1.1.0.0)
                      BuildManifest.getCommitId(k-NN)
                      BuildManifest.getRepo(k-NN)
                      createReleaseTag.echo(Tagging k-NN at 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ...)
-                     createReleaseTag.sh(
-                mkdir k-NN
-                cd k-NN
-                git init
-                git remote add origin https://github.com/opensearch-project/k-NN.git
-                git fetch --depth 1 origin 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6
-                git checkout FETCH_HEAD
-                if [ "k-NN" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for k-NN."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 6a3fdcafd75e63521bcf7893ce908642e1d9fcb6 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for k-NN."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/k-NN.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(k-NN, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=6a3fdcafd75e63521bcf7893ce908642e1d9fcb6}], userRemoteConfigs=[{url=https://github.com/opensearch-project/k-NN.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/k-NN.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for k-NN)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/k-NN.git 1.1.0.0)
                      BuildManifest.getCommitId(dashboards-reports)
                      BuildManifest.getRepo(dashboards-reports)
                      createReleaseTag.echo(Tagging dashboards-reports at 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ...)
-                     createReleaseTag.sh(
-                mkdir dashboards-reports
-                cd dashboards-reports
-                git init
-                git remote add origin https://github.com/opensearch-project/dashboards-reports.git
-                git fetch --depth 1 origin 622f334b0724e47f7ffd21cf7e7d521a9f6c949e
-                git checkout FETCH_HEAD
-                if [ "dashboards-reports" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for dashboards-reports."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 622f334b0724e47f7ffd21cf7e7d521a9f6c949e ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for dashboards-reports."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-reports.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(dashboards-reports, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=622f334b0724e47f7ffd21cf7e7d521a9f6c949e}], userRemoteConfigs=[{url=https://github.com/opensearch-project/dashboards-reports.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/dashboards-reports.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for dashboards-reports)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/dashboards-reports.git 1.1.0.0)
                      BuildManifest.getCommitId(notifications)
                      BuildManifest.getRepo(notifications)
                      createReleaseTag.echo(Tagging notifications at d0d3e485c4a850f73652a989eeec795b7347fbb6 ...)
-                     createReleaseTag.sh(
-                mkdir notifications
-                cd notifications
-                git init
-                git remote add origin https://github.com/opensearch-project/notifications.git
-                git fetch --depth 1 origin d0d3e485c4a850f73652a989eeec795b7347fbb6
-                git checkout FETCH_HEAD
-                if [ "notifications" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for notifications."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != d0d3e485c4a850f73652a989eeec795b7347fbb6 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for notifications."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/notifications.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(notifications, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=d0d3e485c4a850f73652a989eeec795b7347fbb6}], userRemoteConfigs=[{url=https://github.com/opensearch-project/notifications.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/notifications.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo()
+                        createReleaseTag.echo(Creating 1.1.0.0 tag for notifications)
+                        createReleaseTag.sh(git tag 1.1.0.0)
+                        createReleaseTag.sh(git push https://GITHUB_TOKEN@github.com/opensearch-project/notifications.git 1.1.0.0)
                      BuildManifest.getCommitId(performance-analyzer-rca)
                      BuildManifest.getRepo(performance-analyzer-rca)
                      createReleaseTag.echo(Tagging performance-analyzer-rca at 345a10fd4f4e94d6392c925ad95503ba8addd152 ...)
-                     createReleaseTag.sh(
-                mkdir performance-analyzer-rca
-                cd performance-analyzer-rca
-                git init
-                git remote add origin https://github.com/opensearch-project/performance-analyzer-rca.git
-                git fetch --depth 1 origin 345a10fd4f4e94d6392c925ad95503ba8addd152
-                git checkout FETCH_HEAD
-                if [ "performance-analyzer-rca" == "OpenSearch" ]; then
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]]; then
-                            echo "Tag 1.1.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0 has been created with identical commit ID. Skipping creating new tag for performance-analyzer-rca."
-                        fi
-                    else
-                        git tag 1.1.0
-                    fi
-                else
-                    if [[ -n $(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0) ]]; then
-                        tag_id=$(git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0 | awk 'NR==1{print $1}')
-                        if [[ ${tag_id} != 345a10fd4f4e94d6392c925ad95503ba8addd152 ]]; then
-                            echo "Tag 1.1.0.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for performance-analyzer-rca."
-                        fi
-                    else
-                        git tag 1.1.0.0
-                    fi
-                fi
-                git push https://GITHUB_TOKEN@github.com/opensearch-project/performance-analyzer-rca.git --tags
-                cd ..
-            )
+                     createReleaseTag.dir(performance-analyzer-rca, groovy.lang.Closure)
+                        createReleaseTag.checkout({$class=GitSCM, branches=[{name=345a10fd4f4e94d6392c925ad95503ba8addd152}], userRemoteConfigs=[{url=https://github.com/opensearch-project/performance-analyzer-rca.git}]})
+                        createReleaseTag.sh({script=git ls-remote --tags https://github.com/opensearch-project/performance-analyzer-rca.git 1.1.0.0 | awk 'NR==1{print $1}', returnStdout=true})
+                        createReleaseTag.echo(345a10fd4f4e94d6392c925ad95503ba8addd152)
+                        createReleaseTag.echo(Tag 1.1.0.0 has been created with identical commit ID. Skipping creating new tag for performance-analyzer-rca.)

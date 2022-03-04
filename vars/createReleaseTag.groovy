@@ -15,41 +15,40 @@ def call(Map args = [:]) {
             def push_url = "https://$GITHUB_TOKEN@" + repo.minus('https://')
             echo "Tagging $component at $commitID ..."
 
-            sh """
-                mkdir $component
-                cd $component
-                git init
-                git remote add origin $repo
-                git fetch --depth 1 origin $commitID
-                git checkout FETCH_HEAD
-                if [ "$component" == "OpenSearch" ]; then
-                    if [[ -n \$(git ls-remote --tags $repo $version) ]]; then
-                        tag_id=\$(git ls-remote --tags $repo $version | awk 'NR==1{print \$1}')
-                        if [[ \${tag_id} != $commitID ]]; then
-                            echo "Tag $version already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag $version has been created with identical commit ID. Skipping creating new tag for $component."
-                        fi
-                    else
-                        git tag $version
-                    fi
-                else
-                    if [[ -n \$(git ls-remote --tags $repo $version.0) ]]; then
-                        tag_id=\$(git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}')
-                        if [[ \${tag_id} != $commitID ]]; then
-                            echo "Tag $version.0 already existed with a different commit ID. Please check this." 
-                            exit 1
-                        else
-                            echo "Tag $version.0 has been created with identical commit ID. Skipping creating new tag for $component."
-                        fi
-                    else
-                        git tag $version.0
-                    fi
-                fi
-                git push $push_url --tags
-                cd ..
-            """
+            dir (component) {
+                checkout([$class: 'GitSCM', branches: [[name: commitID]],
+                          userRemoteConfigs: [[url: repo]]])
+                if (component == "OpenSearch") {
+                    def tag_id = sh (
+                            script: "git ls-remote --tags $repo $version | awk 'NR==1{print \$1}'",
+                            returnStdout: true
+                    ).trim()
+                    if (tag_id == "") {
+                        echo "Creating $version tag for $component"
+                        sh "git tag $version"
+                        sh "git push $push_url $version"
+                    } else if (tag_id == commitID) {
+                        echo "Tag $version has been created with identical commit ID. Skipping creating new tag for $component."
+                    } else {
+                        error "Tag $version already existed in $component with a different commit ID. Please check this."
+                    }
+                } else {
+                    def tag_id = sh (
+                            script: "git ls-remote --tags $repo $version.0 | awk 'NR==1{print \$1}'",
+                            returnStdout: true
+                    ).trim()
+                    echo "$tag_id"
+                    if (tag_id == "") {
+                        echo "Creating $version.0 tag for $component"
+                        sh "git tag $version.0"
+                        sh "git push $push_url $version.0"
+                    } else if (tag_id == commitID) {
+                        echo "Tag $version.0 has been created with identical commit ID. Skipping creating new tag for $component."
+                    } else {
+                        error "Tag $version.0 already existed in $component with a different commit ID. Please check this."
+                    }
+                }
+            }
         }
     }
 }
