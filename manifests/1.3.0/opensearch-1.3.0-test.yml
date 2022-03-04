@@ -88,4 +88,14 @@ components:
     bwc-test:
       test-configs:
         - without-security
+
+  - name: ml-commons
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
 schema-version: '1.0'
