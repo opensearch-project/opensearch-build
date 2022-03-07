@@ -70,6 +70,16 @@ class Dist(ABC):
         logging.info(f"Published {path}.")
 
 
+class DistTar(Dist):
+    def __extract__(self, dest: str) -> None:
+        with tarfile.open(self.path, "r:gz") as tar:
+            tar.extractall(dest)
+
+    def __build__(self, name: str, dest: str) -> None:
+        with tarfile.open(name, "w:gz") as tar:
+            tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
+
+
 class DistZip(Dist):
     def __extract__(self, dest: str) -> None:
         with ZipFile(self.path, "r") as zip:
@@ -82,13 +92,3 @@ class DistZip(Dist):
                 for file in files:
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[rootlen:])
-
-
-class DistTar(Dist):
-    def __extract__(self, dest: str) -> None:
-        with tarfile.open(self.path, "r:gz") as tar:
-            tar.extractall(dest)
-
-    def __build__(self, name: str, dest: str) -> None:
-        with tarfile.open(name, "w:gz") as tar:
-            tar.add(self.archive_path, arcname=os.path.basename(self.archive_path))
