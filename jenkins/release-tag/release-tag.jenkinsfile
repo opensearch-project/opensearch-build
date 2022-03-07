@@ -1,0 +1,57 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'BUILD_ID',
+            description: 'Build ID of the distribution build manifest generated.',
+            trim: true
+        )
+        string(
+            name: 'VERSION',
+            description: 'Version of the distribution build manifest.',
+            trim: true
+        )
+    }
+    environment {
+        BUILD_MANIFEST = "builds/opensearch/manifest.yml"
+    }
+    stages {
+        stage('Create Release Tag') {
+            steps {
+                script {
+                    manifest_path = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds/opensearch/manifest.yml"
+                    downloadFromS3(
+                        destPath: "$WORKSPACE/$BUILD_MANIFEST",
+                        bucket: "${ARTIFACT_BUCKET_NAME}",
+                        path: "${manifest_path}",
+                        force: true
+                    )
+                    echo "Distribution build manifest is downloaded to $BUILD_MANIFEST"
+                    createReleaseTag(
+                        buildManifest: "$BUILD_MANIFEST",
+                        tagVersion: VERSION
+                    )
+
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
