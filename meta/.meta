@@ -21,6 +21,7 @@
     "anomaly-detection-dashboards-plugin": "git@github.com:opensearch-project/anomaly-detection-dashboards-plugin.git",
     "cross-cluster-replication": "git@github.com:opensearch-project/cross-cluster-replication.git",
     "common-utils": "git@github.com:opensearch-project/common-utils.git",
-    "opensearch-build": "git@github.com:opensearch-project/opensearch-build.git"
+    "opensearch-build": "git@github.com:opensearch-project/opensearch-build.git",
+    "ml-commons": "git@github.com:opensearch-project/ml-commons.git"
   }
 }
