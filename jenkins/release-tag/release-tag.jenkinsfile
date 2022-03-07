@@ -13,31 +13,21 @@ pipeline {
     }
     parameters {
         string(
-            name: 'BUILD_ID',
-            description: 'Build ID of the distribution build manifest generated.',
-            trim: true
-        )
-        string(
             name: 'VERSION',
-            description: 'Version of the distribution build manifest.',
+            description: 'Version of the release.',
             trim: true
         )
     }
     environment {
-        BUILD_MANIFEST = "builds/opensearch/manifest.yml"
+        BUILD_MANIFEST = "opensearch-$VERSION/manifest.yml"
     }
     stages {
         stage('Create Release Tag') {
             steps {
                 script {
-                    manifest_path = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds/opensearch/manifest.yml"
-                    downloadFromS3(
-                        destPath: "$WORKSPACE/$BUILD_MANIFEST",
-                        bucket: "${ARTIFACT_BUCKET_NAME}",
-                        path: "${manifest_path}",
-                        force: true
-                    )
-                    echo "Distribution build manifest is downloaded to $BUILD_MANIFEST"
+                    release_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/$VERSION/opensearch-$VERSION-linux-x64.tar.gz"
+                    sh "curl -SLO $release_url && tar -xf opensearch-$VERSION-linux-x64.tar.gz opensearch-$VERSION/manifest.yml"
+                    echo "The release distribution manifest is downloaded to $BUILD_MANIFEST"
                     createReleaseTag(
                         buildManifest: "$BUILD_MANIFEST",
                         tagVersion: VERSION
