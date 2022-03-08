@@ -15,22 +15,12 @@ class TestReleaseTagJob extends BuildPipelineTest {
 
         def buildManifest = 'tests/data/opensearch-build-1.1.0.yml'
 
-        def destPath = "${this.workspace}/${buildManifest}"
-
-        def artifactsPath = 'distribution-build-opensearch/1.1.0/123/linux/x64/builds/opensearch/manifest.yml'
-
-        def bucketName = 'job-s3-bucket-name'
-
-        this.registerLibTester(new DownloadFromS3LibTester(destPath, bucketName, artifactsPath, true))
-
         this.registerLibTester(new CreateReleaseTagLibTester(buildManifest, '1.1.0'))
 
         super.setUp()
 
         // Variables for Release Tag Job
         binding.setVariable('VERSION', '1.1.0')
-        binding.setVariable('BUILD_ID', '123')
-        binding.setVariable('ARTIFACT_BUCKET_NAME', bucketName)
         binding.setVariable('BUILD_MANIFEST', buildManifest)
 
     }
