@@ -26,7 +26,7 @@ class TestBundle(unittest.TestCase):
         self.assertEqual(bundle.min_dist.__class__.__name__, "DistTar")
         self.assertEqual(bundle.build.distribution, None)
         self.assertEqual(bundle.build.platform, "linux")
-        self.assertEqual(len(bundle.plugins), 12)
+        self.assertEqual(len(bundle.components), 15)
         self.assertEqual(bundle.artifacts_dir, artifacts_path)
         self.assertIsNotNone(bundle.bundle_recorder)
         self.assertEqual(bundle.installed_plugins, [])

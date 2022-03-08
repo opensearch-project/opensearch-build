@@ -21,7 +21,7 @@ class TestBundleOpenSearch(unittest.TestCase):
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
         self.assertEqual(bundle.min_dist.name, "OpenSearch")
-        self.assertEqual(len(bundle.plugins), 12)
+        self.assertEqual(len(bundle.components), 15)
         self.assertEqual(bundle.artifacts_dir, artifacts_path)
         self.assertIsNotNone(bundle.bundle_recorder)
         self.assertEqual(bundle.installed_plugins, [])
@@ -59,6 +59,25 @@ class TestBundleOpenSearch(unittest.TestCase):
                     ),
                 ]
             )
+
+    @patch("subprocess.check_call")
+    @patch("os.path.isfile", return_value=True)
+    def test_bundle_include_common_utils(self, mock_path_isile: Mock, mock_check_call: Mock) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        bundle_recorder = MagicMock()
+        bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, bundle_recorder)
+        with patch("shutil.copyfile"):
+            bundle.install_components()
+        bundle_recorder.record_component.assert_has_calls([
+            call(bundle.components["OpenSearch"], "dist/opensearch-min-1.1.0-linux-x64.tar.gz"),
+        ])
+        bundle_recorder.record_component.assert_has_calls([
+            call(bundle.components["common-utils"]),
+            call(bundle.components["job-scheduler"], "plugins/opensearch-job-scheduler-1.1.0.0.zip"),
+        ])
+        mock_path_isile.assert_called()
+        mock_check_call.assert_called()
 
     @patch("subprocess.check_call")
     @patch("os.rename")
@@ -109,7 +128,7 @@ class TestBundleOpenSearch(unittest.TestCase):
         )
 
     @patch.object(BundleOpenSearch, "install_plugin")
-    def test_bundle_install_plugins(self, bundle_install_plugin: Mock) -> None:
+    def test_bundle_install_components(self, bundle_install_plugin: Mock) -> None:
         manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-linux-1.1.0.yml")
         bundle = BundleOpenSearch(
             BuildManifest.from_path(manifest_path),
@@ -117,7 +136,7 @@ class TestBundleOpenSearch(unittest.TestCase):
             MagicMock(),
         )
 
-        bundle.install_plugins()
+        bundle.install_components()
         self.assertEqual(bundle_install_plugin.call_count, 12)
 
     @patch("os.path.isfile", return_value=True)
@@ -126,7 +145,7 @@ class TestBundleOpenSearch(unittest.TestCase):
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
 
-        plugin = bundle.plugins[0]  # job-scheduler
+        plugin = bundle.components['job-scheduler']
 
         with patch("shutil.copyfile") as mock_copyfile:
             with patch("subprocess.check_call") as mock_check_call:
