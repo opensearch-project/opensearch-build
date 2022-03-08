@@ -18,9 +18,10 @@ pipeline {
                 script {
                     archivePath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/archive"
 
-                    sh 'mkdir archive'
-                    sh "curl -sSL ${archivePath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o archive/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
-                    sh "curl -sSL ${archivePath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                    dir('archive') {
+                        sh "curl -sSL ${archivePath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
+                        sh "curl -sSL ${archivePath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                    }
                 }
             }
         }

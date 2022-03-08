@@ -26,7 +26,7 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  'archive', null, null))
 
-        this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}",
+        this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}-997908",
                 "opensearchproject/data-prepper:${version}",
                 'docker',
                 'jenkins-staging-docker-prod-token'))
@@ -54,7 +54,7 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     @Test
     void 'release-data-prepper-all-artifacts builds consistently with same inputs'() {
         testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
-                'tests/jenkins/jobs/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
     }
 
     @Test
@@ -70,10 +70,10 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
         }
 
         assertThat(curlCommands, hasItem(
-                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-${version}-linux-x64.tar.gz".toString()
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-${version}-linux-x64.tar.gz -o opensearch-data-prepper-${version}-linux-x64.tar.gz".toString()
         ))
         assertThat(curlCommands, hasItem(
-                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
         ))
     }
 

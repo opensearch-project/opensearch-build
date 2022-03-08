@@ -5,9 +5,9 @@
          release-data-prepper-all-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          release-data-prepper-all-artifacts.stage(Download Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
-               release-data-prepper-all-artifacts.sh(mkdir archive)
-               release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-0.22.1-linux-x64.tar.gz -o archive/opensearch-data-prepper-0.22.1-linux-x64.tar.gz)
-               release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz -o archive/opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz)
+               release-data-prepper-all-artifacts.dir(archive, groovy.lang.Closure)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-0.22.1-linux-x64.tar.gz)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz)
          release-data-prepper-all-artifacts.stage(Sign Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.signArtifacts({artifactPath=archive, sigtype=.sig, platform=linux})
@@ -32,14 +32,14 @@
                   release-data-prepper-all-artifacts.s3Upload({file=archive/, bucket=production-s3-bucket-name, path=data-prepper/0.22.1/})
          release-data-prepper-all-artifacts.stage(Release Docker Image to DockerHub, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
-               release-data-prepper-all-artifacts.copyContainer({sourceImagePath=http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1, destinationImagePath=opensearchproject/data-prepper:0.22.1, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
+               release-data-prepper-all-artifacts.copyContainer({sourceImagePath=http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908, destinationImagePath=opensearchproject/data-prepper:0.22.1, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
                   copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
                   copyContainer.sh(docker logout)
                   copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh(
                 docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
-                gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1 opensearchproject/data-prepper:0.22.1
+                gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:0.22.1
             )
          release-data-prepper-all-artifacts.script(groovy.lang.Closure)
             release-data-prepper-all-artifacts.postCleanup()
