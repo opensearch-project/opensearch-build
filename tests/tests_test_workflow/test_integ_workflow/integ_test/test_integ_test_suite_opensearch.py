@@ -6,12 +6,13 @@
 
 import os
 import unittest
+from typing import Tuple
 from unittest.mock import MagicMock, call, patch
 
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
-from manifests.bundle_manifest import BundleManifest
-from manifests.test_manifest import TestManifest
+from manifests.bundle_manifest import BundleComponents, BundleManifest
+from manifests.test_manifest import TestComponents, TestManifest
 from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError, ScriptFinder
 from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch, LocalTestCluster
 
@@ -25,7 +26,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
     TEST_MANIFEST = os.path.join(DATA, "test_manifest.yml")
 
-    def setUp(self):
+    def setUp(self) -> None:
         os.chdir(os.path.dirname(__file__))
         self.bundle_manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.build_manifest = BuildManifest.from_path(self.BUILD_MANIFEST)
@@ -34,7 +35,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
     @patch("os.path.exists", return_value=True)
     @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_multiple_test_configs(self, mock_test_recorder, mock_local_test_cluster, *mock):
+    def test_execute_with_multiple_test_configs(self, mock_test_recorder: MagicMock, mock_local_test_cluster: MagicMock, *mock: MagicMock) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
         dependency_installer = MagicMock()
         integ_test_suite = IntegTestSuiteOpenSearch(dependency_installer, component, test_config,
@@ -55,7 +56,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
     @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_build_dependencies(self, mock_test_recorder, mock_local_test_cluster, *mock):
+    def test_execute_with_build_dependencies(self, mock_test_recorder: MagicMock, mock_local_test_cluster: MagicMock, *mock: MagicMock) -> None:
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("index-management")
         integ_test_suite = IntegTestSuiteOpenSearch(dependency_installer, component, test_config,
@@ -79,7 +80,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_suite.execute")
-    def test_execute_without_build_dependencies(self, mock_execute, *mock):
+    def test_execute_without_build_dependencies(self, mock_execute: MagicMock, *mock: MagicMock) -> None:
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
         mock_test_recorder = MagicMock()
@@ -107,7 +108,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         dependency_installer.install_build_dependencies.assert_not_called()
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_unsupported_build_dependencies(self, mock_test_recorder, *mock):
+    def test_execute_with_unsupported_build_dependencies(self, mock_test_recorder: MagicMock, *mock: MagicMock) -> None:
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("anomaly-detection")
         integ_test_suite = IntegTestSuiteOpenSearch(dependency_installer, component, test_config,
@@ -117,7 +118,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         dependency_installer.install_build_dependencies.assert_not_called()
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_missing_job_scheduler(self, mock_test_recorder, mock_install_build_dependencies, *mock):
+    def test_execute_with_missing_job_scheduler(self, mock_test_recorder: MagicMock, mock_install_build_dependencies: MagicMock, *mock: MagicMock) -> None:
         invalid_build_manifest = BuildManifest.from_path("data/build_manifest_missing_components.yml")
         test_config, component = self.__get_test_config_and_bundle_component("index-management")
         dependency_installer = MagicMock()
@@ -130,7 +131,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         self.assertEqual(str(ctx.exception), "'job-scheduler'")
         dependency_installer.install_build_dependencies.assert_not_called()
 
-    def __get_test_config_and_bundle_component(self, component_name):
+    def __get_test_config_and_bundle_component(self, component_name: str) -> Tuple[TestComponents, BundleComponents]:
         component = self.bundle_manifest.components[component_name]
         test_config = self.test_manifest.components[component.name]
         return test_config, component
@@ -139,7 +140,7 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
     @patch.object(ScriptFinder, "find_integ_test_script")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_working_directory(self, mock_test_recorder, mock_local_test_cluster, mock_script_finder, *mock):
+    def test_execute_with_working_directory(self, mock_test_recorder: MagicMock, mock_local_test_cluster: MagicMock, mock_script_finder: MagicMock, *mock: MagicMock) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
         dependency_installer = MagicMock()
         integ_test_suite = IntegTestSuiteOpenSearch(

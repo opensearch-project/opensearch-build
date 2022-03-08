@@ -14,7 +14,7 @@ from test_workflow.test_kwargs import TestKwargs
 
 
 class TestTestKwargs(unittest.TestCase):
-    def test(self):
+    def test(self) -> None:
         kwargs = TestKwargs(dest="test", option_strings=[])
         mock_parser = MagicMock()
         namespace = SimpleNamespace()

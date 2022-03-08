@@ -1,7 +1,10 @@
 import os
 import unittest
-from unittest.mock import call, patch
+from typing import Any
+from unittest.mock import MagicMock, call, patch
 from urllib.error import HTTPError
+
+from can import Message
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
@@ -18,7 +21,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_maven_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
+    def test_install_maven_dependencies_local(self, mock_request: MagicMock, mock_copyfile: MagicMock, mock_makedirs: MagicMock) -> None:
         counter = ThreadSafeCounter()
         mock_copyfile.side_effect = counter.thread_safe_count
 
@@ -50,7 +53,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_maven_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
+    def test_install_maven_dependencies_remote(self, mock_request: MagicMock, mock_copyfile: MagicMock, mock_makedirs: MagicMock) -> None:
         counter = ThreadSafeCounter()
         mock_request.side_effect = counter.thread_safe_count
         dependency_installer = DependencyInstallerOpenSearch(
@@ -81,9 +84,9 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_maven_dependencies_remote_failure(self, mock_request, mock_copyfile, mock_makedirs):
-        def mock_retrieve(source, dest):
-            raise HTTPError(url=source, hdrs={}, fp=None, msg="Not Found", code=404)
+    def test_install_maven_dependencies_remote_failure(self, mock_request: MagicMock, mock_copyfile: MagicMock, mock_makedirs: MagicMock) -> None:
+        def mock_retrieve(source: Any, dest: Any) -> None:
+            raise HTTPError(url=source, hdrs=Message(), fp=None, msg="Not Found", code=404)
 
         mock_request.side_effect = mock_retrieve
 
@@ -100,7 +103,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_build_dependencies_local(self, mock_request, mock_copyfile, mock_makedirs):
+    def test_install_build_dependencies_local(self, mock_request: MagicMock, mock_copyfile: MagicMock, mock_makedirs: MagicMock) -> None:
         dependency_installer = DependencyInstallerOpenSearch(
             self.DATA,
             BuildManifest.from_path(self.BUILD_MANIFEST),
@@ -118,7 +121,7 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
     @patch("os.makedirs")
     @patch("shutil.copyfile")
     @patch("urllib.request.urlretrieve")
-    def test_install_build_dependencies_remote(self, mock_request, mock_copyfile, mock_makedirs):
+    def test_install_build_dependencies_remote(self, mock_request: MagicMock, mock_copyfile: MagicMock, mock_makedirs: MagicMock) -> None:
         dependency_installer = DependencyInstallerOpenSearch(
             "https://ci.opensearch.org/x/y", BuildManifest.from_path(self.BUILD_MANIFEST), BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
         )

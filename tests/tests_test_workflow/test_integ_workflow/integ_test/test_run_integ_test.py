@@ -23,7 +23,7 @@ class TestRunIntegTest(unittest.TestCase):
             "--paths",
             "opensearch=" + os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote")
         ])
-    def test_run_integ_test(self, *mock):
+    def test_run_integ_test(self, *mock: MagicMock) -> None:
 
         mock_runner = MagicMock()
         mock_result = MagicMock()

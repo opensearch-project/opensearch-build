@@ -13,7 +13,7 @@ from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSe
 
 class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.version = "1.1.0"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
@@ -24,7 +24,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process):
+    def test_start(self, mock_tarfile_open: MagicMock, mock_dump: MagicMock, mock_file: MagicMock, mock_pid: MagicMock, mock_process: MagicMock) -> None:
 
         mock_dependency_installer = MagicMock()
 
@@ -70,7 +70,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call):
+    def test_start_without_security(self, mock_tarfile_open: MagicMock, mock_dump: MagicMock, mock_file: MagicMock, mock_pid: MagicMock, mock_process: MagicMock, mock_check_call: MagicMock) -> None:
 
         mock_dependency_installer = MagicMock()
 
@@ -101,8 +101,8 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         service.start()
 
         mock_file.assert_has_calls(
-            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
-            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w"),
+                call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")]
         )
 
         mock_check_call.assert_called_once_with(
@@ -117,7 +117,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_file_hanlder_for_security.close.assert_called_once()
         mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result)
 
-    def test_endpoint_port_url(self):
+    def test_endpoint_port_url(self) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,
@@ -132,7 +132,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
-    def test_get_service_response_with_security(self, mock_url, mock_requests_get):
+    def test_get_service_response_with_security(self, mock_url: MagicMock, mock_requests_get: MagicMock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,
@@ -151,7 +151,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
-    def test_get_service_response_without_security(self, mock_url, mock_requests_get):
+    def test_get_service_response_without_security(self, mock_url: MagicMock, mock_requests_get: MagicMock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,
@@ -169,7 +169,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_requests_get.assert_called_once_with(mock_url_result, auth=None, verify=False)
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_green_available(self, mock_get_service_response):
+    def test_service_alive_green_available(self, mock_get_service_response: MagicMock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,
@@ -188,7 +188,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_yellow_available(self, mock_get_service_response):
+    def test_service_alive_yellow_available(self, mock_get_service_response: MagicMock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,
@@ -207,7 +207,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_red_unavailable(self, mock_get_service_response):
+    def test_service_alive_red_unavailable(self, mock_get_service_response: MagicMock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.additional_config,

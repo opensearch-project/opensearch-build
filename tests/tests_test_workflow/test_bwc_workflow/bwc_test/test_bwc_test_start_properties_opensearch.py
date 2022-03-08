@@ -14,7 +14,7 @@ class TestBwcTestStartPropertiesOpenSearch(unittest.TestCase):
 
     @patch("test_workflow.bwc_test.bwc_test_start_properties.BundleManifest")
     @patch("test_workflow.bwc_test.bwc_test_start_properties.BuildManifest")
-    def test(self, mock_build, mock_bundle):
+    def test(self, mock_build: MagicMock, mock_bundle: MagicMock) -> None:
         path = "test-path"
 
         mock_bundle_object = MagicMock()

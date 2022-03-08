@@ -23,7 +23,7 @@ class TestRunBwcTest(unittest.TestCase):
             "--paths",
             "opensearch=" + os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote")
         ])
-    def test_run_bwc_test(self, *mock):
+    def test_run_bwc_test(self, *mock: MagicMock) -> None:
 
         mock_runner = MagicMock()
         mock_result = MagicMock()

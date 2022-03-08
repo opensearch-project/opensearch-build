@@ -13,7 +13,7 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 
 class TestPerfTestSuite(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.args = Mock()
         self.args.workload = "nyc_taxis"
         self.args.workload_options = "{}"
@@ -25,7 +25,7 @@ class TestPerfTestSuite(unittest.TestCase):
         self.endpoint = None
         self.perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=None, security=False, current_workspace="current_workspace", args=self.args)
 
-    def test_execute(self):
+    def test_execute(self) -> None:
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_suite.execute()

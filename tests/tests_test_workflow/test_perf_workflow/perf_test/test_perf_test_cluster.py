@@ -16,7 +16,7 @@ class TestPerfTestCluster(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.stack_name = "stack"
         self.security = "disable"
@@ -25,7 +25,7 @@ class TestPerfTestCluster(unittest.TestCase):
             bundle_manifest=self.manifest, config=config, stack_name=self.stack_name, security=self.security, current_workspace="current_workspace"
         )
 
-    def test_create(self):
+    def test_create(self) -> None:
         mock_file = MagicMock(side_effect=[{"stack": {"PrivateIp": "10.10.10.10"}}])
         with patch("test_workflow.perf_test.perf_test_cluster.os.chdir") as mock_chdir:
             with patch("subprocess.check_call") as mock_check_call:
@@ -35,13 +35,13 @@ class TestPerfTestCluster(unittest.TestCase):
                         mock_chdir.assert_called_once_with(os.path.join("opensearch-cluster", "cdk", "single-node"))
                         self.assertEqual(mock_check_call.call_count, 1)
 
-    def test_endpoint(self):
+    def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint(), None)
 
-    def test_port(self):
+    def test_port(self) -> None:
         self.assertEqual(self.perf_test_cluster.port(), 443)
 
-    def test_terminate(self):
+    def test_terminate(self) -> None:
         with patch("test_workflow.perf_test.perf_test_cluster.os.chdir") as mock_chdir:
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_cluster.terminate()

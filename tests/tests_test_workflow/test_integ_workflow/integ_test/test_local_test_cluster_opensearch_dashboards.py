@@ -15,7 +15,7 @@ from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         mock_bundle_manifest_opensearch = MagicMock()
         mock_bundle_manifest_opensearch.build.version = "1.1.0"
         self.mock_bundle_manifest_opensearch = mock_bundle_manifest_opensearch
@@ -42,7 +42,7 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
-    def test_start(self, mock_service_opensearch_dashboards, mock_service_opensearch):
+    def test_start(self, mock_service_opensearch_dashboards: MagicMock, mock_service_opensearch: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -93,7 +93,7 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
     @patch("test_workflow.test_cluster.TestResultData")
-    def test_terminate(self, mock_test_result_data, mock_service_opensearch_dashboards, mock_service_opensearch):
+    def test_terminate(self, mock_test_result_data: MagicMock, mock_service_opensearch_dashboards: MagicMock, mock_service_opensearch: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -154,7 +154,7 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
-    def test_terminate_service_not_initialized(self, mock_service_opensearch_dashboards, mock_service_opensearch):
+    def test_terminate_service_not_initialized(self, mock_service_opensearch_dashboards: MagicMock, mock_service_opensearch: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -186,7 +186,7 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
-    def test_endpoint_port(self, mock_service_opensearch_dashboards, mock_service_opensearch):
+    def test_endpoint_port(self, mock_service_opensearch_dashboards: MagicMock, mock_service_opensearch: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs

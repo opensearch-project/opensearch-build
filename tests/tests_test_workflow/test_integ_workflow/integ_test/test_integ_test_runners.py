@@ -12,7 +12,7 @@ from test_workflow.integ_test.integ_test_runners import IntegTestRunners
 
 class TestIntegTestRunners(unittest.TestCase):
 
-    def test_opensearch(self):
+    def test_opensearch(self) -> None:
 
         mock_args = MagicMock()
         mock_test_manifest = MagicMock()
@@ -34,7 +34,7 @@ class TestIntegTestRunners(unittest.TestCase):
 
             mock_opensearch_runner.assert_called_once_with(mock_args, mock_test_manifest)
 
-    def test_opensearch_dashboards(self):
+    def test_opensearch_dashboards(self) -> None:
 
         mock_args = MagicMock()
         mock_test_manifest = MagicMock()

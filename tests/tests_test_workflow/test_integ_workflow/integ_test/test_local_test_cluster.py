@@ -15,7 +15,7 @@ from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 class LocalTestClusterTests(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         mock_manifest = MagicMock()
         mock_manifest.build.version = "1.1.0"
         self.manifest = mock_manifest
@@ -31,7 +31,7 @@ class LocalTestClusterTests(unittest.TestCase):
         self.test_recorder = ""
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_start(self, mock_service):
+    def test_start(self, mock_service: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -65,7 +65,7 @@ class LocalTestClusterTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
     @patch("test_workflow.test_cluster.TestResultData")
-    def test_terminate(self, mock_test_result_data, mock_service):
+    def test_terminate(self, mock_test_result_data: MagicMock, mock_service: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -107,7 +107,7 @@ class LocalTestClusterTests(unittest.TestCase):
         mock_local_cluster_logs.save_test_result_data.assert_called_once_with(mock_test_result_data_object)
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_terminate_service_not_initialized(self, mock_service):
+    def test_terminate_service_not_initialized(self, mock_service: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -131,7 +131,7 @@ class LocalTestClusterTests(unittest.TestCase):
         self.assertEqual(str(ctx.exception), "Service is not initialized")
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_endpoint_port(self, mock_service):
+    def test_endpoint_port(self, mock_service: MagicMock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs

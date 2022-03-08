@@ -15,7 +15,7 @@ class TestIntegTestStartPropertiesOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_start_properties.BundleManifest")
     @patch("test_workflow.integ_test.integ_test_start_properties.BuildManifest")
     @patch("test_workflow.integ_test.integ_test_start_properties_opensearch.DependencyInstallerOpenSearch")
-    def test(self, mock_installer, mock_build, mock_bundle):
+    def test(self, mock_installer: MagicMock, mock_build: MagicMock, mock_bundle: MagicMock) -> None:
         path = "test-path"
 
         mock_bundle_object = MagicMock()

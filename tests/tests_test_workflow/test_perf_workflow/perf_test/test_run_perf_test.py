@@ -7,7 +7,7 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from run_perf_test import main
 
@@ -36,7 +36,7 @@ class TestRunPerfTest(unittest.TestCase):
     @patch("run_perf_test.GitRepository")
     @patch("run_perf_test.PerfTestCluster.create")
     @patch("run_perf_test.PerfTestSuite")
-    def test_run_perf_test(self, mock_perf_suite, mock_perf_test_cluster, mock_git_repo, mock_temp_drectory, *mock):
+    def test_run_perf_test(self, mock_perf_suite: MagicMock, mock_perf_test_cluster: MagicMock, mock_git_repo: MagicMock, mock_temp_drectory: MagicMock, *mock: MagicMock) -> None:
         mock_temp_drectory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_perf_test_cluster.return_value.__enter__.return_value = ["endpoint", 1234]
         main()

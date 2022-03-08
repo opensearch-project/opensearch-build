@@ -12,7 +12,7 @@ from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import Lo
 
 class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.dependency_installer_opensearch = MagicMock()
         self.dependency_installer_opensearch_dashboards = MagicMock()
 
@@ -40,7 +40,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_tests(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, mock_chdir):
+    def test_execute_tests(self, mock_execute: MagicMock, mock_git: MagicMock, mock_test_result_data: MagicMock, mock_path_exists: MagicMock, mock_chdir: MagicMock) -> None:
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
@@ -92,7 +92,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_integtest_sh(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_execute_integtest_sh(self, mock_execute: MagicMock, mock_git: MagicMock, mock_test_result_data: MagicMock, mock_path_exists: MagicMock) -> None:
         logging.info(locals())
 
         mock_find = MagicMock()
@@ -149,7 +149,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute: MagicMock, mock_git: MagicMock, mock_test_result_data: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
@@ -187,7 +187,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_is_security_enabled(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_is_security_enabled(self, mock_execute: MagicMock, mock_git: MagicMock, mock_test_result_data: MagicMock, mock_path_exists: MagicMock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
@@ -225,7 +225,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_pretty_print_message(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, mock_logging):
+    def test_pretty_print_message(self, mock_execute: MagicMock, mock_git: MagicMock, mock_test_result_data: MagicMock, mock_path_exists: MagicMock, mock_logging: MagicMock) -> None:
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"

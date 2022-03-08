@@ -11,7 +11,7 @@ from test_workflow.integ_test.integ_test_runner_opensearch import IntegTestRunne
 
 
 class TestIntegTestRunnerOpenSearch(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.args = MagicMock()
         self.test_manifest = MagicMock()
 
@@ -19,7 +19,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
     @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
-    def test_with_integ_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties):
+    def test_with_integ_test(self, mock_temp: MagicMock, mock_test_recorder: MagicMock, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
@@ -76,7 +76,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
-    def test_without_integ_test(self, mock_suite, mock_properties):
+    def test_without_integ_test(self, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"
@@ -112,7 +112,7 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestStartPropertiesOpenSearch")
     @patch("test_workflow.integ_test.integ_test_runner_opensearch.IntegTestSuiteOpenSearch")
-    def test_component_not_in_test_manifest(self, mock_suite, mock_properties):
+    def test_component_not_in_test_manifest(self, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         self.args.paths = {"opensearch": "test-path"}
         self.args.component = "sql"
         self.args.test_run_id = "12345"

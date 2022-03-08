@@ -14,7 +14,7 @@ from test_workflow.test_recorder.test_recorder import TestRecorder
 
 class TestLocalClusterLogs(unittest.TestCase):
 
-    def test(self):
+    def test(self) -> None:
         mock_parent_class = MagicMock()
 
         mock_parent_class._create_base_folder_structure.return_value = "test_base"

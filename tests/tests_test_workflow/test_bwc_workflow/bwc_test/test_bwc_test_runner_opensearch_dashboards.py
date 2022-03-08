@@ -11,7 +11,7 @@ from test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards import BwcTest
 
 
 class TestBwcTestRunnerOpenSearchDashboards(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.args = MagicMock()
         self.args.paths = {"opensearch-dashboards": "test-path"}
         self.args.component = "sql"
@@ -23,7 +23,7 @@ class TestBwcTestRunnerOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards.BwcTestSuiteOpenSearchDashboards")
     @patch("test_workflow.bwc_test.bwc_test_runner.TestRecorder")
     @patch("test_workflow.bwc_test.bwc_test_runner.TemporaryDirectory")
-    def test_with_bwc_test(self, mock_temp, mock_test_recorder, mock_suite, mock_properties):
+    def test_with_bwc_test(self, mock_temp: MagicMock, mock_test_recorder: MagicMock, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         mock_test_config = MagicMock()
         mock_test_config.bwc_test = MagicMock()
         self.test_manifest.components = {"sql": mock_test_config}
@@ -69,7 +69,7 @@ class TestBwcTestRunnerOpenSearchDashboards(unittest.TestCase):
 
     @patch("test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards.BwcTestStartPropertiesOpenSearchDashboards")
     @patch("test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards.BwcTestSuiteOpenSearchDashboards")
-    def test_without_bwc_test(self, mock_suite, mock_properties):
+    def test_without_bwc_test(self, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         mock_test_config = MagicMock()
         mock_test_config.bwc_test = None
         self.test_manifest.components = {"sql": mock_test_config}
@@ -99,7 +99,7 @@ class TestBwcTestRunnerOpenSearchDashboards(unittest.TestCase):
 
     @patch("test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards.BwcTestStartPropertiesOpenSearchDashboards")
     @patch("test_workflow.bwc_test.bwc_test_runner_opensearch_dashboards.BwcTestSuiteOpenSearchDashboards")
-    def test_component_not_in_test_manifest(self, mock_suite, mock_properties):
+    def test_component_not_in_test_manifest(self, mock_suite: MagicMock, mock_properties: MagicMock) -> None:
         mock_test_config = MagicMock()
         mock_test_config.bwc_test = MagicMock()
         self.test_manifest.components = {"alerting": mock_test_config}
