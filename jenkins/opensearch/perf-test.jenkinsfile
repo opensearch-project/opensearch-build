@@ -24,19 +24,19 @@ pipeline {
         string(
             defaultValue: 'nyc_taxis',
             name: 'TEST_WORKLOAD',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            description: 'The workload name from OpenSearch Benchmark Workloads for Mensor (internal client).',
             trim: true
         )
         string(
             defaultValue: '1',
             name: 'TEST_ITERATIONS',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            description: 'Number of times to run a workload for Mensor (internal client).',
             trim: true
         )
         string(
             defaultValue: '0',
             name: 'WARMUP_ITERATIONS',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
             trim: true
         )
     }
