@@ -19,7 +19,7 @@ Summary: An open source distributed and RESTful search engine
 URL: https://www.opensearch.org/
 Group: Application/Internet
 ExclusiveArch: x86_64
-Requires: java-11-amazon-corretto-devel
+#Requires: #java-11-amazon-corretto-devel
 AutoReqProv: no
 
 %description
@@ -38,8 +38,8 @@ cd %{_topdir} && pwd
 mkdir -p %{buildroot}%{pid_dir}
 # Install directories/files
 cp -a etc usr var %{buildroot}
-cp -a service_templates/%{name}/* %{buildroot}
-rm -rf %{buildroot}%{product_dir}/jdk
+#cp -a service_templates/%{name}/* %{buildroot}
+#rm -rf %{buildroot}%{product_dir}/jdk
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
 ln -s %{log_dir}  %{buildroot}%{product_dir}/logs
@@ -118,7 +118,7 @@ exit 0
 %doc %{product_dir}/NOTICE.txt
 %doc %{product_dir}/README.md
 %license %{product_dir}/LICENSE.txt
-#%{product_dir}/manifest.yml
+%{product_dir}/manifest.yml
 
 # Config dirs/files
 %dir %{config_dir}
@@ -141,13 +141,14 @@ exit 0
 
 # Main dirs
 %{product_dir}/bin
+%{product_dir}/jdk
 %{product_dir}/lib
 %{product_dir}/modules
 %{product_dir}/performance-analyzer-rca
 %{product_dir}/plugins
-%{data_dir}
 %{log_dir}
 %{pid_dir}
+%dir %{data_dir}
 
 # Symlinks
 %{product_dir}/data

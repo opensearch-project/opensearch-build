@@ -85,7 +85,7 @@ elif [ "$DISTRIBUTION" = "rpm" ]; then
     DIR="$(dirname "$0")"
     echo $DIR
     cd $DIR
-    cp -a ../../../scripts/pkg/service_templates/* "$OUTPUT/"
-    cp -a ../../../scripts/pkg/build_templates/* "$OUTPUT/"
+    cp -a ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
+    cp -a ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
 )
 fi

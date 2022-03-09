@@ -102,4 +102,4 @@ class DistRpm(Dist):
         BundleRpm(self.filename, self.path, self.min_path).extract(dest)
 
     def __build__(self, name: str, dest: str) -> None:
-        BundleRpm(self.filename, self.path, self.min_path).build(dest, self.archive_path)
+        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path)

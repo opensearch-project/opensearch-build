@@ -55,14 +55,10 @@ class BundleRpm:
         logging.info(f"Move {min_source_path} to {min_dest_path} for plugin installation")
         shutil.move(min_source_path, min_dest_path)
 
-        subprocess.check_call(["ls", "-l", dest])
-        subprocess.check_call(["ls", "-l", min_dest_path])
-
         # Multiple modifications and env vars setups before install plugins
         # As bin/opensearch-env is different between archive and package
         # https://github.com/opensearch-project/OpenSearch/issues/2092
         os.environ[f"{self.filename.upper()}_PATH_CONF"] = min_config_path
-        print(os.environ.get('OPENSEARCH_PATH_CONF'))
 
         if os.path.exists(min_bin_env_path):
             # Backup original file
@@ -74,31 +70,43 @@ class BundleRpm:
             with open(min_bin_env_path, "w") as fp:
                 fp.write(min_bin_env_lines)
 
-        #subprocess.check_call(["cat", min_bin_env_path])
 
-        print(os.getcwd())
-
-
-
-        subprocess.check_call(["ls", "-l", min_config_path])
-        subprocess.check_call(["ls", "-l", os.path.join(min_dest_path, "bin")])
-
-
-        #sys.exit(0)
-
-    def build(self, dest: str, archive_path: str) -> None:
-        min_source_path = os.path.join(dest, "usr", "share", self.filename)
-        min_dest_path = os.path.join(dest, self.min_path)
-        min_config_path = os.path.join(dest, "etc", self.filename)
+    def build(self, name: str,  dest: str, archive_path: str) -> None:
+        # extract dest and build dest are not the same, this is restoring the extract dest
+        # mainly due to rpm requires several different setups compares to tarball and zip
+        ext_dest = os.path.dirname(archive_path)
+        min_source_path = os.path.join(ext_dest, "usr", "share", self.filename)
+        min_dest_path = os.path.join(ext_dest, self.min_path)
+        min_config_path = os.path.join(ext_dest, "etc", self.filename)
         min_bin_env_path = os.path.join(min_dest_path, "bin", f"{self.filename}-env")
+        bundle_artifact_path: str = None
 
-        logging.info(f"Organize folder structure before generating rpm")
         # Remove env var
+        logging.info(f"Organize folder structure before generating rpm")
         os.environ.pop('OPENSEARCH_PATH_CONF', None)
 
         # Restore config file and core folder to original location
         shutil.move(f"{min_bin_env_path}.backup", min_bin_env_path)
         shutil.move(min_dest_path, min_source_path)
 
-        subprocess.check_call(["ls", "-l", min_config_path])
-        sys.exit(0)
+        # Run bundle rpmbuild
+        bundle_cmd = " ".join(
+            [
+                "rpmbuild",
+                "-bb",
+                "--define",
+                f"'_topdir {ext_dest}'",
+                f"{self.filename}.rpm.spec",
+            ]
+        )
+
+        logging.info(f"Execute {bundle_cmd} in {ext_dest}")
+        subprocess.check_call(bundle_cmd, cwd=ext_dest, shell=True)
+
+        # Move artifact to repo root before being published to {dest}       
+        for dirpath, dirnames, filenames in os.walk(os.path.join(ext_dest, 'RPMS')):
+            for filename in [file for file in filenames if file.endswith(".rpm")]:
+                bundle_artifact_path = os.path.join(dirpath, filename)
+                break
+
+        shutil.move(bundle_artifact_path, name)

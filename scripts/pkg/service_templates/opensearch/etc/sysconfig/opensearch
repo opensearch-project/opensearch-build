@@ -6,7 +6,7 @@
 OPENSEARCH_HOME=/usr/share/opensearch
 
 # OpenSearch Java path
-OPENSEARCH_JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto
+#OPENSEARCH_JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto
 
 # OpenSearch configuration directory
 # Note: this setting will be shared with command-line tools
