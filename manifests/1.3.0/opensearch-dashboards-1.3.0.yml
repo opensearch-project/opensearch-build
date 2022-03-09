@@ -40,4 +40,4 @@ components:
     ref: "main"
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin
-    ref: "main"
+    ref: "1.3"
