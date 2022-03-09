@@ -151,10 +151,13 @@ pipeline {
                                             string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
                                         ]
 
-                                    // TODO: consume results once ARM64 works
-                                    // https://github.com/opensearch-project/opensearch-build/issues/1381
                                     String status = integTestResults.getResult()
-                                    echo "${status}"
+                                    String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
+                                    lib.jenkins.Messages.new(this).add(
+                                        STAGE_NAME,
+                                        lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
+                                            "\nInteg Tests (arm64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
+                                    )
                                 }
                             }
                             post {
