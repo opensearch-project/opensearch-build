@@ -1,28 +1,33 @@
 lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
+    options {
+        timeout(time: 3, unit: 'HOURS')
+    }
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
-    }
-    tools {
-        jdk "JDK14"
-        maven "maven-3.8.2"
+        BUILD_JOB_NAME = 'distribution-build-opensearch-dashboards'
     }
     parameters {
         string(
             name: 'TEST_MANIFEST',
-            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
+            description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
             name: 'AGENT_LABEL',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            name: 'CONTAINER_IMAGE',
+            description: 'The container image running on the agent where the tests should be executed, e.g. opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028.',
             trim: true
         )
     }
@@ -34,13 +39,19 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
                     }
+                    if (CONTAINER_IMAGE == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Missing parameter: CONTAINER_IMAGE.")
+                    }
                 }
             }
         }
         stage('integ-test') {
             agent {
-                node {
+                docker {
                     label AGENT_LABEL
+                    image CONTAINER_IMAGE
+                    alwaysPull true
                 }
             }
             steps {
@@ -55,6 +66,7 @@ pipeline {
                     echo "BUILD_ID: ${BUILD_ID}"
 
                     runIntegTestScript(
+                        jobName: BUILD_JOB_NAME,
                         buildManifest: BUILD_MANIFEST,
                         testManifest: "manifests/${TEST_MANIFEST}",
                         buildId: BUILD_ID

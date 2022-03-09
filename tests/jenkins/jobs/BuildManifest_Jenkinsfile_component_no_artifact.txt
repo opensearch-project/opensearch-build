@@ -18,3 +18,7 @@
                BuildManifest_Jenkinsfile_component_no_artifact.echo(opensearch-dashboards-1.2.0-linux-x64.tar.gz)
                BuildManifest.getMinArtifact()
                BuildManifest_Jenkinsfile_component_no_artifact.echo(dist/opensearch-dashboards-min-1.2.0-linux-x64.tar.gz)
+               BuildManifest.getCommitId(OpenSearch-Dashboards)
+               BuildManifest_Jenkinsfile_component_no_artifact.echo(caf668e73304bac890f41c37cd6c3a41257cd289)
+               BuildManifest.getRepo(OpenSearch-Dashboards)
+               BuildManifest_Jenkinsfile_component_no_artifact.echo(https://github.com/opensearch-project/OpenSearch-Dashboards.git)

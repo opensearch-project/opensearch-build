@@ -134,4 +134,18 @@ class BuildManifest implements Serializable {
     public String getMinArtifact() {
         components.get(build.name.replace(' ','-'))?.artifacts?.get("dist")?.first()
     }
+
+    public String getCommitId (String name) {
+        return this.components.get(name).commit_id
+    }
+
+    public ArrayList getNames() {
+        def componentsName = []
+        this.components.each{key, value -> componentsName.add(key)}
+        return componentsName
+    }
+
+    public String getRepo(String name) {
+        return this.components.get(name).repository
+    }
 }

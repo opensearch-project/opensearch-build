@@ -41,7 +41,7 @@ class TestRunAssemble(unittest.TestCase):
         main()
 
         mock_bundle.install_min.assert_called()
-        mock_bundle.install_plugins.assert_called()
+        mock_bundle.install_components.assert_called()
 
         mock_bundle.package.assert_called_with(os.path.join("curdir", "dist", "opensearch"))
 

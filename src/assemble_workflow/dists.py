@@ -5,14 +5,23 @@
 # compatible open source license.
 
 import logging
+from typing import Type
 
 from assemble_workflow.dist import Dist, DistTar, DistZip
 
 
+class Distribution:
+
+    def __init__(self, cls: Type[Dist], extension: str) -> None:
+        self.cls = cls
+        self.extension = extension
+
+
 class Dists:
+
     DISTRIBUTIONS_MAP = {
-        "tar": DistTar,
-        "zip": DistZip,
+        "tar": Distribution(cls=DistTar, extension=".tar.gz"),
+        "zip": Distribution(cls=DistZip, extension=".zip"),
     }
 
     @classmethod
@@ -21,4 +30,6 @@ class Dists:
             logging.info("Distribution not specified, default to tar")
             distribution = 'tar'
 
-        return cls.DISTRIBUTIONS_MAP[distribution](name, path, min_path)
+        dist_cls = cls.DISTRIBUTIONS_MAP[distribution].cls
+
+        return dist_cls(name, path, min_path)

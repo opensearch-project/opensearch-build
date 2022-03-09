@@ -129,7 +129,7 @@ pipeline {
                                 propagate: false,
                                 wait: true,
                                 parameters: [
-                                    string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_X64)
                                 ]
@@ -175,7 +175,7 @@ pipeline {
                                 propagate: false,
                                 wait: true,
                                 parameters: [
-                                    string(name: 'TEST_MANIFEST', value: "manifests/${TEST_MANIFEST}"),
+                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                 ]

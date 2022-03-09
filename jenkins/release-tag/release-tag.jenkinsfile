@@ -1,0 +1,47 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'VERSION',
+            description: 'Version of the release.',
+            trim: true
+        )
+    }
+    environment {
+        BUILD_MANIFEST = "opensearch-$VERSION/manifest.yml"
+    }
+    stages {
+        stage('Create Release Tag') {
+            steps {
+                script {
+                    release_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/$VERSION/opensearch-$VERSION-linux-x64.tar.gz"
+                    sh "curl -SLO $release_url && tar -xf opensearch-$VERSION-linux-x64.tar.gz opensearch-$VERSION/manifest.yml"
+                    echo "The release distribution manifest is downloaded to $BUILD_MANIFEST"
+                    createReleaseTag(
+                        buildManifest: "$BUILD_MANIFEST",
+                        tagVersion: VERSION
+                    )
+
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
