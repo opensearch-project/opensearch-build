@@ -20,7 +20,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -28,6 +28,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
