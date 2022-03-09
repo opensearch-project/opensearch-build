@@ -38,7 +38,6 @@ cd %{_topdir} && pwd
 mkdir -p %{buildroot}%{pid_dir}
 # Install directories/files
 cp -a etc usr var %{buildroot}
-#cp -a service_templates/%{name}/* %{buildroot}
 #rm -rf %{buildroot}%{product_dir}/jdk
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
