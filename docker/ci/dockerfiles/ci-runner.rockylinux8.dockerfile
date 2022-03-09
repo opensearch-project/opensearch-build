@@ -11,7 +11,6 @@
 
 FROM rockylinux:8
 
-# Ensure localedef running correct with root permission
 USER 0
 
 # Add normal dependencies
