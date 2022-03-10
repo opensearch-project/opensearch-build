@@ -72,20 +72,16 @@ fi
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 [ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
+# Make sure the cwd is where the script is located
+DIR="$(dirname "$0")"
+echo $DIR
+cd $DIR
+
 ## Copy the tar installation script into the bundle
 if [ "$DISTRIBUTION" = "tar" ]; then
-(   
-    DIR="$(dirname "$0")"
-    echo $DIR
-    cd $DIR
     cp ../../../scripts/legacy/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
-)
+
 elif [ "$DISTRIBUTION" = "rpm" ]; then
-(   
-    DIR="$(dirname "$0")"
-    echo $DIR
-    cd $DIR
     cp -a ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     cp -a ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
-)
 fi

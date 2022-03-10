@@ -72,20 +72,16 @@ fi
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 [ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
+# Make sure the cwd is where the script is located
+DIR="$(dirname "$0")"
+echo $DIR
+cd $DIR
+
 ## Setup default config
 if [ "$DISTRIBUTION" = "tar" ]; then
-(   
-    DIR="$(dirname "$0")"
-    echo $DIR
-    cd $DIR
     cp ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
-)
+
 elif [ "$DISTRIBUTION" = "rpm" ]; then
-(   
-    DIR="$(dirname "$0")"
-    echo $DIR
-    cd $DIR
     cp -a ../../../scripts/service_templates/opensearch-dashboards/* "$OUTPUT/../"
     cp -a ../../../scripts/build_templates/opensearch-dashboards/* "$OUTPUT/../"
-)
 fi
