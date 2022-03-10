@@ -11,19 +11,21 @@
 
 FROM rockylinux:8
 
-# Ensure localedef running correct with root permission
 USER 0
 
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python38 python38-devel python3-pip
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
+
+# Add Python37 dependencies
+RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -36,6 +38,19 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
+
+
+# Install Python37 binary
+RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
+    cd Python-3.7.7 && \
+    ./configure --enable-optimizations && \
+    make altinstall
+
+# Setup Python37 links
+RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3
 
 # Add other dependencies
 RUN yum install -y epel-release && yum clean all && yum install -y chromium && yum clean all && \
