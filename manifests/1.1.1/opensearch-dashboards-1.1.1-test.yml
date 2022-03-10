@@ -6,4 +6,4 @@ components:
       test-configs:
         - with-security
         - without-security
-schema-version: '1.0'
+schema-version: "1.0"

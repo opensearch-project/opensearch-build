@@ -5,7 +5,7 @@
 # Description:
 # Default configuration for OpenSearch Dashboards
 
-server.host: '0'
+server.host: "0"
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver

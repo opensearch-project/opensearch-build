@@ -2,7 +2,7 @@
 build:
   platform: linux
   architecture: x64
-  id: '717'
+  id: "717"
   name: OpenSearch
   version: 1.3.0
 components:
@@ -2336,4 +2336,4 @@ components:
     ref: 1.x
     repository: https://github.com/opensearch-project/OpenSearch.git
     version: 1.3.0.0
-schema-version: '1.2'
+schema-version: "1.2"

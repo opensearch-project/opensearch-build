@@ -2462,4 +2462,4 @@ components:
     ref: main
     repository: https://github.com/opensearch-project/dashboards-notebooks.git
     version: 1.1.0.0
-schema-version: '1.2'
+schema-version: "1.2"

@@ -42,9 +42,9 @@ jobs:
 
             Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
           delete-branch: true
-          title: '[AUTO] Updated input manifests.'
+          title: "[AUTO] Updated input manifests."
           body: |
-            I've noticed that a repo has incremented a version and have made some updates to input manifests.
+            I"ve noticed that a repo has incremented a version and have made some updates to input manifests.
       - name: Check outputs
         run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"

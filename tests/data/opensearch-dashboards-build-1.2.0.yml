@@ -32,7 +32,7 @@ components:
         - plugins/securityDashboards-1.2.0.zip
     commit_id: 960ef753f74dceb793e8936a40ac8c6cbec88dd1
     name: securityDashboards
-    ref: '1.2'
+    ref: "1.2"
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     version: 1.2.0.0
   - artifacts:
@@ -40,7 +40,7 @@ components:
         - plugins/indexManagementDashboards-1.2.0.zip
     commit_id: 6748b18ee172138b4811a459053f4a43c1486821
     name: indexManagementDashboards
-    ref: '1.2'
+    ref: "1.2"
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
     version: 1.2.0.0
   - artifacts:
@@ -83,4 +83,4 @@ components:
     ref: tags/1.2.0.0
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     version: 1.2.0.0
-schema-version: '1.2'
+schema-version: "1.2"

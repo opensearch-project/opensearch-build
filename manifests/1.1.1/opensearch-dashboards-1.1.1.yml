@@ -1,5 +1,5 @@
 ---
-schema-version: '1.0'
+schema-version: "1.0"
 ci:
   image:
     name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
@@ -11,7 +11,7 @@ build:
 components:
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reports
-    ref: '1.1'
+    ref: "1.1"
     working_directory: dashboards-reports
     platforms:
       - linux

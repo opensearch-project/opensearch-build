@@ -41,4 +41,4 @@ components:
     bwc-test:
       test-configs:
         - with-security
-schema-version: '1.0'
+schema-version: "1.0"

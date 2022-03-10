@@ -1,7 +1,7 @@
 ---
 yaml-files:
-  - '*.yaml'
-  - '*.yml'
+  - "*.yaml"
+  - "*.yml"
   - .yamllint.yml
 ignore: |
   bin
@@ -30,6 +30,8 @@ rules:
   new-line-at-end-of-file: enable
   new-lines: enable
   octal-values: disable
-  quoted-strings: disable
+  quoted-strings:
+    quote-type: double
+    required: false
   trailing-spaces: enable
   truthy: disable
