@@ -20,17 +20,17 @@ class BundleRpm:
     def extract(self, dest: str) -> None:
         cpio_basename = os.path.splitext(os.path.basename(self.package_path))[0]
         cpio_path = os.path.join(dest, f"{cpio_basename}.cpio")
-        min_source_path = os.path.join(dest, "usr", "share", self.filename)
+        min_source_path = os.path.join(dest, 'usr', 'share', self.filename)
         min_dest_path = os.path.join(dest, self.min_path)
-        min_config_path = os.path.join(dest, "etc", self.filename)
-        min_bin_env_path = os.path.join(min_dest_path, "bin", f"{self.filename}-env")
+        min_config_path = os.path.join(dest, 'etc', self.filename)
+        min_bin_env_path = os.path.join(min_dest_path, 'bin', f"{self.filename}-env")
 
         # Convert rpm to cpio so we can extract the content
         logging.info(f"Convert rpm to cpio for extraction: {self.package_path} to {cpio_path}")
         with open(cpio_path, 'wb') as fp: 
             proc_cpio = subprocess.check_call(
                 [
-                    "rpm2cpio",
+                    'rpm2cpio',
                     self.package_path,
                 ],
                 stdout=fp,
@@ -42,8 +42,8 @@ class BundleRpm:
         with open(cpio_path, 'rb') as fp: 
             proc_extraction = subprocess.check_call(
                 [
-                    "cpio",
-                    "-imdv",
+                    'cpio',
+                    '-imdv',
                 ],
                 stdin=fp,
                 stdout=subprocess.DEVNULL,
@@ -66,8 +66,8 @@ class BundleRpm:
             # Prevent sourcing as file is only in place after rpm installation
             # So that min can install plugin zips
             with open(min_bin_env_path) as fp:
-                min_bin_env_lines=fp.read().replace("source", '#source')
-            with open(min_bin_env_path, "w") as fp:
+                min_bin_env_lines=fp.read().replace('source', '#source')
+            with open(min_bin_env_path, 'w') as fp:
                 fp.write(min_bin_env_lines)
 
 
@@ -75,10 +75,10 @@ class BundleRpm:
         # extract dest and build dest are not the same, this is restoring the extract dest
         # mainly due to rpm requires several different setups compares to tarball and zip
         ext_dest = os.path.dirname(archive_path)
-        min_source_path = os.path.join(ext_dest, "usr", "share", self.filename)
+        min_source_path = os.path.join(ext_dest, 'usr', 'share', self.filename)
         min_dest_path = os.path.join(ext_dest, self.min_path)
-        min_config_path = os.path.join(ext_dest, "etc", self.filename)
-        min_bin_env_path = os.path.join(min_dest_path, "bin", f"{self.filename}-env")
+        min_config_path = os.path.join(ext_dest, 'etc', self.filename)
+        min_bin_env_path = os.path.join(min_dest_path, 'bin', f"{self.filename}-env")
         bundle_artifact_path: str = None
 
         # Remove env var
@@ -92,9 +92,9 @@ class BundleRpm:
         # Run bundle rpmbuild
         bundle_cmd = " ".join(
             [
-                "rpmbuild",
-                "-bb",
-                "--define",
+                'rpmbuild',
+                '-bb',
+                '--define',
                 f"'_topdir {ext_dest}'",
                 f"{self.filename}.rpm.spec",
             ]
@@ -105,7 +105,7 @@ class BundleRpm:
 
         # Move artifact to repo root before being published to {dest}       
         for dirpath, dirnames, filenames in os.walk(os.path.join(ext_dest, 'RPMS')):
-            for filename in [file for file in filenames if file.endswith(".rpm")]:
+            for filename in [file for file in filenames if file.endswith('.rpm')]:
                 bundle_artifact_path = os.path.join(dirpath, filename)
                 break
 
