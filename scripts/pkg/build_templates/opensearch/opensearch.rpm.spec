@@ -38,6 +38,8 @@ cd %{_topdir} && pwd
 mkdir -p %{buildroot}%{pid_dir}
 # Install directories/files
 cp -a etc usr var %{buildroot}
+chmod 0755 %{buildroot}%{product_dir}/bin/*
+chmod 0755 %{buildroot}%{product_dir}/plugins/opensearch-security/tools/*
 #rm -rf %{buildroot}%{product_dir}/jdk
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
@@ -65,8 +67,6 @@ exit 0
 
 %post
 # Apply Security Settings
-chmod 0755 %{product_dir}/bin/*
-chmod 0755 %{product_dir}/plugins/opensearch-security/tools/*
 sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
 chown -R %{name}.%{name} %{config_dir}
 chown -R %{name}.%{name} %{log_dir}
@@ -105,9 +105,6 @@ if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/
 fi
 exit 0
 
-%postun
-# No-op, let rpm handle the removal of folders and files that it owns.
-
 %files
 # Permissions
 %defattr(-, %{name}, %{name})
@@ -139,7 +136,7 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
 
 # Main dirs
-%{product_dir}/bin
+ %{product_dir}/bin
 %{product_dir}/jdk
 %{product_dir}/lib
 %{product_dir}/modules
@@ -154,4 +151,6 @@ exit 0
 %{product_dir}/logs
 
 %changelog
+* Fri Mar 11 2022 OpenSearch Team <opensearch@amazon.com>
+- Initial package
 
