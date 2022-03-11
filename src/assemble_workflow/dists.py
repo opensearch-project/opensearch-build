@@ -7,7 +7,7 @@
 import logging
 from typing import Type
 
-from assemble_workflow.dist import Dist, DistTar, DistZip, DistRpm
+from assemble_workflow.dist import Dist, DistRpm, DistTar, DistZip
 
 
 class Distribution:

@@ -4,8 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
 import logging
+import os
 import shutil
 import subprocess
 
@@ -27,8 +27,8 @@ class BundleRpm:
 
         # Convert rpm to cpio so we can extract the content
         logging.info(f"Convert rpm to cpio for extraction: {self.package_path} to {cpio_path}")
-        with open(cpio_path, 'wb') as fp: 
-            proc_cpio = subprocess.check_call(
+        with open(cpio_path, 'wb') as fp:
+            subprocess.check_call(
                 [
                     'rpm2cpio',
                     self.package_path,
@@ -39,8 +39,8 @@ class BundleRpm:
 
         # Extract cpio archive based on the rpm package
         logging.info(f"Extract cpio {cpio_path} content to {dest}")
-        with open(cpio_path, 'rb') as fp: 
-            proc_extraction = subprocess.check_call(
+        with open(cpio_path, 'rb') as fp:
+            subprocess.check_call(
                 [
                     'cpio',
                     '-imdv',
@@ -65,24 +65,24 @@ class BundleRpm:
             shutil.copy2(min_bin_env_path, f"{min_bin_env_path}.backup")
             # Prevent sourcing as file is only in place after rpm installation
             # So that min can install plugin zips
-            with open(min_bin_env_path) as fp:
-                min_bin_env_lines=fp.read().replace('source', '#source')
-            with open(min_bin_env_path, 'w') as fp:
-                fp.write(min_bin_env_lines)
+            # Have to decode then encode back to ascii due to mypy complains TextIO not equals to BinaryIO
+            with open(min_bin_env_path, 'rb') as fp:
+                min_bin_env_lines = fp.read().decode('ascii')
 
+            with open(min_bin_env_path, 'wb') as fp:
+                fp.write(min_bin_env_lines.replace('source', '#source').encode('ascii'))
 
-    def build(self, name: str,  dest: str, archive_path: str) -> None:
+    def build(self, name: str, dest: str, archive_path: str) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
         # mainly due to rpm requires several different setups compares to tarball and zip
         ext_dest = os.path.dirname(archive_path)
         min_source_path = os.path.join(ext_dest, 'usr', 'share', self.filename)
         min_dest_path = os.path.join(ext_dest, self.min_path)
-        min_config_path = os.path.join(ext_dest, 'etc', self.filename)
         min_bin_env_path = os.path.join(min_dest_path, 'bin', f"{self.filename}-env")
         bundle_artifact_path: str = None
 
         # Remove env var
-        logging.info(f"Organize folder structure before generating rpm")
+        logging.info('Organize folder structure before generating rpm')
         os.environ.pop('OPENSEARCH_PATH_CONF', None)
 
         # Restore config file and core folder to original location
@@ -103,7 +103,7 @@ class BundleRpm:
         logging.info(f"Execute {bundle_cmd} in {ext_dest}")
         subprocess.check_call(bundle_cmd, cwd=ext_dest, shell=True)
 
-        # Move artifact to repo root before being published to {dest}       
+        # Move artifact to repo root before being published to {dest}
         for dirpath, dirnames, filenames in os.walk(os.path.join(ext_dest, 'RPMS')):
             for filename in [file for file in filenames if file.endswith('.rpm')]:
                 bundle_artifact_path = os.path.join(dirpath, filename)

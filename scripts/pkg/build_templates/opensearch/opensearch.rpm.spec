@@ -16,7 +16,7 @@ Version: 1.3.0
 Release: 1
 License: Apache-2.0
 Summary: An open source distributed and RESTful search engine
-URL: https://www.opensearch.org/
+URL: https://opensearch.org/
 Group: Application/Internet
 ExclusiveArch: x86_64
 #Requires: #java-11-amazon-corretto-devel
@@ -24,7 +24,7 @@ AutoReqProv: no
 
 %description
 OpenSearch makes it easy to ingest, search, visualize, and analyze your data.
-For more information, see: https://www.opensearch.org/
+For more information, see: https://opensearch.org/
 
 %prep
 # No-op. We are using dir so no need to setup.
