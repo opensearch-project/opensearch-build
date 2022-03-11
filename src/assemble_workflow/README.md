@@ -14,7 +14,7 @@ Artifacts will be created as follows.
 
 ```
 /dist
-  <file-name>.tar.gz or .zip <- assembled tarball or zip depending on platform
+  <file-name>.tar.gz / .zip / .rpm <- assembled tarball / zip / rpm depending on distribution value in builds/opensearch/manifest.yml, default to tarball if 'distribution' key not found
   manifest.yml <- bundle manifest describing versions for the min bundle and all installed plugins and their locations
 ```
 
