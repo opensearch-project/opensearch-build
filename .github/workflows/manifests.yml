@@ -6,8 +6,6 @@ on:
   pull_request:
     paths:
       - manifests/**/*.yml
-  schedule:
-    - cron: 0 0 * * *
 
 jobs:
 
