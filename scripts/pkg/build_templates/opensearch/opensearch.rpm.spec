@@ -136,7 +136,7 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
 
 # Main dirs
- %{product_dir}/bin
+%{product_dir}/bin
 %{product_dir}/jdk
 %{product_dir}/lib
 %{product_dir}/modules
