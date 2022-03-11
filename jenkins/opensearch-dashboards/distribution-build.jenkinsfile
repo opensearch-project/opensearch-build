@@ -64,6 +64,13 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
+
+                            def testDocker = getTestDocker(
+                                testManifest: "manifests/${TEST_MANIFEST}",
+                            )
+
+                            def testDockerImage = testDocker?.image;
+
                             def integTestResults = 
                                 build job: INTEG_TEST_JOB_NAME,
                                 propagate: false,
@@ -72,7 +79,7 @@ pipeline {
                                     string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                     string(name: 'AGENT_LABEL', value: AGENT_X64),
-                                    string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
+                                    string(name: 'CONTAINER_IMAGE', value: testDockerImage ? testDockerImage : dockerAgent.image)
                                 ]
 
                             String status = integTestResults.getResult()
@@ -140,6 +147,10 @@ pipeline {
                                     echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64): ${artifactUrl}"
 
+                                    def testDocker = getTestDocker(
+                                        testManifest: "manifests/${INPUT_MANIFEST}"
+                                    )
+
                                     def integTestResults = 
                                         build job: INTEG_TEST_JOB_NAME,
                                         propagate: false,
@@ -148,7 +159,7 @@ pipeline {
                                             string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                             string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_ARM64),
-                                            string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
+                                            string(name: 'CONTAINER_IMAGE', value: testDocker.image)
                                         ]
 
                                     String status = integTestResults.getResult()
