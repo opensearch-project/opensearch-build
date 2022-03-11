@@ -1,0 +1,46 @@
+   release-data-prepper-all-artifacts.run()
+      release-data-prepper-all-artifacts.legacySCM(groovy.lang.Closure)
+      release-data-prepper-all-artifacts.library({identifier=jenkins@20211123, retriever=null})
+      release-data-prepper-all-artifacts.pipeline(groovy.lang.Closure)
+         release-data-prepper-all-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         release-data-prepper-all-artifacts.stage(Download Archives, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.dir(archive, groovy.lang.Closure)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-0.22.1-linux-x64.tar.gz)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz)
+         release-data-prepper-all-artifacts.stage(Sign Archives, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.signArtifacts({artifactPath=archive, sigtype=.sig, platform=linux})
+                  signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                  signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                  signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                  signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            /tmp/workspace/sign.sh archive --sigtype=.sig --platform=linux
+        )
+         release-data-prepper-all-artifacts.stage(Release Archives to Production Distribution Bucket, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.withAWS({role=production-role-name, roleAccount=aws-account-artifact, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                  release-data-prepper-all-artifacts.s3Upload({file=archive/, bucket=production-s3-bucket-name, path=data-prepper/0.22.1/})
+         release-data-prepper-all-artifacts.stage(Release Docker Image to DockerHub, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.copyContainer({sourceImagePath=http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908, destinationImagePath=opensearchproject/data-prepper:0.22.1, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
+                  copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
+                  copyContainer.sh(docker logout)
+                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyContainer.sh(
+                docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
+                gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:0.22.1
+            )
+         release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+            release-data-prepper-all-artifacts.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
