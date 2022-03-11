@@ -151,6 +151,8 @@ pipeline {
                                         testManifest: "manifests/${INPUT_MANIFEST}"
                                     )
 
+                                    def testDockerImage = testDocker?.image;
+
                                     def integTestResults = 
                                         build job: INTEG_TEST_JOB_NAME,
                                         propagate: false,
@@ -159,7 +161,7 @@ pipeline {
                                             string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                             string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_ARM64),
-                                            string(name: 'CONTAINER_IMAGE', value: testDocker.image)
+                                            string(name: 'CONTAINER_IMAGE', value: testDockerImage ? testDockerImage : dockerAgent.image)
                                         ]
 
                                     String status = integTestResults.getResult()
