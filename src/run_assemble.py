@@ -41,7 +41,7 @@ def main() -> int:
 
     with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:
         bundle.install_min()
-        bundle.install_plugins()
+        bundle.install_components()
         logging.info(f"Installed plugins: {bundle.installed_plugins}")
 
         #  Save a copy of the manifest inside of the tar

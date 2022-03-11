@@ -56,7 +56,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
                 "type": "dict",
                 "schema": {
                     "commit_id": {"required": True, "type": "string"},
-                    "location": {"required": True, "type": "string"},
+                    "location": {"type": "string"},  # optional in 1.1
                     "name": {"required": True, "type": "string"},
                     "ref": {"required": True, "type": "string"},
                     "repository": {"required": True, "type": "string"},
@@ -115,7 +115,7 @@ class BundleComponent(Component):
         self.repository = data["repository"]
         self.ref = data["ref"]
         self.commit_id = data["commit_id"]
-        self.location = data["location"]
+        self.location = data.get("location", None)
 
     def __to_dict__(self) -> dict:
         return {

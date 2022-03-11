@@ -11,6 +11,7 @@ from assemble_workflow.bundle_location import BundleLocation
 from assemble_workflow.dists import Dists
 from manifests.build_manifest import BuildComponent, BuildManifest
 from manifests.bundle_manifest import BundleManifest
+from manifests.manifest import Manifest
 
 
 class BundleRecorder:
@@ -52,9 +53,9 @@ class BundleRecorder:
     # Build artifacts are expected to be served from a "builds" folder
     # Example: https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/build-id/linux/x64/builds/
     def __get_component_location(self, component_rel_path: str) -> str:
-        return self.bundle_location.get_build_location(component_rel_path)
+        return self.bundle_location.get_build_location(component_rel_path) if component_rel_path else None
 
-    def record_component(self, component: BuildComponent, rel_path: str) -> None:
+    def record_component(self, component: BuildComponent, rel_path: str = None) -> None:
         self.bundle_manifest.append_component(
             component.name,
             component.repository,
@@ -86,14 +87,14 @@ class BundleRecorder:
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []
 
-        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str) -> None:
-            component = {
+        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str = None) -> None:
+            component = Manifest.compact({
                 "name": name,
                 "repository": repository_url,
                 "ref": ref,
                 "commit_id": commit_id,
                 "location": location,
-            }
+            })
             self.data["components"].append(component)
 
         def to_manifest(self) -> BundleManifest:

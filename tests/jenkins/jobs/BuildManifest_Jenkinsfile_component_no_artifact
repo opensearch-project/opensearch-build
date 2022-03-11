@@ -23,7 +23,9 @@ pipeline {
                     echo buildManifest.getArtifactRoot('bundle-build', '1')
                     echo buildManifest.getArtifactRootUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.build.getPackageName()
-                    echo buildManifest.components.getMinArtifact()
+                    echo buildManifest.getMinArtifact()
+                    echo buildManifest.getCommitId("OpenSearch-Dashboards")
+                    echo buildManifest.getRepo("OpenSearch-Dashboards")
                 }
             }
         }

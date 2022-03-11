@@ -54,6 +54,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             "schema": {
                 "name": {"required": True, "type": "string"},
                 "version": {"required": True, "type": "string"},
+                "qualifier": {"type": "string"},
                 "patches": {"type": "list", "schema": {"type": "string"}},
                 "platform": {"type": "string"},
                 "architecture": {"type": "string"},
@@ -143,6 +144,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         def __init__(self, data: Any):
             self.name: str = data["name"]
             self.version = data["version"]
+            self.qualifier = data.get("qualifier", None)
             self.platform = data.get("platform", None)
             self.architecture = data.get("architecture", None)
             self.snapshot = data.get("snapshot", None)
@@ -152,6 +154,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             return {
                 "name": self.name,
                 "version": self.version,
+                "qualifier": self.qualifier,
                 "patches": self.patches,
                 "platform": self.platform,
                 "architecture": self.architecture,

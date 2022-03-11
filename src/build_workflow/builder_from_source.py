@@ -42,6 +42,7 @@ class BuilderFromSource(Builder):
                     "bash",
                     build_script,
                     f"-v {self.target.version}",
+                    f"-q {self.target.qualifier}" if self.target.qualifier else None,
                     f"-p {self.target.platform}",
                     f"-a {self.target.architecture}",
                     f"-d {self.target.distribution}" if self.target.distribution and (self.component.name in DISTRIBUTION_SUPPORTED_COMPONENTS) else None,

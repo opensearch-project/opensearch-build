@@ -19,7 +19,7 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearchDashboards(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
         self.assertEqual(bundle.min_dist.name, "OpenSearch-Dashboards")
-        self.assertEqual(len(bundle.plugins), 1)
+        self.assertEqual(len(bundle.components), 2)
         self.assertEqual(bundle.artifacts_dir, artifacts_path)
         self.assertIsNotNone(bundle.bundle_recorder)
         self.assertEqual(bundle.installed_plugins, [])
@@ -63,7 +63,7 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
         artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
         bundle = BundleOpenSearchDashboards(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
 
-        plugin = bundle.plugins[0]  # alertingDashboards
+        plugin = bundle.components['alertingDashboards']
 
         with patch("shutil.copyfile") as mock_copyfile:
             with patch("subprocess.check_call") as mock_check_call:

@@ -46,6 +46,7 @@ def main():
         target = BuildTarget(
             name=manifest.build.name,
             version=manifest.build.version,
+            qualifier=manifest.build.qualifier,
             patches=manifest.build.patches,
             snapshot=args.snapshot if args.snapshot is not None else manifest.build.snapshot,
             output_dir=output_dir,
