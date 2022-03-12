@@ -109,6 +109,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                     "args": self.args
                 }
 
+
 class TestComponents(Components['TestComponent']):
     @classmethod
     def __create__(self, data: Any) -> 'TestComponent':
