@@ -1,5 +1,8 @@
 void call(Map args = [:]) {
     String jobName = args.jobName ?: 'distribution-build-opensearch'
+
+    echo "job name: ${jobName}"
+
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
