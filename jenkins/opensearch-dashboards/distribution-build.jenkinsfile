@@ -148,7 +148,7 @@ pipeline {
                                     echo "artifactUrl (arm64): ${artifactUrl}"
 
                                     def testDocker = getTestDocker(
-                                        testManifest: "manifests/${INPUT_MANIFEST}"
+                                        testManifest: "manifests/${TEST_MANIFEST}"
                                     )
 
                                     def testDockerImage = testDocker?.image;
