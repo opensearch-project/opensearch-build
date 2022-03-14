@@ -1,5 +1,10 @@
 ---
+schema-version: '1.0'
 name: OpenSearch
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-v1
+    args: -e JAVA_HOME=/opt/java/openjdk-11
 components:
   - name: index-management
     integ-test:
@@ -98,4 +103,3 @@ components:
       test-configs:
         - with-security
         - without-security
-schema-version: '1.0'

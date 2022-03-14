@@ -11,10 +11,10 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestGetTestDocker extends BuildPipelineTest {
+class TestDetectTestDockerAgent extends BuildPipelineTest {
 
     @Test
     public void test() {
-        super.testPipeline("tests/jenkins/jobs/GetTestDocker_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/DetectTestDockerAgent_Jenkinsfile")
     }
 }
