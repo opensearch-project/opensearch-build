@@ -141,6 +141,30 @@ class TestBuilderFromSource(unittest.TestCase):
         )
         build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
 
+    @patch("build_workflow.builder_from_source.GitRepository")
+    def test_build_snapshot_qualiier(self, mock_git_repo: Mock) -> None:
+        self.builder.target.snapshot = True
+        self.builder.target.qualifier = "alpha1"
+        mock_git_repo.return_value = MagicMock(working_directory="dir")
+        build_recorder = MagicMock()
+        self.builder.checkout("dir")
+        self.builder.build(build_recorder)
+        mock_git_repo.return_value.execute.assert_called_with(
+            " ".join(
+                [
+                    "bash",
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    "-v 1.1.0",
+                    "-q alpha1",
+                    "-p linux",
+                    "-a x64",
+                    "-s true",
+                    "-o builds",
+                ]
+            )
+        )
+        build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
+
     def mock_os_walk(self, artifact_path: str) -> List[Any]:
         if artifact_path.endswith(os.path.join("dir", "builds", "core-plugins")):
             return [["core-plugins", [], ["plugin1.zip"]]]
