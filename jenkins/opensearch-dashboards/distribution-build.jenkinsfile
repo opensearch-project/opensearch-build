@@ -64,12 +64,11 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
-
                             def testDocker = getTestDocker(
                                 testManifest: "manifests/${TEST_MANIFEST}",
                             )
 
-                            def testDockerImage = testDocker?.image;
+                            def testDockerImage = testDocker?.image
 
                             def integTestResults = 
                                 build job: INTEG_TEST_JOB_NAME,
@@ -151,7 +150,7 @@ pipeline {
                                         testManifest: "manifests/${TEST_MANIFEST}"
                                     )
 
-                                    def testDockerImage = testDocker?.image;
+                                    def testDockerImage = testDocker?.image
 
                                     def integTestResults = 
                                         build job: INTEG_TEST_JOB_NAME,
