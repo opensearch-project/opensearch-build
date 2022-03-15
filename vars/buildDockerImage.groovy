@@ -8,7 +8,6 @@ void call(Map args = [:]) {
 
     if (args.artifactUrlX64 == null || args.artifactUrlArm64 ==  null) {
         echo 'Skipping docker build, one of x64 or arm64 artifacts was not built.'
-        
     } else {
         dockerBuild: {
             build job: 'docker-build',
