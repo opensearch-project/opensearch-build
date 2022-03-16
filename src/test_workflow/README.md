@@ -99,7 +99,65 @@ opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1
 
 ### Performance Tests
 
-TODO
+TODO: Add instructions on how run performance tests with `test.sh`
+
+
+
+#### How to identify regressions in performance tests
+
+Disclaimer: the guidelines listed below were determined based on empirical testing using OpenSearch Benchmark. 
+These tests were run against OpenSearch 1.2 build #762 and used the nyc_taxis workload with 2 warmup and 3 test iterations. 
+The values listed below are **not** applicable to other configurations. More details on the test setup can be found here: https://github.com/opensearch-project/OpenSearch/issues/2461
+
+Using the aggregate results from the nightly performance test runs, compare indexing and query metrics to the specifications layed out in the table
+
+Please keep in mind the following:
+
+1. Expected values are rough estimates. These are only meant to establish a baseline understanding of test results. 
+2. StDev% Mean is the standard deviation as a percentage of the mean. This is expected variation between tests. 
+   1. If the average of several tests consistently falls outside this bound there may be a performance regression. 
+3. MinMax% Diff is the worst case variance between any two tests with the same configuration. 
+   1. If there is a difference greater than this value than there is likely a performance regression or an issue with the test setup. 
+      1. In general, comparing one off test runs should be avoided if possible.
+
+
+|Instance Type|Security|Expected Indexing Throughput Avg (req/s)|Expected Indexing Error Rate|Indexing StDev% Mean|Indexing MinMax% Diff|Expected Query Latency p90 (ms)|Expected Query Latency p99 (ms)|Expected Query Error Rate|Query StDev% Mean|Query MinMax% Diff|
+|---|---|---|---|---|---|---|---|---|---|---|
+|m5.xlarge|Enabled|30554|0|~5%|~12%|431|449|0|~10%|~23%|
+|m5.xlarge|Disabled|34472|0|~5%|~15%|418|444|0|~10%|~25%|
+|m6g.xlarge|Enabled|38625|0|~3%|~8%|497|512|0|~8%|~23|
+|m6g.xlarge|Disabled|45447|0|~2%|~3%|470|480|0|~5%|~15%|
+
+Note that performance regressions are based on decreased indexing throughput and/or increased query latency.
+
+Additionally, error rates on the order of 0.01% are acceptable, though higher ones may be cause for concern.
+
+
+
+#### How to identify issues in longevity tests
+
+Navigate to the Jenkins build for a longevity test. Look at the Console Output
+
+Search for:
+
+```
+INFO:root:Test can be monitored on <link>
+```
+
+Navigate to that link then click the link for "Live Dashboards"
+
+Use the following table to monitor metrics for the test:
+
+|Metric|Health Indicators / Expected Values|Requires investigations / Cause for concerns|
+|---|---|---|
+|Memory|saw tooth graph|upward trends|
+|CPU| |upward trends or rising towards 100%|
+|Threadpool|0 rejections|any rejections|
+|Indexing Throughput|Consistent rate during each test iteration|downward trends|
+|Query Throughput|Varies based on the query being issued|downward trends between iterations|
+|Indexing Latency|Consistent during each test iteration|upward trends|
+|Query Latency|Varies based on the query being issued|upward trends|
+
 
 ## Testing in CI/CD
 
