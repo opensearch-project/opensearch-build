@@ -99,7 +99,7 @@ opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1
 
 ### Performance Tests
 
-TODO: Add instructions on how run performance tests with `test.sh`
+TODO: Add instructions on how to run performance tests with `test.sh`
 
 
 
