@@ -105,7 +105,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Adds support on UI for min primary shard size rollover condition and min rollover age transition condition ([#159](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/159))
 
 
-### OpenSearch K-NN
+### OpenSearch k-NN
 * Add Recall Tests ([#251](https://github.com/opensearch-project/k-NN/pull/251))
 * Change serialization for knn vector from single array object to collection of floats ([#253](https://github.com/opensearch-project/k-NN/pull/253))
 * Add ExtensiblePlugin to KNNPlugin ([#264](https://github.com/opensearch-project/k-NN/pull/264))
@@ -233,7 +233,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Changes the default policy of the visual editor to be an empty one ([#149](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/149))
 
 
-### OpenSearch K-NN
+### OpenSearch k-NN
 * Set default space type to L2 to support bwc ([#267](https://github.com/opensearch-project/k-NN/pull/267))
 * [BUG FIX] Add space type default and ef search parameter in warmup ([#276](https://github.com/opensearch-project/k-NN/pull/276))
 * [FLAKY TEST] Fix codec test causing CI to fail ([#277](https://github.com/opensearch-project/k-NN/pull/277))
@@ -396,7 +396,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Using Github App token to trigger CI for version increment PRs ([126](https://github.com/opensearch-project/job-scheduler/pull/126))
 
 
-### OpenSearch K-NN
+### OpenSearch k-NN
 * Remove jcenter repo from build related gradle files ([#261](https://github.com/opensearch-project/k-NN/pull/261))
 * Add write permissions to backport action ([#262](https://github.com/opensearch-project/k-NN/pull/262))
 * Add JDK 11 to CI and docs ([#271](https://github.com/opensearch-project/k-NN/pull/271))
@@ -622,7 +622,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## REFACTORING
 
-### OpenSearch K-NN
+### OpenSearch k-NN
 * Refactor benchmark dataset format and add big ann benchmark format ([#265](https://github.com/opensearch-project/k-NN/pull/265))
 
 
