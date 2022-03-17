@@ -58,7 +58,6 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
 - [ ] Performance tests do not show a regression
-
 - [ ] Longevity tests do not show any issues
 
 
