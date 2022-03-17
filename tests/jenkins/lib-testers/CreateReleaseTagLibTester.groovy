@@ -7,23 +7,23 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 class CreateReleaseTagLibTester extends LibFunctionTester {
 
-    private String buildManifest
+    private String distManifest
     private String tagVersion
     private ArrayList buildManifestComponentsList
 
-    public CreateReleaseTagLibTester(buildManifest, tagVersion){
-        this.buildManifest = buildManifest
+    public CreateReleaseTagLibTester(distManifest, tagVersion){
+        this.distManifest = distManifest
         this.tagVersion = tagVersion
         this.buildManifestComponentsList = []
     }
 
     void parameterInvariantsAssertions(call){
-        assertThat(call.args.buildManifest.first(), notNullValue())
+        assertThat(call.args.distManifest.first(), notNullValue())
         assertThat(call.args.tagVersion.first(), notNullValue())
     }
 
     boolean expectedParametersMatcher(call) {
-        return call.args.buildManifest.first().toString().equals(this.buildManifest)
+        return call.args.distManifest.first().toString().equals(this.distManifest)
                 && call.args.tagVersion.first().toString().equals(this.tagVersion)
                 && this.buildManifestComponentsList.size() > 1
     }
@@ -39,7 +39,7 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
 
         helper.registerAllowedMethod("checkout", [Map], {})
         helper.registerAllowedMethod("dir", [Map], {})
-        InputStream inputStream = new FileInputStream(new File(this.buildManifest));
+        InputStream inputStream = new FileInputStream(new File(this.distManifest));
         Yaml yaml = new Yaml()
         Map ymlMap = yaml.load(inputStream)
         BuildManifest buildManifestObj = new BuildManifest(ymlMap)

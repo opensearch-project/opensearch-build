@@ -1,7 +1,7 @@
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
+    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.distManifest))
 
     def componentsName = buildManifestObj.getNames()
     def componetsNumber = componentsName.size()
