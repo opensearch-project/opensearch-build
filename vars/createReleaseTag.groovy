@@ -19,7 +19,7 @@ def call(Map args = [:]) {
                 checkout([$class: 'GitSCM', branches: [[name: commitID]],
                           userRemoteConfigs: [[url: repo]]])
                 def tagVersion = "$version.0"
-                if (component == "OpenSearch") {
+                if (component == "OpenSearch" || component == "OpenSearch-Dashboards") {
                     tagVersion = version
                 }
                 def tag_id = sh (

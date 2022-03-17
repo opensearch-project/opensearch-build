@@ -21,6 +21,7 @@ class TestReleaseTagJob extends BuildPipelineTest {
 
         // Variables for Release Tag Job
         binding.setVariable('VERSION', '1.1.0')
+        binding.setVariable('PRODUCT', 'opensearch')
         binding.setVariable('BUILD_MANIFEST', buildManifest)
 
     }
