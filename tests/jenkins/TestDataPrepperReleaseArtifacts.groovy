@@ -10,6 +10,7 @@ import org.junit.Test
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.hasItems
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
@@ -61,19 +62,32 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     void 'downloads from the correct URLs'() {
         runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
 
-        def curlCommands = helper.callStack.findAll { call ->
+        def shCommands = helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.collect { call ->
             callArgsToString(call)
-        }.findAll { shCommand ->
-            shCommand.contains('curl')
         }
 
-        assertThat(curlCommands, hasItem(
+        def archiveCommands = shCommands.findAll { shCommand ->
+            shCommand.contains('tar')
+        }
+        def mavenCommands = shCommands.findAll { shCommand ->
+            shCommand.contains('maven/org/opensearch/dataprepper')
+        }
+
+        assertThat(archiveCommands.size(), equalTo(2))
+        assertThat(archiveCommands, hasItem(
                 "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-${version}-linux-x64.tar.gz -o opensearch-data-prepper-${version}-linux-x64.tar.gz".toString()
         ))
-        assertThat(curlCommands, hasItem(
+        assertThat(archiveCommands, hasItem(
                 "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
+        ))
+        assertThat(mavenCommands, hasItems(
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-javadoc.jar -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-javadoc.jar".toString(),
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.jar.md5 -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.jar.md5".toString(),
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.pom.sha1 -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.pom.sha1".toString(),
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-sources.jar.sha256 -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-sources.jar.sha256".toString(),
+                "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.module.sha512 -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.module.sha512".toString()
         ))
     }
 

@@ -25,12 +25,37 @@ pipeline {
                 }
             }
         }
+        stage('Download Maven Artifacts') {
+            steps {
+                script {
+                    mavenPath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/maven"
+                    group = "org/opensearch/dataprepper"
+                    artifacts = ["data-prepper-api"]
+                    fileTypes = ["-javadoc.jar", ".jar", ".pom", "-sources.jar", ".module"]
+                    checksums = ["", ".md5", ".sha1", ".sha256", ".sha512"]
+
+                    downloadArtifacts()
+                }
+            }
+        }
         stage('Sign Archives') {
             steps {
                 script {
                     signatureType = '.sig'
                     signArtifacts(
                             artifactPath: 'archive',
+                            sigtype: signatureType,
+                            platform: 'linux'
+                    )
+                }
+            }
+        }
+        stage('Sign Maven Artifacts') {
+            steps {
+                script {
+                    signatureType = '.sig'
+                    signArtifacts(
+                            artifactPath: 'maven',
                             sigtype: signatureType,
                             platform: 'linux'
                     )
@@ -58,11 +83,42 @@ pipeline {
                 }
             }
         }
+        stage('Upload Artifacts to Sonatype') {
+            tools {
+                maven "maven-3.8.2"
+            }
+            environment {
+                REPO_URL = "https://aws.oss.sonatype.org/"
+                STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
+                BUILD_ID = "${BUILD_ID}"
+            }
+            steps {
+                script {
+                    // stage artifacts for release with Sonatype
+                    withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                        sh('$WORKSPACE/publish/stage-maven-release.sh maven')
+                    }
+                }
+            }
+        }
     }
     post() {
         always {
             script {
                 postCleanup()
+            }
+        }
+    }
+}
+
+def downloadArtifacts() {
+    dir('maven') {
+        for (artifact in artifacts) {
+            sh "mkdir -p ${group}/${artifact}/${VERSION}"
+            for (fileType in fileTypes) {
+                for (checksum in checksums) {
+                    sh "curl -sSL ${mavenPath}/${group}/${artifact}/${VERSION}/${artifact}-${VERSION}${fileType}${checksum} -o ${group}/${artifact}/${VERSION}/${artifact}-${VERSION}${fileType}${checksum}"
+                }
             }
         }
     }
