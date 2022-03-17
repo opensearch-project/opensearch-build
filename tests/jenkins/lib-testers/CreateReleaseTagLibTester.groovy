@@ -48,7 +48,7 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
         for (component in this.buildManifestComponentsList) {
             def repo = buildManifestObj.getRepo(component)
             def version = "$tagVersion.0"
-            if (component == "OpenSearch" || component == "OpenSearch-Dashboards") {
+            if (component == "OpenSearch" || component == "OpenSearch-Dashboards" || component == "functionalTestDashboards") {
                 version = tagVersion
             }
             def out = ""
