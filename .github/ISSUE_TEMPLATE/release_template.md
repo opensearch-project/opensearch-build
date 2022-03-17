@@ -56,6 +56,11 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 - [ ] Code Complete (__REPLACE_RELEASE-minus-14-days__ - __REPLACE_RELEASE-minus-11-days__): Teams test their component within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
 - [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams.
 
+### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
+- [ ] Performance tests do not show a regression
+- [ ] Longevity tests do not show any issues
+
+
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 
 - [ ] Declare a release candidate build, and publish all test results.
