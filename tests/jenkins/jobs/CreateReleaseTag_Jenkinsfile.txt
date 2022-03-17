@@ -3,7 +3,7 @@
          CreateReleaseTag_Jenkinsfile.echo(Executing on agent [label:none])
          CreateReleaseTag_Jenkinsfile.stage(createTag, groovy.lang.Closure)
             CreateReleaseTag_Jenkinsfile.script(groovy.lang.Closure)
-               CreateReleaseTag_Jenkinsfile.createReleaseTag({buildManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
+               CreateReleaseTag_Jenkinsfile.createReleaseTag({distManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
                   createReleaseTag.legacySCM(groovy.lang.Closure)
                   createReleaseTag.library({identifier=jenkins@20211123, retriever=null})
                   createReleaseTag.readYaml({file=tests/data/opensearch-build-1.1.0.yml})

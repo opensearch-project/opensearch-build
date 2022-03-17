@@ -8,7 +8,7 @@
             release-tag.script(groovy.lang.Closure)
                release-tag.sh(curl -SLO https://artifacts.opensearch.org/releases/bundle/opensearch/1.1.0/opensearch-1.1.0-linux-x64.tar.gz && tar -xf opensearch-1.1.0-linux-x64.tar.gz opensearch-1.1.0/manifest.yml)
                release-tag.echo(The release distribution manifest is downloaded to tests/data/opensearch-build-1.1.0.yml)
-               release-tag.createReleaseTag({buildManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
+               release-tag.createReleaseTag({distManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
                   createReleaseTag.legacySCM(groovy.lang.Closure)
                   createReleaseTag.library({identifier=jenkins@20211123, retriever=null})
                   createReleaseTag.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
