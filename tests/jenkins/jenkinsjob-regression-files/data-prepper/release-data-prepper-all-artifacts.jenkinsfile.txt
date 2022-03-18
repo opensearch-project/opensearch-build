@@ -92,7 +92,7 @@
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
                release-data-prepper-all-artifacts.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
-                  release-data-prepper-all-artifacts.sh($WORKSPACE/publish/stage-maven-release.sh /maven)
+                  release-data-prepper-all-artifacts.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven)
          release-data-prepper-all-artifacts.script(groovy.lang.Closure)
             release-data-prepper-all-artifacts.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
