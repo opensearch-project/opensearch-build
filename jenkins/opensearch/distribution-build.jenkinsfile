@@ -148,7 +148,7 @@ pipeline {
 
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
-                
+
                             def integTestResults = 
                                 build job: env.INTEG_TEST_JOB_NAME,
                                 propagate: false,
