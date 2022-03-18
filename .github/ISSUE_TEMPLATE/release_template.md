@@ -56,13 +56,18 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 - [ ] Code Complete (__REPLACE_RELEASE-minus-14-days__ - __REPLACE_RELEASE-minus-11-days__): Teams test their component within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
 - [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams.
 
+### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
+- [ ] Performance tests do not show a regression
+- [ ] Longevity tests do not show any issues
+
+
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 
 - [ ] Declare a release candidate build, and publish all test results.
 - [ ] Verify [all issues labeled `v{{ env.VERSION }}` in all projects](https://github.com/opensearch-project/project-meta#find-labeled-issues) have been resolved.
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
 - [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
-- [ ] Gather, review and publish release notes. [git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
+- [ ] Gather, review and add release notes to the release branch. [git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
 - [ ] __REPLACE_RELEASE-day - Publish a [blog post](https://github.com/opensearch-project/project-website) - release is launched!
 

@@ -1,7 +1,7 @@
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
+    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.distManifest))
 
     def componentsName = buildManifestObj.getNames()
     def componetsNumber = componentsName.size()
@@ -19,7 +19,7 @@ def call(Map args = [:]) {
                 checkout([$class: 'GitSCM', branches: [[name: commitID]],
                           userRemoteConfigs: [[url: repo]]])
                 def tagVersion = "$version.0"
-                if (component == "OpenSearch") {
+                if (component == "OpenSearch" || component == "OpenSearch-Dashboards" || component == "functionalTestDashboards") {
                     tagVersion = version
                 }
                 def tag_id = sh (
