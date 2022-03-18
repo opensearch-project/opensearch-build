@@ -16,7 +16,6 @@ class TestRunPerfTestScript extends BuildPipelineTest {
     @Before
     void setUp() {
         this.registerLibTester(new RunPerfTestScriptLibTester(
-            'dummy_job',
             'tests/jenkins/data/opensearch-1.3.0-bundle.yml',
             '1236',
             'false',

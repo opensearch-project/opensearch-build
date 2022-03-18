@@ -4,19 +4,17 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 class RunPerfTestScriptLibTester extends LibFunctionTester {
 
-    private String jobName
     private String bundleManifest
     private String buildId
-    private String security
+    private String insecure
     private String workload
     private String testIterations
     private String warmupIterations
 
-    public RunPerfTestScriptLibTester(jobName, bundleManifest, buildId, security, workload, testIterations, warmupIterations){
-        this.jobName = jobName
+    public RunPerfTestScriptLibTester(bundleManifest, buildId, insecure, workload, testIterations, warmupIterations){
         this.bundleManifest = bundleManifest
         this.buildId = buildId
-        this.security = security
+        this.insecure = insecure
         this.workload = workload
         this.testIterations = testIterations
         this.warmupIterations = warmupIterations
@@ -40,20 +38,19 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
     void parameterInvariantsAssertions(call) {
         assertThat(call.args.bundleManifest.first(), notNullValue())
         assertThat(call.args.buildId.first(), notNullValue())
-        assertThat(call.args.security.first(), notNullValue())
+        assertThat(call.args.insecure.first(), notNullValue())
         assertThat(call.args.workload.first(), notNullValue())
         assertThat(call.args.testIterations.first(), notNullValue())
         assertThat(call.args.warmupIterations.first(), notNullValue())
     }
 
     boolean expectedParametersMatcher(call) {
-        return call.args.jobName.first().toString().equals(this.jobName)
-                && call.args.bundleManifest.first().toString().equals(this.bundleManifest)
+        return call.args.bundleManifest.first().toString().equals(this.bundleManifest)
                 && call.args.buildId.first().toString().equals(this.buildId)
-                && call.args.security.first().toString().equals(this.security)
+                && call.args.insecure.first().toString().equals(this.insecure)
                 && call.args.workload.first().toString().equals(this.workload)
-                && call.args.testIterations.first().toString().equals(this.testIterations)
-                && call.args.warmupIterations.first().toString().equals(this.warmupIterations)
+                && call.args.testIterations.first().toInteger().equals(this.testIterations.toInteger())
+                && call.args.warmupIterations.first().toInteger().equals(this.warmupIterations.toInteger())
     }
 
     String libFunctionName() {

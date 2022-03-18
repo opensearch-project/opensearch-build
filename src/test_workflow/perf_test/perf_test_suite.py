@@ -26,6 +26,8 @@ class PerfTestSuite:
             self.command = (
                 f"pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}"
                 f" -a {self.manifest.build.architecture} -p {test_results_path}"
+                f" --workload {self.args.workload} --workload-options '{self.args.workload_options}'"
+                f" --warmup-iters {self.args.warmup_iters} --test-iters {self.args.test_iters}"
             )
 
     def execute(self):

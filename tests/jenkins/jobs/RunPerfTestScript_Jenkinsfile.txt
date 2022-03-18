@@ -3,12 +3,11 @@
          RunPerfTestScript_Jenkinsfile.echo(Executing on agent [label:none])
          RunPerfTestScript_Jenkinsfile.stage(perf-test, groovy.lang.Closure)
             RunPerfTestScript_Jenkinsfile.script(groovy.lang.Closure)
-               RunPerfTestScript_Jenkinsfile.runPerfTestScript({jobName=dummy_job, bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, security=false, workload=nyc_taxis, testIterations=1, warmupIterations=1})
+               RunPerfTestScript_Jenkinsfile.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, insecure=false, workload=nyc_taxis, testIterations=1, warmupIterations=1})
                   runPerfTestScript.legacySCM(groovy.lang.Closure)
                   runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
                   runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   BuildManifest.asBoolean()
-                  BuildManifest.getArtifactRootUrl(dummy_job, 1236)
                   runPerfTestScript.sh(
         npm install -g fs-extra
         npm install -g chalk@4.1.2
@@ -23,4 +22,4 @@
     )
                   runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --security --workload nyc_taxis --test-iters 1 --warmup-iters 1)
+                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-null --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --force-insecure-mode --workload nyc_taxis --test-iters 1 --warmup-iters 1)

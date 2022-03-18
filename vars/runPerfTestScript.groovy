@@ -1,8 +1,6 @@
 void call(Map args = [:]) {
-    String jobName = args.jobName ?: 'distribution-build-opensearch'
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
-    String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
 
     install_dependencies()
     install_opensearch_infra_dependencies()
@@ -13,11 +11,11 @@ void call(Map args = [:]) {
     sh([
         './test.sh',
         'perf-test',
-        args.security ? "--stack test-single-security-${args.buildId}" :
-        "--stack test-single-${args.buildId}",
+        args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}" :
+        "--stack test-single-security-${args.buildId}-${args.architecture}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
-        args.security ? "--security" : "",
+        args.insecure ? "--force-insecure-mode" : "",
         isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
         isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
         isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",

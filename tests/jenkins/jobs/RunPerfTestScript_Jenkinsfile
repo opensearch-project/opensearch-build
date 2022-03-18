@@ -13,10 +13,9 @@ pipeline {
             steps {
                 script {
                     runPerfTestScript(
-                        jobName: 'dummy_job',
                         bundleManifest: 'tests/jenkins/data/opensearch-1.3.0-bundle.yml',
                         buildId: '1236',
-                        security: 'false',
+                        insecure: 'false',
                         workload: 'nyc_taxis',
                         testIterations: '1',
                         warmupIterations: '1'
