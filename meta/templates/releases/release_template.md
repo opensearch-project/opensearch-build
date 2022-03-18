@@ -44,7 +44,7 @@ If including changes in this release, increment the version on `__{REPLACE_MAJOR
 
 - [ ] Update to the `__REPLACE_MAJOR_MINOR__` release branch in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
 - [ ] Increment the version on the parent branch to the next development iteration.
-- [ ] Gather, review and publish release notes follwing the [rules](https://github.com/opensearch-project/opensearch-plugins/blob/main/RELEASE_NOTES.md) and back port it to the release branch.[git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
+- [ ] Gather, review and publish release notes following the [rules](https://github.com/opensearch-project/opensearch-plugins/blob/main/RELEASE_NOTES.md) and back port it to the release branch.[git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] Confirm that all changes for `__{REPLACE_MAJOR_MINOR_PATCH}__` have been merged.
 - [ ] Add this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/) for the next developer iteration.
 
