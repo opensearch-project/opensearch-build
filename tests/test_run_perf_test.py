@@ -64,7 +64,7 @@ class TestRunPerfTest(unittest.TestCase):
         self.assertEqual(1, mock_git.call_count)
         self.assertEqual(1, mock_execute.call_count)
         self.assertEqual([], mock_execute.call_args)
-        self.assertIn(True, mock_suite.call_args.args)
+        self.assertIn(True, mock_suite.call_args[0])
 
     @patch("argparse._sys.argv", ["run_perf_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST,
                                   "--stack", "test-stack", "--config", PERF_TEST_CONFIG, "--force-insecure-mode"])
@@ -89,4 +89,4 @@ class TestRunPerfTest(unittest.TestCase):
         self.assertEqual(1, mock_git.call_count)
         self.assertEqual(1, mock_execute.call_count)
         self.assertEqual([], mock_execute.call_args)
-        self.assertIn(False, mock_suite.call_args.args)
+        self.assertIn(False, mock_suite.call_args[0])
