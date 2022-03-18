@@ -59,20 +59,11 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     }
 
     @Test
-    void 'downloads from the correct URLs'() {
-        runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
+    void 'downloads archives from the correct URLs'() {
+        def shCurlCommands = getCurlCommands()
 
-        def shCommands = helper.callStack.findAll { call ->
-            call.methodName == 'sh'
-        }.collect { call ->
-            callArgsToString(call)
-        }
-
-        def archiveCommands = shCommands.findAll { shCommand ->
+        def archiveCommands = shCurlCommands.findAll { shCommand ->
             shCommand.contains('tar')
-        }
-        def mavenCommands = shCommands.findAll { shCommand ->
-            shCommand.contains('maven/org/opensearch/dataprepper')
         }
 
         assertThat(archiveCommands.size(), equalTo(2))
@@ -82,6 +73,16 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
         assertThat(archiveCommands, hasItem(
                 "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/archive/opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${version}-linux-x64.tar.gz".toString()
         ))
+    }
+
+    @Test
+    void 'downloads Maven artifacts from the correct URLs'() {
+        def shCurlCommands = getCurlCommands()
+
+        def mavenCommands = shCurlCommands.findAll { shCommand ->
+            shCommand.contains('maven/org/opensearch/dataprepper')
+        }
+
         assertThat(mavenCommands, hasItems(
                 "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-javadoc.jar -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}-javadoc.jar".toString(),
                 "curl -sSL http://staging-artifacts.cloudfront.net/${version}/997908/maven/org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.jar.md5 -o org/opensearch/dataprepper/data-prepper-api/${version}/data-prepper-api-${version}.jar.md5".toString(),
@@ -101,5 +102,19 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         assertThat(actualS3Upload, notNullValue())
         assertThat(actualS3Upload.args[0].get('path'), equalTo("data-prepper/${version}/"))
+    }
+
+    def getCurlCommands() {
+        runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
+
+        def shCurlCommands = helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.collect { call ->
+            callArgsToString(call)
+        }.findAll { curlCommand ->
+            curlCommand.contains('curl')
+        }
+
+        return shCurlCommands
     }
 }
