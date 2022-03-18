@@ -52,20 +52,19 @@ class Bundle(ABC):
     def install_min(self) -> None:
         install_script = ScriptFinder.find_install_script(self.min_dist.name)
         install_command = " ".join(
-            [
-                "bash",
-                install_script,
-                "-v",
-                self.build.version,
-                "-p",
-                self.build.platform,
-                "-a",
-                self.build.architecture,
-                "-f",
-                self.artifacts_dir,
-                "-o",
-                self.min_dist.archive_path,
-            ]
+            filter(
+                None,
+                [
+                    "bash",
+                    install_script,
+                    f"-v {self.build.version}",
+                    f"-p {self.build.platform}",
+                    f"-a {self.build.architecture}",
+                    f"-d {self.build.distribution}" if self.build.distribution else None,
+                    f"-f {self.artifacts_dir}",
+                    f"-o {self.min_dist.archive_path}",
+                ]
+            )
         )
         self._execute(install_command)
 
@@ -90,16 +89,11 @@ class Bundle(ABC):
             [
                 "bash",
                 install_script,
-                "-v",
-                self.build.version,
-                "-p",
-                self.build.platform,
-                "-a",
-                self.build.architecture,
-                "-f",
-                self.artifacts_dir,
-                "-o",
-                self.min_dist.archive_path,
+                f"-v {self.build.version}",
+                f"-p {self.build.platform}",
+                f"-a {self.build.architecture}",
+                f"-f {self.artifacts_dir}",
+                f"-o {self.min_dist.archive_path}",
             ]
         )
         self._execute(install_command)
