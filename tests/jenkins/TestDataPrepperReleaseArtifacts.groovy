@@ -60,10 +60,10 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
     @Test
     void 'downloads archives from the correct URLs'() {
-        def shCurlCommands = getCurlCommands()
+        runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
 
-        def archiveCommands = shCurlCommands.findAll { shCommand ->
-            shCommand.contains('tar')
+        def archiveCommands = getCurlCommands().findAll {
+            shCommand -> shCommand.contains('tar')
         }
 
         assertThat(archiveCommands.size(), equalTo(2))
@@ -77,10 +77,10 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
     @Test
     void 'downloads Maven artifacts from the correct URLs'() {
-        def shCurlCommands = getCurlCommands()
+        runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
 
-        def mavenCommands = shCurlCommands.findAll { shCommand ->
-            shCommand.contains('maven/org/opensearch/dataprepper')
+        def mavenCommands = getCurlCommands().findAll {
+            shCommand -> shCommand.contains('maven/org/opensearch/dataprepper')
         }
 
         assertThat(mavenCommands, hasItems(
@@ -105,8 +105,6 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     }
 
     def getCurlCommands() {
-        runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
-
         def shCurlCommands = helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.collect { call ->
