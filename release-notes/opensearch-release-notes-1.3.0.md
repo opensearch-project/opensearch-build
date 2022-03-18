@@ -3,7 +3,7 @@
 ## Release Highlights
 
 ### OpenSearch Ml Commons
-* ml-commons now officially becomes part of the OpenSearch 1.3.0 release.
+* The new ML Commons plugin empowers users to train and apply machine learning models as a part of the OpenSearch 1.3.0 release.
 
 ## Release Details
 
@@ -29,25 +29,25 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Ml Commons
-* add anomaly localization implementation ([#103](https://github.com/opensearch-project/ml-commons/pull/103))
-* refactor ML task data model; add create ML task index method ([#116](https://github.com/opensearch-project/ml-commons/pull/116))
-* integration step 1 and 2 for anomaly localization ([#113](https://github.com/opensearch-project/ml-commons/pull/113))
-* anomaly localization integration step 3 ([#114](https://github.com/opensearch-project/ml-commons/pull/114))
-* support train ML model in either sync or async way ([#124](https://github.com/opensearch-project/ml-commons/pull/124))
-* anomaly localization integration step 4 and 5 ([#125](https://github.com/opensearch-project/ml-commons/pull/125))
-* add train and predict API ([#126](https://github.com/opensearch-project/ml-commons/pull/126))
-* add ML Model get API ([#117](https://github.com/opensearch-project/ml-commons/pull/117))
-* integrate tribuo anomaly detection based on libSVM ([#96](https://github.com/opensearch-project/ml-commons/pull/96))
-* add ML Delete model API ([#136](https://github.com/opensearch-project/ml-commons/pull/136))
-* add fixed in time rcf ([#138](https://github.com/opensearch-project/ml-commons/pull/138))
+* Add anomaly localization implementation ([#103](https://github.com/opensearch-project/ml-commons/pull/103))
+* Refactor ML task data model; add create ML task index method ([#116](https://github.com/opensearch-project/ml-commons/pull/116))
+* Integration step 1 and 2 for anomaly localization ([#113](https://github.com/opensearch-project/ml-commons/pull/113))
+* Anomaly localization integration step 3 ([#114](https://github.com/opensearch-project/ml-commons/pull/114))
+* Support train ML model in either sync or async way ([#124](https://github.com/opensearch-project/ml-commons/pull/124))
+* Anomaly localization integration step 4 and 5 ([#125](https://github.com/opensearch-project/ml-commons/pull/125))
+* Add train and predict API ([#126](https://github.com/opensearch-project/ml-commons/pull/126))
+* Add ML Model get API ([#117](https://github.com/opensearch-project/ml-commons/pull/117))
+* Integrate tribuo anomaly detection based on libSVM ([#96](https://github.com/opensearch-project/ml-commons/pull/96))
+* Add ML Delete model API ([#136](https://github.com/opensearch-project/ml-commons/pull/136))
+* Add fixed in time rcf ([#138](https://github.com/opensearch-project/ml-commons/pull/138))
 * Add ML Model Search API ([#140](https://github.com/opensearch-project/ml-commons/pull/140))
-* add circuit breaker ([#142](https://github.com/opensearch-project/ml-commons/pull/142))
-* add batch RCF for non-time-series data ([#145](https://github.com/opensearch-project/ml-commons/pull/145))
+* Add circuit breaker ([#142](https://github.com/opensearch-project/ml-commons/pull/142))
+* Add batch RCF for non-time-series data ([#145](https://github.com/opensearch-project/ml-commons/pull/145))
 * Add ML Task GET/Delete API ([#146](https://github.com/opensearch-project/ml-commons/pull/146))
 * Add Search Task API and Refactor search actions and handlers ([#149](https://github.com/opensearch-project/ml-commons/pull/149))
-* add minimum top contributor candidate queue size ([#151](https://github.com/opensearch-project/ml-commons/pull/151))
-* add more stats: request/failure/model count on algo/action level ([#159](https://github.com/opensearch-project/ml-commons/pull/159))
-* add tasks API in Client ([#200](https://github.com/opensearch-project/ml-commons/pull/200))
+* Add minimum top contributor candidate queue size ([#151](https://github.com/opensearch-project/ml-commons/pull/151))
+* Add more stats: request/failure/model count on algo/action level ([#159](https://github.com/opensearch-project/ml-commons/pull/159))
+* Add tasks API in Client ([#200](https://github.com/opensearch-project/ml-commons/pull/200))
 
 
 ### OpenSearch Observability
@@ -63,7 +63,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Adding auto backport ([#146](https://github.com/opensearch-project/performance-analyzer/pull/146))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Add parse command to PPL ([#411](https://github.com/opensearch-project/sql/pull/411))
 * PPL integration with AD and ml-commons ([#468](https://github.com/opensearch-project/sql/pull/468))
 
@@ -105,7 +105,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Adds support on UI for min primary shard size rollover condition and min rollover age transition condition ([#159](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/159))
 
 
-### OpenSearch Knn
+### OpenSearch k-NN
 * Add Recall Tests ([#251](https://github.com/opensearch-project/k-NN/pull/251))
 * Change serialization for knn vector from single array object to collection of floats ([#253](https://github.com/opensearch-project/k-NN/pull/253))
 * Add ExtensiblePlugin to KNNPlugin ([#264](https://github.com/opensearch-project/k-NN/pull/264))
@@ -115,26 +115,26 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Ml Commons
-* support float type in data frame ([#129](https://github.com/opensearch-project/ml-commons/pull/129))
-* support short and long type in data frame ([#131](https://github.com/opensearch-project/ml-commons/pull/131))
-* use threadpool in execute task runner ([#156](https://github.com/opensearch-project/ml-commons/pull/156))
-* do not return model and task id in response ([#171](https://github.com/opensearch-project/ml-commons/pull/171))
-* more strict check on input parameters by applying non-coerce mode ([#173](https://github.com/opensearch-project/ml-commons/pull/173))
-* move anomaly localization to the last position to avoid BWC issue ([#189](https://github.com/opensearch-project/ml-commons/pull/189))
+* Support float type in data frame ([#129](https://github.com/opensearch-project/ml-commons/pull/129))
+* Support short and long type in data frame ([#131](https://github.com/opensearch-project/ml-commons/pull/131))
+* Use threadpool in execute task runner ([#156](https://github.com/opensearch-project/ml-commons/pull/156))
+* Do not return model and task id in response ([#171](https://github.com/opensearch-project/ml-commons/pull/171))
+* More strict check on input parameters by applying non-coerce mode ([#173](https://github.com/opensearch-project/ml-commons/pull/173))
+* Move anomaly localization to the last position to avoid BWC issue ([#189](https://github.com/opensearch-project/ml-commons/pull/189))
 
 
 ### OpenSearch Observability
 * Disable duplicate visualization and enable edit panel ([#554](https://github.com/opensearch-project/observability/pull/554))
 * Allow app creation with one composition ([#557](https://github.com/opensearch-project/observability/pull/557))
 * Add ability to choose visualization for availability ([#552](https://github.com/opensearch-project/observability/pull/552))
-* added common visualization parser ([#550](https://github.com/opensearch-project/observability/pull/550))
-* converting datetime to utc from picker ([#551](https://github.com/opensearch-project/observability/pull/551))
+* Added common visualization parser ([#550](https://github.com/opensearch-project/observability/pull/550))
+* Converting datetime to utc from picker ([#551](https://github.com/opensearch-project/observability/pull/551))
 * Feature/remove timestamp saving ([#546](https://github.com/opensearch-project/observability/pull/546))
 * Feature convert browser time to utc time ([#542](https://github.com/opensearch-project/observability/pull/542))
-* replace viz icon ([#543](https://github.com/opensearch-project/observability/pull/543))
+* Replace viz icon ([#543](https://github.com/opensearch-project/observability/pull/543))
 * Add availability metrics to app table ([#539](https://github.com/opensearch-project/observability/pull/539))
 * Add autocomplete to panels, add parse command to app analytics ([#529](https://github.com/opensearch-project/observability/pull/529))
-* changes panel requests & date, traces link in events ([#533](https://github.com/opensearch-project/observability/pull/533))
+* Changes panel requests & date, traces link in events ([#533](https://github.com/opensearch-project/observability/pull/533))
 * Include related services node under service filter ([#527](https://github.com/opensearch-project/observability/pull/527))
 * Change availability level to have expression ([#525](https://github.com/opensearch-project/observability/pull/525))
 * Feature/sort only datatable in flyout ([#522](https://github.com/opensearch-project/observability/pull/522))
@@ -174,7 +174,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Configure ML plugin actions ([#912](https://github.com/opensearch-project/security-dashboards-plugin/pull/912))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Support ISO 8601 Format in Date Format. ([#460](https://github.com/opensearch-project/sql/pull/460))
 * Add Certificate Validation option ([#449](https://github.com/opensearch-project/sql/pull/449))
 * Span expression should always be first in by list if exist ([#437](https://github.com/opensearch-project/sql/pull/437))
@@ -233,7 +233,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Changes the default policy of the visual editor to be an empty one ([#149](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/149))
 
 
-### OpenSearch Knn
+### OpenSearch k-NN
 * Set default space type to L2 to support bwc ([#267](https://github.com/opensearch-project/k-NN/pull/267))
 * [BUG FIX] Add space type default and ef search parameter in warmup ([#276](https://github.com/opensearch-project/k-NN/pull/276))
 * [FLAKY TEST] Fix codec test causing CI to fail ([#277](https://github.com/opensearch-project/k-NN/pull/277))
@@ -241,38 +241,38 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Ml Commons
-* use latest version of tribuo to fix modify thread group permission issue ([#112](https://github.com/opensearch-project/ml-commons/pull/112))
-* fix jarhell error from SQL build ([#137](https://github.com/opensearch-project/ml-commons/pull/137))
-* fix EpochMilli parse error in MLTask ([#147](https://github.com/opensearch-project/ml-commons/pull/147))
-* fix permission when accessing ML system indices ([#148](https://github.com/opensearch-project/ml-commons/pull/148))
-* fix system index permission issue in train/predict runner ([#150](https://github.com/opensearch-project/ml-commons/pull/150))
-* cleanup task cache once task done ([#152](https://github.com/opensearch-project/ml-commons/pull/152))
-* fix update task semaphore; don't return task id for sync request ([#153](https://github.com/opensearch-project/ml-commons/pull/153))
-* restore context after accessing system index to check user permission on non-system index ([#154](https://github.com/opensearch-project/ml-commons/pull/154))
-* fix verbose error message thrown by invalid enum ([#167](https://github.com/opensearch-project/ml-commons/pull/167))
-* fix no permission to create model/task index bug;add security IT for train/predict API ([#177](https://github.com/opensearch-project/ml-commons/pull/177))
+* Use latest version of tribuo to fix modify thread group permission issue ([#112](https://github.com/opensearch-project/ml-commons/pull/112))
+* Fix jarhell error from SQL build ([#137](https://github.com/opensearch-project/ml-commons/pull/137))
+* Fix EpochMilli parse error in MLTask ([#147](https://github.com/opensearch-project/ml-commons/pull/147))
+* Fix permission when accessing ML system indices ([#148](https://github.com/opensearch-project/ml-commons/pull/148))
+* Fix system index permission issue in train/predict runner ([#150](https://github.com/opensearch-project/ml-commons/pull/150))
+* Cleanup task cache once task done ([#152](https://github.com/opensearch-project/ml-commons/pull/152))
+* Fix update task semaphore; don't return task id for sync request ([#153](https://github.com/opensearch-project/ml-commons/pull/153))
+* Restore context after accessing system index to check user permission on non-system index ([#154](https://github.com/opensearch-project/ml-commons/pull/154))
+* Fix verbose error message thrown by invalid enum ([#167](https://github.com/opensearch-project/ml-commons/pull/167))
+* Fix no permission to create model/task index bug;add security IT for train/predict API ([#177](https://github.com/opensearch-project/ml-commons/pull/177))
 
 
 ### OpenSearch Observability
-* fix for datepicker issue ([#571](https://github.com/opensearch-project/observability/pull/571))
+* Fix for datepicker issue ([#571](https://github.com/opensearch-project/observability/pull/571))
 * Show saved time range when editing saved visualization ([#570](https://github.com/opensearch-project/observability/pull/570))
 * Issue/query click ([#569](https://github.com/opensearch-project/observability/pull/569))
 * Fix fields not showing up in panels autocomplete ([#566](https://github.com/opensearch-project/observability/pull/566))
 * Pass in prop curSelectedTabId for live tail ([#567](https://github.com/opensearch-project/observability/pull/567))
-* added fix for threshold ([#568](https://github.com/opensearch-project/observability/pull/568))
-* fix interval selector issue, revert interval function changes ([#563](https://github.com/opensearch-project/observability/pull/563))
-* remove bold letter and extra pranthesis ([#559](https://github.com/opensearch-project/observability/pull/559))
+* Added fix for threshold ([#568](https://github.com/opensearch-project/observability/pull/568))
+* Fix interval selector issue, revert interval function changes ([#563](https://github.com/opensearch-project/observability/pull/563))
+* Remove bold letter and extra pranthesis ([#559](https://github.com/opensearch-project/observability/pull/559))
 * Issue horizontal bar ([#556](https://github.com/opensearch-project/observability/pull/556))
-* final live tail fixes ([#558](https://github.com/opensearch-project/observability/pull/558))
-* fix page flicker for live tail ([#541](https://github.com/opensearch-project/observability/pull/541))
+* Final live tail fixes ([#558](https://github.com/opensearch-project/observability/pull/558))
+* Fix page flicker for live tail ([#541](https://github.com/opensearch-project/observability/pull/541))
 * Fix multiple flyouts issue in explorer ([#538](https://github.com/opensearch-project/observability/pull/538))
 * Flyout bugs ([#540](https://github.com/opensearch-project/observability/pull/540))
-* detete request and response changes for event and panels ([#530](https://github.com/opensearch-project/observability/pull/530))
+* Detete request and response changes for event and panels ([#530](https://github.com/opensearch-project/observability/pull/530))
 * Issue/darkmode support viz config ([#521](https://github.com/opensearch-project/observability/pull/521))
 * Visualizations do not follow set timerange ([#516](https://github.com/opensearch-project/observability/pull/516))
 * Fix empty userConfigs stringify ([#513](https://github.com/opensearch-project/observability/pull/513))
 * Fix lower margin of autocomplete being cut off ([#512](https://github.com/opensearch-project/observability/pull/512))
-* fix issue of clicking query caused crash ([#515](https://github.com/opensearch-project/observability/pull/515))
+* Fix issue of clicking query caused crash ([#515](https://github.com/opensearch-project/observability/pull/515))
 * Feature viz saving on missing fields ([#511](https://github.com/opensearch-project/observability/pull/511))
 * Fix events flyout bugs and Styling ([#510](https://github.com/opensearch-project/observability/pull/510))
 * Bump prismjs from 1.25.0 to 1.27.0 in /dashboards-observability ([#508](https://github.com/opensearch-project/observability/pull/508))
@@ -307,7 +307,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updates backport workflow with custom branch and github app ([#900](https://github.com/opensearch-project/security-dashboards-plugin/pull/900))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Fix certificate validation for ODBC driver ([#479](https://github.com/opensearch-project/sql/pull/479))
 * Update dependency opensearch-ml-client group name ([#477](https://github.com/opensearch-project/sql/pull/477))
 * Treating ExpressionEvaluationException as client Error. ([#459](https://github.com/opensearch-project/sql/pull/459))
@@ -396,7 +396,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Using Github App token to trigger CI for version increment PRs ([126](https://github.com/opensearch-project/job-scheduler/pull/126))
 
 
-### OpenSearch Knn
+### OpenSearch k-NN
 * Remove jcenter repo from build related gradle files ([#261](https://github.com/opensearch-project/k-NN/pull/261))
 * Add write permissions to backport action ([#262](https://github.com/opensearch-project/k-NN/pull/262))
 * Add JDK 11 to CI and docs ([#271](https://github.com/opensearch-project/k-NN/pull/271))
@@ -413,34 +413,34 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Ml Commons
-* add git ignore file ([#92](https://github.com/opensearch-project/ml-commons/pull/92))
-* change common utils to 1.2 snapshot;add more test ([#94](https://github.com/opensearch-project/ml-commons/pull/94))
+* Add git ignore file ([#92](https://github.com/opensearch-project/ml-commons/pull/92))
+* Change common utils to 1.2 snapshot;add more test ([#94](https://github.com/opensearch-project/ml-commons/pull/94))
 * Remove jcenter dependency ([#121](https://github.com/opensearch-project/ml-commons/pull/121))
-* add integration test for train and predict API ([#157](https://github.com/opensearch-project/ml-commons/pull/157))
-* fix build/CI and add backport workflow ([#161](https://github.com/opensearch-project/ml-commons/pull/161))
-* publish ml client to maven ([#165](https://github.com/opensearch-project/ml-commons/pull/165))
+* Add integration test for train and predict API ([#157](https://github.com/opensearch-project/ml-commons/pull/157))
+* Fix build/CI and add backport workflow ([#161](https://github.com/opensearch-project/ml-commons/pull/161))
+* Publish ml client to maven ([#165](https://github.com/opensearch-project/ml-commons/pull/165))
 * Add integ tests for model APIs ([#166](https://github.com/opensearch-project/ml-commons/pull/166))
-* add security IT ([#168](https://github.com/opensearch-project/ml-commons/pull/168))
-* fix maven group ([#170](https://github.com/opensearch-project/ml-commons/pull/170))
-* add more UT for ml-algorithms ([#182](https://github.com/opensearch-project/ml-commons/pull/182))
-* add java 8 to CI workflow ([#194](https://github.com/opensearch-project/ml-commons/pull/194))
-* add more UT and IT for rest actions ([#192](https://github.com/opensearch-project/ml-commons/pull/192))
-* add more UT to client module ([#203](https://github.com/opensearch-project/ml-commons/pull/203))
-* add more UT for task manager/runner ([#206](https://github.com/opensearch-project/ml-commons/pull/206))
-* create config and workflow files for release note ([#209](https://github.com/opensearch-project/ml-commons/pull/209))
-* use 1.3.0 docker to run CI ([#212](https://github.com/opensearch-project/ml-commons/pull/212))
+* Add security IT ([#168](https://github.com/opensearch-project/ml-commons/pull/168))
+* Fix maven group ([#170](https://github.com/opensearch-project/ml-commons/pull/170))
+* Add more UT for ml-algorithms ([#182](https://github.com/opensearch-project/ml-commons/pull/182))
+* Add java 8 to CI workflow ([#194](https://github.com/opensearch-project/ml-commons/pull/194))
+* Add more UT and IT for rest actions ([#192](https://github.com/opensearch-project/ml-commons/pull/192))
+* Add more UT to client module ([#203](https://github.com/opensearch-project/ml-commons/pull/203))
+* Add more UT for task manager/runner ([#206](https://github.com/opensearch-project/ml-commons/pull/206))
+* Create config and workflow files for release note ([#209](https://github.com/opensearch-project/ml-commons/pull/209))
+* Use 1.3.0 docker to run CI ([#212](https://github.com/opensearch-project/ml-commons/pull/212))
 
 
 ### OpenSearch Observability
-* change to support java 8 in compile and runtime ([#575](https://github.com/opensearch-project/observability/pull/575))
+* Change to support java 8 in compile and runtime ([#575](https://github.com/opensearch-project/observability/pull/575))
 * Update cypress test ([#564](https://github.com/opensearch-project/observability/pull/564))
-* fixed flaky panel test ([#565](https://github.com/opensearch-project/observability/pull/565))
+* Fixed flaky panel test ([#565](https://github.com/opensearch-project/observability/pull/565))
 * Feature flyout tests ([#553](https://github.com/opensearch-project/observability/pull/553))
 * Add cypress tests for application analytics ([#544](https://github.com/opensearch-project/observability/pull/544))
 * Update panels cypress ([#545](https://github.com/opensearch-project/observability/pull/545))
 * Update cypress for trace analytics traces view ([#536](https://github.com/opensearch-project/observability/pull/536))
 * Cypress fix for panels and events ([#531](https://github.com/opensearch-project/observability/pull/531))
-* updated panels flaky jest tests ([#505](https://github.com/opensearch-project/observability/pull/505))
+* Updated panels flaky jest tests ([#505](https://github.com/opensearch-project/observability/pull/505))
 * Change Default CI java version to 11 ([#504](https://github.com/opensearch-project/observability/pull/504))
 * Update backport and add auto-delete workflows ([#496](https://github.com/opensearch-project/observability/pull/496))
 * Add auto backporting functionality ([#491](https://github.com/opensearch-project/observability/pull/491))
@@ -448,7 +448,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Configure WhiteSource for GitHub.com ([#365](https://github.com/opensearch-project/observability/pull/365))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Disable flaky test in JdbcTestIT. ([#475](https://github.com/opensearch-project/sql/pull/475))
 
 
@@ -482,15 +482,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Ml Commons
 * Add support for codeowners to repo ([#91](https://github.com/opensearch-project/ml-commons/pull/91))
-* add how to develop new function doc to readme ([#95](https://github.com/opensearch-project/ml-commons/pull/95))
-* update license header ([#134](https://github.com/opensearch-project/ml-commons/pull/134))
+* Add how to develop new function doc to readme ([#95](https://github.com/opensearch-project/ml-commons/pull/95))
+* Update license header ([#134](https://github.com/opensearch-project/ml-commons/pull/134))
 
 
 ### OpenSearch Observability
 * Sync PPL commands doc with main repo ([#549](https://github.com/opensearch-project/observability/pull/549))
 * Fixed documentation links ([#534](https://github.com/opensearch-project/observability/pull/534))
 * Add parse command docs ([#535](https://github.com/opensearch-project/observability/pull/535))
-* updating readme and badges ([#352](https://github.com/opensearch-project/observability/pull/352))
+* Updating readme and badges ([#352](https://github.com/opensearch-project/observability/pull/352))
 
 
 ### OpenSearch Performance Analyzer
@@ -503,7 +503,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updates maintainers list ([#902](https://github.com/opensearch-project/security-dashboards-plugin/pull/902))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Add parse docs to PPL commands index ([#486](https://github.com/opensearch-project/sql/pull/486))
 * Add limitation section in PPL docs ([#456](https://github.com/opensearch-project/sql/pull/456))
 * Add how to setup aws credentials for ODBC Tableau ([#394](https://github.com/opensearch-project/sql/pull/394))
@@ -519,7 +519,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Alerting Dashboards Plugin
 * Bumping version to 1.3. ([#159](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/159))
-* adding CODEOWNERS file ([#150](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/150))
+* Adding CODEOWNERS file ([#150](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/150))
 * Configure WhiteSource for GitHub.com ([#153](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/153))
 * Adding basic unit tests ([#151](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/151))
 * Updated copyright notices and headers. ([#168](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/168))
@@ -563,12 +563,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Ml Commons
 * Bump version to 1.2 ([#90](https://github.com/opensearch-project/ml-commons/pull/90))
-* bump to 1.2.3 ([#110](https://github.com/opensearch-project/ml-commons/pull/110))
-* bump to 1.3.0 ([#115](https://github.com/opensearch-project/ml-commons/pull/115))
+* Bump to 1.2.3 ([#110](https://github.com/opensearch-project/ml-commons/pull/110))
+* Bump to 1.3.0 ([#115](https://github.com/opensearch-project/ml-commons/pull/115))
 
 
 ### OpenSearch Observability
-* bump main to 1.3 ([#361](https://github.com/opensearch-project/observability/pull/361))
+* Bump main to 1.3 ([#361](https://github.com/opensearch-project/observability/pull/361))
 
 
 ### OpenSearch Performance Analyzer
@@ -611,7 +611,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updates release notes for 1.3.0.0 ([#920](https://github.com/opensearch-project/security-dashboards-plugin/pull/920))
 
 
-### OpenSearch Sql
+### OpenSearch SQL
 * Add JDK 8 to CI Matrix  ([#483](https://github.com/opensearch-project/sql/pull/483))
 * Add CI Matrix for JDK 11 and 14 ([#451](https://github.com/opensearch-project/sql/pull/451))
 * Update backport and add auto-delete workflows ([#446](https://github.com/opensearch-project/sql/pull/446))
@@ -622,16 +622,16 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## REFACTORING
 
-### OpenSearch Knn
+### OpenSearch k-NN
 * Refactor benchmark dataset format and add big ann benchmark format ([#265](https://github.com/opensearch-project/k-NN/pull/265))
 
 
 ### OpenSearch Ml Commons
 * Merge develop branch into main branch ([#87](https://github.com/opensearch-project/ml-commons/pull/87))
-* refactor API input/output/URL; add execute API for non-model based algorithm ([#93](https://github.com/opensearch-project/ml-commons/pull/93))
-* cleanup code and refactor ([#106](https://github.com/opensearch-project/ml-commons/pull/106))
-* support registering ML objects; refactor ML engine interface ([#108](https://github.com/opensearch-project/ml-commons/pull/108))
-* refactor persisting ML model ([#109](https://github.com/opensearch-project/ml-commons/pull/109))
-* refactor transport APIs;fix class cast exception ([#127](https://github.com/opensearch-project/ml-commons/pull/127))
-* add ML custom exceptions ([#133](https://github.com/opensearch-project/ml-commons/pull/133))
-* rename tribuo AD algorithm name ([#144](https://github.com/opensearch-project/ml-commons/pull/144))
+* Refactor API input/output/URL; add execute API for non-model based algorithm ([#93](https://github.com/opensearch-project/ml-commons/pull/93))
+* Cleanup code and refactor ([#106](https://github.com/opensearch-project/ml-commons/pull/106))
+* Support registering ML objects; refactor ML engine interface ([#108](https://github.com/opensearch-project/ml-commons/pull/108))
+* Refactor persisting ML model ([#109](https://github.com/opensearch-project/ml-commons/pull/109))
+* Refactor transport APIs;fix class cast exception ([#127](https://github.com/opensearch-project/ml-commons/pull/127))
+* Add ML custom exceptions ([#133](https://github.com/opensearch-project/ml-commons/pull/133))
+* Rename tribuo AD algorithm name ([#144](https://github.com/opensearch-project/ml-commons/pull/144))
