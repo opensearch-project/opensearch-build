@@ -51,6 +51,12 @@ To aid in understanding the state of the release there is a table with status in
 
 __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
+### Code Complete - _Ends __REPLACE_RELEASE-minus-10-days___
+
+- [ ] Code Complete: Make sure that the code for this specific version of the release is ready and the branch corresponding to this release has been added to this release version manifest.
+- [ ] Verify pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) have been merged.
+- [ ] Gather, review and combine the release notes from components repositories.
+
 ### Release testing - _Ends __REPLACE_RELEASE-minus-6-days___
 
 - [ ] Declare a release candidate build, and provide the instructions with the release candidates for teams on testing (__REPLACE_RELEASE-minus-8-days__).
@@ -67,7 +73,6 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 - [ ] Verify [all issues labeled `v{{ env.VERSION }}` in all projects](https://github.com/opensearch-project/project-meta#find-labeled-issues) have been resolved.
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
 - [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
-- [ ] Gather, review and combine the release notes from components repositories. Create a PR for the merged release notes and ask PM teams to review it.
 - [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
 - [ ] __REPLACE_RELEASE-day - Publish a [blog post](https://github.com/opensearch-project/project-website) - release is launched!
 
@@ -75,6 +80,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 - [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/issues/378#issuecomment-999700848) for each component.
 - [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
+- [ ] Generate distribution release notes reviewed by PM team for opensearch-build repository.
 - [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
 - [ ] Lower the [frequency of builds](https://github.com/opensearch-project/opensearch-build/pull/1475) for this version of OpenSearch and/or OpenSearch Dashboards.
 - [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
