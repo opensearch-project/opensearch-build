@@ -16,3 +16,19 @@ components:
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: main
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: main
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/observability.git
+    working_directory: dashboards-observability
+    ref: main
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    working_directory: gantt-chart
+    ref: main
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: dashboards-reports
+    ref: main
