@@ -24,7 +24,7 @@ pipeline {
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  An non-null empty value here will skip integration tests.",
+            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.",
             defaultValue: "integ-test-opensearch-dashboards",
             trim: true
         )
