@@ -10,7 +10,6 @@ pipeline {
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
-        DEFAULT_INTEG_TEST_JOB_NAME = 'integ-test-opensearch-dashboards'
     }
     parameters {
         string(
@@ -41,15 +40,6 @@ pipeline {
         )
     }
     stages {
-        stage('verify-parameters') {
-            steps {
-                script {
-                    env.INTEG_TEST_JOB_NAME = INTEG_TEST_JOB_NAME != '' ?
-                        INTEG_TEST_JOB_NAME :
-                        DEFAULT_INTEG_TEST_JOB_NAME
-                }
-            }
-        }
         stage('detect docker image + args') {
             agent {
                 docker {
@@ -89,21 +79,25 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
-                            def integTestResults = 
-                                build job: env.INTEG_TEST_JOB_NAME,
-                                propagate: false,
-                                wait: true,
-                                parameters: [
-                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                    string(name: 'AGENT_LABEL', value: AGENT_X64)
-                                ]
+                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                            if (!skipIntegTests) {
+                                def integTestResults =
+                                    build job: INTEG_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                    ]
 
-                            createTestResultsMessage(
-                                testType: "Integ Tests (x64)",
-                                status: integTestResults.getResult(),
-                                absoluteUrl: integTestResults.getAbsoluteUrl()
-                            )
+                                createTestResultsMessage(
+                                    testType: "Integ Tests (x64)",
+                                    status: integTestResults.getResult(),
+                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                )
+                            }
                         }
                     }
                     post {
@@ -162,21 +156,25 @@ pipeline {
                                     echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64): ${artifactUrl}"
 
-                                    def integTestResults = 
-                                        build job: env.INTEG_TEST_JOB_NAME,
-                                        propagate: false,
-                                        wait: true,
-                                        parameters: [
-                                            string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                            string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                                        ]
+                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    if (!skipIntegTests) {
+                                        def integTestResults = 
+                                            build job: INTEG_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                            ]
 
-                                    createTestResultsMessage(
-                                        testType: "Integ Tests (arm64)",
-                                        status: integTestResults.getResult(),
-                                        absoluteUrl: integTestResults.getAbsoluteUrl()
-                                    )
+                                        createTestResultsMessage(
+                                            testType: "Integ Tests (arm64)",
+                                            status: integTestResults.getResult(),
+                                            absoluteUrl: integTestResults.getAbsoluteUrl()
+                                        )
+                                    }
                                 }
                             }
                             post {
