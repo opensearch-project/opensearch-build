@@ -19,7 +19,7 @@ pipeline {
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test.",
+            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test. An non-null empty value here will skip integration tests.",
             defaultValue: "integ-test",
             trim: true
         )
