@@ -85,7 +85,7 @@ pipeline {
                     echo "BUILD_ID: ${BUILD_ID}"
 
                     runIntegTestScript(
-                        jobName: env.BUILD_JOB_NAME,
+                        jobName: BUILD_JOB_NAME,
                         buildManifest: BUILD_MANIFEST,
                         testManifest: "manifests/${TEST_MANIFEST}",
                         buildId: BUILD_ID
