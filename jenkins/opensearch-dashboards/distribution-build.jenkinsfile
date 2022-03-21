@@ -190,7 +190,9 @@ pipeline {
         stage('docker build') {
             when {
                 beforeAgent true
-                equals expected: true, actual: BUILD_DOCKER
+                expression { 
+                    return params.BUILD_DOCKER
+                }
             }
             steps {
                 node(AGENT_X64) {
