@@ -11,10 +11,13 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestGetTestDocker extends BuildPipelineTest {
+class TestDetectTestDockerAgent extends BuildPipelineTest {
 
     @Test
     public void test() {
-        super.testPipeline("tests/jenkins/jobs/GetTestDocker_Jenkinsfile")
+        this.registerLibTester(new DetectTestDockerAgentLibTester(
+            'tests/jenkins/data/opensearch-1.3.0-test.yml'
+        ))
+        super.testPipeline("tests/jenkins/jobs/DetectTestDockerAgent_Jenkinsfile")
     }
 }
