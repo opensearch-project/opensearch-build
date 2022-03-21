@@ -46,6 +46,7 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] Create Jenkins workflows that run daily snapshot builds for OpenSearch and OpenSearch Dashboards. 
 - [ ] Increment each component version to {{ env.VERSION }} and ensure working CI in component repositories.
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
+- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
 
 ### Campaigns
 
