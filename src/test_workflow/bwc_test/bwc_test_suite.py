@@ -64,7 +64,7 @@ class BwcTestSuite(abc.ABC):
 
             test_result_data = TestResultData(
                 self.component.name,
-                self.test_config,
+                config,
                 status,
                 stdout,
                 stderr,
