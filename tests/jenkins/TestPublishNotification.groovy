@@ -8,20 +8,18 @@
 
 package jenkins.tests
 
+import jenkins.tests.BuildPipelineTest
 import org.junit.*
-import java.util.*
 
 class TestPublishNotification extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
+
+        this.registerLibTester(new PublishNotificationLibTester(
+                ':white_check_mark:', 'Successful Build' , 'extra', '1.2.0/opensearch-1.2.0.yml', 'BUILD_NOTICE_WEBHOOK'))
+
         super.setUp()
-
-        binding.setVariable('JOB_NAME', 'get-manifest-sha-build')
-        binding.setVariable('BUILD_NUMBER', '33')
-        binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
-
-        helper.registerAllowedMethod("git", [Map])
     }
 
     @Test
