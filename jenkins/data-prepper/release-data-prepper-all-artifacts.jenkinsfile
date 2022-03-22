@@ -57,10 +57,9 @@ pipeline {
         stage('Sign Maven Artifacts') {
             steps {
                 script {
-                    signatureType = '.sig'
                     signArtifacts(
                             artifactPath: "${WORKSPACE}/maven",
-                            sigtype: signatureType,
+                            type: 'maven',
                             platform: 'linux'
                     )
                 }
