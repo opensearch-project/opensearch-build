@@ -94,9 +94,6 @@ pipeline {
             }
         }
         stage('Upload Artifacts to Sonatype') {
-            tools {
-                maven "maven-3.8.2"
-            }
             environment {
                 REPO_URL = "https://aws.oss.sonatype.org/"
                 STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
