@@ -156,7 +156,7 @@ class TestBwcSuiteOpenSearchDashboards(unittest.TestCase):
 
         mock_test_result_data.assert_called_once_with(
             "dashboards-reports",
-            test_config,
+            "with-security",
             "test_status",
             "test_stdout",
             "",
