@@ -25,7 +25,7 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         String sourceImageRepository = 'http://public.ecr.aws/data-prepper-container-repository'
 
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux',  'archive', null, null))
+        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
 
         this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}-997908",
                 "opensearchproject/data-prepper:${version}",
