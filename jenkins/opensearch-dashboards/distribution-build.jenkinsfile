@@ -9,8 +9,7 @@ pipeline {
     agent none
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'       
-        INTEG_TEST_JOB_NAME = 'integ-test-opensearch-dashboards'
+        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
     }
     parameters {
         string(
@@ -22,6 +21,22 @@ pipeline {
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
+        )
+        string(
+            name: 'INTEG_TEST_JOB_NAME',
+            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.",
+            defaultValue: "integ-test-opensearch-dashboards",
+            trim: true
+        )
+        booleanParam(
+            name: 'BUILD_DOCKER',
+            description: 'Build docker image or not.',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'PUBLISH_NOTIFICATION',
+            description: 'Publish the status of this build job or not.',
+            defaultValue: true
         )
     }
     stages {
@@ -64,24 +79,25 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
-                            def integTestResults = 
-                                build job: INTEG_TEST_JOB_NAME,
-                                propagate: false,
-                                wait: true,
-                                parameters: [
-                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                    string(name: 'AGENT_LABEL', value: AGENT_X64),
-                                    string(name: 'CONTAINER_IMAGE', value: getTestDocker(testManifest: "manifests/${TEST_MANIFEST}")?.image ?: dockerAgent.image)
-                                ]
+                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                            if (!skipIntegTests) {
+                                def integTestResults =
+                                    build job: INTEG_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                    ]
 
-                            String status = integTestResults.getResult()
-                            String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
-                            lib.jenkins.Messages.new(this).add(
-                                STAGE_NAME,
-                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
-                                    "\nInteg Tests (x64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
-                            )
+                                createTestResultsMessage(
+                                    testType: "Integ Tests (x64)",
+                                    status: integTestResults.getResult(),
+                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                )
+                            }
                         }
                     }
                     post {
@@ -140,24 +156,25 @@ pipeline {
                                     echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64): ${artifactUrl}"
 
-                                    def integTestResults = 
-                                        build job: INTEG_TEST_JOB_NAME,
-                                        propagate: false,
-                                        wait: true,
-                                        parameters: [
-                                            string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                            string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_ARM64),
-                                            string(name: 'CONTAINER_IMAGE', value: getTestDocker(testManifest: "manifests/${TEST_MANIFEST}")?.image ?: dockerAgent.image)
-                                        ]
+                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    if (!skipIntegTests) {
+                                        def integTestResults = 
+                                            build job: INTEG_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                            ]
 
-                                    String status = integTestResults.getResult()
-                                    String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
-                                    lib.jenkins.Messages.new(this).add(
-                                        STAGE_NAME,
-                                        lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
-                                            "\nInteg Tests (arm64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
-                                    )
+                                        createTestResultsMessage(
+                                            testType: "Integ Tests (arm64)",
+                                            status: integTestResults.getResult(),
+                                            absoluteUrl: integTestResults.getAbsoluteUrl()
+                                        )
+                                    }
                                 }
                             }
                             post {
@@ -171,6 +188,12 @@ pipeline {
             }
         }
         stage('docker build') {
+            when {
+                beforeAgent true
+                expression { 
+                    return params.BUILD_DOCKER
+                }
+            }
             steps {
                 node(AGENT_X64) {
                     script {
@@ -191,19 +214,20 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get([
-                        'build-and-test-linux-x64',
-                        'build-archive-linux-arm64',
-                        'assemble-archive-and-test-linux-arm64'
-                    ])
+                    if (params.PUBLISH_NOTIFICATION) { 
+                        def stashed = lib.jenkins.Messages.new(this).get([
+                            'build-and-test-linux-x64',
+                            'assemble-archive-and-test-linux-arm64'
+                        ])
 
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                        publishNotification(
+                            icon: ':white_check_mark:',
+                            message: 'Successful Build',
+                            extra: stashed,
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            manifest: "${INPUT_MANIFEST}"
+                        )
+                    }
 
                     postCleanup()
                 }
@@ -212,12 +236,14 @@ pipeline {
         failure {
             node(AGENT_X64) {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    if (params.PUBLISH_NOTIFICATION) { 
+                        publishNotification(
+                            icon: ':warning:',
+                            message: 'Failed Build',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            manifest: "${INPUT_MANIFEST}"
+                        )
+                    }
 
                     postCleanup()
                 }

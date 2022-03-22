@@ -7,7 +7,7 @@
 import logging
 from typing import Type
 
-from assemble_workflow.dist import Dist, DistTar, DistZip
+from assemble_workflow.dist import Dist, DistRpm, DistTar, DistZip
 
 
 class Distribution:
@@ -22,6 +22,7 @@ class Dists:
     DISTRIBUTIONS_MAP = {
         "tar": Distribution(cls=DistTar, extension=".tar.gz"),
         "zip": Distribution(cls=DistZip, extension=".zip"),
+        "rpm": Distribution(cls=DistRpm, extension=".rpm"),
     }
 
     @classmethod

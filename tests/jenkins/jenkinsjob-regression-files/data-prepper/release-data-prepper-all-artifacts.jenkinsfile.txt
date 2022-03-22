@@ -8,6 +8,35 @@
                release-data-prepper-all-artifacts.dir(archive, groovy.lang.Closure)
                   release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-0.22.1-linux-x64.tar.gz)
                   release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/archive/opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz -o opensearch-data-prepper-jdk-0.22.1-linux-x64.tar.gz)
+         release-data-prepper-all-artifacts.stage(Download Maven Artifacts, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.dir(maven, groovy.lang.Closure)
+                  release-data-prepper-all-artifacts.sh(mkdir -p org/opensearch/dataprepper/data-prepper-api/0.22.1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.md5 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.md5)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha1 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha256 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha256)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-javadoc.jar.sha512)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.md5 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.md5)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha1 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha256 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha256)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.jar.sha512)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.md5 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.md5)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha1 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha256 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha256)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.pom.sha512)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.md5 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.md5)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha1 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha256 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha256)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1-sources.jar.sha512)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.md5 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.md5)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha1 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha1)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha256 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha256)
+                  release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha512)
          release-data-prepper-all-artifacts.stage(Sign Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.signArtifacts({artifactPath=archive, sigtype=.sig, platform=linux})
@@ -26,6 +55,24 @@
 
             /tmp/workspace/sign.sh archive --sigtype=.sig --platform=linux
         )
+         release-data-prepper-all-artifacts.stage(Sign Maven Artifacts, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.signArtifacts({artifactPath=maven, sigtype=.sig, platform=linux})
+                  signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                  signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                  signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                  signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            /tmp/workspace/sign.sh maven --sigtype=.sig --platform=linux
+        )
          release-data-prepper-all-artifacts.stage(Release Archives to Production Distribution Bucket, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.withAWS({role=production-role-name, roleAccount=aws-account-artifact, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
@@ -41,6 +88,11 @@
                 docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
                 gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:0.22.1
             )
+         release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
+               release-data-prepper-all-artifacts.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
+                  release-data-prepper-all-artifacts.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven)
          release-data-prepper-all-artifacts.script(groovy.lang.Closure)
             release-data-prepper-all-artifacts.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

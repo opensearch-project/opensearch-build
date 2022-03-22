@@ -30,7 +30,7 @@ class TestDist(unittest.TestCase):
     @patch("assemble_workflow.dist.Dist.find_min_archive_path", return_value="opensearch-1.3.0")
     @patch("assemble_workflow.dist.Dist.rename_archive_path", return_value="test_path")
     @patch("assemble_workflow.dist.DistTar.__extract__")
-    def test_dist_extract(self, dist_find_min_path: Mock, dist_rename_path: Mock, distTar_extract: Mock) -> None:
+    def test_dist_extract(self, distTar_extract: Mock, dist_rename_path: Mock, dist_find_min_path: Mock) -> None:
         archive_path = self.distTar.extract("test_dest")
         self.assertEqual(archive_path, "test_path")
         dist_find_min_path.assert_called_once()
@@ -39,7 +39,7 @@ class TestDist(unittest.TestCase):
 
     @patch("assemble_workflow.dist.DistTar.__build__")
     @patch("shutil.copyfile")
-    def test_dist_build(self, distTar_build: Mock, shutil_copyfile: Mock) -> None:
+    def test_dist_build(self, shutil_copyfile: Mock, distTar_build: Mock) -> None:
         self.distTar.build("temp_name", "temp_dest")
         distTar_build.assert_called_once()
         shutil_copyfile.assert_called_once()
@@ -59,7 +59,7 @@ class TestDist(unittest.TestCase):
 
     @patch("os.path.dirname", return_value="temp_path")
     @patch("os.rename")
-    def test_rename_archive_path_rename(self, os_path_dirname: Mock, os_rename: Mock) -> None:
+    def test_rename_archive_path_rename(self, os_rename: Mock, os_path_dirname: Mock) -> None:
         self.assertEqual(
             self.distTar.rename_archive_path(os.path.join("temp_path", "opensearch-x.y.z")),
             os.path.join("temp_path", "opensearch-1.3.0")

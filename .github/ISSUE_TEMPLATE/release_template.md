@@ -31,43 +31,49 @@ To aid in understanding the state of the release there is a table with status in
 ### Preparation
 
 - [ ] Assign this issue to a release owner.
-- [ ] Declare a pencils down date for new features to be merged. ___REPLACE_RELEASE-minus-14-days__ is pencils down.
+- [ ] Declare a pencils down date for new features to be merged. 
+- [ ] __REPLACE_RELEASE-minus-14-days__ is pencils down date for feature freeze.
 - [ ] Update the Campaigns section to include monitoring campaigns during this release. 
 - [ ] Update this issue so all `__REPLACE_RELEASE-__` placeholders have actual dates.
 - [ ] Document any new quality requirements or changes.
-- [ ] Declare a pencils down date for new features to be merged.
-- [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
-- [ ] [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos) in each component repo for this, and the next minor release.
+- [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1). 
 - [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-build/blob/main/meta/README.md#create-a-release-issue) that links back to this issue, update Components section with these links.
+- [ ] Ensure the label is created in each component repo for this new version, and the next minor release. [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos)
 - [ ] Ensure that all release issues created above are assigned to an owner in the component team.
 
-### CI/CD - _Ends __REPLACE_RELEASE-minus-14-days___
+### CI/CD (Feature Freeze) - _Ends __REPLACE_RELEASE-minus-14-days__
 
 - [ ] Create Jenkins workflows that run daily snapshot builds for OpenSearch and OpenSearch Dashboards. 
 - [ ] Increment each component version to {{ env.VERSION }} and ensure working CI in component repositories.
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
+- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
 
 ### Campaigns
 
 __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
+### Code Complete - _Ends __REPLACE_RELEASE-minus-10-days___
+
+- [ ] Code Complete: Make sure that the code for this specific version of the release is ready and the branch corresponding to this release has been added to this release version manifest.
+- [ ] Verify pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) have been merged.
+- [ ] Gather, review and combine the release notes from components repositories.
+
 ### Release testing - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] Code Complete (__REPLACE_RELEASE-minus-14-days__ - __REPLACE_RELEASE-minus-11-days__): Teams test their component within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
-- [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams.
+- [ ] Declare a release candidate build, and provide the instructions with the release candidates for teams on testing (__REPLACE_RELEASE-minus-8-days__).
+- [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams. Teams test their components within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
+- [ ] Publish all test results in the comments of this issue.
 
 ### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
+
 - [ ] Performance tests do not show a regression
 - [ ] Longevity tests do not show any issues
 
-
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 
-- [ ] Declare a release candidate build, and publish all test results.
 - [ ] Verify [all issues labeled `v{{ env.VERSION }}` in all projects](https://github.com/opensearch-project/project-meta#find-labeled-issues) have been resolved.
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
 - [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
-- [ ] Gather, review and add release notes to the release branch. [git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
 - [ ] __REPLACE_RELEASE-day - Publish a [blog post](https://github.com/opensearch-project/project-website) - release is launched!
 
@@ -75,6 +81,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 - [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/issues/378#issuecomment-999700848) for each component.
 - [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
+- [ ] Generate distribution release notes reviewed by PM team for opensearch-build repository.
 - [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
 - [ ] Lower the [frequency of builds](https://github.com/opensearch-project/opensearch-build/pull/1475) for this version of OpenSearch and/or OpenSearch Dashboards.
 - [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.

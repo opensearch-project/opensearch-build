@@ -10,6 +10,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-q QUALIFIER\t[Optional] Version qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
@@ -27,7 +28,7 @@ while getopts ":h:v:q:s:o:p:a:" arg; do
             VERSION=$OPTARG
             ;;
         q)
-            QUALIIFIER=$OPTARG
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -59,6 +60,7 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+[[ ! -z "$QUALIFIER" ]] && VERSION=$VERSION-$QUALIFIER
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 

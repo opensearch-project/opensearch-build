@@ -3,7 +3,7 @@ schema-version: '1.0'
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-v1
-    args: -e JAVA_HOME=/opt/java/openjdk-11
+    args: -e JAVA_HOME=/opt/java/openjdk-17
 build:
   name: OpenSearch
   version: 2.0.0
@@ -24,6 +24,15 @@ components:
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: main
+    platforms:
+      - darwin
+      - linux
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
