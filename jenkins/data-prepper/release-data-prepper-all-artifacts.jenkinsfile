@@ -43,7 +43,7 @@ pipeline {
                 script {
                     signatureType = '.sig'
                     signArtifacts(
-                            artifactPath: 'archive',
+                            artifactPath: "${WORKSPACE}/archive",
                             sigtype: signatureType,
                             platform: 'linux'
                     )
@@ -55,7 +55,7 @@ pipeline {
                 script {
                     signatureType = '.sig'
                     signArtifacts(
-                            artifactPath: 'maven',
+                            artifactPath: "${WORKSPACE}/maven",
                             sigtype: signatureType,
                             platform: 'linux'
                     )
