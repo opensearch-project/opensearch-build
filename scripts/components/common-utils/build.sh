@@ -60,6 +60,7 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+[[ ! -z "$QUALIFIER" ]] && VERSION=$VERSION-$QUALIFIER
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
