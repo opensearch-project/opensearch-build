@@ -34,7 +34,7 @@ class SignArtifactsLibTester extends LibFunctionTester {
         assertThat(call.args.platform.first(), notNullValue())
         if(call.args.artifactPath.first().toString().endsWith(".yml")){
             assertThat(call.args.type.first(), notNullValue())
-        } else {
+        } else if(call.args.type.first() != 'maven'){
             assertThat(call.args.sigtype.first(), notNullValue())
         }
     }
