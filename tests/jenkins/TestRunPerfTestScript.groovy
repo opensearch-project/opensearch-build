@@ -13,9 +13,11 @@ import org.junit.Test
 
 class TestRunPerfTestScript extends BuildPipelineTest {
 
+    RunPerfTestScriptLibTester perfTestScriptLibTester
+
     @Before
     void setUp() {
-        this.registerLibTester(new RunPerfTestScriptLibTester(
+        perfTestScriptLibTester = new RunPerfTestScriptLibTester(
             'tests/jenkins/data/opensearch-1.3.0-bundle.yml',
             '1236',
             'false',
@@ -23,12 +25,14 @@ class TestRunPerfTestScript extends BuildPipelineTest {
             '1',
             '1'
             )
-        )
+        this.registerLibTester(perfTestScriptLibTester)
         super.setUp()
     }
 
     @Test
     public void TestRunPerfTestScript() {
         super.testPipeline("tests/jenkins/jobs/RunPerfTestScript_Jenkinsfile")
+        perfTestScriptLibTester.setBundleManifest('tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
+        super.testPipeline("tests/jenkins/jobs/RunPerfTestScriptWithoutSecurity_Jenkinsfile")
     }
 }

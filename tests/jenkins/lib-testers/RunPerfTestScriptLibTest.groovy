@@ -20,6 +20,10 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
         this.warmupIterations = warmupIterations
     }
 
+    public void setBundleManifest(bundleManifest) {
+        this.bundleManifest = bundleManifest
+    }
+
     void configure(helper, binding) {
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->

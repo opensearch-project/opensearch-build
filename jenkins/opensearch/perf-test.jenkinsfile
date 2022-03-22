@@ -42,7 +42,14 @@ pipeline {
     }
 
     stages {
-        stage('validate-parameters') {
+        stage('validate-and-set-parameters') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image AGENT_IMAGE
+                    alwaysPull true
+                }
+            }
             steps {
                 script {
                     if (BUNDLE_MANIFEST_URL == '') {
@@ -61,6 +68,14 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
                     }
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                    )
+                    String buildId = bundleManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                    env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                 }
             }
         }
@@ -74,17 +89,15 @@ pipeline {
                             alwaysPull true
                         }
                     }
+                    when {
+                        environment name: 'HAS_SECURITY', value: 'true'
+                    }
                     steps {
                         script {
-
                             def bundleManifestObj = downloadBuildManifest(
                                 url: BUNDLE_MANIFEST_URL,
                                 path: BUNDLE_MANIFEST
                             )
-                            String buildId = bundleManifestObj.getArtifactBuildId()
-                            env.BUILD_ID = buildId
-                            env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
-                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "BUILD_ID: ${BUILD_ID}"
@@ -92,17 +105,16 @@ pipeline {
                             echo "Architecture: ${ARCHITECTURE}"
 
                             lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
-                            if (env.HAS_SECURITY) {
-                                runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                                    buildId: "${BUILD_ID}",
-                                    architecture: "${ARCHITECTURE}",
-                                    insecure: false,
-                                    workload: TEST_WORKLOAD,
-                                    testIterations: TEST_ITERATIONS,
-                                    warmupIterations: WARMUP_ITERATIONS)
 
-                                lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
-                            }
+                            runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                                buildId: "${BUILD_ID}",
+                                architecture: "${ARCHITECTURE}",
+                                insecure: false,
+                                workload: TEST_WORKLOAD,
+                                testIterations: TEST_ITERATIONS,
+                                warmupIterations: WARMUP_ITERATIONS)
+
+                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
                         }
                     }
                     post {
@@ -138,9 +150,7 @@ pipeline {
                                 url: BUNDLE_MANIFEST_URL,
                                 path: BUNDLE_MANIFEST
                             )
-                            String buildId = bundleManifestObj.getArtifactBuildId()
-                            env.BUILD_ID = buildId
-                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "BUILD_ID: ${BUILD_ID}"
