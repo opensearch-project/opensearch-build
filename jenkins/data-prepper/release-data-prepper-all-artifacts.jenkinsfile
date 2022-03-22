@@ -84,6 +84,12 @@ pipeline {
                         destinationType: 'docker',
                         destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
                     )
+                    copyContainer(
+                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        destinationImagePath: "opensearchproject/data-prepper:latest",
+                        destinationType: 'docker',
+                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                    )
                 }
             }
         }
