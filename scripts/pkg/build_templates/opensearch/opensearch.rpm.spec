@@ -12,13 +12,13 @@
 %define pid_dir %{_localstatedir}/run/%{name}
 
 Name: opensearch
-Version: 1.3.0
+Version: ##VERSION##
 Release: 1
 License: Apache-2.0
 Summary: An open source distributed and RESTful search engine
 URL: https://opensearch.org/
 Group: Application/Internet
-ExclusiveArch: x86_64
+ExclusiveArch: ##ARCHITECTURE_ALT##
 #Requires: #java-11-amazon-corretto-devel
 AutoReqProv: no
 
@@ -36,10 +36,17 @@ For more information, see: https://opensearch.org/
 cd %{_topdir} && pwd
 # Create necessary directories
 mkdir -p %{buildroot}%{pid_dir}
+mkdir -p %{buildroot}%{product_dir}/plugins
 # Install directories/files
 cp -a etc usr var %{buildroot}
 chmod 0755 %{buildroot}%{product_dir}/bin/*
-chmod 0755 %{buildroot}%{product_dir}/plugins/opensearch-security/tools/*
+if ls %{buildroot}%{product_dir}/plugins | grep opensearch-security; then
+    chmod 0755 %{buildroot}%{product_dir}/plugins/opensearch-security/tools/*
+fi
+# Pre-populate the folders to ensure rpm build success even without all plugins
+mkdir -p %{buildroot}%{config_dir}/opensearch-observability
+mkdir -p %{buildroot}%{config_dir}/opensearch-reports-scheduler
+mkdir -p %{buildroot}%{product_dir}/performance-analyzer-rca
 #rm -rf %{buildroot}%{product_dir}/jdk
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
@@ -67,7 +74,9 @@ exit 0
 
 %post
 # Apply Security Settings
-sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
+if ls %{product_dir}/plugins | grep opensearch-security; then
+    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
+fi
 chown -R %{name}.%{name} %{config_dir}
 chown -R %{name}.%{name} %{log_dir}
 # Apply PerformanceAnalyzer Settings
@@ -151,6 +160,6 @@ exit 0
 %{product_dir}/logs
 
 %changelog
-* Fri Mar 11 2022 OpenSearch Team <opensearch@amazon.com>
+* Mon Mar 17 2022 OpenSearch Team <opensearch@amazon.com>
 - Initial package
 

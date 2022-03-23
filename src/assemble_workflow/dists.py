@@ -8,6 +8,7 @@ import logging
 from typing import Type
 
 from assemble_workflow.dist import Dist, DistRpm, DistTar, DistZip
+from manifests.build_manifest import BuildManifest
 
 
 class Distribution:
@@ -26,11 +27,12 @@ class Dists:
     }
 
     @classmethod
-    def create_dist(cls, name: str, path: str, min_path: str, distribution: str) -> Dist:
+    def create_dist(cls, name: str, path: str, min_path: str, build: BuildManifest.Build) -> Dist:
+        distribution = build.distribution
         if distribution is None:
             logging.info("Distribution not specified, default to tar")
             distribution = 'tar'
 
         dist_cls = cls.DISTRIBUTIONS_MAP[distribution].cls
 
-        return dist_cls(name, path, min_path)
+        return dist_cls(name, path, min_path, build)
