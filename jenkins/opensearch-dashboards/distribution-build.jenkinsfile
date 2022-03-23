@@ -18,6 +18,11 @@ pipeline {
             trim: true
         )
         string(
+            name: 'DISTRIBUTION',
+            description: 'Distribution to build, e.g. tar, zip, and rpm.',
+            trim: true
+        )
+        string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
@@ -77,7 +82,8 @@ pipeline {
                             def buildManifestObj = buildAssembleUpload(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
-                                architecture: 'x64'
+                                architecture: 'x64',
+                                distribution: DISTRIBUTION
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -178,7 +184,8 @@ pipeline {
                                     def buildManifestObj = archiveAssembleUpload(
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
-                                        architecture: 'arm64'
+                                        architecture: 'arm64',
+                                        distribution: DISTRIBUTION
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)

@@ -13,6 +13,11 @@ pipeline {
             trim: true
         )
         string(
+            name: 'DISTRIBUTION',
+            description: 'Distribution to build, e.g. tar, zip, and rpm.',
+            trim: true
+        )
+        string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
@@ -75,6 +80,7 @@ pipeline {
                             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: DISTRIBUTION
                                 snapshot: true
                             )
                             if (fileExists("$WORKSPACE/builds/opensearch/maven")) {

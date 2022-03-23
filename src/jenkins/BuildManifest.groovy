@@ -15,6 +15,7 @@ class BuildManifest implements Serializable {
         String version
         String platform
         String architecture
+        String distribution
 
         Build(Map data) {
             this.id = data.id
@@ -22,6 +23,7 @@ class BuildManifest implements Serializable {
             this.version = data.version
             this.platform = data.platform
             this.architecture = data.architecture
+            this.distribution = data.distribution
         }
 
         String getFilename() {
@@ -110,6 +112,7 @@ class BuildManifest implements Serializable {
             this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
             'builds',
             this.build.getFilename(),
+            this.build.distribution,
             'manifest.yml'
         ].join("/")
     }
@@ -119,6 +122,7 @@ class BuildManifest implements Serializable {
             this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
             'dist',
             this.build.getFilename(),
+            this.build.distribution,
             this.build.getFilenameWithExtension()
         ].join("/")
     }
