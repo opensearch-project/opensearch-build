@@ -5,6 +5,7 @@ void call(Map args = [:]) {
     def minArtifactPath = buildManifest.getMinArtifact()
     def productFilename = buildManifest.build.getFilename()
     def packageName = buildManifest.build.getPackageName()
+    def distribution = buildManifest.build.distribution
 
     def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
@@ -36,14 +37,14 @@ void call(Map args = [:]) {
     echo "Uploading to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "builds/${productFilename}/${minArtifactPath}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/core/${productFilename}/${buildManifest.build.version}/")
-        s3Upload(file: "dist/${productFilename}/${packageName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/bundle/${productFilename}/${buildManifest.build.version}/")
+        s3Upload(file: "builds/${productFilename}/${distribution}/${minArtifactPath}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/core/${productFilename}/${buildManifest.build.version}/")
+        s3Upload(file: "dist/${productFilename}/${distribution}/${packageName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/bundle/${productFilename}/${buildManifest.build.version}/")
     }
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/builds/${productFilename}/manifest.yml",
-            "${baseUrl}/dist/${productFilename}/manifest.yml"
+            "${baseUrl}/builds/${productFilename}/${distribution}/manifest.yml",
+            "${baseUrl}/dist/${productFilename}/${distribution}/manifest.yml"
         ].join('\n')
     )
 }
