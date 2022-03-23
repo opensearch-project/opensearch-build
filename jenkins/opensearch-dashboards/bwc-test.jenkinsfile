@@ -8,6 +8,8 @@ pipeline {
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
+        // DO NOT DELETE: Set from detectTestDockerAgent
+        DOCKER_AGENT = ""
     }
     parameters {
         string(
@@ -59,7 +61,7 @@ pipeline {
             }
             steps {
                 script { 
-                    dockerAgent = detectTestDockerAgent()
+                    DOCKER_AGENT = detectTestDockerAgent()
                 }
             }
         }
@@ -67,8 +69,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image dockerAgent.image
-                    args dockerAgent.args
+                    image DOCKER_AGENT.image
+                    args DOCKER_AGENT.args
                     alwaysPull true
                 }
             }
@@ -116,6 +118,7 @@ pipeline {
                         message: 'BWC Tests Successful',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
+                        manifest: TEST_MANIFEST,
                     )
 
                     postCleanup()
@@ -131,6 +134,7 @@ pipeline {
                         message: 'Failed BWC Tests',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
+                        manifest: TEST_MANIFEST,
                     )
 
                     postCleanup()

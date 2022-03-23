@@ -21,9 +21,9 @@ class RunBwcTestScriptLibTester extends LibFunctionTester {
     }
 
     void parameterInvariantsAssertions(call) {
-        assertThat(call.args.buildManifest.first(), notNullValue())
-        assertThat(call.args.testManifest.first(), notNullValue())
-        assertThat(call.args.buildId.first(), notNullValue())
+        assertThat(call.args.buildManifest.first().toString(), notNullValue())
+        assertThat(call.args.testManifest.first().toString(), notNullValue())
+        assertThat(call.args.buildId.first().toString(), notNullValue())
     }
 
     boolean expectedParametersMatcher(call) {
