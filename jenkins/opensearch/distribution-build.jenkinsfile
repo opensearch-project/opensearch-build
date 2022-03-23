@@ -83,12 +83,15 @@ pipeline {
                                 distribution: DISTRIBUTION,
                                 snapshot: true
                             )
-                            if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
+
+                            String mavenPath = "$WORKSPACE/builds/opensearch/${DISTRIBUTION}/maven"
+
+                            if (fileExists(mavenPath)) {
                                 withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                                    sh('$WORKSPACE/publish/publish-snapshot.sh $mavenPath')
                                 }
                             } else {
-                                echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
+                                echo "Skipping publishing snapshots, $mavenPath does not exist."
                             }
                             echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
