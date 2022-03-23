@@ -40,11 +40,11 @@ pipeline {
                 script {
                     if (AGENT_LABEL == '') {
                         currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
+                        error("BWC Tests failed to start. Missing parameter: AGENT_LABEL.")
                     }
                     if (!fileExists("manifests/${TEST_MANIFEST}")) {
                         currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Test manifest not found in manifests/${TEST_MANIFEST}.")
+                        error("BWC Tests failed to start. Test manifest not found in manifests/${TEST_MANIFEST}.")
                     }
                     env.BUILD_JOB_NAME = currentBuild.upstreamBuilds ? 
                         currentBuild.upstreamBuilds[0].fullProjectName : 
@@ -66,7 +66,7 @@ pipeline {
                 }
             }
         }
-        stage('integ-test') {
+        stage('bwc-test') {
             agent {
                 docker {
                     label AGENT_LABEL
@@ -86,7 +86,7 @@ pipeline {
                     echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
 
-                    runIntegTestScript(
+                    runBwcTestScript(
                         jobName: BUILD_JOB_NAME,
                         buildManifest: BUILD_MANIFEST,
                         testManifest: "manifests/${TEST_MANIFEST}",
@@ -113,10 +113,10 @@ pipeline {
         success {
             node(AGENT_LABEL) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
                     publishNotification(
                         icon: ':white_check_mark:',
-                        message: 'Integration Tests Successful',
+                        message: 'BWC Tests Successful',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
                         manifest: TEST_MANIFEST,
@@ -129,10 +129,10 @@ pipeline {
         failure {
             node(AGENT_LABEL) {
                 script  {
-                    def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
+                    def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
                     publishNotification(
                         icon: ':warning:',
-                        message: 'Failed Integration Tests',
+                        message: 'Failed BWC Tests',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
                         manifest: TEST_MANIFEST,

@@ -11,11 +11,11 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestRunIntegTestScript extends BuildPipelineTest {
+class TestRunBwcTestScript extends BuildPipelineTest {
 
     @Test
-    public void TestRunIntegTestScript() {
-        this.registerLibTester(new RunIntegTestScriptLibTester(
+    public void TestRunBwcTestScript() {
+        this.registerLibTester(new RunBwcTestScriptLibTester(
             'dummy_job',
             'tests/jenkins/data/opensearch-1.3.0-build.yml',
             'tests/jenkins/data/opensearch-1.3.0-test.yml',
@@ -23,12 +23,12 @@ class TestRunIntegTestScript extends BuildPipelineTest {
             )
         )
 
-        super.testPipeline("tests/jenkins/jobs/RunIntegTestScript_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/RunBwcTestScript_Jenkinsfile")
     }
 
     @Test
-    public void TestRunIntegTestScript_OpenSearch_Dashboards() {
-        this.registerLibTester(new RunIntegTestScriptLibTester(
+    public void TestRunBwcTestScript_OpenSearch_Dashboards() {
+        this.registerLibTester(new RunBwcTestScriptLibTester(
             'dummy_job',
             'tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml',
             'tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml',
@@ -36,6 +36,6 @@ class TestRunIntegTestScript extends BuildPipelineTest {
             )
         )
 
-        super.testPipeline("tests/jenkins/jobs/RunIntegTestScript_OpenSearch_Dashboards_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/RunBwcTestScript_OpenSearch_Dashboards_Jenkinsfile")
     }
 }
