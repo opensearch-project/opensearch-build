@@ -2,6 +2,7 @@
       integ-test.legacySCM(groovy.lang.Closure)
       integ-test.library({identifier=jenkins@20211118, retriever=null})
       integ-test.pipeline(groovy.lang.Closure)
+         integ-test.timeout({time=3, unit=HOURS})
          integ-test.echo(Executing on agent [label:none])
          integ-test.stage(verify-parameters, groovy.lang.Closure)
             integ-test.echo(Executing on agent [label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host])

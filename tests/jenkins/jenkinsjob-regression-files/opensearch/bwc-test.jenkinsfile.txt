@@ -2,6 +2,7 @@
       bwc-test.legacySCM(groovy.lang.Closure)
       bwc-test.library({identifier=jenkins@20211118, retriever=null})
       bwc-test.pipeline(groovy.lang.Closure)
+         bwc-test.timeout({time=3, unit=HOURS})
          bwc-test.echo(Executing on agent [label:none])
          bwc-test.stage(verify-parameters, groovy.lang.Closure)
             bwc-test.echo(Executing on agent [label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host])
