@@ -92,7 +92,8 @@ pipeline {
                             }
                             echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()]
+                                fileActions: [createSha512Checksums()],
+                                distribution: DISTRIBUTION
                             )
                         }
                     }
@@ -121,7 +122,8 @@ pipeline {
                             )
                             echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()]
+                                fileActions: [createSha512Checksums()],
+                                distribution: DISTRIBUTION
                             )
                         }
                     }

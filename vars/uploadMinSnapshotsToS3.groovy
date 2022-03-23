@@ -5,7 +5,7 @@ void call(Map args = [:]) {
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
 
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
-    echo("Retreving build manifest from: $WORKSPACE/builds/${inputManifest.build.getFilename()}/manifest.yml")
+    echo("Retreving build manifest from: $WORKSPACE/builds/${inputManifest.build.getFilename()}/${args.distribution}/manifest.yml")
 
     productName = inputManifest.build.getFilename()
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/builds/${productName}/manifest.yml"))
