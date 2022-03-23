@@ -249,7 +249,7 @@ Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArti
 - All tests for jenkins job should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - All tests should have a `setUp()` which is used to set the variables associated with the job
 - Add setups for all libraries used in the job using `this.registerLibTester` with appropriate values
-(Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
+(Eg: [TestDataPrepperReleaseArtifacts](tests/jenkins/TestDataPrepperReleaseArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
 
 #### Tests for jenkins libraries
 
