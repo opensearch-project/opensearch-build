@@ -13,7 +13,7 @@ def call(Map args = [:]) {
 
     unzip(zipFile: "archived-builds.zip")
 
-    String buildManifest = "builds/${inputManifestObj.build.getFilename()}/manifest.yml"
+    String buildManifest = "builds/${inputManifestObj.build.getFilename()}/${args.distribution}/manifest.yml"
     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: buildManifest))
 
     assembleUpload(
