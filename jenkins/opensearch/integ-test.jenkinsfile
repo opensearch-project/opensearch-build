@@ -7,7 +7,6 @@ pipeline {
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
     }
     tools {
-        jdk "JDK14"
         maven "maven-3.8.2"
     }
     parameters {

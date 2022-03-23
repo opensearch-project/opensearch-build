@@ -5,11 +5,8 @@ pipeline {
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
-        // DO NOT DELETE: Set from detectTestDockerAgent
-        DOCKER_AGENT = ""
     }
     tools {
-        jdk "JDK14"
         maven "maven-3.8.2"
     }
     parameters {
