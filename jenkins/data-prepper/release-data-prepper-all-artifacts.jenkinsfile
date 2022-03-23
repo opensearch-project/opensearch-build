@@ -1,11 +1,15 @@
 lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
     agent {
         docker {
             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+            image 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-data-prepper-pipeline-v1'
             alwaysPull true
+            args '-u root'
         }
     }
     parameters {
@@ -43,7 +47,7 @@ pipeline {
                 script {
                     signatureType = '.sig'
                     signArtifacts(
-                            artifactPath: 'archive',
+                            artifactPath: "${WORKSPACE}/archive",
                             sigtype: signatureType,
                             platform: 'linux'
                     )
@@ -53,10 +57,9 @@ pipeline {
         stage('Sign Maven Artifacts') {
             steps {
                 script {
-                    signatureType = '.sig'
                     signArtifacts(
-                            artifactPath: 'maven',
-                            sigtype: signatureType,
+                            artifactPath: "${WORKSPACE}/maven",
+                            type: 'maven',
                             platform: 'linux'
                     )
                 }
@@ -80,13 +83,16 @@ pipeline {
                         destinationType: 'docker',
                         destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
                     )
+                    copyContainer(
+                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        destinationImagePath: "opensearchproject/data-prepper:latest",
+                        destinationType: 'docker',
+                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                    )
                 }
             }
         }
         stage('Upload Artifacts to Sonatype') {
-            tools {
-                maven "maven-3.8.2"
-            }
             environment {
                 REPO_URL = "https://aws.oss.sonatype.org/"
                 STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
@@ -105,6 +111,7 @@ pipeline {
     post() {
         always {
             script {
+                sh("rm -rf $WORKSPACE/*")
                 postCleanup()
             }
         }
