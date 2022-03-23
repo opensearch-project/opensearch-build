@@ -8,14 +8,14 @@ void call(Map args = [:]) {
     echo("Retreving build manifest from: $WORKSPACE/builds/${inputManifest.build.getFilename()}/${args.distribution}/manifest.yml")
 
     productName = inputManifest.build.getFilename()
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/builds/${productName}/manifest.yml"))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/builds/${productName}/${args.distribution}/manifest.yml"))
     version = buildManifest.build.version
     architecture = buildManifest.build.architecture
     platform = buildManifest.build.platform
     id = buildManifest.build.id
 
     // Setup src & dst variables for artifacts
-    srcDir = "${WORKSPACE}/builds/${productName}/dist"
+    srcDir = "${WORKSPACE}/builds/${productName}/${args.distribution}/dist"
     dstDir = "snapshots/core/${productName}/${version}"
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
 
