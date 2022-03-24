@@ -79,7 +79,6 @@ class Dist(ABC):
         return self.archive_path
 
     def build(self, name: str, dest: str) -> None:
-        print("123123")
         self.__build__(name, dest)
         path = os.path.join(dest, name)
         shutil.copyfile(name, path)
