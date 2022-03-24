@@ -24,6 +24,7 @@ def current_platform() -> str:
     else:
         return subprocess.check_output(["uname", "-s"]).decode().strip().lower()
 
+
 def rpm_architecture_alt(architecture: str) -> str:
     # This would convert arch from "current_architecture" to rpm specific architecture alternatives
 

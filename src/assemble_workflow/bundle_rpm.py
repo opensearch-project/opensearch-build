@@ -8,7 +8,7 @@ import logging
 import os
 import shutil
 import subprocess
-from functools import reduce
+
 from system.os import rpm_architecture_alt
 
 
