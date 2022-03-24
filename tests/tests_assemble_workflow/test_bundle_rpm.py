@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from assemble_workflow.bundle_rpm import BundleRpm
+from manifests.build_manifest import BuildManifest
 
 
 class TestBundleRpm(unittest.TestCase):
@@ -20,6 +21,7 @@ class TestBundleRpm(unittest.TestCase):
         self.package_path = os.path.join(self.artifacts_path, self.package_name)
 
         self.bundle_rpm = BundleRpm('opensearch', self.package_path, 'opensearch-1.3.0')
+        self.manifest = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-rpm-1.3.0.yml"))
 
     @patch("builtins.open")
     @patch("os.path.exists", return_value=False)
@@ -45,10 +47,10 @@ class TestBundleRpm(unittest.TestCase):
     @patch("subprocess.check_call")
     def test_build_rpm(self, check_call_mock: Mock, shutil_move_mock: Mock, builtins_open: Mock, os_walk_mock: Mock) -> None:
 
-        self.bundle_rpm.build(self.package_path, self.artifacts_path, os.path.join(self.artifacts_path, 'opensearch-1.3.0'))
+        self.bundle_rpm.build(self.package_path, self.artifacts_path, os.path.join(self.artifacts_path, 'opensearch-1.3.0'), self.manifest.build)
         args_list = check_call_mock.call_args_list
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' opensearch.rpm.spec", args_list[0][0][0])
+        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 1.3.0' --define '_architecture_alt x86_64' opensearch.rpm.spec", args_list[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 3)

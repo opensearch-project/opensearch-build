@@ -23,3 +23,14 @@ def current_platform() -> str:
         return "windows"
     else:
         return subprocess.check_output(["uname", "-s"]).decode().strip().lower()
+
+
+def rpm_architecture(architecture: str) -> str:
+    # This would convert arch from "current_architecture" to rpm specific architecture alternatives
+
+    rpm_architecture_map = {
+        "x64": "x86_64",
+        "arm64": "aarch64",
+    }
+
+    return rpm_architecture_map[architecture]
