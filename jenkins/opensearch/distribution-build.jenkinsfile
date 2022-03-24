@@ -13,11 +13,6 @@ pipeline {
             trim: true
         )
         string(
-            name: 'DISTRIBUTION',
-            description: 'Distribution to build, e.g. tar, zip, and rpm.',
-            trim: true
-        )
-        string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
             trim: true
@@ -63,7 +58,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshot-x64') {
+                stage('build-snapshot-x64-tar') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
@@ -80,11 +75,11 @@ pipeline {
                             git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
-                                distribution: DISTRIBUTION,
+                                distribution: 'tar',
                                 snapshot: true
                             )
 
-                            String mavenPath = "$WORKSPACE/builds/opensearch/${DISTRIBUTION}/maven"
+                            String mavenPath = "$WORKSPACE/builds/opensearch/tar/maven"
 
                             if (fileExists(mavenPath)) {
                                 withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
@@ -96,7 +91,7 @@ pipeline {
                             echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
-                                distribution: DISTRIBUTION
+                                distribution: 'tar'
                             )
                         }
                     }
@@ -106,7 +101,50 @@ pipeline {
                         }
                     }
                 }
-                stage('build-snapshot-arm64') {
+                stage('build-snapshot-x64-rpm') {
+                    environment {
+                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
+                    }
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
+                            buildManifest(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'rpm',
+                                snapshot: true
+                            )
+
+                            String mavenPath = "$WORKSPACE/builds/opensearch/rpm/maven"
+
+                            if (fileExists(mavenPath)) {
+                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                    sh('$WORKSPACE/publish/publish-snapshot.sh $mavenPath')
+                                }
+                            } else {
+                                echo "Skipping publishing snapshots, $mavenPath does not exist."
+                            }
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'rpm'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }                
+                stage('build-snapshot-arm64-tar') {
                     agent {
                         docker {
                             label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
@@ -120,13 +158,13 @@ pipeline {
                             git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
-                                distribution: DISTRIBUTION,
+                                distribution: 'tar',
                                 snapshot: true
                             )
                             echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
-                                distribution: DISTRIBUTION
+                                distribution: 'tar'
                             )
                         }
                     }
@@ -136,7 +174,37 @@ pipeline {
                         }
                     }
                 }
-                stage('build-and-test-x64') {
+                stage('build-snapshot-arm64-rpm') {
+                    agent {
+                        docker {
+                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
+                            buildManifest(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'rpm',
+                                snapshot: true
+                            )
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'rpm'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }                
+                stage('build-and-test-x64-tar') {
                     agent {
                         docker {
                             label AGENT_X64
@@ -149,7 +217,7 @@ pipeline {
                         script {
                             def buildManifestObj = buildAssembleUpload(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
-                                distribution: DISTRIBUTION
+                                distribution: 'tar'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -210,7 +278,56 @@ pipeline {
                         }
                     }
                 }
-                stage('build-and-test-arm64') {
+                stage('build-and-test-x64-rpm') {
+                    agent {
+                        docker {
+                            label AGENT_X64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'rpm'
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_X64 = artifactUrl
+
+                            echo "buildManifestUrl (x64): ${buildManifestUrl}"
+                            echo "artifactUrl (x64): ${artifactUrl}"
+
+                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                            if (!skipIntegTests) {
+                                def integTestResults =
+                                    build job: INTEG_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                    ]
+
+                                createTestResultsMessage(
+                                    testType: "Integ Tests (x64)",
+                                    status: integTestResults.getResult(),
+                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                )
+                            } 
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-and-test-arm64-tar') {
                     agent {
                         docker {
                             label AGENT_ARM64
@@ -223,7 +340,56 @@ pipeline {
                         script {
                             def buildManifestObj = buildAssembleUpload(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
-                                distribution: DISTRIBUTION
+                                distribution: 'tar'
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_ARM64 = artifactUrl
+
+                            echo "buildManifestUrl (arm64): ${buildManifestUrl}"
+                            echo "artifactUrl (arm64): ${artifactUrl}"
+
+                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                            if (!skipIntegTests) {
+                                def integTestResults =
+                                    build job: INTEG_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                    ]
+
+                                createTestResultsMessage(
+                                    testType: "Integ Tests (arm64)",
+                                    status: integTestResults.getResult(),
+                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                )
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-and-test-arm64-rpm') {
+                    agent {
+                        docker {
+                            label AGENT_ARM64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'rpm'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
