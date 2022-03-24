@@ -312,7 +312,7 @@ pipeline {
                     if (params.PUBLISH_NOTIFICATION) { 
                         publishNotification(
                             icon: ':warning:',
-                            message: 'Failed Build',
+                            message: buildFailureMessage(),
                             credentialsId: 'BUILD_NOTICE_WEBHOOK',
                             manifest: "${INPUT_MANIFEST}"
                         )
