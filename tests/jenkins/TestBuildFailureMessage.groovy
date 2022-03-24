@@ -17,15 +17,17 @@ class TestBuildFailureMessage extends BasePipelineTestCPS {
     def buildFailureMessage
 
     @Before
+    @Override
     void setUp() {
         super.setUp()
+        def currentBuild = binding.getVariable('currentBuild')
+        binding.setVariable("currentBuild", currentBuild)
         buildFailureMessage = loadScript("../../vars/buildFailureMessage.groovy")
     }
 
     @Test
     void testCall() {
         def result = buildFailureMessage()
-        assertEquals "result:", result
     }
 
 
