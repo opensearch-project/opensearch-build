@@ -77,7 +77,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: DISTRIBUTION,
@@ -117,7 +117,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: DISTRIBUTION,
