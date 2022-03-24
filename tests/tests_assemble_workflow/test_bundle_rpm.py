@@ -47,10 +47,10 @@ class TestBundleRpm(unittest.TestCase):
     @patch("subprocess.check_call")
     def test_build_rpm(self, check_call_mock: Mock, shutil_move_mock: Mock, builtins_open: Mock, os_walk_mock: Mock) -> None:
 
-        self.bundle_rpm.build(self.package_path, self.artifacts_path, os.path.join(self.artifacts_path, 'opensearch-1.3.0'), self.manifest.build)
+        self.bundle_rpm.build(self.package_path, self.artifacts_path, os.path.join(self.artifacts_path, 'opensearch-1.3.0'), self.manifest.build.__to_dict__())
         args_list = check_call_mock.call_args_list
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' opensearch.rpm.final.spec", args_list[0][0][0])
+        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 1.3.0' --define '_architecture_alt x86_64' opensearch.rpm.spec", args_list[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 3)

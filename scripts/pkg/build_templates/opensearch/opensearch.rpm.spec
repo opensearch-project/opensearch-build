@@ -10,15 +10,17 @@
 %define data_dir %{_sharedstatedir}/%{name}
 %define log_dir %{_localstatedir}/log/%{name}
 %define pid_dir %{_localstatedir}/run/%{name}
+%{!?_version: %define _version 0.0.0 }
+%{!?_architecture_alt: %define _architecture_alt x86_64 }
 
 Name: opensearch
-Version: ##VERSION##
+Version: %{_version}
 Release: 1
 License: Apache-2.0
 Summary: An open source distributed and RESTful search engine
 URL: https://opensearch.org/
 Group: Application/Internet
-ExclusiveArch: ##ARCHITECTURE_ALT##
+ExclusiveArch: %{_architecture_alt}
 #Requires: #java-11-amazon-corretto-devel
 AutoReqProv: no
 
@@ -160,6 +162,6 @@ exit 0
 %{product_dir}/logs
 
 %changelog
-* Mon Mar 17 2022 OpenSearch Team <opensearch@amazon.com>
+* Mon Mar 21 2022 OpenSearch Team <opensearch@amazon.com>
 - Initial package
 

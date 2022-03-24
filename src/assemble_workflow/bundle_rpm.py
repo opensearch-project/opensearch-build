@@ -9,8 +9,7 @@ import os
 import shutil
 import subprocess
 from functools import reduce
-
-from manifests.build_manifest import BuildManifest
+from system.os import rpm_architecture_alt
 
 
 class BundleRpm:
@@ -75,7 +74,7 @@ class BundleRpm:
             with open(min_bin_env_path, 'wb') as fp:
                 fp.write(min_bin_env_lines.replace('source', '#source').encode('ascii'))
 
-    def build(self, name: str, dest: str, archive_path: str, build_kls: BuildManifest.Build) -> None:
+    def build(self, name: str, dest: str, archive_path: str, build_dict: dict) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
         # mainly due to rpm requires several different setups compares to tarball and zip
         ext_dest = os.path.dirname(archive_path)
@@ -92,27 +91,15 @@ class BundleRpm:
         shutil.move(f"{min_bin_env_path}.backup", min_bin_env_path)
         shutil.move(min_dest_path, min_source_path)
 
-        # Append correct value substitute to the spec file
-        architecture_alt_rpm = {
-            "x64": "x86_64",
-            "arm64": "aarch64",
-        }
-        replaces = ('##VERSION##', build_kls.version), ('##ARCHITECTURE_ALT##', architecture_alt_rpm[build_kls.architecture])
-
-        with open(os.path.join(ext_dest, f"{self.filename}.rpm.spec"), 'r') as fp:
-            spec_lines = fp.read()
-
-        with open(os.path.join(ext_dest, f"{self.filename}.rpm.final.spec"), 'w') as fp:
-            fp.write(reduce(lambda a, key_value: a.replace(*key_value), replaces, spec_lines))
-
         # Run bundle rpmbuild
         bundle_cmd = " ".join(
             [
                 'rpmbuild',
                 '-bb',
-                '--define',
-                f"'_topdir {ext_dest}'",
-                f"{self.filename}.rpm.final.spec",
+                f"--define '_topdir {ext_dest}'",
+                f"--define '_version {build_dict['version']}'",
+                f"--define '_architecture_alt {rpm_architecture_alt(build_dict['architecture'])}'",
+                f"{self.filename}.rpm.spec",
             ]
         )
 
