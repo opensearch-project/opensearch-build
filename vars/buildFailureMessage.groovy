@@ -4,7 +4,7 @@ def call(){
     def String ERROR_STRING = "ERROR"
     def String message = ""
     def String delimiter = ","
-    Reader performance_log = currentBuild.getRawBuild().getLogReader().join('\n')
+    Reader performance_log = currentBuild.getRawBuild().getLogReader()
     String logContent = IOUtils.toString(performance_log)
     performance_log.close();
     performance_log = null
