@@ -10,6 +10,7 @@ package jenkins.tests
 
 import org.junit.*
 import com.lesfurets.jenkins.unit.*
+import com.lesfurets.jenkins.unit.cps.BasePipelineTestCPS
 import static groovy.test.GroovyAssert.*
 
 class TestBuildFailureMessage extends BasePipelineTestCPS {
@@ -22,12 +23,12 @@ class TestBuildFailureMessage extends BasePipelineTestCPS {
         super.setUp()
         def currentBuild = binding.getVariable('currentBuild')
         binding.setVariable("currentBuild", currentBuild)
-        buildFailureMessage = loadScript("../../vars/buildFailureMessage.groovy")
     }
 
     @Test
     void testCall() {
-        def result = buildFailureMessage()
+        buildFailureMessage = loadScript("../../vars/buildFailureMessage.groovy")
+        printCallStack()
     }
 
 
