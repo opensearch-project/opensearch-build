@@ -7,6 +7,7 @@
 from typing import Type
 
 from assemble_workflow.dist import Dist, DistRpm, DistTar, DistZip
+from manifests.build_manifest import BuildManifest
 
 
 class Distribution:
@@ -25,8 +26,8 @@ class Dists:
     }
 
     @classmethod
-    def create_dist(cls, name: str, path: str, min_path: str, build_dict: dict) -> Dist:
-        distribution = build_dict['distribution'] or 'tar'
+    def create_dist(cls, name: str, path: str, min_path: str, build_cls: BuildManifest.Build) -> Dist:
+        distribution = build_cls.distribution or 'tar'
         dist_cls = cls.DISTRIBUTIONS_MAP[distribution].cls
 
-        return dist_cls(name, path, min_path, build_dict)
+        return dist_cls(name, path, min_path, build_cls)

@@ -29,9 +29,9 @@ class TestDists(unittest.TestCase):
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['rpm'].extension, '.rpm')
 
     def test_create_dist(self) -> None:
-        return_cls_tar = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_tar.build.__to_dict__())
+        return_cls_tar = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_tar.build)
         self.assertEqual(return_cls_tar.__class__.__name__, 'DistTar')
-        return_cls_zip = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_zip.build.__to_dict__())
+        return_cls_zip = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_zip.build)
         self.assertEqual(return_cls_zip.__class__.__name__, 'DistZip')
-        return_cls_rpm = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_rpm.build.__to_dict__())
+        return_cls_rpm = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_rpm.build)
         self.assertEqual(return_cls_rpm.__class__.__name__, 'DistRpm')

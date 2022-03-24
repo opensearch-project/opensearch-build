@@ -11,7 +11,7 @@
 %define log_dir %{_localstatedir}/log/%{name}
 %define pid_dir %{_localstatedir}/run/%{name}
 %{!?_version: %define _version 0.0.0 }
-%{!?_architecture_alt: %define _architecture_alt x86_64 }
+%{!?_architecture: %define _architecture x86_64 }
 
 Name: opensearch
 Version: %{_version}
@@ -20,7 +20,7 @@ License: Apache-2.0
 Summary: An open source distributed and RESTful search engine
 URL: https://opensearch.org/
 Group: Application/Internet
-ExclusiveArch: %{_architecture_alt}
+ExclusiveArch: %{_architecture}
 #Requires: #java-11-amazon-corretto-devel
 AutoReqProv: no
 
@@ -35,6 +35,7 @@ For more information, see: https://opensearch.org/
 # No-op. This is all pre-built Java. Nothing to do here.
 
 %install
+set -e
 cd %{_topdir} && pwd
 # Create necessary directories
 mkdir -p %{buildroot}%{pid_dir}
@@ -42,7 +43,7 @@ mkdir -p %{buildroot}%{product_dir}/plugins
 # Install directories/files
 cp -a etc usr var %{buildroot}
 chmod 0755 %{buildroot}%{product_dir}/bin/*
-if ls %{buildroot}%{product_dir}/plugins | grep opensearch-security; then
+if [ -d %{buildroot}%{product_dir}/plugins/opensearch-security ]; then
     chmod 0755 %{buildroot}%{product_dir}/plugins/opensearch-security/tools/*
 fi
 # Pre-populate the folders to ensure rpm build success even without all plugins
@@ -62,6 +63,7 @@ chmod -Rf a+rX,u+w,g-w,o-w %{buildroot}/*
 exit 0
 
 %pre
+set -e
 # Stop existing service
 if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/null; then
     echo "Stop existing %{name}.service"
@@ -75,8 +77,9 @@ getent passwd %{name} > /dev/null 2>&1 || \
 exit 0
 
 %post
+set -e
 # Apply Security Settings
-if ls %{product_dir}/plugins | grep opensearch-security; then
+if [ -d %{product_dir}/plugins/opensearch-security ]; then
     sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
 fi
 chown -R %{name}.%{name} %{config_dir}
@@ -105,11 +108,14 @@ echo " sudo systemctl daemon-reload"
 echo " sudo systemctl enable opensearch.service"
 echo "### You can start opensearch service by executing"
 echo " sudo systemctl start opensearch.service"
-echo "### Created opensearch demo certificates in %{config_dir}/certs"
-echo " See demo certs creation log in %{log_dir}/install_demo_configuration.log"
+if [ -d %{product_dir}/plugins/opensearch-security ]; then
+    echo "### Created opensearch demo certificates in %{config_dir}/certs"
+    echo " See demo certs creation log in %{log_dir}/install_demo_configuration.log"
+fi
 exit 0
 
 %preun
+set -e
 if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/null; then
     echo "Stop existing %{name}.service"
     systemctl --no-reload stop %{name}.service

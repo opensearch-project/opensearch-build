@@ -13,12 +13,13 @@ import zipfile
 from abc import ABC, abstractmethod
 
 from assemble_workflow.bundle_rpm import BundleRpm
+from manifests.build_manifest import BuildManifest
 from system.zip_file import ZipFile
 
 
 class Dist(ABC):
-    def __init__(self, name: str, path: str, min_path: str, build_dict: dict) -> None:
-        self.build_dict = build_dict
+    def __init__(self, name: str, path: str, min_path: str, build_cls: BuildManifest.Build) -> None:
+        self.build_cls = build_cls
         self.name = name
         self.filename = name.lower()
         self.path = path
@@ -114,4 +115,4 @@ class DistRpm(Dist):
         BundleRpm(self.filename, self.path, self.min_path).extract(dest)
 
     def __build__(self, name: str, dest: str) -> None:
-        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_dict)
+        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)

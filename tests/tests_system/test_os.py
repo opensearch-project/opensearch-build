@@ -7,7 +7,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from system.os import current_architecture, current_platform, rpm_architecture_alt
+from system.os import current_architecture, current_platform, rpm_architecture
 
 
 class TestOs(unittest.TestCase):
@@ -47,6 +47,6 @@ class TestOs(unittest.TestCase):
         self.assertTrue(current_platform() == "windows")
 
     # rpm_architecture_alt
-    def test_rpm_architecture_alt(self) -> None:
-        self.assertTrue(rpm_architecture_alt('x64') == 'x86_64')
-        self.assertTrue(rpm_architecture_alt('arm64') == 'aarch64')
+    def test_rpm_architecture(self) -> None:
+        self.assertEqual(rpm_architecture('x64'), 'x86_64')
+        self.assertEqual(rpm_architecture('arm64'), 'aarch64')
