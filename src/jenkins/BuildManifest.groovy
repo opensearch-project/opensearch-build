@@ -50,7 +50,7 @@ class BuildManifest implements Serializable {
                     this.version,
                     this.platform,
                     this.architecture,
-            ].join('-') + getExtension()
+            ].join('-') + '.' +getExtension()
         }
     }
 
