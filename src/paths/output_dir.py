@@ -15,7 +15,7 @@ class OutputDir(ABC):
             cwd or os.getcwd(),
             distribution,
             parent_dir,
-            filename            
+            filename
         )
 
         if makedirs:
