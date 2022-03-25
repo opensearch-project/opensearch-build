@@ -7,29 +7,20 @@
  */
 
 package jenkins.tests
-
+import jenkins.tests.BuildPipelineTest
 import org.junit.*
-import com.lesfurets.jenkins.unit.*
-import com.lesfurets.jenkins.unit.cps.BasePipelineTestCPS
-import static groovy.test.GroovyAssert.*
 
-class TestBuildFailureMessage extends BasePipelineTestCPS {
 
-    def buildFailureMessage
+class TestBuildFailureMessage extends BuildPipelineTest {
 
     @Before
-    @Override
     void setUp() {
+        this.registerLibTester(new BuildFailureMessageLibTester())
         super.setUp()
-        def currentBuild = binding.getVariable('currentBuild')
-        binding.setVariable("currentBuild", currentBuild)
     }
 
     @Test
-    void testCall() {
-        buildFailureMessage = loadScript("../../vars/buildFailureMessage.groovy")
-        printCallStack()
+    void testSignArtifacts() {
+        super.testPipeline("jobs/BuildFailureMessage_Jenkinsfile")
     }
-
-
 }
