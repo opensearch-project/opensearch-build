@@ -18,7 +18,7 @@ class BundleLocation(abc.ABC):
         pass
 
     def get_build_location(self, target_name: str) -> str:
-        return self.join("builds", self.filename, self.distribution, target_name)
+        return self.join(self.distribution, "builds", self.filename, target_name)
 
     def get_bundle_location(self, target_name: str) -> str:
-        return self.join("dist", self.filename, self.distribution, target_name)
+        return self.join(self.distribution, "dist", self.filename, target_name)

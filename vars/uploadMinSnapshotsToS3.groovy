@@ -5,10 +5,10 @@ void call(Map args = [:]) {
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
 
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
-    echo("Retreving build manifest from: $WORKSPACE/builds/${inputManifest.build.getFilename()}/${args.distribution}/manifest.yml")
+    echo("Retreving build manifest from: $WORKSPACE/${args.distribution}/builds/${inputManifest.build.getFilename()}/manifest.yml")
 
     productName = inputManifest.build.getFilename()
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/builds/${productName}/${args.distribution}/manifest.yml"))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: "$WORKSPACE/${args.distribution}/builds/${productName}/manifest.yml"))
     version = buildManifest.build.version
     architecture = buildManifest.build.architecture
     platform = buildManifest.build.platform
@@ -16,14 +16,9 @@ void call(Map args = [:]) {
     extension = buildManifest.build.getExtension()
 
     // Setup src & dst variables for artifacts
-    srcDir = "${WORKSPACE}/builds/${productName}/${args.distribution}/dist"
+    srcDir = "${WORKSPACE}/${args.distribution}/builds/${productName}/dist"
     dstDir = "snapshots/core/${productName}/${version}"
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
-
-    if (args.distribution == 'rpm') {
-        architectureName = (architecture == 'x64') ? 'x86_64' : 'aarch64'
-        baseName = "${productName}-min-${version}.${architectureName}"
-    }
 
     // Create checksums
     echo("Create .sha512 for Min Snapshots Artifacts")

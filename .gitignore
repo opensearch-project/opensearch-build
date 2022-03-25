@@ -21,6 +21,9 @@ out.txt
 /dist/
 /test-results/
 
+/rpm/
+/tar/
+
 /.vscode/
 
 .project
