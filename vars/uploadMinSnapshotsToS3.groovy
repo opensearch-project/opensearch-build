@@ -22,7 +22,7 @@ void call(Map args = [:]) {
 
     if (args.distribution == 'rpm') {
         architectureName = (architecture == 'x64') ? 'x86_64' : 'aarch64'
-        baseName = "${productName}-min-${version}-${architectureName}"
+        baseName = "${productName}-min-${version}.${architectureName}"
     }
 
     // Create checksums
