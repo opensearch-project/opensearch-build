@@ -241,7 +241,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
 
                                         createTestResultsMessage(
-                                            testType: "Integ Tests (x64)",
+                                            testType: "Integ Tests (x64, tar)",
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
                                         )
@@ -262,7 +262,7 @@ pipeline {
                                             ]
 
                                         createTestResultsMessage(
-                                            testType: "BWC Tests (x64)",
+                                            testType: "BWC Tests (x64, tar)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
                                         )
@@ -335,7 +335,7 @@ pipeline {
                                             ]
 
                                         createTestResultsMessage(
-                                            testType: "BWC Tests (rpm)",
+                                            testType: "BWC Tests (x64, rpm)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
                                         )
