@@ -99,7 +99,7 @@ class BundleRpm:
                 '-bb',
                 f"--define '_topdir {ext_dest}'",
                 f"--define '_version {build_cls.version}'",
-                f"--define '_architecture_alt {rpm_architecture(build_cls.architecture)}'",
+                f"--define '_architecture {rpm_architecture(build_cls.architecture)}'",
                 f"{self.filename}.rpm.spec",
             ]
         )
