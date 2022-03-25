@@ -20,6 +20,11 @@ void call(Map args = [:]) {
     dstDir = "snapshots/core/${productName}/${version}"
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
 
+    if (args.distribution == 'rpm') {
+        architectureName = (architecture == 'x64') ? 'x86_64' : 'aarch64'
+        baseName = "${productName}-min-${version}-${architectureName}"
+    }
+
     // Create checksums
     echo("Create .sha512 for Min Snapshots Artifacts")
     argsMap = [:]
