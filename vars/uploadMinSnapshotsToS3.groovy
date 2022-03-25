@@ -13,6 +13,7 @@ void call(Map args = [:]) {
     architecture = buildManifest.build.architecture
     platform = buildManifest.build.platform
     id = buildManifest.build.id
+    extension = buildManifest.build.getExtension()
 
     // Setup src & dst variables for artifacts
     srcDir = "${WORKSPACE}/builds/${productName}/${args.distribution}/dist"
@@ -28,12 +29,12 @@ void call(Map args = [:]) {
     }
 
     sh """
-        cp ${srcDir}/${baseName}.tar.gz ${srcDir}/${baseName}-latest.tar.gz
-        cp ${srcDir}/${baseName}.tar.gz.sha512 ${srcDir}/${baseName}-latest.tar.gz.sha512
-        sed -i "s/.tar.gz/-latest.tar.gz/g" ${srcDir}/${baseName}-latest.tar.gz.sha512
+        cp ${srcDir}/${baseName}.${extension} ${srcDir}/${baseName}-latest.${extension}
+        cp ${srcDir}/${baseName}.${extension}.sha512 ${srcDir}/${baseName}-latest.${extension}.sha512
+        sed -i "s/.${extension}/-latest.${extension}/g" ${srcDir}/${baseName}-latest.${extension}.sha512
     """
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "${srcDir}/${baseName}-latest.tar.gz", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz")
-        s3Upload(file: "${srcDir}/${baseName}-latest.tar.gz.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.tar.gz.sha512")
+        s3Upload(file: "${srcDir}/${baseName}-latest.${extension}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}")
+        s3Upload(file: "${srcDir}/${baseName}-latest.${extension}.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}.sha512")
     }
 }
