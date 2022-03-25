@@ -52,5 +52,5 @@ class TestBundleRpm(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 1.3.0' --define '_architecture_alt x86_64' opensearch.rpm.spec", args_list[0][0][0])
+        self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 1.3.0' --define '_architecture x86_64' opensearch.rpm.spec", args_list[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 3)
