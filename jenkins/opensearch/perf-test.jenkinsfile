@@ -8,7 +8,7 @@ pipeline {
     environment {
         AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
-        BUNDLE_MANIFEST = "bundle-manifest.yml"
+        BUNDLE_MANIFEST = 'bundle-manifest.yml'
     }
     parameters {
         string(
@@ -194,7 +194,7 @@ pipeline {
 
     post {
         success {
-            node(AGENT_X64) {
+            node(AGENT_LABEL) {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
                     publishNotification(
@@ -209,7 +209,7 @@ pipeline {
             }
         }
         failure {
-            node(AGENT_X64) {
+            node(AGENT_LABEL) {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
                     publishNotification(
