@@ -90,7 +90,7 @@ pipeline {
                         }
                     }
                     when {
-                        environment name: 'HAS_SECURITY', value: 'true'
+                        expression { HAS_SECURITY == true }
                     }
                     steps {
                         script {
@@ -100,8 +100,6 @@ pipeline {
                             )
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                             echo "BUILD_ID: ${BUILD_ID}"
-                            echo "BUILD_ID: ${BUILD_ID}"
-                            echo "Security: ${HAS_SECURITY}"
                             echo "Architecture: ${ARCHITECTURE}"
 
                             lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
@@ -152,7 +150,6 @@ pipeline {
                             )
 
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
-                            echo "BUILD_ID: ${BUILD_ID}"
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "Architecture: ${ARCHITECTURE}"
 

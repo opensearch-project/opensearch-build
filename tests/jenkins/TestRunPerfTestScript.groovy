@@ -33,18 +33,19 @@ class TestRunPerfTestScript extends BuildPipelineTest {
 
     @Test
     public void testRunPerfTestScript_Pipeline() {
-        super.testPipeline("tests/jenkins/jobs/RunPerfTestScript_Jenkinsfile")
+        super.testPipeline("jenkins/opensearch/perf-test.jenkinsfile",
+        "tests/jenkins/jenkinsjob-regression-files/opensearch/perf-test-with-security.jenkinsfile")
     }
 
     @Test
     void testRunPerfTestScript_verifyArtifactDownloads() {
-        runScript('tests/jenkins/jobs/RunPerfTestScript_Jenkinsfile')
+        runScript("jenkins/opensearch/perf-test.jenkinsfile")
 
         def curlCommands = getCommandExecutions('sh', 'curl').findAll {
             shCommand -> shCommand.contains('curl')
         }
 
-        assertThat(curlCommands.size(), equalTo(2))
+        assertThat(curlCommands.size(), equalTo(4))
         assertThat(curlCommands, hasItem(
             "curl test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-bundle.yml".toString()
         ))
@@ -61,7 +62,7 @@ class TestRunPerfTestScript extends BuildPipelineTest {
 
     @Test
     void testRunPerfTestScript_verifyPackageInstallation() {
-        runScript('tests/jenkins/jobs/RunPerfTestScript_Jenkinsfile')
+        runScript("jenkins/opensearch/perf-test.jenkinsfile")
 
         def npmCommands = getCommandExecutions('sh', 'npm').findAll {
             shCommand -> shCommand.contains('npm')
@@ -79,7 +80,7 @@ class TestRunPerfTestScript extends BuildPipelineTest {
 
     @Test
     void testRunPerfTestScript_verifyScriptExecutions() {
-        runScript('tests/jenkins/jobs/RunPerfTestScript_Jenkinsfile')
+        runScript("jenkins/opensearch/perf-test.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
             shCommand -> shCommand.contains('./test.sh')

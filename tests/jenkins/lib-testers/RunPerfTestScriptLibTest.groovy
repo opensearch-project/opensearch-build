@@ -32,23 +32,33 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
             closure.delegate = delegate
             return helper.callClosure(closure)
         })
+        helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("downloadBuildManifest", [Map], {
+            c -> lib.jenkins.BuildManifest.new(readYaml(file: bundleManifest))
+        })
 
-        binding.setVariable('GITHUB_TOKEN', 'test_token')
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host')
+        binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
+        binding.setVariable('ARCHITECTURE', 'x64')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')
-        binding.setVariable('PUBLIC_ARTIFACT_URL', 'test://artifact.url')
-        binding.setVariable('STAGE_NAME', 'test_stage')
-        binding.setVariable('PERF_TEST_CONFIG_LOCATION', 'test_config')
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
-
-        binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
-        binding.setVariable('BUNDLE_MANIFEST', bundleManifest)
         binding.setVariable('BUILD_ID', buildId)
+        binding.setVariable('BUILD_NUMBER', buildId)
+        binding.setVariable('BUILD_URL', 'test://artifact.url')
+        binding.setVariable('BUNDLE_MANIFEST', bundleManifest)
+        binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
+        binding.setVariable('GITHUB_TOKEN', 'test_token')
         binding.setVariable('HAS_SECURITY', security)
+        binding.setVariable('JOB_NAME', 'perf-test')
+        binding.setVariable('PERF_TEST_CONFIG_LOCATION', 'test_config')
+        binding.setVariable('PUBLIC_ARTIFACT_URL', 'test://artifact.url')
+        binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_ITERATIONS', testIterations)
-        binding.setVariable('WARMUP_ITERATIONS', warmupIterations)
         binding.setVariable('TEST_WORKLOAD', workload)
-        binding.setVariable('ARCHITECTURE', 'x64')
+        binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
+        binding.setVariable('WARMUP_ITERATIONS', warmupIterations)
 
     }
 
