@@ -79,7 +79,7 @@ pipeline {
                                 snapshot: true
                             )
 
-                            String mavenPath = "$WORKSPACE/builds/opensearch/tar/maven"
+                            String mavenPath = "$WORKSPACE/tar/builds/opensearch/maven"
 
                             if (fileExists(mavenPath)) {
                                 withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
