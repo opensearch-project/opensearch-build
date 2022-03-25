@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils
 def call(){
     String ERROR_STRING = "ERROR"
     List<String> message = []
-    String delimiter = ","
     Reader performance_log = currentBuild.getRawBuild().getLogReader()
     String logContent = IOUtils.toString(performance_log)
     performance_log.close()
