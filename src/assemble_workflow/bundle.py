@@ -135,7 +135,7 @@ class Bundle(ABC):
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
         logging.info(f"Start creating distribution {self.build.distribution} for {self.min_bundle.name}.")
-        min_dist = Dists.create_dist(self.min_bundle.name, min_dist_path, min_path, self.build.distribution)
+        min_dist = Dists.create_dist(self.min_bundle.name, min_dist_path, min_path, self.build)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")

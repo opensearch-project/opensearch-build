@@ -9,6 +9,9 @@ import os
 import shutil
 import subprocess
 
+from manifests.build_manifest import BuildManifest
+from system.os import rpm_architecture
+
 
 class BundleRpm:
 
@@ -72,7 +75,7 @@ class BundleRpm:
             with open(min_bin_env_path, 'wb') as fp:
                 fp.write(min_bin_env_lines.replace('source', '#source').encode('ascii'))
 
-    def build(self, name: str, dest: str, archive_path: str) -> None:
+    def build(self, name: str, dest: str, archive_path: str, build_cls: BuildManifest.Build) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
         # mainly due to rpm requires several different setups compares to tarball and zip
         ext_dest = os.path.dirname(archive_path)
@@ -94,8 +97,9 @@ class BundleRpm:
             [
                 'rpmbuild',
                 '-bb',
-                '--define',
-                f"'_topdir {ext_dest}'",
+                f"--define '_topdir {ext_dest}'",
+                f"--define '_version {build_cls.version}'",
+                f"--define '_architecture {rpm_architecture(build_cls.architecture)}'",
                 f"{self.filename}.rpm.spec",
             ]
         )

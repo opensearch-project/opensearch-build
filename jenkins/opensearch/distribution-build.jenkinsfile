@@ -23,6 +23,12 @@ pipeline {
             defaultValue: "integ-test",
             trim: true
         )
+        string(
+            name: 'BWC_TEST_JOB_NAME',
+            description: "Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.",
+            defaultValue: "bwc-test",
+            trim: true
+        )
         booleanParam(
             name: 'BUILD_DOCKER',
             description: 'Build docker image or not.',
@@ -157,7 +163,27 @@ pipeline {
                                     status: integTestResults.getResult(),
                                     absoluteUrl: integTestResults.getAbsoluteUrl()
                                 )
-                            } 
+                            }
+
+                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                            if (!skipBwcTests) {
+                                def bwcTestResults =
+                                    build job: BWC_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                    ]
+
+                                createTestResultsMessage(
+                                    testType: "BWC Tests (x64)",
+                                    status: bwcTestResults.getResult(),
+                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                )
+                            }
                         }
                     }
                     post {
@@ -204,6 +230,26 @@ pipeline {
                                     testType: "Integ Tests (arm64)",
                                     status: integTestResults.getResult(),
                                     absoluteUrl: integTestResults.getAbsoluteUrl()
+                                )
+                            }
+
+                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                            if (!skipBwcTests) {
+                                def bwcTestResults =
+                                    build job: BWC_TEST_JOB_NAME,
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                    ]
+
+                                createTestResultsMessage(
+                                    testType: "BWC Tests (arm64)",
+                                    status: bwcTestResults.getResult(),
+                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
                                 )
                             }
                         }
