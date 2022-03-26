@@ -320,7 +320,8 @@ pipeline {
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
                                         )
-                                },
+                                    }
+                                },                            
                                 'bwc-test': {
                                     Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
                                     echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
