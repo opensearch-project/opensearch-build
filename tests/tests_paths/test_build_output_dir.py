@@ -41,7 +41,7 @@ class BuildOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        BuildOutputDir("opensearch-dashboards", "tar" , makedirs=True)
+        BuildOutputDir("opensearch-dashboards", "tar", makedirs=True)
 
         mock_os.path.join.assert_called_once_with(
             mock_cwd,
