@@ -83,7 +83,7 @@ class TestBuildArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_distribution_default(self) -> None:
-        self.assertIsNone(BuildArgs().distribution)
+        self.assertEqual(BuildArgs().distribution, "tar")
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--distribution", "rpm"])
     def test_distribution(self) -> None:

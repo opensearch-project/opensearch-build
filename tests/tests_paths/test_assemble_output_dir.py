@@ -21,10 +21,11 @@ class AssembleOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("opensearch", makedirs=True)
+        AssembleOutputDir("opensearch", "tar", makedirs=True)
 
         mock_os.path.join.assert_called_once_with(
             mock_cwd,
+            "tar",
             "dist",
             "opensearch"
         )
@@ -40,10 +41,11 @@ class AssembleOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("opensearch-dashboards", makedirs=True)
+        AssembleOutputDir("opensearch-dashboards", "tar", makedirs=True)
 
         mock_os.path.join.assert_called_once_with(
             mock_cwd,
+            "tar",
             "dist",
             "opensearch-dashboards"
         )
@@ -55,10 +57,11 @@ class AssembleOutputDirTests(unittest.TestCase):
         mock_dir = MagicMock()
         mock_os.path.join.return_value = mock_dir
 
-        AssembleOutputDir("opensearch", cwd="test_cwd", makedirs=False)
+        AssembleOutputDir("opensearch", "tar", cwd="test_cwd", makedirs=False)
 
         mock_os.path.join.assert_called_once_with(
             "test_cwd",
+            "tar",
             "dist",
             "opensearch"
         )
