@@ -120,7 +120,7 @@ class TestBundleRecorder(unittest.TestCase):
             "artifacts_dir",
             BundleUrlLocation(
                 "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/",
-                "opensearch"
+                "opensearch",
                 "tar"
             )
         )
@@ -155,7 +155,7 @@ class TestBundleRecorder(unittest.TestCase):
                     {
                         "commit_id": "3913d7097934cbfe1fdcf919347f22a597d00b76",
                         "location":
-                            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/builds/opensearch/plugins",
+                            "https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/1.2.0/build-123/platform-mac/arch-amd64/tar/builds/opensearch/plugins",
                         "name": component.name,
                         "ref": "main",
                         "repository": "https://github.com/opensearch-project/job_scheduler",

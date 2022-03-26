@@ -14,11 +14,11 @@ class TestBundleFileLocation(unittest.TestCase):
     def test_opensearch(self) -> None:
         location = BundleFileLocation("dir", "opensearch", "tar")
 
-        self.assertEqual(location.get_bundle_location("sql"), os.path.join("tar", "dir", "dist", "opensearch", "sql"))
-        self.assertEqual(location.get_build_location("sql"), os.path.join("tar", "dir", "builds", "opensearch", "sql"))
+        self.assertEqual(location.get_bundle_location("sql"), os.path.join("dir", "tar", "dist", "opensearch", "sql"))
+        self.assertEqual(location.get_build_location("sql"), os.path.join("dir", "tar", "builds", "opensearch", "sql"))
 
     def test_opensearch_dashboards(self) -> None:
         location = BundleFileLocation("dir", "opensearch-dashboards", "tar")
 
-        self.assertEqual(location.get_bundle_location("sql"), os.path.join("tar", "dir", "dist", "opensearch-dashboards", "sql"))
-        self.assertEqual(location.get_build_location("sql"), os.path.join("tar", "dir", "builds", "opensearch-dashboards", "sql"))
+        self.assertEqual(location.get_bundle_location("sql"), os.path.join("dir", "tar", "dist", "opensearch-dashboards", "sql"))
+        self.assertEqual(location.get_build_location("sql"), os.path.join("dir", "tar", "builds", "opensearch-dashboards", "sql"))
