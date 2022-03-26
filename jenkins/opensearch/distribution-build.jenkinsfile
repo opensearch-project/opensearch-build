@@ -130,7 +130,7 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }                
+                }
                 stage('build-and-test-x64-tar') {
                     agent {
                         docker {

@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from turtle import st
 from paths.output_dir import OutputDir
 
 
