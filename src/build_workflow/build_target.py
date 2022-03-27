@@ -81,7 +81,7 @@ class BuildTarget:
 
     @property
     def compatible_opensearch_dashboards_component_versions(self) -> List[str]:
-        versions = self.compatible_component_versions 
+        versions = self.compatible_component_versions
         versions.extend([self.version + ".0"] if self.version + ".0" not in self.compatible_component_versions else [])
         return versions
 
