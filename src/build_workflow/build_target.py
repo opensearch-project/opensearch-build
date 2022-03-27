@@ -55,7 +55,7 @@ class BuildTarget:
         )
 
     @property
-    def compatible_opensearch_versions(self) -> List[str]:
+    def compatible_core_versions(self) -> List[str]:
         return (
             [BuildTarget.__qualify_version(self.version, self.qualifier, self.snapshot)]
             + self.patches
@@ -78,6 +78,10 @@ class BuildTarget:
             + list(map(lambda version: BuildTarget.__qualify_version(version + ".0", self.qualifier, False), self.patches))
             + list(map(lambda version: BuildTarget.__qualify_version(version + ".0", self.qualifier, True), self.patches))
         )
+
+    @property
+    def compatible_opensearch_dashboards_component_versions(self) -> List[str]:
+        return list(set([self.version + ".0"] + self.compatible_component_versions))
 
     @property
     def compatible_versions(self) -> List[str]:
