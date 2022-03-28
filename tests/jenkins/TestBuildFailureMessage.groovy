@@ -10,14 +10,15 @@ package jenkins.tests
 import jenkins.tests.BuildPipelineTest
 import org.junit.*
 
-
 class TestBuildFailureMessage extends BuildPipelineTest {
+
 
     @Before
     void setUp() {
         this.registerLibTester(new BuildFailureMessageLibTester())
         super.setUp()
-
+        def currentBuild = binding.getVariable('currentBuild')
+        binding.setVariable("currentBuild", currentBuild)
     }
 
     @Test
