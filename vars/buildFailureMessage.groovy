@@ -10,6 +10,7 @@ def call(){
     performance_log = null
     logContent.eachLine() { line ->
         if (line.matches(".*$ERROR_STRING.*")) {
+            line=line.replace("\"", "")
             message.add(line)
         }
     }
