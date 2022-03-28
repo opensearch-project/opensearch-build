@@ -200,15 +200,17 @@ pipeline {
                         }
                     }
                     post {
-                        always {
-                            lib.jenkins.Messages.new(this).add(
-                                "${STAGE_NAME}",
-                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                "\n${env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT}" +
-                                "\n${env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT}"
-                            )
+                        always {      
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT}"
+                                )
 
-                            postCleanup()
+                                postCleanup()
+                            }
                         }
                     }
                 }
@@ -282,14 +284,16 @@ pipeline {
                     }
                     post {
                         always {
-                            lib.jenkins.Messages.new(this).add(
-                                "${STAGE_NAME}",
-                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                "\n${env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT}" +
-                                "\n${env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT}"
-                            )
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT}"
+                                )
 
-                            postCleanup()
+                                postCleanup()
+                            }
                         }
                     }
                 }
@@ -363,14 +367,16 @@ pipeline {
                     }
                     post {
                         always {
-                            lib.jenkins.Messages.new(this).add(
-                                "${STAGE_NAME}",
-                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
-                                "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
-                                "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
-                            )
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
+                                    "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
+                                )
 
-                            postCleanup()
+                                postCleanup()
+                            }
                         }
                     }
                 }
@@ -445,14 +451,16 @@ pipeline {
                     }
                     post {
                         always {
-                            lib.jenkins.Messages.new(this).add(
-                                "${STAGE_NAME}",
-                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
-                                "\n${env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT}" +
-                                "\n${env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT}"
-                            )
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
+                                    "\n${env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT}"
+                                )
 
-                            postCleanup()
+                                postCleanup()
+                            }
                         }
                     }
                 }
