@@ -85,45 +85,50 @@ pipeline {
                             echo "buildManifestUrl (x64): ${buildManifestUrl}"
                             echo "artifactUrl (x64): ${artifactUrl}"
 
-                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
-                            if (!skipIntegTests) {
-                                def integTestResults =
-                                    build job: INTEG_TEST_JOB_NAME,
-                                    propagate: false,
-                                    wait: true,
-                                    parameters: [
-                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
-                                    ]
+                            parallel([
+                                'integ-test': {
+                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    if (!skipIntegTests) {
+                                        def integTestResults =
+                                            build job: INTEG_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
 
-                                createTestResultsMessage(
-                                    testType: "Integ Tests (x64)",
-                                    status: integTestResults.getResult(),
-                                    absoluteUrl: integTestResults.getAbsoluteUrl()
-                                )
-                            }
+                                        createTestResultsMessage(
+                                            testType: "Integ Tests (x64)",
+                                            status: integTestResults.getResult(),
+                                            absoluteUrl: integTestResults.getAbsoluteUrl()
+                                        )
+                                    } 
+                                },
+                                'bwc-test': {
+                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                    if (!skipBwcTests) {
+                                        def bwcTestResults =
+                                            build job: BWC_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
 
-                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
-                            if (!skipBwcTests) {
-                                def bwcTestResults =
-                                    build job: BWC_TEST_JOB_NAME,
-                                    propagate: false,
-                                    wait: true,
-                                    parameters: [
-                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                        string(name: 'AGENT_LABEL', value: AGENT_X64)
-                                    ]
-
-                                createTestResultsMessage(
-                                    testType: "BWC Tests (x64)",
-                                    status: bwcTestResults.getResult(),
-                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
-                                )
-                            }
+                                        createTestResultsMessage(
+                                            testType: "BWC Tests (x64)",
+                                            status: bwcTestResults.getResult(),
+                                            absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                        )
+                                    }
+                                }
+                            ])
                         }
                     }
                     post {
@@ -182,45 +187,50 @@ pipeline {
                                     echo "buildManifestUrl (arm64): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64): ${artifactUrl}"
 
-                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
-                                    if (!skipIntegTests) {
-                                        def integTestResults = 
-                                            build job: INTEG_TEST_JOB_NAME,
-                                            propagate: false,
-                                            wait: true,
-                                            parameters: [
-                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                                            ]
+                                    parallel([
+                                        'integ-test': {
+                                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                            if (!skipIntegTests) {
+                                                def integTestResults = 
+                                                    build job: INTEG_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
 
-                                        createTestResultsMessage(
-                                            testType: "Integ Tests (arm64)",
-                                            status: integTestResults.getResult(),
-                                            absoluteUrl: integTestResults.getAbsoluteUrl()
-                                        )
-                                    }
+                                                createTestResultsMessage(
+                                                    testType: "Integ Tests (arm64)",
+                                                    status: integTestResults.getResult(),
+                                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        },
+                                        'bwc-test': {
+                                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                            if (!skipBwcTests) {
+                                                def bwcTestResults =
+                                                    build job: BWC_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
 
-                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
-                                    if (!skipBwcTests) {
-                                        def bwcTestResults =
-                                            build job: BWC_TEST_JOB_NAME,
-                                            propagate: false,
-                                            wait: true,
-                                            parameters: [
-                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                                            ]
-
-                                        createTestResultsMessage(
-                                            testType: "BWC Tests (arm64)",
-                                            status: bwcTestResults.getResult(),
-                                            absoluteUrl: bwcTestResults.getAbsoluteUrl()
-                                        )
-                                    }
+                                                createTestResultsMessage(
+                                                    testType: "BWC Tests (arm64)",
+                                                    status: bwcTestResults.getResult(),
+                                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        }
+                                    ])
                                 }
                             }
                             post {

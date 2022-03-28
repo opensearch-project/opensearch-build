@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from assemble_workflow.dist import DistTar
+from manifests.build_manifest import BuildManifest
 
 
 class TestDist(unittest.TestCase):
@@ -16,10 +17,12 @@ class TestDist(unittest.TestCase):
     def setUp(self) -> None:
 
         self.artifacts_path = os.path.join(os.path.dirname(__file__), "data/artifacts/dist/")
+        self.manifest = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-rpm-1.3.0.yml"))
         self.distTar = DistTar(
             "OpenSearch",
             self.artifacts_path + "opensearch-min-1.3.0-linux-x64.tar.gz",
-            "opensearch-1.3.0"
+            "opensearch-1.3.0",
+            self.manifest.build
         )
 
     def test_dist_variables(self) -> None:
