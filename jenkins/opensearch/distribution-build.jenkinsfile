@@ -323,7 +323,7 @@ pipeline {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK_TEST',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
