@@ -31,4 +31,3 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-
