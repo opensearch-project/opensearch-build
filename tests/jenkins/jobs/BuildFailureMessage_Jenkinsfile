@@ -4,7 +4,28 @@ pipeline {
         stage('notify') {
             steps {
                 script {
-                   buildFailureMessage()
+                    try {
+                        currentBuild.rawBuild = [
+                            getLog: { cnt -> return ['Setting http proxy: proxy.domain.com:8080',
+                                ' > git fetch --no-tags --progress https://github.com/SAP/jenkins-library.git +refs/heads/*:refs/remotes/origin/*',
+                                'Checking out Revision myUniqueCommitId (master)',
+                                ' > git config core.sparsecheckout # timeout=10',
+                                ' > git checkout -f myUniqueCommitId',
+                                'Commit message: "Merge pull request #147 from marcusholl/pr/useGitRevParseForInsideGitRepoCheck"',
+                                ' > git rev-list --no-walk myUniqueCommitId # timeout=10',
+                                '[Pipeline] node',
+                                'Running on Jenkins in /var/jenkins_home/workspace/Test/UserId/ECHO',
+                                '[Pipeline] {',
+                                '[Pipeline] stage',
+                                '[Pipeline] { (A)',
+                                '[Pipeline] script',
+                                '[Pipeline] {']
+                                }
+                            ]
+                        buildFailureMessage()
+                    } catch (Exception e) {
+                        currentBuild.result = 'SUCCESS'
+                    }
                 }
             }
         }

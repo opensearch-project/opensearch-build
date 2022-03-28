@@ -17,10 +17,11 @@ class TestBuildFailureMessage extends BuildPipelineTest {
     void setUp() {
         this.registerLibTester(new BuildFailureMessageLibTester())
         super.setUp()
+
     }
 
     @Test
-    void testSignArtifacts() {
-        super.testPipeline("jobs/BuildFailureMessage_Jenkinsfile")
+    void testBuildFailureMsg() {
+        super.testPipeline("tests/jenkins/jobs/BuildFailureMessage_Jenkinsfile")
     }
 }
