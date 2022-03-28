@@ -168,7 +168,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (x64, tar)",
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
@@ -189,7 +189,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (x64, tar)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
@@ -201,6 +201,13 @@ pipeline {
                     }
                     post {
                         always {
+                            lib.jenkins.Messages.new(this).add(
+                                "${STAGE_NAME}",
+                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                "\n${env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT}" +
+                                "\n${env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT}"
+                            )
+
                             postCleanup()
                         }
                     }
@@ -242,7 +249,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (x64, rpm)",
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
@@ -263,7 +270,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (x64, rpm)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
@@ -275,6 +282,13 @@ pipeline {
                     }
                     post {
                         always {
+                            lib.jenkins.Messages.new(this).add(
+                                "${STAGE_NAME}",
+                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                "\n${env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT}" +
+                                "\n${env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT}"
+                            )
+
                             postCleanup()
                         }
                     }
@@ -316,7 +330,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (arm64, tar)",
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
@@ -337,7 +351,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (arm64, tar)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
@@ -349,6 +363,13 @@ pipeline {
                     }
                     post {
                         always {
+                            lib.jenkins.Messages.new(this).add(
+                                "${STAGE_NAME}",
+                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
+                                "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
+                                "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
+                            )
+
                             postCleanup()
                         }
                     }
@@ -390,7 +411,7 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (arm64, rpm)",
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
@@ -411,11 +432,12 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
 
-                                        createTestResultsMessage(
+                                        env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (arm64, rpm)",
                                             status: bwcTestResults.getResult(),
                                             absoluteUrl: bwcTestResults.getAbsoluteUrl()
                                         )
+
                                     }
                                 }
                             ])
@@ -423,6 +445,13 @@ pipeline {
                     }
                     post {
                         always {
+                            lib.jenkins.Messages.new(this).add(
+                                "${STAGE_NAME}",
+                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
+                                "\n${env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT}" +
+                                "\n${env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT}"
+                            )
+
                             postCleanup()
                         }
                     }
