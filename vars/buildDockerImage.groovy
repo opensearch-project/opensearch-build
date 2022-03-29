@@ -5,8 +5,11 @@ void call(Map args = [:]) {
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
     def build_qualifier = inputManifest.build.qualifier
 
-    if (build_qualifier != null) {
+    if (build_qualifier != null && build_qualifier != 'null') {
         build_qualifier = "-" + build_qualifier
+    }
+    else {
+        build_qualifier = ''
     }
     String filename = inputManifest.build.getFilename()
 
