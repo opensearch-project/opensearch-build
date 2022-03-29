@@ -33,10 +33,10 @@ class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
             config = ConfigFile(data)
             try:
                 config.check_value_in("version", self.target.compatible_opensearch_dashboards_component_versions)
-                config.check_value_in("opensearchDashboardsVersion", self.target.compatible_core_versions)
+                config.check_value_in("opensearchDashboardsVersion", self.target.compatible_min_versions)
             except ConfigFile.CheckError as e:
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
             logging.info(f'Checked {path} ({config.get_value("version", "N/A")})')
 
     def __valid_paths(self, pluginName: str) -> List[str]:
-        return list(map(lambda version: f"{pluginName}-{version}.zip", self.target.compatible_core_versions))
+        return list(map(lambda version: f"{pluginName}-{version}.zip", self.target.compatible_min_versions))
