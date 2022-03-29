@@ -60,7 +60,7 @@ pipeline {
             parallel {
                 stage('build-snapshot-x64') {
                     environment {
-                        SNAPSHOT_REPO_URL = "https:aws.oss.sonatype.org/content/repositories/snapshots/"
+                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
                         docker {
@@ -72,7 +72,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            git url: 'https:github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
@@ -107,7 +107,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            git url: 'https:github.com/opensearch-project/opensearch-build.git', branch: 'main'
+                            git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
                             buildManifest(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
