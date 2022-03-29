@@ -60,4 +60,15 @@ class TestBuildDockerImage extends BuildPipelineTest {
             "tests/jenkins/jobs/BuildDockerImage_Jenkinsfile_skips_arm64"
         )
     }
+
+    @Test
+    public void testBuildsQualifierBoth() {
+        binding.env.ARTIFACT_URL_linux_x64 = 'opensearch.linux.x64'
+        binding.env.ARTIFACT_URL_linux_arm64 = 'opensearch.linux.arm64'
+
+        super.testPipeline(
+            "tests/jenkins/jobs/BuildDockerImage_Qualifier_Jenkinsfile",
+            "tests/jenkins/jobs/BuildDockerImage_Qualifier_Jenkinsfile_builds_both"
+        )
+    }
 }
