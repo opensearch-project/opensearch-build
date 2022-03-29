@@ -94,22 +94,10 @@ class TestBuildTarget(unittest.TestCase):
             ['1.1.2.0', '1.1.0.0', '1.1.1.0', '1.1.0.0-SNAPSHOT', '1.1.1.0-SNAPSHOT'],
         )
 
-    def test_compatible_opensearch_dashboards_component_versions(self) -> None:
-        self.assertCountEqual(
-            BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False).compatible_opensearch_dashboards_component_versions,
-            ['1.1.2.0', '1.1.0.0', '1.1.1.0', '1.1.0.0-SNAPSHOT', '1.1.1.0-SNAPSHOT'],
-        )
-
     def test_compatible_component_versions_qualifier(self) -> None:
         self.assertEqual(
             BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False, qualifier="alpha1").compatible_component_versions,
             ['1.1.2.0-alpha1', '1.1.0.0-alpha1', '1.1.1.0-alpha1', '1.1.0.0-alpha1-SNAPSHOT', '1.1.1.0-alpha1-SNAPSHOT'],
-        )
-
-    def test_compatible_opensearch_dashboards_component_versions_qualifier(self) -> None:
-        self.assertCountEqual(
-            BuildTarget(version="1.1.2", architecture="x86", patches=["1.1.0", "1.1.1"], snapshot=False, qualifier="alpha1").compatible_opensearch_dashboards_component_versions,
-            ['1.1.2.0', '1.1.2.0-alpha1', '1.1.0.0-alpha1', '1.1.1.0-alpha1', '1.1.0.0-alpha1-SNAPSHOT', '1.1.1.0-alpha1-SNAPSHOT'],
         )
 
     def test_compatible_component_versions_snapshot(self) -> None:

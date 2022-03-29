@@ -32,7 +32,7 @@ class BuildArtifactOpenSearchDashboardsCheckPlugin(BuildArtifactCheck):
             data = zip.read(f"opensearch-dashboards/{plugin_name}/opensearch_dashboards.json").decode("UTF-8")
             config = ConfigFile(data)
             try:
-                config.check_value_in("version", self.target.compatible_opensearch_dashboards_component_versions)
+                config.check_value_in("version", self.target.compatible_component_versions)
                 config.check_value_in("opensearchDashboardsVersion", self.target.compatible_min_versions)
             except ConfigFile.CheckError as e:
                 raise BuildArtifactCheck.BuildArtifactInvalidError(path, e.__str__())
