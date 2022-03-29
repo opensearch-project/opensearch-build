@@ -10,6 +10,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch Dashboards version."
+    echo -e "-q QUALIFIER\t[Optional] Version qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
@@ -18,7 +19,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:d:" arg; do
+while getopts ":h:v:q:s:o:p:a:d:" arg; do
     case $arg in
         h)
             usage
@@ -26,6 +27,9 @@ while getopts ":h:v:s:o:p:a:d:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -64,6 +68,7 @@ fi
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 [ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
+[ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
 [[ "$SNAPSHOT" == "true" ]] && IDENTIFIER="-SNAPSHOT"
 [[ "$SNAPSHOT" != "true" ]] && RELEASE="--release"
 
@@ -75,28 +80,28 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         EXT="tar.gz"
         BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
-        QUALIFIER="$PLATFORM-x64"
+        SUFFIX="$PLATFORM-x64"
         ;;
     linux-tar-arm64)
         TARGET="--$PLATFORM-arm"
         EXT="tar.gz"
         BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
-        QUALIFIER="$PLATFORM-arm64"
+        SUFFIX="$PLATFORM-arm64"
         ;;
     linux-rpm-x64)
         TARGET="--$DISTRIBUTION"
         EXT="$DISTRIBUTION"
         BUILD_PARAMS="build"
         EXTRA_PARAMS="--skip-archives"
-        QUALIFIER="x64"
+        SUFFIX="x64"
         ;;
     linux-rpm-arm64)
         TARGET="--$DISTRIBUTION-arm"
         EXT="$DISTRIBUTION"
         BUILD_PARAMS="build"
         EXTRA_PARAMS="--skip-archives"
-        QUALIFIER="arm64"
+        SUFFIX="arm64"
         ;;
     *)
         echo "Unsupported platform-distribution-architecture combination: $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
@@ -109,10 +114,10 @@ yarn osd bootstrap
 
 echo "Building artifact"
 
-yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE
+yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE --version-qualifier=$QUALIFIER
 
 mkdir -p "${OUTPUT}/dist"
 # Copy artifact to dist folder in bundle build output
-ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$IDENTIFIER-$QUALIFIER.$EXT
-ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$IDENTIFIER-$QUALIFIER.$EXT
+ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
+ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
 cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME

@@ -3,6 +3,7 @@ schema-version: '1.0'
 build:
   name: OpenSearch Dashboards
   version: 2.0.0
+  qualifier: alpha1
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build
