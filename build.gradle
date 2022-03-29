@@ -86,6 +86,10 @@ sharedLibrary {
 }
 
 test {
+    testLogging {
+		events "failed"
+		exceptionFormat "full"
+    }
     if (project.hasProperty('pipeline.stack.write')) {
         systemProperty 'pipeline.stack.write', project.getProperty('pipeline.stack.write')
     }
