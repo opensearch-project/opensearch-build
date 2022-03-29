@@ -84,10 +84,10 @@ pipeline {
                             } else {
                                 echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
                             }
-                            /*echo("Uploading min snapshots to S3")
+                            echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()]
-                            )*/
+                            )
                         }
                     }
                     post {
@@ -112,10 +112,10 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 snapshot: true
                             )
-                            /*echo("Uploading min snapshots to S3")
+                            echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()]
-                            )*/
+                            )
                         }
                     }
                     post {
@@ -323,7 +323,7 @@ pipeline {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK_TEST',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
