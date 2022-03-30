@@ -23,7 +23,7 @@ class TestCiCheckPackage(unittest.TestCase):
         props = TestCiCheckPackage.DummyProperties(
             component=MagicMock(),
             git_repo=MagicMock(working_directory=self.DATA),
-            target=CiTarget(version="1.3.0", name="opensearch-dashboards", snapshot=False),
+            target=CiTarget(version="1.3.0", name="opensearch-dashboards", qualifier=None, snapshot=False),
         )
 
         self.assertEqual(props.properties["name"].data, "opensearch-security-dashboards")
