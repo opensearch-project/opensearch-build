@@ -1,27 +1,33 @@
 # OpenSearch 1.3.1 Release Notes
 
-## OpenSearch Security
-### Bug fixes
 
-* Fix for "java.lang.IllegalArgumentException: The array of keys must not be null" for "_cat/health" requests ([#1048](https://github.com/opendistro-for-elasticsearch/security/pull/1048))
-* Revert "Fix AuthCredentials equality (#876)" to improve performance ([#1061](https://github.com/opendistro-for-elasticsearch/security/pull/1061))
+## Bug fixes
 
-### Maintenance
+### OpenSearch Security
+* Fix min_doc_count handling when using Document Level Security ([#1712](https://github.com/opensearch-project/security/pull/1712))
 
-* Bump version to 1.13.1.0 ([#1054](https://github.com/opendistro-for-elasticsearch/security/pull/1054))
-* Update release notes 1.13.1 ([#1063](https://github.com/opendistro-for-elasticsearch/security/pull/1063))
+## Maintenance
+
+### OpenSearch Security
+* Bump plugin version to 1.3.1.0 and OpenSearch dependency version to 1.3.1 ([#1697](https://github.com/opensearch-project/security/pull/1697))
+* Add 1.3.1 release notes ([#1713](https://github.com/opensearch-project/security/pull/1713))
+
+### OpenSearch Ml Commons
+* Bump to 1.3.1 ([#254](https://github.com/opensearch-project/ml-commons/pull/254))
 
 
-## OpenSearch Ml Commons
-### Enhancements
+
+## Enhancements
+
+### OpenSearch Ml Commons
 
 * Use protostuff to serialize/deserialize RCF model ([#251](https://github.com/opensearch-project/ml-commons/pull/251))
 
-### Infrastructure
+## Infrastructure
+
+### OpenSearch Ml Commons
 
 * Use latest RCF jar ([#259](https://github.com/opensearch-project/ml-commons/pull/259))
 
-### Maintenance
 
-* Bump to 1.3.1 ([#254](https://github.com/opensearch-project/ml-commons/pull/254))
 
