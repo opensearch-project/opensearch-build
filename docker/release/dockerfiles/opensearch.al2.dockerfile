@@ -75,7 +75,7 @@ ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
 ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin
 
 # Add k-NN lib directory to library loading path variable
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/knnlib"
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
 
 # Change user
 USER $UID
