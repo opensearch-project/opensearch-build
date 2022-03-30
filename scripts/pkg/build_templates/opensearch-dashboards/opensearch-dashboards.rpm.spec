@@ -69,10 +69,6 @@ exit 0
 
 %post
 set -e
-# Apply Security Settings
-chown -R %{name}.%{name} %{config_dir}
-chown -R %{name}.%{name} %{log_dir}
-# Apply PerformanceAnalyzer Settings
 chmod a+rw /tmp
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
