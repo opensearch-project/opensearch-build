@@ -467,6 +467,14 @@ pipeline {
             }
         }
         stage('update index file') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
+                }
+            }
             steps {
                 script {
                     uploadIndexFile(
