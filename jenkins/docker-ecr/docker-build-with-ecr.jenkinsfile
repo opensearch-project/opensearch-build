@@ -42,7 +42,7 @@ pipeline {
         booleanParam(
                 defaultValue: false,
                 name: 'RELEASE_TO_ECR',
-                description: 'Are we pushing images to ECR'
+                description: 'Are we pushing images to ECR staging?'
         )
     }
     stages {
