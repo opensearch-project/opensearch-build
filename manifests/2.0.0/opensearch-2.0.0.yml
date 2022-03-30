@@ -7,7 +7,7 @@ ci:
 build:
   name: OpenSearch
   version: 2.0.0
-  qualifier: alpha1
+  qualifier: rc1
 components:
   - name: OpenSearch
     ref: '2.0'
