@@ -69,7 +69,6 @@ exit 0
 
 %post
 set -e
-chmod a+rw /tmp
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
     systemctl daemon-reload
