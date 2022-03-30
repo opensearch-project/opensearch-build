@@ -154,7 +154,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump_result = MagicMock()
         mock_dump.return_value = mock_dump_result
 
-        mock_os_isdir.side_effect = [ False, True ]
+        mock_os_isdir.side_effect = [False, True]
 
         # call the target test function
         service.start()
