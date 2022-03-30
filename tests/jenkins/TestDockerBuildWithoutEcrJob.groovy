@@ -21,7 +21,7 @@ class TestDockerBuildWithoutEcrJob extends BuildPipelineTest {
     }
 
     @Test
-    public void testDockerForEcrJobStaging(){
+    public void testDockerWithoutEcrJobStaging(){
 
         binding.setVariable('DOCKER_USERNAME ', 'docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'docker_password')
