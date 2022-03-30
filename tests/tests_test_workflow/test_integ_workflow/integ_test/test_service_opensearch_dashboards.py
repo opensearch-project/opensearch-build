@@ -159,7 +159,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         # call the target test function
         service.start()
 
-        mock_check_call.assert_called()
+        mock_check_call.assert_not_called()
 
         mock_file.assert_has_calls(
             [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
