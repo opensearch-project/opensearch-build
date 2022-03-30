@@ -22,6 +22,11 @@ pipeline {
                 description: 'Image tag on staging. Eg: 1.3.0',
                 trim: true
         )
+        booleanParam(
+                defaultValue: false,
+                name: 'RELEASE_TO_ECR',
+                description: 'Are we pushing images to ECR'
+        )
     }
 
     stages {
@@ -38,6 +43,9 @@ pipeline {
             }
         }
         stage('ecr-promote-to-prod') {
+            when {
+                expression { RELEASE_TO_ECR == true }
+            }
             steps {
                 script {
                     copyContainer(
