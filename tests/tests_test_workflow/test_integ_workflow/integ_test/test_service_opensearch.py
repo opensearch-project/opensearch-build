@@ -64,13 +64,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertEqual(mock_pid.call_count, 1)
 
-    @patch("os.path.isfile")
+    @patch("os.path.isdir")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isfile):
+    def test_start_security_disabled(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
 
         dependency_installer = MagicMock()
 
@@ -99,7 +99,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # open() will be called twice, one for disabling security, second for additional_config
         mock_file.side_effect = [mock_file_handler_for_security, mock_file_handler_for_additional_config]
 
-        mock_os_isfile.return_value = True
+        mock_os_isdir.return_value = True
 
         # call test target function
         service.start()
@@ -113,13 +113,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file_handler_for_security.write.assert_called_once_with(mock_dump_result_for_security)
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
-    @patch("os.path.isfile")
+    @patch("os.path.isdir")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isfile):
+    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
 
         dependency_installer = MagicMock()
 
@@ -147,7 +147,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # open() will be called twice, one for disabling security, second for additional_config
         mock_file.side_effect = [mock_file_handler_for_additional_config]
 
-        mock_os_isfile.return_value = False
+        mock_os_isdir.return_value = False
 
         # call test target function
         service.start()
