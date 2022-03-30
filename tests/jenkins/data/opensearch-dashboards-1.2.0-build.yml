@@ -5,6 +5,7 @@ build:
   name: OpenSearch Dashboards
   platform: linux
   version: 1.2.0
+  distribution: tar
 components:
   - artifacts:
       dist:

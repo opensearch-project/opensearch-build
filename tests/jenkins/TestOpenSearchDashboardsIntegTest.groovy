@@ -17,7 +17,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         def testManifest = "tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml"
         def buildId = 215
         def buildManifest = "tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml"
-        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/${buildId}/linux/x64/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz"
+        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/${buildId}/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz"
         def agentLabel = "Jenkins-Agent-al2-x64-c54xlarge-Docker-Host"
 
         this.registerLibTester(new DetectTestDockerAgentLibTester())
