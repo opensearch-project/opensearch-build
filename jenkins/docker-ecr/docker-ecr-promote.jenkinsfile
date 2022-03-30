@@ -44,7 +44,7 @@ pipeline {
         }
         stage('ecr-promote-to-prod') {
             when {
-                expression { RELEASE_TO_ECR == true }
+                expression { RELEASE_TO_ECR.toBoolean() == true }
             }
             steps {
                 script {
