@@ -41,11 +41,12 @@ class TestBundleRpm(unittest.TestCase):
         self.assertEqual(os_path_exists_mock.call_count, 1)
         self.assertEqual(os.environ['OPENSEARCH_PATH_CONF'], os.path.join(self.artifacts_path, 'etc', 'opensearch'))
 
+    @patch("os.path.exists", return_value=True)
     @patch("os.walk")
     @patch("builtins.open")
     @patch("shutil.move")
     @patch("subprocess.check_call")
-    def test_build_rpm(self, check_call_mock: Mock, shutil_move_mock: Mock, builtins_open: Mock, os_walk_mock: Mock) -> None:
+    def test_build_rpm(self, check_call_mock: Mock, shutil_move_mock: Mock, builtins_open: Mock, os_walk_mock: Mock, os_path_exists: Mock) -> None:
 
         self.bundle_rpm.build(self.package_path, self.artifacts_path, os.path.join(self.artifacts_path, 'opensearch-1.3.0'), self.manifest.build)
         args_list = check_call_mock.call_args_list

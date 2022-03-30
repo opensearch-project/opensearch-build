@@ -19,7 +19,7 @@ Group=opensearch-dashboards
 # exist, it continues onward.
 EnvironmentFile=-/etc/default/opensearch-dashboards
 EnvironmentFile=-/etc/sysconfig/opensearch-dashboards
-ExecStart=/usr/share/opensearch-dashboards/bin/opensearch-dashboards "-c /etc/opensearch-dashboards/opensearch_dashboards.yml"
+ExecStart=/usr/share/opensearch-dashboards/bin/opensearch-dashboards
 Restart=always
 WorkingDirectory=/usr/share/opensearch-dashboards
 

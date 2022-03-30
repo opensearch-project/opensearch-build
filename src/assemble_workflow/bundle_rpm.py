@@ -89,7 +89,10 @@ class BundleRpm:
         os.environ.pop('OPENSEARCH_PATH_CONF', None)
 
         # Restore config file and core folder to original location
-        shutil.move(f"{min_bin_env_path}.backup", min_bin_env_path)
+        if os.path.exists(f"{min_bin_env_path}.backup"):
+            logging.info(f"Restore {min_bin_env_path}.backup to {min_bin_env_path}")
+            shutil.move(f"{min_bin_env_path}.backup", min_bin_env_path)
+
         shutil.move(min_dest_path, min_source_path)
 
         # Run bundle rpmbuild
