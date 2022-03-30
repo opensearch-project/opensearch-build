@@ -73,7 +73,7 @@ pipeline {
         }
         stage('docker-ecr-staging') {
             when {
-                expression { RELEASE_TO_ECR == true }
+                expression { return RELEASE_TO_ECR }
             }
             steps {
                 script {
