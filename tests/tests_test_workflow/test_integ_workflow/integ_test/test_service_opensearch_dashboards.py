@@ -154,12 +154,12 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump_result = MagicMock()
         mock_dump.return_value = mock_dump_result
 
-        mock_os_isdir.return_value = False
+        mock_os_isdir.return_value = True
 
         # call the target test function
         service.start()
 
-        mock_check_call.assert_not_called()
+        mock_check_call.assert_called()
 
         mock_file.assert_has_calls(
             [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
