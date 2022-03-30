@@ -10,7 +10,7 @@ build:
   qualifier: alpha1
 components:
   - name: OpenSearch
-    ref: main
+    ref: '2.0'
     repository: https://github.com/opensearch-project/OpenSearch.git
     checks:
       - gradle:publish
@@ -36,15 +36,3 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: anomaly-detection
-    repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: ml-commons
-    repository: https://github.com/opensearch-project/ml-commons.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: opensearch-ml-plugin

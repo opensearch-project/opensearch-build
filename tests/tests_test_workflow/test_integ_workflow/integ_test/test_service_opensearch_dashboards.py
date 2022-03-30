@@ -64,14 +64,14 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"))
         self.assertEqual(mock_pid.call_count, 1)
 
-    @patch("os.path.isfile")
+    @patch("os.path.isdir")
     @patch("subprocess.check_call")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isfile):
+    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
 
         mock_dependency_installer = MagicMock()
 
@@ -98,7 +98,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump_result = MagicMock()
         mock_dump.return_value = mock_dump_result
 
-        mock_os_isfile.return_value = True
+        mock_os_isdir.return_value = True
 
         # call the target test function
         service.start()
@@ -120,14 +120,14 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_file_handler_for_security.close.assert_called_once()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
 
-    @patch("os.path.isfile")
+    @patch("os.path.isdir")
     @patch("subprocess.check_call")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isfile):
+    def test_start_without_security_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
 
         mock_dependency_installer = MagicMock()
 
@@ -154,12 +154,12 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump_result = MagicMock()
         mock_dump.return_value = mock_dump_result
 
-        mock_os_isfile.return_value = False
+        mock_os_isdir.return_value = True
 
         # call the target test function
         service.start()
 
-        mock_check_call.assert_not_called()
+        mock_check_call.assert_called()
 
         mock_file.assert_has_calls(
             [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
