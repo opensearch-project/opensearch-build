@@ -467,10 +467,14 @@ pipeline {
             }
         }
         stage('update index file') {
-            uploadIndexFile(
-                inputManifest: "manifests/${INPUT_MANIFEST}",
-                distribution: 'tar'
-            )
+            steps {
+                script {
+                    uploadIndexFile(
+                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                        distribution: 'tar'
+                    )
+                }
+            }
         }
         stage('docker build') {
             when {
