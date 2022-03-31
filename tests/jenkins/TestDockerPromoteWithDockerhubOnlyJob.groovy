@@ -2,7 +2,7 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 
-class TestDockerPromoteWithoutEcrJob extends BuildPipelineTest {
+class TestDockerPromoteWithDockerhubOnlyJob extends BuildPipelineTest {
 
     @Before
     void setUp() {
@@ -21,14 +21,14 @@ class TestDockerPromoteWithoutEcrJob extends BuildPipelineTest {
         binding.setVariable('IMAGE_REPOSITORY', imageRepository)
         binding.setVariable('IMAGE_TAG', imageTag)
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', accountName)
-        binding.setVariable('RELEASE_TO_ECR', false)
+        binding.setVariable('PLATFORM', 'docker-hub')
 
     }
 
     @Test
-    public void testDockerForEcrJobProductionWithoutECR(){
+    public void testDockerForEcrJobProductionWithDockerhubOnly(){
         super.testPipeline("jenkins/docker-ecr/docker-ecr-promote.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-ecr-promote-without-ECR.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-ecr-promote-with-dockerhub-only.jenkinsfile")
     }
 
 }

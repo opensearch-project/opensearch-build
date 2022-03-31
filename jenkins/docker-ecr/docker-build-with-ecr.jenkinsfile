@@ -39,10 +39,11 @@ pipeline {
                 description: 'Image tag on staging. Eg: 1.3.0',
                 trim: true
         )
-        booleanParam(
-                defaultValue: false,
-                name: 'RELEASE_TO_ECR',
-                description: 'Are we pushing images to ECR staging?'
+        choice(
+                choices: ['docker-hub + ECR', 'docker-hub', 'ECR'],
+                defaultValue: 'docker-hub + ECR',
+                name: 'PLATFORM',
+                description: 'Where do you want to push the images?'
         )
     }
     stages {
@@ -58,6 +59,9 @@ pipeline {
             }
         }
         stage('docker-build-dockerhub-staging') {
+            when{
+                expression { PLATFORM == 'docker-hub + ECR' || PLATFORM == 'docker-hub' }
+            }
             steps {
                 script {
                     git url: DOCKER_BUILD_GIT_REPOSITORY, branch: DOCKER_BUILD_GIT_REPOSITORY_REFERENCE
@@ -73,7 +77,7 @@ pipeline {
         }
         stage('docker-ecr-staging') {
             when {
-                expression { RELEASE_TO_ECR.toBoolean() == true }
+                expression { PLATFORM == 'docker-hub + ECR' || PLATFORM == 'ECR' }
             }
             steps {
                 script {

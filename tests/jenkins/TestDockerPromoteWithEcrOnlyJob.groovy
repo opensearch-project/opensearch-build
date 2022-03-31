@@ -2,7 +2,7 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 
-class TestDockerPromoteWithEcrJob extends BuildPipelineTest {
+class TestDockerPromoteWithEcrOnlyJob extends BuildPipelineTest {
 
     @Before
     void setUp() {
@@ -17,24 +17,19 @@ class TestDockerPromoteWithEcrJob extends BuildPipelineTest {
                 'public.ecr.aws/p5f6l6i3',
                 accountName))
 
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "opensearchproject/${imageRepository}:${imageTag}",
-                'docker',
-                'jenkins-staging-docker-prod-token'))
-
         super.setUp()
 
         binding.setVariable('IMAGE_REPOSITORY', imageRepository)
         binding.setVariable('IMAGE_TAG', imageTag)
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', accountName)
-        binding.setVariable('RELEASE_TO_ECR', true)
+        binding.setVariable('PLATFORM', 'ECR')
 
     }
 
     @Test
-    public void testDockerForEcrJobProductionWithECR(){
+    public void testDockerForEcrAndDockerhubJobProductionWithECR(){
         super.testPipeline("jenkins/docker-ecr/docker-ecr-promote.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-ecr-promote-with-ECR.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-ecr-promote-with-ECR-only.jenkinsfile")
     }
 
 }

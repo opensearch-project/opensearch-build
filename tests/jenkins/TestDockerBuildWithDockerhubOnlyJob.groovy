@@ -2,7 +2,7 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 
-class TestDockerBuildWithoutEcrJob extends BuildPipelineTest {
+class TestDockerBuildWithDockerhubOnlyJob extends BuildPipelineTest {
 
     @Before
     void setUp() {
@@ -16,12 +16,12 @@ class TestDockerBuildWithoutEcrJob extends BuildPipelineTest {
         binding.setVariable('IMAGE_TAG', imageTag)
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', 'dummy_command')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', accountName)
-        binding.setVariable('RELEASE_TO_ECR', false)
+        binding.setVariable('PLATFORM', 'docker-hub')
 
     }
 
     @Test
-    public void testDockerWithoutEcrJobStaging(){
+    public void testDockerWithDockerhubOnlyJobStaging(){
 
         binding.setVariable('DOCKER_USERNAME ', 'docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'docker_password')
@@ -29,8 +29,7 @@ class TestDockerBuildWithoutEcrJob extends BuildPipelineTest {
         helper.registerAllowedMethod("git", [Map])
 
         super.testPipeline("jenkins/docker-ecr/docker-build-with-ecr.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-build-without-ecr.jenkinsfile")
-
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-build-with-dockerhub-only.jenkinsfile")
         }
 
 }
