@@ -41,7 +41,6 @@ pipeline {
         )
         choice(
                 choices: ['docker-hub + ECR', 'docker-hub', 'ECR'],
-                defaultValue: 'docker-hub + ECR',
                 name: 'PLATFORM',
                 description: 'Where do you want to push the images?'
         )
