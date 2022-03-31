@@ -39,9 +39,11 @@ class BuildManifest implements Serializable {
         String getExtension() {
             if (this.distribution == 'zip') {
                 return 'zip'
+            } else if (this.distribution == 'rpm') {
+                return 'rpm'
+            } else {
+                return 'tar.gz'
             }
-
-            return this.distribution == 'rpm' ? 'rpm' : 'tar.gz'
         }
 
         String getPackageName() {
