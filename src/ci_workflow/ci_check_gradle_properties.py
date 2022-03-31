@@ -20,11 +20,15 @@ class CiCheckGradleProperties(CiCheckSource):
 
     def __get_properties(self) -> PropertiesFile:
         cmd = " ".join(
-            [
-                "./gradlew properties",
-                f"-Dopensearch.version={self.target.opensearch_version}",
-                f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
-            ]
+            filter(
+                None,
+                [
+                    "./gradlew properties",
+                    f"-Dopensearch.version={self.target.opensearch_version}",
+                    f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
+                    f"-Dbuild.version_qualifier={str(self.target.qualifier)}" if self.target.qualifier else None,
+                ]
+            )
         )
 
         return PropertiesFile(self.git_repo.output(cmd))

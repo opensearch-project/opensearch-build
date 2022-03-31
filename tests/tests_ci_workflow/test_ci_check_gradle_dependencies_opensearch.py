@@ -23,7 +23,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             return CiCheckGradleDependenciesOpenSearchVersion(
                 component=MagicMock(),
                 git_repo=MagicMock(),
-                target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
+                target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True),
                 args=None,
             )
 
@@ -53,7 +53,7 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True),
             args=None,
         )
         output = unittest.mock.create_autospec(check.git_repo.output)
@@ -61,14 +61,38 @@ class TestCiCheckGradleDependenciesOpenSearchVersion(unittest.TestCase):
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
+    def test_executes_gradle_command_qualifier(self) -> None:
+        check = CiCheckGradleDependenciesOpenSearchVersion(
+            component=MagicMock(),
+            git_repo=MagicMock(),
+            target=CiTarget(version="2.0.0", name="opensearch", qualifier="alpha1", snapshot=True),
+            args=None,
+        )
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
+            './gradlew :dependencies -Dopensearch.version=2.0.0-alpha1-SNAPSHOT -Dbuild.snapshot=true -Dbuild.version_qualifier=alpha1 --configuration compileOnly | grep -e "---"'
+        )
+
     def test_executes_gradle_command_with_arg(self) -> None:
         check = CiCheckGradleDependenciesOpenSearchVersion(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True),
             args="plugin",
         )
         output = unittest.mock.create_autospec(check.git_repo.output)
         output.assert_called_once_with(
             './gradlew plugin:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
+        )
+
+    def test_executes_gradle_command_qualifier_with_arg(self) -> None:
+        check = CiCheckGradleDependenciesOpenSearchVersion(
+            component=MagicMock(),
+            git_repo=MagicMock(),
+            target=CiTarget(version="2.0.0", name="opensearch", qualifier="alpha1", snapshot=True),
+            args="plugin",
+        )
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
+            './gradlew plugin:dependencies -Dopensearch.version=2.0.0-alpha1-SNAPSHOT -Dbuild.snapshot=true -Dbuild.version_qualifier=alpha1 --configuration compileOnly | grep -e "---"'
         )
