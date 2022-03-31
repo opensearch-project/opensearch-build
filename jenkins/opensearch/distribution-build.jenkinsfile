@@ -148,7 +148,7 @@ pipeline {
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                            env.ARTIFACT_URL_X64_TAR = artifactUrl    
+                            env.ARTIFACT_URL_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
                             echo "buildManifestUrl (x64, tar): ${buildManifestUrl}"
@@ -479,7 +479,7 @@ pipeline {
             steps {
                 script {
                     uploadIndexFile(
-                        indexFilePath: env.INDEX_FILE_PATH                        
+                        indexFilePath: env.INDEX_FILE_PATH
                     )
                 }
             }
