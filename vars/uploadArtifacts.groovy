@@ -13,13 +13,13 @@ void call(Map args = [:]) {
     uploadToS3(
             sourcePath: "${distribution}/builds",
             bucket: "${ARTIFACT_BUCKET_NAME}",
-            path: "${artifactPath}/${distribution}/builds"
+            path: "${artifactPath}/builds"
     )
 
     uploadToS3(
             sourcePath: "${distribution}/dist",
             bucket: "${ARTIFACT_BUCKET_NAME}",
-            path: "${artifactPath}/${distribution}/dist"
+            path: "${artifactPath}/dist"
     )
 
     echo "Uploading to s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${artifactPath}"
@@ -31,8 +31,8 @@ void call(Map args = [:]) {
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
-            "${baseUrl}/${distribution}/builds/${productFilename}/manifest.yml",
-            "${baseUrl}/${distribution}/dist/${productFilename}/manifest.yml"
+            "${baseUrl}/builds/${productFilename}/manifest.yml",
+            "${baseUrl}/dist/${productFilename}/manifest.yml"
         ].join('\n')
     )
 }
