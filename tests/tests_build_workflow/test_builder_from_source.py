@@ -18,7 +18,7 @@ from paths.script_finder import ScriptFinder
 class TestBuilderFromSource(unittest.TestCase):
     def setUp(self) -> None:
         self.builder = BuilderFromSource(
-            InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
+            InputComponentFromSource({"name": "security", "repository": "url", "ref": "ref"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.1.0",
@@ -41,7 +41,7 @@ class TestBuilderFromSource(unittest.TestCase):
         )
 
         self.builder_distribution_support = BuilderFromSource(
-            InputComponentFromSource({"name": "common-utils", "repository": "url", "ref": "ref"}),
+            InputComponentFromSource({"name": "security", "repository": "url", "ref": "ref"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.3.0",
@@ -53,7 +53,7 @@ class TestBuilderFromSource(unittest.TestCase):
         )
 
     def test_builder(self) -> None:
-        self.assertEqual(self.builder.component.name, "common-utils")
+        self.assertEqual(self.builder.component.name, "security")
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build(self, mock_git_repo: Mock) -> None:
@@ -65,7 +65,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "security", "build.sh")),
                     "-v 1.1.0",
                     "-p linux",
                     "-a x64",
@@ -74,7 +74,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("common-utils", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("security", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_distribution(self, mock_git_repo: Mock) -> None:
@@ -108,7 +108,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "security", "build.sh")),
                     "-v 1.3.0",
                     "-p linux",
                     "-a x64",
@@ -117,7 +117,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("common-utils", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("security", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot(self, mock_git_repo: Mock) -> None:
@@ -130,7 +130,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "security", "build.sh")),
                     "-v 1.1.0",
                     "-p linux",
                     "-a x64",
@@ -139,7 +139,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
+        build_recorder.record_component.assert_called_with("security", self.builder.git_repo)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_snapshot_qualiier(self, mock_git_repo: Mock) -> None:
@@ -153,7 +153,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "common-utils", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "security", "build.sh")),
                     "-v 1.1.0",
                     "-q alpha1",
                     "-p linux",
@@ -163,7 +163,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("common-utils", self.builder.git_repo)
+        build_recorder.record_component.assert_called_with("security", self.builder.git_repo)
 
     def mock_os_walk(self, artifact_path: str) -> List[Any]:
         if artifact_path.endswith(os.path.join("dir", "builds", "core-plugins")):
@@ -185,7 +185,7 @@ class TestBuilderFromSource(unittest.TestCase):
         build_recorder.record_artifact.assert_has_calls(
             [
                 call(
-                    "common-utils",
+                    "security",
                     "maven",
                     os.path.relpath(
                         os.path.join("maven", "artifact1.jar"),
@@ -194,7 +194,7 @@ class TestBuilderFromSource(unittest.TestCase):
                     os.path.join("maven", "artifact1.jar"),
                 ),
                 call(
-                    "common-utils",
+                    "security",
                     "core-plugins",
                     os.path.relpath(
                         os.path.join("core-plugins", "plugin1.zip"),
