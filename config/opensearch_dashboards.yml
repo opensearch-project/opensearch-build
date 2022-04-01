@@ -157,17 +157,17 @@
 # vis_type_timeline.graphiteBlockedIPs: []
 
 # opensearchDashboards.branding:
-  # logo:
-    # defaultUrl: ""
-    # darkModeUrl: ""
-  # mark:
-    # defaultUrl: ""
-    # darkModeUrl: ""
-  # loadingLogo:
-    # defaultUrl: ""
-    # darkModeUrl: ""
-  # faviconUrl: ""
-  # applicationTitle: ""
+#   logo:
+#     defaultUrl: ""
+#     darkModeUrl: ""
+#   mark:
+#     defaultUrl: ""
+#     darkModeUrl: ""
+#   loadingLogo:
+#     defaultUrl: ""
+#     darkModeUrl: ""
+#   faviconUrl: ""
+#   applicationTitle: ""
 
 # Set the value of this setting to true to capture region blocked warnings and errors
 # for your map rendering services.
