@@ -15,7 +15,7 @@ void call(Map args = [:]) {
         "--stack test-single-security-${args.buildId}-${args.architecture}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
-        args.insecure ? "--force-insecure-mode" : "",
+        args.insecure ? "--without-security" : "",
         isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
         isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
         isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",

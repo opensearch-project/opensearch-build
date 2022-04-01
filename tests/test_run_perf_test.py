@@ -67,7 +67,7 @@ class TestRunPerfTest(unittest.TestCase):
         self.assertIn(True, mock_suite.call_args[0])
 
     @patch("argparse._sys.argv", ["run_perf_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST,
-                                  "--stack", "test-stack", "--config", PERF_TEST_CONFIG, "--force-insecure-mode"])
+                                  "--stack", "test-stack", "--config", PERF_TEST_CONFIG, "--without-security"])
     @patch("run_perf_test.PerfTestCluster.create")
     @patch("run_perf_test.PerfTestSuite")
     @patch("run_perf_test.WorkingDirectory")
