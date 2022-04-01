@@ -2,7 +2,7 @@
       docker-build-with-ecr.legacySCM(groovy.lang.Closure)
       docker-build-with-ecr.library({identifier=jenkins@20211123, retriever=null})
       docker-build-with-ecr.pipeline(groovy.lang.Closure)
-         docker-build-with-ecr.timeout({time=3, unit=HOURS})
+         docker-build-with-ecr.timeout({time=1, unit=HOURS})
          docker-build-with-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          docker-build-with-ecr.stage(check-params, groovy.lang.Closure)
             docker-build-with-ecr.script(groovy.lang.Closure)

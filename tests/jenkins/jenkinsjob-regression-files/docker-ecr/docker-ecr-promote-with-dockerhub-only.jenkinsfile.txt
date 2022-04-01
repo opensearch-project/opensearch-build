@@ -2,7 +2,7 @@
       docker-ecr-promote.legacySCM(groovy.lang.Closure)
       docker-ecr-promote.library({identifier=jenkins@20211123, retriever=null})
       docker-ecr-promote.pipeline(groovy.lang.Closure)
-         docker-ecr-promote.timeout({time=3, unit=HOURS})
+         docker-ecr-promote.timeout({time=1, unit=HOURS})
          docker-ecr-promote.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          docker-ecr-promote.stage(dockerhub-promote-to-prod, groovy.lang.Closure)
             docker-ecr-promote.script(groovy.lang.Closure)
