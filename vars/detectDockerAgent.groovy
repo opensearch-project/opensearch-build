@@ -1,9 +1,9 @@
 Map call(Map args = [:]) {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+    git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
     def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
-    dockerImage = inputManifest.ci?.image?.name ?: 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+    dockerImage = inputManifest.ci?.image?.name ?: 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1'
     dockerArgs = inputManifest.ci?.image?.args
     echo "Using Docker image ${dockerImage} (${dockerArgs})"
     return [
