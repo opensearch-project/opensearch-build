@@ -105,7 +105,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -125,8 +125,6 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     pip3 install pipenv && pipenv --version
-
-
 
 # Change User
 USER 1000
