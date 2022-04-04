@@ -493,8 +493,8 @@ pipeline {
             steps {
                 node(AGENT_X64) {
                     script {
-                        echo "env.ARTIFACT_URL_X64: ${env.ARTIFACT_URL_X64}"
-                        echo "env.ARTIFACT_URL_ARM64: ${env.ARTIFACT_URL_ARM64}"
+                        echo "env.ARTIFACT_URL_X64: ${env.ARTIFACT_URL_X64_TAR}"
+                        echo "env.ARTIFACT_URL_ARM64: ${env.ARTIFACT_URL_ARM64_TAR}"
                         
                         buildDockerImage(
                             inputManifest: "manifests/${INPUT_MANIFEST}",
@@ -512,8 +512,10 @@ pipeline {
                 script {
                     if (params.PUBLISH_NOTIFICATION) { 
                         def stashed = lib.jenkins.Messages.new(this).get([
-                            'build-and-test-linux-x64',
-                            'assemble-archive-and-test-linux-arm64'
+                            'build-and-test-linux-x64-tar',
+                            'build-and-test-linux-x64-rpm',
+                            'assemble-archive-and-test-linux-arm64-tar',
+                            'assemble-archive-and-test-linux-arm64-rpm',
                         ])
 
                         publishNotification(
