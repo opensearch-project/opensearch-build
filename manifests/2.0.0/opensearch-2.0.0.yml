@@ -10,8 +10,8 @@ build:
   qualifier: alpha1
 components:
   - name: OpenSearch
-    ref: '2.0'
     repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: '2.0'
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -33,6 +33,24 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
@@ -42,21 +60,47 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: alerting
-    repository: https://github.com/opensearch-project/alerting.git
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: main
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
     ref: main
     checks:
       - gradle:properties:version
-      - gradle:dependencies:opensearch.version: alerting
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: asynchronous-search
-    repository: https://github.com/opensearch-project/asynchronous-search.git
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: plugin
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: main
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability
+    ref: main
+    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
