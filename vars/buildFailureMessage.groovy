@@ -17,6 +17,7 @@ def call(){
             message.add(line)
         }
     }
+    //if no match returns as Build failed
     if(message.isEmpty()){
         message=["Build failed"]
     }
