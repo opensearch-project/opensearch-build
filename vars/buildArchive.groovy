@@ -5,7 +5,7 @@ void call(Map args = [:]) {
     echo "Archiving into zip: ${args.distribution}/builds/**, ${args.inputManifest}"
 
     zip(
-        zipFile: "archived-builds.zip",
+        zipFile: "${args.distribution}/archived-builds.zip",
         archive: true,
         glob: "${args.distribution}/builds/**"
     )

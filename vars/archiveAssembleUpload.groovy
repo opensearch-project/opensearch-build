@@ -11,7 +11,7 @@ def call(Map args = [:]) {
         selector: specific("${BUILD_NUMBER}")
     )
 
-    unzip(zipFile: "archived-builds.zip")
+    unzip(zipFile: "${args.distribution}/archived-builds.zip")
 
     String buildManifest = "${args.distribution}/builds/${inputManifestObj.build.getFilename()}/manifest.yml"
     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: buildManifest))
