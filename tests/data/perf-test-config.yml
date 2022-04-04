@@ -1,0 +1,9 @@
+---
+Description: Configuration file to store contants required to run rally for performance test
+Constants:
+  Repository: https://github.com/opensearch-project/
+  SecurityGroupId: test-security
+  VpcId: test-vpc
+  AccountId: 123456
+  Region: eu-east-1
+  Role: test-role-name

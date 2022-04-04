@@ -11,6 +11,7 @@ import os
 import sys
 
 import yaml
+from retry.api import retry_call
 
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
@@ -35,6 +36,9 @@ def main():
     parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.", required=True)
     parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
     parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
+    parser.add_argument("--without-security", dest="insecure", action="store_true",
+                        help="Force the security of the cluster to be disabled.",
+                        default=False)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
     parser.add_argument("--workload", default="nyc_taxis", help="Mensor (internal client) param - Workload name from OpenSeach Benchmark Workloads")
     parser.add_argument("--workload-options", default="{}", help="Mensor (internal client) param - Json object with OpenSearch Benchmark arguments")
@@ -45,14 +49,23 @@ def main():
     manifest = BundleManifest.from_file(args.bundle_manifest)
     config = yaml.safe_load(args.config)
 
+    security = "security" in manifest.components and not args.insecure
+    tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", f"{'with' if security else 'without'}-security")
+    os.makedirs(tests_dir, exist_ok=True)
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "main", current_workspace):
-            security = "security" in manifest.components
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace, args)
-                    perf_test_suite.execute()
+                with PerfTestCluster.create(
+                        manifest,
+                        config,
+                        args.stack,
+                        security,
+                        current_workspace) as (test_cluster_endpoint, test_cluster_port):
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security,
+                                                    current_workspace, tests_dir, args)
+                    retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)
 
 
 if __name__ == "__main__":
