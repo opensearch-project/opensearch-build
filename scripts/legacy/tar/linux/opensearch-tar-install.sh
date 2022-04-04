@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 OPENSEARCH_HOME=`dirname $(realpath $0)`; cd $OPENSEARCH_HOME
-KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/knnlib
+KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
 ##Security Plugin
 bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
 

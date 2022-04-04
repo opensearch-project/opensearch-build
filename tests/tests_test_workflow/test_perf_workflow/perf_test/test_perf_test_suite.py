@@ -23,10 +23,13 @@ class TestPerfTestSuite(unittest.TestCase):
         self.manifest_filename = os.path.join(self.data_path, "bundle_manifest.yml")
         self.manifest = BundleManifest.from_path(self.manifest_filename)
         self.endpoint = None
-        self.perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=None, security=False, current_workspace="current_workspace", args=self.args)
+
+        self.perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=None, security=False,
+                                             current_workspace="current_workspace", test_results_path="test/results/",
+                                             args=self.args)
 
     def test_execute(self):
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_suite.execute()
-                self.assertEqual(mock_check_call.call_count, 3)
+                self.assertEqual(mock_check_call.call_count, 2)

@@ -52,7 +52,7 @@ class ServiceOpenSearchDashboards(Service):
 
     def __remove_security(self):
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "securityDashboards")
-        if os.path.isfile(self.security_plugin_dir):
+        if os.path.isdir(self.security_plugin_dir):
             subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
 
         with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:

@@ -1,0 +1,225 @@
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 10, unit: 'HOURS')
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+        BUNDLE_MANIFEST = 'bundle-manifest.yml'
+        JOB_NAME = 'perf-test'
+    }
+    parameters {
+        string(
+            name: 'GITHUB_TOKEN',
+            description: 'Github token for account access.',
+            trim: true
+        )
+        string(
+            name: 'BUNDLE_MANIFEST_URL',
+            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            trim: true
+        )
+        string(
+            defaultValue: 'nyc_taxis',
+            name: 'TEST_WORKLOAD',
+            description: 'The workload name from OpenSearch Benchmark Workloads for Mensor (internal client).',
+            trim: true
+        )
+        string(
+            defaultValue: '1',
+            name: 'TEST_ITERATIONS',
+            description: 'Number of times to run a workload for Mensor (internal client).',
+            trim: true
+        )
+        string(
+            defaultValue: '0',
+            name: 'WARMUP_ITERATIONS',
+            description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
+            trim: true
+        )
+    }
+
+    stages {
+        stage('validate-and-set-parameters') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image AGENT_IMAGE
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    if (BUNDLE_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
+                    }
+                    if (GITHUB_TOKEN == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                    }
+                    if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
+                    }
+                    if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
+                    }
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                    )
+                    String buildId = bundleManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                    env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                    echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                    lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
+                }
+            }
+        }
+        stage('perf-test') {
+            parallel {
+                stage('test-with-security') {
+                    agent {
+                        docker {
+                            label AGENT_LABEL
+                            image AGENT_IMAGE
+                            alwaysPull true
+                        }
+                    }
+                    when {
+                        expression { return env.HAS_SECURITY }
+                    }
+                    steps {
+                        script {
+                            def bundleManifestObj = downloadBuildManifest(
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                            )
+                            echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "Architecture: ${ARCHITECTURE}"
+
+                            runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
+                                buildId: BUILD_ID,
+                                architecture: ARCHITECTURE,
+                                insecure: false,
+                                workload: TEST_WORKLOAD,
+                                testIterations: TEST_ITERATIONS,
+                                warmupIterations: WARMUP_ITERATIONS)
+
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nPerformance tests with security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        success {
+                            script {
+                                uploadTestResults(
+                                    buildManifestFileName: BUNDLE_MANIFEST,
+                                    jobName: JOB_NAME,
+                                    buildNumber: BUILD_ID
+                                )
+                            }
+                            postCleanup()
+                        }
+                        failure {
+                            postCleanup()
+                        }
+                        aborted {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('test-without-security') {
+                    agent {
+                        docker {
+                            label AGENT_LABEL
+                            image AGENT_IMAGE
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def bundleManifestObj = downloadBuildManifest(
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                            )
+
+                            echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "Architecture: ${ARCHITECTURE}"
+
+                            runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
+                                buildId: BUILD_ID,
+                                architecture: ARCHITECTURE,
+                                insecure: true,
+                                workload: TEST_WORKLOAD,
+                                testIterations: TEST_ITERATIONS,
+                                warmupIterations: WARMUP_ITERATIONS)
+
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nPerformance tests without security for ${BUILD_ID} completed")
+                        }
+                    }
+                    post {
+                        success {
+                            script {
+                                uploadTestResults(
+                                    buildManifestFileName: BUNDLE_MANIFEST,
+                                    jobName: JOB_NAME,
+                                    buildNumber: BUILD_ID
+                                )
+                            }
+                            postCleanup()
+                        }
+                        failure {
+                            postCleanup()
+                        }
+                        aborted {
+                            postCleanup()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Performance Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Performance Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+    }
+}
