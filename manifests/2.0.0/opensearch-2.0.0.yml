@@ -57,6 +57,9 @@ components:
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: main
