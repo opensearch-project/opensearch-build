@@ -35,6 +35,9 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
+# Add Python37 dependencies
+RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+
 # Add Dashboards dependencies
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
@@ -111,6 +114,21 @@ ENV RVM_HOME=/usr/local/rvm/bin
 ENV GEM_HOME=/usr/share/opensearch/.gem
 ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
+
+# Install Python37 binary
+RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
+    cd Python-3.7.7 && \
+    ./configure --enable-optimizations && \
+    make altinstall
+
+# Setup Python37 links
+RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
+    pip3 install pipenv && pipenv --version
+
+
 
 # Change User
 USER 1000
