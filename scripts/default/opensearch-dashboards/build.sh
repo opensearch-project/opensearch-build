@@ -72,7 +72,7 @@ PLUGIN_NAME=$(basename "$PWD")
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../OpenSearch-Dashboards && yarn osd bootstrap)
+(cd ../OpenSearch-Dashboards && nvm use && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"

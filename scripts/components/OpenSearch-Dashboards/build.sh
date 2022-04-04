@@ -109,6 +109,9 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         ;;
 esac
 
+echo "Setting node version"
+nvm use
+
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap
 
