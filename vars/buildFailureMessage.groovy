@@ -2,16 +2,16 @@ import com.cloudbees.groovy.cps.NonCPS
 import org.apache.commons.io.IOUtils
 @NonCPS
 def call(){
-    String ERROR_STRING = "ERROR"
+    String ERROR_STRING = "Error"
     List<String> message = []
     Reader performance_log = currentBuild.getRawBuild().getLogReader()
     String logContent = IOUtils.toString(performance_log)
     performance_log.close()
     performance_log = null
     logContent.eachLine() { line ->
-        def String match = (line =~ /$ERROR_STRING.*/) 
+        line=line.replace("\"", "")
+        def match = (line =~ /$ERROR_STRING.*/) 
         if (match.find()) {
-            line=line.replace("\"", "")
             line=match[0]
             message.add(line)
         }
