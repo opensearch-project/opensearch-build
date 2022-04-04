@@ -1,0 +1,19 @@
+pipeline {
+    agent none
+    stages {
+        stage('notify') {
+            steps {
+                script {
+                    try {
+                        buildFailureMessage()
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception err) {
+//https://github.com/jenkinsci/JenkinsPipelineUnit/issues/509
+                        currentBuild.result = 'SUCCESS'
+                    }
+                }
+            }
+        }
+    }
+}
+

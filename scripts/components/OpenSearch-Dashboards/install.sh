@@ -82,6 +82,7 @@ if [ "$DISTRIBUTION" = "tar" ]; then
     cp ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
 
 elif [ "$DISTRIBUTION" = "rpm" ]; then
-    cp -a ../../../scripts/service_templates/opensearch-dashboards/* "$OUTPUT/../"
-    cp -a ../../../scripts/build_templates/opensearch-dashboards/* "$OUTPUT/../"
+    cp ../../../config/opensearch_dashboards.yml "$OUTPUT/../etc/opensearch-dashboards/"
+    cp -a ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
+    cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/* "$OUTPUT/../"
 fi

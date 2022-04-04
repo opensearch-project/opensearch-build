@@ -55,7 +55,7 @@ class BuildTarget:
         )
 
     @property
-    def compatible_opensearch_versions(self) -> List[str]:
+    def compatible_min_versions(self) -> List[str]:
         return (
             [BuildTarget.__qualify_version(self.version, self.qualifier, self.snapshot)]
             + self.patches

@@ -21,7 +21,12 @@ class CiInputManifest(CiManifest):
 
     def __check__(self) -> None:
 
-        target = CiTarget(version=self.manifest.build.version, name=self.manifest.build.filename, snapshot=self.args.snapshot)
+        target = CiTarget(
+            version=self.manifest.build.version,
+            name=self.manifest.build.filename,
+            qualifier=self.manifest.build.qualifier if self.manifest.build.qualifier else None,
+            snapshot=self.args.snapshot
+        )
 
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             logging.info(f"Sanity-testing in {work_dir.name}")

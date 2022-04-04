@@ -13,6 +13,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-q QUALIFIER\t[Optional] Version qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
@@ -20,7 +21,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -28,6 +29,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -62,6 +66,7 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+[ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
 
 case $PLATFORM in
     linux*)
@@ -99,17 +104,17 @@ cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build)
+(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 ZIP_NAME=`ls ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build | grep .zip`
 unzip ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$ZIP_NAME -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/
 # Reporting uses headless chromium to generate reports, which needs to be included in its artifact
 echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
 mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
 curl -SL "$CHROMIUM_URL" -o $CHROMIUM_TARGET
-echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION.zip"
+echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip"
 unzip "$CHROMIUM_TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
-(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION.zip opensearch-dashboards)
+(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip opensearch-dashboards)
 echo "COPY $PLUGIN_NAME.zip"
-cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
+cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
 

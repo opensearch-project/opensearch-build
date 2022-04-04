@@ -16,7 +16,7 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", name="opensearch", snapshot=False),
+            target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=False),
         )
         check.check()
         exec_command = unittest.mock.create_autospec(check.git_repo.execute)
@@ -26,8 +26,18 @@ class TestCiCheckGradlePublishToMavenLocal(unittest.TestCase):
         check = CiCheckGradlePublishToMavenLocal(
             component=MagicMock(),
             git_repo=MagicMock(),
-            target=CiTarget(version="1.1.0", name="opensearch", snapshot=True),
+            target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True),
         )
         check.check()
         exec_command = unittest.mock.create_autospec(check.git_repo.execute)
         exec_command.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true")
+
+    def test_executes_gradle_command_qualifier_snapshot(self) -> None:
+        check = CiCheckGradlePublishToMavenLocal(
+            component=MagicMock(),
+            git_repo=MagicMock(),
+            target=CiTarget(version="2.0.0", name="opensearch", qualifier="alpha1", snapshot=True),
+        )
+        check.check()
+        exec_command = unittest.mock.create_autospec(check.git_repo.execute)
+        exec_command.assert_called_once_with("./gradlew publishToMavenLocal -Dopensearch.version=2.0.0-alpha1-SNAPSHOT -Dbuild.snapshot=true -Dbuild.version_qualifier=alpha1")

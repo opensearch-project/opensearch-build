@@ -63,7 +63,7 @@ class TestBuildArtifactOpenSearchDashboardsCheckPlugin(unittest.TestCase):
             with self.__mock(snapshot=False) as mock:
                 mock.check("pluginName-1.2.3.zip")
         self.assertEqual(
-            "Artifact pluginName-1.2.3.zip is invalid. Expected filename to to be one of ['pluginName-1.1.0.zip', 'pluginName-1.0.0.zip'].",
+            "Artifact pluginName-1.2.3.zip is invalid. Expected filename to to be one of ['pluginName-1.1.0.zip', 'pluginName-1.0.0.zip', 'pluginName-1.0.0-SNAPSHOT.zip'].",
             str(context.exception),
         )
 

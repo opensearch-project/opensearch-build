@@ -35,12 +35,14 @@ class InputManifest {
     class Build implements Serializable {
         String name
         String version
+        String qualifier
         String platform
         String architecture
 
         Build(Map data) {
             this.name = data.name
             this.version = data.version
+            this.qualifier = data.qualifier
             this.platform = data.platform
             this.architecture = data.architecture
         }

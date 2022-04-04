@@ -3,7 +3,14 @@ void call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
+    def build_qualifier = inputManifest.build.qualifier
 
+    if (build_qualifier != null && build_qualifier != 'null') {
+        build_qualifier = "-" + build_qualifier
+    }
+    else {
+        build_qualifier = ''
+    }
     String filename = inputManifest.build.getFilename()
 
     if (args.artifactUrlX64 == null || args.artifactUrlArm64 ==  null) {
@@ -23,7 +30,7 @@ void call(Map args = [:]) {
                         [
                             'bash',
                             'build-image-multi-arch.sh',
-                            "-v ${inputManifest.build.version}",
+                            "-v ${inputManifest.build.version}${build_qualifier}",
                             "-f ./dockerfiles/${filename}.al2.dockerfile",
                             "-p ${filename}",
                             "-a 'x64,arm64'",
