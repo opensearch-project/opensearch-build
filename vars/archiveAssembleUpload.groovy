@@ -5,7 +5,7 @@ def call(Map args = [:]) {
     echo "Assembling ${args.inputManifest}"
 
     copyArtifacts(
-        filter: "*.zip",
+        filter: "${args.distribution}/*.zip",
         fingerprintArtifacts: true,
         projectName: "${JOB_NAME}",
         selector: specific("${BUILD_NUMBER}")
