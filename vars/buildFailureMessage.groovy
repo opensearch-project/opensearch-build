@@ -10,7 +10,7 @@ def call(){
     performance_log = null
     logContent.eachLine() { line ->
         line=line.replace("\"", "")
-        def match = (line =~ /$ERROR_STRING.*/) 
+        def java.util.regex.Matcher match = (line =~ /$ERROR_STRING.*/) 
         if (match.find()) {
             line=match[0]
             message.add(line)
