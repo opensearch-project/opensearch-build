@@ -9,10 +9,18 @@ def call(){
     performance_log.close()
     performance_log = null
     logContent.eachLine() { line ->
-        if (line.matches(".*?$ERROR_STRING(.*?)")) {
+        def match = (line =~ /$ERROR_STRING.*/) 
+        if (match.find()) {
             line=line.replace("\"", "")
+            line=match[0]
             message.add(line)
         }
+        //if (line.matches(".*?$ERROR_STRING(.*?)")) {
+        //    line=line.replace("\"", "")
+        //    def matches = (articleContent =~ /$ERROR_STRING.*/) 
+        //    def firstmatch = matches[0]
+        //    message.add(firstmatch)
+        //}
     }
     if(message.isEmpty()){
         message=["Build failed"]
