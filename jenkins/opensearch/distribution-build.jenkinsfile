@@ -79,8 +79,7 @@ pipeline {
                             )
                             if (fileExists("$WORKSPACE/builds/opensearch/maven")) {
                                 withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh 'echo "Not publishing"'
-                                    //sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
+                                    sh('$WORKSPACE/publish/publish-snapshot.sh $WORKSPACE/builds/opensearch/maven')
                                 }
                             } else {
                                 echo "Skipping publishing snapshots, builds/opensearch/maven does not exist."
@@ -324,7 +323,7 @@ pipeline {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK_TEST',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }

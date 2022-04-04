@@ -15,12 +15,6 @@ def call(){
             line=match[0]
             message.add(line)
         }
-        //if (line.matches(".*?$ERROR_STRING(.*?)")) {
-        //    line=line.replace("\"", "")
-        //    def matches = (articleContent =~ /$ERROR_STRING.*/) 
-        //    def firstmatch = matches[0]
-        //    message.add(firstmatch)
-        //}
     }
     if(message.isEmpty()){
         message=["Build failed"]
