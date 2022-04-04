@@ -240,7 +240,7 @@ and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). I
 
 - To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
 
-- To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
+- To run a specific test case, run `./gradlew test -info --tests=TestCaseClassName`
 
 #### Tests for jenkins job
 Each jenkins job should have a test case associated with it. 
