@@ -9,7 +9,7 @@ def call(){
     performance_log.close()
     performance_log = null
     logContent.eachLine() { line ->
-        def match = (line =~ /$ERROR_STRING.*/) 
+        def String match = (line =~ /$ERROR_STRING.*/) 
         if (match.find()) {
             line=line.replace("\"", "")
             line=match[0]

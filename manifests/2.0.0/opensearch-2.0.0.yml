@@ -15,48 +15,48 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
-  - name: common-utils
-    repository: https://github.com/opensearch-project/common-utils.git
-    ref: main
-    checks:
-      - gradle:publish
-      - gradle:properties:version
-  - name: job-scheduler
-    repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: ml-commons
-    repository: https://github.com/opensearch-project/ml-commons.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
-  - name: k-NN
-    repository: https://github.com/opensearch-project/k-NN.git
-    ref: main
-    platforms:
-      - darwin
-      - linux
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: alerting
-    repository: https://github.com/opensearch-project/alerting.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: alerting
-  - name: anomaly-detection
-    repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-  - name: asynchronous-search
-    repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: main
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
+#  - name: common-utils
+#    repository: https://github.com/opensearch-project/common-utils.git
+#    ref: main
+#    checks:
+#      - gradle:publish
+#      - gradle:properties:version
+#  - name: job-scheduler
+#    repository: https://github.com/opensearch-project/job-scheduler.git
+#    ref: main
+#    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version
+#  - name: ml-commons
+#    repository: https://github.com/opensearch-project/ml-commons.git
+#    ref: main
+#    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+#  - name: k-NN
+#    repository: https://github.com/opensearch-project/k-NN.git
+#    ref: main
+#    platforms:
+#      - darwin
+#      - linux
+#    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version
+#  - name: alerting
+#    repository: https://github.com/opensearch-project/alerting.git
+##    ref: main
+#    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version: alerting
+#  - name: anomaly-detection
+#    repository: https://github.com/opensearch-project/anomaly-detection.git
+#    ref: main
+#    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version
+#  - name: asynchronous-search
+#    repository: https://github.com/opensearch-project/asynchronous-search.git
+#    ref: main
+##    checks:
+#      - gradle:properties:version
+#      - gradle:dependencies:opensearch.version
