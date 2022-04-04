@@ -9,6 +9,7 @@ pipeline {
         AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
+        JOB_NAME = 'perf-test'
     }
     parameters {
         string(
@@ -76,6 +77,8 @@ pipeline {
                     env.BUILD_ID = buildId
                     env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
                     env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                    echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                    lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
                 }
             }
         }
@@ -90,7 +93,7 @@ pipeline {
                         }
                     }
                     when {
-                        expression { HAS_SECURITY == true }
+                        expression { return env.HAS_SECURITY }
                     }
                     steps {
                         script {
@@ -102,26 +105,26 @@ pipeline {
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "Architecture: ${ARCHITECTURE}"
 
-                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
-
-                            runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                                buildId: "${BUILD_ID}",
-                                architecture: "${ARCHITECTURE}",
+                            runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
+                                buildId: BUILD_ID,
+                                architecture: ARCHITECTURE,
                                 insecure: false,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS)
 
-                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nPerformance tests with security for ${BUILD_ID} completed")
                         }
                     }
                     post {
                         success {
                             script {
                                 uploadTestResults(
-                                    buildManifestFileName: "${BUNDLE_MANIFEST}",
-                                    jobName: 'perf-test',
-                                    buildNumber: "${BUILD_ID}"
+                                    buildManifestFileName: BUNDLE_MANIFEST,
+                                    jobName: JOB_NAME,
+                                    buildNumber: BUILD_ID
                                 )
                             }
                             postCleanup()
@@ -153,26 +156,26 @@ pipeline {
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "Architecture: ${ARCHITECTURE}"
 
-                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
-
-                            runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                                buildId: "${BUILD_ID}",
-                                architecture: "${ARCHITECTURE}",
+                            runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
+                                buildId: BUILD_ID,
+                                architecture: ARCHITECTURE,
                                 insecure: true,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS)
 
-                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests without security for ${BUILD_ID} completed")
+                            lib.jenkins.Messages.new(this).add(JOB_NAME,
+                                lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                                "\nPerformance tests without security for ${BUILD_ID} completed")
                         }
                     }
                     post {
                         success {
                             script {
                                 uploadTestResults(
-                                    buildManifestFileName: "${BUNDLE_MANIFEST}",
-                                    jobName: 'perf-test',
-                                    buildNumber: "${BUILD_ID}"
+                                    buildManifestFileName: BUNDLE_MANIFEST,
+                                    jobName: JOB_NAME,
+                                    buildNumber: BUILD_ID
                                 )
                             }
                             postCleanup()
@@ -193,14 +196,13 @@ pipeline {
         success {
             node(AGENT_LABEL) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
                     publishNotification(
                         icon: ':white_check_mark:',
                         message: 'Performance Tests Successful',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
                     )
-
                     postCleanup()
                 }
             }
@@ -208,14 +210,13 @@ pipeline {
         failure {
             node(AGENT_LABEL) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
                     publishNotification(
                         icon: ':warning:',
                         message: 'Failed Performance Tests',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
                     )
-
                     postCleanup()
                 }
             }
