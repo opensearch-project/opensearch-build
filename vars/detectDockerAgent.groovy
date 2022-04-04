@@ -1,5 +1,5 @@
 Map call(Map args = [:]) {
-    git url: 'https://github.com/tianleh/opensearch-build.git', branch: 'add-new-folder'
+    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
     def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
