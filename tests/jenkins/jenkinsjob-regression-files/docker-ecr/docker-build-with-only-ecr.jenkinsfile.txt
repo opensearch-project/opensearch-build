@@ -1,0 +1,23 @@
+   docker-build-with-ecr.run()
+      docker-build-with-ecr.legacySCM(groovy.lang.Closure)
+      docker-build-with-ecr.library({identifier=jenkins@20211123, retriever=null})
+      docker-build-with-ecr.pipeline(groovy.lang.Closure)
+         docker-build-with-ecr.timeout({time=1, unit=HOURS})
+         docker-build-with-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         docker-build-with-ecr.stage(check-params, groovy.lang.Closure)
+            docker-build-with-ecr.script(groovy.lang.Closure)
+         docker-build-with-ecr.echo(Skipping stage docker-build-dockerhub-staging)
+         docker-build-with-ecr.stage(docker-ecr-staging, groovy.lang.Closure)
+            docker-build-with-ecr.script(groovy.lang.Closure)
+               docker-build-with-ecr.copyContainer({sourceImagePath=opensearchstaging/ci-runner-staging:latest, destinationImagePath=public.ecr.aws/m0o1u6w1/ci-runner-staging:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/m0o1u6w1, accountName=aws_account_public})
+                  copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
+                  copyContainer.sh(docker logout)
+                  copyContainer.withAWS({role=Upload_ECR_Image, roleAccount=aws_account_public, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     copyContainer.sh(
+                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m0o1u6w1
+                gcrane cp opensearchstaging/ci-runner-staging:latest public.ecr.aws/m0o1u6w1/ci-runner-staging:latest
+            )
+         docker-build-with-ecr.script(groovy.lang.Closure)
+            docker-build-with-ecr.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-build-with-ecr.sh(docker logout && docker image prune -f --all)
