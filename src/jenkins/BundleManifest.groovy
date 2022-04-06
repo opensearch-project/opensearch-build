@@ -10,7 +10,7 @@
 package jenkins
 
 
-class DistributionManifest implements Serializable {
+class BundleManifest implements Serializable {
     class Build implements Serializable {
         String id
         String name
@@ -68,9 +68,9 @@ class DistributionManifest implements Serializable {
     Build build
     Components components
 
-    DistributionManifest(Map data) {
-        this.build = new DistributionManifest.Build(data.build)
-        this.components = new DistributionManifest.Components(data.components)
+    BundleManifest(Map data) {
+        this.build = new BundleManifest.Build(data.build)
+        this.components = new BundleManifest.Components(data.components)
     }
 
     public String getArtifactArchitecture() {
