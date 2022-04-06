@@ -1,14 +1,21 @@
+/**
+ * This is a general function for RPM distribution validation.
+ * @param Map args = [:]
+ * args.bundleManifestObj: The Groovy Object of BundleManifest.
+ * args.rpmDistribution: The location of the RPM distribution file.
+ */
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def bundleManifestObj = args.bundleManifestObj
-    def distFile = args.rpmDistribution         //Distribution file location
+    def distFile = args.rpmDistribution
     def name = bundleManifestObj.build.getFilename()   //opensearch-dashboards
     def version = bundleManifestObj.build.version        //1.3.0
     def architecture = bundleManifestObj.build.architecture
     def plugin_names = bundleManifestObj.getNames();
 
-    def latestOpenSearchURL = "https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/$version/latest/linux/$architecture/rpm/dist/opensearch/opensearch-$version-linux-${architecture}.rpm"
+    def latestOpenSearchURLRoot = "https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22"
+    def latestOpenSearchURL = "$latestOpenSearchURLRoot/$version/latest/linux/$architecture/rpm/dist/opensearch/opensearch-$version-linux-${architecture}.rpm"
     def latestOpensearchDist = "$WORKSPACE/opensearch-$version-linux-${architecture}.rpm"
     // Download the latest OpenSearch distribution with same version to be compatible with Dashboards.
     sh("curl -SLO $latestOpenSearchURL")
@@ -28,37 +35,10 @@ def call(Map args = [:]) {
             "For more information, see: https://opensearch.org/"
 
     //Validation for the Meta Data of distribution
-    println("Meta data validations start:")
-    def metadata = sh (
-            script: "rpm -qip $distFile",
-            returnStdout: true
-    ).trim()
-    println("Meta data for the RPM distribution is: \n" + metadata)
-    // Extract the meta data from the distribution to Map
-    def metaMap = [:]
-    for (line in metadata.split('\n')) {
-        def key = line.split(':')[0].trim()
-        if (key != 'Description') {
-            metaMap[key] = line.split(':', 2)[1].trim()
-        } else {
-            metaMap[key] = metadata.split(line)[1].trim()
-            break
-        }
-    }
-    // Start validating
-    refMap.each{ key, value ->
-        if (key == "Architecture") {
-            if (value == 'x64') {
-                assert metaMap[key] == 'x86_64'
-            } else if (value == 'arm64') {
-                assert metaMap[key] == 'aarch64'
-            }
-        } else {
-            assert metaMap[key] == value
-        }
-        println("Meta data for $key is validated")
-    }
-    println("Validation for meta data of RPM distribution completed.")
+    rpmMetaValidation(
+            rpmDistribution: distFile,
+            refMap: refMap
+    )
 
     //Validation for the installation
     //Install the rpm distribution via yum
@@ -75,16 +55,9 @@ def call(Map args = [:]) {
     sleep 30    //wait for 30 secs for opensearch to start
 
     //Validate if the running status is succeed
-    def running_status = sh (
-            script: "sudo systemctl status $name",
-            returnStdout: true
-    ).trim()
-    def active_status_message = "Active: active (running)"
-    if (running_status.contains(active_status_message)) {
-        println("After checking the status, the installed $name is actively running!")
-    } else {
-        error("Something went run! Installed $name is not actively running.")
-    }
+    rpmStatusValidation(
+            name: name
+    )
 
     //Start validate if this is dashboards distribution.
     println("This is a dashboards validation.")
