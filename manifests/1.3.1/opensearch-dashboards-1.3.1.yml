@@ -23,3 +23,7 @@ components:
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
     ref: '1.3'
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: '1.3'
