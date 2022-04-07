@@ -34,5 +34,8 @@ components:
     working_directory: dashboards-reports
     ref: main
   - name: indexManagementDashboards
-    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: main
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: main
