@@ -5,6 +5,8 @@
 
 set -ex
 
+source $NVM_DIR/nvm.sh
+
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
