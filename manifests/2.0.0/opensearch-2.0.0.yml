@@ -89,3 +89,9 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
