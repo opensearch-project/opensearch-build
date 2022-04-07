@@ -99,7 +99,7 @@ class Bundle(ABC):
         self._execute(install_command)
 
     def package(self, dest: str) -> None:
-        self.min_dist.build(self.bundle_recorder.package_name, dest)
+        self.min_dist.build(self.bundle_recorder.package_name, self.bundle_recorder.release_iteration, dest)
 
     def _execute(self, command: str) -> None:
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')

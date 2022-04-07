@@ -75,7 +75,7 @@ class BundleRpm:
             with open(min_bin_env_path, 'wb') as fp:
                 fp.write(min_bin_env_lines.replace('source', '#source').encode('ascii'))
 
-    def build(self, name: str, dest: str, archive_path: str, build_cls: BuildManifest.Build) -> None:
+    def build(self, name: str, dest: str, archive_path: str, build_cls: BuildManifest.Build, release_iteration: str) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
         # mainly due to rpm requires several different setups compares to tarball and zip
         ext_dest = os.path.dirname(archive_path)
@@ -102,11 +102,13 @@ class BundleRpm:
                 '-bb',
                 f"--define '_topdir {ext_dest}'",
                 f"--define '_version {build_cls.version}'",
+                f"--define '_release {release_iteration}'",
                 f"--define '_architecture {rpm_architecture(build_cls.architecture)}'",
                 f"{self.filename}.rpm.spec",
             ]
         )
 
+        logging.info(f"Generate {self.filename}-{build_cls.version}-{release_iteration}.{rpm_architecture(build_cls.architecture)}.rpm")
         logging.info(f"Execute {bundle_cmd} in {ext_dest}")
         subprocess.check_call(bundle_cmd, cwd=ext_dest, shell=True)
 

@@ -78,8 +78,8 @@ class Dist(ABC):
         )
         return self.archive_path
 
-    def build(self, name: str, dest: str) -> None:
-        self.__build__(name, dest)
+    def build(self, name: str, release_iteration: str, dest: str) -> None:
+        self.__build__(name, release_iteration, dest)
         path = os.path.join(dest, name)
         shutil.copyfile(name, path)
         logging.info(f"Published {path}.")
@@ -114,5 +114,5 @@ class DistRpm(Dist):
     def __extract__(self, dest: str) -> None:
         BundleRpm(self.filename, self.path, self.min_path).extract(dest)
 
-    def __build__(self, name: str, dest: str) -> None:
-        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)
+    def __build__(self, name: str, release_iteration: str, dest: str) -> None:
+        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls, release_iteration)

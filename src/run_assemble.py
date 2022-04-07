@@ -27,6 +27,7 @@ def main() -> int:
     build_manifest = BuildManifest.from_file(args.manifest)
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
+    release_iteration = args.release_iteration
 
     output_dir = AssembleOutputDir(build.filename).dir
 
@@ -34,6 +35,7 @@ def main() -> int:
 
     bundle_recorder = BundleRecorder(
         build,
+        release_iteration,
         output_dir,
         artifacts_dir,
         BundleLocations.from_path(args.base_url, os.getcwd(), build.filename)

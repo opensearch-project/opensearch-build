@@ -16,11 +16,12 @@ from manifests.manifest import Manifest
 
 class BundleRecorder:
 
-    def __init__(self, build: BuildManifest.Build, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
+    def __init__(self, build: BuildManifest.Build, release_iteration: str, output_dir: str, artifacts_dir: str, bundle_location: BundleLocation) -> None:
         self.output_dir = output_dir
         self.build_id = build.id
         self.bundle_location = bundle_location
         self.version = build.version
+        self.release_iteration = release_iteration
         self.distribution = build.distribution
         self.package_name = self.__get_package_name(build)
         self.artifacts_dir = artifacts_dir

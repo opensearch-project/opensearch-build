@@ -11,6 +11,7 @@
 %define log_dir %{_localstatedir}/log/%{name}
 %define pid_dir %{_localstatedir}/run/%{name}
 %{!?_version: %define _version 0.0.0 }
+%{!?_release: %define _release 1 }
 %{!?_architecture: %define _architecture x86_64 }
 
 Name: opensearch-dashboards

@@ -11,11 +11,12 @@
 %define log_dir %{_localstatedir}/log/%{name}
 %define pid_dir %{_localstatedir}/run/%{name}
 %{!?_version: %define _version 0.0.0 }
+%{!?_release: %define _release 1 }
 %{!?_architecture: %define _architecture x86_64 }
 
 Name: opensearch
 Version: %{_version}
-Release: 1
+Release: %{_release}
 License: Apache-2.0
 Summary: An open source distributed and RESTful search engine
 URL: https://opensearch.org/
