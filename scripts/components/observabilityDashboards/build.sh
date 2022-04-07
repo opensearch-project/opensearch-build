@@ -8,8 +8,6 @@
 
 set -ex
 
-source $NVM_DIR/nvm.sh
-
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
@@ -76,7 +74,7 @@ PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && nvm use && yarn osd bootstrap)
+(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"

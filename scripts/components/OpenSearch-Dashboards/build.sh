@@ -5,8 +5,6 @@
 
 set -ex
 
-source $NVM_DIR/nvm.sh
-
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
@@ -112,6 +110,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
 esac
 
 echo "Setting node version"
+source $NVM_DIR/nvm.sh
 nvm use
 
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
