@@ -1,18 +1,18 @@
 /**
  * This is a general function for RPM distribution validation.
  * @param Map args = [:]
- * args.bundleManifest: The Groovy Object of BundleManifest.
+ * args.bundleManifest: The location of the distribution manifest.
  * args.rpmDistribution: The location of the RPM distribution file.
  */
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def bundleManifestObj = args.bundleManifestObj
+    def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.bundleManifest))
     def distFile = args.rpmDistribution
-    def name = bundleManifestObj.build.getFilename()   //opensearch
-    def version = bundleManifestObj.build.version        //1.3.0
-    def architecture = bundleManifestObj.build.architecture
-    def plugin_names = bundleManifestObj.getNames();
+    def name = BundleManifestObj.build.getFilename()   //opensearch
+    def version = BundleManifestObj.build.version        //1.3.0
+    def architecture = BundleManifestObj.build.architecture
+    def plugin_names = BundleManifestObj.getNames();
 
     // This is a reference meta data which the distribution should be consistent with.
     def refMap = [:]
@@ -128,7 +128,7 @@ def call(Map args = [:]) {
         if (component == "OpenSearch" || component == "common-utils") {
             continue
         }
-        def location = bundleManifestObj.getLocation(component)
+        def location = BundleManifestObj.getLocation(component)
         def component_name_with_version = location.split('/').last().minus('.zip') //e.g. opensearch-job-scheduler-1.3.0.0
         components_list.add(component_name_with_version)
     }

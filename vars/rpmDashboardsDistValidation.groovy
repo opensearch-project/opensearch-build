@@ -1,18 +1,18 @@
 /**
  * This is a general function for RPM distribution validation.
  * @param Map args = [:]
- * args.bundleManifestObj: The Groovy Object of BundleManifest.
+ * args.bundleManifest: The location of the distribution manifest.
  * args.rpmDistribution: The location of the RPM distribution file.
  */
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def bundleManifestObj = args.bundleManifestObj
+    def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.bundleManifest))
     def distFile = args.rpmDistribution
-    def name = bundleManifestObj.build.getFilename()   //opensearch-dashboards
-    def version = bundleManifestObj.build.version        //1.3.0
-    def architecture = bundleManifestObj.build.architecture
-    def plugin_names = bundleManifestObj.getNames();
+    def name = BundleManifestObj.build.getFilename()   //opensearch-dashboards
+    def version = BundleManifestObj.build.version        //1.3.0
+    def architecture = BundleManifestObj.build.architecture
+    def plugin_names = BundleManifestObj.getNames();
 
     def latestOpenSearchURLRoot = "https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22"
     def latestOpenSearchURL = "$latestOpenSearchURLRoot/$version/latest/linux/$architecture/rpm/dist/opensearch/opensearch-$version-linux-${architecture}.rpm"
@@ -83,7 +83,7 @@ def call(Map args = [:]) {
         if (component == "OpenSearch-Dashboards" || component == "functionalTestDashboards") {
             continue
         }
-        def location = bundleManifestObj.getLocation(component)
+        def location = BundleManifestObj.getLocation(component)
         def component_name_with_version = location.split('/').last().minus('.zip') //e.g. anomalyDetectionDashboards-1.3.0
         components_list.add(component_name_with_version)
     }

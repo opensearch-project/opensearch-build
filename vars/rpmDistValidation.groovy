@@ -32,12 +32,12 @@ def call(Map args = [:]) {
 
     if (name == "opensearch") {
         rpmOpenSearchDistValidation(
-                bundleManifestObj: BundleManifestObj,
+                bundleManifest: args.bundleManifest,
                 rpmDistribution: distFile
         )
     } else {
         rpmDashboardsDistValidation(
-                bundleManifestObj: BundleManifestObj,
+                bundleManifest: args.bundleManifest,
                 rpmDistribution: distFile
         )
     }
