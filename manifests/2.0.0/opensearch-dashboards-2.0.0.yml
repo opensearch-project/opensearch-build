@@ -33,3 +33,6 @@ components:
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
     ref: main
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: main
