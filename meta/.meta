@@ -22,6 +22,7 @@
     "cross-cluster-replication": "git@github.com:opensearch-project/cross-cluster-replication.git",
     "common-utils": "git@github.com:opensearch-project/common-utils.git",
     "opensearch-build": "git@github.com:opensearch-project/opensearch-build.git",
-    "ml-commons": "git@github.com:opensearch-project/ml-commons.git"
+    "ml-commons": "git@github.com:opensearch-project/ml-commons.git",
+    "geospatial": "git@github.com:opensearch-project/geospatial.git"
   }
 }
