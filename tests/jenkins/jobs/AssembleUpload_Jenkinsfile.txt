@@ -11,7 +11,7 @@
                      assembleManifest.library({identifier=jenkins@20211123, retriever=null})
                      assembleManifest.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
                      BuildManifest.asBoolean()
-                     BuildManifest.getArtifactRootUrl(https://ci.opensearch.org/dbc, vars-build, 33)
+                     BuildManifest.getArtifactRootUrlWithoutDistribution(https://ci.opensearch.org/dbc, vars-build, 33)
                      assembleManifest.sh(./assemble.sh "tests/data/opensearch-build-1.1.0.yml" --base-url https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64)
                   assembleUpload.uploadArtifacts({buildManifest=tests/data/opensearch-build-1.1.0.yml})
                      uploadArtifacts.legacySCM(groovy.lang.Closure)
@@ -31,7 +31,7 @@
                      uploadArtifacts.withAWS({role=role, roleAccount=dummy, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadArtifacts.s3Upload({file=tar/builds/opensearch/dist/opensearch-min-1.1.0-linux-x64.tar.gz, bucket=bucket, path=release-candidates/core/opensearch/1.1.0/})
                         uploadArtifacts.s3Upload({file=tar/dist/opensearch/opensearch-1.1.0-linux-x64.tar.gz, bucket=bucket, path=release-candidates/bundle/opensearch/1.1.0/})
-                     BuildManifest.getArtifactRootUrlWithDistribution(https://ci.opensearch.org/dbc, vars-build, 33)
+                     BuildManifest.getArtifactRootUrl(https://ci.opensearch.org/dbc, vars-build, 33)
                      Messages.asBoolean()
                      Messages.add(stage, https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64/tar/builds/opensearch/manifest.yml
 https://ci.opensearch.org/dbc/vars-build/1.1.0/33/linux/x64/tar/dist/opensearch/manifest.yml)

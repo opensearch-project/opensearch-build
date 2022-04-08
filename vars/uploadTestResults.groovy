@@ -10,6 +10,6 @@ void call(Map args = [:]) {
         s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
     }
 
-    def baseUrl = buildManifest.getArtifactRootUrlWithDistribution("${PUBLIC_ARTIFACT_URL}", args.jobName, args.buildNumber)
+    def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", args.jobName, args.buildNumber)
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/test-results/")
 }

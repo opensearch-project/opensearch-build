@@ -23,7 +23,7 @@ pipeline {
                     echo buildManifest.build.getFilenameWithExtension('windows', 'x86')
                     echo buildManifest.getArtifactRoot('bundle-build', '1')
                     echo buildManifest.getArtifactRootWithDistribution('bundle-build', '1')
-                    echo buildManifest.getArtifactRootUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
+                    echo buildManifest.getArtifactRootUrlWithoutDistribution('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.getArtifactRootUrlWithDistribution('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.getUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
                     echo buildManifest.getArtifactUrl('https://ci.opensearch.org/ci/dbc', 'bundle-build', '1')
