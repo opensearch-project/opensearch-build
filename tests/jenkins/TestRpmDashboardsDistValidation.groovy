@@ -31,7 +31,7 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
                 "Signature   : (none)\n" +
                 "Source RPM  : opensearch-dashboards-1.3.0-1.src.rpm\n" +
                 "Build Date  : Wed 30 Mar 2022 01:09:33 AM UTC\n" +
-                "Build Host  : dev-dsk-zhujiaxi-2a-5c9b3e5e.us-west-2.amazon.com\n" +
+                "Build Host  : dummy_desktop\n" +
                 "Relocations : (not relocatable)\n" +
                 "URL         : https://opensearch.org/\n" +
                 "Summary     : Open source visualization dashboards for OpenSearch\n" +
@@ -48,22 +48,22 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
                 "   CGroup: /system.slice/opensearch-dashboards.service\n" +
                 "           └─30297 /usr/share/opensearch-dashboards/bin/../node/bin/node /usr/share/opensearch-dashboards/bin/../src/cli/dist\n" +
                 "\n" +
-                "Apr 04 21:41:10 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:10Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:12 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:12Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:15 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:15Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:17 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:17Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:20 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:20Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:22 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:22Z\",\"tags\"...00\"}\n" +
-                "Apr 04 21:41:28 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-04T21:41:28Z\",\"tags...\n" +
-                "Apr 05 00:35:41 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T00:35:41Z\",\"tags...\n" +
-                "Apr 05 18:45:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:25Z\",\"tags...\n" +
-                "Apr 05 18:45:32 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:32Z\",\"tags...\n" +
+                "Apr 04 21:41:10 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:10Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:12 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:12Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:15 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:15Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:17 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:17Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:20 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:20Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:22 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"log\",\"@timestamp\":\"2022-04-04T21:41:22Z\",\"tags\"...00\"}\n" +
+                "Apr 04 21:41:28 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-04T21:41:28Z\",\"tags...\n" +
+                "Apr 05 00:35:41 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T00:35:41Z\",\"tags...\n" +
+                "Apr 05 18:45:25 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:25Z\",\"tags...\n" +
+                "Apr 05 18:45:32 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:32Z\",\"tags...\n" +
                 "Hint: Some lines were ellipsized, use -l to show in full."
         helper.addShMock("sudo systemctl status opensearch-dashboards") { script ->
             return [stdout: status_message, exitValue: 0]
         }
         def cluster_status = [
-                "name": "dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com",
+                "name": "dummy_desktop",
                 "uuid": "c4677c7a-d76f-45eb-a124-7e30d2b10e4b",
                 "version": [
                         "number": "1.3.0",

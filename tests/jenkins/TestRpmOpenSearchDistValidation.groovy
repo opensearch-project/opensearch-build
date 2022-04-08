@@ -79,66 +79,53 @@ class TestRpmOpenSearchDistValidation extends BuildPipelineTest {
                 "   CGroup: /system.slice/opensearch.service\n" +
                 "           └─32009 /usr/share/opensearch/jdk/bin/java -Xshare:auto -Dopensearch.networkaddress.cache.ttl=60 -Dopensearch.networkaddress.cache.negative.ttl=1...\n" +
                 "\n" +
-                "Apr 04 21:41:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: WARNING: An illegal reflective access operation has occurred\n" +
-                "Apr 04 21:41:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: WARNING: Illegal reflective access by org.opensearch.securi...name\n" +
-                "Apr 04 21:41:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: WARNING: Please consider reporting this to the maintainers ...tter\n" +
-                "Apr 04 21:41:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: WARNING: Use --illegal-access=warn to enable warnings of fu...ions\n" +
-                "Apr 04 21:41:25 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: WARNING: All illegal access operations will be denied in a ...ease\n" +
-                "Apr 04 22:11:35 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
-                "Apr 04 22:41:47 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
-                "Apr 04 23:11:59 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
-                "Apr 04 23:42:10 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
-                "Apr 05 00:12:22 dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
+                "Apr 04 21:41:25 dummy_desktop systemd-entrypoint[32009]: WARNING: An illegal reflective access operation has occurred\n" +
+                "Apr 04 21:41:25 dummy_desktop systemd-entrypoint[32009]: WARNING: Illegal reflective access by org.opensearch.securi...name\n" +
+                "Apr 04 21:41:25 dummy_desktop systemd-entrypoint[32009]: WARNING: Please consider reporting this to the maintainers ...tter\n" +
+                "Apr 04 21:41:25 dummy_desktop systemd-entrypoint[32009]: WARNING: Use --illegal-access=warn to enable warnings of fu...ions\n" +
+                "Apr 04 21:41:25 dummy_desktop systemd-entrypoint[32009]: WARNING: All illegal access operations will be denied in a ...ease\n" +
+                "Apr 04 22:11:35 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
+                "Apr 04 22:41:47 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
+                "Apr 04 23:11:59 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
+                "Apr 04 23:42:10 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
+                "Apr 05 00:12:22 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
                 "Hint: Some lines were ellipsized, use -l to show in full."
         helper.addShMock("sudo systemctl status opensearch") { script ->
             return [stdout: status_message, exitValue: 0]
         }
-        def cluster_info = "{\n" +
-                "  \"name\" : \"dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com\",\n" +
-                "  \"cluster_name\" : \"opensearch\",\n" +
-                "  \"cluster_uuid\" : \"yM4Z4TgRQ-C_WocJjMfuYg\",\n" +
-                "  \"version\" : {\n" +
-                "    \"distribution\" : \"opensearch\",\n" +
-                "    \"number\" : \"1.3.1\",\n" +
-                "    \"build_type\" : \"rpm\",\n" +
-                "    \"build_hash\" : \"40481be2be0536a34588b1fad10eb6c289713803\",\n" +
-                "    \"build_date\" : \"2022-03-28T18:33:36.499005Z\",\n" +
-                "    \"build_snapshot\" : false,\n" +
-                "    \"lucene_version\" : \"8.10.1\",\n" +
-                "    \"minimum_wire_compatibility_version\" : \"6.8.0\",\n" +
-                "    \"minimum_index_compatibility_version\" : \"6.0.0-beta1\"\n" +
-                "  },\n" +
-                "  \"tagline\" : \"The OpenSearch Project: https://opensearch.org/\"\n" +
-                "}"
+        def cluster_info_n_status = [
+                "name" : "dummy_desktop",
+                "cluster_name" : "opensearch",
+                "status":"green",
+                "cluster_uuid" : "uClFQNw6T_KCO2fmdP2jTA",
+                "version" : [
+                        "distribution" : "opensearch",
+                        "number" : "1.3.1",
+                        "build_type" : "rpm",
+                        "build_hash" : "40481be2be0536a34588b1fad10eb6c289713803",
+                        "build_date" : "2022-03-28T18:33:36.499005Z",
+                        "build_snapshot" : false,
+                        "lucene_version" : "8.10.1",
+                        "minimum_wire_compatibility_version" : "6.8.0",
+                        "minimum_index_compatibility_version" : "6.0.0-beta1"],
+                "tagline" : "The OpenSearch Project: https://opensearch.org/"
+        ]
         helper.addShMock("curl -s \"https://localhost:9200\" -u admin:admin --insecure") { script ->
-            return [stdout: cluster_info, exitValue: 0]
+            return [stdout: cluster_info_n_status.inspect(), exitValue: 0]
         }
-        def cluster_status = "{\n" +
-                "  \"cluster_name\" : \"opensearch\",\n" +
-                "  \"status\" : \"green\",\n" +
-                "  \"timed_out\" : false,\n" +
-                "  \"number_of_nodes\" : 1,\n" +
-                "  \"number_of_data_nodes\" : 1,\n" +
-                "  \"discovered_master\" : true,\n" +
-                "  \"active_primary_shards\" : 2,\n" +
-                "  \"active_shards\" : 2,\n" +
-                "  \"relocating_shards\" : 0,\n" +
-                "  \"initializing_shards\" : 0,\n" +
-                "  \"unassigned_shards\" : 0,\n" +
-                "  \"delayed_unassigned_shards\" : 0,\n" +
-                "  \"number_of_pending_tasks\" : 0,\n" +
-                "  \"number_of_in_flight_fetch\" : 0,\n" +
-                "  \"task_max_waiting_in_queue_millis\" : 0,\n" +
-                "  \"active_shards_percent_as_number\" : 100.0\n" +
-                "}"
+        helper.registerAllowedMethod("readJSON", [Map.class], {c -> cluster_info_n_status})
+        def cluster_status = [cluster_name:"opensearch", status:"green", timed_out:false, number_of_nodes:1,
+                              number_of_data_nodes:1, discovered_master:true, active_primary_shards:1, active_shards:1,
+                              relocating_shards:0, initializing_shards:0, unassigned_shards:0, delayed_unassigned_shards:0,
+                              number_of_pending_tasks:0, number_of_in_flight_fetch:0, task_max_waiting_in_queue_millis:0,
+                              active_shards_percent_as_number:100.0]
         helper.addShMock("curl -s \"https://localhost:9200/_cluster/health?pretty\" -u admin:admin --insecure") { script ->
-            return [stdout: cluster_status, exitValue: 0]
+            return [stdout: cluster_status.inspect(), exitValue: 0]
         }
-        def cluster_plugin = "name                                              component                            version\n" +
-                "dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-alerting                  1.3.1.0\n" +
-                "dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-job-scheduler             1.3.1.0\n" +
-                "dev-dsk-zelinhao-2c-5b97de12.us-west-2.amazon.com opensearch-ml                        1.3.1.0"
-        helper.addShMock("curl -s \"https://localhost:9200/_cat/plugins?v\" -u admin:admin --insecure") { script ->
+        def cluster_plugin = "dummy_desktop opensearch-alerting                  1.3.1.0\n" +
+                "dummy_desktop opensearch-job-scheduler             1.3.1.0\n" +
+                "dummy_desktop opensearch-ml                        1.3.1.0"
+        helper.addShMock("curl -s \"https://localhost:9200/_cat/plugins\" -u admin:admin --insecure") { script ->
             return [stdout: cluster_plugin, exitValue: 0]
         }
     }

@@ -36,10 +36,14 @@ def call(Map args = [:]) {
     //Validation for the installation
     //Install the rpm distribution via yum
     println("Start installation with yum.")
-    sh ("sudo yum install -y $distFile")
+    packageManagerCall(
+            call: "install",
+            product: distFile
+    )
     println("RPM distribution for $name is installed with yum.")
 
     //Check certs in /etc/opensearch/
+    //The location of these certs are up to change based on the progress from Security.
     println("Check if the certs are existed.")
     sh ('[[ -d /etc/opensearch ]] && echo "/etc/opensearch directory exists"' +
             '|| (echo "/etc/opensearch does not exist" && exit 1)')
@@ -71,12 +75,15 @@ def call(Map args = [:]) {
     }
 
     //Start the installed OpenSearch distribution
-    sh ("sudo systemctl restart $name")
-    sleep 30
+    processManagerCall(
+            call: "restart",
+            product: name
+    )
 
     //Validate if the running status is succeed
-    rpmStatusValidation(
-            name: name
+    processManagerCall(
+            call: "status",
+            product: name
     )
 
     //Check the starting cluster
@@ -85,7 +92,7 @@ def call(Map args = [:]) {
             returnStdout: true
     ).trim()
     println("Cluster info is: \n" + cluster_info_json)
-    def cluster_info = readJson(Text: cluster_info_json)
+    def cluster_info = readJSON(text: cluster_info_json)
     assert cluster_info["cluster_name"] == name
     println("Cluster name is validated.")
     assert cluster_info["version"]["number"] == version
@@ -99,8 +106,8 @@ def call(Map args = [:]) {
             script:  "curl -s \"https://localhost:9200/_cluster/health?pretty\" -u admin:admin --insecure",
             returnStdout: true
     ).trim()
-    def cluster_status = readJson(Text: cluster_status_json)
-    println("Cluster status is: \n" + cluster_status)
+    println("Cluster status is: \n" + cluster_status_json)
+    def cluster_status = readJSON(text: cluster_status_json)
     assert cluster_status["cluster_name"] == name
     println("Cluster name is validated.")
     assert cluster_status["status"] == "green"
@@ -130,7 +137,13 @@ def call(Map args = [:]) {
 
     println("Installation and running for opensearch has been validated.")
 
-    sh ("sudo systemctl stop opensearch")
-    sh ("sudo yum remove -y opensearch")
+    processManagerCall(
+            call: "stop",
+            product: name
+    )
+    packageManagerCall(
+            call: "remove",
+            product: "opensearch"
+    )
 
 }

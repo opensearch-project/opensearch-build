@@ -42,21 +42,32 @@ def call(Map args = [:]) {
 
     //Validation for the installation
     //Install the rpm distribution via yum
-    println("Start installation with yum.")
-    sh "sudo yum install -y $distFile"
-    println("RPM distribution for $name is installed with yum.")
-    sh "sudo yum install -y $latestOpensearchDist"
+    println("Start installations of OpenSearch & OpenSearch-Dashboards with yum.")
+    packageManagerCall(
+            call: "install",
+            product: latestOpensearchDist
+    )
     println("Latest RPM distribution for OpenSearch is also installed with yum.")
+    packageManagerCall(
+            call: "install",
+            product: distFile
+    )
+    println("RPM distribution for $name is installed with yum.")
 
     //Start the installed OpenSearch-Dashboards distribution
-    sh ("sudo systemctl restart $name")
-    sleep 30
-    sh ("sudo systemctl restart opensearch")
-    sleep 30    //wait for 30 secs for opensearch to start
+    processManagerCall(
+            call: "restart",
+            product: "opensearch"
+    )
+    processManagerCall(
+            call: "restart",
+            product: name
+    )
 
     //Validate if the running status is succeed
-    rpmStatusValidation(
-            name: name
+    processManagerCall(
+            call: "status",
+            product: name
     )
 
     //Start validate if this is dashboards distribution.
@@ -93,8 +104,20 @@ def call(Map args = [:]) {
         println("Component $component is present with correct version $version." )
     }
 
-    sh ("sudo systemctl stop opensearch-dashboards")
-    sh ("sudo yum remove -y opensearch-dashboards")
-    sh ("sudo systemctl stop opensearch")
-    sh ("sudo yum remove -y opensearch")
+    processManagerCall(
+            call: "stop",
+            product: name
+    )
+    packageManagerCall(
+            call: "remove",
+            product: "opensearch-dashboards"
+    )
+    processManagerCall(
+            call: "stop",
+            product: "opensearch"
+    )
+    packageManagerCall(
+            call: "remove",
+            product: "opensearch"
+    )
 }
