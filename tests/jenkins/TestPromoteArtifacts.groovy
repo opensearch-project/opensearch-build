@@ -75,12 +75,12 @@ class TestPromoteArtifacts extends BuildPipelineTest {
 
         targetOpenSearch = copy(
             "tests/data/opensearch-build-1.1.0.yml", 
-            "artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/manifest.yml"
+            "artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/manifest.yml"
         );
 
         targetOpenSearchDashboards = copy(
             "tests/data/opensearch-dashboards-build-1.2.0.yml", 
-            "artifacts/vars-build/1.2.0/33/linux/x64/builds/opensearch-dashboards/manifest.yml"
+            "artifacts/vars-build/1.2.0/33/linux/x64/tar/builds/opensearch-dashboards/manifest.yml"
         );
     }
 
