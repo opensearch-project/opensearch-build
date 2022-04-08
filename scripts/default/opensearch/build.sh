@@ -77,3 +77,15 @@ distributions="$(dirname "${zipPath}")"
 echo "COPY ${distributions}/*.zip"
 mkdir -p $OUTPUT/plugins
 cp ${distributions}/*.zip ./$OUTPUT/plugins
+
+##Following code checks for zipsmaven dir and if printZipsPublishProperty disabled, to publish plugin zips to maven repo
+publishZip=$(./gradlew -q printZipsPublishProperty)
+ZipDIR="maven/plugin-zips"
+if [ -d $ZipDIR ] && [ $publishZip != 'skip' ]; then
+    echo "Copying the Maven plugin Zips"
+    mkdir -p $OUTPUT/maven/org/opensearch/plugin
+    ./gradlew publishMavenPublicationToMavenLocal -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+    ./gradlew publishMavenPublicationToStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+    mkdir -p $OUTPUT/maven/org/opensearch
+    cp -r ./build/local-staging-repo/org/opensearch/plugin/. $OUTPUT/maven/org/opensearch/plugin
+fi

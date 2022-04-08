@@ -13,6 +13,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-q QUALIFIER\t[Optional] Build qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
@@ -20,7 +21,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -28,6 +29,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -59,19 +63,15 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+[[ ! -z "$QUALIFIER" ]] && VERSION=$VERSION-$QUALIFIER
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-mkdir -p $OUTPUT/maven
-mkdir -p $OUTPUT/plugins
+./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 
-cd notifications
-./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT
-cd ..
+mkdir -p ./$OUTPUT/plugins
 
-zipPath=$(find . -path \*notifications/build/distributions/*.zip)
-distributions="$(dirname "${zipPath}")"
-echo "COPY ${distributions}/*.zip"
-mkdir -p $OUTPUT/plugins
-cp ${distributions}/*.zip ./$OUTPUT/plugins
+notifCoreZipPath=$(ls notifications/build/distributions/ | grep .zip)
+cp -v notifications/build/distributions/$notifCoreZipPath ./$OUTPUT/plugins
+
