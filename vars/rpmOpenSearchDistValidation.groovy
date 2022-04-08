@@ -80,46 +80,35 @@ def call(Map args = [:]) {
     )
 
     //Check the starting cluster
-    def cluster_info = sh (
+    def cluster_info_json = sh (
             script:  "curl -s \"https://localhost:9200\" -u admin:admin --insecure",
             returnStdout: true
-    ).trim().replaceAll("\"", "").replaceAll(",", "")
-    println("Cluster info is: \n" + cluster_info)
-    for (line in cluster_info.split("\n")) {
-        def key = line.split(":")[0].trim()
-        if (key == "cluster_name") {
-            assert line.split(":")[1].trim() == name
-            println("Cluster name is validated.")
-        } else if (key == "number") {
-            assert line.split(":")[1].trim() == version
-            println("Cluster version is validated.")
-        } else if (key == "build_type") {
-            assert line.split(":")[1].trim() == 'rpm'
-            println("Cluster type is validated as rpm.")
-        }
-    }
+    ).trim()
+    println("Cluster info is: \n" + cluster_info_json)
+    def cluster_info = readJson(Text: cluster_info_json)
+    assert cluster_info["cluster_name"] == name
+    println("Cluster name is validated.")
+    assert cluster_info["version"]["number"] == version
+    println("Cluster version is validated.")
+    assert cluster_info["version"]["build_type"] == 'rpm'
+    println("Cluster type is validated as rpm.")
     println("Cluster information is validated.")
 
     //Cluster status validation
-    def cluster_status = sh (
+    def cluster_status_json = sh (
             script:  "curl -s \"https://localhost:9200/_cluster/health?pretty\" -u admin:admin --insecure",
             returnStdout: true
-    ).trim().replaceAll("\"", "").replaceAll(",", "")
+    ).trim()
+    def cluster_status = readJson(Text: cluster_status_json)
     println("Cluster status is: \n" + cluster_status)
-    for (line in cluster_status.split("\n")) {
-        def key = line.split(":")[0].trim()
-        if (key == "cluster_name") {
-            assert line.split(":")[1].trim() == name
-            println("Cluster name is validated.")
-        } else if (key == "status") {
-            assert line.split(":")[1].trim() == "green"
-            println("Cluster status is green!")
-        }
-    }
+    assert cluster_status["cluster_name"] == name
+    println("Cluster name is validated.")
+    assert cluster_status["status"] == "green"
+    println("Cluster status is green!")
 
     //Check the cluster plugins
     def cluster_plugins = sh (
-            script: "curl -s \"https://localhost:9200/_cat/plugins?v\" -u admin:admin --insecure",
+            script: "curl -s \"https://localhost:9200/_cat/plugins\" -u admin:admin --insecure",
             returnStdout: true
     ).trim().replaceAll("\"", "").replaceAll(",", "")
     println("Cluster plugins are: \n" + cluster_plugins)
@@ -132,7 +121,7 @@ def call(Map args = [:]) {
         def component_name_with_version = location.split('/').last().minus('.zip') //e.g. opensearch-job-scheduler-1.3.0.0
         components_list.add(component_name_with_version)
     }
-    for (line in cluster_plugins.split("\n").drop(1)) {
+    for (line in cluster_plugins.split("\n")) {
         def component_name = line.split("\\s+")[1].trim()
         def component_version = line.split("\\s+")[2].trim()
         assert components_list.contains([component_name,component_version].join('-'))
