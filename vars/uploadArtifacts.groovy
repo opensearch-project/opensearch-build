@@ -7,7 +7,7 @@ void call(Map args = [:]) {
     def packageName = buildManifest.build.getPackageName()
     def distribution = buildManifest.build.distribution
 
-    def artifactPath = buildManifest.getArtifactRoot("${JOB_NAME}", "${BUILD_NUMBER}")
+    def artifactPath = buildManifest.getArtifactRootWithDistribution("${JOB_NAME}", "${BUILD_NUMBER}")
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
     uploadToS3(

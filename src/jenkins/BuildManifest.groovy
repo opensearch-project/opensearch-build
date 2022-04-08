@@ -102,6 +102,13 @@ class BuildManifest implements Serializable {
                 this.build.architecture
         ].join("/")
     }
+
+    public String getArtifactRootWithDistribution(String jobName, String buildNumber) {
+        return [
+                this.getArtifactRoot(jobName, buildNumber),
+                this.build.distribution
+        ].join("/")
+    }
     
     public String getIndexFileRoot(String jobName) {
         return [
