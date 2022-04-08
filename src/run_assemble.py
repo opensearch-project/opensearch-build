@@ -28,7 +28,7 @@ def main() -> int:
     build = build_manifest.build
     artifacts_dir = os.path.dirname(os.path.realpath(args.manifest.name))
 
-    output_dir = AssembleOutputDir(build.filename).dir
+    output_dir = AssembleOutputDir(build.filename, build.distribution).dir
 
     logging.info(f"Bundling {build.name} ({build.architecture}) on {build.platform} into {output_dir} ...")
 
@@ -36,7 +36,7 @@ def main() -> int:
         build,
         output_dir,
         artifacts_dir,
-        BundleLocations.from_path(args.base_url, os.getcwd(), build.filename)
+        BundleLocations.from_path(args.base_url, os.getcwd(), build.filename, build.distribution)
     )
 
     with Bundles.create(build_manifest, artifacts_dir, bundle_recorder, args.keep) as bundle:

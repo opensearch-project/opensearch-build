@@ -38,7 +38,7 @@ def main():
             manifest.to_file(args.ref_manifest)
         exit(0)
 
-    output_dir = BuildOutputDir(manifest.build.filename).dir
+    output_dir = BuildOutputDir(manifest.build.filename, args.distribution).dir
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")

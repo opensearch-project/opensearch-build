@@ -5,6 +5,7 @@ build:
   id: c3ff7a232d25403fa8cc14c97799c323
   name: OpenSearch
   version: 1.1.0
+  distribution: tar
 components:
   - artifacts:
       dist:
