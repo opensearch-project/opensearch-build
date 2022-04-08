@@ -126,16 +126,14 @@ class BuildManifest implements Serializable {
 
     public String getArtifactRootUrlWithDistribution(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
-                publicArtifactUrl,
-                this.getArtifactRoot(jobName, buildNumber),
+                this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
                 this.build.distribution
         ].join('/')
     }
 
     public String getUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
-            this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
-            this.build.distribution,
+            this.getArtifactRootUrlWithDistribution(publicArtifactUrl, jobName, buildNumber),
             'builds',
             this.build.getFilename(),
             'manifest.yml'
@@ -144,8 +142,7 @@ class BuildManifest implements Serializable {
 
     public String getArtifactUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
-            this.getArtifactRootUrl(publicArtifactUrl, jobName, buildNumber),
-            this.build.distribution,
+            this.getArtifactRootUrlWithDistribution(publicArtifactUrl, jobName, buildNumber),
             'dist',
             this.build.getFilename(),
             this.build.getFilenameWithExtension()
