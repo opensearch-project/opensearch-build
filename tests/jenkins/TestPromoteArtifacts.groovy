@@ -55,21 +55,21 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         helper.registerAllowedMethod('findFiles', [Map], { args ->
             return [{}]
         })
-        helper.addFileExistsMock('workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins', true)
+        helper.addFileExistsMock('workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins', true)
 
-        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins -type f') { script ->
+        helper.addShMock('find workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins -type f') { script ->
             return [stdout: "tar_dummy_artifact_1.0.0.tar.gz zip_dummy_artifact_1.1.0.zip dummy_artifact_1.1.0.dummy", exitValue: 0]
         }
         helper.addShMock('sha512sum tar_dummy_artifact_1.0.0.tar.gz') { script ->
-            return [stdout: "shaHashDummy_tar_dummy_artifact_1.0.0.tar.gz  workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
+            return [stdout: "shaHashDummy_tar_dummy_artifact_1.0.0.tar.gz  workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
         }
         helper.addShMock('sha512sum zip_dummy_artifact_1.1.0.zip') { script ->
-            return [stdout: "shaHashDummy_zip_dummy_artifact_1.1.0.zip  workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip", exitValue: 0]
+            return [stdout: "shaHashDummy_zip_dummy_artifact_1.1.0.zip  workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip", exitValue: 0]
         }
-        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz') { script ->
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins/tar_dummy_artifact_1.0.0.tar.gz') { script ->
             return [stdout: "tar_dummy_artifact_1.0.0.tar.gz", exitValue: 0]
         }
-        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip') { script ->
+        helper.addShMock('basename workspace/artifacts/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch/core-plugins/zip_dummy_artifact_1.1.0.zip') { script ->
             return [stdout: "zip_dummy_artifact_1.1.0.zip", exitValue: 0]
         }
 
