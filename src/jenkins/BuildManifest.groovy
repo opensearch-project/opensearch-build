@@ -93,7 +93,7 @@ class BuildManifest implements Serializable {
         this.components = new BuildManifest.Components(data.components)
     }
 
-    public String getArtifactRoot(String jobName, String buildNumber) {
+    public String getArtifactRootWithoutDistribution(String jobName, String buildNumber) {
         return [
                 jobName,
                 this.build.version,
@@ -103,9 +103,9 @@ class BuildManifest implements Serializable {
         ].join("/")
     }
 
-    public String getArtifactRootWithDistribution(String jobName, String buildNumber) {
+    public String getArtifactRoot(String jobName, String buildNumber) {
         return [
-                this.getArtifactRoot(jobName, buildNumber),
+                this.getArtifactRootWithoutDistribution(jobName, buildNumber),
                 this.build.distribution
         ].join("/")
     }
@@ -120,7 +120,7 @@ class BuildManifest implements Serializable {
     public String getArtifactRootUrlWithoutDistribution(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
                 publicArtifactUrl,
-                this.getArtifactRoot(jobName, buildNumber)
+                this.getArtifactRootWithoutDistribution(jobName, buildNumber)
         ].join('/')
     }
 
