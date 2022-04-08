@@ -94,6 +94,7 @@ if ! grep -q '## OpenSearch Performance Analyzer' %{config_dir}/jvm.options; the
    echo "-Dclk.tck=$CLK_TCK" >> %{config_dir}/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> %{config_dir}/jvm.options
    echo "-Djava.security.policy=file:///usr/share/opensearch/plugins/opensearch-performance-analyzer/pa_config/opensearch_security.policy" >> %{config_dir}/jvm.options
+   echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> %{config_dir}/jvm.options
 fi
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
