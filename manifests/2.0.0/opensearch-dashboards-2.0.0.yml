@@ -7,7 +7,6 @@ build:
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1
-    args: -e NODE_VERSION=14.18.2
 components:
   - name: OpenSearch-Dashboards
     ref: main

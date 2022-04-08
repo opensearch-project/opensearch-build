@@ -102,9 +102,9 @@ PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
+(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && cd plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 ZIP_NAME=`ls ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build | grep .zip`
 unzip ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$ZIP_NAME -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/
 # Reporting uses headless chromium to generate reports, which needs to be included in its artifact
