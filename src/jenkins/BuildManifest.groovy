@@ -99,8 +99,7 @@ class BuildManifest implements Serializable {
                 this.build.version,
                 buildNumber,
                 this.build.platform,
-                this.build.architecture,
-                this.build.distribution
+                this.build.architecture
         ].join("/")
     }
     
