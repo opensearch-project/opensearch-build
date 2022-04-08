@@ -4,7 +4,7 @@ pipeline {
         stage('promote') {
             steps {
                 script {
-                    promoteArtifacts(
+                    promoteTarArtifacts(
                         manifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
                         fileActions: [createSha512Checksums(), createSignatureFiles()]
                     )
