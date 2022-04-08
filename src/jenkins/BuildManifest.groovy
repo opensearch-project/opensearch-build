@@ -128,7 +128,7 @@ class BuildManifest implements Serializable {
         return [
                 publicArtifactUrl,
                 this.getArtifactRoot(jobName, buildNumber),
-                this.distribution
+                this.build.distribution
         ].join('/')
     }
 
