@@ -99,7 +99,7 @@ class TestRunPerfTestScript extends BuildPipelineTest {
         }
         assertThat(resultUploadScriptCommands.size(), equalTo(2))
         assertThat(resultUploadScriptCommands, hasItem(
-            "{file=test-results, bucket=test_bucket, path=perf-test/1.3.0/1236/linux/x64/test-results}".toString()
+            "{file=test-results, bucket=test_bucket, path=perf-test/1.3.0/1236/linux/x64/tar/test-results}".toString()
         ))
     }
 
