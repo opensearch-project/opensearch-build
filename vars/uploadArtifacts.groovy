@@ -29,7 +29,7 @@ void call(Map args = [:]) {
         s3Upload(file: "${distribution}/dist/${productFilename}/${packageName}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "release-candidates/bundle/${productFilename}/${buildManifest.build.version}/")
     }
 
-    def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
+    def baseUrl = buildManifest.getArtifactRootUrlWithDistribution("${PUBLIC_ARTIFACT_URL}", "${JOB_NAME}", "${BUILD_NUMBER}")
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", [
             "${baseUrl}/builds/${productFilename}/manifest.yml",
             "${baseUrl}/dist/${productFilename}/manifest.yml"
