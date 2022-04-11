@@ -30,7 +30,7 @@
             maven-sign-release.script(groovy.lang.Closure)
                maven-sign-release.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
                maven-sign-release.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
-                  maven-sign-release.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed)
+                  maven-sign-release.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven)
          maven-sign-release.script(groovy.lang.Closure)
             maven-sign-release.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
