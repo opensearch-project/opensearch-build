@@ -21,7 +21,7 @@ pipeline {
         )
     }
     environment {
-        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds"
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
     }
     stages {
         stage('sign') {
