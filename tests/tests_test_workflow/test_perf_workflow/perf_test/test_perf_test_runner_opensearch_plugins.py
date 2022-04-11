@@ -6,10 +6,12 @@
 
 import os
 import unittest
+import tempfile
 from unittest.mock import patch
 
+from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
-
+from test_workflow.perf_test.perf_test_runners import PerfTestRunners
 
 class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
 
@@ -35,11 +37,11 @@ class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
             ],
         )
     @patch("os.chdir")
+    @patch('test_workflow.perf_test.perf_test_runner_opensearch_plugins.subprocess')
     @patch("test_workflow.perf_test.perf_test_runner_opensearch_plugins.TemporaryDirectory")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch_plugins.GitRepository")
     def test_run(self, mock_git, mock_temp_directory, *mocks):
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
-        mock_cluster.return_value.__enter__.return_value = mock_cluster
 
         perf_args = PerfArgs()
         test_manifest = BundleManifest.from_file(perf_args.bundle_manifest)
@@ -48,8 +50,8 @@ class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
 
 
         mock_git.assert_called_with("https://github.com/opensearch-project/plugin-name.git", "main",
-            os.path.join(tempfile.gettempdir(), "infra"))
+            os.path.join(tempfile.gettempdir(), "plugin"))
 
         self.assertEqual(mock_git.call_count, 1)
-        self.assertEqual(mock_temp_directory.call_count, 1)
+        self.assertEqual(mock_temp_directory.call_count, 1)\
 

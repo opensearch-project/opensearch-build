@@ -40,5 +40,5 @@ class PerfTestRunnerOpenSearch(PerfTestRunner):
             with GitRepository(self.get_infra_repo_url(), "main", current_workspace):
                 with WorkingDirectory(current_workspace):
                     with PerfTestCluster.create(self.test_manifest, config, self.args.stack, self.security, current_workspace, self.args.keep) as test_cluster:
-                        perf_test_suite = PerfTestSuite(self.test_manifest, test_cluster.endpoint(), self.security, current_workspace, tests_dir, self.args)
+                        perf_test_suite = PerfTestSuite(self.test_manifest, test_cluster.endpoint(), self.security, current_workspace, self.tests_dir, self.args)
                         retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)

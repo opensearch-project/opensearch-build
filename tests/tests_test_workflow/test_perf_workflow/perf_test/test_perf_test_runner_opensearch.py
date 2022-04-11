@@ -45,13 +45,10 @@ class PerfTestRunnerOpenSearch(unittest.TestCase):
 
         perf_args = PerfArgs()
         test_manifest = BundleManifest.from_file(perf_args.bundle_manifest)
-        #runner = PerfTestRunnerOpenSearch(self, args=perf_args, test_manifest=test_manifest)
         runner = PerfTestRunners.from_args(perf_args, test_manifest)
         runner.run()
 
-        #mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-infra.git", "main",
-        #    os.path.join(tempfile.gettempdir(), "infra"))
-        mock_git.assert_called_with("https://github.com/ankitkala/opensearch-infra.git", "endpoint",
+        mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-infra.git", "main",
             os.path.join(tempfile.gettempdir(), "infra"))
         self.assertEqual(mock_suite.call_count, 1)
         self.assertEqual(mock_cluster.call_count, 1)

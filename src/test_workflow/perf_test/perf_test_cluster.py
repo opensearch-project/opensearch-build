@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 from contextlib import contextmanager
+from retry.api import retry_call
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -86,21 +87,12 @@ class PerfTestCluster(TestCluster):
     def dependencies(self):
         return []
 
-    def wait_for_processing(self, max_wait_sec = 60):
+    def wait_for_processing(self, tries=3, delay=15, backoff=2):
         if self.public_ip is None:
             return
         url = "".join([self.endpoint(), "/_cluster/health"])
-        end_time = time.time() + max_wait_sec
-        while(True):
-            try:
-                r = requests.get(url=url, auth=HTTPBasicAuth('admin', 'admin'), verify=False)
-                return
-            except Exception as e:
-                if time.time() > end_time:
-                    raise e
-                else:
-                    logging.info("Waiting for cluster to be up...")
-                    time.sleep(15)
+        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False},
+            tries=tries, delay=delay, backoff=backoff)
 
     @classmethod
     @contextmanager

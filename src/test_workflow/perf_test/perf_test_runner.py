@@ -20,8 +20,8 @@ class PerfTestRunner(abc.ABC):
         self.test_manifest = test_manifest
 
         self.security = "security" in self.test_manifest.components and not self.args.insecure
-        tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", f"{'with' if security else 'without'}-security")
-        os.makedirs(tests_dir, exist_ok=True)
+        self.tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", f"{'with' if self.security else 'without'}-security")
+        os.makedirs(self.tests_dir, exist_ok=True)
 
     def run(self):
         self.run_tests()

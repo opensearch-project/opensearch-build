@@ -43,7 +43,7 @@ class TestRunPerfTest(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_perf_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST,
                                   "--stack", "test-stack", "--config", PERF_TEST_CONFIG])
-    @patch("run_perf_test.PerfTestRunners.from_test_manifest")
+    @patch("run_perf_test.PerfTestRunners.from_args")
     def test_default_execute_perf_test(self, mock_runner, *mocks):
         main()
         self.assertEqual(1, mock_runner.call_count)
