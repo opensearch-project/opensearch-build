@@ -105,7 +105,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build && yum clean all
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build createrepo && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
