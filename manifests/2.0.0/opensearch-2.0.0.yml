@@ -42,6 +42,20 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+    working_directory: notifications/core
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
     ref: main
