@@ -15,16 +15,10 @@ def call(Map args = [:]) {
                     script: "sudo systemctl status $product",
                     returnStdout: true
             ).trim()
-            def active_status_message = "Active: active (running)"
-            if (running_status.contains(active_status_message)) {
-                println("After checking the status, the installed $product is actively running!")
-            } else {
-                error("Something went run! Installed $product is not actively running.")
-            }
+            return running_status
             break
         case ("restart"):
             sh ("sudo systemctl restart $product")
-            sleep 30
             break
         case ("stop"):
             sh ("sudo systemctl stop $product")

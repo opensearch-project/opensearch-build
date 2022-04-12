@@ -65,10 +65,16 @@ def call(Map args = [:]) {
     )
 
     //Validate if the running status is succeed
-    processManagerCall(
-            call: "status",
-            product: name
+    def running_status = processManagerCall(
+                            call: "status",
+                            product: name
     )
+    def active_status_message = "Active: active (running)"
+    if (running_status.contains(active_status_message)) {
+        println("After checking the status, the installed $name is actively running!")
+    } else {
+        error("Something went run! Installed $name is not actively running.")
+    }
 
     //Start validate if this is dashboards distribution.
     println("This is a dashboards validation.")
@@ -76,6 +82,17 @@ def call(Map args = [:]) {
             script: "curl -s \"http://localhost:5601/api/status\"",
             returnStdout: true
     ).trim()
+    for (int i = 0; i < 10; i++) {
+        if (osd_status_json == "") {
+            sleep 3
+            osd_status_json = sh (
+                    script: "curl -s \"http://localhost:5601/api/status\"",
+                    returnStdout: true
+            ).trim()
+        } else {
+            break
+        }
+    }
     println("Dashboards status are here: \n" + osd_status_json)
     def osd_status = readJSON(text: osd_status_json)
     assert osd_status["version"]["number"] == version

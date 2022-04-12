@@ -81,10 +81,16 @@ def call(Map args = [:]) {
     )
 
     //Validate if the running status is succeed
-    processManagerCall(
+    def running_status = processManagerCall(
             call: "status",
             product: name
     )
+    def active_status_message = "Active: active (running)"
+    if (running_status.contains(active_status_message)) {
+        println("After checking the status, the installed $name is actively running!")
+    } else {
+        error("Something went run! Installed $name is not actively running.")
+    }
 
     //Check the starting cluster
     def cluster_info_json = sh (
