@@ -55,14 +55,20 @@ class BundleRecorder:
     def __get_component_location(self, component_rel_path: str) -> str:
         return self.bundle_location.get_build_location(component_rel_path) if component_rel_path else None
 
-    def record_component(self, component: BuildComponent, rel_path: str = None) -> None:
-        self.bundle_manifest.append_component(
+    def record_component(self, component: BuildComponent, rel_path: str = None) -> Any:
+        result = self.bundle_manifest.append_component(
             component.name,
             component.repository,
             component.ref,
-            component.commit_id,
-            self.__get_component_location(rel_path),
+            component.commit_id
         )
+
+        if "locations" not in result:
+            result["locations"] = []
+
+        result["locations"].append(self.__get_component_location(rel_path))
+
+        return result
 
     def get_manifest(self) -> BundleManifest:
         return self.bundle_manifest.to_manifest()
@@ -82,20 +88,29 @@ class BundleRecorder:
             self.data["build"]["architecture"] = architecture
             self.data["build"]["distribution"] = distribution if distribution else "tar"
             self.data["build"]["location"] = location
-            self.data["schema-version"] = "1.1"
+            self.data["schema-version"] = "2.0"
             # We need to store components as a hash so that we can append artifacts by component name
             # When we convert to a BundleManifest this will get converted back into a list
             self.data["components"] = []
 
-        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str, location: str = None) -> None:
+        def append_component(self, name: str, repository_url: str, ref: str, commit_id: str) -> Any:
             component = Manifest.compact({
                 "name": name,
                 "repository": repository_url,
                 "ref": ref,
                 "commit_id": commit_id,
-                "location": location,
             })
-            self.data["components"].append(component)
+
+            existing_component = next((item for item in self.data["components"] if item['name'] == name), None)
+
+            if existing_component:
+                for key in component.keys():
+                    if (component[key] != existing_component[key]):
+                        raise ValueError(f"Component {name} \"{key}\" mismatch, expected \"{component[key]}\", got \"{existing_component[key]}\".")
+                return existing_component
+            else:
+                self.data["components"].append(component)
+                return component
 
         def to_manifest(self) -> BundleManifest:
             return BundleManifest(self.data)

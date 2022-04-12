@@ -105,14 +105,16 @@ class Bundle(ABC):
         logging.info(f'Executing "{command}" in {self.min_dist.archive_path}')
         subprocess.check_call(command, cwd=self.min_dist.archive_path, shell=True)
 
-    def _copy_component(self, component: BuildComponent, component_type: str) -> str:
-        rel_path = self.__get_rel_path(component, component_type)
+    def _copy_component(self, component: BuildComponent, component_type: str) -> List[str]:
+        return list(map(
+            lambda rel_path: self.__copy_and_record(component, rel_path),
+            component.artifacts.get(component_type, [])
+        ))
+
+    def __copy_and_record(self, component: BuildComponent, rel_path: str) -> str:
         tmp_path = self.__copy_component_files(rel_path, self.tmp_dir.name)
         self.bundle_recorder.record_component(component, rel_path)
         return tmp_path
-
-    def __get_rel_path(self, component: BuildComponent, component_type: str) -> str:
-        return next(iter(component.artifacts.get(component_type, [])), None)
 
     def __copy_component_files(self, rel_path: str, dest: str) -> str:
         local_path = os.path.join(self.artifacts_dir, rel_path)
@@ -131,7 +133,10 @@ class Bundle(ABC):
         return min_bundle
 
     def __get_min_dist(self, build_components: BuildComponents) -> Dist:
-        min_dist_path = self._copy_component(self.min_bundle, "dist")
+        min_dist_paths = self._copy_component(self.min_bundle, "dist")
+        if len(min_dist_paths) != 1:
+            raise ValueError('Invalid min "dist" in input artifacts, expected a single package.')
+        min_dist_path = min_dist_paths[0]
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
         logging.info(f"Start creating distribution {self.build.distribution} for {self.min_bundle.name}.")

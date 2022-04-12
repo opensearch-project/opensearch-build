@@ -6,19 +6,17 @@
 
 from typing import Any, Dict
 
-from manifests.bundle.bundle_manifest_1_0 import BundleManifest_1_0
-from manifests.bundle.bundle_manifest_1_1 import BundleManifest_1_1
 from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
+class BundleManifest_1_1(ComponentManifest['BundleManifest_1_1', 'BundleComponents_1_1']):
     """
     A BundleManifest is an immutable view of the outputs from a assemble step
     The manifest contains information about the bundle that was built (in the `assemble` section),
     and the components that made up the bundle in the `components` section.
 
-    The format for schema version 2.0 is:
-        schema-version: "2.0"
+    The format for schema version 1.1 is:
+        schema-version: "1.1"
         build:
           name: string
           version: string
@@ -32,9 +30,7 @@ class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
             repository: URL of git repository
             ref: git ref that was built (sha, branch, or tag)
             commit_id: The actual git commit ID that was built (i.e. the resolved "ref")
-            locations:
-                - /relative/path/to/artifact1
-                - /relative/path/to/artifact2
+            location: /relative/path/to/artifact
     """
 
     SCHEMA = {
@@ -51,7 +47,7 @@ class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
                 "version": {"required": True, "type": "string"},
             },
         },
-        "schema-version": {"required": True, "type": "string", "allowed": ["2.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "components": {
             "required": True,
             "type": "list",
@@ -59,7 +55,7 @@ class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
                 "type": "dict",
                 "schema": {
                     "commit_id": {"required": True, "type": "string"},
-                    "locations": {"type": "list"},  # optional array in 2.0
+                    "location": {"type": "string"},  # optional in 1.1
                     "name": {"required": True, "type": "string"},
                     "ref": {"required": True, "type": "string"},
                     "repository": {"required": True, "type": "string"},
@@ -70,23 +66,23 @@ class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
 
     def __init__(self, data: Any) -> None:
         super().__init__(data)
-        self.build = self.Build(data["build"])
-        self.components = BundleComponents(data.get("components", []))  # type: ignore[assignment]
+        self.build = self.Build_1_1(data["build"])
+        self.components = BundleComponents_1_1(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "2.0",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "components": self.components.__to_dict__()
         }
 
-    class Build:
+    class Build_1_1:
         def __init__(self, data: Dict[str, str]):
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data["platform"]
             self.architecture = data["architecture"]
-            self.distribution: str = data.get("distribution", None)
+            self.distribution: str = data.get('distribution', None)
             self.location = data["location"]
             self.id = data["id"]
 
@@ -106,19 +102,19 @@ class BundleManifest(ComponentManifest["BundleManifest", "BundleComponents"]):
             return self.name.lower().replace(" ", "-")
 
 
-class BundleComponents(Components["BundleComponent"]):
+class BundleComponents_1_1(Components['BundleComponent_1_1']):
     @classmethod
-    def __create__(self, data: Any) -> "BundleComponent":
-        return BundleComponent(data)
+    def __create__(self, data: Any) -> 'BundleComponent_1_1':
+        return BundleComponent_1_1(data)
 
 
-class BundleComponent(Component):
+class BundleComponent_1_1(Component):
     def __init__(self, data: Any):
         super().__init__(data)
         self.repository = data["repository"]
         self.ref = data["ref"]
         self.commit_id = data["commit_id"]
-        self.locations = data.get("locations", None)
+        self.location = data.get("location", None)
 
     def __to_dict__(self) -> dict:
         return {
@@ -126,8 +122,5 @@ class BundleComponent(Component):
             "repository": self.repository,
             "ref": self.ref,
             "commit_id": self.commit_id,
-            "locations": self.locations if self.locations and len(self.locations) > 0 else None,
+            "location": self.location
         }
-
-
-BundleManifest.VERSIONS = {"1.0": BundleManifest_1_0, "1.1": BundleManifest_1_1, "2.0": BundleManifest}

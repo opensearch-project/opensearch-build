@@ -1,0 +1,106 @@
+---
+schema-version: '2.0'
+build:
+  name: OpenSearch
+  version: 2.0.0-alpha1-SNAPSHOT
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: tar/dist/opensearch/opensearch-2.0.0-alpha1-SNAPSHOT-linux-x64.tar.gz
+  id: 35686882f6cf4fcea53b7bc85ff55dd6
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: '2.0'
+    commit_id: a9a1c0dd01aff08e48e7a65c9dfe2a2de6683061
+    locations:
+      - tar/builds/opensearch/dist/opensearch-min-2.0.0-alpha1-SNAPSHOT-linux-x64.tar.gz
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: main
+    commit_id: c3794c4768669d649f7a185163be7b85c6593c3c
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: main
+    commit_id: 2a49d3813c3f6f4f548f88abcae6d5f6f7ab6973
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-job-scheduler-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: main
+    commit_id: 0c6249a0ad7aef70f53f4daf4bf60b146f09a612
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-ml-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: main
+    commit_id: 1a11a1a80d6c261529900019191b08010a1a7bbb
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-knn-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: main
+    commit_id: 731ee820a36edc25bac07a5b6a624c35d1615ce5
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-notifications-core-2.0.0.0-alpha1-SNAPSHOT.zip
+      - tar/builds/opensearch/plugins/opensearch-notifications-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
+    commit_id: bbde68ca547c39f5d7e790ac17995bbd2c886dec
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-alerting-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
+    commit_id: 34b480c7ee8c4e607d6c2903a605fefe4744b459
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-index-management-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: main
+    commit_id: 9d44f1bad1bd674c8a03b2629ababab21783f2f3
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-anomaly-detection-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: main
+    commit_id: e83ee07406e1a30861988b266b74df1826119bc0
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-asynchronous-search-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: main
+    commit_id: 938325a6e934c8d2c2851ce6577c754d79869f3f
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-sql-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability
+    ref: main
+    commit_id: ecfd2f9372e870f16b3903cf0436fc8eb65e1c83
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-observability-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: main
+    commit_id: 45fe8c1c7de6dd48da55e5c0ea916fc87974242a
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-reports-scheduler-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: main
+    commit_id: 74618eb5be4e587fe7d015d8ae15a3269bbce78c
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-security-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: main
+    commit_id: 9073e6372cd5aeef6c7d21d98650c4f76c22c836
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-cross-cluster-replication-2.0.0.0-alpha1-SNAPSHOT.zip
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: main
+    commit_id: 908218e5d0f3e252c3375859b47c2ad8318a74f7
+    locations:
+      - tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.0.0.0-alpha1-SNAPSHOT.zip

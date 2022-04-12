@@ -17,7 +17,8 @@ class BundleOpenSearch(Bundle):
         return "opensearch-plugin.bat" if current_platform() == "windows" else "opensearch-plugin"
 
     def install_plugin(self, plugin: BuildComponent) -> None:
-        tmp_path = self._copy_component(plugin, "plugins")
+        tmp_paths = self._copy_component(plugin, "plugins")
         cli_path = os.path.join(self.min_dist.archive_path, "bin", self.install_plugin_script)
-        self._execute(f"{cli_path} install --batch file:{tmp_path}")
+        for tmp_path in tmp_paths:
+            self._execute(f"{cli_path} install --batch file:{tmp_path}")
         super().install_plugin(plugin)
