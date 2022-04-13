@@ -67,13 +67,11 @@ fi
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-# Go to the first notifications folder, which holds the core folder and the second notifications folder
-cd ../
 ./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 
-mkdir -p notifications/$OUTPUT/plugins
+mkdir -p ./$OUTPUT/plugins
 
 notifCoreZipPath=$(ls notifications/build/distributions/ | grep .zip)
-cp -v notifications/build/distributions/$notifCoreZipPath notifications/$OUTPUT/plugins
+cp -v notifications/build/distributions/$notifCoreZipPath ./$OUTPUT/plugins
 
