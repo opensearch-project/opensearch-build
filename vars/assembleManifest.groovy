@@ -19,15 +19,15 @@ void call(Map args = [:]) {
             "\"${args.distribution}/dist/${filename}\"",
         ].join(' '))
 
-        def repoFile = [
+        def repoFileContent = [
             "[${filename}-staging-${version}-${BUILD_NUMBER}]",
             "name=OpenSearch ${version} ${BUILD_NUMBER} Staging",
             "baseurl=${baseUrl}/${args.distribution}/dist/${filename}/",
             "enabled=1",
             "autorefresh=1",
             "type=rpm-md"
-        ].join('\n'))
+        ].join('\n')
 
-        writeFile file: 'opensearch-artifacts.repo', text: repoFile
+        writeFile file: 'opensearch-artifacts.repo', text: repoFileContent
     }
 }
