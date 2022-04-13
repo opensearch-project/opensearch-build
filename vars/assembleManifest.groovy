@@ -9,6 +9,8 @@ void call(Map args = [:]) {
     ].join(' '))
 
     if (args.distribution == 'rpm') {
+        echo "Creating repo file and data for ${args.buildManifest}"
+
         def filename = buildManifest.build.getFilename()
         def version = buildManifest.build.version
 
