@@ -11,7 +11,7 @@ void call(Map args = [:]) {
     if (args.distribution == 'rpm') {
         sh([
             './assemble.sh',
-            "\"${args.distribution}/dist/${buildManifest.build.getFileName()}\"",
+            "\"${args.distribution}/dist/${buildManifest.build.getFilename()}\"",
             "--base-url ${baseUrl}"
         ].join(' '))
     }
