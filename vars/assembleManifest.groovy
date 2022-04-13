@@ -10,9 +10,8 @@ void call(Map args = [:]) {
 
     if (args.distribution == 'rpm') {
         sh([
-            './assemble.sh',
+            'createrepo',
             "\"${args.distribution}/dist/${buildManifest.build.getFilename()}\"",
-            "--base-url ${baseUrl}"
         ].join(' '))
     }
 }
