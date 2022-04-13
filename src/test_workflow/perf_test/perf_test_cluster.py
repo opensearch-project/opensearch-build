@@ -2,12 +2,11 @@ import json
 import logging
 import os
 import subprocess
-import time
 from contextlib import contextmanager
-from retry.api import retry_call
 
 import requests
 from requests.auth import HTTPBasicAuth
+from retry.api import retry_call
 
 from test_workflow.test_cluster import TestCluster
 
@@ -92,7 +91,7 @@ class PerfTestCluster(TestCluster):
             return
         url = "".join([self.endpoint(), "/_cluster/health"])
         retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False},
-            tries=tries, delay=delay, backoff=backoff)
+                   tries=tries, delay=delay, backoff=backoff)
 
     @classmethod
     @contextmanager

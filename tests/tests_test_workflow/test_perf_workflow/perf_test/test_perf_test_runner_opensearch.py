@@ -10,30 +10,29 @@ from unittest.mock import patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
-from test_workflow.perf_test.perf_test_runner_opensearch import PerfTestRunnerOpenSearch
 from test_workflow.perf_test.perf_test_runners import PerfTestRunners
 
 
-class PerfTestRunnerOpenSearch(unittest.TestCase):
+class TestPerfTestRunnerOpenSearch(unittest.TestCase):
 
     @patch(
-            "argparse._sys.argv",
-            [
-                "run_perf_test.py",
-                "--bundle-manifest",
-                os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
-                "--config",
-                os.path.join(os.path.dirname(__file__), "data", "cluster_config.yml"),
-                "--workload",
-                "nyc_taxis",
-                "--workload-options",
-                "{\"workload-params\":\"number_of_shards:5,number_of_replicas:0,bulk_size:2500\"}",
-                "--warmup-iters",
-                "2",
-                "--test-iters",
-                "3"
-            ],
-        )
+        "argparse._sys.argv",
+        [
+            "run_perf_test.py",
+            "--bundle-manifest",
+            os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
+            "--config",
+            os.path.join(os.path.dirname(__file__), "data", "cluster_config.yml"),
+            "--workload",
+            "nyc_taxis",
+            "--workload-options",
+            "{\"workload-params\":\"number_of_shards:5,number_of_replicas:0,bulk_size:2500\"}",
+            "--warmup-iters",
+            "2",
+            "--test-iters",
+            "3"
+        ],
+    )
     @patch("os.chdir")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.GitRepository")
@@ -49,7 +48,7 @@ class PerfTestRunnerOpenSearch(unittest.TestCase):
         runner.run()
 
         mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-infra.git", "main",
-            os.path.join(tempfile.gettempdir(), "infra"))
+                                    os.path.join(tempfile.gettempdir(), "infra"))
         self.assertEqual(mock_suite.call_count, 1)
         self.assertEqual(mock_cluster.call_count, 1)
         self.assertEqual(mock_git.call_count, 1)

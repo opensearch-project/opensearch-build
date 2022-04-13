@@ -5,13 +5,10 @@
 # compatible open source license.
 
 import abc
-import logging
 import os
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
-from test_workflow.test_recorder.test_recorder import TestRecorder
-from test_workflow.test_result.test_suite_results import TestSuiteResults
 
 
 class PerfTestRunner(abc.ABC):
