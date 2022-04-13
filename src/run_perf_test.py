@@ -21,5 +21,6 @@ def main():
     manifest = BundleManifest.from_file(perf_args.bundle_manifest)
     PerfTestRunners.from_args(perf_args, manifest).run()
 
+
 if __name__ == "__main__":
     sys.exit(main())

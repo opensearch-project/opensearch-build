@@ -10,7 +10,7 @@ class PerfTestSuite:
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
     """
     def __init__(self, bundle_manifest, endpoint, security, current_workspace, test_results_path, args,
-                owner="opensearch-devops", scenario="DEFAULT"):
+                 owner="opensearch-devops", scenario="DEFAULT"):
         self.manifest = bundle_manifest
         self.work_dir = current_workspace + "/mensor/"
         self.endpoint = endpoint

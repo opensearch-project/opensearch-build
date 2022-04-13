@@ -19,10 +19,11 @@ from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
 from test_workflow.perf_test.perf_test_runner import PerfTestRunner
 from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
-"""
-  Runner to execute the performance tests for opensearch.
-"""
+
 class PerfTestRunnerOpenSearch(PerfTestRunner):
+    """
+      Runner to execute the performance tests for opensearch.
+    """
     def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
         super().__init__(args, test_manifest)
         logging.info("Running opensearch tests")
@@ -39,6 +40,6 @@ class PerfTestRunnerOpenSearch(PerfTestRunner):
             logging.info("current_workspace is " + str(current_workspace))
             with GitRepository(self.get_infra_repo_url(), "main", current_workspace):
                 with WorkingDirectory(current_workspace):
-                    with PerfTestCluster.create(self.test_manifest, config, self.args.stack, self.security, current_workspace, self.args.keep) as test_cluster:
+                    with PerfTestCluster.create(self.test_manifest, config, self.args.stack, self.security, current_workspace) as test_cluster:
                         perf_test_suite = PerfTestSuite(self.test_manifest, test_cluster.endpoint(), self.security, current_workspace, self.tests_dir, self.args)
                         retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)

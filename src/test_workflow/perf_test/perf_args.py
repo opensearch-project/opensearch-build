@@ -18,7 +18,8 @@ class PerfArgs:
         parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
         parser.add_argument("--component", dest="component", default="OpenSearch", help="Component name that needs to be performance tested")
         parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
-        parser.add_argument("--without-security", dest="insecure", action="store_true",
+        parser.add_argument(
+            "--without-security", dest="insecure", action="store_true",
             help="Force the security of the cluster to be disabled.", default=False)
         parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
         parser.add_argument("--workload", default="nyc_taxis", help="Mensor (internal client) param - Workload name from OpenSeach Benchmark Workloads")

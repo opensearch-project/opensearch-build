@@ -4,10 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import argparse
 import os
 import subprocess
-import sys
 
 import yaml
 
@@ -16,14 +14,13 @@ from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory
 from system.working_directory import WorkingDirectory
 from test_workflow.perf_test.perf_args import PerfArgs
-from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
 from test_workflow.perf_test.perf_test_runner import PerfTestRunner
-from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
-"""
-  Runner to execute the performance tests for opensearch plugins. The plugins need to define the test suite
-"""
+
 class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
+    """
+      Runner to execute the performance tests for opensearch plugins. The plugins need to define the test suite
+    """
     def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
         super().__init__(args, test_manifest)
         self.command = (
@@ -32,8 +29,6 @@ class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
         )
 
     def get_plugin_repo_url(self):
-        if "GITHUB_TOKEN" in os.environ:
-            return f"https://${GITHUB_TOKEN}@github.com/opensearch-project/{self.args.component}.git"
         return f"https://github.com/opensearch-project/{self.args.component}.git"
 
     def run_tests(self):

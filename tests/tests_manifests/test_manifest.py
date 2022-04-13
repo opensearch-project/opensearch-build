@@ -44,7 +44,7 @@ class TestManifest(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             Manifest(None)  # type: ignore[abstract]
         self.assertEqual(
-            "Can't instantiate abstract class Manifest with abstract method __init__",
+            "Can't instantiate abstract class Manifest with abstract methods __init__",
             context.exception.__str__(),
         )
 
