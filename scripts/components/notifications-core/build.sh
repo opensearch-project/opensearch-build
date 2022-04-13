@@ -68,11 +68,9 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
 
-# Go to the first notifications folder, which holds the core folder and the second notifications folder
-cd ../
 ./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 
-mkdir -p core/$OUTPUT/plugins
+mkdir -p ./$OUTPUT/plugins
 notifCoreZipPath=$(ls core/build/distributions/ | grep .zip)
-cp -v core/build/distributions/$notifCoreZipPath core/$OUTPUT/plugins
+cp -v core/build/distributions/$notifCoreZipPath ./$OUTPUT/plugins
