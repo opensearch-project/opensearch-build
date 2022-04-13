@@ -23,5 +23,5 @@ void call(Map args = [:]) {
         "type=rpm-md"
     ].join('\n')
 
-    writeFile file: "${repoFilePath}/${filename}-staging-${version}.repo", text: repoFileContent
+    writeFile file: "${repoFilePath}/${filename}-${version}.staging.repo", text: repoFileContent
 }
