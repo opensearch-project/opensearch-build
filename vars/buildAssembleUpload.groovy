@@ -7,14 +7,6 @@ def call(Map args = [:]) {
     String buildManifest = "${args.distribution}/builds/${inputManifestObj.build.getFilename()}/manifest.yml"
     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: buildManifest))
 
-    if (args.distribution == 'rpm') {
-        // need to create yum repo
-        sh([
-            'createrepo',
-            "\"${args.distribution}/dist/${inputManifestObj.build.getFilename()}\"",
-        ].join(' '))
-    }
-
     assembleUpload(
         args + [
             buildManifest: buildManifest,

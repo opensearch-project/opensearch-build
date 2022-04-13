@@ -7,4 +7,12 @@ void call(Map args = [:]) {
         "\"${args.buildManifest}\"",
         "--base-url ${baseUrl}"
     ].join(' '))
+
+    if (args.distribution == 'rpm') {
+        sh([
+            './assemble.sh',
+            "\"${args.distribution}/dist/${buildManifest.build.getFileName()}\"",
+            "--base-url ${baseUrl}"
+        ].join(' '))
+    }
 }
