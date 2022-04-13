@@ -43,11 +43,11 @@ class TestRunAssemble(unittest.TestCase):
         mock_bundle.install_min.assert_called()
         mock_bundle.install_components.assert_called()
 
-        mock_bundle.package.assert_called_with(os.path.join("curdir", "dist", "opensearch"))
+        mock_bundle.package.assert_called_with(os.path.join("curdir", "tar", "dist", "opensearch"))
 
         mock_recorder.return_value.write_manifest.assert_has_calls([
             call("path"),
-            call(os.path.join("curdir", "dist", "opensearch"))
+            call(os.path.join("curdir", "tar", "dist", "opensearch"))
         ])  # manifest included in package
 
         self.assertEqual(getcwd.call_count, 2)

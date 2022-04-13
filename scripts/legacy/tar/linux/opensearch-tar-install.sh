@@ -27,6 +27,7 @@ if ! grep -q '## OpenSearch Performance Analyzer' $OPENSEARCH_HOME/config/jvm.op
    echo "-Dclk.tck=$CLK_TCK" >> $OPENSEARCH_HOME/config/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> $OPENSEARCH_HOME/config/jvm.options
    echo "-Djava.security.policy=$OPENSEARCH_HOME/plugins/opensearch-performance-analyzer/pa_config/opensearch_security.policy" >> $OPENSEARCH_HOME/config/jvm.options
+   echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> $OPENSEARCH_HOME/config/jvm.options
 fi
 echo "done plugins"
 

@@ -15,6 +15,7 @@ class BuildManifest implements Serializable {
         String version
         String platform
         String architecture
+        String distribution
 
         Build(Map data) {
             this.id = data.id
@@ -22,6 +23,7 @@ class BuildManifest implements Serializable {
             this.version = data.version
             this.platform = data.platform
             this.architecture = data.architecture
+            this.distribution = data.distribution
         }
 
         String getFilename() {
@@ -31,7 +33,17 @@ class BuildManifest implements Serializable {
         String getFilenameWithExtension(String platform = null, String architecture = null) {
             String resolvedPlatform = platform ?: this.platform
             String resolvedArchitecture = architecture ?: this.architecture
-            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${resolvedPlatform == 'windows' ? 'zip' : 'tar.gz'}"
+            return "${this.getFilename()}-${this.version}-${resolvedPlatform}-${resolvedArchitecture}.${getExtension()}"
+        }
+
+        String getExtension() {
+            if (this.distribution == 'zip') {
+                return 'zip'
+            } else if (this.distribution == 'rpm') {
+                return 'rpm'
+            } else {
+                return 'tar.gz'
+            }
         }
 
         String getPackageName() {
@@ -40,7 +52,7 @@ class BuildManifest implements Serializable {
                     this.version,
                     this.platform,
                     this.architecture,
-            ].join('-') + '.tar.gz'
+            ].join('-') + '.' + getExtension()
         }
     }
 
@@ -81,13 +93,20 @@ class BuildManifest implements Serializable {
         this.components = new BuildManifest.Components(data.components)
     }
 
-    public String getArtifactRoot(String jobName, String buildNumber) {
+    public String getArtifactRootWithoutDistribution(String jobName, String buildNumber) {
         return [
                 jobName,
                 this.build.version,
                 buildNumber,
                 this.build.platform,
                 this.build.architecture
+        ].join("/")
+    }
+
+    public String getArtifactRoot(String jobName, String buildNumber) {
+        return [
+                this.getArtifactRootWithoutDistribution(jobName, buildNumber),
+                this.build.distribution
         ].join("/")
     }
     
@@ -98,10 +117,17 @@ class BuildManifest implements Serializable {
         ].join("/")
     }
 
-    public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
+    public String getArtifactRootUrlWithoutDistribution(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
         return [
                 publicArtifactUrl,
-                this.getArtifactRoot(jobName, buildNumber)
+                this.getArtifactRootWithoutDistribution(jobName, buildNumber)
+        ].join('/')
+    }
+
+    public String getArtifactRootUrl(String publicArtifactUrl = 'https://ci.opensearch.org/ci/dbc', String jobName, String buildNumber) {
+        return [
+                this.getArtifactRootUrlWithoutDistribution(publicArtifactUrl, jobName, buildNumber),
+                this.build.distribution
         ].join('/')
     }
 

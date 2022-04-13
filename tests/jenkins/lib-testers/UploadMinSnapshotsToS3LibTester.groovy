@@ -35,7 +35,7 @@ class UploadMinSnapshotsToS3LibTester extends LibFunctionTester {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'dummy_bucket')
         helper.registerAllowedMethod("s3Upload", [Map])
-        helper.addShMock('find tests/data/builds/opensearch/dist -type f') { script ->
+        helper.addShMock('find tests/data/tar/builds/opensearch/dist -type f') { script ->
             return [stdout: "opensearch-min-1.3.0-linux-x64.tar.gz opensearch-dashboards-min-1.3.0-linux-x64.tar.gz", exitValue: 0]
         }
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->

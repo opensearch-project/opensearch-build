@@ -15,11 +15,11 @@ class TestBundleLocations(unittest.TestCase):
 
     def test(self) -> None:
         self.assertIsInstance(
-            BundleLocations.from_path("", "file", "opensearch"),
+            BundleLocations.from_path("", "file", "opensearch", "tar"),
             BundleFileLocation
         )
 
         self.assertIsInstance(
-            BundleLocations.from_path("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/", "file", "opensearch"),
+            BundleLocations.from_path("https://ci.opensearch.org/ci/ci-env-prod/job-name-opensearch/", "file", "opensearch", "tar"),
             BundleUrlLocation
         )

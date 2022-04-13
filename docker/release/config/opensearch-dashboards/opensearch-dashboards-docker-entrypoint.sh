@@ -29,6 +29,7 @@ opensearch_dashboards_vars=(
     csp.rules
     csp.strict
     csp.warnLegacyBrowsers
+    data.search.usageTelemetry.enabled
     opensearch.customHeaders
     opensearch.hosts
     opensearch.logQueries

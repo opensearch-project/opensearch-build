@@ -3,11 +3,10 @@ schema-version: '1.0'
 build:
   name: OpenSearch Dashboards
   version: 2.0.0
-  qualifier: alpha1
+  qualifier: rc1
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1
-    args: -e NODE_VERSION=14.18.2
 components:
   - name: OpenSearch-Dashboards
     ref: main
@@ -32,4 +31,16 @@ components:
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
+    ref: main
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: main
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: main
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: main
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     ref: main

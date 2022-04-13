@@ -9,13 +9,9 @@ pipeline {
         parameterizedCron '''
             H/10 * * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=1.3.2/opensearch-1.3.2.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H/10 * * * * %INPUT_MANIFEST=1.3.1/opensearch-dashboards-1.3.1.yml;TEST_MANIFEST=1.3.1/opensearch-dashboards-1.3.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H/10 * * * * %INPUT_MANIFEST=1.2.5/opensearch-1.2.5.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=2.0.0/opensearch-2.0.0.yml;TEST_MANIFEST=2.0.0/opensearch-2.0.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H/10 * * * * %INPUT_MANIFEST=2.0.0/opensearch-dashboards-2.0.0.yml;TEST_MANIFEST=2.0.0/opensearch-dashboards-2.0.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
-            H 1 * * * %INPUT_MANIFEST=1.2.1/opensearch-1.2.1.yml;TEST_MANIFEST=1.2.1/opensearch-1.2.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=1.2.2/opensearch-1.2.2.yml;TEST_MANIFEST=1.2.2/opensearch-1.2.2-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H 1 * * * %INPUT_MANIFEST=1.2.3/opensearch-1.2.3.yml;TEST_MANIFEST=1.2.3/opensearch-1.2.3-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=2.1.0/opensearch-2.1.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
         '''
     }
@@ -78,7 +74,7 @@ pipeline {
                             string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
                             string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}")
                             ], wait: true
-                            
+
                             echo "Build succeeded, uploading build SHA for that job"
                             buildUploadManifestSHA(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",

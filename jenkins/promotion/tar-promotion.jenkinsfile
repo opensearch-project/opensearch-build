@@ -45,7 +45,7 @@ pipeline {
             }
             steps {
                 script {
-                    promoteArtifacts(
+                    promoteTarArtifacts(
                         fileActions: [createSha512Checksums(), createSignatureFiles()]
                     )
                 }

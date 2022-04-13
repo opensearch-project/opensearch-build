@@ -21,7 +21,7 @@ pipeline {
         )
     }
     environment {
-        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/builds"
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
     }
     stages {
         stage('sign') {
@@ -56,7 +56,7 @@ pipeline {
                 script {
                     // stage artifacts for release with Sonatype
                     withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                        sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/maven-signed')
+                        sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven')
                     }
                 }
             }

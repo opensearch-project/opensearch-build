@@ -1,5 +1,12 @@
-# OpenSearch 1.3.1 Release Notes
+# OpenSearch and OpenSearch Dashboards 1.3.1 Release Notes
 
+## Release Details
+
+OpenSearch Dashboards 1.3.1 includes the following bug fixes and enhancements.
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.3.1.md).
+
+OpenSearch 1.3.1 includes the following bug fixes and enhancements.
 
 ## Bug fixes
 
@@ -16,7 +23,6 @@
 * Bump to 1.3.1 ([#254](https://github.com/opensearch-project/ml-commons/pull/254))
 
 
-
 ## Enhancements
 
 ### OpenSearch Ml Commons
@@ -28,6 +34,3 @@
 ### OpenSearch Ml Commons
 
 * Use latest RCF jar ([#259](https://github.com/opensearch-project/ml-commons/pull/259))
-
-
-

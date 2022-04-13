@@ -45,7 +45,7 @@ class BuilderFromSource(Builder):
                     f"-q {self.target.qualifier}" if self.target.qualifier else None,
                     f"-p {self.target.platform}",
                     f"-a {self.target.architecture}",
-                    f"-d {self.target.distribution}" if self.target.distribution and (self.component.name in DISTRIBUTION_SUPPORTED_COMPONENTS) else None,
+                    f"-d {self.target.distribution}" if self.component.name in DISTRIBUTION_SUPPORTED_COMPONENTS else None,
                     f"-s {str(self.target.snapshot).lower()}",
                     f"-o {self.output_path}",
                 ]
