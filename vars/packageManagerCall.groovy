@@ -10,10 +10,10 @@ def call(Map args = [:]) {
     def product = args.product
     switch (command) {
         case ("install"):
-            sh ("sudo yum install -y $product")
+            sh ("yum install -y $product")
             break
         case ("remove"):
-            sh ("sudo yum remove -y $product")
+            sh ("yum remove -y $product")
     }
 
 }

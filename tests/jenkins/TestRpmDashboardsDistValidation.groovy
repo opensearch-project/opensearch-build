@@ -59,7 +59,7 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
                 "Apr 05 18:45:25 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:25Z\",\"tags...\n" +
                 "Apr 05 18:45:32 dummy_desktop opensearch-dashboards[30297]: {\"type\":\"response\",\"@timestamp\":\"2022-04-05T18:45:32Z\",\"tags...\n" +
                 "Hint: Some lines were ellipsized, use -l to show in full."
-        helper.addShMock("sudo systemctl status opensearch-dashboards") { script ->
+        helper.addShMock("systemctl status opensearch-dashboards") { script ->
             return [stdout: status_message, exitValue: 0]
         }
         def cluster_status = [
@@ -90,7 +90,7 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
                 "ganttChartDashboards@1.3.0.0\n" +
                 "reportsDashboards@1.3.0.0\n" +
                 "securityDashboards@1.3.0.0"
-        helper.addShMock("/usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin list") { script ->
+        helper.addShMock("/usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin list --allow-root") { script ->
             return [stdout: cluster_plugin, exitValue: 0]
         }
     }

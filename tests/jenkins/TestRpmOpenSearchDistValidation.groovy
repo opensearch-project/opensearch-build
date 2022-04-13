@@ -90,7 +90,7 @@ class TestRpmOpenSearchDistValidation extends BuildPipelineTest {
                 "Apr 04 23:42:10 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
                 "Apr 05 00:12:22 dummy_desktop systemd-entrypoint[32009]: Exception in thread \"Attach Listener\" Agent failed to start!\n" +
                 "Hint: Some lines were ellipsized, use -l to show in full."
-        helper.addShMock("sudo systemctl status opensearch") { script ->
+        helper.addShMock("systemctl status opensearch") { script ->
             return [stdout: status_message, exitValue: 0]
         }
         def cluster_info_n_status = [

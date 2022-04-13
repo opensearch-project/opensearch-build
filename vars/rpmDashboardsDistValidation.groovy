@@ -56,11 +56,11 @@ def call(Map args = [:]) {
 
     //Start the installed OpenSearch-Dashboards distribution
     processManagerCall(
-            call: "restart",
+            call: "start",
             product: "opensearch"
     )
     processManagerCall(
-            call: "restart",
+            call: "start",
             product: name
     )
 
@@ -80,16 +80,20 @@ def call(Map args = [:]) {
     println("This is a dashboards validation.")
     def osd_status_json = sh (
             script: "curl -s \"http://localhost:5601/api/status\"",
-            returnStdout: true
-    ).trim()
+            returnStatus: true
+    )
     for (int i = 0; i < 10; i++) {
-        if (osd_status_json == "") {
+        if (osd_status_json != 0) {
             sleep 3
+            osd_status_json = sh (
+                    script: "curl -s \"http://localhost:5601/api/status\"",
+                    returnStatus: true
+            )
+        } else {
             osd_status_json = sh (
                     script: "curl -s \"http://localhost:5601/api/status\"",
                     returnStdout: true
             ).trim()
-        } else {
             break
         }
     }
@@ -102,7 +106,7 @@ def call(Map args = [:]) {
 
     //Plugin existence validation;
     def osd_plugins = sh (
-            script: "/usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin list",
+            script: "/usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin list --allow-root",
             returnStdout: true
     ).trim()
     println("osd_plugins are: \n" + osd_plugins)

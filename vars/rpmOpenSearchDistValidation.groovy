@@ -76,7 +76,7 @@ def call(Map args = [:]) {
 
     //Start the installed OpenSearch distribution
     processManagerCall(
-            call: "restart",
+            call: "start",
             product: name
     )
 

@@ -12,15 +12,18 @@ def call(Map args = [:]) {
         case ("status"):
             //Validate if the running status is succeed
             def running_status = sh (
-                    script: "sudo systemctl status $product",
+                    script: "systemctl status $product",
                     returnStdout: true
             ).trim()
             return running_status
             break
+        case ("start"):
+            sh ("systemctl start $product")
+            break
         case ("restart"):
-            sh ("sudo systemctl restart $product")
+            sh ("systemctl restart $product")
             break
         case ("stop"):
-            sh ("sudo systemctl stop $product")
+            sh ("systemctl stop $product")
     }
 }
