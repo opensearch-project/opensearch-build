@@ -95,13 +95,15 @@ class BundleRpm:
 
         shutil.move(min_dest_path, min_source_path)
 
+        rpm_version = build_cls.version.replace('-', '.')
+
         # Run bundle rpmbuild
         bundle_cmd = " ".join(
             [
                 'rpmbuild',
                 '-bb',
                 f"--define '_topdir {ext_dest}'",
-                f"--define '_version {build_cls.version}'",
+                f"--define '_version {rpm_version}'",
                 f"--define '_architecture {rpm_architecture(build_cls.architecture)}'",
                 f"{self.filename}.rpm.spec",
             ]
