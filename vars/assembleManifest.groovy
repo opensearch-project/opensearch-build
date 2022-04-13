@@ -9,6 +9,9 @@ void call(Map args = [:]) {
     ].join(' '))
 
     if (args.distribution == 'rpm') {
-        buildYumRepo(args)
+        buildYumRepo(
+            baseUrl: baseUrl,
+            buildManifest: args.buildManifest
+        )
     }
 }

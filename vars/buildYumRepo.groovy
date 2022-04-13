@@ -17,7 +17,7 @@ void call(Map args = [:]) {
     def repoFileContent = [
         "[${filename}-staging-${version}-${BUILD_NUMBER}]",
         "name=${name} ${version} ${BUILD_NUMBER} Staging",
-        "baseurl=${baseUrl}/rpm/dist/${filename}/",
+        "baseurl=${args.baseUrl}/rpm/dist/${filename}/",
         "enabled=1",
         "autorefresh=1",
         "type=rpm-md"
