@@ -2,7 +2,7 @@ void call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
-    echo "Creating repo file and data for ${args.buildManifest}"
+    echo "Create yum repo metadata and repo file ${args.buildManifest}"
 
     def filename = buildManifest.build.getFilename()
     def name = buildManifest.build.name
@@ -23,5 +23,5 @@ void call(Map args = [:]) {
         "type=rpm-md"
     ].join('\n')
 
-    writeFile file: "${repoFilePath}/${filename}-artifacts.repo", text: repoFileContent
+    writeFile file: "${repoFilePath}/${filename}-staging-${version}.repo", text: repoFileContent
 }
