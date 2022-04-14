@@ -14,6 +14,12 @@ class TestAssembleManifest extends BuildPipelineTest {
     @Test
     void testAssembleManifest_rpm() {
         this.registerLibTester(new AssembleManifestLibTester('tests/data/opensearch-build-1.3.0-rpm.yml'))
+
+        this.registerLibTester(new BuildYumRepoTester(
+            'tests/data/opensearch-build-1.3.0-rpm.yml',
+            'https://ci.opensearch.org/dbc/vars-build/1.3.0/123/linux/x64'
+        ))
+
         super.setUp()
 
         super.testPipeline('tests/jenkins/jobs/AssembleManifest_rpm_Jenkinsfile')
