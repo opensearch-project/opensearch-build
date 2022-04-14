@@ -7,4 +7,11 @@ void call(Map args = [:]) {
         "\"${args.buildManifest}\"",
         "--base-url ${baseUrl}"
     ].join(' '))
+
+    if (buildManifest.build.distribution == 'rpm') {
+        buildYumRepo(
+            baseUrl: baseUrl,
+            buildManifest: args.buildManifest
+        )
+    }
 }
