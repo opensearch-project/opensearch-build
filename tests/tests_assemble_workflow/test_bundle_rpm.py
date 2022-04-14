@@ -27,11 +27,10 @@ class TestBundleRpm(unittest.TestCase):
         self.manifest_rpm_qualifier = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-rpm-2.0.0-alpha1.yml"))
 
     @patch("builtins.open")
-    @patch("os.path.exists", return_value=False)
     @patch("shutil.move")
     @patch("shutil.copy2")
     @patch("subprocess.check_call")
-    def test_extract_rpm(self, check_call_mock: Mock, shutil_copy2_mock: Mock, shutil_move_mock: Mock, os_path_exists_mock: Mock, builtins_open: Mock) -> None:
+    def test_extract_rpm(self, check_call_mock: Mock, shutil_copy2_mock: Mock, shutil_move_mock: Mock, builtins_open: Mock) -> None:
 
         self.bundle_rpm.extract(self.artifacts_path)
         args_list = check_call_mock.call_args_list
@@ -41,7 +40,6 @@ class TestBundleRpm(unittest.TestCase):
         self.assertEqual(['cpio', '-imdv'], args_list[1][0][0])
         self.assertEqual(shutil_copy2_mock.call_count, 0)
         self.assertEqual(shutil_move_mock.call_count, 1)
-        self.assertEqual(os_path_exists_mock.call_count, 1)
         self.assertEqual(os.environ['OPENSEARCH_PATH_CONF'], os.path.join(self.artifacts_path, 'etc', 'opensearch'))
 
     @patch("os.path.exists", return_value=True)
@@ -57,7 +55,7 @@ class TestBundleRpm(unittest.TestCase):
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 1.3.0' --define '_architecture x86_64' opensearch.rpm.spec", args_list_rpm[0][0][0])
-        self.assertEqual(shutil_move_mock.call_count, 3)
+        self.assertEqual(shutil_move_mock.call_count, 2)
 
     @patch("os.path.exists", return_value=True)
     @patch("os.walk")
@@ -73,4 +71,4 @@ class TestBundleRpm(unittest.TestCase):
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual(f"rpmbuild -bb --define '_topdir {self.artifacts_path}' --define '_version 2.0.0.alpha1' --define '_architecture x86_64' opensearch.rpm.spec",
                          args_list_rpm_qualifier[0][0][0])
-        self.assertEqual(shutil_move_mock.call_count, 3)
+        self.assertEqual(shutil_move_mock.call_count, 2)
