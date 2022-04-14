@@ -26,7 +26,6 @@ class BundleRpm:
         min_source_path = os.path.join(dest, 'usr', 'share', self.filename)
         min_dest_path = os.path.join(dest, self.min_path)
         min_config_path = os.path.join(dest, 'etc', self.filename)
-        min_bin_env_path = os.path.join(min_dest_path, 'bin', f"{self.filename}-env")
 
         # Convert rpm to cpio so we can extract the content
         logging.info(f"Convert rpm to cpio for extraction: {self.package_path} to {cpio_path}")
@@ -69,7 +68,6 @@ class BundleRpm:
         ext_dest = os.path.dirname(archive_path)
         min_source_path = os.path.join(ext_dest, 'usr', 'share', self.filename)
         min_dest_path = os.path.join(ext_dest, self.min_path)
-        min_bin_env_path = os.path.join(min_dest_path, 'bin', f"{self.filename}-env")
         bundle_artifact_path: str = None
 
         # Remove env var
