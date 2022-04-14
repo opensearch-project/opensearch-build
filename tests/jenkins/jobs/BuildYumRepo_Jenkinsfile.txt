@@ -16,5 +16,6 @@
 name=OpenSearch 1.3.0 123 Staging
 baseurl=https://ci.opensearch.org/ci/dbc/test/1.3.0/9/linux/x64/rpm/dist/opensearch/
 enabled=1
+gpgcheck=0
 autorefresh=1
 type=rpm-md})
