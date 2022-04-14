@@ -15,7 +15,7 @@ void call(Map args = [:]) {
     ].join(' '))
 
     def repoFileContent = [
-        "[${filename}-staging-${version}-${BUILD_NUMBER}]",
+        "[${filename}-${version}-${BUILD_NUMBER}-staging]",
         "name=${name} ${version} ${BUILD_NUMBER} Staging",
         "baseurl=${args.baseUrl}/rpm/dist/${filename}/",
         "enabled=1",
