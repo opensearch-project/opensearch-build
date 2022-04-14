@@ -110,7 +110,7 @@ echo " sudo systemctl enable opensearch.service"
 echo "### You can start opensearch service by executing"
 echo " sudo systemctl start opensearch.service"
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
-    echo "### Created opensearch demo certificates in %{config_dir}/certs"
+    echo "### Create opensearch demo certificates in %{config_dir}/"
     echo " See demo certs creation log in %{log_dir}/install_demo_configuration.log"
 fi
 exit 0
