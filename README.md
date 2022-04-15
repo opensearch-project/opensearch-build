@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/opensearch-project/opensearch-build/branch/main/graph/badge.svg?token=03S5XZ80UI)](https://codecov.io/gh/opensearch-project/opensearch-build)
 
 - [Releasing OpenSearch](#releasing-opensearch)
+  - [Releases and Versions](#releases-and-versions)
   - [Creating a New Version](#creating-a-new-version)
   - [Onboarding a New Plugin](#onboarding-a-new-plugin)
   - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
@@ -35,9 +36,20 @@
 
 ## Releasing OpenSearch
 
+### Releases and Versions
+
+The OpenSearch project releases as versioned distributions of OpenSearch, OpenSearch Dashboards, and the OpenSearch plugins. It [follows semantic versioning](https://opensearch.org/blog/technical-post/2021/08/what-is-semver/). Software, such as Data Prepper, clients, and the Logstash output plugin, are versioned independently of the OpenSearch Project. They also may have independent releases from the main project distributions. The OpenSearch Project may also release software under alpha, beta, release candidate, and generally available labels. The definition of when to use these labels is derived from [the Wikipedia page on Software release lifecycle](https://en.wikipedia.org/wiki/Software_release_life_cycle). Below is the definition of when to use each label.
+
+Release labels:
+
+* **Alpha** - The code is released with instructions to build. Built distributions of the software may not be available. Some features many not be complete. Additional testing and developement work is planned. Distributions will be postfixed with `-alphaX` where "X" is the number of the alpha version  (e.g., "2.0-alpha1").
+* **Beta** - Built distributions of the software are available. All features are completed. Additional testing and developement work is planned. Distributions will be postfixed with `-betaX` where "X" is the number of the beta version  (e.g., "2.0.0-beta1").
+* **Release Candidate** - Built distributions of the software are available. All features are completed. Code is tested and minimal validation remains. At this stage the software is potentially stable and will release unless signficant bugs emerge. Distributions will be postfixed with `-rcX` where "X" is the number of the release candidate version (e.g., "2.0.0-rc1").
+* **Generally Available** - Built distributions of the software are available. All features are completed and documented. All testing is completed. Distributions for generally available versions are not postfixed with an additional label (e.g., "2.0.0").
+
 ### Creating a New Version
 
-OpenSearch and OpenSearch Dashboards are distributed as bundles that include both core engines and plugins. Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.0.0.yml](manifests/2.0.0/opensearch-2.0.0.yml). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
+Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.0.0.yml](manifests/2.0.0/opensearch-2.0.0.yml). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Onboarding a New Plugin
 
