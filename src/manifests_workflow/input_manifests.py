@@ -106,7 +106,7 @@ class InputManifests(Manifests):
                 self.add_to_cron(release_version)
 
     def create_manifest(self, version: str, components: List = []) -> InputManifest:
-        runner_map = {
+        image_map = {
             "opensearch": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1",
             "opensearch-dashboards": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1"
         }
@@ -119,7 +119,7 @@ class InputManifests(Manifests):
             },
             "ci": {
                 "image": {
-                    "name": runner_map[self.prefix]
+                    "name": image_map[self.prefix]
                 }
             },
             "components": [],
