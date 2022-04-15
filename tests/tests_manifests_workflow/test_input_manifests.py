@@ -16,27 +16,39 @@ class TestInputManifests(unittest.TestCase):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
 
-    def test_create_manifest(self) -> None:
-        input_manifests = InputManifests("test")
+    def test_create_manifest_opensearch(self) -> None:
+        input_manifests = InputManifests("opensearch")
         input_manifest = input_manifests.create_manifest("1.2.3", [])
         self.assertEqual(
             input_manifest.to_dict(),
             {
                 "schema-version": "1.0",
-                "build": {"name": "test", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-v1"}},
+                "build": {"name": "opensearch", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1"}},
+            },
+        )
+
+    def test_create_manifest_opensearch_dashboards(self) -> None:
+        input_manifests = InputManifests("opensearch-dashboards")
+        input_manifest = input_manifests.create_manifest("1.2.3", [])
+        self.assertEqual(
+            input_manifest.to_dict(),
+            {
+                "schema-version": "1.0",
+                "build": {"name": "opensearch-dashboards", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1"}},
             },
         )
 
     @patch("os.makedirs")
     @patch("manifests_workflow.input_manifests.InputManifests.create_manifest")
     def test_write_manifest(self, mock_create_manifest: MagicMock, mock_makedirs: MagicMock) -> None:
-        input_manifests = InputManifests("test")
+        input_manifests = InputManifests("opensearch")
         input_manifests.write_manifest('0.1.2', [])
         mock_create_manifest.assert_called_with('0.1.2', [])
         mock_makedirs.assert_called_with(os.path.join(InputManifests.manifests_path(), '0.1.2'), exist_ok=True)
         mock_create_manifest.return_value.to_file.assert_called_with(
-            os.path.join(InputManifests.manifests_path(), '0.1.2', 'test-0.1.2.yml')
+            os.path.join(InputManifests.manifests_path(), '0.1.2', 'opensearch-0.1.2.yml')
         )
 
     def test_jenkins_path(self) -> None:

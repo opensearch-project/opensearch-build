@@ -5,7 +5,7 @@ build:
   version: 1.3.2
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-centos7-v1
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
