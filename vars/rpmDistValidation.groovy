@@ -1,18 +1,44 @@
 /**
  * This is a general function for RPM distribution validation.
  * @param Map args = [:]
- * args.bundleManifest: The location of the distribution manifest.
- * args.rpmDistribution: The location of the RPM distribution file.
+ * args.bundleManifestURL: The CI URL of the distribution manifest.
  */
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.bundleManifest))
-    def distFile = args.rpmDistribution
+    def bundleManifestURL = args.bundleManifestURL
+    sh ("curl -sL $bundleManifestURL -o $WORKSPACE/manifest.yml")
+    def bundleManifest = "$WORKSPACE/manifest.yml"
+
+    def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: "$bundleManifest"))
     def name = BundleManifestObj.build.getFilename()   //opensearch; opensearch-dashboards
-    def version = BundleManifestObj.build.version        //1.3.0
+    def version = BundleManifestObj.build.version       //2.0.0-rc1
+    def rpmVersion = version.replace("-", ".")        //2.0.0.rc1
     def architecture = BundleManifestObj.build.architecture
-    def plugin_names = BundleManifestObj.getNames();
+
+    def repoFileURLBackend = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/$version/latest/linux/$architecture/rpm/dist/opensearch/opensearch-${version}.staging.repo"
+    def repoFileURLProduct = bundleManifestURL.replace("manifest.yml", "${name}-${version}.staging.repo")
+
+    rpmCommands(
+            call: "setup",
+            repoFileURL: "$repoFileURLBackend"
+    )
+    rpmCommands(
+            call: "setup",
+            repoFileURL: "$repoFileURLProduct"
+    )
+    rpmCommands(
+            call: "clean"
+    )
+    rpmCommands(
+            call: "download",
+            product: "$name-$rpmVersion"
+    )
+    def distFileName = sh(
+            script: "ls $WORKSPACE/yum-download/",
+            returnStdout: true
+    ).trim()
+    def distFile = "$WORKSPACE/yum-download/$distFileName"
 
     if (BundleManifestObj.build.distribution != 'rpm') {
         error("Invalid distribution manifest. Please input the correct one.")
@@ -20,24 +46,23 @@ def call(Map args = [:]) {
 
     //Validation for the Name convention
     println("Name convention for distribution file starts:")
-    def distFileNameWithExtension = distFile.split('/').last()
-    println("the File name is : $distFileNameWithExtension")        //e.g. opensearch-1.3.0-linux-x64.rpm
-    if (!distFileNameWithExtension.endsWith(".rpm")) {
+    println("The file name is : $distFileName")        //e.g. opensearch-2.0.0.rc1-linux-x64.rpm
+    if (!distFileName.endsWith(".rpm")) {
         error("This isn't a valid rpm distribution.")
     }
-    def distFileName = distFileNameWithExtension.replace(".rpm", "")
-    def refFileName = [name, version, "linux", architecture].join("-")
+    def refFileName = BundleManifestObj.build.getBuildLocation().split('/').last()
+    println("Name from the manifest is $refFileName")
     assert distFileName == refFileName
     println("File name for the RPM distribution has been validated.")
 
     if (name == "opensearch") {
         rpmOpenSearchDistValidation(
-                bundleManifest: args.bundleManifest,
+                bundleManifest: bundleManifest,
                 rpmDistribution: distFile
         )
     } else {
         rpmDashboardsDistValidation(
-                bundleManifest: args.bundleManifest,
+                bundleManifest: bundleManifest,
                 rpmDistribution: distFile
         )
     }

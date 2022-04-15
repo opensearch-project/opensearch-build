@@ -10,20 +10,15 @@ def call(Map args = [:]) {
     def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.bundleManifest))
     def distFile = args.rpmDistribution
     def name = BundleManifestObj.build.getFilename()   //opensearch-dashboards
-    def version = BundleManifestObj.build.version        //1.3.0
+    def version = BundleManifestObj.build.version       //2.0.0-rc1
+    def rpmVersion = version.replace("-", ".")        //2.0.0.rc1
     def architecture = BundleManifestObj.build.architecture
     def plugin_names = BundleManifestObj.getNames();
-
-    def latestOpenSearchURLRoot = "https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22"
-    def latestOpenSearchURL = "$latestOpenSearchURLRoot/$version/latest/linux/$architecture/rpm/dist/opensearch/opensearch-$version-linux-${architecture}.rpm"
-    def latestOpensearchDist = "$WORKSPACE/opensearch-$version-linux-${architecture}.rpm"
-    // Download the latest OpenSearch distribution with same version to be compatible with Dashboards.
-    sh("curl -SLO $latestOpenSearchURL")
 
     // This is a reference meta data which the distribution should be consistent with.
     def refMap = [:]
     refMap['Name'] = name
-    refMap['Version'] = version
+    refMap['Version'] = rpmVersion
     refMap['Architecture'] = architecture
     refMap['Group'] = "Application/Internet"
     refMap['License'] = "Apache-2.0"
@@ -42,30 +37,29 @@ def call(Map args = [:]) {
 
     //Validation for the installation
     //Install the rpm distribution via yum
-    println("Start installations of OpenSearch & OpenSearch-Dashboards with yum.")
-    packageManagerCall(
+    rpmCommands(
             call: "install",
-            product: latestOpensearchDist
+            product: "opensearch-$rpmVersion"
     )
-    println("Latest RPM distribution for OpenSearch is also installed with yum.")
-    packageManagerCall(
+    println("RPM distribution for OpenSearch $version is also installed with yum.")
+    rpmCommands(
             call: "install",
-            product: distFile
+            product: "$name-$rpmVersion"
     )
-    println("RPM distribution for $name is installed with yum.")
+    println("RPM distribution for $name $version is installed with yum.")
 
     //Start the installed OpenSearch-Dashboards distribution
-    processManagerCall(
+    systemdCall(
             call: "start",
             product: "opensearch"
     )
-    processManagerCall(
+    systemdCall(
             call: "start",
             product: name
     )
 
     //Validate if the running status is succeed
-    def running_status = processManagerCall(
+    def running_status = systemdCall(
                             call: "status",
                             product: name
     )
@@ -76,15 +70,11 @@ def call(Map args = [:]) {
         error("Something went run! Installed $name is not actively running.")
     }
 
-    //Start validate if this is dashboards distribution.
-    println("This is a dashboards validation.")
-    def osd_status_json = sh (
-            script: "curl -s \"http://localhost:5601/api/status\"",
-            returnStatus: true
-    )
+    // Get the OpenSearch-Dashboards api status after start.
+    def osd_status_json = -1
     for (int i = 0; i < 10; i++) {
         if (osd_status_json != 0) {
-            sleep 3
+            sleep 10
             osd_status_json = sh (
                     script: "curl -s \"http://localhost:5601/api/status\"",
                     returnStatus: true
@@ -97,7 +87,7 @@ def call(Map args = [:]) {
             break
         }
     }
-    println("Dashboards status are here: \n" + osd_status_json)
+    println("Dashboards status are: \n" + osd_status_json)
     def osd_status = readJSON(text: osd_status_json)
     assert osd_status["version"]["number"] == version
     println("Dashboards host version has been validated.")
@@ -116,28 +106,35 @@ def call(Map args = [:]) {
             continue
         }
         def location = BundleManifestObj.getLocation(component)
-        def component_name_with_version = location.split('/').last().minus('.zip') //e.g. anomalyDetectionDashboards-1.3.0
+        def component_name_with_version = location.split('/').last().minus('.zip') //e.g. anomalyDetectionDashboards-2.0.0-rc1
         components_list.add(component_name_with_version)
     }
     for (component in components_list) {
-        def component_with_version = component.replace("-","@") + ".0"  //e.g. anomalyDetectionDashboards@1.3.0.0
+        def component_name = component.split("-").first()
+        def component_version = component.minus(component_name + "-")
+        if (component_version.contains("-")) {        //It has qualifier
+            component_version = component_version.split("-").first() + ".0-" + component_version.split("-").last()
+        } else {
+            component_version = component_version + ".0"
+        }
+        def component_with_version = [component_name, component_version].join("@")  //e.g. anomalyDetectionDashboards@2.0.0.0-rc1
         assert osd_plugins.contains(component_with_version)
         println("Component $component is present with correct version $version." )
     }
 
-    processManagerCall(
+    systemdCall(
             call: "stop",
             product: name
     )
-    packageManagerCall(
+    rpmCommands(
             call: "remove",
             product: "opensearch-dashboards"
     )
-    processManagerCall(
+    systemdCall(
             call: "stop",
             product: "opensearch"
     )
-    packageManagerCall(
+    rpmCommands(
             call: "remove",
             product: "opensearch"
     )

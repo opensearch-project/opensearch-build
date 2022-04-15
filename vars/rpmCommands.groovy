@@ -8,9 +8,22 @@ def call(Map args = [:]) {
 
     def command = args.call
     def product = args.product
+    def repoFileURL = args.repoFileURL
     switch (command) {
+        case ("setup"):
+            sh ("cd /etc/yum.repos.d/ && curl -sSLO $repoFileURL && cd -")
+            break
+        case ("clean"):
+            sh ("yum clean all")
+            break
+        case ("download"):
+            sh ("yum install -y yum-plugin-downloadonly && yum install -y --downloadonly --downloaddir=./yum-download/ $product")
+            break
         case ("install"):
             sh ("yum install -y $product")
+            break
+        case ("update"):
+            sh ("yum update -y $product")
             break
         case ("remove"):
             sh ("yum remove -y $product")

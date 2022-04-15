@@ -10,14 +10,15 @@ def call(Map args = [:]) {
     def BundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.bundleManifest))
     def distFile = args.rpmDistribution
     def name = BundleManifestObj.build.getFilename()   //opensearch
-    def version = BundleManifestObj.build.version        //1.3.0
+    def version = BundleManifestObj.build.version       //2.0.0-rc1
+    def rpmVersion = version.replace("-", ".")        //2.0.0.rc1
     def architecture = BundleManifestObj.build.architecture
     def plugin_names = BundleManifestObj.getNames();
 
     // This is a reference meta data which the distribution should be consistent with.
     def refMap = [:]
     refMap['Name'] = name
-    refMap['Version'] = version
+    refMap['Version'] = rpmVersion
     refMap['Architecture'] = architecture
     refMap['Group'] = "Application/Internet"
     refMap['License'] = "Apache-2.0"
@@ -34,11 +35,11 @@ def call(Map args = [:]) {
     )
 
     //Validation for the installation
-    //Install the rpm distribution via yum
+    //Install OpenSearch with designated version via yum
     println("Start installation with yum.")
-    packageManagerCall(
+    rpmCommands(
             call: "install",
-            product: distFile
+            product: "$name-$rpmVersion"
     )
     println("RPM distribution for $name is installed with yum.")
 
@@ -75,13 +76,13 @@ def call(Map args = [:]) {
     }
 
     //Start the installed OpenSearch distribution
-    processManagerCall(
+    systemdCall(
             call: "start",
             product: name
     )
 
     //Validate if the running status is succeed
-    def running_status = processManagerCall(
+    def running_status = systemdCall(
             call: "status",
             product: name
     )
@@ -131,7 +132,7 @@ def call(Map args = [:]) {
             continue
         }
         def location = BundleManifestObj.getLocation(component)
-        def component_name_with_version = location.split('/').last().minus('.zip') //e.g. opensearch-job-scheduler-1.3.0.0
+        def component_name_with_version = location.split('/').last().minus('.zip') //e.g. opensearch-job-scheduler-2.0.0.0-rc1
         components_list.add(component_name_with_version)
     }
     for (line in cluster_plugins.split("\n")) {
@@ -143,11 +144,11 @@ def call(Map args = [:]) {
 
     println("Installation and running for opensearch has been validated.")
 
-    processManagerCall(
+    systemdCall(
             call: "stop",
             product: name
     )
-    packageManagerCall(
+    rpmCommands(
             call: "remove",
             product: "opensearch"
     )

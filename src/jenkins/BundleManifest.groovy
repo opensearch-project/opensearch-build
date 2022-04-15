@@ -34,6 +34,10 @@ class BundleManifest implements Serializable {
             return this.name.toLowerCase().replaceAll(' ', '-')
         }
 
+        String getBuildLocation() {
+            return this.location
+        }
+
     }
 
     class Components extends HashMap<String, Component> {
