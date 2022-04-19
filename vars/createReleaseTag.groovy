@@ -6,6 +6,7 @@ def call(Map args = [:]) {
     def componentsName = buildManifestObj.getNames()
     def componetsNumber = componentsName.size()
     def version = args.tagVersion
+    def untaggedRepoList = []
     echo "Creating $version release tag for $componetsNumber components in the manifest"
 
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
@@ -29,13 +30,25 @@ def call(Map args = [:]) {
                 if (tag_id == "") {
                     echo "Creating $tagVersion tag for $component"
                     sh "git tag $tagVersion"
-                    sh "git push $push_url $tagVersion"
+                    def push_exit_id = sh (
+                            script: "git push $push_url $tagVersion",
+                            returnStatus: true
+                    )
+                    if (push_exit_id == 0) {
+                        sh "git push $push_url $tagVersion"
+                    } else {
+                        untaggedRepoList.add(component)
+                    }
                 } else if (tag_id == commitID) {
                     echo "Tag $tagVersion has been created with identical commit ID. Skipping creating new tag for $component."
                 } else {
                     error "Tag $tagVersion already existed in $component with a different commit ID. Please check this."
                 }
             }
+        }
+        if (untaggedRepoList.size() != 0) {
+            error("Having issues creating tag in some repos. Please resolve it manually.\n " +
+                    "List of untagged repos:\n $untaggedRepoList")
         }
     }
 }
