@@ -4,15 +4,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import errno
-import logging
-import os
-import shutil
-import subprocess
 from abc import ABC, abstractmethod
-from typing import Any, List
 
-from system.process import Process
 
 class Distribution(ABC):
     def __enter__(self) -> 'Distribution':
@@ -41,7 +34,7 @@ class Distribution(ABC):
         pass
 
     @abstractmethod
-    def install_distribution(self) ->None:
+    def install_distribution(self) -> None:
         """
         The detailed method to install the distribution before start the service
         """
@@ -60,4 +53,3 @@ class Distribution(ABC):
         Allow distribution that is not 'tar' to do proper cleanup
         """
         pass
-

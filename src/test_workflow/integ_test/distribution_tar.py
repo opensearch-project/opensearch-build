@@ -4,14 +4,12 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import errno
 import logging
 import os
 import tarfile
-import shutil
-import subprocess
 
 from test_workflow.integ_test.distribution import Distribution
+
 
 class DistributionTar(Distribution):
     def __init__(self, filename: str, distribution: str, version: str, work_dir: str) -> None:
@@ -25,10 +23,10 @@ class DistributionTar(Distribution):
     def get_config_dir(self) -> str:
         return os.path.join(self.get_install_dir, "config")
 
-    def install_distribution(self, bundle_name: str) ->None:
+    def install_distribution(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.get_install_dir}")
         with tarfile.open(bundle_name, 'r') as bundle_tar:
-           bundle_tar.extractall(self.work_dir)
+            bundle_tar.extractall(self.work_dir)
 
     @property
     def get_start_cmd(self) -> str:
@@ -37,4 +35,3 @@ class DistributionTar(Distribution):
             "opensearch-dashboards": "./opensearch-dashboards",
         }
         return start_cmd_map[self.filename]
-

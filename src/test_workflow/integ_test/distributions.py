@@ -7,8 +7,8 @@
 import logging
 
 from test_workflow.integ_test.distribution import Distribution
-from test_workflow.integ_test.distribution_tar import DistributionTar
 from test_workflow.integ_test.distribution_rpm import DistributionRpm
+from test_workflow.integ_test.distribution_tar import DistributionTar
 
 
 class Distributions:
@@ -22,10 +22,10 @@ class Distributions:
         klass = cls.DISTRIBUTION_MAP.get(name, None)
         if not klass:
             raise ValueError(f"Unsupported distribution: {name}")
-        return klass # type: ignore[return-value]
+        return klass  # type: ignore[return-value]
 
     @classmethod
     def get_distribution(cls, filename: str, distribution: str, version: str, work_dir: str) -> Distribution:
         klass = cls.from_name(distribution)
         logging.info(f"{filename} distribution: {distribution}")
-        return klass(filename, distribution, version, work_dir) # type: ignore[no-any-return, operator]
+        return klass(filename, distribution, version, work_dir)  # type: ignore[no-any-return, operator]

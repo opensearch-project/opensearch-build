@@ -6,13 +6,12 @@
 
 import logging
 import os
-import tarfile
 
 import requests
 import yaml
 
-from test_workflow.integ_test.service import Service
 from test_workflow.integ_test.distributions import Distributions
+from test_workflow.integ_test.service import Service
 
 
 class ServiceOpenSearch(Service):

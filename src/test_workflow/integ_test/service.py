@@ -6,8 +6,8 @@
 
 import abc
 import logging
-import time
 import os
+import time
 
 import requests
 
