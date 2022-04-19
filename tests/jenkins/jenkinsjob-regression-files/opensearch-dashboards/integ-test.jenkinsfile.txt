@@ -23,7 +23,7 @@
                integ-test.downloadBuildManifest({url=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/215/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz, path=tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
                   downloadBuildManifest.library({identifier=jenkins@20211123, retriever=null})
-                  downloadBuildManifest.sh(curl https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/215/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz --output tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml)
+                  downloadBuildManifest.sh(curl -sSL https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/215/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz --output tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml)
                   downloadBuildManifest.readYaml({file=tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml})
                   BuildManifest.asBoolean()
                BuildManifest.getArtifactBuildId()
