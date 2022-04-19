@@ -16,7 +16,9 @@ from test_workflow.test_cluster import ClusterCreationException
 
 class ServiceOpenSearchTests(unittest.TestCase):
     def setUp(self):
+        self.filename = "opensearch"
         self.version = "1.1.0"
+        self.distribution = "tar"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.dependency_installer = ""
@@ -32,7 +34,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             dependency_installer,
@@ -75,7 +79,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -124,7 +130,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -173,7 +181,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_terminate
     ):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -193,7 +203,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=False)
     def test_terminate_process_not_started(self, mock_process_started, mock_process_terminate):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -207,7 +219,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     def test_endpoint_port(self):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -219,7 +233,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     def test_url_security_enabled(self):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -230,7 +246,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     def test_url_security_disabled(self):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -243,7 +261,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "url")
     def test_get_service_response(self, mock_url, mock_requests_get):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -266,7 +286,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data, mock_process_stdout_data, mock_service_alive, mock_time_sleep):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -292,7 +314,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_time_sleep
     ):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -322,7 +346,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     ):
 
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -354,7 +380,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_time_sleep
     ):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -371,7 +399,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -390,7 +420,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -409,7 +441,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_red_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -428,7 +462,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "get_service_response")
     def test_service_alive_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearch(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,

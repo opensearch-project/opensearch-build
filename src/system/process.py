@@ -12,12 +12,14 @@ import psutil
 
 
 class Process:
-    def __init__(self) -> None:
+    def __init__(self, filename: str, distribution: str) -> None:
         self.process: subprocess.Popen[bytes] = None
         self.stdout: Any = None
         self.stderr: Any = None
         self.__stdout_data__: str = None
         self.__stderr_data__: str = None
+        self.filename = filename
+        self.distribution = distribution
 
     def start(self, command: str, cwd: str) -> None:
         if self.started:
@@ -38,7 +40,7 @@ class Process:
         if not self.started:
             raise ProcessNotStartedError()
 
-        parent = psutil.Process(self.process.pid)
+        parent = psutil.Process(self.pid)
         logging.debug("Checking for child processes")
         child_processes = parent.children(recursive=True)
         for child in child_processes:
@@ -65,6 +67,10 @@ class Process:
         self.return_code = self.process.returncode
         self.process = None
 
+        if self.distribution == "rpm":
+            logging.info("Clean up process related files for packages")
+            subprocess.check_call(f"yum remove -y '{self.filename}*'", shell=True)
+
         return self.return_code
 
     @property
@@ -73,6 +79,8 @@ class Process:
 
     @property
     def pid(self) -> int:
+        if self.distribution == "rpm":
+            return int(subprocess.check_output(f"sleep 1 && systemctl show --property MainPID {self.filename}", encoding='UTF-8', shell=True).split("=")[1]) if self.started else None
         return self.process.pid if self.started else None
 
     @property

@@ -18,20 +18,26 @@ from test_workflow.integ_test.service import Service
 class ServiceOpenSearchDashboards(Service):
     def __init__(
         self,
+        filename,
         version,
+        distribution,
         additional_config,
         security_enabled,
         dependency_installer,
         work_dir
     ):
-        super().__init__(work_dir, version, security_enabled, additional_config, dependency_installer)
-        self.install_dir = os.path.join(self.work_dir, f"opensearch-dashboards-{self.version}")
+        super().__init__(work_dir, filename, version, distribution, security_enabled, additional_config, dependency_installer)
+        self.filename = filename
+        self.distribution = distribution
+
+        logging.info(f'{self.filename} distribution: {self.distribution}')
+        self.install_dir = self.install_dir_map[self.distribution]
 
     def start(self):
         logging.info(f"Starting OpenSearch Dashboards service from {self.work_dir}")
         self.__download()
 
-        self.opensearch_dashboards_yml_dir = os.path.join(self.install_dir, "config", "opensearch_dashboards.yml")
+        self.opensearch_dashboards_yml_dir = self.config_file_map[self.distribution]
         self.executable_dir = os.path.join(self.install_dir, "bin")
 
         if not self.security_enabled:
@@ -42,7 +48,7 @@ class ServiceOpenSearchDashboards(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start("./opensearch-dashboards", self.executable_dir)
+        self.process_handler.start(self.start_cmd_map[f"{self.distribution}-{self.filename}"], self.executable_dir)
         logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
 
     def __set_logging_dest(self):
@@ -53,7 +59,7 @@ class ServiceOpenSearchDashboards(Service):
     def __remove_security(self):
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "securityDashboards")
         if os.path.isdir(self.security_plugin_dir):
-            subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
+            subprocess.check_call("./opensearch-dashboards-plugin remove --allow-root securityDashboards", cwd=self.executable_dir, shell=True)
 
         with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:
             yamlfile.close()
@@ -63,11 +69,31 @@ class ServiceOpenSearchDashboards(Service):
         bundle_name = self.dependency_installer.download_dist(self.work_dir)
         logging.info(f"Downloaded bundle to {os.path.realpath(bundle_name)}")
 
-        logging.info(f"Unpacking {bundle_name}")
-        with tarfile.open(bundle_name, 'r') as bundle_tar:
-            bundle_tar.extractall(self.work_dir)
+        logging.info(f"Installing {bundle_name} in {self.install_dir}")
 
-        logging.info(f"Unpacked {bundle_name}")
+        if self.distribution == "tar":
+            with tarfile.open(bundle_name, 'r') as bundle_tar:
+                bundle_tar.extractall(self.work_dir)
+        elif self.distribution == "rpm":
+            logging.info("rpm installation requires sudo, script will exit if current user does not have sudo access")
+            rpm_install_cmd = " ".join(
+                [
+                    'yum',
+                    'remove',
+                    '-y',
+                    self.filename,
+                    '&&',
+                    'yum',
+                    'install',
+                    '-y',
+                    bundle_name
+                ]
+            )
+            subprocess.check_call(rpm_install_cmd, cwd=self.work_dir, shell=True)
+        else:
+            raise(f'{self.distribution} is not supported in integ-test yet')
+
+        logging.info(f"Installed {bundle_name}")
 
     def url(self, path=""):
         return f'http://{self.endpoint()}:{self.port()}{path}'

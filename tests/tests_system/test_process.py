@@ -14,7 +14,7 @@ from system.process import Process, ProcessNotStartedError, ProcessStartedError
 class TestProcess(unittest.TestCase):
     def test(self) -> None:
 
-        process_handler = Process()
+        process_handler = Process("opensearch", "tar")
 
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
 
@@ -32,14 +32,37 @@ class TestProcess(unittest.TestCase):
         self.assertFalse(process_handler.started)
         self.assertIsNone(process_handler.pid)
 
+    @patch('psutil.Process')
+    @patch('subprocess.check_output', return_value="MainPID=123")
+    def test_repm_pid(self, mock_subprocess_check_call: MagicMock, mock_psutil_process: MagicMock) -> None:
+
+        process_handler = Process("opensearch", "rpm")
+
+        process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
+        print(process_handler.pid)
+
+        self.assertTrue(process_handler.started)
+        self.assertIsNotNone(process_handler.pid)
+        self.assertIsNotNone(process_handler.stdout_data)
+        self.assertIsNotNone(process_handler.stderr_data)
+
+        return_code = process_handler.terminate()
+
+        self.assertIsNone(return_code)
+        self.assertIsNotNone(process_handler.stdout_data)
+        self.assertIsNotNone(process_handler.stderr_data)
+
+        self.assertFalse(process_handler.started)
+        self.assertIsNone(process_handler.pid)
+
     @patch.object(tempfile, 'NamedTemporaryFile')
     def test_file_open_mode(self, mock_tempfile: MagicMock) -> None:
-        process_handler = Process()
+        process_handler = Process("opensearch", "tar")
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
         mock_tempfile.assert_has_calls([call(mode="r+"), call(mode="r+")])
 
     def test_start_twice(self) -> None:
-        process_handler = Process()
+        process_handler = Process("opensearch", "tar")
         process_handler.start("ls", ".")
 
         with self.assertRaises(ProcessStartedError) as ctx:
@@ -48,7 +71,7 @@ class TestProcess(unittest.TestCase):
         self.assertTrue(str(ctx.exception).startswith("Process already started, pid: "))
 
     def test_terminate_unstarted_process(self) -> None:
-        process_handler = Process()
+        process_handler = Process("opensearch", "tar")
 
         with self.assertRaises(ProcessNotStartedError) as ctx:
             process_handler.terminate()

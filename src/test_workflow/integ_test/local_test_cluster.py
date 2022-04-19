@@ -39,7 +39,9 @@ class LocalTestCluster(TestCluster):
         self.dependency_installer = dependency_installer
 
         self.service_opensearch = ServiceOpenSearch(
+            self.manifest.build.filename,
             self.manifest.build.version,
+            self.manifest.build.distribution if self.manifest.build.distribution else 'tar',
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,

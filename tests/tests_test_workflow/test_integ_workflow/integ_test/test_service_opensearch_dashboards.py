@@ -14,7 +14,9 @@ from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSe
 class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     def setUp(self):
+        self.filename = "opensearch-dashboards"
         self.version = "1.1.0"
+        self.distribution = "tar"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.dependency_installer = ""
@@ -29,7 +31,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dependency_installer = MagicMock()
 
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             mock_dependency_installer,
@@ -76,7 +80,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dependency_installer = MagicMock()
 
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             {},
             False,
             mock_dependency_installer,
@@ -109,7 +115,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         )
 
         mock_check_call.assert_called_once_with(
-            "./opensearch-dashboards-plugin remove securityDashboards",
+            "./opensearch-dashboards-plugin remove --allow-root securityDashboards",
             cwd=os.path.join("test_work_dir", "opensearch-dashboards-1.1.0", "bin"),
             shell=True
         )
@@ -132,7 +138,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dependency_installer = MagicMock()
 
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             {},
             False,
             mock_dependency_installer,
@@ -174,7 +182,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     def test_endpoint_port_url(self):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -189,7 +199,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch.object(ServiceOpenSearchDashboards, "url")
     def test_get_service_response_with_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -208,7 +220,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch.object(ServiceOpenSearchDashboards, "url")
     def test_get_service_response_without_security(self, mock_url, mock_requests_get):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -226,7 +240,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -245,7 +261,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -264,7 +282,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
     def test_service_alive_red_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearchDashboards(
+            self.filename,
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,

@@ -6,6 +6,7 @@
 
 import abc
 import logging
+import os
 import time
 
 import requests
@@ -19,14 +20,30 @@ class Service(abc.ABC):
     Abstract base class for all types of test clusters.
     """
 
-    def __init__(self, work_dir, version, security_enabled, additional_config, dependency_installer):
+    def __init__(self, work_dir, filename, version, distribution, security_enabled, additional_config, dependency_installer):
+        self.filename = filename
         self.work_dir = work_dir
         self.version = version
+        self.distribution = distribution
         self.security_enabled = security_enabled
         self.additional_config = additional_config
         self.dependency_installer = dependency_installer
 
-        self.process_handler = Process()
+        self.process_handler = Process(self.filename, self.distribution)
+        self.install_dir_map = {
+            "tar": os.path.join(self.work_dir, f"{self.filename}-{self.version}"),
+            "rpm": os.path.join(os.sep, "usr", "share", self.filename)
+        }
+        self.config_file_map = {
+            "tar": os.path.join(self.install_dir_map[self.distribution], "config", f"{self.filename.replace('-', '_')}.yml"),
+            "rpm": os.path.join(os.sep, "etc", self.filename, f"{self.filename.replace('-', '_')}.yml")
+        }
+        self.start_cmd_map = {
+            "tar-opensearch": "./opensearch-tar-install.sh",
+            "tar-opensearch-dashboards": "./opensearch-dashboards",
+            "rpm-opensearch": "systemctl start opensearch",
+            "rpm-opensearch-dashboards": "systemctl start opensearch-dashboards"
+        }
         self.install_dir = ""
 
     @abc.abstractmethod

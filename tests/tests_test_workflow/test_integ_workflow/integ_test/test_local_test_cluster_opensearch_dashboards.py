@@ -17,11 +17,15 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
     def setUp(self):
         mock_bundle_manifest_opensearch = MagicMock()
+        mock_bundle_manifest_opensearch.build.filename = "opensearch"
         mock_bundle_manifest_opensearch.build.version = "1.1.0"
+        mock_bundle_manifest_opensearch.build.distribution = "tar"
         self.mock_bundle_manifest_opensearch = mock_bundle_manifest_opensearch
 
         mock_bundle_manifest_opensearch_dashboards = MagicMock()
+        mock_bundle_manifest_opensearch_dashboards.build.filename = "opensearch-dashboards"
         mock_bundle_manifest_opensearch_dashboards.build.version = "1.1.0"
+        mock_bundle_manifest_opensearch_dashboards.build.distribution = "tar"
         self.mock_bundle_manifest_opensearch_dashboards = mock_bundle_manifest_opensearch_dashboards
 
         dependency_installer_opensearch = MagicMock()
@@ -69,7 +73,9 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
         cluster.start()
 
         mock_service_opensearch.assert_called_once_with(
+            "opensearch",
             "1.1.0",
+            "tar",
             {},
             self.security_enabled,
             self.dependency_installer_opensearch,
@@ -80,7 +86,9 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
         mock_service_opensearch_object.wait_for_service.assert_called_once()
 
         mock_service_opensearch_dashboards.assert_called_once_with(
+            "opensearch-dashboards",
             "1.1.0",
+            "tar",
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer_opensearch_dashboards,

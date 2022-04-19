@@ -17,7 +17,9 @@ class LocalTestClusterTests(unittest.TestCase):
 
     def setUp(self):
         mock_manifest = MagicMock()
+        mock_manifest.build.filename = "opensearch"
         mock_manifest.build.version = "1.1.0"
+        mock_manifest.build.distribution = "tar"
         self.manifest = mock_manifest
 
         self.work_dir = "test_work_dir"
@@ -53,7 +55,9 @@ class LocalTestClusterTests(unittest.TestCase):
         cluster.start()
 
         mock_service.assert_called_once_with(
+            "opensearch",
             "1.1.0",
+            "tar",
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,
