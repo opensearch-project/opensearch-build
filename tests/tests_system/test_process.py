@@ -34,12 +34,12 @@ class TestProcess(unittest.TestCase):
 
     @patch('psutil.Process')
     @patch('subprocess.check_output', return_value="MainPID=123")
-    def test_repm_pid(self, mock_subprocess_check_call: MagicMock, mock_psutil_process: MagicMock) -> None:
+    @patch('subprocess.check_call', return_code=0)
+    def test_repm_pid(self, mock_subprocess_check_call: MagicMock, mock_subprocess_check_output: MagicMock, mock_psutil_process: MagicMock) -> None:
 
         process_handler = Process("opensearch", "rpm")
 
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
-        print(process_handler.pid)
 
         self.assertTrue(process_handler.started)
         self.assertIsNotNone(process_handler.pid)
