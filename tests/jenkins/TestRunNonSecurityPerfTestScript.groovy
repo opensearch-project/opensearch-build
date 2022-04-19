@@ -47,7 +47,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
 
         assertThat(curlCommands.size(), equalTo(3))
         assertThat(curlCommands, hasItem(
-            "curl test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
+            "curl -sSL test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
         ))
 
         def s3DownloadCommands = getCommandExecutions('s3Download', 'bucket').findAll {
