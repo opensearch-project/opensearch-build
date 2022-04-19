@@ -4,7 +4,7 @@ Description=OpenSearch Performance Analyzer
 
 [Service]
 Type=simple
-ExecStart=/usr/share/opensearch/bin/performance-analyzer-agent-cli
+ExecStart=/usr/share/opensearch/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli
 Restart=on-failure
 User=opensearch
 Group=opensearch
