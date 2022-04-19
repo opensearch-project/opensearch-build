@@ -102,7 +102,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: main
+    ref: '2.0'
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: main
