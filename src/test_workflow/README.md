@@ -69,7 +69,7 @@ To run OpenSearch Dashboards integration tests.
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
 ```
 
-:warning: RPM Test requires user running the `./test.sh` command with root user or sudo permission, as rpm requires root to install and start the service.
+:warning: RPM Test requires user to run the `./test.sh` command with sudo permission, as rpm requires root to install and start the service.
 
 ### Backwards Compatibility Tests
 
