@@ -70,7 +70,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: main
+    ref: '2.0'
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
