@@ -105,7 +105,7 @@ components:
     ref: main
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: main
+    ref: '2.0'
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
