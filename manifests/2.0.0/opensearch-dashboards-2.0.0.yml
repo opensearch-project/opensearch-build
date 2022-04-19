@@ -19,19 +19,19 @@ components:
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/sql.git
     working_directory: workbench
-    ref: main
+    ref: '2.0'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
-    ref: main
+    ref: '2.0'
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
-    ref: main
+    ref: '2.0'
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
-    ref: main
+    ref: '2.0'
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: main
