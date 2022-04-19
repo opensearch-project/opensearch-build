@@ -35,7 +35,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: main
+    ref: '2.0'
     platforms:
       - darwin
       - linux
