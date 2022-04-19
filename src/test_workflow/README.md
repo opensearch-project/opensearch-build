@@ -69,6 +69,12 @@ To run OpenSearch Dashboards integration tests.
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
 ```
 
+To run OpenSearch Dashboards integration tests with local artifacts on different distributions
+```bash
+./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=tar opensearch-dashboards=tar
+./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=rpm opensearch-dashboards=rpm
+```
+
 :warning: RPM Test requires user to run the `./test.sh` command with sudo permission, as rpm requires root to install and start the service.
 
 ### Backwards Compatibility Tests
