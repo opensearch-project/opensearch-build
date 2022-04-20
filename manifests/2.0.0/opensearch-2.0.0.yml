@@ -76,7 +76,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: main
+    ref: '2.0'
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
