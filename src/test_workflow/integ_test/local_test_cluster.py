@@ -40,6 +40,7 @@ class LocalTestCluster(TestCluster):
 
         self.service_opensearch = ServiceOpenSearch(
             self.manifest.build.version,
+            self.manifest.build.distribution,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,

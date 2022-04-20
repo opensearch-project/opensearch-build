@@ -7,11 +7,11 @@
 import logging
 import os
 import subprocess
-import tarfile
 
 import requests
 import yaml
 
+from test_workflow.integ_test.distributions import Distributions
 from test_workflow.integ_test.service import Service
 
 
@@ -19,19 +19,20 @@ class ServiceOpenSearchDashboards(Service):
     def __init__(
         self,
         version,
+        distribution,
         additional_config,
         security_enabled,
         dependency_installer,
         work_dir
     ):
-        super().__init__(work_dir, version, security_enabled, additional_config, dependency_installer)
-        self.install_dir = os.path.join(self.work_dir, f"opensearch-dashboards-{self.version}")
+        super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
+        self.dist = Distributions.get_distribution("opensearch-dashboards", distribution, version, work_dir)
+        self.install_dir = self.dist.install_dir
 
     def start(self):
-        logging.info(f"Starting OpenSearch Dashboards service from {self.work_dir}")
-        self.__download()
+        self.dist.install(self.download())
 
-        self.opensearch_dashboards_yml_dir = os.path.join(self.install_dir, "config", "opensearch_dashboards.yml")
+        self.opensearch_dashboards_yml_dir = os.path.join(self.dist.config_dir, "opensearch_dashboards.yml")
         self.executable_dir = os.path.join(self.install_dir, "bin")
 
         if not self.security_enabled:
@@ -42,8 +43,11 @@ class ServiceOpenSearchDashboards(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start("./opensearch-dashboards", self.executable_dir)
+        self.process_handler.start(self.dist.start_cmd, self.executable_dir)
         logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
+
+    def uninstall(self):
+        self.dist.uninstall()
 
     def __set_logging_dest(self):
         self.log_dir = os.path.join(self.install_dir, "logs")
@@ -53,21 +57,10 @@ class ServiceOpenSearchDashboards(Service):
     def __remove_security(self):
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "securityDashboards")
         if os.path.isdir(self.security_plugin_dir):
-            subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
+            subprocess.check_call("./opensearch-dashboards-plugin remove --allow-root securityDashboards", cwd=self.executable_dir, shell=True)
 
         with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:
             yamlfile.close()
-
-    def __download(self):
-        logging.info("Downloading OpenSearch Dashboards bundle")
-        bundle_name = self.dependency_installer.download_dist(self.work_dir)
-        logging.info(f"Downloaded bundle to {os.path.realpath(bundle_name)}")
-
-        logging.info(f"Unpacking {bundle_name}")
-        with tarfile.open(bundle_name, 'r') as bundle_tar:
-            bundle_tar.extractall(self.work_dir)
-
-        logging.info(f"Unpacked {bundle_name}")
 
     def url(self, path=""):
         return f'http://{self.endpoint()}:{self.port()}{path}'

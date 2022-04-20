@@ -6,6 +6,7 @@
 
 import abc
 import logging
+import os
 import time
 
 import requests
@@ -19,9 +20,10 @@ class Service(abc.ABC):
     Abstract base class for all types of test clusters.
     """
 
-    def __init__(self, work_dir, version, security_enabled, additional_config, dependency_installer):
+    def __init__(self, work_dir, version, distribution, security_enabled, additional_config, dependency_installer):
         self.work_dir = work_dir
         self.version = version
+        self.distribution = distribution
         self.security_enabled = security_enabled
         self.additional_config = additional_config
         self.dependency_installer = dependency_installer
@@ -42,6 +44,8 @@ class Service(abc.ABC):
             return
 
         self.return_code = self.process_handler.terminate()
+
+        self.uninstall()
 
         return ServiceTerminationResult(self.return_code, self.process_handler.stdout_data, self.process_handler.stderr_data, self.log_files)
 
@@ -79,6 +83,12 @@ class Service(abc.ABC):
             return True
         else:
             return False
+
+    def download(self):
+        logging.info("Downloading bundle artifact")
+        bundle_name = self.dependency_installer.download_dist(self.work_dir)
+        logging.info(f"Downloaded bundle to {os.path.realpath(bundle_name)}")
+        return bundle_name
 
     def wait_for_service(self):
         logging.info("Waiting for service to become available")

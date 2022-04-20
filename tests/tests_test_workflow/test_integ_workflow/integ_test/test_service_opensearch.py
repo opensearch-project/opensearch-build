@@ -17,6 +17,7 @@ from test_workflow.test_cluster import ClusterCreationException
 class ServiceOpenSearchTests(unittest.TestCase):
     def setUp(self):
         self.version = "1.1.0"
+        self.distribution = "tar"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.dependency_installer = ""
@@ -33,6 +34,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             dependency_installer,
@@ -59,7 +61,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
         dependency_installer.download_dist.assert_called_once_with(self.work_dir)
-        mock_tarfile_open.assert_called_once_with(bundle_full_name, "r")
+        mock_tarfile_open.assert_called_once_with(bundle_full_name, "r:gz")
         mock_bundle_tar.extractall.assert_called_once_with(self.work_dir)
 
         self.assertEqual(mock_pid.call_count, 1)
@@ -76,6 +78,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -125,6 +128,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -174,6 +178,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     ):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -194,6 +199,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_terminate_process_not_started(self, mock_process_started, mock_process_terminate):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -208,6 +214,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_endpoint_port(self):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -220,6 +227,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_url_security_enabled(self):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -231,6 +239,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_url_security_disabled(self):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -244,6 +253,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_get_service_response(self, mock_url, mock_requests_get):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -267,6 +277,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data, mock_process_stdout_data, mock_service_alive, mock_time_sleep):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -293,6 +304,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     ):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -323,6 +335,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -355,6 +368,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     ):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -372,6 +386,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_service_alive_green_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -391,6 +406,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_service_alive_yellow_available(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -410,6 +426,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_service_alive_red_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -429,6 +446,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
     def test_service_alive_unavailable(self, mock_get_service_response):
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,

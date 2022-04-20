@@ -45,15 +45,15 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
 
         self.service_opensearch = ServiceOpenSearch(
             self.manifest_opensearch.build.version,
+            self.manifest_opensearch.build.distribution,
             {},
             self.security_enabled,
             self.dependency_installer_opensearch,
             self.work_dir)
 
-        build = self.manifest_opensearch_dashboards.build
-
         self.service_opensearch_dashboards = ServiceOpenSearchDashboards(
-            build.version,
+            self.manifest_opensearch_dashboards.build.version,
+            self.manifest_opensearch_dashboards.build.distribution,
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer_opensearch_dashboards,
