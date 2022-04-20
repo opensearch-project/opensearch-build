@@ -37,7 +37,7 @@ class BuildArtifactOpenSearchCheckMaven(BuildArtifactCheck):
                 try:
                     versions: List[Any] = [None]
                     versions.extend(self.target.compatible_component_versions)
-                    versions.extend(self.target.compatible_opensearch_versions)
+                    versions.extend(self.target.compatible_min_versions)
                     properties.check_value_in("Implementation-Version", versions)
                 except PropertiesFile.CheckError as e:
                     raise BuildArtifactCheck.BuildArtifactInvalidError(path, str(e))

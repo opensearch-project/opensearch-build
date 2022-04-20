@@ -33,8 +33,9 @@ class ServiceOpenSearch(Service):
         self.__download()
 
         self.opensearch_yml_dir = os.path.join(self.install_dir, "config", "opensearch.yml")
+        self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
 
-        if not self.security_enabled:
+        if not self.security_enabled and os.path.isdir(self.security_plugin_dir):
             self.__add_plugin_specific_config({"plugins.security.disabled": "true"})
 
         if self.additional_config:

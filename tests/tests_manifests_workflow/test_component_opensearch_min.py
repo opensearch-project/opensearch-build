@@ -28,12 +28,6 @@ class TestComponentOpenSearchMin(unittest.TestCase):
         self.assertEqual(component.name, "OpenSearch")
         self.assertFalse(component.snapshot)
 
-    def test_publish_to_maven_local(self) -> None:
-        component = ComponentOpenSearchMin(MagicMock())
-        component.publish_to_maven_local()
-        execute_silent = unittest.mock.create_autospec(component.git_repo.execute_silent)
-        execute_silent.assert_called_with("./gradlew publishToMavenLocal -Dbuild.snapshot=false")
-
     def test_version(self) -> None:
         repo = MagicMock()
         repo.output.return_value = "version=2.1"

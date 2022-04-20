@@ -7,3 +7,8 @@ components:
       test-configs:
         - with-security
         - without-security
+  - name: queryWorkbenchDashboards
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security

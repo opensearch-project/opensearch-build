@@ -10,9 +10,10 @@ from typing import Optional
 
 
 class OutputDir(ABC):
-    def __init__(cls, parent_dir: str, filename: str, cwd: Optional[str] = None, makedirs: bool = True) -> None:
+    def __init__(cls, parent_dir: str, filename: str, distribution: str, cwd: Optional[str] = None, makedirs: bool = True) -> None:
         cls.dir = os.path.join(
             cwd or os.getcwd(),
+            distribution,
             parent_dir,
             filename
         )

@@ -1,0 +1,15 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 3.0.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: main
+    checks:
+      - gradle:publish
+      - gradle:properties:version

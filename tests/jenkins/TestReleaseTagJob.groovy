@@ -13,15 +13,16 @@ class TestReleaseTagJob extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        def buildManifest = 'tests/data/opensearch-build-1.1.0.yml'
+        def distManifest = 'tests/data/opensearch-build-1.1.0.yml'
 
-        this.registerLibTester(new CreateReleaseTagLibTester(buildManifest, '1.1.0'))
+        this.registerLibTester(new CreateReleaseTagLibTester(distManifest, '1.1.0'))
 
         super.setUp()
 
         // Variables for Release Tag Job
         binding.setVariable('VERSION', '1.1.0')
-        binding.setVariable('BUILD_MANIFEST', buildManifest)
+        binding.setVariable('PRODUCT', 'opensearch')
+        binding.setVariable('DISTRIBUTION_MANIFEST', distManifest)
 
     }
 

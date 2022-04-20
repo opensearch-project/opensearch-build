@@ -79,6 +79,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 nvm install v14.18.2
 ```
 
+Add the lines below to the correct profile file (`~/.zshrc`, `~/.bashrc`, etc.).
+```
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+```
+
 #### Yarn
 
 [Yarn](https://classic.yarnpkg.com/en/docs/install) is required for building and running the OpenSearch Dashboards and plugins
@@ -240,7 +246,7 @@ and outputs [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt). I
 
 - To update the recorded .txt file run `./gradlew test -info -Ppipeline.stack.write=true` or update its value in [gradle.properties](gradle.properties).
 
-- To run a specific test case, run `./gradlew test -info -tests=TestCaseClassName`
+- To run a specific test case, run `./gradlew test -info --tests=TestCaseClassName`
 
 #### Tests for jenkins job
 Each jenkins job should have a test case associated with it. 
@@ -249,7 +255,7 @@ Eg: [TestSignStandaloneArtifactsJob.groovy](tests/jenkins/TestSignStandaloneArti
 - All tests for jenkins job should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - All tests should have a `setUp()` which is used to set the variables associated with the job
 - Add setups for all libraries used in the job using `this.registerLibTester` with appropriate values
-(Eg: [TestDataPrepperDistributionArtifacts](tests/jenkins/TestDataPrepperDistributionArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
+(Eg: [TestDataPrepperReleaseArtifacts](tests/jenkins/TestDataPrepperReleaseArtifacts.groovy)) in `setUp()` before `super.setUp()` is called.
 
 #### Tests for jenkins libraries
 

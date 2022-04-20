@@ -2,7 +2,7 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     options {
-        timeout(time: 3, unit: 'HOURS')
+        timeout(time: 1, unit: 'HOURS')
     }
     agent {
         docker {
@@ -22,10 +22,18 @@ pipeline {
                 description: 'Image tag on staging. Eg: 1.3.0',
                 trim: true
         )
+        choice(
+                choices: ['docker-hub + ECR', 'docker-hub', 'ECR'],
+                name: 'PLATFORM',
+                description: 'Where do you want to push the images?'
+        )
     }
 
     stages {
         stage('dockerhub-promote-to-prod') {
+            when{
+                expression { PLATFORM == 'docker-hub + ECR' || PLATFORM == 'docker-hub' }
+            }
             steps {
                 script {
                     copyContainer(
@@ -38,6 +46,9 @@ pipeline {
             }
         }
         stage('ecr-promote-to-prod') {
+            when {
+                expression { PLATFORM == 'docker-hub + ECR' || PLATFORM == 'ECR' }
+            }
             steps {
                 script {
                     copyContainer(

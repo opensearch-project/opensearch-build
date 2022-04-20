@@ -17,19 +17,24 @@ pipeline {
             description: 'Version of the release.',
             trim: true
         )
+        choice(
+            choices: ['opensearch', 'opensearch-dashboards'],
+            name: 'PRODUCT',
+            description: 'Product for tag creation.'
+        )
     }
     environment {
-        BUILD_MANIFEST = "opensearch-$VERSION/manifest.yml"
+        DISTRIBUTION_MANIFEST = "$PRODUCT-$VERSION/manifest.yml"
     }
     stages {
         stage('Create Release Tag') {
             steps {
                 script {
-                    release_url = "https://artifacts.opensearch.org/releases/bundle/opensearch/$VERSION/opensearch-$VERSION-linux-x64.tar.gz"
-                    sh "curl -SLO $release_url && tar -xf opensearch-$VERSION-linux-x64.tar.gz opensearch-$VERSION/manifest.yml"
-                    echo "The release distribution manifest is downloaded to $BUILD_MANIFEST"
+                    release_url = "https://artifacts.opensearch.org/releases/bundle/$PRODUCT/$VERSION/$PRODUCT-$VERSION-linux-x64.tar.gz"
+                    sh "curl -SLO $release_url && tar -xf $PRODUCT-$VERSION-linux-x64.tar.gz $PRODUCT-$VERSION/manifest.yml"
+                    echo "The release distribution manifest is downloaded to $DISTRIBUTION_MANIFEST"
                     createReleaseTag(
-                        buildManifest: "$BUILD_MANIFEST",
+                        distManifest: "$DISTRIBUTION_MANIFEST",
                         tagVersion: VERSION
                     )
 

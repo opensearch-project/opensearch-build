@@ -23,13 +23,17 @@ class CiCheckGradleDependencies(CiCheckSource):
 
     def __get_dependencies(self) -> PropertiesFile:
         cmd = " ".join(
-            [
-                f"./gradlew {self.gradle_project or ''}:dependencies",
-                f"-Dopensearch.version={self.target.opensearch_version}",
-                f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
-                "--configuration compileOnly",
-                '| grep -e "---"',
-            ]
+            filter(
+                None,
+                [
+                    f"./gradlew {self.gradle_project or ''}:dependencies",
+                    f"-Dopensearch.version={self.target.opensearch_version}",
+                    f"-Dbuild.snapshot={str(self.target.snapshot).lower()}",
+                    f"-Dbuild.version_qualifier={str(self.target.qualifier)}" if self.target.qualifier else None,
+                    "--configuration compileOnly",
+                    '| grep -e "---"',
+                ]
+            )
         )
 
         lines = self.git_repo.output(cmd)

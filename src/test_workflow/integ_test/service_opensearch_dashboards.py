@@ -51,7 +51,9 @@ class ServiceOpenSearchDashboards(Service):
         self.additional_config["logging.dest"] = os.path.join(self.log_dir, "opensearch_dashboards.log")
 
     def __remove_security(self):
-        subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
+        self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "securityDashboards")
+        if os.path.isdir(self.security_plugin_dir):
+            subprocess.check_call("./opensearch-dashboards-plugin remove securityDashboards", cwd=self.executable_dir, shell=True)
 
         with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:
             yamlfile.close()

@@ -4,7 +4,7 @@ pipeline {
         stage('promote') {
             steps {
                 script {
-                    promoteArtifacts(
+                    promoteTarArtifacts(
                         manifest: 'tests/jenkins/data/opensearch-dashboards-1.2.0.yml'
                     )
                 }

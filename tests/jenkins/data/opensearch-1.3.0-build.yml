@@ -5,6 +5,7 @@ build:
   id: '717'
   name: OpenSearch
   version: 1.3.0
+  distribution: tar
 components:
   - artifacts:
       dist:

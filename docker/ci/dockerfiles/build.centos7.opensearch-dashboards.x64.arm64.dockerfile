@@ -13,8 +13,6 @@
 
 FROM centos:7
 
-ARG MAVEN_DIR=/usr/local/apache-maven
-
 # Ensure localedef running correct with root permission
 USER 0
 
@@ -89,14 +87,6 @@ RUN set -eux; \
         fi; \
     done;
 
-# Install higher version of maven 3.8.x
-RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
-    mkdir -p $MAVEN_DIR && (curl -s $MAVEN_URL | tar xzf - --strip-components=1 -C $MAVEN_DIR) && \
-    echo "export M2_HOME=$MAVEN_DIR" > /etc/profile.d/maven_path.sh && \
-    echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
-    echo "export PATH=\$M2:\$PATH" >> /etc/profile.d/maven_path.sh && \
-    ln -sfn $MAVEN_DIR/bin/mvn /usr/local/bin/mvn
-
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
@@ -115,9 +105,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && \
-    yum install -y rpm-build && \
-    gem install fpm -v 1.13.0
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build createrepo && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -138,43 +126,35 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     pip3 install pipenv && pipenv --version
 
-# Add k-NN Library dependencies
-RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack -y
-RUN pip3 install pip==21.3.1
-RUN pip3 install cmake==3.21.3
-RUN pip3 install awscli==1.22.12
-
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
 
+# Install fpm for opensearch dashboards core
+RUN gem install fpm -v 1.14.2
+ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
+
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 14.18.2
+ENV NODE_VERSION 10.24.1
+ARG NODE_VERSION_LIST="10.24.1 14.18.2"
+COPY --chown=1000:1000 config/build-opensearch-dashboards-entrypoint.sh /usr/share/opensearch
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 # install node and npm
-RUN source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default
+RUN source $NVM_DIR/nvm.sh && \
+    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@^1.21.1; done
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-# install yarn
-RUN npm install -g yarn@^1.21.1
-# install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@5.6.0 && npm cache verify
-# replace default binary with arm64 specific binary from ci.opensearch.org
-RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
-    rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist
 RUN node -v
 RUN npm -v
 RUN yarn -v
-RUN cypress -v
+RUN fpm -v
+ENTRYPOINT ["bash", "/usr/share/opensearch/build-opensearch-dashboards-entrypoint.sh"]
+CMD ["$NODE_VERSION"]

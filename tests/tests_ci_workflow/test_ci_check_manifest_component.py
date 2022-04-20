@@ -23,7 +23,7 @@ class TestCiCheckManifestComponent(unittest.TestCase):
     def test_retrieves_manifests(self, mock_manifest: Mock, find_build_root: Mock) -> None:
         find_build_root.return_value = "url/linux/ARCH/builds/opensearch"
         check = CiCheckManifestComponent(
-            InputComponentFromDist({"name": "common-utils", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", snapshot=True)
+            InputComponentFromDist({"name": "common-utils", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True)
         )
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)
@@ -47,7 +47,7 @@ class TestCiCheckManifestComponent(unittest.TestCase):
     def test_missing_component(self, mock_manifest: Mock, find_build_root: Mock) -> None:
         find_build_root.return_value = "url/linux/x64/builds/opensearch"
         check = CiCheckManifestComponent(
-            InputComponentFromDist({"name": "does-not-exist", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", snapshot=True)
+            InputComponentFromDist({"name": "does-not-exist", "dist": "url"}), CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=True)
         )
 
         mock_manifest.from_url.return_value = BuildManifest.from_path(self.BUILD_MANIFEST)

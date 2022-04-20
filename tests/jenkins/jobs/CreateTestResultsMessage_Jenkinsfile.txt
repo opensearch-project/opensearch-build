@@ -1,0 +1,6 @@
+   CreateTestResultsMessage_Jenkinsfile.run()
+      CreateTestResultsMessage_Jenkinsfile.pipeline(groovy.lang.Closure)
+         CreateTestResultsMessage_Jenkinsfile.echo(Executing on agent [label:none])
+         CreateTestResultsMessage_Jenkinsfile.stage(stage, groovy.lang.Closure)
+            CreateTestResultsMessage_Jenkinsfile.script(groovy.lang.Closure)
+               CreateTestResultsMessage_Jenkinsfile.createTestResultsMessage({testType=Integ Tests (x64), status=SUCCESS, absoluteUrl=dummy-test.com/test-results})

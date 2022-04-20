@@ -67,6 +67,7 @@ WORKDIR /usr/share/opensearch
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 14.18.2
+ENV CYPRESS_VERSION 9.5.2
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -81,11 +82,11 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 RUN npm install -g yarn@^1.21.1
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@5.6.0 && npm cache verify
+RUN npm install -g cypress@$CYPRESS_VERSION && npm cache verify
 # replace default binary with arm64 specific binary from ci.opensearch.org
-RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
-    rm -vf Cypress-5.6.0-arm64.tar.gz; fi
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$CYPRESS_VERSION-arm64.tar.gz && tar -xzf Cypress-$CYPRESS_VERSION-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    rm -vf Cypress-$CYPRESS_VERSION-arm64.tar.gz; fi
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist

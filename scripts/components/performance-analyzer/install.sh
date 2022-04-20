@@ -69,5 +69,3 @@ fi
 
 ## Setup Performance Analyzer Agent
 mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
-mv $OUTPUT/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli $OUTPUT/bin
-rm -rf $OUTPUT/bin/opensearch-performance-analyzer

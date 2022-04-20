@@ -21,6 +21,10 @@ out.txt
 /dist/
 /test-results/
 
+/rpm/
+/tar/
+/zip/
+
 /.vscode/
 
 .project

@@ -5,15 +5,15 @@ def call(Map args = [:]) {
     echo "Assembling ${args.inputManifest}"
 
     copyArtifacts(
-        filter: "*.zip",
+        filter: "${args.distribution}/*.zip",
         fingerprintArtifacts: true,
         projectName: "${JOB_NAME}",
         selector: specific("${BUILD_NUMBER}")
     )
 
-    unzip(zipFile: "archived-builds.zip")
+    unzip(zipFile: "${args.distribution}/archived-builds.zip")
 
-    String buildManifest = "builds/${inputManifestObj.build.getFilename()}/manifest.yml"
+    String buildManifest = "${args.distribution}/builds/${inputManifestObj.build.getFilename()}/manifest.yml"
     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: buildManifest))
 
     assembleUpload(

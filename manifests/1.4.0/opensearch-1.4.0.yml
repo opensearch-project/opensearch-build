@@ -1,0 +1,27 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 1.4.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 1.x
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: 1.x
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: 1.x
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version

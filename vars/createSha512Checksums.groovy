@@ -1,5 +1,5 @@
 Closure call() {
-    allowedFileTypes = [".tar.gz", ".zip"]
+    allowedFileTypes = [".tar.gz", ".zip", ".rpm"]
 
     return { argsMap -> body: {
 

@@ -64,13 +64,14 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"))
         self.assertEqual(mock_pid.call_count, 1)
 
+    @patch("os.path.isdir")
     @patch("subprocess.check_call")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call):
+    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
 
         mock_dependency_installer = MagicMock()
 
@@ -88,14 +89,16 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_bundle_tar = MagicMock()
         mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
 
-        mock_file_hanlder_for_security = mock_open().return_value
-        mock_file_hanlder_for_additional_config = mock_open().return_value
+        mock_file_handler_for_security = mock_open().return_value
+        mock_file_handler_for_additional_config = mock_open().return_value
 
         # open() will be called twice, one for disabling security, second for additional_config
-        mock_file.side_effect = [mock_file_hanlder_for_security, mock_file_hanlder_for_additional_config]
+        mock_file.side_effect = [mock_file_handler_for_security, mock_file_handler_for_additional_config]
 
         mock_dump_result = MagicMock()
         mock_dump.return_value = mock_dump_result
+
+        mock_os_isdir.return_value = True
 
         # call the target test function
         service.start()
@@ -114,8 +117,60 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_dump.assert_called_once_with({"logging.dest": os.path.join(
             self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log")})
 
-        mock_file_hanlder_for_security.close.assert_called_once()
-        mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result)
+        mock_file_handler_for_security.close.assert_called_once()
+        mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
+
+    @patch("os.path.isdir")
+    @patch("subprocess.check_call")
+    @patch("test_workflow.integ_test.service.Process.start")
+    @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
+    @patch("tarfile.open")
+    def test_start_without_security_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
+
+        mock_dependency_installer = MagicMock()
+
+        service = ServiceOpenSearchDashboards(
+            self.version,
+            {},
+            False,
+            mock_dependency_installer,
+            self.work_dir
+        )
+
+        bundle_full_name = "test_bundle_name"
+        mock_dependency_installer.download_dist.return_value = bundle_full_name
+
+        mock_bundle_tar = MagicMock()
+        mock_tarfile_open.return_value.__enter__.return_value = mock_bundle_tar
+
+        mock_file_handler_for_security = mock_open().return_value
+        mock_file_handler_for_additional_config = mock_open().return_value
+
+        # open() will be called twice, one for disabling security, second for additional_config
+        mock_file.side_effect = [mock_file_handler_for_security, mock_file_handler_for_additional_config]
+
+        mock_dump_result = MagicMock()
+        mock_dump.return_value = mock_dump_result
+
+        mock_os_isdir.side_effect = [False, True]
+
+        # call the target test function
+        service.start()
+
+        mock_check_call.assert_not_called()
+
+        mock_file.assert_has_calls(
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "w")],
+            [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")],
+        )
+
+        mock_dump.assert_called_once_with({"logging.dest": os.path.join(
+            self.work_dir, "opensearch-dashboards-1.1.0", "logs", "opensearch_dashboards.log")})
+
+        mock_file_handler_for_security.close.assert_called_once()
+        mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
 
     def test_endpoint_port_url(self):
         service = ServiceOpenSearchDashboards(

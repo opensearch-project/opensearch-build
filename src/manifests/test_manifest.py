@@ -4,7 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Any
+from typing import Any, Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
 
@@ -16,6 +16,10 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     The format for schema version 1.0 is:
         schema-version: '1.0'
         name: 'OpenSearch'
+        ci:
+            image:
+                name: docker image name to pull
+                args: args to execute builds with, e.g. -e JAVA_HOME=...
         components:
           - name: index-management
             working-directory: optional relative directory to run commands in
@@ -35,6 +39,17 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     SCHEMA = {
         "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
+        "ci": {
+            "required": False,
+            "type": "dict",
+            "schema": {
+                "image": {
+                    "required": False,
+                    "type": "dict",
+                    "schema": {"name": {"required": True, "type": "string"}, "args": {"required": False, "type": "string"}},
+                }
+            },
+        },
         "components": {
             "type": "list",
             "schema": {
@@ -65,14 +80,34 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
     def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.name = str(data["name"])
+        self.ci = self.Ci(data.get("ci", None))
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
             "schema-version": "1.0",
             "name": self.name,
+            "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": self.components.__to_dict__()
         }
+
+    class Ci:
+        def __init__(self, data: Any):
+            self.image = None if data is None else self.Image(data.get("image", None))
+
+        def __to_dict__(self) -> Optional[dict]:
+            return None if self.image is None else {"image": self.image.__to_dict__()}
+
+        class Image:
+            def __init__(self, data: Any):
+                self.name = data["name"]
+                self.args = data.get("args", None)
+
+            def __to_dict__(self) -> dict:
+                return {
+                    "name": self.name,
+                    "args": self.args
+                }
 
 
 class TestComponents(Components['TestComponent']):

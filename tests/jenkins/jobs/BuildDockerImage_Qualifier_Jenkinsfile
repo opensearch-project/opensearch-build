@@ -1,0 +1,16 @@
+pipeline {
+    agent none
+    stages {
+        stage('build docker image') {
+            steps {
+                script {
+                    buildDockerImage(
+                        inputManifest: 'tests/jenkins/data/opensearch-2.0.0.yml',
+                        artifactUrlX64: env.ARTIFACT_URL_linux_x64,
+                        artifactUrlArm64: env.ARTIFACT_URL_linux_arm64
+                    )
+                }
+            }
+        }
+    }
+}

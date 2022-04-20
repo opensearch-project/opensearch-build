@@ -13,6 +13,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
+    echo -e "-q QUALIFIER\t[Optional] Version qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
@@ -20,7 +21,7 @@ function usage() {
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:" arg; do
+while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
         h)
             usage
@@ -28,6 +29,9 @@ while getopts ":h:v:s:o:p:a:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -60,6 +64,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
+[ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
 
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'ganttChartDashboards/gantt-chart'
@@ -69,9 +74,9 @@ PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && yarn osd bootstrap)
+(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER && yarn plugin-helpers build)
+(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && cd plugins/$PLUGIN_FOLDER && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"
-cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION.zip $OUTPUT/plugins/
+cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER

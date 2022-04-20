@@ -64,12 +64,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertEqual(mock_pid.call_count, 1)
 
+    @patch("os.path.isdir")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process):
+    def test_start_security_disabled(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
 
         dependency_installer = MagicMock()
 
@@ -92,11 +93,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_bundle_tar = MagicMock()
         mock_tarfile_open.return_value = mock_bundle_tar
 
-        mock_file_hanlder_for_security = mock_open().return_value
-        mock_file_hanlder_for_additional_config = mock_open().return_value
+        mock_file_handler_for_security = mock_open().return_value
+        mock_file_handler_for_additional_config = mock_open().return_value
 
         # open() will be called twice, one for disabling security, second for additional_config
-        mock_file.side_effect = [mock_file_hanlder_for_security, mock_file_hanlder_for_additional_config]
+        mock_file.side_effect = [mock_file_handler_for_security, mock_file_handler_for_additional_config]
+
+        mock_os_isdir.return_value = True
 
         # call test target function
         service.start()
@@ -107,8 +110,56 @@ class ServiceOpenSearchTests(unittest.TestCase):
             [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
             [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
         )
-        mock_file_hanlder_for_security.write.assert_called_once_with(mock_dump_result_for_security)
-        mock_file_hanlder_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
+        mock_file_handler_for_security.write.assert_called_once_with(mock_dump_result_for_security)
+        mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
+
+    @patch("os.path.isdir")
+    @patch("test_workflow.integ_test.service.Process.start")
+    @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("yaml.dump")
+    @patch("tarfile.open")
+    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
+
+        dependency_installer = MagicMock()
+
+        service = ServiceOpenSearch(
+            self.version,
+            self.additional_config,
+            False,
+            dependency_installer,
+            self.work_dir
+        )
+
+        bundle_full_name = "test_bundle_name"
+        dependency_installer.download_dist.return_value = bundle_full_name
+
+        mock_dump_result_for_additional_config = MagicMock()
+
+        mock_dump.side_effect = [mock_dump_result_for_additional_config]
+
+        mock_bundle_tar = MagicMock()
+        mock_tarfile_open.return_value = mock_bundle_tar
+
+        mock_file_handler_for_security = mock_open().return_value
+        mock_file_handler_for_additional_config = mock_open().return_value
+
+        # open() will be called twice, one for disabling security, second for additional_config
+        mock_file.side_effect = [mock_file_handler_for_additional_config]
+
+        mock_os_isdir.return_value = False
+
+        # call test target function
+        service.start()
+
+        mock_dump.assert_has_calls([call(self.additional_config)])
+
+        mock_file.assert_has_calls(
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
+        )
+        mock_file_handler_for_security.write.assert_not_called()
+        mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
     @patch("test_workflow.integ_test.service.Process.terminate", return_value=123)
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=True)

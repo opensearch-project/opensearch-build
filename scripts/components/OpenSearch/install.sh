@@ -16,12 +16,13 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
+    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-f ARTIFACTS\t[Optional] Location of build artifacts."
     echo -e "-o OUTPUT\t[Optional] Output path."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:f:" arg; do
+while getopts ":h:v:s:o:p:a:d:f:" arg; do
     case $arg in
         h)
             usage
@@ -41,6 +42,9 @@ while getopts ":h:v:s:o:p:a:f:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
+            ;;
+        d)
+            DISTRIBUTION=$OPTARG
             ;;
         f)
             ARTIFACTS=$ARTIFACTS
@@ -66,11 +70,18 @@ fi
 [ -z "$SNAPSHOT" ] && SNAPSHOT="false"
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
+[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
+
+# Make sure the cwd is where the script is located
+DIR="$(dirname "$0")"
+echo $DIR
+cd $DIR
 
 ## Copy the tar installation script into the bundle
-(
-    DIR="$(dirname "$0")"
-    echo $DIR
-    cd $DIR
+if [ "$DISTRIBUTION" = "tar" ]; then
     cp ../../../scripts/legacy/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
-)
+
+elif [ "$DISTRIBUTION" = "rpm" ]; then
+    cp -a ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
+    cp -a ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
+fi

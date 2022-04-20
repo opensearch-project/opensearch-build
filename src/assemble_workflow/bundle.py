@@ -52,20 +52,19 @@ class Bundle(ABC):
     def install_min(self) -> None:
         install_script = ScriptFinder.find_install_script(self.min_dist.name)
         install_command = " ".join(
-            [
-                "bash",
-                install_script,
-                "-v",
-                self.build.version,
-                "-p",
-                self.build.platform,
-                "-a",
-                self.build.architecture,
-                "-f",
-                self.artifacts_dir,
-                "-o",
-                self.min_dist.archive_path,
-            ]
+            filter(
+                None,
+                [
+                    "bash",
+                    install_script,
+                    f"-v {self.build.version}",
+                    f"-p {self.build.platform}",
+                    f"-a {self.build.architecture}",
+                    f"-d {self.build.distribution}" if self.build.distribution else None,
+                    f"-f {self.artifacts_dir}",
+                    f"-o {self.min_dist.archive_path}",
+                ]
+            )
         )
         self._execute(install_command)
 
@@ -90,16 +89,11 @@ class Bundle(ABC):
             [
                 "bash",
                 install_script,
-                "-v",
-                self.build.version,
-                "-p",
-                self.build.platform,
-                "-a",
-                self.build.architecture,
-                "-f",
-                self.artifacts_dir,
-                "-o",
-                self.min_dist.archive_path,
+                f"-v {self.build.version}",
+                f"-p {self.build.platform}",
+                f"-a {self.build.architecture}",
+                f"-f {self.artifacts_dir}",
+                f"-o {self.min_dist.archive_path}",
             ]
         )
         self._execute(install_command)
@@ -141,7 +135,7 @@ class Bundle(ABC):
         logging.info(f"Copied min bundle to {min_dist_path}.")
         min_path = f"{self.build.filename}-{self.build.version}".replace("-SNAPSHOT", "")
         logging.info(f"Start creating distribution {self.build.distribution} for {self.min_bundle.name}.")
-        min_dist = Dists.create_dist(self.min_bundle.name, min_dist_path, min_path, self.build.distribution)
+        min_dist = Dists.create_dist(self.min_bundle.name, min_dist_path, min_path, self.build)
         logging.info(f"Extracting dist into {self.tmp_dir.name}.")
         min_dist.extract(self.tmp_dir.name)
         logging.info(f"Extracted dist into {self.tmp_dir.name}.")

@@ -27,7 +27,7 @@ class TestRunIntegTestScript extends BuildPipelineTest {
     }
 
     @Test
-    public void TestRunIntegTestScript_OpenSearch_Dasbhoards() {
+    public void TestRunIntegTestScript_OpenSearch_Dashboards() {
         this.registerLibTester(new RunIntegTestScriptLibTester(
             'dummy_job',
             'tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml',

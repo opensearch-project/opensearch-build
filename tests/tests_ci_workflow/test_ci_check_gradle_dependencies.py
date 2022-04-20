@@ -18,14 +18,14 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
         def check(self) -> None:
             pass
 
-    def __mock_dependencies(self, props: str = "", snapshot: bool = False, gradle_project: Any = None) -> DummyDependencies:
+    def __mock_dependencies(self, props: str = "", qualifier: Any = None, snapshot: bool = False, gradle_project: Any = None) -> DummyDependencies:
         git_repo = MagicMock()
         git_repo.output.return_value = props
 
         return TestCiCheckGradleDependencies.DummyDependencies(
             component=MagicMock(),
             git_repo=git_repo,
-            target=CiTarget(version="1.1.0", name="opensearch", snapshot=snapshot),
+            target=CiTarget(version="1.1.0", name="opensearch", qualifier=None, snapshot=snapshot),
             args=gradle_project,
         )
 
@@ -41,11 +41,25 @@ class TestCiCheckGradleDependencies(unittest.TestCase):
             './gradlew :dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
         )
 
+    def test_executes_gradle_dependencies_qualifier_snapshot(self) -> None:
+        check = self.__mock_dependencies(qualifier="alpha1", snapshot=True)
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
+            './gradlew :dependencies -Dopensearch.version=1.1.0-alpha1-SNAPSHOT -Dbuild.snapshot=true -Dbuild.version_qualifier=alpha1 --configuration compileOnly | grep -e "---"'
+        )
+
     def test_executes_gradle_dependencies_project(self) -> None:
         check = self.__mock_dependencies(snapshot=True, gradle_project="project")
         output = unittest.mock.create_autospec(check.git_repo.output)
         output.assert_called_once_with(
             './gradlew project:dependencies -Dopensearch.version=1.1.0-SNAPSHOT -Dbuild.snapshot=true --configuration compileOnly | grep -e "---"'
+        )
+
+    def test_executes_gradle_dependencies_project_qualifier(self) -> None:
+        check = self.__mock_dependencies(qualifier="alpha1", snapshot=True, gradle_project="project")
+        output = unittest.mock.create_autospec(check.git_repo.output)
+        output.assert_called_once_with(
+            './gradlew project:dependencies -Dopensearch.version=1.1.0-alpha1-SNAPSHOT -Dbuild.snapshot=true -Dbuild.version_qualifier=alpha1 --configuration compileOnly | grep -e "---"'
         )
 
     def test_loads_tree(self) -> None:

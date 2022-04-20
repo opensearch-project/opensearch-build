@@ -60,6 +60,39 @@ class TestBundleOpenSearch(unittest.TestCase):
                 ]
             )
 
+    def test_bundle_install_min_distribution(self) -> None:
+        manifest_path = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-windows-1.3.0.yml")
+        artifacts_path = os.path.join(os.path.dirname(__file__), "data", "artifacts")
+        bundle = BundleOpenSearch(BuildManifest.from_path(manifest_path), artifacts_path, MagicMock())
+
+        with patch("subprocess.check_call") as mock_check_call:
+            bundle.install_min()
+
+            self.assertEqual(mock_check_call.call_count, 1)
+
+            mock_check_call.assert_has_calls(
+                [
+                    call(
+                        " ".join(
+                            [
+                                "bash",
+                                ScriptFinder.find_install_script("OpenSearch"),
+                                "-v 1.3.0",
+                                "-p windows",
+                                "-a x64",
+                                "-d zip",
+                                "-f",
+                                artifacts_path,
+                                "-o",
+                                bundle.min_dist.archive_path,
+                            ]
+                        ),
+                        cwd=bundle.min_dist.archive_path,
+                        shell=True,
+                    ),
+                ]
+            )
+
     @patch("subprocess.check_call")
     @patch("os.path.isfile", return_value=True)
     def test_bundle_include_common_utils(self, mock_path_isile: Mock, mock_check_call: Mock) -> None:

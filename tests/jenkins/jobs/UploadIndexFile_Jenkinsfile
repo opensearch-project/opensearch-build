@@ -1,0 +1,16 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    stages {
+        stage('uploadIndexFile') {
+            steps {
+                script {
+                    uploadIndexFile(
+                        indexFilePath: 'test'
+                    )
+                }
+            }
+        }
+    }
+}

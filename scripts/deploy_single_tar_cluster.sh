@@ -119,7 +119,7 @@ echo "script.context.field.max_compilations_rate: 1000/1m" >> config/opensearch.
 # Required for Security
 echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> config/opensearch.yml
 # Required for PA
-echo "webservice-bind-host = 0.0.0.0" >> plugins/opensearch-performance-analyzer/pa_config/performance-analyzer.properties
+echo "webservice-bind-host = 0.0.0.0" >> config/opensearch-performance-analyzer/performance-analyzer.properties
 # Security setup
 if [ "$ENABLE_SECURITY" == "false" ]
 then

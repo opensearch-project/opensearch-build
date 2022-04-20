@@ -9,8 +9,7 @@ pipeline {
     agent none
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'       
-        INTEG_TEST_JOB_NAME = 'integ-test-opensearch-dashboards'
+        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
     }
     parameters {
         string(
@@ -22,6 +21,28 @@ pipeline {
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
+        )
+        string(
+            name: 'INTEG_TEST_JOB_NAME',
+            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.",
+            defaultValue: "integ-test-opensearch-dashboards",
+            trim: true
+        )
+        string(
+            name: 'BWC_TEST_JOB_NAME',
+            description: "Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test-opensearch-dashboards.  A non-null empty value here will skip BWC tests.",
+            defaultValue: "bwc-test-opensearch-dashboards",
+            trim: true
+        )
+        booleanParam(
+            name: 'BUILD_DOCKER',
+            description: 'Build docker image or not.',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'PUBLISH_NOTIFICATION',
+            description: 'Publish the status of this build job or not.',
+            defaultValue: true
         )
     }
     stages {
@@ -42,7 +63,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-and-test-linux-x64') {
+                stage('build-and-test-linux-x64-tar') {
                     agent {
                         docker {
                             label AGENT_X64
@@ -56,44 +77,167 @@ pipeline {
                             def buildManifestObj = buildAssembleUpload(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
-                                architecture: 'x64'
+                                architecture: 'x64',
+                                distribution: 'tar'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                            env.ARTIFACT_URL_X64 = artifactUrl
-                            echo "buildManifestUrl (x64): ${buildManifestUrl}"
-                            echo "artifactUrl (x64): ${artifactUrl}"
+                            env.ARTIFACT_URL_X64_TAR = artifactUrl
+                            env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
-                            def integTestResults = 
-                                build job: INTEG_TEST_JOB_NAME,
-                                propagate: false,
-                                wait: true,
-                                parameters: [
-                                    string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                    string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                    string(name: 'AGENT_LABEL', value: AGENT_X64),
-                                    string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
-                                ]
+                            echo "buildManifestUrl (x64, tar): ${buildManifestUrl}"
+                            echo "artifactUrl (x64, tar): ${artifactUrl}"
 
-                            String status = integTestResults.getResult()
-                            String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
-                            lib.jenkins.Messages.new(this).add(
-                                STAGE_NAME,
-                                lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
-                                    "\nInteg Tests (x64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
-                            )
+                            parallel([
+                                'integ-test': {
+                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    if (!skipIntegTests) {
+                                        def integTestResults =
+                                            build job: INTEG_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
+
+                                        env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
+                                            testType: "Integ Tests (x64, tar)",
+                                            status: integTestResults.getResult(),
+                                            absoluteUrl: integTestResults.getAbsoluteUrl()
+                                        )
+                                    } 
+                                },
+                                'bwc-test': {
+                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                    if (!skipBwcTests) {
+                                        def bwcTestResults =
+                                            build job: BWC_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
+
+                                        env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
+                                            testType: "BWC Tests (x64, tar)",
+                                            status: bwcTestResults.getResult(),
+                                            absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                        )
+                                    }
+                                }
+                            ])
                         }
                     }
                     post {
                         always {
-                            postCleanup()
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT}"
+                                )
+
+                                postCleanup()
+                            }
                         }
                     }
                 }
-                stage('build-and-test-linux-arm64') {
+                stage('build-and-test-linux-x64-rpm') {
+                    agent {
+                        docker {
+                            label AGENT_X64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'x64',
+                                distribution: 'rpm'
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_X64_RPM = artifactUrl
+
+                            echo "buildManifestUrl (x64, rpm): ${buildManifestUrl}"
+                            echo "artifactUrl (x64, rpm): ${artifactUrl}"
+
+                            parallel([
+                                'integ-test': {
+                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    if (!skipIntegTests) {
+                                        def integTestResults =
+                                            build job: INTEG_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
+
+                                        env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT = createTestResultsMessage(
+                                            testType: "Integ Tests (x64, rpm)",
+                                            status: integTestResults.getResult(),
+                                            absoluteUrl: integTestResults.getAbsoluteUrl()
+                                        )
+                                    } 
+                                },
+                                'bwc-test': {
+                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                    if (!skipBwcTests) {
+                                        def bwcTestResults =
+                                            build job: BWC_TEST_JOB_NAME,
+                                            propagate: false,
+                                            wait: true,
+                                            parameters: [
+                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            ]
+
+                                        env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT = createTestResultsMessage(
+                                            testType: "BWC Tests (x64, rpm)",
+                                            status: bwcTestResults.getResult(),
+                                            absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                        )
+                                    }
+                                }
+                            ])
+                        }
+                    }
+                    post {
+                        always {
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.ARTIFACT_URL_X64_RPM_INTEG_TEST_RESULT}" +
+                                    "\n${env.ARTIFACT_URL_X64_RPM_BWC_TEST_RESULT}"
+                                )
+
+                                postCleanup()
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-linux-arm64-tar') {
                     agent none
                     stages {
-                        stage('build-archive-linux-arm64') {
+                        stage('build-archive-linux-arm64-tar') {
                             agent {
                                 docker {
                                     label AGENT_X64
@@ -107,7 +251,8 @@ pipeline {
                                     buildArchive(
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
-                                        architecture: 'arm64'
+                                        architecture: 'arm64',
+                                        distribution: 'tar'
                                     )
                                 }
                             }
@@ -117,7 +262,7 @@ pipeline {
                                 }
                             }
                         }
-                        stage('assemble-archive-and-test-linux-arm64') {
+                        stage('assemble-archive-and-test-linux-arm64-tar') {
                             agent {
                                 docker {
                                     label AGENT_ARM64
@@ -131,32 +276,98 @@ pipeline {
                                     def buildManifestObj = archiveAssembleUpload(
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
-                                        architecture: 'arm64'
+                                        architecture: 'arm64',
+                                        distribution: 'tar'
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                                    env.ARTIFACT_URL_ARM64 = artifactUrl
-                                    echo "buildManifestUrl (arm64): ${buildManifestUrl}"
-                                    echo "artifactUrl (arm64): ${artifactUrl}"
+                                    env.ARTIFACT_URL_ARM64_TAR = artifactUrl
+                                    echo "buildManifestUrl (arm64, tar): ${buildManifestUrl}"
+                                    echo "artifactUrl (arm64, tar): ${artifactUrl}"
 
-                                    def integTestResults = 
-                                        build job: INTEG_TEST_JOB_NAME,
-                                        propagate: false,
-                                        wait: true,
-                                        parameters: [
-                                            string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                            string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_ARM64),
-                                            string(name: 'CONTAINER_IMAGE', value: dockerAgent.image)
-                                        ]
+                                    parallel([
+                                        'integ-test': {
+                                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                            if (!skipIntegTests) {
+                                                def integTestResults = 
+                                                    build job: INTEG_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
 
-                                    String status = integTestResults.getResult()
-                                    String icon = status == 'SUCCESS' ? ':white_check_mark:' : ':warning:'
-                                    lib.jenkins.Messages.new(this).add(
-                                        STAGE_NAME,
-                                        lib.jenkins.Messages.new(this).get([STAGE_NAME]) + 
-                                            "\nInteg Tests (arm64): ${icon} ${status} ${integTestResults.getAbsoluteUrl()}"
+                                                env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
+                                                    testType: "Integ Tests (arm64, tar)",
+                                                    status: integTestResults.getResult(),
+                                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        },
+                                        'bwc-test': {
+                                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                            if (!skipBwcTests) {
+                                                def bwcTestResults =
+                                                    build job: BWC_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
+
+                                                env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
+                                                    testType: "BWC Tests (arm64, tar)",
+                                                    status: bwcTestResults.getResult(),
+                                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        }
+                                    ])
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
+                                            "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
+                                        )
+
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-linux-arm64-rpm') {
+                    agent none
+                    stages {
+                        stage('build-archive-linux-arm64-rpm') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'rpm'
                                     )
                                 }
                             }
@@ -166,16 +377,124 @@ pipeline {
                                 }
                             }
                         }
+                        stage('assemble-archive-and-test-linux-arm64-rpm') {
+                            agent {
+                                docker {
+                                    label AGENT_ARM64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'rpm'
+                                    )
+
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_ARM64_TAR = artifactUrl
+                                    echo "buildManifestUrl (arm64, rpm): ${buildManifestUrl}"
+                                    echo "artifactUrl (arm64, rpm): ${artifactUrl}"
+
+                                    parallel([
+                                        'integ-test': {
+                                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
+                                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                            if (!skipIntegTests) {
+                                                def integTestResults = 
+                                                    build job: INTEG_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
+
+                                                env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT = createTestResultsMessage(
+                                                    testType: "Integ Tests (arm64, rpm)",
+                                                    status: integTestResults.getResult(),
+                                                    absoluteUrl: integTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        },
+                                        'bwc-test': {
+                                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
+                                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                            if (!skipBwcTests) {
+                                                def bwcTestResults =
+                                                    build job: BWC_TEST_JOB_NAME,
+                                                    propagate: false,
+                                                    wait: true,
+                                                    parameters: [
+                                                        string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
+                                                        string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                    ]
+
+                                                env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT = createTestResultsMessage(
+                                                    testType: "BWC Tests (arm64, rpm)",
+                                                    status: bwcTestResults.getResult(),
+                                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
+                                                )
+                                            }
+                                        }
+                                    ])
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.ARTIFACT_URL_ARM64_RPM_INTEG_TEST_RESULT}" +
+                                            "\n${env.ARTIFACT_URL_ARM64_RPM_BWC_TEST_RESULT}"
+                                        )
+
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+        stage('update index file') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    uploadIndexFile(
+                        indexFilePath: env.INDEX_FILE_PATH
+                    )
+                }
+            }
+        }
         stage('docker build') {
+            when {
+                beforeAgent true
+                expression { 
+                    return params.BUILD_DOCKER
+                }
+            }
             steps {
                 node(AGENT_X64) {
                     script {
-                        echo "env.ARTIFACT_URL_X64: ${env.ARTIFACT_URL_X64}"
-                        echo "env.ARTIFACT_URL_ARM64: ${env.ARTIFACT_URL_ARM64}"
+                        echo "env.ARTIFACT_URL_X64_TAR: ${env.ARTIFACT_URL_X64_TAR}"
+                        echo "env.ARTIFACT_URL_ARM64_TAR: ${env.ARTIFACT_URL_ARM64_TAR}"
                         
                         buildDockerImage(
                             inputManifest: "manifests/${INPUT_MANIFEST}",
@@ -191,19 +510,22 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    def stashed = lib.jenkins.Messages.new(this).get([
-                        'build-and-test-linux-x64',
-                        'build-archive-linux-arm64',
-                        'assemble-archive-and-test-linux-arm64'
-                    ])
+                    if (params.PUBLISH_NOTIFICATION) { 
+                        def stashed = lib.jenkins.Messages.new(this).get([
+                            'build-and-test-linux-x64-tar',
+                            'build-and-test-linux-x64-rpm',
+                            'assemble-archive-and-test-linux-arm64-tar',
+                            'assemble-archive-and-test-linux-arm64-rpm',
+                        ])
 
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Successful Build',
-                        extra: stashed,
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                        publishNotification(
+                            icon: ':white_check_mark:',
+                            message: 'Successful Build',
+                            extra: stashed,
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            manifest: "${INPUT_MANIFEST}"
+                        )
+                    }
 
                     postCleanup()
                 }
@@ -212,12 +534,14 @@ pipeline {
         failure {
             node(AGENT_X64) {
                 script {
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Build',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
-                        manifest: "${INPUT_MANIFEST}"
-                    )
+                    if (params.PUBLISH_NOTIFICATION) { 
+                        publishNotification(
+                            icon: ':warning:',
+                            message: 'Failed Build',
+                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            manifest: "${INPUT_MANIFEST}"
+                        )
+                    }
 
                     postCleanup()
                 }

@@ -7,7 +7,7 @@ pipeline {
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
-        BUILD_JOB_NAME = 'distribution-build-opensearch-dashboards'
+        DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
     }
     parameters {
         string(
@@ -25,24 +25,45 @@ pipeline {
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
-        string(
-            name: 'CONTAINER_IMAGE',
-            description: 'The container image running on the agent where the tests should be executed, e.g. opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028.',
-            trim: true
-        )
     }
     stages {
         stage('verify-parameters') {
+            agent {
+                node {
+                    label AGENT_LABEL
+                }
+            }
             steps {
                 script {
                     if (AGENT_LABEL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
                     }
-                    if (CONTAINER_IMAGE == '') {
+                    if (!fileExists("manifests/${TEST_MANIFEST}")) {
                         currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Missing parameter: CONTAINER_IMAGE.")
+                        error("Integration Tests failed to start. Test manifest not found in manifests/${TEST_MANIFEST}.")
                     }
+                    /*
+                    Rebuilding of this job will result in considering upstream build as self($JOB_NAME) See https://issues.jenkins.io/browse/JENKINS-61590 for bug
+                    Either trigger from expected upstream job or run a new build
+                    */                    
+                    env.BUILD_JOB_NAME = currentBuild.upstreamBuilds ? 
+                        currentBuild.upstreamBuilds[0].fullProjectName : 
+                        env.DEFAULT_BUILD_JOB_NAME
+                }
+            }
+        }
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script { 
+                    DOCKER_AGENT = detectTestDockerAgent()
                 }
             }
         }
@@ -50,7 +71,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image CONTAINER_IMAGE
+                    image DOCKER_AGENT.image
+                    args DOCKER_AGENT.args
                     alwaysPull true
                 }
             }
@@ -98,6 +120,7 @@ pipeline {
                         message: 'Integration Tests Successful',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
+                        manifest: TEST_MANIFEST,
                     )
 
                     postCleanup()
@@ -113,6 +136,7 @@ pipeline {
                         message: 'Failed Integration Tests',
                         extra: stashed,
                         credentialsId: 'INTEG_TEST_WEBHOOK',
+                        manifest: TEST_MANIFEST,
                     )
 
                     postCleanup()

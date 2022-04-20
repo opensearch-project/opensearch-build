@@ -8,5 +8,5 @@ from paths.output_dir import OutputDir
 
 
 class AssembleOutputDir(OutputDir):
-    def __init__(cls, filename: str, cwd: str = None, makedirs: bool = True) -> None:
-        super().__init__("dist", filename, cwd, makedirs)
+    def __init__(cls, filename: str, distribution: str, cwd: str = None, makedirs: bool = True) -> None:
+        super().__init__("dist", filename, distribution, cwd, makedirs)

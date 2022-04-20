@@ -75,7 +75,7 @@ while getopts ":ht:n:v:f:p:a:r:" arg; do
             exit 1
             ;;
         ?)
-            echo "Invalid option: -${arg}"
+            echo "Invalid option: -${OPTARG}"
             exit 1
             ;;
     esac
@@ -96,6 +96,9 @@ if [ "$PRODUCT" != "opensearch" ] && [ "$PRODUCT" != "opensearch-dashboards" ]
 then
     echo "Enter either 'opensearch' or 'opensearch-dashboards' as product name for -p parameter"
     exit 1
+else
+    PRODUCT_ALT=`echo $PRODUCT | sed 's@-@_@g'`
+    echo $PRODUCT $PRODUCT_ALT.yml
 fi
 
 for ARCH in $ARCHITECTURE_ARRAY
@@ -136,6 +139,7 @@ docker ps | grep $BUILDER_NAME
 
 # Copy configs
 cp -v config/${PRODUCT}/* $DIR/
+cp -v ../../config/${PRODUCT_ALT}.yml $DIR/
 cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 
 # Copy TGZ
