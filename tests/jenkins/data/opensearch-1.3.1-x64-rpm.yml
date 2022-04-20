@@ -1,0 +1,31 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 1.3.1
+  platform: linux
+  architecture: x64
+  distribution: rpm
+  location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/1.3.1/79/linux/x64/rpm/rpm/dist/opensearch/opensearch-1.3.1-linux-x64.rpm
+  id: '79'
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: tags/1.3.1
+    commit_id: c4c0672877bf0f787ca857c7c37b775967f93d81
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/1.3.1/79/linux/x64/rpm/rpm/builds/opensearch/dist/opensearch-min-1.3.1.x86_64.rpm
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: tags/1.3.1.0
+    commit_id: 3a9b3447a6dea936cb72068fcd40381fb90bcfa6
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/1.3.1/79/linux/x64/rpm/rpm/builds/opensearch/plugins/opensearch-job-scheduler-1.3.1.0.zip
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: tags/1.3.1.0
+    commit_id: 7f25eeb958bf01bf1c6b48ff5dc4e2e068c1d53b
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/1.3.1/79/linux/x64/rpm/rpm/builds/opensearch/plugins/opensearch-ml-1.3.1.0.zip
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: tags/1.3.1.0
+    commit_id: cbbfd7419f79acdfddec156c83ed3ea8673a8166
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianle-opensearch-build-3-22/1.3.1/79/linux/x64/rpm/rpm/builds/opensearch/plugins/opensearch-alerting-1.3.1.0.zip
