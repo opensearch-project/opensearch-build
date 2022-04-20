@@ -6,9 +6,9 @@
 
 import os
 import unittest
+from unittest.mock import MagicMock, patch
 
 from test_workflow.integ_test.distribution_tar import DistributionTar
-from unittest.mock import MagicMock, patch
 
 
 class TestDistributionTar(unittest.TestCase):

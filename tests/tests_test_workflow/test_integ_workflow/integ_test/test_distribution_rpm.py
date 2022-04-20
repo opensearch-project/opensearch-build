@@ -6,9 +6,9 @@
 
 import os
 import unittest
+from unittest.mock import Mock, patch
 
 from test_workflow.integ_test.distribution_rpm import DistributionRpm
-from unittest.mock import Mock, patch
 
 
 class TestDistributionRpm(unittest.TestCase):
