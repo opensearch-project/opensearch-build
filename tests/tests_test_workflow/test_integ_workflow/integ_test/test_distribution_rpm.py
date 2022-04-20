@@ -48,4 +48,4 @@ class TestDistributionRpm(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual("yum remove -y 'opensearch*'", args_list[0][0][0])
+        self.assertEqual("yum remove -y opensearch", args_list[0][0][0])
