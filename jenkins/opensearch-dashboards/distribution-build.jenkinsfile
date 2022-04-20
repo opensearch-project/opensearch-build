@@ -397,7 +397,7 @@ pipeline {
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                                    env.ARTIFACT_URL_ARM64_TAR = artifactUrl
+                                    env.ARTIFACT_URL_ARM64_RPM = artifactUrl
                                     echo "buildManifestUrl (arm64, rpm): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64, rpm): ${artifactUrl}"
 
