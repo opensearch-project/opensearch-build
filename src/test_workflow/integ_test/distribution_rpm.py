@@ -12,8 +12,8 @@ from test_workflow.integ_test.distribution import Distribution
 
 
 class DistributionRpm(Distribution):
-    def __init__(self, filename: str, distribution: str, version: str, work_dir: str) -> None:
-        super().__init__(filename, distribution, version, work_dir)
+    def __init__(self, filename: str, version: str, work_dir: str) -> None:
+        super().__init__(filename, version, work_dir)
 
     @property
     def get_install_dir(self) -> str:

@@ -12,8 +12,8 @@ from test_workflow.integ_test.distribution import Distribution
 
 
 class DistributionTar(Distribution):
-    def __init__(self, filename: str, distribution: str, version: str, work_dir: str) -> None:
-        super().__init__(filename, distribution, version, work_dir)
+    def __init__(self, filename: str, version: str, work_dir: str) -> None:
+        super().__init__(filename, version, work_dir)
 
     @property
     def get_install_dir(self) -> str:
@@ -25,7 +25,7 @@ class DistributionTar(Distribution):
 
     def install_distribution(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.get_install_dir}")
-        with tarfile.open(bundle_name, 'r') as bundle_tar:
+        with tarfile.open(bundle_name, 'r:gz') as bundle_tar:
             bundle_tar.extractall(self.work_dir)
 
     @property

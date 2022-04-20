@@ -11,9 +11,8 @@ class Distribution(ABC):
     def __enter__(self) -> 'Distribution':
         return self
 
-    def __init__(self, filename: str, distribution: str, version: str, work_dir: str) -> None:
+    def __init__(self, filename: str, version: str, work_dir: str) -> None:
         self.filename = filename
-        self.distribution = distribution
         self.version = version
         self.work_dir = work_dir
 

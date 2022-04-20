@@ -12,14 +12,14 @@ from test_workflow.integ_test.distribution_tar import DistributionTar
 
 
 class Distributions:
-    DISTRIBUTION_MAP = {
+    DISTRIBUTIONS_MAP = {
         "tar": DistributionTar,
         "rpm": DistributionRpm,
     }
 
     @classmethod
     def from_name(cls, name: str) -> Distribution:
-        klass = cls.DISTRIBUTION_MAP.get(name, None)
+        klass = cls.DISTRIBUTIONS_MAP.get(name, None)
         if not klass:
             raise ValueError(f"Unsupported distribution: {name}")
         return klass  # type: ignore[return-value]
@@ -28,4 +28,4 @@ class Distributions:
     def get_distribution(cls, filename: str, distribution: str, version: str, work_dir: str) -> Distribution:
         klass = cls.from_name(distribution)
         logging.info(f"{filename} distribution: {distribution}")
-        return klass(filename, distribution, version, work_dir)  # type: ignore[no-any-return, operator]
+        return klass(filename, version, work_dir)  # type: ignore[no-any-return, operator]
