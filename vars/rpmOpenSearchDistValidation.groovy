@@ -38,7 +38,7 @@ def call(Map args = [:]) {
     //Install OpenSearch with designated version via yum
     println("Start installation with yum.")
     rpmCommands(
-            call: "install",
+            command: "install",
             product: "$name-$rpmVersion"
     )
     println("RPM distribution for $name is installed with yum.")
@@ -76,14 +76,14 @@ def call(Map args = [:]) {
     }
 
     //Start the installed OpenSearch distribution
-    systemdCall(
-            call: "start",
+    systemdCommands(
+            command: "start",
             product: name
     )
 
     //Validate if the running status is succeed
-    def running_status = systemdCall(
-            call: "status",
+    def running_status = systemdCommands(
+            command: "status",
             product: name
     )
     def active_status_message = "Active: active (running)"
@@ -144,12 +144,12 @@ def call(Map args = [:]) {
 
     println("Installation and running for opensearch has been validated.")
 
-    systemdCall(
-            call: "stop",
+    systemdCommands(
+            command: "stop",
             product: name
     )
     rpmCommands(
-            call: "remove",
+            command: "remove",
             product: "opensearch"
     )
 

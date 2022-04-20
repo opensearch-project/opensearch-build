@@ -20,18 +20,18 @@ def call(Map args = [:]) {
     def repoFileURLProduct = bundleManifestURL.replace("manifest.yml", "${name}-${version}.staging.repo")
 
     rpmCommands(
-            call: "setup",
+            command: "setup",
             repoFileURL: "$repoFileURLBackend"
     )
     rpmCommands(
-            call: "setup",
+            command: "setup",
             repoFileURL: "$repoFileURLProduct"
     )
     rpmCommands(
-            call: "clean"
+            command: "clean"
     )
     rpmCommands(
-            call: "download",
+            command: "download",
             product: "$name-$rpmVersion"
     )
     def distFileName = sh(

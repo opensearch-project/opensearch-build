@@ -1,12 +1,12 @@
 /**
  * This is a helper method for package manager yum call.
  * @param Map args = [:]
- * args.call: The command that we want to run with SystemD.
+ * args.command: The command that we want to run with SystemD.
  * args.product: The name of the product we are testing for running status.
  */
 def call(Map args = [:]) {
 
-    def command = args.call
+    def command = args.command
     def product = args.product
     def repoFileURL = args.repoFileURL
     switch (command) {

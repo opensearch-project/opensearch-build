@@ -38,29 +38,29 @@ def call(Map args = [:]) {
     //Validation for the installation
     //Install the rpm distribution via yum
     rpmCommands(
-            call: "install",
+            command: "install",
             product: "opensearch-$rpmVersion"
     )
     println("RPM distribution for OpenSearch $version is also installed with yum.")
     rpmCommands(
-            call: "install",
+            command: "install",
             product: "$name-$rpmVersion"
     )
     println("RPM distribution for $name $version is installed with yum.")
 
     //Start the installed OpenSearch-Dashboards distribution
-    systemdCall(
-            call: "start",
+    systemdCommands(
+            command: "start",
             product: "opensearch"
     )
-    systemdCall(
-            call: "start",
+    systemdCommands(
+            command: "start",
             product: name
     )
 
     //Validate if the running status is succeed
-    def running_status = systemdCall(
-                            call: "status",
+    def running_status = systemdCommands(
+                            command: "status",
                             product: name
     )
     def active_status_message = "Active: active (running)"
@@ -122,20 +122,20 @@ def call(Map args = [:]) {
         println("Component $component is present with correct version $version." )
     }
 
-    systemdCall(
-            call: "stop",
+    systemdCommands(
+            command: "stop",
             product: name
     )
     rpmCommands(
-            call: "remove",
+            command: "remove",
             product: "opensearch-dashboards"
     )
-    systemdCall(
-            call: "stop",
+    systemdCommands(
+            command: "stop",
             product: "opensearch"
     )
     rpmCommands(
-            call: "remove",
+            command: "remove",
             product: "opensearch"
     )
 }
