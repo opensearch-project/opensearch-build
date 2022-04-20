@@ -19,6 +19,7 @@ void call(Map args = [:]) {
         isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
         isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
         isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
+        isNullOrEmpty(args.component) ? "" : "--component ${args.component}"
     ].join(' '))
 }
 

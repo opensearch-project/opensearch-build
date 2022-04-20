@@ -51,7 +51,7 @@
     )
                   runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1)
+                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([perf-test])
