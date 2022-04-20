@@ -177,9 +177,7 @@ pipeline {
                     }
                     post {
                         always {
-                            script {
-                                postCleanup()
-                            }
+                            postCleanup()
                         }
                     }
                 }
@@ -353,9 +351,7 @@ pipeline {
                             }
                             post {
                                 always {
-                                    script {
-                                        postCleanup()
-                                    }
+                                    postCleanup()
                                 }
                             }
                         }
