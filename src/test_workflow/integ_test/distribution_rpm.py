@@ -43,11 +43,7 @@ class DistributionRpm(Distribution):
 
     @property
     def start_cmd(self) -> str:
-        start_cmd_map = {
-            "opensearch": "systemctl start opensearch",
-            "opensearch-dashboards": "systemctl start opensearch-dashboards",
-        }
-        return start_cmd_map[self.filename]
+        return f"systemctl start {self.filename}"
 
     def uninstall(self) -> None:
         logging.info("Uninstall {self.filename} package after the test")
