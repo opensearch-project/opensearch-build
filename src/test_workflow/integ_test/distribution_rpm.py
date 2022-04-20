@@ -16,15 +16,15 @@ class DistributionRpm(Distribution):
         super().__init__(filename, version, work_dir)
 
     @property
-    def get_install_dir(self) -> str:
+    def install_dir(self) -> str:
         return os.path.join(os.sep, "usr", "share", self.filename)
 
     @property
-    def get_config_dir(self) -> str:
+    def config_dir(self) -> str:
         return os.path.join(os.sep, "etc", self.filename)
 
-    def install_distribution(self, bundle_name: str) -> None:
-        logging.info(f"Installing {bundle_name} in {self.get_install_dir}")
+    def install(self, bundle_name: str) -> None:
+        logging.info(f"Installing {bundle_name} in {self.install_dir}")
         logging.info("rpm installation requires sudo, script will exit if current user does not have sudo access")
         rpm_install_cmd = " ".join(
             [
@@ -42,13 +42,13 @@ class DistributionRpm(Distribution):
         subprocess.check_call(rpm_install_cmd, cwd=self.work_dir, shell=True)
 
     @property
-    def get_start_cmd(self) -> str:
+    def start_cmd(self) -> str:
         start_cmd_map = {
             "opensearch": "systemctl start opensearch",
             "opensearch-dashboards": "systemctl start opensearch-dashboards",
         }
         return start_cmd_map[self.filename]
 
-    def cleanup(self) -> None:
-        logging.info("Clean up packages after the test")
+    def uninstall(self) -> None:
+        logging.info("Uninstall {self.filename} package after the test")
         subprocess.check_call(f"yum remove -y '{self.filename}*'", shell=True)

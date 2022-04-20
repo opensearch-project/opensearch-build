@@ -27,12 +27,12 @@ class ServiceOpenSearchDashboards(Service):
     ):
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
         self.dist = Distributions.get_distribution("opensearch-dashboards", distribution, version, work_dir)
-        self.install_dir = self.dist.get_install_dir
+        self.install_dir = self.dist.install_dir
 
     def start(self):
-        self.dist.install_distribution(self.download())
+        self.dist.install(self.download())
 
-        self.opensearch_dashboards_yml_dir = os.path.join(self.dist.get_config_dir, "opensearch_dashboards.yml")
+        self.opensearch_dashboards_yml_dir = os.path.join(self.dist.config_dir, "opensearch_dashboards.yml")
         self.executable_dir = os.path.join(self.install_dir, "bin")
 
         if not self.security_enabled:
@@ -43,11 +43,11 @@ class ServiceOpenSearchDashboards(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start(self.dist.get_start_cmd, self.executable_dir)
+        self.process_handler.start(self.dist.start_cmd, self.executable_dir)
         logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
 
-    def cleanup(self):
-        self.dist.cleanup()
+    def uninstall(self):
+        self.dist.uninstall()
 
     def __set_logging_dest(self):
         self.log_dir = os.path.join(self.install_dir, "logs")

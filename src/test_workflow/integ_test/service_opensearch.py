@@ -28,12 +28,12 @@ class ServiceOpenSearch(Service):
 
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
-        self.install_dir = self.dist.get_install_dir
+        self.install_dir = self.dist.install_dir
 
     def start(self):
-        self.dist.install_distribution(self.download())
+        self.dist.install(self.download())
 
-        self.opensearch_yml_dir = os.path.join(self.dist.get_config_dir, "opensearch.yml")
+        self.opensearch_yml_dir = os.path.join(self.dist.config_dir, "opensearch.yml")
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
 
         if not self.security_enabled and os.path.isdir(self.security_plugin_dir):
@@ -42,11 +42,11 @@ class ServiceOpenSearch(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start(self.dist.get_start_cmd, self.install_dir)
+        self.process_handler.start(self.dist.start_cmd, self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
-    def cleanup(self):
-        self.dist.cleanup()
+    def uninstall(self):
+        self.dist.uninstall()
 
     def url(self, path=""):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'

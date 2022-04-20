@@ -18,7 +18,7 @@ class Distribution(ABC):
 
     @property
     @abstractmethod
-    def get_install_dir(self) -> str:
+    def install_dir(self) -> str:
         """
         Return the install directory for the distribution
         """
@@ -26,14 +26,14 @@ class Distribution(ABC):
 
     @property
     @abstractmethod
-    def get_config_dir(self, bundle_name: str) -> str:
+    def config_dir(self, bundle_name: str) -> str:
         """
         Return the config directory for the distribution
         """
         pass
 
     @abstractmethod
-    def install_distribution(self) -> None:
+    def install(self) -> None:
         """
         The detailed method to install the distribution before start the service
         """
@@ -41,13 +41,13 @@ class Distribution(ABC):
 
     @property
     @abstractmethod
-    def get_start_cmd(self) -> str:
+    def start_cmd(self) -> str:
         """
         Return the start command for the distribution
         """
         pass
 
-    def cleanup(self) -> None:
+    def uninstall(self) -> None:
         """
         Allow distribution that is not 'tar' to do proper cleanup
         """

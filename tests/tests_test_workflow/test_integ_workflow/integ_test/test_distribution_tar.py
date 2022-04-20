@@ -24,22 +24,22 @@ class TestDistributionTar(unittest.TestCase):
         self.assertEqual(self.distribution_tar.version, '1.3.0')
         self.assertEqual(self.distribution_tar.work_dir, self.work_dir)
 
-    def test_get_install_dir(self) -> None:
-        self.assertEqual(self.distribution_tar.get_install_dir, os.path.join(self.work_dir, "opensearch-1.3.0"))
+    def test_install_dir(self) -> None:
+        self.assertEqual(self.distribution_tar.install_dir, os.path.join(self.work_dir, "opensearch-1.3.0"))
 
-    def test_get_config_dir(self) -> None:
-        self.assertEqual(self.distribution_tar.get_config_dir, os.path.join(self.work_dir, "opensearch-1.3.0", "config"))
+    def test_config_dir(self) -> None:
+        self.assertEqual(self.distribution_tar.config_dir, os.path.join(self.work_dir, "opensearch-1.3.0", "config"))
 
-    def test_install_distribution(self) -> None:
+    def test_install(self) -> None:
         with patch("tarfile.open") as mock_tarfile_open:
             mock_tarfile_extractall = MagicMock()
             mock_tarfile_open.return_value.__enter__.return_value.extractall = mock_tarfile_extractall
 
-            self.distribution_tar.install_distribution(os.path.join(self.work_dir, "artifacts", "dist", "opensearch-min-1.3.0-linux-x64.tar.gz"))
+            self.distribution_tar.install(os.path.join(self.work_dir, "artifacts", "dist", "opensearch-min-1.3.0-linux-x64.tar.gz"))
 
             mock_tarfile_open.assert_called_with(os.path.join(self.work_dir, "artifacts", "dist", "opensearch-min-1.3.0-linux-x64.tar.gz"), "r:gz")
             mock_tarfile_extractall.assert_called_with(self.work_dir)
 
-    def test_get_start_cmd(self) -> None:
-        self.assertEqual(self.distribution_tar.get_start_cmd, "./opensearch-tar-install.sh")
-        self.assertEqual(self.distribution_tar_dashboards.get_start_cmd, "./opensearch-dashboards")
+    def test_start_cmd(self) -> None:
+        self.assertEqual(self.distribution_tar.start_cmd, "./opensearch-tar-install.sh")
+        self.assertEqual(self.distribution_tar_dashboards.start_cmd, "./opensearch-dashboards")

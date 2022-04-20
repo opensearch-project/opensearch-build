@@ -24,27 +24,27 @@ class TestDistributionRpm(unittest.TestCase):
         self.assertEqual(self.distribution_rpm.version, '1.3.0')
         self.assertEqual(self.distribution_rpm.work_dir, self.work_dir)
 
-    def test_get_install_dir(self) -> None:
-        self.assertEqual(self.distribution_rpm.get_install_dir, os.path.join(os.sep, "usr", "share", "opensearch"))
+    def test_install_dir(self) -> None:
+        self.assertEqual(self.distribution_rpm.install_dir, os.path.join(os.sep, "usr", "share", "opensearch"))
 
-    def test_get_config_dir(self) -> None:
-        self.assertEqual(self.distribution_rpm.get_config_dir, os.path.join(os.sep, "etc", "opensearch"))
+    def test_config_dir(self) -> None:
+        self.assertEqual(self.distribution_rpm.config_dir, os.path.join(os.sep, "etc", "opensearch"))
 
     @patch("subprocess.check_call")
-    def test_install_distribution(self, check_call_mock: Mock) -> None:
-        self.distribution_rpm.install_distribution("opensearch.rpm")
+    def test_install(self, check_call_mock: Mock) -> None:
+        self.distribution_rpm.install("opensearch.rpm")
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual("yum remove -y opensearch && yum install -y opensearch.rpm", args_list[0][0][0])
 
-    def test_get_srpmt_cmd(self) -> None:
-        self.assertEqual(self.distribution_rpm.get_start_cmd, "systemctl start opensearch")
-        self.assertEqual(self.distribution_rpm_dashboards.get_start_cmd, "systemctl start opensearch-dashboards")
+    def test_start_cmd(self) -> None:
+        self.assertEqual(self.distribution_rpm.start_cmd, "systemctl start opensearch")
+        self.assertEqual(self.distribution_rpm_dashboards.start_cmd, "systemctl start opensearch-dashboards")
 
     @patch("subprocess.check_call")
-    def test_cleanup(self, check_call_mock: Mock) -> None:
-        self.distribution_rpm.cleanup()
+    def test_uninstall(self, check_call_mock: Mock) -> None:
+        self.distribution_rpm.uninstall()
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
