@@ -37,7 +37,7 @@ components:
     ref: '2.0'
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: main
+    ref: '2.0'
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: '2.0'
@@ -47,4 +47,4 @@ components:
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/notifications.git
     working_directory: dashboards-notifications
-    ref: main
+    ref: '2.0'
