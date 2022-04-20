@@ -44,7 +44,7 @@ class ServiceOpenSearchDashboards(Service):
             self.__add_plugin_specific_config(self.additional_config)
 
         self.process_handler.start(self.dist.get_start_cmd, self.executable_dir)
-        logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
+        logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
 
     def cleanup(self):
         self.dist.cleanup()
