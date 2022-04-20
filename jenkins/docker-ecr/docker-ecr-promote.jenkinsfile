@@ -27,6 +27,11 @@ pipeline {
                 name: 'PLATFORM',
                 description: 'Where do you want to push the images?'
         )
+        booleanParam(
+            defaultValue: true,
+            name: 'TAG_LATEST',
+            description: 'Tag the copied image as latest'
+        )
     }
 
     stages {
@@ -42,6 +47,14 @@ pipeline {
                             destinationType: "docker",
                             destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                     )
+                    if(TAG_LATEST == "true"){
+                        copyContainer(
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                destinationType: "docker",
+                                destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                        )
+                    }
                 }
             }
         }
@@ -58,6 +71,15 @@ pipeline {
                             destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
                     )
+                    if(TAG_LATEST == "true"){
+                        copyContainer(
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
+                                destinationType: "ecr",
+                                destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
+                                accountName: "${AWS_ACCOUNT_ARTIFACT}"
+                        )
+                    }
                 }
             }
         }
