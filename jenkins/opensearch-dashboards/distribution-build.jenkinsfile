@@ -166,6 +166,13 @@ pipeline {
                                 architecture: 'x64',
                                 distribution: 'rpm'
                             )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_X64_RPM = artifactUrl
+
+                            echo "buildManifestUrl (x64, rpm): ${buildManifestUrl}"
+                            echo "artifactUrl (x64, rpm): ${artifactUrl}"
+
                         }
                     }
                     post {
@@ -336,6 +343,12 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'rpm'
                                     )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_ARM64_RPM = artifactUrl
+                                    echo "buildManifestUrl (arm64, rpm): ${buildManifestUrl}"
+                                    echo "artifactUrl (arm64, rpm): ${artifactUrl}"
+
                                 }
                             }
                             post {
