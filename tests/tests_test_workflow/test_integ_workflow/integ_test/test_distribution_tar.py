@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from test_workflow.integ_test.distribution_tar import DistributionTar
 
@@ -43,3 +43,11 @@ class TestDistributionTar(unittest.TestCase):
     def test_start_cmd(self) -> None:
         self.assertEqual(self.distribution_tar.start_cmd, "./opensearch-tar-install.sh")
         self.assertEqual(self.distribution_tar_dashboards.start_cmd, "./opensearch-dashboards")
+
+    @patch("subprocess.check_call")
+    def test_uninstall(self, check_call_mock: Mock) -> None:
+        self.distribution_tar.uninstall()
+        args_list = check_call_mock.call_args_list
+
+        self.assertEqual(check_call_mock.call_count, 1)
+        self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])

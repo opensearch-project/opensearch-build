@@ -47,8 +47,9 @@ class Distribution(ABC):
         """
         pass
 
+    @abstractmethod
     def uninstall(self) -> None:
         """
-        Allow distribution that is not 'tar' to do proper cleanup
+        Allow distribution to do proper cleanup
         """
         pass

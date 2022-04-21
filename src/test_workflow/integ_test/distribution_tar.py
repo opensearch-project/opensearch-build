@@ -6,6 +6,7 @@
 
 import logging
 import os
+import subprocess
 import tarfile
 
 from test_workflow.integ_test.distribution import Distribution
@@ -35,3 +36,7 @@ class DistributionTar(Distribution):
             "opensearch-dashboards": "./opensearch-dashboards",
         }
         return start_cmd_map[self.filename]
+
+    def uninstall(self) -> None:
+        logging.info(f"Cleanup {self.work_dir}/* content after the test")
+        subprocess.check_call(f"rm -rf {self.work_dir}/*", shell=True)
