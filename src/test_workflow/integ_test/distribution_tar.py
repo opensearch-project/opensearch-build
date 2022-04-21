@@ -6,8 +6,8 @@
 
 import logging
 import os
-import tarfile
 import subprocess
+import tarfile
 
 from test_workflow.integ_test.distribution import Distribution
 
