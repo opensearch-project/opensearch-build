@@ -22,9 +22,9 @@ class TestPerfTestCluster(unittest.TestCase):
         self.stack_name = "stack"
         self.security = "disable"
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678", "Region": "us-west-2", "Role": "role-arn"}}
-        self.perf_test_cluster = PerfTestCluster(bundle_manifest=self.manifest, config=self.config,
-                                                 stack_name=self.stack_name, cluster_config=PerfTestClusterConfig(self.security),
-                                                 current_workspace="current_workspace")
+        self.perf_test_cluster = DummyPerfTestCluster(
+            bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
+            cluster_config=PerfTestClusterConfig(self.security), current_workspace="current_workspace")
 
     def test_create(self):
         mock_file = MagicMock(side_effect=[{"stack": {"PrivateIp": "10.10.10.10"}}])
@@ -33,38 +33,30 @@ class TestPerfTestCluster(unittest.TestCase):
                 with patch("builtins.open", MagicMock()):
                     with patch("json.load", mock_file):
                         self.perf_test_cluster.start()
-                        mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "opensearch-cluster", "cdk", "single-node"))
+                        mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "test_dir"))
                         self.assertEqual(mock_check_call.call_count, 1)
 
     def test_endpoint(self):
-        self.assertEqual(self.perf_test_cluster.endpoint_with_port(), None)
+        self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
 
     def test_port(self):
-        self.assertEqual(self.perf_test_cluster.port(), 443)
+        self.assertEqual(self.perf_test_cluster.port, 443)
 
     def test_terminate(self):
         with patch("test_workflow.perf_test.perf_test_cluster.os.chdir") as mock_chdir:
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_cluster.terminate()
-                mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "current_workspace", "opensearch-cluster", "cdk", "single-node"))
+                mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "test_dir"))
                 self.assertEqual(mock_check_call.call_count, 1)
 
-    def test_single_node_cluster(self):
-        test_cluster = PerfTestCluster(bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
-                                       cluster_config=PerfTestClusterConfig(self.security, 1, 0, 0, 0),
-                                       current_workspace="current_workspace")
-        self.assertEqual(test_cluster.work_dir, "current_workspace/opensearch-cluster/cdk/single-node")
-        self.assertTrue("stack_name" in test_cluster.params)
-        self.assertTrue("data_node_count" not in test_cluster.params)
 
-    def test_multi_node_cluster(self):
-        test_cluster = PerfTestCluster(bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
-                                       cluster_config=PerfTestClusterConfig(self.security, 2, 3, 0, 0),
-                                       current_workspace="current_workspace")
-        self.assertEqual(test_cluster.work_dir, "current_workspace/opensearch-cluster/cdk/multi-node")
-        print(test_cluster.params)
-        self.assertTrue("cluster_stack_name" in test_cluster.params)
-        self.assertTrue("data_node_count=2" in test_cluster.params)
-        self.assertTrue("master_node_count=3" in test_cluster.params)
-        self.assertTrue("client_node_count=0" in test_cluster.params)
-        self.assertTrue("ingest_node_count=0" in test_cluster.params)
+class DummyPerfTestCluster(PerfTestCluster):
+    def __init__(self, bundle_manifest, config, stack_name, cluster_config, current_workspace):
+        work_dir = os.path.join(current_workspace, "test_dir")
+        super().__init__(bundle_manifest, config, stack_name, cluster_config, current_workspace, work_dir)
+
+    def create_endpoint(self, cdk_output):
+        pass
+
+    def setup_cdk_params(self, config):
+        return {}

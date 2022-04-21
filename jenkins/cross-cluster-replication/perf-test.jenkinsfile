@@ -64,9 +64,6 @@ pipeline {
                     alwaysPull true
                 }
             }
-            when {
-                expression { return env.HAS_SECURITY }
-            }
             steps {
                 script {
                     def bundleManifestObj = downloadBuildManifest(

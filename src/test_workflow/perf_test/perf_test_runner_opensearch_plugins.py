@@ -25,7 +25,7 @@ class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
         os.makedirs(self.tests_dir, exist_ok=True)
         security_flag = "--without-security" if not self.security else ""
         self.command = (
-            f"./run_perf_test.sh --config {str(os.path.abspath(self.args.config.name))} "
+            f"bin/run_perf_test.sh --config {str(os.path.abspath(self.args.config.name))} "
             f"--bundle-manifest {str(os.path.abspath(self.args.bundle_manifest.name))} "
             f"--test-result-dir {str(self.tests_dir)} {security_flag}"
         )
