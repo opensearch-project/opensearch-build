@@ -391,8 +391,8 @@ pipeline {
                         
                         buildDockerImage(
                             inputManifest: "manifests/${INPUT_MANIFEST}",
-                            artifactUrlX64: env.ARTIFACT_URL_X64,
-                            artifactUrlArm64: env.ARTIFACT_URL_ARM64
+                            artifactUrlX64: env.ARTIFACT_URL_X64_TAR,
+                            artifactUrlArm64: env.ARTIFACT_URL_ARM64_TAR
                         )
                     }
                 }
