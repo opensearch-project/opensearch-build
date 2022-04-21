@@ -82,7 +82,7 @@ cp ${distributions}/*.zip ./$OUTPUT/plugins
 MAVEN_ZIP_PUBLISH_TASK="publishMavenzipPublicationToZipstagingRepository"
 if ./gradlew tasks --all | grep -qw "^$MAVEN_ZIP_PUBLISH_TASK"
 then
-   ./gradlew publishMavenzipPublicationToZipstagingRepository -PzipVersion=$VERSION 
+   ./gradlew publishMavenzipPublicationToZipstagingRepository -Dopensearch.version=$VERSION
     echo "Copying the Maven plugin Zips"
     mkdir -p $OUTPUT/maven/org/opensearch/plugin
     cp -r ./build/local-staging-repo/org/opensearch/plugin/. $OUTPUT/maven/org/opensearch/plugin
