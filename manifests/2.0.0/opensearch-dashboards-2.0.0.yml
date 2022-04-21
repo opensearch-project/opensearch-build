@@ -9,7 +9,7 @@ ci:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1
 components:
   - name: OpenSearch-Dashboards
-    ref: '2.x'
+    ref: '2.0'
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     checks:
       - npm:package:version
