@@ -40,6 +40,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentBuild.description = DOCKER_BUILD_SCRIPT_WITH_COMMANDS
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
                     def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                     if (env.IS_STAGING == "false") {
