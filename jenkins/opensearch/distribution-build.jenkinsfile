@@ -377,13 +377,13 @@ pipeline {
 
                             echo "Trigger rpm validation for arm64 rpm ${bundleManifestUrl}"
                             def rpmValidationResults =
-                            build job: 'rpm-validation',
-                            propagate: false,
-                            wait: true,
-                            parameters: [
-                                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                            ]
+                                build job: 'rpm-validation',
+                                propagate: false,
+                                wait: true,
+                                parameters: [
+                                    string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                ]
 
                             env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT = createTestResultsMessage(
                                 testType: "RPM Validation (arm64, rpm)",
