@@ -107,8 +107,8 @@ class InputManifests(Manifests):
 
     def create_manifest(self, version: str, components: List = []) -> InputManifest:
         image_map = {
-            "opensearch": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1",
-            "opensearch-dashboards": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1"
+            "opensearch": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+            "opensearch-dashboards": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"
         }
 
         data: Dict = {
