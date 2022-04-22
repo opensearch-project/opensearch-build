@@ -175,7 +175,7 @@ pipeline {
 
                             String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                            echo "Trigger rpm validation for x64 rpm ${buildManifestUrl}"
+                            echo "Trigger rpm validation for x64 rpm ${bundleManifestUrl}"
                             build job: 'rpm-validation',
                             propagate: false,
                             wait: true,
@@ -359,7 +359,7 @@ pipeline {
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                                    echo "Trigger rpm validation for arm64 rpm ${buildManifestUrl}"
+                                    echo "Trigger rpm validation for arm64 rpm ${bundleManifestUrl}"
                                     build job: 'rpm-validation',
                                     propagate: false,
                                     wait: true,
