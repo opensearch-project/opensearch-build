@@ -99,9 +99,11 @@ pipeline {
             post {
                 always {
                     script {
+                        String jobNameToUploadResult = currentBuild.upstreamBuilds ? currentBuild.upstreamBuilds[0].fullProjectName : JOB_NAME
+
                         uploadTestResults(
                             buildManifestFileName: BUILD_MANIFEST,
-                            jobName: JOB_NAME,
+                            jobName: jobNameToUploadResult,
                             buildNumber: BUILD_ID
                         )
                     }
