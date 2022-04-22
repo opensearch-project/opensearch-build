@@ -173,6 +173,16 @@ pipeline {
                             echo "buildManifestUrl (x64, rpm): ${buildManifestUrl}"
                             echo "artifactUrl (x64, rpm): ${artifactUrl}"
 
+                            String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                            echo "Trigger rpm validation for x64 rpm ${buildManifestUrl}"
+                            build job: 'rpm-validation',
+                            propagate: false,
+                            wait: true,
+                            parameters: [
+                                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                            ]
                         }
                     }
                     post {
@@ -347,6 +357,16 @@ pipeline {
                                     echo "buildManifestUrl (arm64, rpm): ${buildManifestUrl}"
                                     echo "artifactUrl (arm64, rpm): ${artifactUrl}"
 
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                                    echo "Trigger rpm validation for arm64 rpm ${buildManifestUrl}"
+                                    build job: 'rpm-validation',
+                                    propagate: false,
+                                    wait: true,
+                                    parameters: [
+                                        string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                    ]
                                 }
                             }
                             post {
