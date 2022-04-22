@@ -4,8 +4,9 @@ void call(Map args = [:]) {
 
     install_dependencies()
     install_opensearch_infra_dependencies()
+    config_name = isNullOrEmpty(args.conig) ? "config.yml" : args.config
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/config.yml", force: true)
+        s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/${config_name}", force: true)
     }
 
     sh([
@@ -19,6 +20,7 @@ void call(Map args = [:]) {
         isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
         isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
         isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
+        isNullOrEmpty(args.component) ? "" : "--component ${args.component}"
     ].join(' '))
 }
 

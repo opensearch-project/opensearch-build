@@ -17,10 +17,10 @@
                BuildManifest.getArtifactArchitecture()
                perf-test.echo(HAS_SECURITY: true)
                Messages.asBoolean()
-               Messages.add(perf-test, Performance tests for #1236)
-                  perf-test.writeFile({file=messages/perf-test.msg, text=Performance tests for #1236})
+               Messages.add(perf-test, CCR Performance tests for #1236)
+                  perf-test.writeFile({file=messages/perf-test.msg, text=CCR Performance tests for #1236})
                   perf-test.stash({includes=messages/*, name=messages-perf-test})
-         perf-test.stage(test-with-security, groovy.lang.Closure)
+         perf-test.stage(perf-test, groovy.lang.Closure)
             perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
             perf-test.script(groovy.lang.Closure)
                perf-test.downloadBuildManifest({url=test://artifact.url, path=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
@@ -32,7 +32,7 @@
                perf-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-bundle.yml)
                perf-test.echo(BUILD_ID: 1236)
                perf-test.echo(Architecture: x64)
-               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=false, workload=nyc_taxis, testIterations=1, warmupIterations=1})
+               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, component=cross-cluster-replication, config=config-ccr.yml})
                   runPerfTestScript.legacySCM(groovy.lang.Closure)
                   runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
                   runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
@@ -51,7 +51,7 @@
     )
                   runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
+                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml     --component cross-cluster-replication)
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([perf-test])
@@ -60,70 +60,9 @@
                   perf-test.dir(messages, groovy.lang.Closure)
                      perf-test.deleteDir()
                Messages.add(perf-test, 
-Performance tests with security for 1236 completed)
+CCR Performance tests for 1236 completed)
                   perf-test.writeFile({file=messages/perf-test.msg, text=
-Performance tests with security for 1236 completed})
-                  perf-test.stash({includes=messages/*, name=messages-perf-test})
-         perf-test.script(groovy.lang.Closure)
-            perf-test.uploadTestResults({buildManifestFileName=tests/jenkins/data/opensearch-1.3.0-bundle.yml, jobName=perf-test, buildNumber=1236})
-               uploadTestResults.legacySCM(groovy.lang.Closure)
-               uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
-               uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
-               BuildManifest.asBoolean()
-               BuildManifest.getArtifactRoot(perf-test, 1236)
-               uploadTestResults.echo(Uploading to s3://test_bucket/perf-test/1.3.0/1236/linux/x64/tar)
-               uploadTestResults.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                  uploadTestResults.s3Upload({file=test-results, bucket=test_bucket, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
-               BuildManifest.getArtifactRootUrl(test://artifact.url, perf-test, 1236)
-               Messages.asBoolean()
-               Messages.add(test_stage, test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/)
-                  uploadTestResults.writeFile({file=messages/test_stage.msg, text=test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/})
-                  uploadTestResults.stash({includes=messages/*, name=messages-test_stage})
-         perf-test.postCleanup()
-            postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-         perf-test.stage(test-without-security, groovy.lang.Closure)
-            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
-            perf-test.script(groovy.lang.Closure)
-               perf-test.downloadBuildManifest({url=test://artifact.url, path=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
-                  downloadBuildManifest.legacySCM(groovy.lang.Closure)
-                  downloadBuildManifest.library({identifier=jenkins@20211123, retriever=null})
-                  downloadBuildManifest.sh(curl -sSL test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-bundle.yml)
-                  downloadBuildManifest.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
-                  BuildManifest.asBoolean()
-               perf-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-bundle.yml)
-               perf-test.echo(BUILD_ID: 1236)
-               perf-test.echo(Architecture: x64)
-               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=true, workload=nyc_taxis, testIterations=1, warmupIterations=1})
-                  runPerfTestScript.legacySCM(groovy.lang.Closure)
-                  runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
-                  runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
-                  BuildManifest.asBoolean()
-                  runPerfTestScript.sh(
-        npm install -g fs-extra
-        npm install -g chalk@4.1.2
-        npm install -g @aws-cdk/cloudformation-diff
-        npm install -g aws-cdk
-        npm install -g cdk-assume-role-credential-plugin@1.4.0
-    )
-                  runPerfTestScript.sh(
-        pipenv install "dataclasses_json~=0.5" "aws_requests_auth~=0.4" "json2html~=1.3.0"
-        pipenv install "aws-cdk.core~=1.143.0" "aws_cdk.aws_ec2~=1.143.0" "aws_cdk.aws_iam~=1.143.0"
-        pipenv install "boto3~=1.18" "setuptools~=57.4" "retry~=0.9"
-    )
-                  runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
-               Messages.asBoolean()
-               Messages.asBoolean()
-               Messages.get([perf-test])
-                  perf-test.unstash({name=messages-perf-test})
-                  perf-test.findFiles({excludes=, glob=messages/*})
-                  perf-test.dir(messages, groovy.lang.Closure)
-                     perf-test.deleteDir()
-               Messages.add(perf-test, 
-Performance tests without security for 1236 completed)
-                  perf-test.writeFile({file=messages/perf-test.msg, text=
-Performance tests without security for 1236 completed})
+CCR Performance tests for 1236 completed})
                   perf-test.stash({includes=messages/*, name=messages-perf-test})
          perf-test.script(groovy.lang.Closure)
             perf-test.uploadTestResults({buildManifestFileName=tests/jenkins/data/opensearch-1.3.0-bundle.yml, jobName=perf-test, buildNumber=1236})
@@ -150,13 +89,13 @@ Performance tests without security for 1236 completed})
                   perf-test.findFiles({excludes=, glob=messages/*})
                   perf-test.dir(messages, groovy.lang.Closure)
                      perf-test.deleteDir()
-               perf-test.publishNotification({icon=:white_check_mark:, message=Performance Tests Successful, extra=, credentialsId=INTEG_TEST_WEBHOOK})
+               perf-test.publishNotification({icon=:white_check_mark:, message=CCR Performance Tests Successful, extra=, credentialsId=INTEG_TEST_WEBHOOK})
                   publishNotification.string({credentialsId=INTEG_TEST_WEBHOOK, variable=WEBHOOK_URL})
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=perf-test
 BUILD_NUMBER=[1236]
-MESSAGE=Performance Tests Successful
+MESSAGE=CCR Performance Tests Successful
 BUILD_URL: test://artifact.url
 MANIFEST: null
 "}' "WEBHOOK_URL")

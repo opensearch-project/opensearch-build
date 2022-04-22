@@ -1,0 +1,140 @@
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 10, unit: 'HOURS')
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-al2-x64-m5xlarge-Perf-Test'
+        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+        BUNDLE_MANIFEST = 'bundle-manifest.yml'
+        JOB_NAME = 'ccr-perf-test'
+    }
+    parameters {
+        string(
+            name: 'GITHUB_TOKEN',
+            description: 'Github token for account access.',
+            trim: true
+        )
+        string(
+            name: 'BUNDLE_MANIFEST_URL',
+            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            trim: true
+        )
+    }
+
+    stages {
+        stage('validate-and-set-parameters') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image AGENT_IMAGE
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    if (BUNDLE_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
+                    }
+                    if (GITHUB_TOKEN == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                    }
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                    )
+                    String buildId = bundleManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                    env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                    echo "HAS_SECURITY: ${env.HAS_SECURITY}"
+                    lib.jenkins.Messages.new(this).add(JOB_NAME, "CCR Performance tests for #${BUILD_ID}")
+                }
+            }
+        }
+        stage('perf-test') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image AGENT_IMAGE
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
+                    )
+
+                    echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                    echo "BUILD_ID: ${BUILD_ID}"
+                    echo "Architecture: ${ARCHITECTURE}"
+
+                    runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
+                        buildId: BUILD_ID,
+                        architecture: ARCHITECTURE,
+                        component: "cross-cluster-replication",
+                        config: "config-ccr.yml")
+
+                    lib.jenkins.Messages.new(this).add(JOB_NAME,
+                        lib.jenkins.Messages.new(this).get([JOB_NAME]) +
+                        "\nCCR Performance tests for ${BUILD_ID} completed")
+                }
+            }
+            post {
+                success {
+                    script {
+                        uploadTestResults(
+                            buildManifestFileName: BUNDLE_MANIFEST,
+                            jobName: JOB_NAME,
+                            buildNumber: BUILD_ID
+                        )
+                    }
+                    postCleanup()
+                }
+                failure {
+                    postCleanup()
+                }
+                aborted {
+                    postCleanup()
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'CCR Performance Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_LABEL) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed CCR Performance Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+                    postCleanup()
+                }
+            }
+        }
+    }
+}

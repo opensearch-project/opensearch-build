@@ -65,18 +65,26 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
     void parameterInvariantsAssertions(call) {
         assertThat(call.args.bundleManifest.first(), notNullValue())
         assertThat(call.args.buildId.first(), notNullValue())
-        assertThat(call.args.insecure.first(), notNullValue())
-        assertThat(call.args.workload.first(), notNullValue())
-        assertThat(call.args.testIterations.first(), notNullValue())
-        assertThat(call.args.warmupIterations.first(), notNullValue())
+        if (!this.insecure.isEmpty()) {
+            assertThat(call.args.insecure.first(), notNullValue())
+        }
+        if (!this.workload.isEmpty()) {
+            assertThat(call.args.workload.first(), notNullValue())
+        }
+        if (!this.testIterations.isEmpty()) {
+            assertThat(call.args.testIterations.first(), notNullValue())
+        }
+        if (!this.warmupIterations.isEmpty()) {
+            assertThat(call.args.warmupIterations.first(), notNullValue())
+        }
     }
 
     boolean expectedParametersMatcher(call) {
         return call.args.bundleManifest.first().toString().equals(this.bundleManifest) &&
             call.args.buildId.first().toString().equals(this.buildId) &&
-            call.args.workload.first().toString().equals(this.workload) &&
-            call.args.testIterations.first().toInteger().equals(this.testIterations.toInteger()) &&
-            call.args.warmupIterations.first().toInteger().equals(this.warmupIterations.toInteger())
+            (this.workload.isEmpty() || call.args.workload.first().toString().equals(this.workload)) &&
+            (this.testIterations.isEmpty() || call.args.testIterations.first().toInteger().equals(this.testIterations.toInteger())) &&
+            (this.warmupIterations.isEmpty() || call.args.warmupIterations.first().toInteger().equals(this.warmupIterations.toInteger()))
     }
 
     String libFunctionName() {

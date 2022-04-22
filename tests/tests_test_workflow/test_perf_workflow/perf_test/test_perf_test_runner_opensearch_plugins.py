@@ -49,7 +49,7 @@ class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
         runner.run()
 
         mock_git.assert_called_with("https://github.com/opensearch-project/plugin-name.git", "main",
-                                    os.path.join(tempfile.gettempdir(), "plugin"))
+                                    os.path.join(tempfile.gettempdir(), "plugin-name"))
 
         self.assertEqual(mock_git.call_count, 1)
         self.assertEqual(mock_temp_directory.call_count, 1)

@@ -36,7 +36,7 @@ class TestPerfTestRunnerOpenSearch(unittest.TestCase):
     @patch("os.chdir")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.GitRepository")
-    @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfTestCluster.create")
+    @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfSingleNodeCluster.create")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfTestSuite")
     def test_run(self, mock_suite, mock_cluster, mock_git, mock_temp_directory, *mocks):
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
