@@ -8,7 +8,7 @@ pipeline {
     parameters {
             string(
                 name: 'BUNDLE_MANIFEST_URL',
-                description: 'The bundle manifest url. (e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/2493/linux/x64/rpm/dist/opensearch/manifest.yml)',
+                description: 'The bundle manifest url, required for yum staging repo file. (e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/2493/linux/x64/rpm/dist/opensearch/manifest.yml)',
                 trim: true
             )
             string(
