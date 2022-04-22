@@ -27,7 +27,7 @@ class TestPerfMultiNodeCluster(unittest.TestCase):
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 2, 3, 0, 0), current_workspace="current_workspace")
 
-        self.assertEqual(test_cluster.work_dir, "current_workspace/opensearch-cluster/cdk/multi-node")
+        self.assertEqual(test_cluster.work_dir, os.path.join("current_workspace", "opensearch-cluster", "cdk", "multi-node"))
         self.assertTrue("cluster_stack_name" in test_cluster.params)
         self.assertTrue("data_node_count=2" in test_cluster.params)
         self.assertTrue("master_node_count=3" in test_cluster.params)
@@ -69,3 +69,11 @@ class TestPerfMultiNodeCluster(unittest.TestCase):
         self.assertEqual(test_cluster.cluster_endpoint_with_port, "https://abc:443")
         self.assertTrue(test_cluster.is_endpoint_public)
         self.assertEqual(test_cluster.endpoint, "abc")
+
+    def test_cdk_failure_scenarios(self):
+        test_cluster = PerfMultiNodeCluster(
+            bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
+            cluster_config=PerfTestClusterConfig(True, 1, 1, 0, 0), current_workspace="current_workspace")
+
+        cdk_output = {self.stack_name: {}}
+        self.assertRaises(RuntimeError, test_cluster.create_endpoint, cdk_output)

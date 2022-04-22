@@ -18,7 +18,7 @@ class TestPerfTestClusterConfig(unittest.TestCase):
         self.assertEqual(config.master_nodes, 0)
         self.assertEqual(config.ingest_nodes, 0)
         self.assertEqual(config.client_nodes, 0)
-        self.assertEqual(config.is_single_node_cluster(), True)
+        self.assertEqual(config.is_single_node_cluster, True)
 
     def test_non_default_args(self):
         config = PerfTestClusterConfig(True, 1, 2, 3, 4)
@@ -27,4 +27,4 @@ class TestPerfTestClusterConfig(unittest.TestCase):
         self.assertEqual(config.master_nodes, 2)
         self.assertEqual(config.ingest_nodes, 3)
         self.assertEqual(config.client_nodes, 4)
-        self.assertEqual(config.is_single_node_cluster(), False)
+        self.assertEqual(config.is_single_node_cluster, False)

@@ -27,7 +27,7 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 1, 0, 0, 0), current_workspace="current_workspace")
 
-        self.assertEqual(test_cluster.work_dir, "current_workspace/opensearch-cluster/cdk/single-node")
+        self.assertEqual(test_cluster.work_dir, os.path.join("current_workspace", "opensearch-cluster", "cdk", "single-node"))
         self.assertTrue("stack_name" in test_cluster.params)
         self.assertTrue("data_node_count" not in test_cluster.params)
 
@@ -67,3 +67,11 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
         self.assertEqual(test_cluster.cluster_endpoint_with_port, "https://127.0.0.1:443")
         self.assertFalse(test_cluster.is_endpoint_public)
         self.assertEqual(test_cluster.endpoint, "127.0.0.1")
+
+    def test_cdk_failure_scenarios(self):
+        test_cluster = PerfSingleNodeCluster(
+            bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
+            cluster_config=PerfTestClusterConfig(True, 1, 0, 0, 0), current_workspace="current_workspace")
+
+        cdk_output = {self.stack_name: {}}
+        self.assertRaises(RuntimeError, test_cluster.create_endpoint, cdk_output)

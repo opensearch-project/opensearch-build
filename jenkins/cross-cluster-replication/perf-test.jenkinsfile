@@ -6,7 +6,7 @@ pipeline {
         timeout(time: 10, unit: 'HOURS')
     }
     environment {
-        AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_LABEL = 'Jenkins-Agent-al2-x64-m5xlarge-Perf-Test'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'ccr-perf-test'
@@ -70,6 +70,7 @@ pipeline {
                         url: BUNDLE_MANIFEST_URL,
                         path: BUNDLE_MANIFEST
                     )
+
                     echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
                     echo "Architecture: ${ARCHITECTURE}"
@@ -77,7 +78,8 @@ pipeline {
                     runPerfTestScript(bundleManifest: BUNDLE_MANIFEST,
                         buildId: BUILD_ID,
                         architecture: ARCHITECTURE,
-                        component: "cross-cluster-replication")
+                        component: "cross-cluster-replication",
+                        config: "config-ccr.yml")
 
                     lib.jenkins.Messages.new(this).add(JOB_NAME,
                         lib.jenkins.Messages.new(this).get([JOB_NAME]) +
