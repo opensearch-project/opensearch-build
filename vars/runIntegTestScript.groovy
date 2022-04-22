@@ -12,6 +12,7 @@ void call(Map args = [:]) {
         './test.sh',
         'integ-test',
         "${args.testManifest}",
+        '--test-run-id 1',
         "--paths ${paths}",
     ].join(' '))
 }
