@@ -11,4 +11,4 @@
                   BuildManifest.getArtifactRootUrl(dummy_job, 215)
                   runIntegTestScript.echo(Artifact root URL: https://ci.opensearch.org/ci/dbc/dummy_job/1.2.0/215/linux/x64/tar)
                   runIntegTestScript.echo(Paths: opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.0/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/dummy_job/1.2.0/215/linux/x64/tar)
-                  runIntegTestScript.sh(./test.sh integ-test tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.0/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/dummy_job/1.2.0/215/linux/x64/tar)
+                  runIntegTestScript.sh(./test.sh integ-test tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --test-run-id 1 --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.0/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/dummy_job/1.2.0/215/linux/x64/tar)
