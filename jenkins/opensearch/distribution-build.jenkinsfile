@@ -238,18 +238,33 @@ pipeline {
                             String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                             echo "Trigger rpm validation for x64 rpm ${bundleManifestUrl}"
-                            build job: 'rpm-validation',
-                            propagate: false,
-                            wait: true,
-                            parameters: [
-                                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                string(name: 'AGENT_LABEL', value: AGENT_X64)
-                            ]
+                            def rpmValidationResults =
+                                build job: 'rpm-validation',
+                                propagate: false,
+                                wait: true,
+                                parameters: [
+                                    string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                ]
+
+                            env.RPM_VALIDATION_X64_RPM_TEST_RESULT = createTestResultsMessage(
+                                testType: "RPM Validation (x64, rpm)",
+                                status: rpmValidationResults.getResult(),
+                                absoluteUrl: rpmValidationResults.getAbsoluteUrl()
+                            )
                         }
                     }
                     post {
                         always {
-                            postCleanup()
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.RPM_VALIDATION_X64_RPM_TEST_RESULT}"
+                                )
+
+                                postCleanup()
+                            }
                         }
                     }
                 }
@@ -361,17 +376,30 @@ pipeline {
                             String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                             echo "Trigger rpm validation for arm64 rpm ${bundleManifestUrl}"
-                            build job: 'rpm-validation',
-                            propagate: false,
-                            wait: true,
-                            parameters: [
-                                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                            ]
+                            def rpmValidationResults =
+                                build job: 'rpm-validation',
+                                propagate: false,
+                                wait: true,
+                                parameters: [
+                                    string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                    string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                ]
+
+                            env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT = createTestResultsMessage(
+                                testType: "RPM Validation (arm64, rpm)",
+                                status: rpmValidationResults.getResult(),
+                                absoluteUrl: rpmValidationResults.getAbsoluteUrl()
+                            )
                         }
                     }
                     post {
-                        always {
+                        script {
+                            lib.jenkins.Messages.new(this).add(
+                                "${STAGE_NAME}",
+                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                "\n${env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT}"
+                            )
+
                             postCleanup()
                         }
                     }

@@ -31,6 +31,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentBuild.description = BUNDLE_MANIFEST_URL
                     rpmDistValidation(
                         bundleManifestURL: "$BUNDLE_MANIFEST_URL"
                     )

@@ -38,6 +38,7 @@ pipeline {
             }
             steps {
                 script {
+                    currentBuild.description = TEST_MANIFEST
                     if (AGENT_LABEL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
