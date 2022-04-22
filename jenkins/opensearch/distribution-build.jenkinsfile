@@ -393,15 +393,17 @@ pipeline {
                         }
                     }
                     post {
-                        script {
-                            lib.jenkins.Messages.new(this).add(
-                                "${STAGE_NAME}",
-                                lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                "\n${env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT}"
-                            )
+                        always {
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                    "\n${env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT}"
+                                )
 
-                            postCleanup()
-                        }
+                                postCleanup()
+                            }
+                        }                    
                     }
                 }
             }
