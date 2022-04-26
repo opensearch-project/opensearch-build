@@ -29,7 +29,7 @@
 | Sayali Gaikawad  | [gaiksaya](https://github.com/gaiksaya)             | Amazon      |
 | Rishab Singh     | [rishabh6788](https://github.com/rishabh6788)       | Amazon      |
 | Zelin Hao        | [zelinh](https://github.com/zelinh)                 | Amazon      |
-| Prudhvi Godithi  | [prudhvigodithi](https://github.com/prudhvigodithi) | Amazon      |
+| Prudhvi Godithi  | [prudhvigodithi](https://github.com/prudhvigodithi) | Amazon       | 
 
 
 [This document](https://github.com/opensearch-project/.github/blob/main/MAINTAINERS.md) explains what maintainers do in this repo, and how they should be doing it. If you're interested in contributing, see [CONTRIBUTING](CONTRIBUTING.md).
