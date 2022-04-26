@@ -1,6 +1,4 @@
 void call(Map args = [:]) {
-    git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
-
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
     def build_qualifier = inputManifest.build.qualifier
