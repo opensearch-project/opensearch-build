@@ -25,7 +25,7 @@ ExclusiveArch: %{_architecture}
 AutoReqProv: no
 
 %description
-OpenSearch makes it easy to ingest, search, visualize, and analyze your data.
+OpenSearch makes it easy to ingest, search, visualize, and analyze your data
 For more information, see: https://opensearch.org/
 
 %prep
