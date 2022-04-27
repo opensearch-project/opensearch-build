@@ -36,7 +36,7 @@ class TestRpmOpenSearchDistValidation extends BuildPipelineTest {
                 "URL         : https://opensearch.org/\n" +
                 "Summary     : An open source distributed and RESTful search engine\n" +
                 "Description :\n" +
-                "OpenSearch makes it easy to ingest, search, visualize, and analyze your data.\n" +
+                "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\n" +
                 "For more information, see: https://opensearch.org/"
         helper.addShMock("rpm -qip $workspace/opensearch-1.3.1-linux-x64.rpm") { script ->
             return [stdout: out, exitValue: 0]

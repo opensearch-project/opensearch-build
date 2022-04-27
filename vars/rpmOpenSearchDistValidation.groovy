@@ -26,7 +26,7 @@ def call(Map args = [:]) {
     refMap['URL'] = "https://opensearch.org/"
     // The context the meta data should be for OpenSearch
     refMap['Summary'] = "An open source distributed and RESTful search engine"
-    refMap['Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data.\n" +
+    refMap['Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\n" +
             "For more information, see: https://opensearch.org/"
 
     rpmMetaValidation(
