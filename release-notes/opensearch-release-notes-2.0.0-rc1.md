@@ -3,7 +3,7 @@
 ## Release Highlights
 
 ### OpenSearch Notifications
-* OpenSearch 2.0.0 is the first official release with OpenSearch Notifications.
+* OpenSearch 2.0.0 RC1 is the first official release with OpenSearch Notifications.
 * Notifications consist of three plugins, `notifications-core` and `notifications` backend plugins for OpenSearch, and a `notificationsDashboards` frontend plugin for OpenSearch Dashboards.
 
 
@@ -11,7 +11,7 @@
 
 OpenSearch and OpenSearch Dashboards 2.0.0-rc1 include the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.0.0-rc1.md).
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.0/release-notes/opensearch.release-notes-2.0.0-rc1.md).
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.0.0-rc1.md).
 
@@ -224,7 +224,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Performance Analyzer
-* Updated issue templates from .github. ([#177](https://github.com/opensearch-project/performance-analyzer/pull/177))
 * Fix EventLogFileHandlerTests flaky test ([#178](https://github.com/opensearch-project/performance-analyzer/pull/178))
 * Add retry for tests ([#180](https://github.com/opensearch-project/performance-analyzer/pull/180))
 
@@ -443,6 +442,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Remove master and whitelist text ([#657](https://github.com/opensearch-project/observability/pull/657))
 
 
+### OpenSearch Performance Analyzer
+* Updated issue templates from .github. ([#177](https://github.com/opensearch-project/performance-analyzer/pull/177))
+* Removing metrics which are not required now as were removed in OS 2.0 ([#159](https://github.com/opensearch-project/performance-analyzer-rca/pull/159))
+
+
 ### OpenSearch SQL
 * Change master nomenclature ([#551](https://github.com/opensearch-project/sql/pull/551))
 * Change blacklist and whitelist nomenclature ([#560](https://github.com/opensearch-project/sql/pull/560))
@@ -597,10 +601,4 @@ ING
 * Modularize event Analytics live tail and fix bug ([#647](https://github.com/opensearch-project/observability/pull/647))
 * Fix lint and modularize dashboard ([#583](https://github.com/opensearch-project/observability/pull/583))
 * Modularize service and fix issues ([#595](https://github.com/opensearch-project/observability/pull/595))
-
-
-## Deprecation
-
-### OpenSearch Performance Analyzer
-* Removing metrics which are not required now as were removed in OS 2.0 ([#159](https://github.com/opensearch-project/performance-analyzer-rca/pull/159))
 
