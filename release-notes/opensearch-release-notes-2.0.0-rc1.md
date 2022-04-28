@@ -13,7 +13,7 @@ OpenSearch and OpenSearch Dashboards 2.0.0-rc1 include the following features, e
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.0/release-notes/opensearch.release-notes-2.0.0-rc1.md).
 
-OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.0.0-rc1.md).
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.0/release-notes/opensearch-dashboards.release-notes-2.0.0-rc1.md).
 
 ## FEATURES
 
