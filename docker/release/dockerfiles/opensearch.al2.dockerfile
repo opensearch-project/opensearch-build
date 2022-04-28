@@ -19,8 +19,9 @@ ARG UID=1000
 ARG GID=1000
 ARG TEMP_DIR=/tmp/opensearch
 ARG OPENSEARCH_HOME=/usr/share/opensearch
+ARG OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 ARG SECURITY_PLUGIN_DIR=$OPENSEARCH_HOME/plugins/opensearch-security
-ARG PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR=$OPENSEARCH_HOME/config/opensearch-performance-analyzer
+ARG PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR=$OPENSEARCH_PATH_CONF/opensearch-performance-analyzer
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -41,7 +42,7 @@ RUN ls -l $TEMP_DIR && \
     if [[ -d $SECURITY_PLUGIN_DIR ]] ; then chmod -v 750 $SECURITY_PLUGIN_DIR/tools/* ; fi && \
     if [[ -d $PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR ]] ; then cp -v $TEMP_DIR/performance-analyzer.properties $PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR; fi && \
     cp -v $TEMP_DIR/opensearch-docker-entrypoint.sh $TEMP_DIR/opensearch-onetime-setup.sh $OPENSEARCH_HOME/ && \
-    cp -v $TEMP_DIR/log4j2.properties $TEMP_DIR/opensearch.yml $OPENSEARCH_HOME/config/ && \
+    cp -v $TEMP_DIR/log4j2.properties $TEMP_DIR/opensearch.yml $OPENSEARCH_PATH_CONF/ && \
     ls -l $OPENSEARCH_HOME && \
     rm -rf $TEMP_DIR
 
