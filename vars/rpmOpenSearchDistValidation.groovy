@@ -155,7 +155,7 @@ def call(Map args = [:]) {
     if (running_status_PA.contains(active_status_message)) {
         println("After checking the status, the Performance-analyzer plugin is actively running!")
     } else {
-        error("Something went run! Performance-analyzer is not actively running.")
+        error("Something went wrong! Performance-analyzer is not actively running.")
     }
     //Check logs exist in the /tmp/
     sh ('[[ -f /tmp/PerformanceAnalyzer.log ]] && echo "PerformanceAnalyzer.log exists" ' +
