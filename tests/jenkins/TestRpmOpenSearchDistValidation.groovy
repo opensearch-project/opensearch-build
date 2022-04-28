@@ -128,6 +128,27 @@ class TestRpmOpenSearchDistValidation extends BuildPipelineTest {
         helper.addShMock("curl -s \"https://localhost:9200/_cat/plugins\" -u admin:admin --insecure") { script ->
             return [stdout: cluster_plugin, exitValue: 0]
         }
+
+        def pa_status_message = "opensearch-performance-analyzer.service - OpenSearch Performance Analyzer\n" +
+                "   Loaded: loaded (/usr/lib/systemd/system/opensearch-performance-analyzer.service; disabled; vendor preset: disabled)\n" +
+                "   Active: active (running) since Wed 2022-04-27 23:41:32 UTC; 20min ago\n" +
+                " Main PID: 518 (java)\n" +
+                "   CGroup: /docker/0ac16d0953dba2520b57227f93645847c916e1747c7d0fb47ffaef593075f809/system.slice/opensearch-performance-analyzer.service\n" +
+                "           └─518 /usr/share/opensearch/jdk/bin/java -Xshare:auto -Xms4m -Xmx64m -XX:+UseSerialGC -Dlog4j.configurationFile=/usr/share/opensearch/plugins/opensearch-performance-a...\n" +
+                "\n" +
+                "Apr 28 00:02:00 0ac16d0953db performance-analyzer-agent-cli[518]: 00:02:00.413 [JPhU4pKjSySOd03YU1Fm6g-task-0-] ERROR org.opensearch.performanceanalyzer.rca.store.metric.Aggrega...\n" +
+                "Hint: Some lines were ellipsized, use -l to show in full."
+        helper.addShMock("systemctl status opensearch-performance-analyzer") { script ->
+            return [stdout: pa_status_message, exitValue: 0]
+        }
+
+        def pa_metrics = "{\"JPhU4pKjSySOd03YU1Fm6g\": {\"timestamp\": 1651104310000, \"data\": {\"fields\":" +
+                "[{\"name\":\"CPU_Utilization\",\"type\":\"DOUBLE\"}],\"records\":[[1.258446418449754E-4]]}}}"
+        helper.addShMock("curl -s localhost:9600/_plugins/_performanceanalyzer/metrics?metrics=CPU_Utilization\\&agg=avg") { script ->
+            return [stdout: pa_metrics, exitValue: 0]
+        }
+
+
     }
 
     @Test
