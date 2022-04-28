@@ -24,7 +24,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "opensearch", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1"}},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2"}},
             },
         )
 
@@ -36,7 +36,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "opensearch-dashboards", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v1"}},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"}},
             },
         )
 

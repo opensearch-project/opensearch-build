@@ -25,7 +25,7 @@ ExclusiveArch: %{_architecture}
 AutoReqProv: no
 
 %description
-OpenSearch makes it easy to ingest, search, visualize, and analyze your data.
+OpenSearch makes it easy to ingest, search, visualize, and analyze your data
 For more information, see: https://opensearch.org/
 
 %prep
@@ -93,7 +93,7 @@ if ! grep -q '## OpenSearch Performance Analyzer' %{config_dir}/jvm.options; the
    echo '## OpenSearch Performance Analyzer' >> %{config_dir}/jvm.options
    echo "-Dclk.tck=$CLK_TCK" >> %{config_dir}/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> %{config_dir}/jvm.options
-   echo "-Djava.security.policy=file:///etc/opensearch/opensearch-performance-analyzer/opensearch_security.policy" >> %{config_dir}/jvm.options
+   echo "-Djava.security.policy=file://%{config_dir}/opensearch-performance-analyzer/opensearch_security.policy" >> %{config_dir}/jvm.options
    echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> %{config_dir}/jvm.options
 fi
 # Reload systemctl daemon

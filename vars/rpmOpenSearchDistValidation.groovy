@@ -26,7 +26,7 @@ def call(Map args = [:]) {
     refMap['URL'] = "https://opensearch.org/"
     // The context the meta data should be for OpenSearch
     refMap['Summary'] = "An open source distributed and RESTful search engine"
-    refMap['Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data.\n" +
+    refMap['Description'] = "OpenSearch makes it easy to ingest, search, visualize, and analyze your data\n" +
             "For more information, see: https://opensearch.org/"
 
     rpmMetaValidation(
@@ -90,7 +90,7 @@ def call(Map args = [:]) {
     if (running_status.contains(active_status_message)) {
         println("After checking the status, the installed $name is actively running!")
     } else {
-        error("Something went run! Installed $name is not actively running.")
+        error("Something went wrong! Installed $name is not actively running.")
     }
 
     //Check the starting cluster
@@ -141,6 +141,36 @@ def call(Map args = [:]) {
         assert components_list.contains([component_name,component_version].join('-'))
         println("Component $component_name is present with correct version $component_version." )
     }
+
+    //Check the status of Performance analyzer
+    //Check systemctl status
+    systemdCommands(
+            command: "start",
+            product: "opensearch-performance-analyzer"
+    )
+    def running_status_PA = systemdCommands(
+            command: "status",
+            product: "opensearch-performance-analyzer"
+    )
+    if (running_status_PA.contains(active_status_message)) {
+        println("After checking the status, the Performance-analyzer plugin is actively running!")
+    } else {
+        error("Something went wrong! Performance-analyzer is not actively running.")
+    }
+    //Check logs exist in the /tmp/
+    sh ('[[ -f /tmp/PerformanceAnalyzer.log ]] && echo "PerformanceAnalyzer.log exists" ' +
+            '|| (echo "PerformanceAnalyzer.log does not exist" && exit 1)')
+    sh ('[[ -f /tmp/performance_analyzer_agent_stats.log ]] && echo "performance_analyzer_agent_stats.log exists" ' +
+            '|| (echo "performance_analyzer_agent_stats.log does not exist" && exit 1)')
+    //Validate the metrics name is CPU_Utilization
+    def pa_metrics = sh (
+            script:  "curl -s localhost:9600/_plugins/_performanceanalyzer/metrics?metrics=CPU_Utilization\\&agg=avg",
+            returnStdout: true
+    ).trim()
+    println("PA metrics is: \n" + pa_metrics)
+    assert pa_metrics.contains("\"timestamp\"")
+    assert pa_metrics.contains("\"data\"")
+    println("Performance Analyzer is validated.")
 
     println("Installation and running for opensearch has been validated.")
 
