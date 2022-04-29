@@ -69,6 +69,10 @@ if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/
     echo "Stop existing %{name}.service"
     systemctl --no-reload stop %{name}.service
 fi
+if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+    echo "Stop existing opensearch-performance-analyzer.service"
+    systemctl --no-reload stop opensearch-performance-analyzer.service
+fi
 # Create user and group if they do not already exist.
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent passwd %{name} > /dev/null 2>&1 || \
@@ -120,6 +124,10 @@ set -e
 if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/null; then
     echo "Stop existing %{name}.service"
     systemctl --no-reload stop %{name}.service
+fi
+if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+    echo "Stop existing opensearch-performance-analyzer.service"
+    systemctl --no-reload stop opensearch-performance-analyzer.service
 fi
 exit 0
 
