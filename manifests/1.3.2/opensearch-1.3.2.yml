@@ -6,6 +6,7 @@ build:
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
+    args: -e JAVA_HOME=/opt/java/openjdk-11
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
@@ -73,6 +74,13 @@ components:
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: '1.3'
+    working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
