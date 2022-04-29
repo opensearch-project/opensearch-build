@@ -432,19 +432,24 @@ pipeline {
                     return params.BUILD_DOCKER
                 }
             }
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
+                }
+            }
             steps {
-                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
-                    script {
-
-                        echo "env.ARTIFACT_URL_X64_TAR: ${env.ARTIFACT_URL_X64_TAR}"
-                        echo "env.ARTIFACT_URL_ARM64_TAR: ${env.ARTIFACT_URL_ARM64_TAR}"
-                        
-                        buildDockerImage(
-                            inputManifest: "manifests/${INPUT_MANIFEST}",
-                            artifactUrlX64: env.ARTIFACT_URL_X64_TAR,
-                            artifactUrlArm64: env.ARTIFACT_URL_ARM64_TAR
-                        )
-                    }
+                script {
+                    echo "env.ARTIFACT_URL_X64_TAR: ${env.ARTIFACT_URL_X64_TAR}"
+                    echo "env.ARTIFACT_URL_ARM64_TAR: ${env.ARTIFACT_URL_ARM64_TAR}"
+                    
+                    buildDockerImage(
+                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                        artifactUrlX64: env.ARTIFACT_URL_X64_TAR,
+                        artifactUrlArm64: env.ARTIFACT_URL_ARM64_TAR
+                    )
                 }
             }
         }
