@@ -53,7 +53,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
 
         assertThat(s3DownloadCommands.size(), equalTo(1))
         assertThat(s3DownloadCommands, hasItem(
-            "{file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true}".toString()
+            "{file=config.yml, bucket=test_bucket, path=test_config/config-ccr.yml, force=true}".toString()
         ))
     }
 
@@ -85,7 +85,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml     --component cross-cluster-replication".toString()
+            "./test.sh perf-test --stack test-single-security-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml     --component cross-cluster-replication".toString()
         ))
 
         def resultUploadScriptCommands = getCommandExecutions('s3Upload', 'test-results').findAll {

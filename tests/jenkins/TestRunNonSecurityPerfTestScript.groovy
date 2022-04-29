@@ -88,7 +88,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
+            "./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
         ))
 
         def resultUploadScriptCommands = getCommandExecutions('s3Upload', 'test-results').findAll {
