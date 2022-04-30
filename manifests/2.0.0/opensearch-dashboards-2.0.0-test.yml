@@ -3,7 +3,7 @@ schema-version: '1.0'
 name: OpenSearch Dashboards
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v1
+    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
 components:
   - name: OpenSearch-Dashboards
     bwc-test:
