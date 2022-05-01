@@ -7,6 +7,8 @@ pipeline {
     agent none
     triggers {
         parameterizedCron '''
+            H/10 * * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
+            H/10 * * * * %INPUT_MANIFEST=2.1.0/opensearch-dashboards-2.1.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H 1 * * * %INPUT_MANIFEST=1.3.2/opensearch-dashboards-1.3.2.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H 1 * * * %INPUT_MANIFEST=1.3.2/opensearch-1.3.2.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=2.1.0/opensearch-2.1.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
