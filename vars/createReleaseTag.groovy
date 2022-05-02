@@ -19,7 +19,12 @@ def call(Map args = [:]) {
             dir (component) {
                 checkout([$class: 'GitSCM', branches: [[name: commitID]],
                           userRemoteConfigs: [[url: repo]]])
-                def tagVersion = "$version.0"
+                def tagVersion = version
+                if (version.contains("-")) {
+                    tagVersion = version.split("-").first() + ".0-" + version.split("-").last()
+                } else {
+                    tagVersion = "$version.0"
+                }
                 if (component == "OpenSearch" || component == "OpenSearch-Dashboards" || component == "functionalTestDashboards") {
                     tagVersion = version
                 }
