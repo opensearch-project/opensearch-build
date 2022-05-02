@@ -44,6 +44,7 @@
                uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
                uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml})
                BuildManifest.asBoolean()
+               uploadTestResults.echo(Build Id: 215)
                BuildManifest.getArtifactRoot(dummy_job, 215)
                uploadTestResults.echo(Uploading to s3://DUMMY_ARTIFACT_BUCKET_NAME/dummy_job/1.2.0/215/linux/x64/tar)
                uploadTestResults.withAWS({role=opensearch-test, roleAccount=DUMMY_AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)

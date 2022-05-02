@@ -7,23 +7,19 @@ class UploadTestResultsLibTester extends LibFunctionTester {
     private String jobName
     private Integer buildNumber
 
-    public UploadTestResultsLibTester(buildManifestFileName, jobName, buildNumber) {
+    public UploadTestResultsLibTester(buildManifestFileName, jobName) {
         this.buildManifestFileName = buildManifestFileName
         this.jobName = jobName
-        this.buildNumber = buildNumber
     }
 
     void parameterInvariantsAssertions(call){
         assertThat(call.args.buildManifestFileName.first(), notNullValue())
         assertThat(call.args.jobName.first(), notNullValue())
-        assertThat(call.args.buildNumber.first(), notNullValue())
-        assert call.args.buildNumber.first().toString().isInteger()
     }
 
     boolean expectedParametersMatcher(call) {
         return call.args.buildManifestFileName.first().toString().equals(this.buildManifestFileName)
                 && call.args.jobName.first().toString().equals(this.jobName)
-                && call.args.buildNumber.first().toInteger().equals(this.buildNumber)
     }
 
     String libFunctionName() {

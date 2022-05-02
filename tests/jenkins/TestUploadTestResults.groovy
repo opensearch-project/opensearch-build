@@ -7,7 +7,7 @@ class TestUploadTestResults extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        this.registerLibTester(new UploadTestResultsLibTester( 'tests/jenkins/data/opensearch-1.3.0-build.yml', 'dummy_job', 123 ))
+        this.registerLibTester(new UploadTestResultsLibTester( 'tests/jenkins/data/opensearch-1.3.0-build.yml', 'dummy_job'))
 
         super.setUp()
     }
