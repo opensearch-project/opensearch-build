@@ -4,24 +4,28 @@ void call(Map args = [:]) {
 
     install_dependencies()
     install_opensearch_infra_dependencies()
-    config_name = isNullOrEmpty(args.conig) ? "config.yml" : args.config
+    config_name = isNullOrEmpty(args.config) ? "config.yml" : args.config
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
         s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/${config_name}", force: true)
     }
 
-    sh([
-        './test.sh',
-        'perf-test',
-        args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}" :
-        "--stack test-single-security-${args.buildId}-${args.architecture}",
-        "--bundle-manifest ${args.bundleManifest}",
-        "--config config.yml",
-        args.insecure ? "--without-security" : "",
-        isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
-        isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
-        isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
-        isNullOrEmpty(args.component) ? "" : "--component ${args.component}"
-    ].join(' '))
+    String stackNameSuffix = isNullOrEmpty(args.stackNameSuffix) ? 'perf-test' : args.stackNameSuffix
+
+    withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+        sh([
+            './test.sh',
+            'perf-test',
+            args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}-${stackNameSuffix}" :
+            "--stack test-single-security-${args.buildId}-${args.architecture}-${stackNameSuffix}",
+            "--bundle-manifest ${args.bundleManifest}",
+            "--config config.yml",
+            args.insecure ? "--without-security" : "",
+            isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
+            isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
+            isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
+            isNullOrEmpty(args.component) ? "" : "--component ${args.component}"
+        ].join(' '))
+    }
 }
 
 boolean isNullOrEmpty(String str) { return (str == null || str.allWhitespace) }

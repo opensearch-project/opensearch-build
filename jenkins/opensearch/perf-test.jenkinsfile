@@ -13,11 +13,6 @@ pipeline {
     }
     parameters {
         string(
-            name: 'GITHUB_TOKEN',
-            description: 'Github token for account access.',
-            trim: true
-        )
-        string(
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
             trim: true
@@ -57,10 +52,6 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
                     }
-                    if (GITHUB_TOKEN == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
-                    }
                     if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
@@ -93,7 +84,7 @@ pipeline {
                         }
                     }
                     when {
-                        expression { return env.HAS_SECURITY }
+                        expression { return env.HAS_SECURITY.toBoolean() }
                     }
                     steps {
                         script {
@@ -111,7 +102,8 @@ pipeline {
                                 insecure: false,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
-                                warmupIterations: WARMUP_ITERATIONS)
+                                warmupIterations: WARMUP_ITERATIONS,
+                                stackNameSuffix: env.BUILD_NUMBER)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
@@ -162,7 +154,8 @@ pipeline {
                                 insecure: true,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
-                                warmupIterations: WARMUP_ITERATIONS)
+                                warmupIterations: WARMUP_ITERATIONS,
+                                stackNameSuffix: env.BUILD_NUMBER)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
