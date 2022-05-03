@@ -2,6 +2,11 @@
 
 ## Release Highlights
 
+* Document level alerting allows users to create monitors that can generate alerts per document.
+* Lucene 9 is now used in OpenSearch
+* The Geo Map Tiles in OpenSearch Dashboards are updated and now have a pipeline to update them more frequently.
+* Document level security now supports term lookup queries.
+
 ### OpenSearch Notifications
 * OpenSearch 2.0.0 RC1 is the first official release with OpenSearch Notifications.
 * Notifications consist of three plugins, `notifications-core` and `notifications` backend plugins for OpenSearch, and a `notificationsDashboards` frontend plugin for OpenSearch Dashboards.
