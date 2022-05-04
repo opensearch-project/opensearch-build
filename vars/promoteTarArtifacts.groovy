@@ -16,78 +16,96 @@ void call(Map args = [:]) {
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
     String filename = inputManifest.build.getFilename()
     String version = inputManifest.build.version
+    String qualifier = inputManifest.build.qualifier ? '-' + inputManifest.build.qualifier : ''
+    String revision = version + qualifier
+    println("Revision: ${revision}")
 
-    def artifactPath = "${DISTRIBUTION_JOB_NAME}/${version}/${DISTRIBUTION_BUILD_NUMBER}/${DISTRIBUTION_PLATFORM}/${DISTRIBUTION_ARCHITECTURE}/tar"
+    List<String> distributionList = ["tar", "rpm"]
 
-    withAWS(role: "${ARTIFACT_DOWNLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Download(bucket: "${ARTIFACT_BUCKET_NAME}", file: "$WORKSPACE/artifacts", path: "${artifactPath}/",  force: true)
-    }
+    for (distribution in distributionList) {
 
-    String build_manifest = "artifacts/$artifactPath/builds/$filename/manifest.yml"
-    def buildManifest = readYaml(file: build_manifest)
+        // Must use local variable due to groovy for loop and closure scope
+        // Or the stage will fixed to the last item in return when trigger new stages
+        // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
+        def distribution_local = distribution
+        def artifactPath = "${DISTRIBUTION_JOB_NAME}/${revision}/${DISTRIBUTION_BUILD_NUMBER}/${DISTRIBUTION_PLATFORM}/${DISTRIBUTION_ARCHITECTURE}/${distribution_local}"
+        def prefixPath = "${WORKSPACE}/artifacts/${distribution_local}"
+        println("S3 download ${distribution_local} artifacts before creating signatures")
 
-    print("Actions ${fileActions}")
-
-    argsMap = [:]
-    argsMap['sigtype'] = '.sig'
-
-    String corePluginDir = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins"
-    boolean corePluginDirExists = fileExists(corePluginDir)
-
-    //////////// Signing Artifacts
-    println("Signing Plugins")
-
-    if(corePluginDirExists) {
-        argsMap['artifactPath'] = corePluginDir
-    } else {
-        argsMap['artifactPath'] = "$WORKSPACE/artifacts/$artifactPath/builds/$filename/plugins"
-    }
-
-    for (Closure action : fileActions) {
-        action(argsMap)
-    }
-
-    println("Signing TAR Artifacts")
-    String coreFullPath = ['core', filename, version].join('/')
-    String bundleFullPath = ['bundle', filename, version].join('/')
-    for (Closure action : fileActions) {
-        for (file in findFiles(glob: "**/${filename}-min-${version}*.tar.gz,**/${filename}-${version}*.tar.gz")) {
-            argsMap['artifactPath'] = "$WORKSPACE" + "/" + file.getPath()
-            action(argsMap)
+        withAWS(role: "${ARTIFACT_DOWNLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+            s3Download(bucket: "${ARTIFACT_BUCKET_NAME}", file: "${prefixPath}", path: "${artifactPath}/",  force: true)
         }
-    }
 
-    //////////// Uploading Artifacts
-    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        if(corePluginDirExists) {
-            List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
-            for (String pluginSubPath : corePluginList) {
-                String pluginSubFolder = pluginSubPath.split('/')[0]
-                String pluginNameWithExt = pluginSubPath.split('/')[1]
-                String pluginName = pluginNameWithExt.replace('-' + version + '.zip', '')
-                String pluginNameNoExt = pluginNameWithExt.replace('-' + version, '')
-                String pluginFullPath = ['plugins', pluginName, version].join('/')
-                s3Upload(
-                    bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-                    path: "releases/$pluginFullPath/",
-                    workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/core-plugins/",
-                    includePathPattern: "**/${pluginName}*"
-                )
+        String build_manifest = "$prefixPath/$artifactPath/builds/$filename/manifest.yml"
+        def buildManifest = readYaml(file: build_manifest)
+
+        print("Actions ${fileActions}")
+
+        argsMap = [:]
+        argsMap['sigtype'] = '.sig'
+
+        String corePluginDir = "$prefixPath/$artifactPath/builds/$filename/core-plugins"
+        boolean corePluginDirExists = fileExists(corePluginDir)
+
+        //////////// Signing Artifacts
+        println("Signing Starts")
+
+        if(corePluginDirExists && distribution_local.equals('tar')) {
+            println("Signing Core Plugins")
+            argsMap['artifactPath'] = corePluginDir
+            for (Closure action : fileActions) {
+                action(argsMap)
             }
         }
 
-        s3Upload(
-            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$coreFullPath/",
-            workingDir: "$WORKSPACE/artifacts/$artifactPath/builds/$filename/dist/",
-            includePathPattern: "**/${filename}-min-${version}*")
+        println("Signing Core/Bundle Artifacts")
+        String coreFullPath = ['core', filename, revision].join('/')
+        String bundleFullPath = ['bundle', filename, revision].join('/')
+        for (Closure action : fileActions) {
+            for (file in findFiles(glob: "**/${filename}-min-${revision}*.${distribution_local}*,**/${filename}-${revision}*.${distribution_local}*")) {
+                argsMap['artifactPath'] = "$WORKSPACE" + "/" + file.getPath()
+                action(argsMap)
+            }
+        }
 
+        //////////// Uploading Artifacts
+        withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+            // Core Plugins only needs to be published once through Tar, ignore other distributions
+            if(corePluginDirExists && distribution_local.equals('tar')) {
+                List<String> corePluginList = buildManifest.components.artifacts."core-plugins"[0]
+                for (String pluginSubPath : corePluginList) {
+                    String pluginSubFolder = pluginSubPath.split('/')[0]
+                    String pluginNameWithExt = pluginSubPath.split('/')[1]
+                    String pluginName = pluginNameWithExt.replace('-' + revision + '.zip', '')
+                    String pluginNameNoExt = pluginNameWithExt.replace('-' + revision, '')
+                    // PluginFullPath keep using version not revision due to this bug:
+                    // https://github.com/opensearch-project/OpenSearch/issues/3168
+                    String pluginFullPath = ['plugins', pluginName, version].join('/')
+                    s3Upload(
+                        bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                        path: "releases/$pluginFullPath/",
+                        workingDir: "$prefixPath/$artifactPath/builds/$filename/core-plugins/",
+                        includePathPattern: "**/${pluginName}*"
+                    )
+                }
+            }
+            
+            // We will only publish min artifacts for Tar, ignore other distributions
+            if (distribution_local.equals('tar')) {
+                s3Upload(
+                    bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                    path: "releases/$coreFullPath/",
+                    workingDir: "$prefixPath/$artifactPath/builds/$filename/dist/",
+                    includePathPattern: "**/${filename}-min-${revision}-${DISTRIBUTION_PLATFORM}-${DISTRIBUTION_ARCHITECTURE}*")
+            }
 
-        s3Upload(
-            bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
-            path: "releases/$bundleFullPath/",
-            workingDir: "$WORKSPACE/artifacts/$artifactPath/dist/$filename/",
-            includePathPattern: "**/${filename}-${version}*")
+            // We will publish bundle artifacts for all distributions
+            s3Upload(
+                bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
+                path: "releases/$bundleFullPath/",
+                workingDir: "$prefixPath/$artifactPath/dist/$filename/",
+                includePathPattern: "**/${filename}-${revision}-${DISTRIBUTION_PLATFORM}-${DISTRIBUTION_ARCHITECTURE}*")
 
+        }
     }
 }
