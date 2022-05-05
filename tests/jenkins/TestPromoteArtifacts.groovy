@@ -16,8 +16,12 @@ import java.nio.file.*
 class TestPromoteArtifacts extends BuildPipelineTest {
     private Path targetOpenSearchTar;
     private Path targetOpenSearchDashboardsTar;
+    private Path targetOpenSearchTarQualifier;
+    private Path targetOpenSearchDashboardsTarQualifier;
     private Path targetOpenSearchRpm;
     private Path targetOpenSearchDashboardsRpm;
+    private Path targetOpenSearchRpmQualifier;
+    private Path targetOpenSearchDashboardsRpmQualifier;
 
     @Override
     @Before
@@ -86,6 +90,16 @@ class TestPromoteArtifacts extends BuildPipelineTest {
             "tests/jenkins/artifacts/tar/vars-build/1.3.0/33/linux/x64/tar/builds/opensearch-dashboards/manifest.yml"
         );
 
+        targetOpenSearchTarQualifier = copy(
+            "tests/data/opensearch-build-2.0.0-rc1.yml", 
+            "tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch/manifest.yml"
+        );
+
+        targetOpenSearchDashboardsTarQualifier = copy(
+            "tests/data/opensearch-dashboards-build-2.0.0-rc1.yml", 
+            "tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch-dashboards/manifest.yml"
+        );
+
         targetOpenSearchRpm = copy(
             "tests/data/opensearch-build-1.3.0-rpm.yml", 
             "tests/jenkins/artifacts/rpm/vars-build/1.3.0/33/linux/x64/rpm/builds/opensearch/manifest.yml"
@@ -94,6 +108,16 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         targetOpenSearchDashboardsRpm = copy(
             "tests/data/opensearch-dashboards-build-1.3.0-rpm.yml", 
             "tests/jenkins/artifacts/rpm/vars-build/1.3.0/33/linux/x64/rpm/builds/opensearch-dashboards/manifest.yml"
+        );
+
+        targetOpenSearchRpmQualifier = copy(
+            "tests/data/opensearch-build-2.0.0-rc1-rpm.yml", 
+            "tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch/manifest.yml"
+        );
+
+        targetOpenSearchDashboardsRpmQualifier = copy(
+            "tests/data/opensearch-dashboards-build-2.0.0-rc1-rpm.yml", 
+            "tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch-dashboards/manifest.yml"
         );
     }
 
@@ -112,8 +136,12 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         // Test file needs to be cleaned up
         Files.delete(targetOpenSearchTar)
         Files.delete(targetOpenSearchDashboardsTar)
+        Files.delete(targetOpenSearchTarQualifier)
+        Files.delete(targetOpenSearchDashboardsTarQualifier)
         Files.delete(targetOpenSearchRpm)
         Files.delete(targetOpenSearchDashboardsRpm)
+        Files.delete(targetOpenSearchRpmQualifier)
+        Files.delete(targetOpenSearchDashboardsRpmQualifier)
     }
 
     @Test
@@ -127,6 +155,16 @@ class TestPromoteArtifacts extends BuildPipelineTest {
     }
 
     @Test
+    public void testDefaultQualifier() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifactsQualifier_Jenkinsfile")
+    }
+
+    @Test
+    public void testDefaultQualifier_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifactsQualifier_OpenSearch_Dashboards_Jenkinsfile")
+    }
+
+    @Test
     public void testWithActions() {
         super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_Jenkinsfile")
     }
@@ -134,5 +172,15 @@ class TestPromoteArtifacts extends BuildPipelineTest {
     @Test
     public void testWithActions_OpenSearch_Dashboards() {
         super.testPipeline("tests/jenkins/jobs/PromoteArtifacts_actions_OpenSearch_Dashboards_Jenkinsfile")
+    }
+
+    @Test
+    public void testWithActionsQualifier() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifactsQualifier_actions_Jenkinsfile")
+    }
+
+    @Test
+    public void testWithActionsQualifier_OpenSearch_Dashboards() {
+        super.testPipeline("tests/jenkins/jobs/PromoteArtifactsQualifier_actions_OpenSearch_Dashboards_Jenkinsfile")
     }
 }

@@ -1,0 +1,73 @@
+   PromoteArtifactsQualifier_actions_Jenkinsfile.run()
+      PromoteArtifactsQualifier_actions_Jenkinsfile.pipeline(groovy.lang.Closure)
+         PromoteArtifactsQualifier_actions_Jenkinsfile.echo(Executing on agent [label:none])
+         PromoteArtifactsQualifier_actions_Jenkinsfile.stage(promote, groovy.lang.Closure)
+            PromoteArtifactsQualifier_actions_Jenkinsfile.script(groovy.lang.Closure)
+               PromoteArtifactsQualifier_actions_Jenkinsfile.createSha512Checksums()
+               PromoteArtifactsQualifier_actions_Jenkinsfile.createSignatureFiles()
+                  createSignatureFiles.legacySCM(groovy.lang.Closure)
+                  createSignatureFiles.library({identifier=jenkins@20211123, retriever=null})
+               PromoteArtifactsQualifier_actions_Jenkinsfile.promoteTarArtifacts({manifest=tests/jenkins/data/opensearch-2.0.0-rc1.yml, fileActions=[groovy.lang.Closure, groovy.lang.Closure]})
+                  promoteTarArtifacts.legacySCM(groovy.lang.Closure)
+                  promoteTarArtifacts.library({identifier=jenkins@20211123, retriever=null})
+                  promoteTarArtifacts.readYaml({file=tests/jenkins/data/opensearch-2.0.0-rc1.yml})
+                  InputManifest.asBoolean()
+                  promoteTarArtifacts.withAWS({role=downloadRoleName, roleAccount=publicAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteTarArtifacts.s3Download({bucket=artifact-bucket, file=tests/jenkins/artifacts/tar, path=vars-build/2.0.0-rc1/33/linux/x64/tar/, force=true})
+                  promoteTarArtifacts.readYaml({file=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch/manifest.yml})
+                  promoteTarArtifacts.fileExists(tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch/core-plugins)
+                  promoteTarArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.tar*,**/opensearch-2.0.0-rc1*.tar*})
+                  promoteTarArtifacts.getPath()
+                  createSha512Checksums.sh({script=find tests/jenkins/tests/jenkins/file/found.zip -type f, returnStdout=true})
+                  createSha512Checksums.echo(Not generating sha for bbb in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
+                  createSha512Checksums.echo(Not generating sha for ccc in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
+                  promoteTarArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.tar*,**/opensearch-2.0.0-rc1*.tar*})
+                  promoteTarArtifacts.getPath()
+                  createSignatureFiles.signArtifacts({sigtype=.sig, artifactPath=tests/jenkins/tests/jenkins/file/found.zip})
+                     signArtifacts.fileExists(tests/jenkins/sign.sh)
+                     signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                     signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                     signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
+        )
+                  promoteTarArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteTarArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch/dist/, includePathPattern=**/opensearch-min-2.0.0-rc1-linux-x64*})
+                     promoteTarArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/dist/opensearch/, includePathPattern=**/opensearch-2.0.0-rc1-linux-x64*})
+                  promoteTarArtifacts.withAWS({role=downloadRoleName, roleAccount=publicAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteTarArtifacts.s3Download({bucket=artifact-bucket, file=tests/jenkins/artifacts/rpm, path=vars-build/2.0.0-rc1/33/linux/x64/rpm/, force=true})
+                  promoteTarArtifacts.readYaml({file=tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch/manifest.yml})
+                  promoteTarArtifacts.fileExists(tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch/core-plugins)
+                  promoteTarArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.rpm*,**/opensearch-2.0.0-rc1*.rpm*})
+                  promoteTarArtifacts.getPath()
+                  createSha512Checksums.sh({script=find tests/jenkins/tests/jenkins/file/found.zip -type f, returnStdout=true})
+                  createSha512Checksums.echo(Not generating sha for bbb in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
+                  createSha512Checksums.echo(Not generating sha for ccc in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
+                  promoteTarArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.rpm*,**/opensearch-2.0.0-rc1*.rpm*})
+                  promoteTarArtifacts.getPath()
+                  createSignatureFiles.signArtifacts({sigtype=.sig, artifactPath=tests/jenkins/tests/jenkins/file/found.zip})
+                     signArtifacts.fileExists(tests/jenkins/sign.sh)
+                     signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                     signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                     signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        signArtifacts.sh(
+            #!/bin/bash
+            set +x
+            export ROLE=dummy_signer_client_role
+            export EXTERNAL_ID=signer_client_external_id
+            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+            export SIGNED_BUCKET=signer_client_signed_bucket
+
+            tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
+        )
+                  promoteTarArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteTarArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/dist/opensearch/, includePathPattern=**/opensearch-2.0.0-rc1-linux-x64*})
