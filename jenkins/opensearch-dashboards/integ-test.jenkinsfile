@@ -54,7 +54,7 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image 'alpine:latest'
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }

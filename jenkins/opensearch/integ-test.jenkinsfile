@@ -57,7 +57,7 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image 'alpine:latest'
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }
@@ -68,8 +68,8 @@ pipeline {
             }
         }
         stage('integ-test') {
-            // Required to trigger multiple docker stages in agent node, not trigger docker within docker container
-            // Can only be run in runner that is at least 50GB per container so space will be an issue
+            // Required running on agent directly here to trigger docker stages in agent node, not trigger docker within docker container
+            // Can only be run in runner that is at least 50GB per container
             agent { label AGENT_LABEL }
             steps {
                 script {
@@ -91,7 +91,7 @@ pipeline {
 
                     for (component in componentList) {
                         // Must use local variable due to groovy for loop and closure scope
-                        // Or the stage will fixed to the last item in return when trigger new stages
+                        // Or the stage will be fixed to the last item in return when new stages are triggered here
                         // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
                         def local_component = component
 
@@ -106,7 +106,8 @@ pipeline {
                                             unstash 'opensearch-build-repo'
                                             // Jenkins tend to not clean up workspace at times even though ws clean is called
                                             // Due to docker is mounting the agent directory so it can communicated with the agent
-                                            // This sometimes cause the test to retain last run results and trigger build failures
+                                            // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                            // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
                                             sh("rm -rf test-results")
                                             runIntegTestScript(
                                                 jobName: BUILD_JOB_NAME,
