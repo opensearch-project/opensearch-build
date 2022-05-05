@@ -14,9 +14,9 @@ pipeline {
                 script {
                     runIntegTestScript(
                         jobName: 'dummy_job',
+                        componentName: 'OpenSearch',
                         buildManifest: 'tests/jenkins/data/opensearch-1.3.0-build.yml',
                         testManifest: 'tests/jenkins/data/opensearch-1.3.0-test.yml',
-                        buildId: '717'
                     )
                 }
             }

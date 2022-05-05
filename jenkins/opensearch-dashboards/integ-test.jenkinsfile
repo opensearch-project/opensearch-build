@@ -28,11 +28,7 @@ pipeline {
     }
     stages {
         stage('verify-parameters') {
-            agent {
-                node {
-                    label AGENT_LABEL
-                }
-            }
+            agent { label AGENT_LABEL }
             steps {
                 script {
                     currentBuild.description = TEST_MANIFEST
@@ -57,8 +53,8 @@ pipeline {
         stage('detect docker image + args') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    label AGENT_LABEL
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }
@@ -90,9 +86,9 @@ pipeline {
 
                     runIntegTestScript(
                         jobName: BUILD_JOB_NAME,
+                        componentName: 'functionalTestDashboards',
                         buildManifest: BUILD_MANIFEST,
                         testManifest: "manifests/${TEST_MANIFEST}",
-                        buildId: BUILD_ID
                     )
                 }
             }
@@ -101,8 +97,7 @@ pipeline {
                     script {
                         uploadTestResults(
                             buildManifestFileName: BUILD_MANIFEST,
-                            jobName: JOB_NAME,
-                            buildNumber: BUILD_ID
+                            jobName: JOB_NAME
                         )
                     }
                     postCleanup()

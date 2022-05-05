@@ -23,7 +23,7 @@ class TestOpenSearchBwcTest extends BuildPipelineTest {
         this.registerLibTester(new DetectTestDockerAgentLibTester())
         this.registerLibTester(new DownloadBuildManifestLibTester(buildManifestUrl, buildManifest))
         this.registerLibTester(new RunBwcTestScriptLibTester(jobName, buildManifest, "manifests/${testManifest}", "${buildId}"))
-        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName, buildId))
+        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName))
         this.registerLibTester(new PublishNotificationLibTester(
                 ':white_check_mark:',
                 'BWC Tests Successful',

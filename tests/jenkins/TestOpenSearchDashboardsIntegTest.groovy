@@ -22,8 +22,8 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         this.registerLibTester(new DetectTestDockerAgentLibTester())
         this.registerLibTester(new DownloadBuildManifestLibTester(buildManifestUrl, buildManifest))
-        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, buildManifest, "manifests/${testManifest}", "${buildId}"))
-        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName, buildId))
+        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, 'functionalTestDashboards', buildManifest, "manifests/${testManifest}"))
+        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName))
         this.registerLibTester(new PublishNotificationLibTester(
                 ':white_check_mark:',
                 'Integration Tests Successful',
@@ -48,6 +48,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod('unstash', [String.class], null)
     }
 
     @Test

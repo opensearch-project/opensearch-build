@@ -1,17 +1,26 @@
 void call(Map args = [:]) {
-    String jobName = args.jobName ?: 'distribution-build-opensearch'
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+    String jobName = args.jobName ?: 'distribution-build-opensearch'
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
-    String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
+
+    String buildId = buildManifest.build.id
+    echo "Build Id: ${buildId}"
+
+    String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, buildId)
     echo "Artifact root URL: ${artifactRootUrl}"
 
     String paths = generatePaths(buildManifest, artifactRootUrl)
     echo "Paths: ${paths}"
 
+    String component = args.componentName
+    echo "Component: ${component}"
+
     sh([
         './test.sh',
         'integ-test',
         "${args.testManifest}",
+        "--component ${component}",
         '--test-run-id 1',
         "--paths ${paths}",
     ].join(' '))
@@ -22,9 +31,9 @@ String generatePaths(buildManifest, artifactRootUrl) {
     String version = buildManifest.build.version
     String platform = buildManifest.build.platform
     String architecture = buildManifest.build.architecture
+    String distribution = buildManifest.build.distribution
     
-    // only support tar for now. will use parameter for distribution in https://github.com/opensearch-project/opensearch-build/issues/1857
-    String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/latest/${platform}/${architecture}/tar"
+    String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/latest/${platform}/${architecture}/${distribution}"
     return name == 'OpenSearch' ? 
         "opensearch=${artifactRootUrl}" :
         "opensearch=${latestOpenSearchArtifactRootUrl} opensearch-dashboards=${artifactRootUrl}"

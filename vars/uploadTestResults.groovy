@@ -3,7 +3,10 @@ void call(Map args = [:]) {
     
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifestFileName))
 
-    def artifactPath = buildManifest.getArtifactRoot(args.jobName, args.buildNumber)
+    String buildId = buildManifest.build.id
+    echo "Build Id: ${buildId}"
+
+    def artifactPath = buildManifest.getArtifactRoot(args.jobName, buildId)
     echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {

@@ -31,11 +31,7 @@ pipeline {
     }
     stages {
         stage('verify-parameters') {
-            agent {
-                node {
-                    label AGENT_LABEL
-                }
-            }
+            agent { label AGENT_LABEL }
             steps {
                 script {
                     currentBuild.description = TEST_MANIFEST
@@ -60,8 +56,8 @@ pipeline {
         stage('detect docker image + args') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    label AGENT_LABEL
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }
@@ -72,42 +68,73 @@ pipeline {
             }
         }
         stage('integ-test') {
-            agent {
-                docker {
-                    label AGENT_LABEL
-                    image DOCKER_AGENT.image
-                    args DOCKER_AGENT.args
-                    alwaysPull true
-                }
-            }
+            // Required running on agent directly here to trigger docker stages in agent node, not trigger docker within docker container
+            // Can only be run in runner that is at least 50GB per container
+            agent { label AGENT_LABEL }
             steps {
                 script {
-                    def buildManifestObj = downloadBuildManifest(
+
+                    downloadBuildManifest(
                         url: BUILD_MANIFEST_URL,
                         path: BUILD_MANIFEST
                     )
-                    String buildId = buildManifestObj.getArtifactBuildId()
-                    env.BUILD_ID = buildId
-                    echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
-                    echo "BUILD_ID: ${BUILD_ID}"
 
-                    runIntegTestScript(
-                        jobName: BUILD_JOB_NAME,
-                        buildManifest: BUILD_MANIFEST,
-                        testManifest: "manifests/${TEST_MANIFEST}",
-                        buildId: BUILD_ID
-                    )
+                    // Stash the current working directory files, aka opensearch-build repo
+                    // Unstash later in each triggered stage to run integTest
+                    stash includes: '**', name: 'opensearch-build-repo'
+
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    def componentList = buildManifestObj.getNames()
+                    echo "componentList: ${componentList}"
+
+                    componentTests = [:]
+
+                    for (component in componentList) {
+                        // Must use local variable due to groovy for loop and closure scope
+                        // Or the stage will be fixed to the last item in return when new stages are triggered here
+                        // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
+                        def local_component = component
+
+                        echo "Add Component: ${local_component}"
+                        componentTests["Run Integtest ${local_component}"] = {
+                            // Using scripted pipelines to trigger dynamic parallel stages
+                            node(AGENT_LABEL) {
+                                docker.image(DOCKER_AGENT.image).inside(DOCKER_AGENT.args) {
+                                    try {
+                                        stage("Run Integtest ${local_component}") {
+                                            echo "Component Name: ${local_component}"
+                                            unstash 'opensearch-build-repo'
+                                            // Jenkins tend to not clean up workspace at times even though ws clean is called
+                                            // Due to docker is mounting the agent directory so it can communicated with the agent
+                                            // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                            // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
+                                            sh("rm -rf test-results")
+                                            runIntegTestScript(
+                                                jobName: BUILD_JOB_NAME,
+                                                componentName: "${local_component}",
+                                                buildManifest: BUILD_MANIFEST,
+                                                testManifest: "manifests/${TEST_MANIFEST}"
+                                            )
+                                        }
+                                    } catch (e) {
+                                        echo "Error running integtest for component ${local_component}"
+                                        throw e
+                                    } finally {
+                                        uploadTestResults(
+                                            buildManifestFileName: BUILD_MANIFEST,
+                                            jobName: JOB_NAME
+                                        )
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    parallel componentTests
                 }
             }
             post {
                 always {
-                    script {
-                        uploadTestResults(
-                            buildManifestFileName: BUILD_MANIFEST,
-                            jobName: JOB_NAME,
-                            buildNumber: BUILD_ID
-                        )
-                    }
                     postCleanup()
                 }
             }
