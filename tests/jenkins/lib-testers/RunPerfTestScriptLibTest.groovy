@@ -49,6 +49,8 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
         binding.setVariable('BUILD_URL', 'test://artifact.url')
         binding.setVariable('BUNDLE_MANIFEST', bundleManifest)
         binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
+        binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
         binding.setVariable('HAS_SECURITY', security)
         binding.setVariable('JOB_NAME', 'perf-test')
