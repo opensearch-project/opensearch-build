@@ -78,9 +78,7 @@ void call(Map args = [:]) {
                     String pluginNameWithExt = pluginSubPath.split('/')[1]
                     String pluginName = pluginNameWithExt.replace('-' + revision + '.zip', '')
                     String pluginNameNoExt = pluginNameWithExt.replace('-' + revision, '')
-                    // PluginFullPath keep using version not revision due to this bug:
-                    // https://github.com/opensearch-project/OpenSearch/issues/3168
-                    String pluginFullPath = ['plugins', pluginName, version].join('/')
+                    String pluginFullPath = ['plugins', pluginName, revision].join('/')
                     s3Upload(
                         bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}",
                         path: "releases/$pluginFullPath/",
