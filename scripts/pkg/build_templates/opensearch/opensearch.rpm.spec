@@ -4,7 +4,9 @@
 # Disable brp-java-repack-jars, so jars will not be decompressed and repackaged
 %define __jar_repack 0
 
-# Generate digests
+# Generate digests, 8 means algorithm of sha256
+# This is different from rpm sig algorithm
+# Requires rpm version 4.12 + to generate but b/c run on older versions
 %define _source_filedigest_algorithm 8
 %define _binary_filedigest_algorithm 8
 
