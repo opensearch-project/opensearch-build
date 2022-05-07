@@ -4,6 +4,10 @@
 # Disable brp-java-repack-jars, so jars will not be decompressed and repackaged
 %define __jar_repack 0
 
+# Generate digests
+%define _source_filedigest_algorithm 8
+%define _binary_filedigest_algorithm 8
+
 # User Define Variables
 %define product_dir %{_datadir}/%{name}
 %define config_dir %{_sysconfdir}/%{name}
