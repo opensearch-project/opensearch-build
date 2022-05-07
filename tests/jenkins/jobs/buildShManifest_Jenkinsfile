@@ -1,0 +1,28 @@
+pipeline {
+    agent none
+    stages {
+        stage('Test build manifest jenkins var') {
+            steps {
+                script {
+                    try {
+                        def status = buildManifest(
+                                componentName: "job-scheduler",
+                                inputManifest: "manifests/2.0.0/opensearch-2.0.0.yml",
+                                distribution: "tar",
+                                snapshot: true
+                        )
+                        if (status > 0) {
+                            currentBuild.result = 'UNSTABLE'
+                        }else {
+                           currentBuild.result = 'SUCCESS'
+                        }
+                    } catch (Exception err) {
+                        println(err)
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+    }
+}
+

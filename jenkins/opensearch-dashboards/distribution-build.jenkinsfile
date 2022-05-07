@@ -13,6 +13,11 @@ pipeline {
     }
     parameters {
         string(
+            name: 'COMPONENT_NAME',
+            description: 'If this field contains a component name (e.g. OpenSearch-Dashboards), will build with "--component <COMPONENT_NAME>", else build everything in the INPUT_MANIFEST.',
+            trim: true
+        )
+        string(
             name: 'INPUT_MANIFEST',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0.yml.',
             trim: true
@@ -49,8 +54,8 @@ pipeline {
         stage('detect docker image + args') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    label AGENT_X64
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }
@@ -75,6 +80,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64',
@@ -161,6 +167,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64',
@@ -221,6 +228,7 @@ pipeline {
                             steps {
                                 script {
                                     buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
@@ -246,6 +254,7 @@ pipeline {
                             steps {
                                 script {
                                     def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
@@ -336,6 +345,7 @@ pipeline {
                             steps {
                                 script {
                                     buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
@@ -361,6 +371,7 @@ pipeline {
                             steps {
                                 script {
                                     def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
@@ -498,3 +509,4 @@ pipeline {
         }
     }
 }
+
