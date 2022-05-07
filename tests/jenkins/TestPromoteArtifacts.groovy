@@ -10,7 +10,6 @@ package jenkins.tests
 
 import org.junit.*
 import java.util.*
-//import java.io.File
 import java.nio.file.*
 
 class TestPromoteArtifacts extends BuildPipelineTest {
