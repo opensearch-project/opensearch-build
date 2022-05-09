@@ -1,7 +1,0 @@
-   buildShManifest_Jenkinsfile.run()
-      buildShManifest_Jenkinsfile.pipeline(groovy.lang.Closure)
-         buildShManifest_Jenkinsfile.echo(Executing on agent [label:none])
-         buildShManifest_Jenkinsfile.stage(Test build manifest jenkins var, groovy.lang.Closure)
-            buildShManifest_Jenkinsfile.script(groovy.lang.Closure)
-               buildShManifest_Jenkinsfile.buildManifest({componentName=job-scheduler, inputManifest=manifests/2.0.0/opensearch-2.0.0.yml, distribution=tar, snapshot=true})
-                  buildManifest.sh(./build.sh manifests/2.0.0/opensearch-2.0.0.yml -d tar --component job-scheduler --snapshot)

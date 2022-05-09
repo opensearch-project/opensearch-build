@@ -14,7 +14,7 @@ class TestbuildManifestVar extends BuildPipelineTest {
     
     @Test
     void testbuildManifest() {
-        super.testPipeline("tests/jenkins/jobs/buildShManifest_Jenkinsfile")
+        super.testPipeline("tests/jenkins/jobs/BuildShManifest_Jenkinsfile")
     }
 }
 
