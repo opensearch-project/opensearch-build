@@ -38,6 +38,12 @@ components:
       additional-cluster-configs:
         plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
 
+  - name: cross-cluster-replication
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
   - name: notifications
     working-directory: notifications
     integ-test:
