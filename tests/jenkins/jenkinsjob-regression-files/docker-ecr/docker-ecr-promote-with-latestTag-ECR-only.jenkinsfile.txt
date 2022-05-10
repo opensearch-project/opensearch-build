@@ -15,6 +15,7 @@
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/p5f6l6i3
                 gcrane cp opensearchstaging/ci-runner-staging:1.3.0 public.ecr.aws/p5f6l6i3/ci-runner-staging:1.3.0
             )
+               docker-ecr-promote.echo(Tagging with latest.)
                docker-ecr-promote.copyContainer({sourceImagePath=opensearchstaging/ci-runner-staging:1.3.0, destinationImagePath=public.ecr.aws/p5f6l6i3/ci-runner-staging:latest, destinationType=ecr, destinationCredentialIdentifier=public.ecr.aws/p5f6l6i3, accountName=aws_account_artifact})
                   copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
                   copyContainer.sh(docker logout)
