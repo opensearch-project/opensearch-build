@@ -8,6 +8,11 @@ pipeline {
     }
     parameters {
         string(
+            name: 'COMPONENT_NAME',
+            description: 'If this field contains a component name (e.g. OpenSearch), will build with "--component <COMPONENT_NAME>", else build everything in the INPUT_MANIFEST.',
+            trim: true
+        )
+        string(
             name: 'INPUT_MANIFEST',
             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
             trim: true
@@ -44,8 +49,8 @@ pipeline {
         stage('detect docker image + args') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    label AGENT_X64
+                    image 'alpine:3'
                     alwaysPull true
                 }
             }
@@ -64,7 +69,7 @@ pipeline {
                     }
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -73,6 +78,7 @@ pipeline {
                     steps {
                         script {
                             buildManifest(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: 'tar',
                                 snapshot: true
@@ -103,7 +109,7 @@ pipeline {
                 stage('build-snapshot-arm64-tar') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                            label AGENT_ARM64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -112,6 +118,7 @@ pipeline {
                     steps {
                         script {
                             buildManifest(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: 'tar',
                                 snapshot: true
@@ -141,6 +148,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: "tar"
                             )
@@ -225,6 +233,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: "rpm"
                             )
@@ -280,6 +289,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: "tar"
                             )
@@ -363,6 +373,7 @@ pipeline {
                     steps {
                         script {
                             def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: "rpm"
                             )
@@ -497,3 +508,4 @@ pipeline {
         }
     }
 }
+
