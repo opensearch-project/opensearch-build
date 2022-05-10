@@ -76,7 +76,7 @@ The following options are available in `build.sh`.
 
 ### Custom Build Scripts
 
-Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](../../scripts/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/default/opensearch/build.sh](../../scripts/default/opensearch/build.sh).
+Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](../../scripts/components), then in the checked-out repository in `scripts/build.sh`, then default to a Gradle build implemented in [scripts/default/opensearch/build.sh](../../scripts/default/opensearch/build.sh).
 
 ### Avoiding Rebuilds
 
