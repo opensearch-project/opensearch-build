@@ -59,11 +59,15 @@ class TestBuildArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_component_default(self) -> None:
-        self.assertIsNone(BuildArgs().component)
+        self.assertIsNone(BuildArgs().components)
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_component(self) -> None:
-        self.assertEqual(BuildArgs().component, "xyz")
+        self.assertEqual(BuildArgs().components, ["xyz"])
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--component", "foo", "bar"])
+    def test_components(self) -> None:
+        self.assertEqual(BuildArgs().components, ["foo", "bar"])
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_platform_default(self) -> None:

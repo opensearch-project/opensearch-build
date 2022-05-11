@@ -11,17 +11,17 @@ class TestSignArtifacts(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
     @patch("sign_workflow.signer.Signer", return_value=MagicMock())
     def test_from_path_method(self, mock_signer, *mocks):
-        component = 'maven'
+        components = ['maven']
         artifact_type = 'dummy'
         sigtype = '.asc'
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignExistingArtifactsDir), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), component, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, mock_signer)
         self.assertEqual(type(SignArtifactsExistingArtifactFile), type(klass.__class__))
 
     def test_signer_class(self):
@@ -43,7 +43,7 @@ class TestSignArtifacts(unittest.TestCase):
         signer = MagicMock()
         signer_with_manifest = SignWithBuildManifest(
             target=manifest,
-            component="",
+            components=[],
             artifact_type="maven",
             signature_type=sigtype,
             signer=signer
@@ -65,7 +65,7 @@ class TestSignArtifacts(unittest.TestCase):
         signer = MagicMock()
         signer_with_manifest = SignArtifactsExistingArtifactFile(
             target=path,
-            component='maven',
+            components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
             signer=signer
@@ -83,7 +83,7 @@ class TestSignArtifacts(unittest.TestCase):
         signer = MagicMock()
         signer_with_manifest = SignExistingArtifactsDir(
             target=path,
-            component='maven',
+            components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
             signer=signer

@@ -10,14 +10,15 @@ import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
+from typing import List
 
 from manifests.build_manifest import BuildManifest
 
 
 class SignArtifacts:
-    def __init__(self, target: Path, component, artifact_type, signature_type, signer):
+    def __init__(self, target: Path, components: List[str], artifact_type, signature_type, signer):
         self.target = target
-        self.component = component
+        self.components = components
         self.artifact_type = artifact_type
         self.signature_type = signature_type
         self.signer = signer
@@ -46,9 +47,9 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, component, artifact_type, signature_type, signer):
+    def from_path(self, path: Path, components: List[str], artifact_type, signature_type, signer):
         klass = self.__signer_class__(path)
-        return klass(path, component, artifact_type, signature_type, signer)
+        return klass(path, components, artifact_type, signature_type, signer)
 
 
 class SignWithBuildManifest(SignArtifacts):
@@ -56,7 +57,7 @@ class SignWithBuildManifest(SignArtifacts):
     def __sign__(self):
         manifest = BuildManifest.from_file(self.target.open("r"))
         basepath = self.target.parent
-        for component in manifest.components.select(focus=self.component):
+        for component in manifest.components.select(focus=self.components):
             logging.info(f"Signing {component.name}")
 
             for component_artifact_type in component.artifacts:

@@ -28,7 +28,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch Dashboards")
         self.assertEqual(manifest.build.filename, "opensearch-dashboards")
         self.assertEqual(manifest.build.version, "1.1.1")
-        self.assertEqual(len(list(manifest.components.select(focus="alertingDashboards"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["alertingDashboards"]))), 1)
         opensearch_component: InputComponentFromDist = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
         self.assertIsInstance(opensearch_component, InputComponentFromDist)
         self.assertEqual(opensearch_component.name, "OpenSearch-Dashboards")
@@ -49,7 +49,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.0.0")
-        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertIsInstance(opensearch_component, InputComponentFromSource)
         self.assertEqual(opensearch_component.name, "OpenSearch")
@@ -68,7 +68,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.1.0")
-        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         # opensearch component
         opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
@@ -100,7 +100,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028")
         self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot")
         self.assertNotEqual(len(manifest.components), 0)
-        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         # opensearch component
         opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
@@ -139,15 +139,15 @@ class TestInputManifest(unittest.TestCase):
     def test_select(self) -> None:
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path)
-        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         self.assertNotEqual(len(list(manifest.components.select(platform="windows"))), 0)
-        self.assertEqual(len(list(manifest.components.select(focus="k-NN", platform="linux"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["k-NN"], platform="linux"))), 1)
 
     def test_select_none(self) -> None:
         path = os.path.join(self.manifests_path, "1.1.0", "opensearch-1.1.0.yml")
         manifest = InputManifest.from_path(path)
         with self.assertRaises(ValueError) as ctx:
-            self.assertEqual(len(list(manifest.components.select(focus="k-NN", platform="windows"))), 0)
+            self.assertEqual(len(list(manifest.components.select(focus=["k-NN"], platform="windows"))), 0)
         self.assertEqual(str(ctx.exception), "No components matched focus=k-NN, platform=windows.")
 
     def test_component___matches__(self) -> None:
@@ -164,8 +164,10 @@ class TestInputManifest(unittest.TestCase):
     def test_component___matches_focus__(self) -> None:
         component = InputComponent({"name": "x", "repository": "", "ref": ""})
         self.assertTrue(component.__matches__(focus=None))
-        self.assertTrue(component.__matches__(focus="x"))
-        self.assertFalse(component.__matches__(focus="y"))
+        self.assertTrue(component.__matches__(focus=[]))
+        self.assertTrue(component.__matches__(focus=["x"]))
+        self.assertTrue(component.__matches__(focus=["x", "y"]))
+        self.assertFalse(component.__matches__(focus=["y"]))
 
     @patch("subprocess.check_output")
     def test_stable(self, mock_output: Mock) -> None:
