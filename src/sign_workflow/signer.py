@@ -18,7 +18,7 @@ The signed artifacts will be found in the same location as the original artifact
 
 
 class Signer:
-    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate"]
+    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
 
     def __init__(self):
         self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")

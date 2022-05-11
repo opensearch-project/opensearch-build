@@ -45,7 +45,8 @@ pipeline {
             }
             steps {
                 script {
-                    promoteTarArtifacts(
+                    currentBuild.description = "${DISTRIBUTION_BUILD_NUMBER} ${DISTRIBUTION_PLATFORM} ${DISTRIBUTION_ARCHITECTURE} ${INPUT_MANIFEST}"
+                    promoteArtifacts(
                         fileActions: [createSha512Checksums(), createSignatureFiles()]
                     )
                 }
