@@ -47,27 +47,22 @@ pipeline {
             steps {
                 script {
                     params.IMAGE_TAG.split("\\r?\\n").each { param ->
-                        if(param.isEmpty()) {
-                            println "Tag: ${param} is Blank"
-                        }
-                        else {
-                            println "Tag: ${param}"
-                            /*copyContainer(
+                        println "Tag: ${param}"
+                        /*copyContainer(
+                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
+                            destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${param}",
+                            destinationType: "docker",
+                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                        )
+                        if("$TAG_LATEST".toBoolean()){
+                            echo "Tagging with latest."
+                            copyContainer(
                                 sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
-                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${param}",
+                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
                                 destinationType: "docker",
                                 destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                             )
-                            if("$TAG_LATEST".toBoolean()){
-                                echo "Tagging with latest."
-                                copyContainer(
-                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
-                                    destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
-                                    destinationType: "docker",
-                                    destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                                )
-                            }*/
-                        }
+                        }*/
                     }
                 }
             }
@@ -79,29 +74,24 @@ pipeline {
             steps {
                 script {
                     params.IMAGE_TAG.split("\\r?\\n").each { param ->
-                        if(param.isEmpty()) {
-                            println "Tag: ${param} is Blank"
-                        }
-                        else {
-                            println "Tag: ${param}"
-                            /*copyContainer(
+                        println "Tag: ${param}"
+                        /*copyContainer(
+                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
+                            destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${param}",
+                            destinationType: "ecr",
+                            destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
+                            accountName: "${AWS_ACCOUNT_ARTIFACT}"
+                        )
+                        if("$TAG_LATEST".toBoolean()){
+                            echo "Tagging with latest."
+                            copyContainer(
                                 sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
-                                destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${param}",
+                                destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
                                 destinationType: "ecr",
                                 destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
                                 accountName: "${AWS_ACCOUNT_ARTIFACT}"
                             )
-                            if("$TAG_LATEST".toBoolean()){
-                                echo "Tagging with latest."
-                                copyContainer(
-                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${param}",
-                                    destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
-                                    destinationType: "ecr",
-                                    destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
-                                    accountName: "${AWS_ACCOUNT_ARTIFACT}"
-                                )
-                            }*/
-                        }
+                        }*/
                     }
                 }
             }
