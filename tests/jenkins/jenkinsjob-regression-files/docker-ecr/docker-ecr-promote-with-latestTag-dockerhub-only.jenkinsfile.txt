@@ -15,6 +15,7 @@
                 docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
                 gcrane cp opensearchstaging/ci-runner-staging:1.3.0 opensearchproject/ci-runner-staging:1.3.0
             )
+               docker-ecr-promote.echo(Tagging with latest.)
                docker-ecr-promote.copyContainer({sourceImagePath=opensearchstaging/ci-runner-staging:1.3.0, destinationImagePath=opensearchproject/ci-runner-staging:latest, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
                   copyContainer.sh({script=test -f /usr/local/bin/gcrane && echo '1' || echo '0' , returnStdout=true})
                   copyContainer.sh(docker logout)

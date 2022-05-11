@@ -22,8 +22,9 @@ class TestDockerPromoteWithEcrOnlyJob extends BuildPipelineTest {
         binding.setVariable('IMAGE_REPOSITORY', imageRepository)
         binding.setVariable('IMAGE_TAG', imageTag)
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', accountName)
-        binding.setVariable('PLATFORM', 'ECR')
-        binding.setVariable('TAG_LATEST', 'false')
+        binding.setVariable('DOCKER_HUB', false)
+        binding.setVariable('ECR', true)
+        binding.setVariable('TAG_LATEST', false)
 
     }
 
