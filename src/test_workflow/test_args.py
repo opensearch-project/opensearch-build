@@ -17,14 +17,14 @@ from test_workflow.test_kwargs import TestKwargs
 
 
 class TestArgs:
-    test_run_id: int
+    test_run_id: str
     components: List[str]
     keep: bool
     logging_level: int
     test_manifest_path: str
     paths: dict
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("test_manifest_path", type=TestArgsPathValidator.validate, help="Specify a test manifest path.")
         parser.add_argument("-p", "--paths", nargs='*', action=TestKwargs, default={}, help="Specify paths for OpenSearch and OpenSearch Dashboards.")

@@ -6,7 +6,7 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
 from test_workflow.integ_test.service import ServiceTerminationResult
@@ -15,7 +15,7 @@ from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 class LocalTestClusterTests(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         mock_manifest = MagicMock()
         mock_manifest.build.version = "1.1.0"
         mock_manifest.build.distribution = "tar"
@@ -28,11 +28,11 @@ class LocalTestClusterTests(unittest.TestCase):
         self.component_test_config = "test_config"
         self.additional_cluster_config = {"script.context.field.max_compilations_rate": "1000/1m"}
         self.save_logs = ""
-        self.dependency_installer = ""
-        self.test_recorder = ""
+        self.dependency_installer = None
+        self.test_recorder = None
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_start(self, mock_service):
+    def test_start(self, mock_service: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -67,7 +67,7 @@ class LocalTestClusterTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
     @patch("test_workflow.test_cluster.TestResultData")
-    def test_terminate(self, mock_test_result_data, mock_service):
+    def test_terminate(self, mock_test_result_data: Mock, mock_service: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -88,7 +88,12 @@ class LocalTestClusterTests(unittest.TestCase):
 
         mock_log_files = MagicMock()
 
-        mock_service_object.terminate.return_value = ServiceTerminationResult(123, "test stdout_data", "test stderr_data", mock_log_files)
+        mock_service_object.terminate.return_value = ServiceTerminationResult(
+            123,
+            "test stdout_data",
+            "test stderr_data",
+            mock_log_files
+        )
 
         mock_test_result_data_object = MagicMock()
         mock_test_result_data.return_value = mock_test_result_data_object
@@ -109,7 +114,7 @@ class LocalTestClusterTests(unittest.TestCase):
         mock_local_cluster_logs.save_test_result_data.assert_called_once_with(mock_test_result_data_object)
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_terminate_service_not_initialized(self, mock_service):
+    def test_terminate_service_not_initialized(self, mock_service: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -133,7 +138,7 @@ class LocalTestClusterTests(unittest.TestCase):
         self.assertEqual(str(ctx.exception), "Service is not initialized")
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_endpoint_port(self, mock_service):
+    def test_endpoint_port(self, mock_service: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -152,5 +157,5 @@ class LocalTestClusterTests(unittest.TestCase):
             mock_test_recorder
         )
 
-        self.assertEqual(cluster.endpoint(), "localhost")
-        self.assertEqual(cluster.port(), 9200)
+        self.assertEqual(cluster.endpoint, "localhost")
+        self.assertEqual(cluster.port, 9200)

@@ -6,7 +6,8 @@
 
 import os
 import unittest
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -15,11 +16,11 @@ from run_sign import main
 
 class TestRunSign(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def capfd(self, capfd):
+    def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_sign.py", "--help"])
-    def test_usage(self, *mocks):
+    def test_usage(self, *mocks: Any) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -33,7 +34,7 @@ class TestRunSign(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
     @patch("run_sign.SignArtifacts")
     @patch("run_sign.Signer")
-    def test_main(self, mock_signer, mock_sign_artifacts, *mocks):
+    def test_main(self, mock_signer: Mock, mock_sign_artifacts: Mock, *mocks: Any) -> None:
         main()
 
         mock_sign_artifacts.from_path.assert_called_once()

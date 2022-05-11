@@ -26,14 +26,14 @@ class Distribution(ABC):
 
     @property
     @abstractmethod
-    def config_dir(self, bundle_name: str) -> str:
+    def config_dir(self) -> str:
         """
         Return the config directory for the distribution
         """
         pass
 
     @abstractmethod
-    def install(self) -> None:
+    def install(self, bundle_name: str) -> None:
         """
         The detailed method to install the distribution before start the service
         """

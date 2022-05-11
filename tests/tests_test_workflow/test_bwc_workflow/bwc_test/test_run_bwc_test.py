@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 from manifests.test_manifest import TestManifest
@@ -23,7 +24,7 @@ class TestRunBwcTest(unittest.TestCase):
             "--paths",
             "opensearch=" + os.path.join(os.path.dirname(__file__), "..", "..", "data", "remote")
         ])
-    def test_run_bwc_test(self, *mock):
+    def test_run_bwc_test(self, *mock: Any) -> None:
 
         mock_runner = MagicMock()
         mock_result = MagicMock()
@@ -32,7 +33,7 @@ class TestRunBwcTest(unittest.TestCase):
         mock_runner.run.return_value = mock_result
         mock_from_test_manifest = MagicMock()
         mock_from_test_manifest.return_value = mock_runner
-        BwcTestRunners.from_test_manifest = mock_from_test_manifest
+        BwcTestRunners.from_test_manifest = mock_from_test_manifest  # type: ignore
 
         main()
 

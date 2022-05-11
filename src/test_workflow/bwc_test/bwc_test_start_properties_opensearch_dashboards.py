@@ -8,5 +8,5 @@ from test_workflow.bwc_test.bwc_test_start_properties import BwcTestStartPropert
 
 
 class BwcTestStartPropertiesOpenSearchDashboards(BwcTestStartProperties):
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         super().__init__(path, "builds/opensearch-dashboards/manifest.yml", "dist/opensearch-dashboards/manifest.yml")

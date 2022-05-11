@@ -16,13 +16,13 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.stack_name = "stack"
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345",
                        "AccountId": "12345678", "Region": "us-west-2", "Role": "role-arn"}}
 
-    def test_single_node_cluster(self):
+    def test_single_node_cluster(self) -> None:
         test_cluster = PerfSingleNodeCluster(
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 1, 0, 0, 0), current_workspace="current_workspace")
@@ -31,13 +31,13 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
         self.assertTrue("stack_name" in test_cluster.params)
         self.assertTrue("data_node_count" not in test_cluster.params)
 
-    def test_single_node_cluster_invalid_configuration(self):
+    def test_single_node_cluster_invalid_configuration(self) -> None:
         self.assertRaises(
             AssertionError, PerfSingleNodeCluster,
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 1, 1, 0, 0), current_workspace="current_workspace")
 
-    def test_single_node_cluster_public_ip(self):
+    def test_single_node_cluster_public_ip(self) -> None:
         test_cluster = PerfSingleNodeCluster(
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(False, 1, 0, 0, 0), current_workspace="current_workspace")
@@ -53,7 +53,7 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
         self.assertTrue(test_cluster.is_endpoint_public)
         self.assertEqual(test_cluster.endpoint, "3.0.0.0")
 
-    def test_single_node_cluster_private_ip(self):
+    def test_single_node_cluster_private_ip(self) -> None:
         test_cluster = PerfSingleNodeCluster(
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 1, 0, 0, 0), current_workspace="current_workspace")
@@ -68,10 +68,9 @@ class TestPerfSingleNodeCluster(unittest.TestCase):
         self.assertFalse(test_cluster.is_endpoint_public)
         self.assertEqual(test_cluster.endpoint, "127.0.0.1")
 
-    def test_cdk_failure_scenarios(self):
+    def test_cdk_failure_scenarios(self) -> None:
         test_cluster = PerfSingleNodeCluster(
             bundle_manifest=self.manifest, config=self.config, stack_name=self.stack_name,
             cluster_config=PerfTestClusterConfig(True, 1, 0, 0, 0), current_workspace="current_workspace")
 
-        cdk_output = {self.stack_name: {}}
-        self.assertRaises(RuntimeError, test_cluster.create_endpoint, cdk_output)
+        self.assertRaises(RuntimeError, test_cluster.create_endpoint, {self.stack_name: {}})

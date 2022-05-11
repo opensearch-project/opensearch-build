@@ -7,6 +7,7 @@
 import os
 import stat
 import unittest
+from pathlib import Path
 
 from system.temporary_directory import TemporaryDirectory
 
@@ -44,3 +45,8 @@ class TestTemporaryDirectory(unittest.TestCase):
         with TemporaryDirectory():
             self.assertEqual(before_dir, os.getcwd())
         self.assertEqual(before_dir, os.getcwd())
+
+    def test_path(self) -> None:
+        with TemporaryDirectory() as work_dir:
+            self.assertIsInstance(work_dir.path, Path)
+            self.assertTrue(work_dir.path.exists())

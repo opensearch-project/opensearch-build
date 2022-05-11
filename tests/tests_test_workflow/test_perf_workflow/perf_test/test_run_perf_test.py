@@ -6,7 +6,8 @@
 
 import os
 import unittest
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import Mock, patch
 
 from run_perf_test import main
 
@@ -32,7 +33,7 @@ class TestRunPerfTest(unittest.TestCase):
     )
     @patch("test_workflow.perf_test.perf_test_runners.PerfTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.perf_test.perf_test_runners.PerfTestRunnerOpenSearch.run_tests")
-    def test_run_perf_test(self, os_mock_runner, plugin_mock_runner, *mock):
+    def test_run_perf_test(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
         main()
         self.assertEqual(1, os_mock_runner.call_count)
         self.assertEqual(0, plugin_mock_runner.call_count)
@@ -59,7 +60,7 @@ class TestRunPerfTest(unittest.TestCase):
     )
     @patch("test_workflow.perf_test.perf_test_runners.PerfTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.perf_test.perf_test_runners.PerfTestRunnerOpenSearch.run_tests")
-    def test_run_perf_test_plugins(self, os_mock_runner, plugin_mock_runner, *mock):
+    def test_run_perf_test_plugins(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
         main()
         self.assertEqual(0, os_mock_runner.call_count)
         self.assertEqual(1, plugin_mock_runner.call_count)

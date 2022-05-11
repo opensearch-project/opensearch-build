@@ -1,22 +1,24 @@
-from sortedcontainers import SortedDict  # type: ignore
+from sortedcontainers import SortedDict
+
+from test_workflow.test_result.test_result import TestResult  # type: ignore
 
 
 class TestComponentResults(SortedDict):
-    def __init__(self):
+    def __init__(self) -> None:
         super(TestComponentResults, self).__init__()
 
-    def __append__(self, result):
+    def __append__(self, result: TestResult) -> None:
         self.__setitem__(result.config, result)
 
-    def append(self, result):
+    def append(self, result: TestResult) -> None:
         self.__append__(result)
 
-    def log(self):
+    def log(self) -> None:
         for result in self.values():
             result.log(str(result))
 
     @property
-    def failed(self):
+    def failed(self) -> bool:
         for result in self.values():
             failed = result.failed
             if failed:

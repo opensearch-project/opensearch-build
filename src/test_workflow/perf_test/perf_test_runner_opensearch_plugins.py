@@ -16,10 +16,13 @@ from test_workflow.perf_test.perf_test_runner import PerfTestRunner
 
 
 class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
+    test_dir: str
+    command: str
+
     """
       Runner to execute the performance tests for opensearch plugins. The plugins need to define the test suite
     """
-    def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
+    def __init__(self, args: PerfArgs, test_manifest: BundleManifest) -> None:
         super().__init__(args, test_manifest)
         self.tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", self.args.component)
         os.makedirs(self.tests_dir, exist_ok=True)
@@ -30,10 +33,10 @@ class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
             f"--test-result-dir {str(self.tests_dir)} {security_flag}"
         )
 
-    def get_plugin_repo_url(self):
+    def get_plugin_repo_url(self) -> str:
         return f"https://github.com/opensearch-project/{self.args.component}.git"
 
-    def run_tests(self):
+    def run_tests(self) -> None:
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             current_workspace = os.path.join(work_dir.name, self.args.component)
             with GitRepository(self.get_plugin_repo_url(), "main", current_workspace):

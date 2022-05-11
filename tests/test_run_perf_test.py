@@ -6,7 +6,8 @@
 
 import os
 import unittest
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -15,11 +16,11 @@ from run_perf_test import main
 
 class TestRunPerfTest(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def capfd(self, capfd):
+    def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_perf_test.py", "--help"])
-    def test_usage(self):
+    def test_usage(self) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -43,6 +44,6 @@ class TestRunPerfTest(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_perf_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST,
                                   "--stack", "test-stack", "--config", PERF_TEST_CONFIG])
     @patch("run_perf_test.PerfTestRunners.from_args")
-    def test_default_execute_perf_test(self, mock_runner, *mocks):
+    def test_default_execute_perf_test(self, mock_runner: Mock, *mocks: Any) -> None:
         main()
         self.assertEqual(1, mock_runner.call_count)

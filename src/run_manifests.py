@@ -13,7 +13,7 @@ from manifests_workflow.manifests_args import ManifestsArgs
 from system import console
 
 
-def main():
+def main() -> int:
     args = ManifestsArgs()
     console.configure(level=args.logging_level)
 
@@ -26,6 +26,7 @@ def main():
             klass().update(keep=args.keep)
 
     logging.info("Done.")
+    return 0
 
 
 if __name__ == "__main__":

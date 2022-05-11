@@ -7,7 +7,8 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import MagicMock, patch
+from typing import Any
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
@@ -17,11 +18,11 @@ from run_build import main
 
 class TestRunBuild(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def capfd(self, capfd):
+    def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_build.py", "--help"])
-    def test_usage(self):
+    def test_usage(self) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -41,7 +42,7 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
-    def test_main_platform_linux(self, mock_temp, mock_recorder, mock_builder, *mocks):
+    def test_main_platform_linux(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
@@ -52,7 +53,7 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
-    def test_main_platform_darwin(self, mock_temp, mock_recorder, mock_builder, *mocks):
+    def test_main_platform_darwin(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         self.assertNotEqual(mock_builder.return_value.build.call_count, 0)
@@ -63,7 +64,7 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
-    def test_main_platform_windows(self, mock_temp, mock_recorder, mock_builder, *mocks):
+    def test_main_platform_windows(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         # excludes performance analyzer and k-nn
@@ -92,7 +93,7 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
-    def test_main_with_architecture(self, mock_temp, mock_recorder, mock_builder, *mocks):
+    def test_main_with_architecture(self, mock_temp: Mock, mock_recorder: Mock, mock_builder: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         self.assertEqual(mock_builder.return_value.build.call_count, 11)
@@ -100,12 +101,12 @@ class TestRunBuild(unittest.TestCase):
         mock_recorder.return_value.write_manifest.assert_called()
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_DASHBOARDS_MANIFEST, "-p", "invalidplatform", "-a", "x64"])
-    def test_main_with_invalid_platform(self, *mocks):
+    def test_main_with_invalid_platform(self, *mocks: Any) -> None:
         with self.assertRaises(SystemExit):
             main()
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_DASHBOARDS_MANIFEST, "-p", "linux", "-a", "invalidarchitecture"])
-    def test_main_with_invalid_architecture(self, *mocks):
+    def test_main_with_invalid_architecture(self, *mocks: Any) -> None:
         with self.assertRaises(SystemExit):
             main()
 
@@ -115,9 +116,8 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST))
     @patch("run_build.InputManifest.to_file")
     @patch("logging.info")
-    def test_main_manifest_lock_without_changes(self, mock_logging, mock_to_file, mock_stable, *mocks):
-        with self.assertRaises(SystemExit):
-            main()
+    def test_main_manifest_lock_without_changes(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
         mock_stable.assert_called_with()
         mock_to_file.assert_not_called()
         mock_logging.assert_called_with(f"No changes since {self.OPENSEARCH_MANIFEST}.lock")
@@ -128,9 +128,8 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_1_2))
     @patch("run_build.InputManifest.to_file")
     @patch("logging.info")
-    def test_main_manifest_lock_with_changes(self, mock_logging, mock_to_file, mock_stable, *mocks):
-        with self.assertRaises(SystemExit):
-            main()
+    def test_main_manifest_lock_with_changes(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Updating {self.OPENSEARCH_MANIFEST}.lock")
@@ -141,9 +140,8 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_1_2))
     @patch("run_build.InputManifest.to_file")
     @patch("logging.info")
-    def test_main_manifest_new_lock(self, mock_logging, mock_to_file, mock_stable, *mocks):
-        with self.assertRaises(SystemExit):
-            main()
+    def test_main_manifest_new_lock(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")
@@ -154,9 +152,8 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.InputManifest.stable", return_value=InputManifest.from_path(OPENSEARCH_MANIFEST_1_2))
     @patch("run_build.InputManifest.to_file")
     @patch("logging.info")
-    def test_main_manifest_new_lock_with_overrides(self, mock_logging, mock_to_file, mock_stable, *mocks):
-        with self.assertRaises(SystemExit):
-            main()
+    def test_main_manifest_new_lock_with_overrides(self, mock_logging: Mock, mock_to_file: Mock, mock_stable: Mock, *mocks: Any) -> None:
+        main()
         mock_stable.assert_called_with()
         mock_to_file.assert_called_with(self.OPENSEARCH_MANIFEST + ".lock")
         mock_logging.assert_called_with(f"Creating {self.OPENSEARCH_MANIFEST}.lock")

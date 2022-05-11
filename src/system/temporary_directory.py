@@ -10,6 +10,7 @@ import os
 import shutil
 import stat
 import tempfile
+from pathlib import Path
 from types import FunctionType
 from typing import Any
 
@@ -32,6 +33,10 @@ class TemporaryDirectory:
             os.chdir(self.name)
         else:
             self.curdir = None
+
+    @property
+    def path(self) -> Path:
+        return Path(self.name)
 
     def __enter__(self) -> 'TemporaryDirectory':
         return self

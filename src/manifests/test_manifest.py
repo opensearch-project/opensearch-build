@@ -135,4 +135,5 @@ class TestComponent(Component):
 
 TestManifest.VERSIONS = {"1.0": TestManifest}
 
+TestComponent.__test__ = False  # type: ignore[attr-defined]
 TestManifest.__test__ = False  # type: ignore[attr-defined]
