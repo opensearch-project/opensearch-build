@@ -14,12 +14,12 @@ pipeline {
     parameters {
         string(
             name: 'IMAGE_REPOSITORY',
-            description: 'Image Repository on staging Eg: ci-runner',
+            description: 'Image Repository on staging. E.g.: ci-runner, opensearch, opensearch-dashboards..',
             trim: true
         )
         string(
             name: 'IMAGE_TAG',
-            description: 'Image tag on staging. Eg: 1.3.0',
+            description: 'Image tag on staging and this will also be the tag used for production. E.g.: 1.3.0',
             trim: true
         )
         booleanParam(
@@ -37,6 +37,16 @@ pipeline {
             defaultValue: true,
             description: 'Tag the copied image as latest'
         )
+        booleanParam(
+            name: 'TAG_MAJOR_VERSION',
+            defaultValue: true,
+            description: 'Tag the copied image to be on the latest image for any build within its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
+        )
+        booleanParam(
+            name: 'TAG_MAJOR_MINOR_VERSION',
+            defaultValue: true,
+            description: 'Tag the copied image to be on the latest image for any build within its major and minor version. E.g.: 1.3.2 image will be tagged with 1.3 in the hub.'
+        )
     }
 
     stages {
@@ -46,50 +56,71 @@ pipeline {
             }
             steps {
                 script {
-                    copyContainer(
-                        sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationType: "docker",
-                        destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+//                     def version = "$IMAGE_TAG"
+//                     def array = version.split(".")
+//                     echo "$array"
+//                     def major = "$IMAGE_TAG".split(".").first()
+//                     def minor = "$IMAGE_TAG".split(".").get(1)
+                    copyDockerContainer(
+                        imageRepository: IMAGE_REPOSITORY,
+                        imageTag: IMAGE_TAG,
+                        latestTag: TAG_LATEST,
+                        majorVersionTag: TAG_MAJOR_VERSION,
+                        minorVersionTag: TAG_MAJOR_MINOR_VERSION
                     )
-                    if("$TAG_LATEST".toBoolean()){
-                        echo "Tagging with latest."
-                        copyContainer(
-                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
-                            destinationType: "docker",
-                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                        )
-                    }
+//                     if("$TAG_LATEST".toBoolean()){
+//                         echo "Tagging with latest."
+//                         copyDockerContainer(
+//                             imageRepository: IMAGE_REPOSITORY,
+//                             sourceImageTag: IMAGE_TAG,
+//                             destinationImageTag: "latest"
+//                         )
+//                     }
+//                     if("$TAG_MAJOR_VERSION".toBoolean()){
+//                         echo "Tagging with image's major version."
+//                         copyDockerContainer(
+//                             imageRepository: IMAGE_REPOSITORY,
+//                             sourceImageTag: IMAGE_TAG,
+//                             destinationImageTag: "$major"
+//                         )
+//                     }
+//                     if("$TAG_MAJOR_MINOR_VERSION".toBoolean()){
+//                         echo "Tagging with image's major and minor version."
+//                         copyDockerContainer(
+//                             imageRepository: IMAGE_REPOSITORY,
+//                             sourceImageTag: IMAGE_TAG,
+//                             destinationImageTag: "$major.$minor"
+//                         )
+//                     }
                 }
             }
         }
-        stage('ecr-promote-to-prod') {
-            when {
-                expression { return "$ECR".toBoolean() }
-            }
-            steps {
-                script {
-                    copyContainer(
-                        sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationType: "ecr",
-                        destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
-                        accountName: "${AWS_ACCOUNT_ARTIFACT}"
-                    )
-                    if("$TAG_LATEST".toBoolean()){
-                        echo "Tagging with latest."
-                        copyContainer(
-                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
-                            destinationType: "ecr",
-                            destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
-                            accountName: "${AWS_ACCOUNT_ARTIFACT}"
-                        )
-                    }
-                }
-            }
-        }
+//         stage('ecr-promote-to-prod') {
+//             when {
+//                 expression { return "$ECR".toBoolean() }
+//             }
+//             steps {
+//                 script {
+//                     copyContainer(
+//                         sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+//                         destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+//                         destinationType: "ecr",
+//                         destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
+//                         accountName: "${AWS_ACCOUNT_ARTIFACT}"
+//                     )
+//                     if("$TAG_LATEST".toBoolean()){
+//                         echo "Tagging with latest."
+//                         copyContainer(
+//                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+//                             destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
+//                             destinationType: "ecr",
+//                             destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
+//                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
+//                         )
+//                     }
+//                 }
+//             }
+//         }
     }
     post() {
         always {
