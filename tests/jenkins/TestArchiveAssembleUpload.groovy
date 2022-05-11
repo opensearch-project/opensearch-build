@@ -37,6 +37,7 @@ class TestArchiveAssembleUpload extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod("git", [Map])
+        helper.registerAllowedMethod('unstash', [String.class], null)
 
         Path source = Path.of("tests/data/opensearch-build-1.3.0.yml");
         Path target = Path.of("tar/builds/opensearch/manifest.yml");

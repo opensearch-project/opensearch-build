@@ -18,6 +18,7 @@ class TestBuildArchive extends BuildPipelineTest {
 
         binding.setVariable('JOB_NAME', 'build-archive')
         binding.setVariable('STAGE_NAME', 'stage')
+        binding.setVariable('BUILD_NUMBER', '717')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
 
