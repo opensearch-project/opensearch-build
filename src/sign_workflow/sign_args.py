@@ -22,7 +22,7 @@ class SignArgs:
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Sign artifacts")
         parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory")
-        parser.add_argument("-c", "--component", type=str, nargs='+', dest="components", help="Component or components to sign")
+        parser.add_argument("-c", "--component", type=str, nargs='*', dest="components", help="Component or components to sign")
         parser.add_argument("--type", help="Artifact type")
         parser.add_argument("--sigtype", choices=self.ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of signature file.", default=".asc")
         parser.add_argument("--platform", nargs="?", help="Distribution platform.", default="linux")
