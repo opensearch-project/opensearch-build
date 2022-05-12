@@ -40,8 +40,8 @@ The following example sanity-checks components in the the OpenSearch 1.2.0 manif
 
 The following options are available.
 
-| name               | description                                                             |
-|--------------------|-------------------------------------------------------------------------|
-| --component [name] | Test a single component by name, e.g. `--component common-utils`.       |
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose      | Show more verbose output.                                               |
+| name                    | description                                                                         |
+|-------------------------|-------------------------------------------------------------------------------------|
+| --component [name ...]  | Test a subset of components by name, e.g. `--component common-utils job-scheduler`. |
+| --keep                  | Do not delete the temporary working directory on both success or error.             |
+| -v, --verbose           | Show more verbose output.                                                           |

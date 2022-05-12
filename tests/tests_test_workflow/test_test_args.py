@@ -33,10 +33,15 @@ class TestTestArgs(unittest.TestCase):
         self.assertFalse(hasattr(test_args, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
+
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, "--component", "foo", "bar"])
+    def test_components(self):
+        test_args = TestArgs()
+        self.assertEqual(test_args.components, ["foo", "bar"])
 
     @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, "--paths", "opensearch=" + TEST_MANIFEST_PATH])
     def test_opensearch_file_with_opensearch_test_manifest(self):
@@ -45,7 +50,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertFalse(hasattr(test_args.paths, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
@@ -57,7 +62,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertFalse(hasattr(test_args.paths, "opensearch-dashboards"))
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.DEBUG)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
@@ -69,7 +74,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(test_args.paths.get("opensearch"), self.TEST_MANIFEST_PATH)
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
@@ -90,7 +95,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(test_args.paths.get("opensearch"), self.TEST_MANIFEST_PATH)
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
@@ -102,7 +107,7 @@ class TestTestArgs(unittest.TestCase):
         self.assertEqual(test_args.paths.get("opensearch"), self.TEST_MANIFEST_PATH)
 
         self.assertIsNotNone(test_args.test_run_id)
-        self.assertIsNone(test_args.component)
+        self.assertIsNone(test_args.components)
         self.assertFalse(test_args.keep)
         self.assertEqual(test_args.logging_level, logging.INFO)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)

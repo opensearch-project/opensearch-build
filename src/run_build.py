@@ -59,7 +59,7 @@ def main():
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
-        for component in manifest.components.select(focus=args.component, platform=target.platform):
+        for component in manifest.components.select(focus=args.components, platform=target.platform):
             logging.info(f"Building {component.name}")
 
             builder = Builders.builder_from(component, target)

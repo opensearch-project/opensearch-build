@@ -26,15 +26,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name               | description                                                             |
-| ------------------ | ----------------------------------------------------------------------- |
-| test-type          | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
-| test-manifest-path | Specify a test manifest path.                                           |
-| --paths            | Location of manifest(s).                                                |
-| --test-run-id      | Unique identifier for a test run.                                       |
-| --component        | Test a specific component in a manifest.                                |
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose      | Show more verbose output.                                               |
+| name                   | description                                                             |
+| ---------------------- | ----------------------------------------------------------------------- |
+| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| test-manifest-path     | Specify a test manifest path.                                           |
+| --paths                | Location of manifest(s).                                                |
+| --test-run-id          | Unique identifier for a test run.                                       |
+| --component [name ...] | Test a subset of specific components.                                   |
+| --keep                 | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose          | Show more verbose output.                                               |
 
 ### Integration Tests
 

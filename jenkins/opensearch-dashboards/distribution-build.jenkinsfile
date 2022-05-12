@@ -14,7 +14,7 @@ pipeline {
     parameters {
         string(
             name: 'COMPONENT_NAME',
-            description: 'If this field contains a component name (e.g. OpenSearch-Dashboards), will build with "--component <COMPONENT_NAME>", else build everything in the INPUT_MANIFEST.',
+            description: 'If this field contains one or more component names (e.g. OpenSearch-Dashboards reportsDashboards ...), will build with "--component <COMPONENT_NAME> ...", else build everything in the INPUT_MANIFEST.',
             trim: true
         )
         string(

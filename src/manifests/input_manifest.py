@@ -39,7 +39,7 @@ components:
 import copy
 import itertools
 import logging
-from typing import Any, Callable, Iterator, Optional
+from typing import Any, Callable, Iterator, List, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components
@@ -175,20 +175,25 @@ class InputComponents(Components['InputComponent']):
         for component in self.values():
             component.__stabilize__()
 
-    def select(self, focus: str = None, platform: str = None) -> Iterator['InputComponent']:
+    def select(self, focus: List[str] = [], platform: str = None) -> Iterator['InputComponent']:
         """
         Select components.
 
-        :param str focus: Choose one component.
+        :param List[str] focus: Choose some components.
         :param str platform: Only components targeting a given platform.
         :return: Collection of components.
         :raises ValueError: Invalid platform or component name specified.
         """
+        if focus and len(focus) > 0:
+            invalid = [item for item in focus if item not in self]
+            if len(invalid) > 0:
+                raise ValueError(f"Unknown component{'s'[:len(invalid) != 1]}={','.join(invalid)}.")
+
         by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
         selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
 
         if not any(it):
-            raise ValueError(f"No components matched focus={focus}, platform={platform}.")
+            raise ValueError(f"No components matched focus={','.join(focus)}, platform={platform}.")
 
         return selected
 
@@ -208,8 +213,14 @@ class InputComponent(Component):
         else:
             raise ValueError(f"Invalid component data: {data}")
 
-    def __matches__(self, focus: str = None, platform: str = None) -> bool:
-        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+    def __matches__(self, focus: List[str] = [], platform: str = None) -> bool:
+        matches = True
+
+        if focus and len(focus) > 0:
+            matches = matches and self.name in focus
+
+        if platform and self.platforms:
+            matches = matches and platform in self.platforms
 
         if not matches:
             logging.info(f"Skipping {self.name}")
