@@ -20,10 +20,10 @@ RUN apt-get update -y && apt-get install -y software-properties-common && add-ap
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && apt clean -y && pip3 install awscli==1.22.12
 
 # Install JDK
-RUN curl -SL https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U-jdk_x64_linux_hotspot_14.0.2_12.tar.gz -o /opt/jdk14.tar.gz && \
-    mkdir -p /opt/java/openjdk-14 && \
-    tar -xzf /opt/jdk14.tar.gz --strip-components 1 -C /opt/java/openjdk-14/ && \
-    rm /opt/jdk14.tar.gz
+RUN curl -SL https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz -o /opt/jdk11.tar.gz && \
+    mkdir -p /opt/java/openjdk-11 && \
+    tar -xzf /opt/jdk11.tar.gz --strip-components 1 -C /opt/java/openjdk-11/ && \
+    rm /opt/jdk11.tar.gz
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -32,7 +32,7 @@ RUN groupadd -g 1000 opensearch && \
     chown -R 1000:1000 /usr/share/opensearch 
 
 # ENV JDK
-ENV JAVA_HOME=/opt/java/openjdk-14 \
+ENV JAVA_HOME=/opt/java/openjdk-11 \
     PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
