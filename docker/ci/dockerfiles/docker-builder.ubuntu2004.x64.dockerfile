@@ -29,15 +29,22 @@ RUN curl -SL https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/downloa
 RUN groupadd -g 1000 opensearch && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch \
+    chown -R 1000:1000 /usr/share/opensearch 
 
 # ENV JDK
-ENV JAVA_HOME=/opt/java/openjdk-14
-ENV PATH=$PATH:$JAVA_HOME/bin
+ENV JAVA_HOME=/opt/java/openjdk-14 \
+    PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
 RUN mkdir -p ~/.docker/cli-plugins && \
     curl -SL https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx  && \
     chmod 775 ~/.docker/cli-plugins/docker-buildx && \
     docker buildx version
+
+# Install gcrane
+RUN curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
+    tar -zxvf go-containerregistry.tar.gz && \
+    chmod +x gcrane && \
+    mv gcrane /usr/local/bin/ && \
+    rm -rf go-containerregistry.tar.gz 
 

@@ -40,10 +40,3 @@ RUN mkdir -p ~/.docker/cli-plugins && \
     curl -SL https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx  && \
     chmod 775 ~/.docker/cli-plugins/docker-buildx && \
     docker buildx version
-
-# Install gcrane
-RUN curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
-    tar -zxvf go-containerregistry.tar.gz && \
-    chmod +x gcrane && \
-    mv gcrane /usr/local/bin/ && \
-    rm -rf go-containerregistry.tar.gz 
