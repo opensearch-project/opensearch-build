@@ -2,7 +2,7 @@ def call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifestObj = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
 
-    String stashName = "build-archive-${args.platform}-${args.architecture}-${args.distribution}-${JOB_NAME}-${BUILD_NUMBER}"
+    String stashName = "${args.stashName}"
     echo "Unstashing ${stashName} before starting the assemble process"
     unstash "${stashName}"
 

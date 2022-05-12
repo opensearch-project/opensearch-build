@@ -8,7 +8,8 @@ pipeline {
                         inputManifest: 'tests/jenkins/data/opensearch-1.3.0.yml',
                         platform: 'linux',
                         architecture: 'x64',
-                        distribution: 'tar'
+                        distribution: 'tar',
+                        stashName: 'test-stash-tar'
                     )
                 }
             }

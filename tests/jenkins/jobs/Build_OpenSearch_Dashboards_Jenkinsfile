@@ -46,7 +46,8 @@ pipeline {
                             def buildManifestObj = archiveAssembleUpload(
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
-                                architecture: 'x64'
+                                architecture: 'x64',
+                                stashName: 'test-stash-tar-x64'
                             )
 
                             String artifactUrl = buildManifestObj.getArtifactUrl('bundle-build', '1')
@@ -77,7 +78,8 @@ pipeline {
                                     buildArchive(
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
-                                        architecture: 'arm64'
+                                        architecture: 'arm64',
+                                        stashName: 'test-stash-tar-arm64'
                                     )
                                 }
                             }
@@ -102,6 +104,7 @@ pipeline {
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64'
+                                        stashName: 'test-stash-tar-arm64'
                                     )
 
                                     String artifactUrl = buildManifestObj.getArtifactUrl('bundle-build', '1')
