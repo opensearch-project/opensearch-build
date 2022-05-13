@@ -189,7 +189,6 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_RPM
-                                    args dockerAgent.args
                                     alwaysPull true
                                 }
                             }
@@ -399,7 +398,6 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_RPM
-                                    args dockerAgent.args
                                     alwaysPull true
                                 }
                             }
