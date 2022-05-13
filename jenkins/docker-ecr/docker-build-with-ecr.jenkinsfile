@@ -1,80 +1,81 @@
 lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-
+ properties([
+     parameters([
+            [$class: 'DynamicReferenceParameter', 
+            choiceType: 'ET_FORMATTED_HTML', 
+            description: 'Image Repository on staging Eg: ci-runner',
+            name: 'IMAGE_REPOSITORY', 
+            referencedParameters: 'ECR', 
+            script: 
+                [$class: 'GroovyScript', 
+                fallbackScript: [
+                        classpath: [], 
+                        sandbox: false, 
+                        script: "return['']"
+                        ], 
+                script: [
+                        classpath: [], 
+                        sandbox: false, 
+                        script: '''
+                        if (data_center.contains('DC01')){
+                            return """<textarea name=\"value\" rows=\"5\" class=\"setting-input   \"></textarea>"""
+                        }
+                        '''
+                    ] 
+            ],
+        omitValueField: true
+        ],
+    ])
+])
 pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
     agent none
-    properties([
-        parameters([
-            string(
-                    defaultValue: 'https://github.com/opensearch-project/opensearch-build',
-                    name: 'DOCKER_BUILD_GIT_REPOSITORY',
-                    description: 'The git repository name that contains dockerfiles and the docker build script.',
-                    trim: true
-            )
-            string(
-                    defaultValue: 'main',
-                    name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
-                    description: 'The git reference (branch/tag/commit_id) of above repository.',
-                    trim: true
-            )
-            string(
-                    name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
-                    description: 'The script path of the docker build script. Eg: bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
-                    trim: true
-            )
-            string(
-                    name: 'IMAGE_REPOSITORY',
-                    description: 'Image Repository on staging Eg: ci-runner',
-                    trim: true
-            )
-            string(
-                    name: 'IMAGE_TAG',
-                    description: 'Image tag on staging. Eg: 1.3.0',
-                    trim: true
-            )
-            [$class: 'DynamicReferenceParameter', 
-                choiceType: 'ET_FORMATTED_HTML', 
+    parameters {
+        string(
+                defaultValue: 'https://github.com/opensearch-project/opensearch-build',
+                name: 'DOCKER_BUILD_GIT_REPOSITORY',
+                description: 'The git repository name that contains dockerfiles and the docker build script.',
+                trim: true
+        )
+        string(
+                defaultValue: 'main',
+                name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
+                description: 'The git reference (branch/tag/commit_id) of above repository.',
+                trim: true
+        )
+        string(
+                name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
+                description: 'The script path of the docker build script. Eg: bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
+                trim: true
+        )
+        string(
+                name: 'IMAGE_REPOSITORY',
                 description: 'Image Repository on staging Eg: ci-runner',
-                name: 'IMAGE_REPOSITORY', 
-                referencedParameters: 'ECR', 
-                script: 
-                    [$class: 'GroovyScript', 
-                    fallbackScript: [
-                            classpath: [], 
-                            sandbox: false, 
-                            script: "return['']"
-                            ], 
-                    script: [
-                            classpath: [], 
-                            sandbox: false, 
-                            script: '''
-                            if (data_center.contains('DC01')){
-                                return """<textarea name=\"value\" rows=\"5\" class=\"setting-input   \"></textarea>"""
-                            }
-                            '''
-                        ] 
-                ],
-            omitValueField: true
-            ],
-            booleanParam(
-                name: 'DOCKER_HUB',
-                defaultValue: true,
-                description: 'Promote to docker hub platform.'
-            )
-            booleanParam(
-                name: 'ECR',
-                defaultValue: false,
-                description: 'Promote to AWS ECR platform.'
-            )
-            booleanParam(
-                name: 'TAG_LATEST',
-                defaultValue: true,
-                description: 'Tag the copied image as latest to ECR staging repo'
-            )
-        ])
-    ])
+                trim: true
+        )
+        string(
+                name: 'IMAGE_TAG',
+                description: 'Image tag on staging. Eg: 1.3.0',
+                trim: true
+        )
+        booleanParam(
+            name: 'DOCKER_HUB',
+            defaultValue: true,
+            description: 'Promote to docker hub platform.'
+        )
+        booleanParam(
+            name: 'ECR',
+            defaultValue: true,
+            description: 'Promote to AWS ECR platform.'
+        )
+        booleanParam(
+            name: 'TAG_LATEST',
+            defaultValue: true,
+            description: 'Tag the copied image as latest to ECR staging repo'
+        )
+    }
     stages {
         agent {
             docker {
