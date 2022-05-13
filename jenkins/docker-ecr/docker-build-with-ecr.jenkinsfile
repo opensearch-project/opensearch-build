@@ -31,7 +31,13 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
-    agent none
+    agent {
+        docker {
+            label AGENT_X64
+            image 'alpine:3'
+            alwaysPull true
+        }
+    }
     parameters {
         string(
                 defaultValue: 'https://github.com/opensearch-project/opensearch-build',
