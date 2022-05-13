@@ -119,7 +119,7 @@ pipeline {
                         script {
                             git url: DOCKER_BUILD_GIT_REPOSITORY, branch: DOCKER_BUILD_GIT_REPOSITORY_REFERENCE
                             //def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential" docker-temp-pg
-                            def CREDENTIAL_ID = docker-temp-pg
+                            def CREDENTIAL_ID = "docker-temp-pg"
                             withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                 sh '''
                                         set -e
