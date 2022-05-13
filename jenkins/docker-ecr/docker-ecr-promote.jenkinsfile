@@ -58,7 +58,8 @@ pipeline {
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
                             destinationType: "docker",
-                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                            //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                            destinationCredentialIdentifier: "docker-temp-pg"
                         )
                     }
                 }

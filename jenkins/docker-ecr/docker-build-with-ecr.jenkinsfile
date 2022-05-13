@@ -137,18 +137,19 @@ pipeline {
                         script {
                             copyContainer(
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
-                                destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1",
+                                destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                                 accountName: "${AWS_ACCOUNT_PUBLIC}"
                             )
                             if("$TAG_LATEST".toBoolean()){
                                 echo "Tagging with latest."
                                 copyContainer(
                                     sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                    destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_REPOSITORY}:latest",
+                                    //used to be the jenki jenkins ECR public
+                                    destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
-                                    destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1",
+                                    destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                                     accountName: "${AWS_ACCOUNT_ARTIFACT}"
                                 )
                             }
