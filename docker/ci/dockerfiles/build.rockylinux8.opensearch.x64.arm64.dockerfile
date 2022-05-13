@@ -22,9 +22,9 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
     localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || echo set locale
 
 # Add normal dependencies
-RUN yum clean all && \
-    yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+RUN dnf clean all && \
+    dnf update -y && \
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -33,16 +33,16 @@ RUN groupadd -g 1000 opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
 # Add Python37 dependencies
-RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies
-RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Notebook dependencies
-RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && dnf clean all
 
 # Add Yarn dependencies
-RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
+RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
 
 #JDK setup
 COPY --chown=0:0 config/jdk-setup.sh /tmp
@@ -69,7 +69,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && yum install -y rpm-build createrepo && yum clean all
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && dnf install -y rpm-build createrepo && dnf clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -91,7 +91,11 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     pip3 install pipenv && pipenv --version
 
 # Add k-NN Library dependencies
-RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack gcc-gfortran -y
+# EL8 requires install config-manager and enable powertools to consume openblas-static
+RUN dnf install epel-release -y && dnf repolist && \
+    dnf install -y 'dnf-command(config-manager)' && \
+    dnf config-manager --set-enabled powertools && \
+    dnf install openblas-static lapack gcc-gfortran -y
 RUN pip3 install pip==21.3.1
 RUN pip3 install cmake==3.21.3
 RUN pip3 install awscli==1.22.12
