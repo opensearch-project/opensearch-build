@@ -13,31 +13,9 @@
 
 FROM ubuntu:20.04
 
-# Import necessary repository for installing qemu 5.0
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y
-
-# Install necessary packages
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && apt clean -y && pip3 install awscli==1.22.12
-
-# Install JDK
-RUN curl -SL https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U-jdk_x64_linux_hotspot_14.0.2_12.tar.gz -o /opt/jdk14.tar.gz && \
-    mkdir -p /opt/java/openjdk-14 && \
-    tar -xzf /opt/jdk14.tar.gz --strip-components 1 -C /opt/java/openjdk-14/ && \
-    rm /opt/jdk14.tar.gz
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch \
-
-# ENV JDK
-ENV JAVA_HOME=/opt/java/openjdk-14
-ENV PATH=$PATH:$JAVA_HOME/bin
-
-# Install docker buildx
-RUN mkdir -p ~/.docker/cli-plugins && \
-    curl -SL https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx  && \
-    chmod 775 ~/.docker/cli-plugins/docker-buildx && \
-    docker buildx version
-
