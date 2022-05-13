@@ -208,7 +208,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         service.get_service_response()
 
         mock_url.assert_called_once_with("/api/status")
-        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("admin", "admin"))
+        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("kibanaserver", "kibanaserver"))
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
@@ -228,7 +228,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         service.get_service_response()
 
         mock_url.assert_called_once_with("/api/status")
-        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("admin", "admin"))
+        mock_requests_get.assert_called_once_with(mock_url_result, auth=None, verify=False)
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
     def test_service_alive_green_available(self, mock_get_service_response):
