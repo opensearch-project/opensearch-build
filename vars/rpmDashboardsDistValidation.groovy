@@ -76,12 +76,12 @@ def call(Map args = [:]) {
         if (osd_status_json != 0) {
             sleep 10
             osd_status_json = sh (
-                    script: "curl -s \"http://localhost:5601/api/status\"",
+                    script: "curl -s \"http://localhost:5601/api/status\" -u admin:admin",
                     returnStatus: true
             )
         } else {
             osd_status_json = sh (
-                    script: "curl -s \"http://localhost:5601/api/status\"",
+                    script: "curl -s \"http://localhost:5601/api/status\" -u admin:admin",
                     returnStdout: true
             ).trim()
             break

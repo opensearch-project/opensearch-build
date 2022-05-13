@@ -208,7 +208,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         service.get_service_response()
 
         mock_url.assert_called_once_with("/api/status")
-        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("kibanaserver", "kibanaserver"))
+        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=("admin", "admin"))
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
