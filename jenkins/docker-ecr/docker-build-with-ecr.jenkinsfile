@@ -55,13 +55,7 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
-    agent {
-        docker {
-            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'alpine:3'
-            alwaysPull true
-        }
-    }
+    agent any  
     parameters {
         string(
                 defaultValue: 'https://github.com/opensearch-project/opensearch-build',
