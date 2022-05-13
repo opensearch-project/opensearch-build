@@ -46,8 +46,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh "echo dockerhub-promote-to-prod"
-                    /*copyContainer(
+                    copyContainer(
                         sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationType: "docker",
@@ -61,7 +60,7 @@ pipeline {
                             destinationType: "docker",
                             destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                         )
-                    }*/
+                    }
                 }
             }
         }
@@ -71,8 +70,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh "ecr-promote-to-prod"
-                    /*copyContainer(
+                    copyContainer(
                         sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                         destinationType: "ecr",
@@ -88,7 +86,7 @@ pipeline {
                             destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
                         )
-                    }*/
+                    }
                 }
             }
         }
@@ -97,7 +95,7 @@ pipeline {
         always {
             script {
                 postCleanup()
-                sh "docker logout"
+                sh "docker image prune -f --all"
             }
         }
     }
