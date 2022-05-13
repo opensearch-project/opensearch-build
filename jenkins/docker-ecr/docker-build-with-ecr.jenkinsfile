@@ -73,7 +73,7 @@ pipeline {
         )
         booleanParam(
             name: 'ECR',
-            defaultValue: true,
+            defaultValue: false,
             description: 'Promote to AWS ECR platform.'
         )
         booleanParam(
