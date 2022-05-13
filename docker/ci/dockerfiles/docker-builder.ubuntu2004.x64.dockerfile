@@ -18,4 +18,4 @@ FROM ubuntu:20.04
 RUN groupadd -g 1000 opensearch && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch \
+    chown -R 1000:1000 /usr/share/opensearch 
