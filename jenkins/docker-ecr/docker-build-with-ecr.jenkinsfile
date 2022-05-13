@@ -55,7 +55,7 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
-    agent any  
+    agent none  
     parameters {
         string(
                 defaultValue: 'https://github.com/opensearch-project/opensearch-build',
