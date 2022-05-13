@@ -95,7 +95,7 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
 RUN dnf install epel-release -y && dnf repolist && \
     dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
-    dnf install openblas-static lapack gcc-gfortran -y
+    dnf install openblas-static lapack gcc-gfortran -y && dnf clean all
 RUN pip3 install pip==21.3.1
 RUN pip3 install cmake==3.21.3
 RUN pip3 install awscli==1.22.12
