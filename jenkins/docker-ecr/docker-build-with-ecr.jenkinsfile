@@ -17,7 +17,7 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
                         classpath: [], 
                         sandbox: false, 
                         script: '''
-                        if (data_center.contains('DC01')){
+                        if (ECR){
                             return """<textarea name=\"value\" rows=\"5\" class=\"setting-input   \"></textarea>"""
                         }
                         '''
