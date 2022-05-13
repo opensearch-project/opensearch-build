@@ -68,7 +68,7 @@ class ServiceOpenSearchDashboards(Service):
     def get_service_response(self):
         url = self.url("/api/status")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("kibanaserver", "kibanaserver") if self.security_enabled else None)
+        return requests.get(url, verify=False, auth=("admin", "admin") if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config):
         with open(self.opensearch_dashboards_yml_dir, "a") as yamlfile:
