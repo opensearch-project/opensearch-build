@@ -25,8 +25,8 @@ void call(Map args = [:]) {
             sh """
                 set +x
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}
+                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
-            sh "gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}"
             }
         }
         if(!args.ecrProd) {
