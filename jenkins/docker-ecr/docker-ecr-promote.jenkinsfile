@@ -4,13 +4,7 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
-    agent {
-            docker {
-                label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
-                args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
-            }
-    }
+    agent none  
     parameters {
         string(
             name: 'IMAGE_REPOSITORY',
@@ -40,63 +34,72 @@ pipeline {
     }
 
     stages {
-        stage('dockerhub-promote-to-prod') {
-            when{
-                expression { return "$DOCKER_HUB".toBoolean() }
-            }
-            steps {
-                script {
-                    copyContainer(
-                        sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationType: "docker",
-                        destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                    )
-                    if("$TAG_LATEST".toBoolean()){
-                        echo "Tagging with latest."
+        stage("Docker Image Promote") {
+        agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                }
+        }
+        stages {
+            stage('dockerhub-promote-to-prod') {
+                when{
+                    expression { return "$DOCKER_HUB".toBoolean() }
+                }
+                steps {
+                    script {
                         copyContainer(
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
+                            destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "docker",
-                            //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                            destinationCredentialIdentifier: "docker-temp-pg"
+                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                         )
+                        if("$TAG_LATEST".toBoolean()){
+                            echo "Tagging with latest."
+                            copyContainer(
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                destinationType: "docker",
+                                destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                            )
+                        }
                     }
                 }
             }
-        }
-        stage('ecr-promote-to-prod') {
-            when {
-                expression { return "$ECR".toBoolean() }
-            }
-            steps {
-                script {
-                    copyContainer(
-                        sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                        destinationType: "ecr",
-                        destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
-                        accountName: "${AWS_ACCOUNT_ARTIFACT}"
-                    )
-                    if("$TAG_LATEST".toBoolean()){
-                        echo "Tagging with latest."
+            stage('ecr-promote-to-prod') {
+                when {
+                    expression { return "$ECR".toBoolean() }
+                }
+                steps {
+                    script {
                         copyContainer(
                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
+                            destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "ecr",
+                            ecrProd: true,
                             destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
-                            accountName: "${AWS_ACCOUNT_ARTIFACT}"
                         )
+                        if("$TAG_LATEST".toBoolean()){
+                            echo "Tagging with latest."
+                            copyContainer(
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                destinationType: "ecr",
+                                ecrProd: true,
+                                destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
+                            )
+                        }
                     }
                 }
             }
-        }
-    }
-    post() {
-        always {
-            script {
-                postCleanup()
-                sh "docker image prune -f --all"
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker image prune -f --all"
+                    }
+                }
             }
         }
     }
