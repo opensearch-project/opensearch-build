@@ -139,7 +139,7 @@ pipeline {
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
-                                ecrProd: false,
+                                ecrProd: true,
                                 destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                             )
                             if("$TAG_LATEST".toBoolean()){
@@ -148,7 +148,7 @@ pipeline {
                                     sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                     destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
-                                    ecrProd: false,
+                                    ecrProd: true,
                                     destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                                 )
                             }
