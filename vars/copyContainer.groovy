@@ -19,10 +19,21 @@ void call(Map args = [:]) {
         }
     }
     if (args.destinationType == 'ecr') {
+        if(args.ecrProd) {
+            withAWS(role: "${ARTIFACT_UPLOAD_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
             sh """
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
                 docker logout ${args.destinationCredentialIdentifier}
             """
+            }
+        }
+        if(!args.ecrProd) {
+            sh """
+                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}
+                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                docker logout ${args.destinationCredentialIdentifier}
+            """
+        }
     }
 }
