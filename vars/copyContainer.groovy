@@ -23,7 +23,6 @@ void call(Map args = [:]) {
         if(args.ecrProd) {
             withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
             sh """
-                #!/bin/sh -e
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
