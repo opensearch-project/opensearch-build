@@ -139,6 +139,7 @@ pipeline {
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
+                                ecrProd: true,
                                 destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                                 accountName: "${AWS_ACCOUNT_PUBLIC}"
                             )
@@ -149,6 +150,7 @@ pipeline {
                                     //used to be the jenki jenkins ECR public
                                     destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
+                                    ecrProd: true,
                                     destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                                     accountName: "${AWS_ACCOUNT_ARTIFACT}"
                                 )
