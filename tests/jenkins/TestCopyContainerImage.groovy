@@ -17,10 +17,10 @@ class TestCopyContainer extends BuildPipelineTest {
     void setUp() {
 
         this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
-                'opensearchproject/ci-runner:latest',
+                'public.ecr.aws/opensearchproject/ci-runner:latest',
                 'ecr',
-                'public.ecr.aws/p5f6l6i3',
-                'DUMMY_ACCOUNT_NAME'))
+                'public.ecr.aws/opensearchproject',
+                true))
 
         this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
                 'opensearchproject/ci-runner:latest',
@@ -33,5 +33,6 @@ class TestCopyContainer extends BuildPipelineTest {
     @Test
     public void testForDockerhub() {
         super.testPipeline("tests/jenkins/jobs/CopyContainer_docker_Jenkinsfile")
+        
     }
 }

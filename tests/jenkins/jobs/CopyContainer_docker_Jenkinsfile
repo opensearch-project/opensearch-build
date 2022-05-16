@@ -13,10 +13,18 @@ pipeline {
 
                     copyContainer(
                         sourceImagePath: 'opensearchstaging/ci-runner:latest',
-                        destinationImagePath: 'opensearchproject/ci-runner:latest',
+                        destinationImagePath: 'public.ecr.aws/opensearchstaging/ci-runner:latest',
                         destinationType: 'ecr',
-                        destinationCredentialIdentifier: 'public.ecr.aws/p5f6l6i3',
-                        accountName: 'DUMMY_ACCOUNT_NAME'
+                        ecrProd: false,
+                        destinationCredentialIdentifier: 'public.ecr.aws/opensearchstaging',
+                    )
+
+                    copyContainer(
+                        sourceImagePath: 'opensearchstaging/ci-runner:latest',
+                        destinationImagePath: 'public.ecr.aws/opensearchproject/ci-runner:latest',
+                        destinationType: 'ecr',
+                        ecrProd: true,
+                        destinationCredentialIdentifier: 'public.ecr.aws/opensearchproject',
                     )
                 }
             }

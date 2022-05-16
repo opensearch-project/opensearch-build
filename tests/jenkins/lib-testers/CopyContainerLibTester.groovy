@@ -9,19 +9,19 @@ class CopyContainerLibTester extends LibFunctionTester {
     private final String destinationImagePath
     private final String destinationType
     private final String destinationCredentialIdentifier
-    private final String accountName
+    private final boolean ecrProd
 
     CopyContainerLibTester(
         String sourceImagePath,
         String destinationImagePath,
         String destinationType,
         String destinationCredentialIdentifier,
-        String accountName=null) {
+        boolean ecrProd=false) {
         this.sourceImagePath = sourceImagePath
         this.destinationImagePath = destinationImagePath
         this.destinationType = destinationType
         this.destinationCredentialIdentifier = destinationCredentialIdentifier
-        this.accountName = accountName
+        this.ecrProd = ecrProd
     }
 
     String libFunctionName() {
@@ -31,6 +31,8 @@ class CopyContainerLibTester extends LibFunctionTester {
     void configure(helper, binding){
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')
+        binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'sample-agent-AssumeRole')
+        binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234567890')
 
         helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
             closure.delegate = delegate
@@ -52,26 +54,29 @@ class CopyContainerLibTester extends LibFunctionTester {
                     equalTo('jenkins-staging-docker-staging-credential')))
         }
         if (call.args.destinationType.first().toString() == 'ecr') {
-            assertThat(call.args.accountName.first(), notNullValue())
             assertThat(call.args.destinationCredentialIdentifier.first(),
                 anyOf(
-                    equalTo('public.ecr.aws/p5f6l6i3'),
-                    equalTo('public.ecr.aws/m0o1u6w1')))
+                    equalTo('public.ecr.aws/opensearchstaging'),
+                    equalTo('public.ecr.aws/opensearchproject')))
+            assertThat(call.args.ecrProd.first(),
+                anyOf(
+                    equalTo(true),
+                    equalTo(false)))
         }
     }
 
     boolean expectedParametersMatcher(call) {
-        boolean accountNameFound = true
+        boolean ecrProdFound = true
 
         if (call.args.destinationType.first() == 'ecr') {
-            accountNameFound = call.args.accountName.first().toString() == accountName
+            ecrProdFound = call.args.ecrProd.first() == ecrProd
         }
 
         return call.args.sourceImagePath.first().toString().equals(sourceImagePath)
                 && call.args.destinationImagePath.first().toString().equals(destinationImagePath)
                 && call.args.destinationCredentialIdentifier.first().toString().equals(destinationCredentialIdentifier)
                 && call.args.destinationType.first().toString().equals(destinationType)
-                && accountNameFound
+                && ecrProdFound
     }
 
 }
