@@ -23,6 +23,12 @@ class TestCopyContainer extends BuildPipelineTest {
                 true))
 
         this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
+                'public.ecr.aws/opensearchstaging/ci-runner:latest',
+                'ecr',
+                'public.ecr.aws/opensearchstaging',
+                false))
+
+        this.registerLibTester(new CopyContainerLibTester('opensearchstaging/ci-runner:latest',
                 'opensearchproject/ci-runner:latest',
                 'docker',
                 'jenkins-staging-docker-prod-token'))
