@@ -97,14 +97,14 @@ pipeline {
                     }
                 }
             }
-            post() {
+        }
+        post() {
                 always {
                     script {
                         postCleanup()
                         sh "docker image prune -f --all"
                     }
                 }
-            }
         }
     }
 }
