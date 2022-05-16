@@ -96,15 +96,15 @@ pipeline {
                         }
                     }
                 } 
-                post() {
-                    always {
-                        script {
-                            postCleanup()
-                            sh "docker image prune -f --all"
-                        }
+            }  
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker image prune -f --all"
                     }
                 }
-            }       
+            }     
         }
     }
 }
