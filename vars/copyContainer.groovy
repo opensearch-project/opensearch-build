@@ -12,7 +12,7 @@ void call(Map args = [:]) {
 
     if (args.destinationType == 'docker') {
         withCredentials([usernamePassword(credentialsId: args.destinationCredentialIdentifier, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            def dockerLogin = sh(returnStdout: false, script: "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD").trim()
+            def dockerLogin = sh(returnStdout: true, script: "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
@@ -21,14 +21,14 @@ void call(Map args = [:]) {
     if (args.destinationType == 'ecr') {
         if(args.ecrProd) {
             withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-            def ecrLogin = sh(returnStdout: false, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+            def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
             }
         }
         if(!args.ecrProd) {
-            def ecrLogin = sh(returnStdout: false, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+            def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
