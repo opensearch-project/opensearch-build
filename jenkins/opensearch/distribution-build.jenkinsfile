@@ -299,18 +299,18 @@ pipeline {
                                     )
                                 }
                             }
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                    "\n${env.RPM_VALIDATION_X64_RPM_TEST_RESULT}"
-                                )
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.RPM_VALIDATION_X64_RPM_TEST_RESULT}"
+                                        )
 
-                                postCleanup()
+                                        postCleanup()
+                                    }
+                                }
                             }
                         }
                     }
@@ -473,20 +473,20 @@ pipeline {
                                     )
                                 }
                             }
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                    "\n${env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT}"
-                                )
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.RPM_VALIDATION_ARM64_RPM_TEST_RESULT}"
+                                        )
 
-                                postCleanup()
+                                        postCleanup()
+                                    }
+                                }                    
                             }
-                        }                    
+                        }
                     }
                 }
             }
@@ -544,9 +544,9 @@ pipeline {
                     if (params.PUBLISH_NOTIFICATION) { 
                         def stashed = lib.jenkins.Messages.new(this).get([
                             'build-and-test-x64-tar', 
+                            'assemble-archive-and-test-linux-x64-rpm',
                             'build-and-test-arm64-tar', 
-                            'build-and-test-x64-rpm', 
-                            'build-and-test-arm64-rpm'
+                            'assemble-archive-and-test-linux-arm64-rpm'
                         ])
 
                         publishNotification(
