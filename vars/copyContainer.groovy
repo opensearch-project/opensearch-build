@@ -20,12 +20,13 @@ void call(Map args = [:]) {
     }
     if (args.destinationType == 'ecr') {
         if(args.ecrProd) {
-           // withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-            withAws(credentials: 'ARTIFACT_PROMOTION') {
-            def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
-            sh """
-                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
-            """
+            ARTIFACT_PROMOTION_ROLE_NAME = credentials('ARTIFACT_PROMOTION_ROLE_NAME')
+            AWS_ACCOUNT_ARTIFACT = credentials('AWS_ACCOUNT_ARTIFACT')
+            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+                sh """
+                    gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                """
             }
         }
         if(!args.ecrProd) {
