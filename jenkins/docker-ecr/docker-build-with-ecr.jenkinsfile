@@ -118,8 +118,7 @@ pipeline {
                     steps {
                         script {
                             git url: DOCKER_BUILD_GIT_REPOSITORY, branch: DOCKER_BUILD_GIT_REPOSITORY_REFERENCE
-                            //def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential" docker-temp-pg
-                            def CREDENTIAL_ID = "docker-temp-pg"
+                            def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                             withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                 sh '''
                                         set -e
@@ -136,7 +135,7 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
                                 ecrProd: true,
@@ -145,7 +144,7 @@ pipeline {
                             if("$TAG_LATEST".toBoolean()){
                                 echo "Tagging with latest."
                                 copyContainer(
-                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                     destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
                                     ecrProd: true,

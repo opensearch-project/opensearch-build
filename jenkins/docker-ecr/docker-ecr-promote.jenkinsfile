@@ -56,7 +56,7 @@ pipeline {
                                 //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                             )
                             if("$TAG_LATEST".toBoolean()){
-                                echo "Tagging with latest."
+                                echo "Docker: Tagging with latest."
                                 copyContainer(
                                     //staging
                                     sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
@@ -84,7 +84,7 @@ pipeline {
                                 destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                             )
                             if("$TAG_LATEST".toBoolean()){
-                                echo "Tagging with latest."
+                                echo "ECR: Tagging with latest."
                                 copyContainer(
                                     sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                     destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
