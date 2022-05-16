@@ -32,79 +32,79 @@ pipeline {
             description: 'Tag the copied image as latest'
         )
     }
-
     stages {
         stage("Docker Image Promote") {
-        agent {
-                docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
-                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
-                }
-        }
-        stages {
-            stage('Promote to prod DockerHub') {
-                when{
-                    expression { return "$DOCKER_HUB".toBoolean() }
-                }
-                steps {
-                    script {
-                        copyContainer(
-                            sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationType: "docker",
-                            destinationCredentialIdentifier: "docker-temp-pg",
-                            //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
-                        )
-                        if("$TAG_LATEST".toBoolean()){
-                            echo "Tagging with latest."
+            agent {
+                    docker {
+                        label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                        image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+                        args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    }
+            }
+            stages {
+                stage('Promote to prod DockerHub') {
+                    when{
+                        expression { return "$DOCKER_HUB".toBoolean() }
+                    }
+                    steps {
+                        script {
                             copyContainer(
-                                //staging
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                //project
-                                destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:latest",
+                                destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "docker",
                                 destinationCredentialIdentifier: "docker-temp-pg",
                                 //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                             )
+                            if("$TAG_LATEST".toBoolean()){
+                                echo "Tagging with latest."
+                                copyContainer(
+                                    //staging
+                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    //project
+                                    destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:latest",
+                                    destinationType: "docker",
+                                    destinationCredentialIdentifier: "docker-temp-pg",
+                                    //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                                )
+                            }
                         }
                     }
                 }
-            }
-            stage('Promote to prod ECR') {
-                when {
-                    expression { return "$ECR".toBoolean() }
-                }
-                steps {
-                    script {
-                        copyContainer(
-                            sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationType: "ecr",
-                            ecrProd: true,
-                            destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
-                        )
-                        if("$TAG_LATEST".toBoolean()){
-                            echo "Tagging with latest."
+                stage('Promote to prod ECR') {
+                    when {
+                        expression { return "$ECR".toBoolean() }
+                    }
+                    steps {
+                        script {
                             copyContainer(
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
                                 ecrProd: true,
                                 destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
                             )
+                            if("$TAG_LATEST".toBoolean()){
+                                echo "Tagging with latest."
+                                copyContainer(
+                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                    destinationType: "ecr",
+                                    ecrProd: true,
+                                    destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
+                                )
+                            }
+                        }
+                    }
+                } 
+                post() {
+                    always {
+                        script {
+                            postCleanup()
+                            sh "docker image prune -f --all"
                         }
                     }
                 }
-            }
-        }
-        post() {
-                always {
-                    script {
-                        postCleanup()
-                        sh "docker image prune -f --all"
-                    }
-                }
+            }       
         }
     }
 }
