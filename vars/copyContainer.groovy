@@ -12,7 +12,7 @@ void call(Map args = [:]) {
 
     if (args.destinationType == 'docker') {
         withCredentials([usernamePassword(credentialsId: args.destinationCredentialIdentifier, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            def dockerLogin = sh(returnStdout: true, script: "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD").trim()
+            def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_USERNAME | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
