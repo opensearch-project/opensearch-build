@@ -2,11 +2,11 @@
  * Copies a container from one docker registry to another
  *
  * @param args A map of the following parameters
- * @param args.sourceImagePath The url to the image to be copied from, supports any public docker registry
- * @param args.destinationImagePath Follows the format NAME[:TAG|@DIGEST], e.g. opensearchproject/opensearch:1.2.4
- * @param args.destinationType The docker registry, currently supports 'docker' or 'ecr'
- * @param args.destinationCredentialIdentifier The credential identifier registered in the jenkins system associated with the NAME
- * @param args.accountName Only used for the 'ecr' registry, the AWS role to assume
+ * @param args.imageRepository The repository name of the product we perform promoting and tagging. E.g.: opensearch
+ * @param args.imageTag The image tag from the staging docker repository.
+ * @param args.latestTag The boolean parameter of whether tag this staging container with latest in the promoting ECR.
+ * @param args.majorVersionTag The boolean parameter of whether tag this staging container with major version of it in the promoting ECR.
+ * @param args.minorVersionTag The boolean parameter of whether tag this staging container with major.minor version of it in the promoting ECR.
  */
 void call(Map args = [:]) {
     res = sh(script: "test -f /usr/local/bin/gcrane && echo '1' || echo '0' ", returnStdout: true).trim()
@@ -16,21 +16,28 @@ void call(Map args = [:]) {
 
     sh 'docker logout'
 
-    if (args.destinationType == 'docker') {
-        withCredentials([usernamePassword(credentialsId: args.destinationCredentialIdentifier, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            sh """
-                docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
-            """
-        }
-    } else if (args.destinationType == 'ecr') {
-        withAWS(role: 'Upload_ECR_Image', roleAccount: "${args.accountName}", duration: 900, roleSessionName: 'jenkins-session') {
-            sh """
-                aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}
-                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
-            """
-        }
+    def imageRepository = args.imageRepository
+    def imageVersionTag = args.imageTag
+    def latestBoolean = args.latestTag
+    def majorVersionBoolean = args.majorVersionTag
+    def minorVersionBoolean = args.minorVersionTag
+    def majorVersion = imageVersionTag.split("\\.").first()
+    def minorVersion = imageVersionTag.split("\\.")[1]
+
+    copy_image(imageRepository, imageVersionTag, imageVersionTag)
+    if (latestBoolean.toBoolean()) {
+        echo("Tagging with latest for this ECR image.")
+        copy_image(imageRepository, imageVersionTag, "latest")
     }
+    if (majorVersionBoolean.toBoolean()) {
+        echo("Tagging with its major version for this ECR image.")
+        copy_image(imageRepository, imageVersionTag, majorVersion)
+    }
+    if (minorVersionBoolean.toBoolean()) {
+        echo("Tagging with its major and minor version for this ECR image.")
+        copy_image(imageRepository, imageVersionTag, majorVersion + "." + minorVersion)
+    }
+
 }
 
 void install_gcrane() {
@@ -41,4 +48,14 @@ void install_gcrane() {
         chmod +x gcrane
         mv gcrane /usr/local/bin/
       '''
+}
+
+void copy_image(String imageRepository, String imageTag, String destinationTag) {
+    def destinationCredentialIdentifier= "public.ecr.aws/p5f6l6i3"
+    withAWS(role: 'Upload_ECR_Image', roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+        sh """
+               aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$destinationCredentialIdentifier"
+               gcrane cp opensearchstaging/$imageRepository:$imageTag public.ecr.aws/p5f6l6i3/$imageRepository:$destinationTag
+           """
+    }
 }

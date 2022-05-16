@@ -7,20 +7,23 @@ class TestDockerPromoteWithEcrAndDockerhubJob extends BuildPipelineTest {
     @Before
     void setUp() {
         String imageRepository = 'ci-runner-staging'
-        String imageTag = 'latest'
+        String imageTag = '2.0.0'
         String accountName = 'aws_account_artifact'
-        String sourceImagePath = "opensearchstaging/${imageRepository}:${imageTag}"
+        Boolean latestTag = false
+        Boolean majorVersionTag = true
+        Boolean minorVersionTag = true
 
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "public.ecr.aws/p5f6l6i3/${imageRepository}:${imageTag}",
-                'ecr',
-                'public.ecr.aws/p5f6l6i3',
-                accountName))
+        this.registerLibTester(new CopyDockerContainerLibTester(imageRepository,
+                imageTag,
+                latestTag,
+                majorVersionTag,
+                minorVersionTag))
 
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "opensearchproject/${imageRepository}:${imageTag}",
-                'docker',
-                'jenkins-staging-docker-prod-token'))
+        this.registerLibTester(new CopyECRContainerLibTester(imageRepository,
+                imageTag,
+                latestTag,
+                majorVersionTag,
+                minorVersionTag))
 
         super.setUp()
 
@@ -30,6 +33,8 @@ class TestDockerPromoteWithEcrAndDockerhubJob extends BuildPipelineTest {
         binding.setVariable('DOCKER_HUB', true)
         binding.setVariable('ECR', true)
         binding.setVariable('TAG_LATEST', false)
+        binding.setVariable('TAG_MAJOR_VERSION', true)
+        binding.setVariable('TAG_MAJOR_MINOR_VERSION', true)
 
     }
 

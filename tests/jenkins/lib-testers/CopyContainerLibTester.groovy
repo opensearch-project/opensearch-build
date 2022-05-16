@@ -12,11 +12,11 @@ class CopyContainerLibTester extends LibFunctionTester {
     private final String accountName
 
     CopyContainerLibTester(
-        String sourceImagePath,
-        String destinationImagePath,
-        String destinationType,
-        String destinationCredentialIdentifier,
-        String accountName=null) {
+            String sourceImagePath,
+            String destinationImagePath,
+            String destinationType,
+            String destinationCredentialIdentifier,
+            String accountName=null) {
         this.sourceImagePath = sourceImagePath
         this.destinationImagePath = destinationImagePath
         this.destinationType = destinationType
@@ -46,17 +46,17 @@ class CopyContainerLibTester extends LibFunctionTester {
         assertThat(call.args.destinationCredentialIdentifier.first(), notNullValue())
         if (call.args.destinationType.first().toString() == 'docker') {
             assertThat(
-                call.args.destinationCredentialIdentifier.first(),
-                anyOf(
-                    equalTo('jenkins-staging-docker-prod-token'),
-                    equalTo('jenkins-staging-docker-staging-credential')))
+                    call.args.destinationCredentialIdentifier.first(),
+                    anyOf(
+                            equalTo('jenkins-staging-docker-prod-token'),
+                            equalTo('jenkins-staging-docker-staging-credential')))
         }
         if (call.args.destinationType.first().toString() == 'ecr') {
             assertThat(call.args.accountName.first(), notNullValue())
             assertThat(call.args.destinationCredentialIdentifier.first(),
-                anyOf(
-                    equalTo('public.ecr.aws/p5f6l6i3'),
-                    equalTo('public.ecr.aws/m0o1u6w1')))
+                    anyOf(
+                            equalTo('public.ecr.aws/p5f6l6i3'),
+                            equalTo('public.ecr.aws/m0o1u6w1')))
         }
     }
 

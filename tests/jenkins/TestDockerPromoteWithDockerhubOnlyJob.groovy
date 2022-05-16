@@ -7,23 +7,26 @@ class TestDockerPromoteWithDockerhubOnlyJob extends BuildPipelineTest {
     @Before
     void setUp() {
         String imageRepository = 'ci-runner-staging'
-        String imageTag = 'latest'
-        String accountName = 'aws_account_artifact'
-        String sourceImagePath = "opensearchstaging/${imageRepository}:${imageTag}"
+        String imageTag = '2.0.0'
+        Boolean latestTag = false
+        Boolean majorVersionTag = true
+        Boolean minorVersionTag = true
 
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "opensearchproject/${imageRepository}:${imageTag}",
-                'docker',
-                'jenkins-staging-docker-prod-token'))
+        this.registerLibTester(new CopyDockerContainerLibTester(imageRepository,
+                imageTag,
+                latestTag,
+                majorVersionTag,
+                minorVersionTag))
 
         super.setUp()
 
         binding.setVariable('IMAGE_REPOSITORY', imageRepository)
         binding.setVariable('IMAGE_TAG', imageTag)
-        binding.setVariable('AWS_ACCOUNT_ARTIFACT', accountName)
         binding.setVariable('DOCKER_HUB', true)
         binding.setVariable('ECR', false)
         binding.setVariable('TAG_LATEST', false)
+        binding.setVariable('TAG_MAJOR_VERSION', true)
+        binding.setVariable('TAG_MAJOR_MINOR_VERSION', true)
 
     }
 

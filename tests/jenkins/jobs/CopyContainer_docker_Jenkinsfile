@@ -4,19 +4,19 @@ pipeline {
         stage('copyImage') {
             steps {
                 script {
-                    copyContainer(
-                        sourceImagePath: 'opensearchstaging/ci-runner:latest',
-                        destinationImagePath: 'opensearchproject/ci-runner:latest',
-                        destinationType: 'docker',
-                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                    copyDockerContainer(
+                        imageRepository: 'opensearchstaging/ci-runner',
+                        imageTag: '2.0.0',
+                        latestTag: true,
+                        majorVersionTag: true,
+                        minorVersionTag: true
                     )
-
-                    copyContainer(
-                        sourceImagePath: 'opensearchstaging/ci-runner:latest',
-                        destinationImagePath: 'opensearchproject/ci-runner:latest',
-                        destinationType: 'ecr',
-                        destinationCredentialIdentifier: 'public.ecr.aws/p5f6l6i3',
-                        accountName: 'DUMMY_ACCOUNT_NAME'
+                    copyECRContainer(
+                        imageRepository: 'opensearchstaging/ci-runner',
+                        imageTag: '2.0.0',
+                        latestTag: true,
+                        majorVersionTag: true,
+                        minorVersionTag: true
                     )
                 }
             }

@@ -7,19 +7,17 @@ class TestDockerPromoteWithLatestTagDockerHubJob extends BuildPipelineTest {
     @Before
     void setUp() {
         String imageRepository = 'ci-runner-staging'
-        String imageTag = '1.3.0'
+        String imageTag = '2.0.0'
         String accountName = 'aws_account_artifact'
-        String sourceImagePath = "opensearchstaging/${imageRepository}:${imageTag}"
+        Boolean latestTag = true
+        Boolean majorVersionTag = true
+        Boolean minorVersionTag = true
 
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "opensearchproject/${imageRepository}:${imageTag}",
-                'docker',
-                'jenkins-staging-docker-prod-token'))
-
-        this.registerLibTester(new CopyContainerLibTester(sourceImagePath,
-                "opensearchproject/${imageRepository}:latest",
-                'docker',
-                'jenkins-staging-docker-prod-token'))
+        this.registerLibTester(new CopyDockerContainerLibTester(imageRepository,
+                imageTag,
+                latestTag,
+                majorVersionTag,
+                minorVersionTag))
 
         super.setUp()
 
@@ -29,6 +27,8 @@ class TestDockerPromoteWithLatestTagDockerHubJob extends BuildPipelineTest {
         binding.setVariable('DOCKER_HUB', true)
         binding.setVariable('ECR', false)
         binding.setVariable('TAG_LATEST', true)
+        binding.setVariable('TAG_MAJOR_VERSION', true)
+        binding.setVariable('TAG_MAJOR_MINOR_VERSION', true)
 
     }
 

@@ -56,11 +56,6 @@ pipeline {
             }
             steps {
                 script {
-//                     def version = "$IMAGE_TAG"
-//                     def array = version.split(".")
-//                     echo "$array"
-//                     def major = "$IMAGE_TAG".split(".").first()
-//                     def minor = "$IMAGE_TAG".split(".").get(1)
                     copyDockerContainer(
                         imageRepository: IMAGE_REPOSITORY,
                         imageTag: IMAGE_TAG,
@@ -68,59 +63,25 @@ pipeline {
                         majorVersionTag: TAG_MAJOR_VERSION,
                         minorVersionTag: TAG_MAJOR_MINOR_VERSION
                     )
-//                     if("$TAG_LATEST".toBoolean()){
-//                         echo "Tagging with latest."
-//                         copyDockerContainer(
-//                             imageRepository: IMAGE_REPOSITORY,
-//                             sourceImageTag: IMAGE_TAG,
-//                             destinationImageTag: "latest"
-//                         )
-//                     }
-//                     if("$TAG_MAJOR_VERSION".toBoolean()){
-//                         echo "Tagging with image's major version."
-//                         copyDockerContainer(
-//                             imageRepository: IMAGE_REPOSITORY,
-//                             sourceImageTag: IMAGE_TAG,
-//                             destinationImageTag: "$major"
-//                         )
-//                     }
-//                     if("$TAG_MAJOR_MINOR_VERSION".toBoolean()){
-//                         echo "Tagging with image's major and minor version."
-//                         copyDockerContainer(
-//                             imageRepository: IMAGE_REPOSITORY,
-//                             sourceImageTag: IMAGE_TAG,
-//                             destinationImageTag: "$major.$minor"
-//                         )
-//                     }
                 }
             }
         }
-//         stage('ecr-promote-to-prod') {
-//             when {
-//                 expression { return "$ECR".toBoolean() }
-//             }
-//             steps {
-//                 script {
-//                     copyContainer(
-//                         sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-//                         destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-//                         destinationType: "ecr",
-//                         destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
-//                         accountName: "${AWS_ACCOUNT_ARTIFACT}"
-//                     )
-//                     if("$TAG_LATEST".toBoolean()){
-//                         echo "Tagging with latest."
-//                         copyContainer(
-//                             sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-//                             destinationImagePath: "public.ecr.aws/p5f6l6i3/${IMAGE_REPOSITORY}:latest",
-//                             destinationType: "ecr",
-//                             destinationCredentialIdentifier: "public.ecr.aws/p5f6l6i3",
-//                             accountName: "${AWS_ACCOUNT_ARTIFACT}"
-//                         )
-//                     }
-//                 }
-//             }
-//         }
+        stage('ecr-promote-to-prod') {
+            when {
+                expression { return "$ECR".toBoolean() }
+            }
+            steps {
+                script {
+                    copyECRContainer(
+                        imageRepository: IMAGE_REPOSITORY,
+                        imageTag: IMAGE_TAG,
+                        latestTag: TAG_LATEST,
+                        majorVersionTag: TAG_MAJOR_VERSION,
+                        minorVersionTag: TAG_MAJOR_MINOR_VERSION
+                    )
+                }
+            }
+        }
     }
     post() {
         always {
