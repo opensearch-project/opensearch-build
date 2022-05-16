@@ -43,38 +43,42 @@ pipeline {
                 }
         }
         stages {
-            stage('dockerhub-promote-to-prod') {
+            stage('Promote to prod DockerHub') {
                 when{
                     expression { return "$DOCKER_HUB".toBoolean() }
                 }
                 steps {
                     script {
                         copyContainer(
-                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                            destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                            sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                            destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "docker",
-                            destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                            destinationCredentialIdentifier: "docker-temp-pg",
+                            //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                         )
                         if("$TAG_LATEST".toBoolean()){
                             echo "Tagging with latest."
                             copyContainer(
-                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                //staging
+                                sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                //project
+                                destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:latest",
                                 destinationType: "docker",
-                                destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                                destinationCredentialIdentifier: "docker-temp-pg",
+                                //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                             )
                         }
                     }
                 }
             }
-            stage('ecr-promote-to-prod') {
+            stage('Promote to prod ECR') {
                 when {
                     expression { return "$ECR".toBoolean() }
                 }
                 steps {
                     script {
                         copyContainer(
-                            sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                            sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                             destinationType: "ecr",
                             ecrProd: true,
@@ -83,7 +87,7 @@ pipeline {
                         if("$TAG_LATEST".toBoolean()){
                             echo "Tagging with latest."
                             copyContainer(
-                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                 destinationType: "ecr",
                                 ecrProd: true,
