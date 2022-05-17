@@ -78,7 +78,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
         }
 
     class Build:
-        def __init__(self, data: Dict[str, str]):
+        def __init__(self, data: Dict[str, str]) -> None:
             self.name = data["name"]
             self.version = data["version"]
             self.platform = data["platform"]
@@ -110,7 +110,7 @@ class BundleComponents(Components['BundleComponent']):
 
 
 class BundleComponent(Component):
-    def __init__(self, data: Any):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.repository = data["repository"]
         self.ref = data["ref"]

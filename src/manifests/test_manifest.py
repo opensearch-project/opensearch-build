@@ -92,14 +92,14 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
         }
 
     class Ci:
-        def __init__(self, data: Any):
+        def __init__(self, data: Any) -> None:
             self.image = None if data is None else self.Image(data.get("image", None))
 
         def __to_dict__(self) -> Optional[dict]:
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data: Any):
+            def __init__(self, data: Any) -> None:
                 self.name = data["name"]
                 self.args = data.get("args", None)
 

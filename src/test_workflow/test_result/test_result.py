@@ -7,7 +7,7 @@ class TestResult:
     config: dict
     status: int
 
-    def __init__(self, component: str, config: dict, status: int):
+    def __init__(self, component: str, config: dict, status: int) -> None:
         self.component = component
         self.config = config
         self.status = status

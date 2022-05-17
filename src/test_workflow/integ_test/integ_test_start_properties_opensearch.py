@@ -11,6 +11,6 @@ from test_workflow.integ_test.integ_test_start_properties import IntegTestStartP
 class IntegTestStartPropertiesOpenSearch(IntegTestStartProperties):
     dependency_installer: DependencyInstallerOpenSearch
 
-    def __init__(self, path: str):
+    def __init__(self, path: str) -> None:
         super().__init__(path, "builds/opensearch/manifest.yml", "dist/opensearch/manifest.yml")
         self.dependency_installer = DependencyInstallerOpenSearch(self.path, self.build_manifest, self.bundle_manifest)

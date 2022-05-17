@@ -20,7 +20,7 @@ class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
     properties: IntegTestStartPropertiesOpenSearchDashboards
     properties_dependency: IntegTestStartPropertiesOpenSearch
 
-    def __init__(self, args: TestArgs, test_manifest: TestManifest):
+    def __init__(self, args: TestArgs, test_manifest: TestManifest) -> None:
         self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.paths.get("opensearch", os.getcwd()))
         self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.paths.get("opensearch-dashboards", os.getcwd()))
         super().__init__(args, test_manifest, self.properties.build_manifest.components)

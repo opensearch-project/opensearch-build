@@ -4,7 +4,7 @@ from typing import List
 
 
 class DistributionNotFound(Exception):
-    def __init__(self, urls: List[str]):
+    def __init__(self, urls: List[str]) -> None:
         self.urls = urls
         super().__init__(f"Unable to find a distribution under urls {self.urls}")
 

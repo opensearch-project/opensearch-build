@@ -19,7 +19,7 @@ from test_workflow.test_args import TestArgs
 
 class BwcTestRunnerOpenSearch(BwcTestRunner):
 
-    def __init__(self, args: TestArgs, test_manifest: TestManifest):
+    def __init__(self, args: TestArgs, test_manifest: TestManifest) -> None:
         self.properties = BwcTestStartPropertiesOpenSearch(args.paths.get("opensearch", os.getcwd()))
         super().__init__(args, test_manifest, self.properties.build_manifest.components)
         logging.info("Entering BWC test for OpenSearch")

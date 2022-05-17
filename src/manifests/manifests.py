@@ -16,7 +16,7 @@ T = TypeVar('T', bound='Manifest')
 
 
 class Manifests(SortedDict, Generic[T]):
-    def __init__(self, klass: Any, files: List[str]):
+    def __init__(self, klass: Any, files: List[str]) -> None:
         super(Manifests, self).__init__()
         self.klass = klass
         self.__append__(files)

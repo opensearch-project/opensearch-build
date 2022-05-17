@@ -90,7 +90,7 @@ class LocalClusterLogs(LogRecorder):
 class RemoteClusterLogs(LogRecorder):
     parent_class: TestRecorder
 
-    def __init__(self, parent_class: TestRecorder):
+    def __init__(self, parent_class: TestRecorder) -> None:
         self.parent_class = parent_class
 
     def save_test_result_data(self, test_result_data: TestResultData) -> None:
@@ -107,7 +107,7 @@ class RemoteClusterLogs(LogRecorder):
 class TestResultsLogs(LogRecorder):
     parent_class: TestRecorder
 
-    def __init__(self, parent_class: TestRecorder):
+    def __init__(self, parent_class: TestRecorder) -> None:
         self.parent_class = parent_class
 
     def save_test_result_data(self, test_result_data: TestResultData) -> None:

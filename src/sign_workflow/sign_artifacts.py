@@ -23,7 +23,7 @@ class SignArtifacts:
     signature_type: str
     signer: Signer
 
-    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer):
+    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer) -> None:
         self.target = target
         self.components = components
         self.artifact_type = artifact_type

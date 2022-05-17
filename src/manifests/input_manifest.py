@@ -101,7 +101,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         },
     }
 
-    def __init__(self, data: Any):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
 
         self.build = self.Build(data["build"])
@@ -123,14 +123,14 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         return manifest
 
     class Ci:
-        def __init__(self, data: Any):
+        def __init__(self, data: Any) -> None:
             self.image = None if data is None else self.Image(data.get("image", None))
 
         def __to_dict__(self) -> Optional[dict]:
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data: Any):
+            def __init__(self, data: Any) -> None:
                 self.name = data["name"]
                 self.args = data.get("args", None)
 
@@ -141,7 +141,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                 }
 
     class Build:
-        def __init__(self, data: Any):
+        def __init__(self, data: Any) -> None:
             self.name: str = data["name"]
             self.version = data["version"]
             self.qualifier = data.get("qualifier", None)
@@ -199,7 +199,7 @@ class InputComponents(Components['InputComponent']):
 
 
 class InputComponent(Component):
-    def __init__(self, data: Any):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.platforms = data.get("platforms", None)
         self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
@@ -255,7 +255,7 @@ class InputComponentFromSource(InputComponent):
 
 
 class InputComponentFromDist(InputComponent):
-    def __init__(self, data: Any):
+    def __init__(self, data: Any) -> None:
         super().__init__(data)
         self.dist = data["dist"]
 

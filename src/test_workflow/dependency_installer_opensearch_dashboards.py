@@ -11,5 +11,5 @@ from test_workflow.dependency_installer import DependencyInstaller
 
 class DependencyInstallerOpenSearchDashboards(DependencyInstaller):
 
-    def __init__(self, root_url: str, build_manifest: BuildManifest, bundle_manifest: BundleManifest):
+    def __init__(self, root_url: str, build_manifest: BuildManifest, bundle_manifest: BundleManifest) -> None:
         super().__init__(root_url, build_manifest, bundle_manifest)

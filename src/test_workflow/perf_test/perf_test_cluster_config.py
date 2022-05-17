@@ -15,7 +15,7 @@ class PerfTestClusterConfig():
     """
     Maintains the cluster level configuration.
     """
-    def __init__(self, security: bool = False, data_nodes: int = 1, master_nodes: int = 0, ingest_nodes: int = 0, client_nodes: int = 0):
+    def __init__(self, security: bool = False, data_nodes: int = 1, master_nodes: int = 0, ingest_nodes: int = 0, client_nodes: int = 0) -> None:
         self.security = security
         self.data_nodes = data_nodes
         self.master_nodes = master_nodes
