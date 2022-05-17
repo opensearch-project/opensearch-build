@@ -49,22 +49,18 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "docker",
-                                destinationCredentialIdentifier: "docker-temp-pg",
-                                //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                                destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                             )
                             if("$TAG_LATEST".toBoolean()){
                                 echo "Docker: Tagging with latest."
                                 copyContainer(
-                                    //staging
-                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                    //project
-                                    destinationImagePath: "1001235258/${IMAGE_REPOSITORY}:latest",
+                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    destinationImagePath: "opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "docker",
-                                    destinationCredentialIdentifier: "docker-temp-pg",
-                                    //destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
+                                    destinationCredentialIdentifier: "jenkins-staging-docker-prod-token"
                                 )
                             }
                         }
@@ -77,7 +73,7 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
                                 ecrProd: true,
@@ -86,7 +82,7 @@ pipeline {
                             if("$TAG_LATEST".toBoolean()){
                                 echo "ECR: Tagging with latest."
                                 copyContainer(
-                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                     destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
                                     ecrProd: true,
