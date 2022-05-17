@@ -11,7 +11,7 @@ from test_workflow.perf_test.perf_test_cluster_config import PerfTestClusterConf
 
 class TestPerfTestClusterConfig(unittest.TestCase):
 
-    def test_default_args(self):
+    def test_default_args(self) -> None:
         config = PerfTestClusterConfig()
         self.assertEqual(config.security, False)
         self.assertEqual(config.data_nodes, 1)
@@ -20,7 +20,7 @@ class TestPerfTestClusterConfig(unittest.TestCase):
         self.assertEqual(config.client_nodes, 0)
         self.assertEqual(config.is_single_node_cluster, True)
 
-    def test_non_default_args(self):
+    def test_non_default_args(self) -> None:
         config = PerfTestClusterConfig(True, 1, 2, 3, 4)
         self.assertEqual(config.security, True)
         self.assertEqual(config.data_nodes, 1)

@@ -6,26 +6,33 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, PropertyMock, call, mock_open, patch
+from typing import Any
+from unittest.mock import MagicMock, Mock, PropertyMock, call, mock_open, patch
 
+from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
 
 
 class ServiceOpenSearchDashboardsTests(unittest.TestCase):
+    version: str
+    distribution: str
+    work_dir: str
+    additional_config: dict
+    dependency_installer: DependencyInstaller
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.version = "1.1.0"
         self.distribution = "tar"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
-        self.dependency_installer = ""
+        self.dependency_installer = None
 
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process):
+    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
 
         mock_dependency_installer = MagicMock()
 
@@ -73,7 +80,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
+    def test_start_without_security(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_check_call: Mock, mock_os_isdir: Mock) -> None:
 
         mock_dependency_installer = MagicMock()
 
@@ -130,7 +137,16 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_without_security_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_check_call, mock_os_isdir):
+    def test_start_without_security_and_not_installed(
+        self,
+        mock_tarfile_open: Mock,
+        mock_dump: Mock,
+        mock_file: Any,
+        mock_pid: Mock,
+        mock_process: Mock,
+        mock_check_call: Mock,
+        mock_os_isdir: Mock
+    ) -> None:
 
         mock_dependency_installer = MagicMock()
 
@@ -176,7 +192,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_file_handler_for_security.close.assert_called_once()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result)
 
-    def test_endpoint_port_url(self):
+    def test_endpoint_port_url(self) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,
@@ -192,7 +208,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
-    def test_get_service_response_with_security(self, mock_url, mock_requests_get):
+    def test_get_service_response_with_security(self, mock_url: Mock, mock_requests_get: Mock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,
@@ -212,7 +228,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearchDashboards, "url")
-    def test_get_service_response_without_security(self, mock_url, mock_requests_get):
+    def test_get_service_response_without_security(self, mock_url: Mock, mock_requests_get: Mock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,
@@ -231,7 +247,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         mock_requests_get.assert_called_once_with(mock_url_result, auth=None, verify=False)
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_green_available(self, mock_get_service_response):
+    def test_service_alive_green_available(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,
@@ -251,7 +267,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_yellow_available(self, mock_get_service_response):
+    def test_service_alive_yellow_available(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,
@@ -271,7 +287,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearchDashboards, "get_service_response")
-    def test_service_alive_red_unavailable(self, mock_get_service_response):
+    def test_service_alive_red_unavailable(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearchDashboards(
             self.version,
             self.distribution,

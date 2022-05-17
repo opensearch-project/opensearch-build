@@ -5,10 +5,17 @@
 # compatible open source license.
 
 class PerfTestClusterConfig():
+    security: bool
+    data_nodes: int
+    master_nodes: int
+    ingest_nodes: int
+    client_nodes: int
+    _is_single_node_cluster: bool
+
     """
     Maintains the cluster level configuration.
     """
-    def __init__(self, security=False, data_nodes=1, master_nodes=0, ingest_nodes=0, client_nodes=0):
+    def __init__(self, security: bool = False, data_nodes: int = 1, master_nodes: int = 0, ingest_nodes: int = 0, client_nodes: int = 0) -> None:
         self.security = security
         self.data_nodes = data_nodes
         self.master_nodes = master_nodes
@@ -18,5 +25,5 @@ class PerfTestClusterConfig():
                                         and self.ingest_nodes == 0 and self.client_nodes == 0)
 
     @property
-    def is_single_node_cluster(self):
+    def is_single_node_cluster(self) -> bool:
         return self._is_single_node_cluster

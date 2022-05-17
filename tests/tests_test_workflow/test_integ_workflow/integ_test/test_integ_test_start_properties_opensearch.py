@@ -5,7 +5,7 @@
 # compatible open source license.
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from test_workflow.integ_test.integ_test_start_properties_opensearch import IntegTestStartPropertiesOpenSearch
 
@@ -15,7 +15,7 @@ class TestIntegTestStartPropertiesOpenSearch(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_start_properties.BundleManifest")
     @patch("test_workflow.integ_test.integ_test_start_properties.BuildManifest")
     @patch("test_workflow.integ_test.integ_test_start_properties_opensearch.DependencyInstallerOpenSearch")
-    def test(self, mock_installer, mock_build, mock_bundle):
+    def test(self, mock_installer: Mock, mock_build: Mock, mock_bundle: Mock) -> None:
         path = "test-path"
 
         mock_bundle_object = MagicMock()

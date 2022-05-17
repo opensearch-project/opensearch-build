@@ -14,11 +14,11 @@ from ci_workflow.ci_manifests import CiManifests
 from system import console
 
 
-def main():
+def main() -> int:
     args = CiArgs()
     console.configure(level=args.logging_level)
-
     CiManifests.from_file(args.manifest, args).check()
+    return 0
 
 
 if __name__ == "__main__":

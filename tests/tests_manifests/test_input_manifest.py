@@ -157,9 +157,9 @@ class TestInputManifest(unittest.TestCase):
         data = {"name": "x", "repository": "", "ref": ""}
         self.assertTrue(InputComponent(data).__matches__(platform=None))
         self.assertTrue(InputComponent(data).__matches__(platform="x"))
-        self.assertTrue(InputComponent({**data, "platforms": ["linux"]}).__matches__(platform="linux"))
-        self.assertTrue(InputComponent({**data, "platforms": ["linux", "windows"]}).__matches__(platform="linux"))
-        self.assertFalse(InputComponent({**data, "platforms": ["linux"]}).__matches__(platform="x"))
+        self.assertTrue(InputComponent({**data, "platforms": ["linux"]}).__matches__(platform="linux"))  # type: ignore
+        self.assertTrue(InputComponent({**data, "platforms": ["linux", "windows"]}).__matches__(platform="linux"))  # type: ignore
+        self.assertFalse(InputComponent({**data, "platforms": ["linux"]}).__matches__(platform="x"))  # type: ignore
 
     def test_component___matches_focus__(self) -> None:
         component = InputComponent({"name": "x", "repository": "", "ref": ""})

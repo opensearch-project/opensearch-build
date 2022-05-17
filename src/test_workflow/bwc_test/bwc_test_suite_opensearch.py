@@ -5,21 +5,25 @@
 # compatible open source license.
 
 import os
+from pathlib import Path
+from typing import Any
 
+from manifests.bundle_manifest import BundleManifest
+from manifests.test_manifest import TestComponent
 from test_workflow.bwc_test.bwc_test_suite import BwcTestSuite
+from test_workflow.test_recorder.test_recorder import TestRecorder
 
 
 class BwcTestSuiteOpenSearch(BwcTestSuite):
 
     def __init__(
         self,
-        work_dir,
-        component,
-        test_config,
-        test_recorder,
-        manifest
-    ):
-
+        work_dir: Path,
+        component: Any,
+        test_config: TestComponent,
+        test_recorder: TestRecorder,
+        manifest: BundleManifest
+    ) -> None:
         super().__init__(
             work_dir,
             component,
@@ -29,11 +33,11 @@ class BwcTestSuiteOpenSearch(BwcTestSuite):
         )
 
     # TODO: enable OpenSearch scripts to accept more arguments
-    def get_cmd(self, script, security, manifest_build_location):
+    def get_cmd(self, script: str, security: bool, manifest_build_location: str) -> str:
         return script
 
     @property
-    def test_artifact_files(self):
+    def test_artifact_files(self) -> dict:
         return {
             "opensearch-bwc-test": os.path.join(self.repo_work_dir, "build", "reports", "tests", "bwcTest")
         }

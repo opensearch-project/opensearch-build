@@ -9,7 +9,7 @@ class LogRecorder(abc.ABC):
     """
 
     @abc.abstractmethod
-    def save_test_result_data(self, test_result_data: TestResultData):
+    def save_test_result_data(self, test_result_data: TestResultData) -> None:
         """
         Defines how the result data is are recorded
         """

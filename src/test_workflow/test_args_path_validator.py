@@ -16,5 +16,5 @@ import validators  # type:ignore
 class TestArgsPathValidator:
 
     @classmethod
-    def validate(cls, path):
+    def validate(cls, path: str) -> str:
         return path if validators.url(path) else os.path.realpath(path)

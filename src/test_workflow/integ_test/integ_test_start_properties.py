@@ -12,7 +12,11 @@ from manifests.bundle_manifest import BundleManifest
 
 
 class IntegTestStartProperties(abc.ABC):
-    def __init__(self, path, build_dir, bundle_dir):
+    path: str
+    build_dir: str
+    bundle_dir: str
+
+    def __init__(self, path: str, build_dir: str, bundle_dir: str) -> None:
         self.path = path
         self.build_dir = build_dir
         self.bundle_dir = bundle_dir

@@ -14,7 +14,7 @@ from sign_workflow.signer import Signer
 from system import console
 
 
-def main():
+def main() -> int:
     args = SignArgs()
 
     console.configure(level=args.logging_level)
@@ -28,6 +28,7 @@ def main():
     )
 
     sign.sign()
+    return 0
 
 
 if __name__ == "__main__":

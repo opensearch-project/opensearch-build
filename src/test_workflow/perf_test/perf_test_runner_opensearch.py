@@ -8,7 +8,7 @@ import logging
 import os
 
 import yaml
-from retry.api import retry_call
+from retry.api import retry_call  # type: ignore
 
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
@@ -25,16 +25,16 @@ class PerfTestRunnerOpenSearch(PerfTestRunner):
     """
       Runner to execute the performance tests for opensearch.
     """
-    def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
+    def __init__(self, args: PerfArgs, test_manifest: BundleManifest) -> None:
         super().__init__(args, test_manifest)
         logging.info("Running opensearch tests")
 
-    def get_infra_repo_url(self):
+    def get_infra_repo_url(self) -> str:
         if "GITHUB_TOKEN" in os.environ:
             return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
         return "https://github.com/opensearch-project/opensearch-infra.git"
 
-    def run_tests(self):
+    def run_tests(self) -> None:
         config = yaml.safe_load(self.args.config)
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             current_workspace = os.path.join(work_dir.name, "infra")
