@@ -82,7 +82,7 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
                         ]
                 ]
         ]
-        helper.addShMock("curl -s \"http://localhost:5601/api/status\"") { script ->
+        helper.addShMock("curl -s \"http://localhost:5601/api/status\" -u admin:admin") { script ->
             return [stdout: cluster_status.inspect(), exitValue: 0]
         }
         helper.registerAllowedMethod("readJSON", [Map.class], {c -> cluster_status})

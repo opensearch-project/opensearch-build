@@ -3,13 +3,12 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
-        copyArtifactPermission("${JOB_BASE_NAME}")
-        buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
     }
     agent none
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+        IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
     }
     parameters {
         string(
@@ -156,65 +155,97 @@ pipeline {
                     }
                 }
                 stage('build-and-test-linux-x64-rpm') {
-                    agent {
-                        docker {
-                            label AGENT_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
+                    agent { label AGENT_X64 }
+                    stages {
+                        stage('build-archive-linux-x64-rpm') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'rpm',
+                                        stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
                         }
-                    }
-                    steps {
-                        script {
-                            def buildManifestObj = buildAssembleUpload(
-                                componentName: "${COMPONENT_NAME}",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'linux',
-                                architecture: 'x64',
-                                distribution: 'rpm'
-                            )
-                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
-                            env.ARTIFACT_URL_X64_RPM = artifactUrl
+                        stage('assemble-archive-and-test-linux-x64-rpm') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image IMAGE_RPM
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'rpm',
+                                        stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_X64_RPM = artifactUrl
 
-                            echo "buildManifestUrl (x64, rpm): ${buildManifestUrl}"
-                            echo "artifactUrl (x64, rpm): ${artifactUrl}"
+                                    echo "buildManifestUrl (x64, rpm): ${buildManifestUrl}"
+                                    echo "artifactUrl (x64, rpm): ${artifactUrl}"
 
-                            String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
-                            echo "Trigger rpm validation for x64 rpm ${bundleManifestUrl}"
-                            def rpmValidationResults =
-                                build job: 'rpm-validation',
-                                propagate: false,
-                                wait: true,
-                                parameters: [
-                                    string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                    string(name: 'AGENT_LABEL', value: AGENT_X64)
-                                ]
+                                    echo "Trigger rpm validation for x64 rpm ${bundleManifestUrl}"
+                                    def rpmValidationResults =
+                                        build job: 'rpm-validation',
+                                        propagate: false,
+                                        wait: true,
+                                        parameters: [
+                                            string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                                            string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                        ]
 
-                            env.RPM_VALIDATION_X64_RPM_TEST_RESULT = createTestResultsMessage(
-                                testType: "RPM Validation (x64, rpm)",
-                                status: rpmValidationResults.getResult(),
-                                absoluteUrl: rpmValidationResults.getAbsoluteUrl()
-                            )
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                    "\n${env.RPM_VALIDATION_X64_RPM_TEST_RESULT}"
-                                )
+                                    env.RPM_VALIDATION_X64_RPM_TEST_RESULT = createTestResultsMessage(
+                                        testType: "RPM Validation (x64, rpm)",
+                                        status: rpmValidationResults.getResult(),
+                                        absoluteUrl: rpmValidationResults.getAbsoluteUrl()
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.RPM_VALIDATION_X64_RPM_TEST_RESULT}"
+                                        )
 
-                                postCleanup()
+                                        postCleanup()
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 stage('build-and-test-linux-arm64-tar') {
-                    agent none
+                    agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-arm64-tar') {
                             agent {
@@ -232,7 +263,8 @@ pipeline {
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
-                                        distribution: 'tar'
+                                        distribution: 'tar',
+                                        stashName: "build-archive-linux-arm64-tar-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
                             }
@@ -258,7 +290,8 @@ pipeline {
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
-                                        distribution: 'tar'
+                                        distribution: 'tar',
+                                        stashName: "build-archive-linux-arm64-tar-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -331,7 +364,7 @@ pipeline {
                     }
                 }
                 stage('build-and-test-linux-arm64-rpm') {
-                    agent none
+                    agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-arm64-rpm') {
                             agent {
@@ -349,7 +382,8 @@ pipeline {
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
-                                        distribution: 'rpm'
+                                        distribution: 'rpm',
+                                        stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
                             }
@@ -363,8 +397,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_ARM64
-                                    image dockerAgent.image
-                                    args dockerAgent.args
+                                    image IMAGE_RPM
                                     alwaysPull true
                                 }
                             }
@@ -375,7 +408,8 @@ pipeline {
                                         inputManifest: "manifests/${INPUT_MANIFEST}",
                                         platform: 'linux',
                                         architecture: 'arm64',
-                                        distribution: 'rpm'
+                                        distribution: 'rpm',
+                                        stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -473,7 +507,7 @@ pipeline {
                     if (params.PUBLISH_NOTIFICATION) { 
                         def stashed = lib.jenkins.Messages.new(this).get([
                             'build-and-test-linux-x64-tar',
-                            'build-and-test-linux-x64-rpm',
+                            'assemble-archive-and-test-linux-x64-rpm',
                             'assemble-archive-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
                         ])

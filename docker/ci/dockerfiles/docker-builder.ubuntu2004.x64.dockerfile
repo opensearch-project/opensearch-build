@@ -46,4 +46,4 @@ RUN curl -L https://github.com/google/go-containerregistry/releases/latest/downl
     tar -zxvf go-containerregistry.tar.gz && \
     chmod +x gcrane && \
     mv gcrane /usr/local/bin/ && \
-    rm -rf go-containerregistry.tar.gz
+    rm -rf go-containerregistry.tar.gz 
