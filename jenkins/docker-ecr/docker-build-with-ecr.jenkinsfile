@@ -118,8 +118,7 @@ pipeline {
                     steps {
                         script {
                             git url: DOCKER_BUILD_GIT_REPOSITORY, branch: DOCKER_BUILD_GIT_REPOSITORY_REFERENCE
-                            //def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
-                            def CREDENTIAL_ID = "docker-temp-pg"
+                            def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
                             withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                                 sh '''
                                         set -e
@@ -137,19 +136,19 @@ pipeline {
                         script {
                             copyContainer(
                                 sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
                                 destinationType: "ecr",
-                                ecrProd: true,
-                                destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
+                                ecrProd: false,
+                                destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1",
                             )
                             if("$TAG_LATEST".toBoolean()){
                                 echo "ECR: Tagging with latest."
                                 copyContainer(
-                                    sourceImagePath: "1001235258/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
-                                    destinationImagePath: "public.ecr.aws/opensearchproject/${IMAGE_REPOSITORY}:latest",
+                                    sourceImagePath: "opensearchstaging/${IMAGE_REPOSITORY}:${IMAGE_TAG}",
+                                    destinationImagePath: "public.ecr.aws/m0o1u6w1/${IMAGE_REPOSITORY}:latest",
                                     destinationType: "ecr",
-                                    ecrProd: true,
-                                    destinationCredentialIdentifier: "public.ecr.aws/opensearchproject",
+                                    ecrProd: false,
+                                    destinationCredentialIdentifier: "public.ecr.aws/m0o1u6w1",
                                 )
                             }
                         }
