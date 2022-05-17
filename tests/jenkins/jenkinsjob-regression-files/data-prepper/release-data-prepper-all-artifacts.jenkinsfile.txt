@@ -83,19 +83,17 @@
                release-data-prepper-all-artifacts.copyContainer({sourceImagePath=http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908, destinationImagePath=opensearchproject/data-prepper:0.22.1, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
                   copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
-                docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
                 gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:0.22.1
-                docker logout
             )
                   copyContainer.sh(docker logout jenkins-staging-docker-prod-token)
                release-data-prepper-all-artifacts.copyContainer({sourceImagePath=http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908, destinationImagePath=opensearchproject/data-prepper:latest, destinationType=docker, destinationCredentialIdentifier=jenkins-staging-docker-prod-token})
                   copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
-                docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
                 gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:latest
-                docker logout
             )
                   copyContainer.sh(docker logout jenkins-staging-docker-prod-token)
          release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)

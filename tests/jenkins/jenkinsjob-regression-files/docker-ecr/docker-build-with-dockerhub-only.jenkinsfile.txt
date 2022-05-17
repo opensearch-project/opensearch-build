@@ -1,9 +1,19 @@
    docker-build-with-ecr.run()
       docker-build-with-ecr.legacySCM(groovy.lang.Closure)
       docker-build-with-ecr.library({identifier=jenkins@20211123, retriever=null})
+      docker-build-with-ecr.parameters([{$class=DynamicReferenceParameter, choiceType=ET_FORMATTED_HTML, description=ECR Image Repository, Eg: ci-runner, name=IMAGE_REPOSITORY, referencedParameters=ECR, script={$class=GroovyScript, fallbackScript={classpath=[], sandbox=false, script=return['']}, script={classpath=[], sandbox=false, script=
+                        if (ECR){
+                            return """<textarea name="value" rows="5" class="setting-input   "></textarea>"""
+                        }
+                        }}, omitValueField=true}, {$class=DynamicReferenceParameter, choiceType=ET_FORMATTED_HTML, description=ECR Image tag, Eg: 1.3.0, name=IMAGE_TAG, referencedParameters=ECR, script={$class=GroovyScript, fallbackScript={classpath=[], sandbox=false, script=return['']}, script={classpath=[], sandbox=false, script=
+                        if (ECR){
+                            return """<textarea name="value" rows="5" class="setting-input   "></textarea>"""
+                        }
+                        }}, omitValueField=true}])
+      docker-build-with-ecr.properties([null])
       docker-build-with-ecr.pipeline(groovy.lang.Closure)
          docker-build-with-ecr.timeout({time=1, unit=HOURS})
-         docker-build-with-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         docker-build-with-ecr.echo(Executing on agent [label:none])
          docker-build-with-ecr.stage(check-params, groovy.lang.Closure)
             docker-build-with-ecr.script(groovy.lang.Closure)
          docker-build-with-ecr.stage(docker-build-dockerhub-staging, groovy.lang.Closure)
@@ -12,11 +22,11 @@
                docker-build-with-ecr.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                docker-build-with-ecr.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                   docker-build-with-ecr.sh(
-                                set -e
-                                docker logout && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
-                           )
+                                        set -e
+                                        docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                                )
          docker-build-with-ecr.echo(Skipping stage docker-ecr-staging)
          docker-build-with-ecr.script(groovy.lang.Closure)
             docker-build-with-ecr.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-            docker-build-with-ecr.sh(docker logout && docker image prune -f --all)
+            docker-build-with-ecr.sh(docker image prune -f --all)
