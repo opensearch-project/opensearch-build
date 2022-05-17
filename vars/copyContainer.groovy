@@ -21,8 +21,10 @@ void call(Map args = [:]) {
     if (args.destinationType == 'ecr') {
         if(args.ecrProd) {
             withCredentials([
-                string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
-                string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
+                //string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+                //string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
+                string(credentialsId: 'ARTIFACT_PROMOTION_ROLE_NAME', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+                string(credentialsId: 'AWS_ACCOUNT_ARTIFACT', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
                 {
                     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
                         def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
