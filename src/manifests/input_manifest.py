@@ -39,7 +39,7 @@ components:
 import copy
 import itertools
 import logging
-from typing import Any, Callable, Iterator, List, Optional
+from typing import Callable, Iterator, List, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components

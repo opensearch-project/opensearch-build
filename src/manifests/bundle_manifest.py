@@ -4,7 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Any, Dict
+from typing import Dict
 
 from manifests.bundle.bundle_manifest_1_0 import BundleManifest_1_0
 from manifests.component_manifest import Component, ComponentManifest, Components

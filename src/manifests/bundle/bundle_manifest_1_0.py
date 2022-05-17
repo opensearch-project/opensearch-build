@@ -4,8 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Any
-
 from manifests.component_manifest import Component, ComponentManifest, Components
 
 
