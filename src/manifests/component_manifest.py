@@ -26,7 +26,7 @@ class ComponentManifest(Manifest[ManifestType], Generic[ManifestType, Components
         }
     }
 
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
 
         self.components = Components(data.get("components", []))  # type: ignore[assignment]
@@ -44,7 +44,7 @@ class Components(Dict[str, ComponentType], Generic[ComponentType]):
         super().__init__(map(create_component, data))
 
     @classmethod
-    def __create__(self, data: Any) -> ComponentType:
+    def __create__(self, data: dict) -> ComponentType:
         return Component(data)  # type: ignore[return-value]
 
     def __to_dict__(self) -> List[Dict[Any, Any]]:

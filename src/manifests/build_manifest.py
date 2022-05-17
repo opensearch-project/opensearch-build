@@ -89,7 +89,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
         },
     }
 
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.build = self.Build(data["build"])
         self.components = BuildComponents(data.get("components", []))  # type: ignore[assignment]
@@ -102,7 +102,7 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
         }
 
     class Build:
-        def __init__(self, data: Any) -> None:
+        def __init__(self, data: dict) -> None:
             self.name: str = data["name"]
             self.version: str = data["version"]
             self.platform: str = data["platform"]
@@ -127,12 +127,12 @@ class BuildManifest(ComponentManifest['BuildManifest', 'BuildComponents']):
 
 class BuildComponents(Components['BuildComponent']):
     @classmethod
-    def __create__(self, data: Any) -> 'BuildComponent':
+    def __create__(self, data: dict) -> 'BuildComponent':
         return BuildComponent(data)
 
 
 class BuildComponent(Component):
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.repository = data["repository"]
         self.ref = data["ref"]

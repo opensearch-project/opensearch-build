@@ -65,7 +65,7 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
         },
     }
 
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.build = self.Build(data["build"])
         self.components = BundleComponents(data.get("components", []))  # type: ignore[assignment]
@@ -105,12 +105,12 @@ class BundleManifest(ComponentManifest['BundleManifest', 'BundleComponents']):
 
 class BundleComponents(Components['BundleComponent']):
     @classmethod
-    def __create__(self, data: Any) -> 'BundleComponent':
+    def __create__(self, data: dict) -> 'BundleComponent':
         return BundleComponent(data)
 
 
 class BundleComponent(Component):
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.repository = data["repository"]
         self.ref = data["ref"]
