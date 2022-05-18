@@ -1,7 +1,7 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.*
 
-class TestDockerBuildWithEcrJob extends BuildPipelineTest {
+class TestDockerCopy extends BuildPipelineTest {
 
     @Before
     void setUp() {
@@ -45,8 +45,8 @@ class TestDockerBuildWithEcrJob extends BuildPipelineTest {
 
         helper.registerAllowedMethod("git", [Map])
 
-        super.testPipeline("jenkins/docker-ecr/docker-build-with-ecr.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-build-with-ecr-dockerhub.jenkinsfile")
+        super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy.jenkinsfile")
     }
 
 }

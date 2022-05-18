@@ -8,14 +8,11 @@ class CopyContainerLibTester extends LibFunctionTester {
     private final String sourceImagePath
     private final String destinationImagePath
     private final String destinationType
-    private final String destinationCredentialIdentifier
-    private final boolean ecrProd
 
     CopyContainerLibTester(
         String sourceImagePath,
         String destinationImagePath,
         String destinationType,
-        String destinationCredentialIdentifier,
         boolean ecrProd=false) {
         this.sourceImagePath = sourceImagePath
         this.destinationImagePath = destinationImagePath
@@ -44,39 +41,14 @@ class CopyContainerLibTester extends LibFunctionTester {
         assertThat(call.args.sourceImagePath.first(), notNullValue())
         assertThat(call.args.destinationImagePath.first(), notNullValue())
         assertThat(call.args.destinationType.first(), notNullValue())
-        assertThat(call.args.destinationType.first(), anyOf(equalTo('ecr'), equalTo('docker')))
-        assertThat(call.args.destinationCredentialIdentifier.first(), notNullValue())
-        if (call.args.destinationType.first().toString() == 'docker') {
-            assertThat(
-                call.args.destinationCredentialIdentifier.first(),
-                anyOf(
-                    equalTo('jenkins-staging-docker-prod-token'),
-                    equalTo('jenkins-staging-docker-staging-credential')))
-        }
-        if (call.args.destinationType.first().toString() == 'ecr') {
-            assertThat(call.args.destinationCredentialIdentifier.first(),
-                anyOf(
-                    equalTo('public.ecr.aws/opensearchstaging'),
-                    equalTo('public.ecr.aws/opensearchproject')))
-            assertThat(call.args.ecrProd.first(),
-                anyOf(
-                    equalTo(true),
-                    equalTo(false)))
-        }
+        assertThat(call.args.destinationType.first(), anyOf(equalTo('Prod-ECR'), equalTo('Prod-DockerHub'), equalTo('Staging-ECR'), equalTo('Staging-DockerHub')))
     }
 
     boolean expectedParametersMatcher(call) {
-        boolean ecrProdFound = true
-
-        if (call.args.destinationType.first() == 'ecr') {
-            ecrProdFound = call.args.ecrProd.first() == ecrProd
-        }
 
         return call.args.sourceImagePath.first().toString().equals(sourceImagePath)
                 && call.args.destinationImagePath.first().toString().equals(destinationImagePath)
-                && call.args.destinationCredentialIdentifier.first().toString().equals(destinationCredentialIdentifier)
                 && call.args.destinationType.first().toString().equals(destinationType)
-                && ecrProdFound
     }
 
 }

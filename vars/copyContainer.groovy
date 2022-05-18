@@ -14,21 +14,21 @@ void call(Map args = [:]) {
         withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
-                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                gcrane cp ${args.sourceImage} ${args.destinationImage}
             """
         }
     }
     if (args.destinationType == 'Staging-ECR') {
         def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchstaging").trim()
         sh """
-            gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+            gcrane cp ${args.sourceImage} ${args.destinationImage}
         """
     }
     if (args.destinationType == 'Prod-DockerHub') {
         withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
-                gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                gcrane cp ${args.sourceImage} ${args.destinationImage}
             """
         }
     }
@@ -40,10 +40,9 @@ void call(Map args = [:]) {
             withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
                 def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject").trim()
                 sh """
-                    gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                    gcrane cp ${args.sourceImage} ${args.destinationImage}
                 """
             }
         }
     }
-    sh "docker logout ${args.destinationCredentialIdentifier}"
 }

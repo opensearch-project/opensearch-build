@@ -6,40 +6,25 @@ pipeline {
     }
     agent none  
     parameters {
-        /*choice(
-            name: 'SOURCE_IMAGE_LOCATION', 
-            choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
-            description: 'Existing Image location'
-        )*/
         string(
-            name: 'SOURCE_IMAGE_REPOSITORY',
-            description: 'Image Repository on staging Eg: ci-runner',
-            trim: true
-        )
-        string(
-            name: 'SOURCE_IMAGE_TAG',
-            description: 'Image tag on staging. Eg: 1.3.0',
+            name: 'SOURCE_IMAGE',
+            description: 'Complete image path name Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
             trim: true
         )
         choice(
             name: 'DESTINATION_IMAGE_LOCATION', 
             choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
-            description: 'Destination Image location'
+            description: '''
+                Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG> <br>
+                Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG> <br>
+                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG> <br>
+                Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+            '''
         )
         string(
-            name: 'DESTINATION_IMAGE_REPOSITORY',
-            description: 'Image Repository Eg: ci-runner',
+            name: 'DESTINATION_IMAGE',
+            description: 'Complete image path name Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
             trim: true
-        )
-        string(
-            name: 'DESTINATION_IMAGE_TAG',
-            description: 'Image tag Eg: 1.3.0',
-            trim: true
-        )
-        booleanParam(
-            name: 'TAG_LATEST',
-            defaultValue: true,
-            description: 'Tag the copied image as latest'
         )
     }
     stages {
@@ -56,18 +41,10 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImagePath: "${SOURCE_IMAGE_REPOSITORY}:${SOURCE_IMAGE_TAG}",
-                                destinationImagePath: "${DESTINATION_IMAGE_REPOSITORY}:${DESTINATION_IMAGE_TAG}",
+                                sourceImage: "${SOURCE_IMAGE}",
+                                destinationImage: "${DESTINATION_IMAGE}",
                                 destinationType: "${DESTINATION_IMAGE_LOCATION}"
                             )
-                            if("$TAG_LATEST".toBoolean()){
-                                echo "Docker: Tagging with latest."
-                                copyContainer(
-                                    sourceImagePath: "${SOURCE_IMAGE_REPOSITORY}:${SOURCE_IMAGE_TAG}",
-                                    destinationImagePath: "${DESTINATION_IMAGE_REPOSITORY}:latest",
-                                    destinationType: "${DESTINATION_IMAGE_LOCATION}"
-                                )
-                            }
                         }
                     }
                 }
