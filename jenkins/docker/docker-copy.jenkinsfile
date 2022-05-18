@@ -6,11 +6,11 @@ pipeline {
     }
     agent none  
     parameters {
-        choice(
+        /*choice(
             name: 'SOURCE_IMAGE_LOCATION', 
             choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
             description: 'Existing Image location'
-        )
+        )*/
         string(
             name: 'SOURCE_IMAGE_REPOSITORY',
             description: 'Image Repository on staging Eg: ci-runner',
