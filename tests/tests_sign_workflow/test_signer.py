@@ -73,15 +73,11 @@ class TestSigner(unittest.TestCase):
         signer.sign_artifacts(artifacts, Path("path"), ".sig")
         self.assertEqual(signer.sign.call_args_list, expected)
 
-    @patch(
-        "sign_workflow.signer.Signer.get_repo_url",
-        return_value="https://github.com/opensearch-project/.github",
-    )
-    @patch("sign_workflow.signer.GitRepository.execute")
-    def test_signer_checks_out_tool(self, mock_execute: Mock, mock_signer: Mock) -> None:
+    @patch("sign_workflow.signer.GitRepository")
+    def test_signer_checks_out_tool(self, mock_repo: Mock) -> None:
         Signer()
-        self.assertEqual(mock_execute.call_count, 2)
-        mock_execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])
+        self.assertEqual(mock_repo.return_value.execute.call_count, 2)
+        mock_repo.return_value.execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_verify_asc(self, mock_repo: Mock) -> None:
