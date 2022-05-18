@@ -15,9 +15,9 @@ pipeline {
             name: 'DESTINATION_IMAGE_LOCATION', 
             choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
             description: '''
-                Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG> <br>
-                Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG> <br>
-                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG> <br>
+                Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
+                Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
+                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
                 Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
             '''
         )
