@@ -1,0 +1,85 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none  
+    parameters {
+        choice(
+            name: 'SOURCE_IMAGE_LOCATION', 
+            choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
+            description: 'Existing Image location'
+        )
+        string(
+            name: 'SOURCE_IMAGE_REPOSITORY',
+            description: 'Image Repository on staging Eg: ci-runner',
+            trim: true
+        )
+        string(
+            name: 'SOURCE_IMAGE_TAG',
+            description: 'Image tag on staging. Eg: 1.3.0',
+            trim: true
+        )
+        choice(
+            name: 'DESTINATION_IMAGE_LOCATION', 
+            choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
+            description: 'Destination Image location'
+        )
+        string(
+            name: 'DESTINATION_IMAGE_REPOSITORY',
+            description: 'Image Repository Eg: ci-runner',
+            trim: true
+        )
+        string(
+            name: 'DESTINATION_IMAGE_TAG',
+            description: 'Image tag Eg: 1.3.0',
+            trim: true
+        )
+        booleanParam(
+            name: 'TAG_LATEST',
+            defaultValue: true,
+            description: 'Tag the copied image as latest'
+        )
+    }
+    stages {
+        stage("Docker Image Promote") {
+            agent {
+                    docker {
+                        label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                        image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+                        args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    }
+            }
+            stages {
+                stage('Image Copy') {
+                    steps {
+                        script {
+                            copyContainer(
+                                sourceImagePath: "${SOURCE_IMAGE_REPOSITORY}:${SOURCE_IMAGE_TAG}",
+                                destinationImagePath: "${DESTINATION_IMAGE_LOCATION}:${DESTINATION_IMAGE_TAG}",
+                                destinationType: "${DESTINATION_IMAGE_LOCATION}"
+                            )
+                            if("$TAG_LATEST".toBoolean()){
+                                echo "Docker: Tagging with latest."
+                                copyContainer(
+                                    sourceImagePath: "${SOURCE_IMAGE_REPOSITORY}:${SOURCE_IMAGE_TAG}",
+                                    destinationImagePath: "${DESTINATION_IMAGE_LOCATION}:${DESTINATION_IMAGE_TAG}",
+                                    destinationType: "${DESTINATION_IMAGE_LOCATION}"
+                                )
+                            }
+                        }
+                    }
+                }
+            }  
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker image prune -f --all"
+                    }
+                }
+            }     
+        }
+    }
+}

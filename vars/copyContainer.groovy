@@ -10,33 +10,39 @@
  */
 void call(Map args = [:]) {
 
-    if (args.destinationType == 'docker') {
-        withCredentials([usernamePassword(credentialsId: args.destinationCredentialIdentifier, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+    if (args.destinationType == 'Staging-DockerHub') {
+        withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
         }
     }
-    if (args.destinationType == 'ecr') {
-        if(args.ecrProd) {
-            withCredentials([
-                string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
-                string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
-                {
-                    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-                        def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
-                        sh """
-                            gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
-                        """
-                    }
-                }
-        }
-        if(!args.ecrProd) {
-            def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+    if (args.destinationType == 'Staging-ECR') {
+        def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+        sh """
+            gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+        """
+    }
+    if (args.destinationType == 'Prod-DockerHub') {
+        withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
                 gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
             """
+        }
+    }
+    if (args.destinationType == 'Prod-ECR'){
+        withCredentials([
+        string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+        string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
+        {
+            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${args.destinationCredentialIdentifier}").trim()
+                sh """
+                    gcrane cp ${args.sourceImagePath} ${args.destinationImagePath}
+                """
+            }
         }
     }
     sh "docker logout ${args.destinationCredentialIdentifier}"
