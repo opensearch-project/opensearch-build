@@ -64,7 +64,7 @@ pipeline {
                                 echo "Docker: Tagging with latest."
                                 copyContainer(
                                     sourceImagePath: "${SOURCE_IMAGE_REPOSITORY}:${SOURCE_IMAGE_TAG}",
-                                    destinationImagePath: "${DESTINATION_IMAGE_REPOSITORY}:${DESTINATION_IMAGE_TAG}",
+                                    destinationImagePath: "${DESTINATION_IMAGE_REPOSITORY}:latest",
                                     destinationType: "${DESTINATION_IMAGE_LOCATION}"
                                 )
                             }
