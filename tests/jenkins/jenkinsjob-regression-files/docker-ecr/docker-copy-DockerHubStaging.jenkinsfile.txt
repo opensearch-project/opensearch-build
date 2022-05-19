@@ -6,12 +6,12 @@
          docker-copy.echo(Executing on agent [label:none])
          docker-copy.stage(Image Copy, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
-               docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=DockerHub, prod=false})
-                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+               docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=docker, prod=false})
+                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
-                    gcrane cp samplerepo/alpine:3.15.4 opensearchproject/alpine:3.15.4
+                    gcrane cp samplerepo/alpine:3.15.4 opensearchstaging/null
                     docker logout
                 )
          docker-copy.script(groovy.lang.Closure)

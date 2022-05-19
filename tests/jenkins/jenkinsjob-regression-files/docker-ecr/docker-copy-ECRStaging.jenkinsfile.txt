@@ -7,15 +7,11 @@
          docker-copy.stage(Image Copy, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
                docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=ecr, prod=false})
-                  copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
-                  copyContainer.string({credentialsId=jenkins-artifact-promotion-account, variable=AWS_ACCOUNT_ARTIFACT})
-                  copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
-                     copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
-                        copyContainer.sh(
-                            gcrane cp samplerepo/alpine:3.15.4 public.ecr.aws/opensearchproject/alpine:3.15.4
-                            docker logout public.ecr.aws/opensearchproject
-                        )
+                  copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchstaging})
+                  copyContainer.sh(
+                 gcrane cp samplerepo/alpine:3.15.4 public.ecr.aws/opensearchstaging/alpine:3.15.4
+                 docker logout public.ecr.aws/opensearchstaging
+            )
          docker-copy.script(groovy.lang.Closure)
             docker-copy.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

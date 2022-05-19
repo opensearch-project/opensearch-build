@@ -6,7 +6,7 @@
          docker-copy.echo(Executing on agent [label:none])
          docker-copy.stage(Image Copy, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
-               docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=ECR, prod=true})
+               docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=ecr, prod=true})
                   copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
                   copyContainer.string({credentialsId=jenkins-artifact-promotion-account, variable=AWS_ACCOUNT_ARTIFACT})
                   copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
