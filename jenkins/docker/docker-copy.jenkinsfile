@@ -51,7 +51,7 @@ pipeline {
                                 sourceImage: "${SOURCE_IMAGE}",
                                 destinationImage: "${DESTINATION_IMAGE}",
                                 destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}",
-                                prod: "${prod}.toBoolean()"
+                                prod: "$prod".toBoolean()
                             )
                         }
                     }
