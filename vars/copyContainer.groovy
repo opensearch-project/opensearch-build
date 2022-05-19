@@ -12,7 +12,7 @@ void call(Map args = [:]) {
 
     
 
-    if (args.destinationRegistry == 'docker') {
+    if (args.destinationRegistry.toLowerCase() == 'dockerhub') {
         if(!args.prod) {
             withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                 def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
@@ -32,7 +32,7 @@ void call(Map args = [:]) {
             }
         }
     }
-    if (args.destinationRegistry == 'ecr') {
+    if (args.destinationRegistry.toLowerCase() == 'ecr') {
         if(args.prod) {
             withCredentials([
                 string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
