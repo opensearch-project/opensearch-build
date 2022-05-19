@@ -10,39 +10,49 @@
  */
 void call(Map args = [:]) {
 
-    if (args.destinationType == 'Staging-DockerHub') {
-        withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
-            sh """
-                gcrane cp ${args.sourceImage} ${args.destinationImage}
-            """
-        }
-    }
-    if (args.destinationType == 'Staging-ECR') {
-        def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchstaging").trim()
-        sh """
-            gcrane cp ${args.sourceImage} ${args.destinationImage}
-        """
-    }
-    if (args.destinationType == 'Prod-DockerHub') {
-        withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-            def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
-            sh """
-                gcrane cp ${args.sourceImage} ${args.destinationImage}
-            """
-        }
-    }
-    if (args.destinationType == 'Prod-ECR'){
-        withCredentials([
-        string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
-        string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
-        {
-            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-                def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject").trim()
+    
+
+    if (args.destinationRegistry == 'docker') {
+        if(!args.prod) {
+            withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
                 sh """
-                    gcrane cp ${args.sourceImage} ${args.destinationImage}
+                    gcrane cp ${args.sourceImage} opensearchproject/${args.destinationImage}
+                    docker logout
                 """
             }
+        }
+        if(args.prod) {
+            withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
+                sh """
+                    gcrane cp ${args.sourceImage} opensearchstaging/${args.destinationImagePath}
+                    docker logout
+                """
+            }
+        }
+    }
+    if (args.destinationType == 'ecr') {
+        if(args.prod) {
+            withCredentials([
+                string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+                string(credentialsId: 'jenkins-artifact-promotion-account', variable: 'AWS_ACCOUNT_ARTIFACT')]) 
+                {
+                    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                        def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject").trim()
+                        sh """
+                            gcrane cp ${args.sourceImage} public.ecr.aws/opensearchproject/${args.destinationImage}
+                            docker logout public.ecr.aws/opensearchproject
+                        """
+                    }
+                }
+        }
+        if(!args.prod) {
+            def ecrLogin = sh(returnStdout: true, script: "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchstaging").trim()
+            sh """
+                 gcrane cp ${args.sourceImage} public.ecr.aws/opensearchstaging/${args.destinationImage}
+                 docker logout public.ecr.aws/opensearchstaging
+            """
         }
     }
 }

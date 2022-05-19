@@ -8,12 +8,12 @@ pipeline {
     parameters {
         string(
             name: 'SOURCE_IMAGE',
-            description: 'Complete image path name Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
+            description: 'Complete source image path Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
             trim: true
         )
         choice(
-            name: 'DESTINATION_IMAGE_LOCATION', 
-            choices: ['Staging-DockerHub', 'Staging-ECR', 'Prod-DockerHub', 'Prod-ECR'], 
+            name: 'DESTINATION_IMAGE_REGISTRY', 
+            choices: ['DockerHub', 'ECR'],
             description: '''
                 Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
                 Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
@@ -23,8 +23,16 @@ pipeline {
         )
         string(
             name: 'DESTINATION_IMAGE',
-            description: 'Complete image path name Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
+            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg opensearch:1.3.2',
             trim: true
+        )
+        booleanParam(
+            name: 'prod',
+            defaultValue: true,
+            description: '''
+                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+                Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+            '''
         )
     }
     stages {
@@ -43,7 +51,8 @@ pipeline {
                             copyContainer(
                                 sourceImage: "${SOURCE_IMAGE}",
                                 destinationImage: "${DESTINATION_IMAGE}",
-                                destinationType: "${DESTINATION_IMAGE_LOCATION}"
+                                destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}"
+                                prod: "${prod}"
                             )
                         }
                     }
