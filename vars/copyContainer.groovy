@@ -2,18 +2,17 @@
  * Copies a container from one docker registry to another
  *
  * @param args A map of the following parameters
- * @param args.sourceImagePath The url to the image to be copied from, supports any public docker registry
- * @param args.destinationImagePath Follows the format NAME[:TAG|@DIGEST], e.g. opensearchproject/opensearch:1.2.4
- * @param args.destinationType The docker registry, currently supports 'docker' or 'ecr'
- * @param args.destinationCredentialIdentifier The credential identifier registered in the jenkins system associated with the NAME
- * @param args.ecrProd (true/false) to choose between production and staging environments
+ * @param args.sourceImage The url to the image to be copied from, supports any public docker registry
+ * @param args.destinationImage Follows the format NAME[:TAG|@DIGEST], e.g. opensearchproject/opensearch:1.2.4
+ * @param args.destinationRegistry The docker registry, currently supports 'docker' or 'ecr'
+ * @param args.prod (true/false) to choose between production and staging environments
  */
 void call(Map args = [:]) {
 
     
 
-    if (args.destinationRegistry.toLowerCase() == 'dockerhub') {
-        if(!args.prod) {
+    if (args.destinationRegistry == 'docker') {
+        if(args.prod) {
             withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                 def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
                 sh """
@@ -22,7 +21,7 @@ void call(Map args = [:]) {
                 """
             }
         }
-        if(args.prod) {
+        if(!args.prod) {
             withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                 def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
                 sh """
@@ -32,7 +31,7 @@ void call(Map args = [:]) {
             }
         }
     }
-    if (args.destinationRegistry.toLowerCase() == 'ecr') {
+    if (args.destinationRegistry == 'ecr') {
         if(args.prod) {
             withCredentials([
                 string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),

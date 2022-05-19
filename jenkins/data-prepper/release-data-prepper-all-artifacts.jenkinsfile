@@ -78,16 +78,16 @@ pipeline {
             steps {
                 script {
                     copyContainer(
-                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImagePath: "opensearchproject/data-prepper:${VERSION}",
-                        destinationType: 'docker',
-                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        destinationImage: "opensearchproject/data-prepper:${VERSION}",
+                        destinationRegistry: 'DockerHub',
+                        prod: true
                     )
                     copyContainer(
                         sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImagePath: "opensearchproject/data-prepper:latest",
-                        destinationType: 'docker',
-                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                        destinationImage: "opensearchproject/data-prepper:latest",
+                        destinationRegistry: 'DockerHub',
+                        prod: true
                     )
                 }
             }

@@ -5,20 +5,20 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 class CopyContainerLibTester extends LibFunctionTester {
 
-    private final String sourceImagePath
-    private final String destinationImagePath
-    private final String destinationType
+    private final String sourceImage
+    private final String destinationImage
+    private final String destinationRegistry
+    private final boolean prod
 
     CopyContainerLibTester(
-        String sourceImagePath,
-        String destinationImagePath,
-        String destinationType,
-        boolean ecrProd=false) {
-        this.sourceImagePath = sourceImagePath
-        this.destinationImagePath = destinationImagePath
-        this.destinationType = destinationType
-        this.destinationCredentialIdentifier = destinationCredentialIdentifier
-        this.ecrProd = ecrProd
+        String sourceImage,
+        String destinationImage,
+        String destinationRegistry,
+        boolean prod) {
+        this.sourceImage = sourceImage
+        this.destinationImage = destinationImage
+        this.destinationRegistry = destinationRegistry
+        this.prod = prod
     }
 
     String libFunctionName() {
@@ -38,17 +38,19 @@ class CopyContainerLibTester extends LibFunctionTester {
     }
 
     void parameterInvariantsAssertions(call) {
-        assertThat(call.args.sourceImagePath.first(), notNullValue())
-        assertThat(call.args.destinationImagePath.first(), notNullValue())
-        assertThat(call.args.destinationType.first(), notNullValue())
-        assertThat(call.args.destinationType.first(), anyOf(equalTo('Prod-ECR'), equalTo('Prod-DockerHub'), equalTo('Staging-ECR'), equalTo('Staging-DockerHub')))
+        assertThat(call.args.sourceImage.first(), notNullValue())
+        assertThat(call.args.destinationImage.first(), notNullValue())
+        //assertThat(call.args.destinationType.first(),  notNullValue())
+        assertThat(call.args.prod.first(), anyOf(equalTo(true),equalTo(false)))
     }
 
     boolean expectedParametersMatcher(call) {
 
-        return call.args.sourceImagePath.first().toString().equals(sourceImagePath)
-                && call.args.destinationImagePath.first().toString().equals(destinationImagePath)
-                && call.args.destinationType.first().toString().equals(destinationType)
+
+        return call.args.sourceImage.first().toString().equals(sourceImage)
+                && call.args.destinationImage.first().toString().equals(destinationImage)
+                && call.args.destinationRegistry.first().equals(destinationRegistry)
     }
 
 }
+

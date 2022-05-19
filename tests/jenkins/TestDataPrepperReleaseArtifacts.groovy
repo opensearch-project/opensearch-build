@@ -27,10 +27,10 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
 
-        this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}-997908",
+        /*this.registerLibTester(new CopyContainerLibTester("${sourceImageRepository}/data-prepper:${version}-997908",
                 "opensearchproject/data-prepper:${version}",
                 'docker',
-                'jenkins-staging-docker-prod-token'))
+                'jenkins-staging-docker-prod-token'))*/
 
         super.setUp()
 

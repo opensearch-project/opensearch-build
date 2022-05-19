@@ -13,13 +13,14 @@ pipeline {
         )
         choice(
             name: 'DESTINATION_IMAGE_REGISTRY', 
-            choices: ['DockerHub', 'ECR'],
+            choices: ['docker', 'ecr'],
             description: '''
                 Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
                 Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
                 Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
                 Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
-            '''
+            ''',
+            trim: true
         )
         string(
             name: 'DESTINATION_IMAGE',
@@ -28,7 +29,6 @@ pipeline {
         )
         booleanParam(
             name: 'prod',
-            defaultValue: true,
             description: '''
                 Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
                 Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
