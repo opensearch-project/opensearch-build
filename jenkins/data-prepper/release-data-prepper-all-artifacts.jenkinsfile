@@ -84,7 +84,7 @@ pipeline {
                         prod: true
                     )
                     copyContainer(
-                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
                         destinationImage: "data-prepper:latest",
                         destinationRegistry: 'docker',
                         prod: true
