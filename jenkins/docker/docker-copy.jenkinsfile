@@ -15,10 +15,11 @@ pipeline {
             name: 'DESTINATION_IMAGE_REGISTRY', 
             choices: ['docker', 'ecr'],
             description: '''
-                Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
-                Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
-                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
-                Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+            Default is always staging registry, unless the below prod flag is enabled
+            Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
+            Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
+            Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+            Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
             '''
         )
         string(
@@ -29,8 +30,7 @@ pipeline {
         booleanParam(
             name: 'prod',
             description: '''
-                Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
-                Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
+            To copy images to DockerHub and ECR prod registries.
             '''
         )
     }
