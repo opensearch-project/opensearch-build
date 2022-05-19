@@ -29,9 +29,7 @@ pipeline {
         )
         booleanParam(
             name: 'prod',
-            description: '''
-            To copy images to DockerHub and ECR prod registries.
-            '''
+            description: ' To copy images to DockerHub and ECR prod registries.'
         )
     }
     stages {
