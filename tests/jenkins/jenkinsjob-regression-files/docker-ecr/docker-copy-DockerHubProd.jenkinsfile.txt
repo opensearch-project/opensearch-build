@@ -1,0 +1,20 @@
+   docker-copy.run()
+      docker-copy.legacySCM(groovy.lang.Closure)
+      docker-copy.library({identifier=jenkins@20211123, retriever=null})
+      docker-copy.pipeline(groovy.lang.Closure)
+         docker-copy.timeout({time=1, unit=HOURS})
+         docker-copy.echo(Executing on agent [label:none])
+         docker-copy.stage(Image Copy, groovy.lang.Closure)
+            docker-copy.script(groovy.lang.Closure)
+               docker-copy.copyContainer({sourceImage=null, destinationImage=null, destinationRegistry=DockerHub, prod=false})
+                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                     copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                     copyContainer.sh(
+                    gcrane cp null opensearchproject/null
+                    docker logout
+                )
+         docker-copy.script(groovy.lang.Closure)
+            docker-copy.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            docker-copy.sh(docker image prune -f --all)
