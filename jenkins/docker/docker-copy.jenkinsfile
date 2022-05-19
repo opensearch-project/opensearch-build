@@ -8,7 +8,7 @@ pipeline {
     parameters {
         string(
             name: 'SOURCE_IMAGE',
-            description: 'Complete source image path Eg: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>',
+            description: 'The Complete source image path.',
             trim: true
         )
         choice(
@@ -29,7 +29,7 @@ pipeline {
         )
         booleanParam(
             name: 'prod',
-            description: ' To copy images to DockerHub and ECR prod registries.'
+            description: 'To copy images to DockerHub/ECR prod registries'
         )
     }
     stages {

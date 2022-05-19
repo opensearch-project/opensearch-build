@@ -9,26 +9,16 @@
  */
 void call(Map args = [:]) {
 
-    
 
     if (args.destinationRegistry == 'docker') {
-        if(args.prod) {
-            withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-staging-credential', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
-                sh """
-                    gcrane cp ${args.sourceImage} opensearchproject/${args.destinationImage}
-                    docker logout
-                """
-            }
-        }
-        if(!args.prod) {
-            withCredentials([usernamePassword(credentialsId: 'jenkins-staging-docker-prod-token', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
-                sh """
-                    gcrane cp ${args.sourceImage} opensearchstaging/${args.destinationImagePath}
-                    docker logout
-                """
-            }
+        def dockerJenkinsCredential = args.prod ? "jenkins-staging-docker-prod-token" : "jenkins-staging-docker-staging-credential"
+        def dockerTargetRepo = args.prod ? "opensearchproject" : "opensearchstaging"
+        withCredentials([usernamePassword(credentialsId: dockerJenkinsCredential, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
+            sh """
+                gcrane cp ${args.sourceImage} ${dockerTargetRepo}/${args.destinationImage}
+                docker logout
+            """
         }
     }
     if (args.destinationRegistry == 'ecr') {

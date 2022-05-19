@@ -9,13 +9,13 @@
          docker-copy.stage(Copy Image to ECR/DockerHub, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
                docker-copy.copyContainer({sourceImage=samplerepo/alpine:3.15.4, destinationImage=alpine:3.15.4, destinationRegistry=docker, prod=false})
-                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-staging-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
-                    gcrane cp samplerepo/alpine:3.15.4 opensearchstaging/null
-                    docker logout
-                )
+                gcrane cp samplerepo/alpine:3.15.4 opensearchstaging/alpine:3.15.4
+                docker logout
+            )
          docker-copy.script(groovy.lang.Closure)
             docker-copy.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
