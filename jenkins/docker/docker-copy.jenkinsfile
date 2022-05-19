@@ -33,7 +33,7 @@ pipeline {
         )
     }
     stages {
-        stage("Docker Image Promote") {
+        stage("Image Copy") {
             agent {
                     docker {
                         label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -42,7 +42,7 @@ pipeline {
                     }
             }
             stages {
-                stage('check-params') {
+                stage('Parameters Check') {
                     steps {
                         script {
                             if( SOURCE_IMAGE.isEmpty() || DESTINATION_IMAGE.isEmpty()) {
@@ -52,7 +52,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Image Copy') {
+                stage('Copy Image to ECR/DockerHub') {
                     steps {
                         script {
                             copyContainer(
