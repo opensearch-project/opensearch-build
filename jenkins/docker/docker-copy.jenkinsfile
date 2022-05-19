@@ -6,30 +6,25 @@ pipeline {
     }
     agent none  
     parameters {
+        choice(
+            name: 'SOURCE_IMAGE_REGISTRY', 
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
+            description: 'Choose the source image registry'
+        )
         string(
             name: 'SOURCE_IMAGE',
-            description: 'The Complete source image path.',
+            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2',
             trim: true
         )
         choice(
             name: 'DESTINATION_IMAGE_REGISTRY', 
-            choices: ['docker', 'ecr'],
-            description: '''
-            Default is always staging registry, unless the below prod flag is enabled
-            Staging-DockerHub: opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
-            Staging-ECR: public.ecr.aws/opensearchstaging/<IMAGE_NAME>:<IMAGE_TAG>
-            Prod-DockerHub: opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
-            Prod-ECR: public.ecr.aws/opensearchproject/<IMAGE_NAME>:<IMAGE_TAG>
-            '''
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
+            description: 'Choose the destination image registry'
         )
         string(
             name: 'DESTINATION_IMAGE',
-            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg opensearch:1.3.2',
+            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2',
             trim: true
-        )
-        booleanParam(
-            name: 'prod',
-            description: 'To copy images to DockerHub/ECR prod registries'
         )
     }
     stages {
@@ -56,10 +51,9 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImage: "${SOURCE_IMAGE}",
-                                destinationImage: "${DESTINATION_IMAGE}",
-                                destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}",
-                                prod: "$prod".toBoolean()
+                                sourceImage: "${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE}",
+                                destinationImage: "${DESTINATION_IMAGE_REGISTRY}/${DESTINATION_IMAGE}",
+                                destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}"
                             )
                         }
                     }

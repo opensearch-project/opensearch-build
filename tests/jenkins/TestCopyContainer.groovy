@@ -3,7 +3,7 @@ import org.junit.*
 
 class TestCopyContainer extends BuildPipelineTest {
 
-    String sourceImage = 'samplerepo/alpine:3.15.4'
+    String sourceImage = 'alpine:3.15.4'
     String destinationImage = 'alpine:3.15.4'
 
     @Before
@@ -17,53 +17,76 @@ class TestCopyContainer extends BuildPipelineTest {
 
     }
 
-
     @Test
-    public void testCopyContainerDockerStaging() {
+    public void testCopyContainerDockerStagingToProd() {
 
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'opensearchstaging')
         binding.setVariable('SOURCE_IMAGE', sourceImage)
-        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'docker')
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'opensearchproject')
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
-        binding.setVariable('prod', false)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-DockerHubStaging.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerStagingToProd.jenkinsfile")
     }
 
     @Test
-    public void testCopyContainerDockerProd() {
+    public void testCopyContainerDockerStagingToEcrProd() {
 
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'opensearchstaging')
         binding.setVariable('SOURCE_IMAGE', sourceImage)
-        binding.setVariable('DESTINATION_IMAGE_REGISTRY', "docker")
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'public.ecr.aws/opensearchproject')
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
-        binding.setVariable('prod', true)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-DockerHubProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerStagingToEcrProd.jenkinsfile")
     }
 
     @Test
-    public void testCopyContainerECRStaging() {
+    public void testCopyContainerECRStagingtoDockerProd() {
 
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'public.ecr.aws/opensearchstaging')
         binding.setVariable('SOURCE_IMAGE', sourceImage)
-        binding.setVariable('DESTINATION_IMAGE_REGISTRY', "ecr")
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'opensearchproject')
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
-        binding.setVariable('prod', false)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-ECRStaging.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerECRStagingtoDockerProd.jenkinsfile")
     }
 
     @Test
-    public void testCopyContainerECRProd() {
+    public void testCopyContainerDockerProdtoEcrProd() {
 
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'opensearchproject')
         binding.setVariable('SOURCE_IMAGE', sourceImage)
-        binding.setVariable('DESTINATION_IMAGE_REGISTRY', "ecr")
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'public.ecr.aws/opensearchproject')
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
-        binding.setVariable('prod', true)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-ECRProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerProdtoEcrProd.jenkinsfile")
+    }
+
+    @Test
+    public void testCopyContainerEcrStagingtoEcrProd() {
+
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'public.ecr.aws/opensearchstaging')
+        binding.setVariable('SOURCE_IMAGE', sourceImage)
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'public.ecr.aws/opensearchproject')
+        binding.setVariable('DESTINATION_IMAGE', destinationImage)
+
+        super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerEcrStagingtoEcrProd.jenkinsfile")
+    }
+
+    @Test
+    public void testCopyContainerEcrStagingtoDockerProd() {
+
+        binding.setVariable('SOURCE_IMAGE_REGISTRY', 'public.ecr.aws/opensearchstaging')
+        binding.setVariable('SOURCE_IMAGE', sourceImage)
+        binding.setVariable('DESTINATION_IMAGE_REGISTRY', 'opensearchproject')
+        binding.setVariable('DESTINATION_IMAGE', destinationImage)
+
+        super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerEcrStagingtoDockerProd.jenkinsfile")
     }
 
 }

@@ -78,16 +78,14 @@ pipeline {
             steps {
                 script {
                     copyContainer(
-                        sourceImage: "public.ecr.aws/t2m2d0w1/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImage: "data-prepper:${VERSION}",
-                        destinationRegistry: 'docker',
-                        prod: true
+                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        destinationImage: "opensearchproject/data-prepper:${VERSION}",
+                        destinationRegistry: 'opensearchproject',
                     )
                     copyContainer(
-                        sourceImage: "public.ecr.aws/t2m2d0w1/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImage: "data-prepper:latest",
-                        destinationRegistry: 'docker',
-                        prod: true
+                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        destinationImage: "opensearchproject/data-prepper:latest",
+                        destinationRegistry: 'opensearchproject',
                     )
                 }
             }
