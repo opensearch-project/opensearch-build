@@ -44,6 +44,16 @@ pipeline {
                     }
             }
             stages {
+                stage('check-params') {
+                    steps {
+                        script {
+                            if( SOURCE_IMAGE.isEmpty() || DESTINATION_IMAGE.isEmpty()) {
+                                        currentBuild.result = 'ABORTED'
+                                        error('Make sure all the parameters are passed in.')
+                            }
+                        }
+                    }
+                }
                 stage('Image Copy') {
                     steps {
                         script {
