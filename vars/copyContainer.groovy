@@ -32,7 +32,7 @@ void call(Map args = [:]) {
             }
         }
     }
-    if (args.destinationType == 'ecr') {
+    if (args.destinationRegistry == 'ecr') {
         if(args.prod) {
             withCredentials([
                 string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
