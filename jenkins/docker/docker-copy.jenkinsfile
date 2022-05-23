@@ -64,7 +64,7 @@ pipeline {
                 always {
                     script {
                         postCleanup()
-                        sh "docker image prune -f --all"
+                        sh "docker logout ${DESTINATION_IMAGE_REGISTRY} && docker image prune -f --all"
                     }
                 }
             }     
