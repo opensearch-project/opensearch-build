@@ -9,32 +9,32 @@ build:
   version: 2.0.0
 components:
   - name: OpenSearch
-    ref: '2.0'
+    ref: tags/2.0.0
     repository: https://github.com/opensearch-project/OpenSearch.git
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     platforms:
       - darwin
       - linux
@@ -43,74 +43,74 @@ components:
       - gradle:dependencies:opensearch.version
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     working_directory: notifications
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     working_directory: notifications
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability
-    ref: '2.0'
+    ref: tags/2.0.0.0
     working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: '2.0'
+    ref: tags/2.0.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
