@@ -8,7 +8,7 @@
             docker-copy.script(groovy.lang.Closure)
          docker-copy.stage(Copy Image to ECR/DockerHub, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
-               docker-copy.copyContainer({sourceImage=opensearchstaging/alpine:3.15.4, destinationImage=public.ecr.aws/opensearchproject/alpine:3.15.4, destinationRegistry=public.ecr.aws/opensearchproject})
+               docker-copy.copyContainer({sourceImage=alpine:3.15.4, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=public.ecr.aws/opensearchproject})
                   copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
                   copyContainer.string({credentialsId=jenkins-artifact-promotion-account, variable=AWS_ACCOUNT_ARTIFACT})
                   copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)

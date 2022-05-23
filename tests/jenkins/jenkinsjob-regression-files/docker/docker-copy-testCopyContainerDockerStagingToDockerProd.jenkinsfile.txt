@@ -8,7 +8,7 @@
             docker-copy.script(groovy.lang.Closure)
          docker-copy.stage(Copy Image to ECR/DockerHub, groovy.lang.Closure)
             docker-copy.script(groovy.lang.Closure)
-               docker-copy.copyContainer({sourceImage=opensearchstaging/alpine:3.15.4, destinationImage=opensearchproject/alpine:3.15.4, destinationRegistry=opensearchproject})
+               docker-copy.copyContainer({sourceImage=alpine:3.15.4, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=opensearchproject})
                   copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})

@@ -51,8 +51,9 @@ pipeline {
                     steps {
                         script {
                             copyContainer(
-                                sourceImage: "${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE}",
-                                destinationImage: "${DESTINATION_IMAGE_REGISTRY}/${DESTINATION_IMAGE}",
+                                sourceImage: "${SOURCE_IMAGE}",
+                                sourceRegistry: "${SOURCE_IMAGE_REGISTRY}",
+                                destinationImage: "${DESTINATION_IMAGE}",
                                 destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}"
                             )
                         }

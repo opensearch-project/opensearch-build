@@ -26,7 +26,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerStagingToDockerProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerDockerStagingToDockerProd.jenkinsfile")
     }
 
     @Test
@@ -38,7 +38,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerStagingToEcrProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerDockerStagingToEcrProd.jenkinsfile")
     }
 
     @Test
@@ -50,7 +50,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerECRStagingtoDockerProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerECRStagingtoDockerProd.jenkinsfile")
     }
 
     @Test
@@ -62,7 +62,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerProdtoEcrProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerDockerProdtoEcrProd.jenkinsfile")
     }
 
     @Test
@@ -74,7 +74,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerEcrStagingtoEcrProd.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerEcrStagingtoEcrProd.jenkinsfile")
     }
 
     @Test
@@ -86,7 +86,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('DESTINATION_IMAGE', destinationImage)
 
         super.testPipeline("jenkins/docker/docker-copy.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/docker-ecr/docker-copy-testCopyContainerDockerStagingtoEcrStaging.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/docker/docker-copy-testCopyContainerDockerStagingtoEcrStaging.jenkinsfile")
     }
 
 }

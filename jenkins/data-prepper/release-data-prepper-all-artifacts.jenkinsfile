@@ -78,13 +78,15 @@ pipeline {
             steps {
                 script {
                     copyContainer(
-                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImage: "opensearchproject/data-prepper:${VERSION}",
+                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
+                        destinationImage: "data-prepper:${VERSION}",
                         destinationRegistry: 'opensearchproject',
                     )
                     copyContainer(
-                        sourceImage: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImage: "opensearchproject/data-prepper:latest",
+                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
+                        destinationImage: "data-prepper:latest",
                         destinationRegistry: 'opensearchproject',
                     )
                 }
