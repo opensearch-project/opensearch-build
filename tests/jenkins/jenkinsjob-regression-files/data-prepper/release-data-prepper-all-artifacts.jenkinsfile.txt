@@ -102,6 +102,6 @@
                release-data-prepper-all-artifacts.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
                   release-data-prepper-all-artifacts.sh($WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven)
          release-data-prepper-all-artifacts.script(groovy.lang.Closure)
-            release-data-prepper-all-artifacts.sh(rm -rf /tmp/workspace/*)
+            release-data-prepper-all-artifacts.sh(rm -rf /tmp/workspace/* && docker logout)
             release-data-prepper-all-artifacts.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
