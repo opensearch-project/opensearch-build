@@ -81,7 +81,7 @@
          release-data-prepper-all-artifacts.stage(Release Docker Image to DockerHub, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.copyContainer({sourceImage=data-prepper:0.22.1-997908, sourceRegistry=http://public.ecr.aws/data-prepper-container-repository, destinationImage=data-prepper:0.22.1, destinationRegistry=opensearchproject})
-                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
@@ -89,7 +89,7 @@
                 docker logout
             )
                release-data-prepper-all-artifacts.copyContainer({sourceImage=data-prepper:0.22.1-997908, sourceRegistry=http://public.ecr.aws/data-prepper-container-repository, destinationImage=data-prepper:latest, destinationRegistry=opensearchproject})
-                  copyContainer.usernamePassword({credentialsId=jenkins-staging-docker-prod-token, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                  copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                   copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                      copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                      copyContainer.sh(
