@@ -2,16 +2,16 @@
  * Copies a container from one docker registry to another
  *
  * @param args A map of the following parameters
- * @param args.sourceImage The url to the image to be copied from, supports any public docker registry
- * @param args.destinationImage Follows the format NAME[:TAG|@DIGEST], e.g. opensearchproject/opensearch:1.2.4
- * @param args.destinationRegistry The docker registry, currently supports 'docker' or 'ecr'
- * @param args.prod (true/false) to choose between production and staging environments
+ * @param args.sourceImage The Source Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2
+ * @param args.sourceRegistry The source docker registry, currently supports 'DockerHub' or 'ECR'
+ * @param args.destinationImage The Destination Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2
+ * @param args.destinationRegistry The destination docker registry, currently supports 'DockerHub' or 'ECR'
  */
 void call(Map args = [:]) {
 
 
     if (args.destinationRegistry == 'opensearchstaging' || args.destinationRegistry == 'opensearchproject') {
-        def dockerJenkinsCredential = args.destinationRegistry == 'opensearchproject' ? "jenkins-staging-docker-prod-token" : "jenkins-staging-docker-staging-credential"
+        def dockerJenkinsCredential = args.destinationRegistry == 'opensearchproject' ? "jenkins-production-dockerhub-credential" : "jenkins-staging-dockerhub-credential"
         withCredentials([usernamePassword(credentialsId: dockerJenkinsCredential, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             def dockerLogin = sh(returnStdout: true, script: "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
             sh """
