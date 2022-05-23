@@ -1,0 +1,73 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 30)
+    }
+    agent none  
+    parameters {
+        choice(
+            name: 'SOURCE_IMAGE_REGISTRY', 
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
+            description: 'Choose the source image registry'
+        )
+        string(
+            name: 'SOURCE_IMAGE',
+            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2',
+            trim: true
+        )
+        choice(
+            name: 'DESTINATION_IMAGE_REGISTRY', 
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
+            description: 'Choose the destination image registry'
+        )
+        string(
+            name: 'DESTINATION_IMAGE',
+            description: 'Image name and tag <IMAGE_NAME>:<IMAGE_TAG> Eg: opensearch:1.3.2',
+            trim: true
+        )
+    }
+    stages {
+        stage("Image Copy") {
+            agent {
+                    docker {
+                        label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                        image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+                        args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    }
+            }
+            stages {
+                stage('Parameters Check') {
+                    steps {
+                        script {
+                            if( SOURCE_IMAGE.isEmpty() || DESTINATION_IMAGE.isEmpty()) {
+                                        currentBuild.result = 'ABORTED'
+                                        error('Make sure all the parameters are passed in.')
+                            }
+                        }
+                    }
+                }
+                stage('Copy Image to ECR/DockerHub') {
+                    steps {
+                        script {
+                            copyContainer(
+                                sourceImage: "${SOURCE_IMAGE}",
+                                sourceRegistry: "${SOURCE_IMAGE_REGISTRY}",
+                                destinationImage: "${DESTINATION_IMAGE}",
+                                destinationRegistry: "${DESTINATION_IMAGE_REGISTRY}"
+                            )
+                        }
+                    }
+                }
+            }  
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                        sh "docker logout ${DESTINATION_IMAGE_REGISTRY} && docker image prune -f --all"
+                    }
+                }
+            }     
+        }
+    }
+}

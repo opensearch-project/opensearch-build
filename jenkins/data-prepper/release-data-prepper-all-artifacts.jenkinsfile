@@ -78,16 +78,16 @@ pipeline {
             steps {
                 script {
                     copyContainer(
-                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImagePath: "opensearchproject/data-prepper:${VERSION}",
-                        destinationType: 'docker',
-                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
+                        destinationImage: "data-prepper:${VERSION}",
+                        destinationRegistry: 'opensearchproject',
                     )
                     copyContainer(
-                        sourceImagePath: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}/data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        destinationImagePath: "opensearchproject/data-prepper:latest",
-                        destinationType: 'docker',
-                        destinationCredentialIdentifier: 'jenkins-staging-docker-prod-token'
+                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
+                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
+                        destinationImage: "data-prepper:latest",
+                        destinationRegistry: 'opensearchproject',
                     )
                 }
             }
@@ -111,7 +111,7 @@ pipeline {
     post() {
         always {
             script {
-                sh("rm -rf $WORKSPACE/*")
+                sh("rm -rf $WORKSPACE/* && docker logout")
                 postCleanup()
             }
         }
