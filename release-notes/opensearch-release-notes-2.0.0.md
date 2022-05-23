@@ -22,6 +22,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## FEATURES
 
+### OpenSearch Alerting
+* Integrate Document Level Alerting changes ([#410](https://github.com/opensearch-project/alerting/pull/410]))
+* Alias support for Document Level Monitors ([#416](https://github.com/opensearch-project/alerting/pull/416]))
+
+
 ### OpenSearch Index Management
 * Adds shrink action to ISM ([#326](https://github.com/opensearch-project/index-management/pull/326))
 * Notification integration with IM ([#338](https://github.com/opensearch-project/index-management/pull/338))
@@ -42,22 +47,21 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Performance Analyzer
 * Adds setting to enable/disable Thread Contention Monitoring ([#171](https://github.com/opensearch-project/performance-analyzer/pull/171))
-* Fixes calculation of average thread blocked time and average thread waited time ([#118](https://github.com/opensearch-project/performance-analyzer-rca/pull/118))
 
 
 ### OpenSearch SQL
 * Add Kmeans and AD command documentation ([#493](https://github.com/opensearch-project/sql/pull/493))
-* AD and Kmeans grammar edits ([#500](https://github.com/opensearch-project/sql/pull/500))
 * Support more parameters for AD and KMEANS command, and update related documentation ([#515](https://github.com/opensearch-project/sql/pull/515))
 
+
+### OpenSearch Security
+* Add support for DLS Term Lookup Queries ([#1541](https://github.com/opensearch-project/security/pull/1541))
 
 ## ENHANCEMENT
 
 ### OpenSearch Alerting
 * Add automated migration for Destinations to Notification configs ([#379](https://github.com/opensearch-project/alerting/pull/379]))
 * Integrate with Notifications plugin for Alerting backend ([#401](https://github.com/opensearch-project/alerting/pull/401]))
-* Integrate Document Level Alerting changes ([#410](https://github.com/opensearch-project/alerting/pull/410]))
-* Alias support for Document Level Monitors ([#416](https://github.com/opensearch-project/alerting/pull/416]))
 
 
 ### OpenSearch Alerting Dashboards Plugin
@@ -106,6 +110,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add availability entry points ([#731](https://github.com/opensearch-project/observability/pull/731))
 
 
+### OpenSearch Performance Analyzer
+* Fixes calculation of average thread blocked time and average thread waited time ([#118](https://github.com/opensearch-project/performance-analyzer-rca/pull/118))
+
+
 ### OpenSearch Security
 * Remove checked-in zip files ([#1774](https://github.com/opensearch-project/security/pull/1774))
 * Introduce dfm_empty_overrides_all setting to enable role without dls/fls to override roles with dls/fls ([#1735](https://github.com/opensearch-project/security/pull/1735))
@@ -133,7 +141,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add CI check for demo script ([#1690](https://github.com/opensearch-project/security/pull/1690))
 * Introduce BWC tests in security plugin ([#1685](https://github.com/opensearch-project/security/pull/1685))
 * Correct the step name in CI ([#1683](https://github.com/opensearch-project/security/pull/1683))
-* Add support for DLS Term Lookup Queries ([#1541](https://github.com/opensearch-project/security/pull/1541))
 * Add Alerting getFindings cluster permission ([#1844](https://github.com/opensearch-project/security/pull/1844))
 * Introduce new API _plugins/_security/ssl/certs ([#1841](https://github.com/opensearch-project/security/pull/1841))
 * Add default roles for Notifications plugin ([#1847](https://github.com/opensearch-project/security/pull/1847))
@@ -145,6 +152,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Updated issue templates from .github. ([#931](https://github.com/opensearch-project/security-dashboards-plugin/pull/931))
 * Bumps version of main to 2.0.0.0 ([#928](https://github.com/opensearch-project/security-dashboards-plugin/pull/928))
 * Enforce authentication on api/status route by default ([#968](https://github.com/opensearch-project/security-dashboards-plugin/pull/968))
+
+
+### OpenSearch SQL
+* AD and Kmeans grammar edits ([#500](https://github.com/opensearch-project/sql/pull/500))
 
 
 ## BUG FIXES
