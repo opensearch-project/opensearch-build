@@ -9,8 +9,8 @@ from sign_workflow.sign_artifacts import SignArtifacts, SignArtifactsExistingArt
 
 class TestSignArtifacts(unittest.TestCase):
 
-    @patch("sign_workflow.signer.GitRepository")
-    @patch("sign_workflow.signer.Signer", return_value=MagicMock())
+    @patch("sign_workflow.signer_pgp.GitRepository")
+    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
     def test_from_path_method(self, mock_signer: Mock, *mocks: Any) -> None:
         components = ['maven']
         artifact_type = 'dummy'
@@ -38,17 +38,20 @@ class TestSignArtifacts(unittest.TestCase):
             Path(r"/dummy/path/artifact.tar.gz")),
             SignArtifactsExistingArtifactFile)
 
-    def test_sign_with_build_manifest(self) -> None:
+    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
+    def test_sign_with_build_manifest(self, mock_signer: Mock) -> None:
         manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
-        signer = MagicMock()
+        platform = 'linux'
         signer_with_manifest = SignWithBuildManifest(
             target=manifest,
             components=[],
             artifact_type="maven",
             signature_type=sigtype,
-            signer=signer
+            platform=platform
         )
+        signer = MagicMock()
+        signer_with_manifest.signer = signer
         signer_with_manifest.sign()
         expected = [
             'maven/org/opensearch/opensearch-performance-analyzer/maven-metadata-local.xml',
@@ -60,35 +63,42 @@ class TestSignArtifacts(unittest.TestCase):
         ]
         signer.sign_artifacts.assert_called_with(expected, manifest.parent, sigtype)
 
-    def test_sign_existing_artifacts_file(self) -> None:
+    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
+    def test_sign_existing_artifacts_file(self, mock_signer: Mock) -> None:
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
-        signer = MagicMock()
+        platform = 'linux'
         signer_with_manifest = SignArtifactsExistingArtifactFile(
             target=path,
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
-            signer=signer
+            platform=platform
         )
+        signer = MagicMock()
+        signer_with_manifest.signer = signer
         signer_with_manifest.sign()
-        signer.sign_artifact.assert_called_with("file.tar.gz", path.parent, sigtype)
+        expected = 'file.tar.gz'
+        signer.sign_artifact.assert_called_with(expected, path.parent, sigtype)
 
     @patch('os.walk')
-    def test_sign_existing_artifacts_folder(self, mock_os_walk: Mock) -> None:
+    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
+    def test_sign_existing_artifacts_folder(self, mock_signer: Mock, mock_os_walk: Mock) -> None:
         mock_os_walk.return_value = [
             ('dummy', (), ['tar_dummy_artifact_1.0.0.tar.gz', 'zip_dummy_artifact_1.1.0.zip'])
         ]
         path = Path('dummy')
         sigtype = '.sig'
-        signer = MagicMock()
+        platform = 'linux'
         signer_with_manifest = SignExistingArtifactsDir(
             target=path,
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
-            signer=signer
+            platform=platform
         )
+        signer = MagicMock()
+        signer_with_manifest.signer = signer
         signer_with_manifest.sign()
         expected = ["tar_dummy_artifact_1.0.0.tar.gz", "zip_dummy_artifact_1.1.0.zip"]
         signer.sign_artifacts.assert_called_with(expected, path, sigtype)

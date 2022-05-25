@@ -15,14 +15,14 @@ from git.git_repository import GitRepository
 
 """
 This class is responsible for signing an artifact using the OpenSearch-signer-client and verifying its signature.
-The signed artifacts will be found in the same location as the original artifacts.
+The signed artifacts will be found in the subfolder called signed under the origin location as the original artifacts.
 """
 
 
-class Signer:
+class SignerWindows:
     git_repo: GitRepository
 
-    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
+    ACCEPTED_FILE_TYPES = [".msi", ".exe", ".dll", ".sys", ".ps1", ".psm1", ".psd1", ".cat", ".zip"]
 
     def __init__(self) -> None:
         self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")
@@ -43,13 +43,11 @@ class Signer:
             self.generate_signature_and_verify(artifact, basepath, signature_type)
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
-        location = os.path.join(basepath, artifact)
-        self.sign(location, signature_type)
-        self.verify(location + signature_type)
+        self.sign(artifact, basepath, signature_type)
 
     def is_valid_file_type(self, file_name: str) -> bool:
         return any(
-            file_name.endswith(x) for x in Signer.ACCEPTED_FILE_TYPES
+            file_name.endswith(x) for x in SignerWindows.ACCEPTED_FILE_TYPES
         )
 
     def get_repo_url(self) -> str:
@@ -62,8 +60,10 @@ class Signer:
             logging.warning(f"Removing existing signature file {signature_file}")
             os.remove(signature_file)
 
-    def sign(self, filename: str, signature_type: str) -> None:
-        signature_file = filename + signature_type
+    def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
+        filename = os.path.join(basepath, artifact)
+        signed_prefix = "signed_"
+        signature_file = os.path.join(basepath, signed_prefix + artifact)
         self.__remove_existing_signature__(signature_file)
         signing_cmd = [
             "./opensearch-signer-client",
@@ -72,10 +72,11 @@ class Signer:
             "-o",
             signature_file,
             "-p",
-            "pgp",
+            "windows",
         ]
         self.git_repo.execute(" ".join(signing_cmd))
-
-    def verify(self, filename: str) -> None:
-        verify_cmd = ["gpg", "--verify-files", filename]
-        self.git_repo.execute(" ".join(verify_cmd))
+        signed_folder = os.path.join(basepath, "signed")
+        if not os.path.exists(signed_folder):
+            os.mkdir(signed_folder)
+        signed_location = os.path.join(signed_folder, artifact)
+        os.rename(signature_file, signed_location)

@@ -29,16 +29,21 @@
                      signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
-                        signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
-
-            tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
-        )
+                        signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
+                        signArtifacts.withCredentials([configs], groovy.lang.Closure)
+                           signArtifacts.readJSON({text=configs})
+                           signArtifacts.sh(
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_role
+                export EXTERNAL_ID=dummy_ID
+                export UNSIGNED_BUCKET=dummy_unsigned_bucket
+                export SIGNED_BUCKET=dummy_signed_bucket
+                export PROFILE_IDENTIFIER=null
+                export PLATFORM_IDENTIFIER=null
+    
+                tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
+            )
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/core/opensearch-dashboards/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch-dashboards/dist/, includePathPattern=**/opensearch-dashboards-min-2.0.0-rc1-linux-x64*})
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch-dashboards/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/dist/opensearch-dashboards/, includePathPattern=**/opensearch-dashboards-2.0.0-rc1-linux-x64*})
@@ -59,15 +64,20 @@
                      signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                      signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                      signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
-                        signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
-
-            tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
-        )
+                        signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
+                        signArtifacts.withCredentials([configs], groovy.lang.Closure)
+                           signArtifacts.readJSON({text=configs})
+                           signArtifacts.sh(
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_role
+                export EXTERNAL_ID=dummy_ID
+                export UNSIGNED_BUCKET=dummy_unsigned_bucket
+                export SIGNED_BUCKET=dummy_signed_bucket
+                export PROFILE_IDENTIFIER=null
+                export PLATFORM_IDENTIFIER=null
+    
+                tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
+            )
                   promoteArtifacts.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      promoteArtifacts.s3Upload({bucket=prod-bucket-name, path=releases/bundle/opensearch-dashboards/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/dist/opensearch-dashboards/, includePathPattern=**/opensearch-dashboards-2.0.0-rc1-linux-x64*})

@@ -3,11 +3,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
 
-from sign_workflow.signer import Signer
+from sign_workflow.signer_pgp import SignerPGP
 
 
 class TestSigner(unittest.TestCase):
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_accepted_file_types_asc(self, git_repo: Mock) -> None:
         artifacts = [
             "bad-xml.xml",
@@ -33,12 +33,12 @@ class TestSigner(unittest.TestCase):
             call(os.path.join("path", "the-tar.tar.gz"), ".asc"),
             call(os.path.join("path", "something-1.0.0.0.jar"), ".asc"),
         ]
-        signer = Signer()
+        signer = SignerPGP()
         signer.sign = MagicMock()  # type: ignore
         signer.sign_artifacts(artifacts, Path("path"), ".asc")
         self.assertEqual(signer.sign.call_args_list, expected)
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_accepted_file_types_sig(self, git_repo: Mock) -> None:
         artifacts = [
             "bad-xml.xml",
@@ -68,67 +68,67 @@ class TestSigner(unittest.TestCase):
             call(os.path.join("path", "opensearch_sql_cli-1.0.0-py3-none-any.whl"), ".sig"),
             call(os.path.join("path", "cratefile.crate"), ".sig")
         ]
-        signer = Signer()
+        signer = SignerPGP()
         signer.sign = MagicMock()  # type: ignore
         signer.sign_artifacts(artifacts, Path("path"), ".sig")
         self.assertEqual(signer.sign.call_args_list, expected)
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_signer_checks_out_tool(self, mock_repo: Mock) -> None:
-        Signer()
+        SignerPGP()
         self.assertEqual(mock_repo.return_value.execute.call_count, 2)
         mock_repo.return_value.execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_signer_verify_asc(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.verify("/path/the-jar.jar.asc")
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.asc")])
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_signer_verify_sig(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.verify("/path/the-jar.jar.sig")
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.sig")])
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_signer_sign_asc(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.sign("/path/the-jar.jar", ".asc")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_signer_sign_sig(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.sign("/path/the-jar.jar", ".sig")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_sign_artifact_not_called(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.generate_signature_and_verify = MagicMock()  # type: ignore
         signer.sign_artifact("the-jar.notvalid", Path("/path"), ".sig")
         signer.generate_signature_and_verify.assert_not_called()
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_sign_artifact_called(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         signer.generate_signature_and_verify = MagicMock()  # type: ignore
         signer.sign_artifact("the-jar.zip", Path("/path"), ".sig")
         signer.generate_signature_and_verify.assert_called_with("the-jar.zip", Path("/path"), ".sig")
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_remove_existing_signature_found(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         os.remove = MagicMock()
         signer.sign("tests/tests_sign_workflow/data/signature/tar_dummy_artifact_1.0.0.tar.gz", ".sig")
         os.remove.assert_called_with("tests/tests_sign_workflow/data/signature/tar_dummy_artifact_1.0.0.tar.gz.sig")
 
-    @patch("sign_workflow.signer.GitRepository")
+    @patch("sign_workflow.signer_pgp.GitRepository")
     def test_remove_existing_signature_not_found(self, mock_repo: Mock) -> None:
-        signer = Signer()
+        signer = SignerPGP()
         os.remove = MagicMock()
         signer.sign("tests/tests_sign_workflow/data/signature/not_found.tar.gz", ".sig")
         os.remove.assert_not_called()

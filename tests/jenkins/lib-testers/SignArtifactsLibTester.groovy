@@ -20,11 +20,12 @@ class SignArtifactsLibTester extends LibFunctionTester {
 
     void configure(helper, binding) {
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
-        binding.setVariable('SIGNER_CLIENT_ROLE', 'dummy_signer_client_role')
-        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'signer_client_external_id')
-        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'signer_client_unsigned_bucket')
-        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
-
+        def configs = ["role": "dummy_role",
+                       "external_id": "dummy_ID",
+                       "unsigned_bucket": "dummy_unsigned_bucket",
+                       "signed_bucket": "dummy_signed_bucket"]
+        binding.setVariable('configs', configs)
+        helper.registerAllowedMethod("readJSON", [Map.class], {c -> configs})
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("withCredentials", [Map])
     }

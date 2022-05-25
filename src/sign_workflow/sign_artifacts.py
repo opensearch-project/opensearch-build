@@ -10,10 +10,11 @@ import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, List, Type
+from typing import Any, List, Type, Union
 
 from manifests.build_manifest import BuildManifest
-from sign_workflow.signer import Signer
+from sign_workflow.signer_pgp import SignerPGP
+from sign_workflow.signer_windows import SignerWindows
 
 
 class SignArtifacts:
@@ -21,14 +22,16 @@ class SignArtifacts:
     component: str
     artifact_type: str
     signature_type: str
-    signer: Signer
+    platform: str
+    signer: Union[SignerPGP, SignerWindows]
 
-    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer) -> None:
+    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> None:
         self.target = target
         self.components = components
         self.artifact_type = artifact_type
         self.signature_type = signature_type
-        self.signer = signer
+        self.platform = platform
+        self.__signer_type__(platform)
 
     @abstractmethod
     def __sign__(self) -> None:
@@ -45,6 +48,13 @@ class SignArtifacts:
         self.signer.sign_artifact(artifact, basepath, self.signature_type)
 
     @classmethod
+    def __signer_type__(self, platform: str) -> None:
+        if (platform == "windows"):
+            self.signer = SignerWindows()
+        else:
+            self.signer = SignerPGP()
+
+    @classmethod
     def __signer_class__(self, path: Path) -> Type[Any]:
         if path.is_dir():
             return SignExistingArtifactsDir
@@ -54,9 +64,9 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer) -> Any:
+    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> Any:
         klass = self.__signer_class__(path)
-        return klass(path, components, artifact_type, signature_type, signer)
+        return klass(path, components, artifact_type, signature_type, platform)
 
 
 class SignWithBuildManifest(SignArtifacts):
