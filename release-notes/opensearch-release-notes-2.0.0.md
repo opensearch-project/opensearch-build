@@ -2,23 +2,23 @@
 
 ## Release Highlights
 
-* Document level alerting allows users to create monitors that can generate alerts per document.
+* Document level alerting allows users to create monitors that can generate alerts per document
 * Lucene 9 is now used in OpenSearch
-* The Geo Map Tiles in OpenSearch Dashboards are updated and now have a pipeline to update them more frequently.
-* Document level security now supports term lookup queries.
+* The Geo Map Tiles in OpenSearch Dashboards are updated and now have a pipeline to update them more frequently
+* Document level security now supports term lookup queries
 
 ### OpenSearch Notifications
-* OpenSearch 2.0.0 is the first official release with OpenSearch Notifications.
-* Notifications consist of three plugins, `notifications-core` and `notifications` backend plugins for OpenSearch, and a `notificationsDashboards` frontend plugin for OpenSearch Dashboards.
+* OpenSearch 2.0.0 is the first official release with OpenSearch Notifications
+* Notifications consist of three plugins, `notifications-core` and `notifications` backend plugins for OpenSearch, and a `notificationsDashboards` frontend plugin for OpenSearch Dashboards
 
 
 ## Release Details
 
-OpenSearch and OpenSearch Dashboards 2.0.0 include the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
+OpenSearch and OpenSearch Dashboards 2.0.0 include the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates
 
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.0/release-notes/opensearch.release-notes-2.0.0.md).
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.0/release-notes/opensearch.release-notes-2.0.0.md)
 
-OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.0/release-notes/opensearch-dashboards.release-notes-2.0.0.md).
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.0/release-notes/opensearch-dashboards.release-notes-2.0.0.md)
 
 ## FEATURES
 
@@ -41,8 +41,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Notifications
-* Use Notifications to manage your notification channel configurations in a centralized location and send messages to these channels.
-* This release also adds notification-specific REST APIs for CRUD operations on channels and internal transport APIs for integrating/communicating with other plugins.
+* Use Notifications to manage your notification channel configurations in a centralized location and send messages to these channels
+* This release also adds notification-specific REST APIs for CRUD operations on channels and internal transport APIs for integrating/communicating with other plugins
 
 
 ### OpenSearch Performance Analyzer
@@ -65,11 +65,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Alerting Dashboards Plugin
-* Implemented UX support for configuring doc level monitors. ([#218](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/218))
+* Implemented UX support for configuring doc level monitors ([#218](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/218))
 * Integrate Alerting Dashboards with Notifications Plugin ([#220](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/220))
-* Added document column to alerts dashboard for doc level monitors. Adjusted alerts dashboard configuration to remove unused alert states for doc level monitors. Refactored style of alerts flyout based on UX feedback. ([#223](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/223))
-* Refactored alerts table for doc level monitors to display a flyout containing finding information. ([#232](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/232))
-* Added documentation ticket workflow. ([#242](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/242))
+* Added document column to alerts dashboard for doc level monitors. Adjusted alerts dashboard configuration to remove unused alert states for doc level monitors. Refactored style of alerts flyout based on UX feedback ([#223](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/223))
+* Refactored alerts table for doc level monitors to display a flyout containing finding information ([#232](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/232))
+* Added documentation ticket workflow ([#242](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/242))
 
 
 ### OpenSearch Anomaly Detection
@@ -102,7 +102,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Ml Commons
-* Add circuit breaker trigger count stat.([#274](https://github.com/opensearch-project/ml-commons/pull/274))
+* Add circuit breaker trigger count stat ([#274](https://github.com/opensearch-project/ml-commons/pull/274))
 
 
 ### OpenSearch Observability
@@ -120,7 +120,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add depreciation notice to security tools ([#1756](https://github.com/opensearch-project/security/pull/1756))
 * [Practice] Reverting changes ([#1754](https://github.com/opensearch-project/security/pull/1754))
 * Renames securityconfig folder to config in bundle step and makes relevant changes ([#1749](https://github.com/opensearch-project/security/pull/1749))
-* Updated issue templates from .github. ([#1740](https://github.com/opensearch-project/security/pull/1740))
+* Updated issue templates from .github ([#1740](https://github.com/opensearch-project/security/pull/1740))
 * Updates Dev guide ([#1590](https://github.com/opensearch-project/security/pull/1590))
 * List out test failures in CI log ([#1737](https://github.com/opensearch-project/security/pull/1737))
 * Make Git ignore out/ directory ([#1734](https://github.com/opensearch-project/security/pull/1734))
@@ -147,9 +147,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Security Dashboards Plugin
-* Change 2.0-alpha1 to 2.0-rc1. ([#946](https://github.com/opensearch-project/security-dashboards-plugin/pull/946))
+* Change 2.0-alpha1 to 2.0-rc1 ([#946](https://github.com/opensearch-project/security-dashboards-plugin/pull/946))
 * Make Git ignore .idea/ folder ([#944](https://github.com/opensearch-project/security-dashboards-plugin/pull/944))
-* Updated issue templates from .github. ([#931](https://github.com/opensearch-project/security-dashboards-plugin/pull/931))
+* Updated issue templates from .github ([#931](https://github.com/opensearch-project/security-dashboards-plugin/pull/931))
 * Bumps version of main to 2.0.0.0 ([#928](https://github.com/opensearch-project/security-dashboards-plugin/pull/928))
 * Enforce authentication on api/status route by default ([#968](https://github.com/opensearch-project/security-dashboards-plugin/pull/968))
 
@@ -164,7 +164,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Completely fix docker pull and install plugin ([#376](https://github.com/opensearch-project/alerting/pull/376))
 * Make sure alerting is using the build script in its own repo ([#377](https://github.com/opensearch-project/alerting/pull/377))
 * fix security test workflow ([#407](https://github.com/opensearch-project/alerting/pull/407))
-* Fixed a flaky test condition. ([#375](https://github.com/opensearch-project/alerting/pull/375]))
+* Fixed a flaky test condition ([#375](https://github.com/opensearch-project/alerting/pull/375]))
 * Remove actionGet and fix minor bugs ([#424](https://github.com/opensearch-project/alerting/pull/424]))
 * Fix UnsupportedOperation error while alert categorization in BucketLevel monitor ([#428](https://github.com/opensearch-project/alerting/pull/428]))
 * Fix minor bugs and support per alert action execution for Document Level Monitors ([#441](https://github.com/opensearch-project/alerting/pull/441]))
@@ -174,11 +174,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Alerting Dashboards Plugin
-* Fixed a bug that was causing the UX to reset visual editor trigger conditions to their default values when a trigger name contained periods. ([#204](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/204))
-* Fixed a bug that was preventing the configured schedule from displaying when editing a monitor that was created through backend commands. ([#197](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/197))
-* Fixed bugs associated with alerts table, and addressed UX review feedback. ([#222](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/222))
+* Fixed a bug that was causing the UX to reset visual editor trigger conditions to their default values when a trigger name contained periods ([#204](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/204))
+* Fixed a bug that was preventing the configured schedule from displaying when editing a monitor that was created through backend commands ([#197](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/197))
+* Fixed bugs associated with alerts table, and addressed UX review feedback ([#222](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/222))
 * Document level monitor UX bug fixes ([#226](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/226))
-* Fixed issues found during bug bash, and implemented tests. ([#240](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/240))
+* Fixed issues found during bug bash, and implemented tests ([#240](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/240))
 
 
 ### OpenSearch Anomaly Detection
@@ -285,20 +285,20 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## INFRASTRUCTURE
 
 ### OpenSearch Alerting
-* Removed the Beta label from the bug report template. ([#353](https://github.com/opensearch-project/alerting/pull/353))
+* Removed the Beta label from the bug report template ([#353](https://github.com/opensearch-project/alerting/pull/353))
 * Update alerting with qualifier support in releases ([#366](https://github.com/opensearch-project/alerting/pull/366))
 * Use OpenSearch 2.0.0-alpha1 ([#370](https://github.com/opensearch-project/alerting/pull/370))
 * Add build qualifier default to alpha1 for 2.0.0 ([#373](https://github.com/opensearch-project/alerting/pull/373))
 * Remove JDK 14 and Add JDK 17 ([#383](https://github.com/opensearch-project/alerting/pull/383))
-* Updated issue templates from .github. ([#382](https://github.com/opensearch-project/alerting/pull/382))
-* Incremented version to 2.0-rc1. ([#404](https://github.com/opensearch-project/alerting/pull/404))
+* Updated issue templates from .github ([#382](https://github.com/opensearch-project/alerting/pull/382))
+* Incremented version to 2.0-rc1 ([#404](https://github.com/opensearch-project/alerting/pull/404))
 * Replace checked-in ZIP for bwc tests with a dynamic dependency ([#411](https://github.com/opensearch-project/alerting/pull/411))
 * Update integTest gradle scripts to run via remote cluster independently ([#418](https://github.com/opensearch-project/alerting/pull/418))
 
 
 ### OpenSearch Alerting Dashboards Plugin
-* Removed the Beta label from the bug report template. ([#196](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/196))
-* Updated issue templates from .github. ([#205](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/205))
+* Removed the Beta label from the bug report template ([#196](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/196))
+* Updated issue templates from .github ([#205](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/205))
 
 
 ### OpenSearch Anomaly Detection
@@ -308,7 +308,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add auto labeler workflow ([#455](https://github.com/opensearch-project/anomaly-detection/pull/455))
 * Gradle 7 and Opensearch 2.0 upgrade ([#464](https://github.com/opensearch-project/anomaly-detection/pull/464))
 * Adding test-retry plugin ([#456](https://github.com/opensearch-project/anomaly-detection/pull/456))
-* Updated issue templates from .github. ([#488](https://github.com/opensearch-project/anomaly-detection/pull/488))
+* Updated issue templates from .github ([#488](https://github.com/opensearch-project/anomaly-detection/pull/488))
 * Removing job-scheduler zip and replacing with distribution build ([#487](https://github.com/opensearch-project/anomaly-detection/pull/487))
 * JDK 17 support ([#489](https://github.com/opensearch-project/anomaly-detection/pull/489))
 * Moving script file in scripts folder  for file location standardization ([#494](https://github.com/opensearch-project/anomaly-detection/pull/494))
@@ -320,9 +320,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Anomaly Detection Dashboards
 * Add auto labeler workflow ([#205](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/205))
-* Updated issue templates from .github. ([#226](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/226))
+* Updated issue templates from .github ([#226](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/226))
 * 2.0 version bump ([#230](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/230))
-* Change 2.0-alpha1 to 2.0-rc1. ([#241](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/241))
+* Change 2.0-alpha1 to 2.0-rc1 ([#241](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/241))
 * Update labeler to default backports to 2.x ([#246](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/246))
 
 
@@ -330,7 +330,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Adding support for integration tests with remote cluster ([#111](https://github.com/opensearch-project/asynchronous-search/pull/111))
 * Remove support for JDK 8 ([#114](https://github.com/opensearch-project/asynchronous-search/pull/114))
 * Remove support for JDK 14 ([#125](https://github.com/opensearch-project/asynchronous-search/pull/125))
-* Updated issue templates from .github. ([#126](https://github.com/opensearch-project/asynchronous-search/pull/126))
+* Updated issue templates from .github ([#126](https://github.com/opensearch-project/asynchronous-search/pull/126))
 * Replace checked-in ZIP with a dynamic dependency ([#133](https://github.com/opensearch-project/asynchronous-search/pull/133))
 
 
@@ -353,7 +353,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Dashboards Reports
 * Added missing zip for bwc tests ([#329](https://github.com/opensearch-project/dashboards-reports/pull/329))
 * Remove JDK14 from CI ([#335](https://github.com/opensearch-project/dashboards-reports/pull/335))
-* Updated issue templates from .github. ([#328](https://github.com/opensearch-project/dashboards-reports/pull/328))
+* Updated issue templates from .github ([#328](https://github.com/opensearch-project/dashboards-reports/pull/328))
 * Remove zips and download from remote at build time ([#337](https://github.com/opensearch-project/dashboards-reports/pull/337))
 * Support integTestRemote with security enabled endpoint ([#354](https://github.com/opensearch-project/dashboards-reports/pull/354))
 
@@ -377,15 +377,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Ml Commons
 * Drop support for JDK 14 ([#267](https://github.com/opensearch-project/ml-commons/pull/267))
-* Add UT/IT Coverage for action/models and action/tasks. ([#268](https://github.com/opensearch-project/ml-commons/pull/268))
+* Add UT/IT Coverage for action/models and action/tasks ([#268](https://github.com/opensearch-project/ml-commons/pull/268))
 * Default qualifier to alpha1 and fix workflows ([#269](https://github.com/opensearch-project/ml-commons/pull/269))
 * Remove additional vars in build.gradle that are not used ([#271](https://github.com/opensearch-project/ml-commons/pull/271))
-* Add UT for Search transport action. ([#272](https://github.com/opensearch-project/ml-commons/pull/272))
-* Updated issue templates for bugs and features. ([#273](https://github.com/opensearch-project/ml-commons/pull/273))
+* Add UT for Search transport action ([#272](https://github.com/opensearch-project/ml-commons/pull/272))
+* Updated issue templates for bugs and features ([#273](https://github.com/opensearch-project/ml-commons/pull/273))
 * Add more test to improve coverage of abstract search action([#275](https://github.com/opensearch-project/ml-commons/pull/275))
-* Add UT for RestMLExecuteAction, and remove it out from the jacoco exclusive list. ([#278](https://github.com/opensearch-project/ml-commons/pull/278))
+* Add UT for RestMLExecuteAction, and remove it out from the jacoco exclusive list ([#278](https://github.com/opensearch-project/ml-commons/pull/278))
 * Add coverage badges ([#281](https://github.com/opensearch-project/ml-commons/pull/281))
-* Re-enable docker image tests for 2.0. ([#288](https://github.com/opensearch-project/ml-commons/pull/288))
+* Re-enable docker image tests for 2.0 ([#288](https://github.com/opensearch-project/ml-commons/pull/288))
 
 
 ### OpenSearch Observability
@@ -399,7 +399,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix trace analytics cypress ([#652](https://github.com/opensearch-project/observability/pull/652))
 * Event analytics jest tests ([#651](https://github.com/opensearch-project/observability/pull/651))
 * 2.0 cypress tests ([#658](https://github.com/opensearch-project/observability/pull/658))
-* Updated issue templates from .github. ([#662](https://github.com/opensearch-project/observability/pull/662))
+* Updated issue templates from .github ([#662](https://github.com/opensearch-project/observability/pull/662))
 * Removing add sample data test from panels cypress ([#668](https://github.com/opensearch-project/observability/pull/668))
 * [OSD][Tests] add test subject to app title for app analytics ([#686](https://github.com/opensearch-project/observability/pull/686))
 * Support integTestRemote with security enabled endpoint ([#699](https://github.com/opensearch-project/observability/pull/699))
@@ -408,7 +408,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch SQL
 * Fix bwc build issue with jdk17 ([#520](https://github.com/opensearch-project/sql/pull/520))
-* Updated issue templates from .github. ([#531](https://github.com/opensearch-project/sql/pull/531))
+* Updated issue templates from .github ([#531](https://github.com/opensearch-project/sql/pull/531))
 * Removing JDK14 from CI ([#547](https://github.com/opensearch-project/sql/pull/547))
 * Replace checked-in ZIP with a dynamic dependency ([#514](https://github.com/opensearch-project/sql/pull/514))
 
@@ -423,7 +423,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Alerting Dashboards Plugin
 * Add release notes for version 2.0.0-rc1 ([#227](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/227))
-* Drafted release notes for 2.0.0. ([#248](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/248))
+* Drafted release notes for 2.0.0 ([#248](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/248))
 
 
 ### OpenSearch Anomaly Detection
@@ -448,20 +448,20 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Dashboards Visualizations
-* Updated issue templates from .github. ([#59](https://github.com/opensearch-project/dashboards-visualizations/pull/59))
+* Updated issue templates from .github ([#59](https://github.com/opensearch-project/dashboards-visualizations/pull/59))
 
 
 ### OpenSearch Index Management
-* Updated issue templates from .github. ([#324](https://github.com/opensearch-project/index-management/pull/324))
+* Updated issue templates from .github ([#324](https://github.com/opensearch-project/index-management/pull/324))
 
 
 ### OpenSearch Index Management Dashboards Plugin
-* Updated issue templates from .github. ([#168](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/168))
+* Updated issue templates from .github ([#168](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/168))
 * Adds release notes for 2.0.0.0-rc1 ([#182](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/182))
 
 
 ### OpenSearch Job Scheduler
-* Updated issue templates from .github. ([165](https://github.com/opensearch-project/job-scheduler/pull/165))
+* Updated issue templates from .github ([165](https://github.com/opensearch-project/job-scheduler/pull/165))
 
 
 ### OpenSearch Observability
@@ -469,7 +469,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Performance Analyzer
-* Updated issue templates from .github. ([#177](https://github.com/opensearch-project/performance-analyzer/pull/177))
+* Updated issue templates from .github ([#177](https://github.com/opensearch-project/performance-analyzer/pull/177))
 * Removing metrics which are not required now as were removed in OS 2.0 ([#159](https://github.com/opensearch-project/performance-analyzer-rca/pull/159))
 
 
@@ -487,12 +487,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Alerting Dashboards Plugin
-* Bumped main branch version to 2.0 to align with OpenSearch-Dashboards. Added alpha1 qualifier to align with backend snapshot version. ([#202](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/202))
+* Bumped main branch version to 2.0 to align with OpenSearch-Dashboards. Added alpha1 qualifier to align with backend snapshot version ([#202](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/202))
 * [Build] bump plugin version to 2.0.0.0-rc1 ([#213](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/213))
-* Incremented version to 2.0-rc1. ([#216](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/216))
-* Updated versions of various dependencies to address CVEs. ([#235](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/235))
-* Removed the rc1 qualifier from the plugin version, changed OSD version used by test workflows to 2.0, added test environment. ([#238](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/238))
-* Enabled CI for 2.* branches, and removed redundant bug report template. ([#246](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/246))
+* Incremented version to 2.0-rc1 ([#216](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/216))
+* Updated versions of various dependencies to address CVEs ([#235](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/235))
+* Removed the rc1 qualifier from the plugin version, changed OSD version used by test workflows to 2.0, added test environment ([#238](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/238))
+* Enabled CI for 2.* branches, and removed redundant bug report template ([#246](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/246))
 
 
 ### OpenSearch Asynchronous Search
@@ -511,7 +511,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump to 2.0 alpha1 and gradle 7 ([#325](https://github.com/opensearch-project/dashboards-reports/pull/325))
 * Make sure qualifier is applied in 2.0.0 ([#327](https://github.com/opensearch-project/dashboards-reports/pull/327))
 * Change alpha1 to rc1 for first 2.0 release ([#333](https://github.com/opensearch-project/dashboards-reports/pull/333))
-* Change 2.0-alpha1 to 2.0-rc1. ([#341](https://github.com/opensearch-project/dashboards-reports/pull/341))
+* Change 2.0-alpha1 to 2.0-rc1 ([#341](https://github.com/opensearch-project/dashboards-reports/pull/341))
 * Remove rc1 qualifier reference ([#358](https://github.com/opensearch-project/dashboards-reports/pull/358))
 
 
@@ -525,7 +525,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Index Management
 * Upgrades Index Management to use 2.0.0-alpha1 of OpenSearch and dependencies ([#318](https://github.com/opensearch-project/index-management/pull/318))
 * Make sure qualifier default is alpha1 in IM ([#323](https://github.com/opensearch-project/index-management/pull/323))
-* Incremented version to 2.0-rc1. ([#331](https://github.com/opensearch-project/index-management/pull/331))
+* Incremented version to 2.0-rc1 ([#331](https://github.com/opensearch-project/index-management/pull/331))
 * Non-inclusive nonmenclature update ([#337](https://github.com/opensearch-project/index-management/pull/337))
 * Removes rc1 qualifier ([#353](https://github.com/opensearch-project/index-management/pull/353))
 
@@ -533,7 +533,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Index Management Dashboards Plugin
 * Upgrades IM Dashboard plugin to OpenSearch Dashboards 2.0 ([#169](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/169))
 * Bumps version to 2.0.0.0-rc1 ([#172](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/172))
-* Incremented version to 2.0-rc1. ([#175](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/175))
+* Incremented version to 2.0-rc1 ([#175](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/175))
 * Removes rc1 version qualifier ([#192](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/192))
 * Remove node version in package.json ([#186](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/186))
 * Wrap up node removal and bump as dependabot suggest ([#193](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/193))
@@ -541,12 +541,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Job Scheduler
 * Removes usage of mapping types ([155](https://github.com/opensearch-project/job-scheduler/pull/155))
 * Dropping support for jdk 14 ([168](https://github.com/opensearch-project/job-scheduler/pull/168))
-* Incremented version to 2.0-rc1.  ([169](https://github.com/opensearch-project/job-scheduler/pull/169))
+* Incremented version to 2.0-rc1  ([169](https://github.com/opensearch-project/job-scheduler/pull/169))
 * Removes rc1 version qualifier  ([178](https://github.com/opensearch-project/job-scheduler/pull/178))
 
 
 ### OpenSearch Ml Commons
-* Change 2.0-alpha1 to 2.0-rc1. ([#282](https://github.com/opensearch-project/ml-commons/pull/282))
+* Change 2.0-alpha1 to 2.0-rc1 ([#282](https://github.com/opensearch-project/ml-commons/pull/282))
 * Bump RCF version to 3.0-rc2.1 ([#289](https://github.com/opensearch-project/ml-commons/pull/289))
 * Bump tribuo version to 4.2.1 ([#312](https://github.com/opensearch-project/ml-commons/pull/312))
 
@@ -557,7 +557,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add alpha1 qualifiers for dashboards plugin ([#616](https://github.com/opensearch-project/observability/pull/616))
 * Tweak build.gradle to have the correct qualifiers in 2.0.0 ([#619](https://github.com/opensearch-project/observability/pull/619))
 * Change alpha1 to rc1 for first 2.0 release ([#635](https://github.com/opensearch-project/observability/pull/635))
-* Change 2.0-alpha1 to 2.0-rc1. ([#655](https://github.com/opensearch-project/observability/pull/655))
+* Change 2.0-alpha1 to 2.0-rc1 ([#655](https://github.com/opensearch-project/observability/pull/655))
 * Remove Candlestick chart from Visualizations ([#690](https://github.com/opensearch-project/observability/pull/690))
 * Remove rc1 reference ([#730](https://github.com/opensearch-project/observability/pull/730))
 
@@ -575,7 +575,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Security
-* Incremented version to 2.0-rc1. ([#1764](https://github.com/opensearch-project/security/pull/1764))
+* Incremented version to 2.0-rc1 ([#1764](https://github.com/opensearch-project/security/pull/1764))
 * Upgrade to opensearch 2.0.0 alpha1 ([#1741](https://github.com/opensearch-project/security/pull/1741))
 * Upgrade to OpenSearch 2.0.0 ([#1698](https://github.com/opensearch-project/security/pull/1698))
 * Move to version 2.0.0.0 ([#1695](https://github.com/opensearch-project/security/pull/1695))
@@ -622,7 +622,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Alerting Dashboards Plugin
-* Temporarily disabled destination use in some cypress tests to resolve flakiness. ([#214](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/214))
+* Temporarily disabled destination use in some cypress tests to resolve flakiness ([#214](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/214))
 * Remove disabled buttons and update Destination flows to reflect read-only state ([#221](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/221))
 
 
