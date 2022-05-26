@@ -14,7 +14,7 @@
 
 ## Release Details
 
-OpenSearch and OpenSearch Dashboards 2.0.0 include the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates
+OpenSearch and OpenSearch Dashboards 2.0.0 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates:
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.0/release-notes/opensearch.release-notes-2.0.0.md)
 
