@@ -51,7 +51,7 @@ class SignArtifacts:
     def __signer_type__(self, platform: str) -> None:
         if (platform == "windows"):
             self.signer = SignerWindows()
-        else:
+        if (platform == "linux"):
             self.signer = SignerPGP()
 
     @classmethod
