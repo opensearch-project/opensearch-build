@@ -42,7 +42,7 @@ class TestSignArtifacts(unittest.TestCase):
     def test_sign_with_build_manifest(self, mock_signer: Mock) -> None:
         manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
-        platform = 'linux'
+        platform = MagicMock()
         signer_with_manifest = SignWithBuildManifest(
             target=manifest,
             components=[],
@@ -67,7 +67,7 @@ class TestSignArtifacts(unittest.TestCase):
     def test_sign_existing_artifacts_file(self, mock_signer: Mock) -> None:
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
-        platform = 'linux'
+        platform = MagicMock()
         signer_with_manifest = SignArtifactsExistingArtifactFile(
             target=path,
             components=['maven'],
@@ -89,7 +89,7 @@ class TestSignArtifacts(unittest.TestCase):
         ]
         path = Path('dummy')
         sigtype = '.sig'
-        platform = 'linux'
+        platform = MagicMock()
         signer_with_manifest = SignExistingArtifactsDir(
             target=path,
             components=['maven'],
