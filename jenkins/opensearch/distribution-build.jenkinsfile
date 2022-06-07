@@ -38,10 +38,10 @@ pipeline {
             defaultValue: "bwc-test",
             trim: true
         )
-        booleanParam(
+        choice(
             name: 'BUILD_DOCKER',
-            description: 'Build docker image or not.',
-            defaultValue: true
+            description: 'Build docker image or not with options.',
+            choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
         )
         booleanParam(
             name: 'PUBLISH_NOTIFICATION',
@@ -512,7 +512,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression { 
-                    return params.BUILD_DOCKER
+                    params.BUILD_DOCKER != 'do_not_build_docker'
                 }
             }
             agent {
@@ -530,6 +530,8 @@ pipeline {
                     
                     buildDockerImage(
                         inputManifest: "manifests/${INPUT_MANIFEST}",
+                        buildNumber: "${BUILD_NUMBER}",
+                        buildOption: "${BUILD_DOCKER}",
                         artifactUrlX64: env.ARTIFACT_URL_X64_TAR,
                         artifactUrlArm64: env.ARTIFACT_URL_ARM64_TAR
                     )

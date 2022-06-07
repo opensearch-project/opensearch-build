@@ -22,11 +22,6 @@ pipeline {
             description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
             trim: true
         )
-        booleanParam(
-            defaultValue: true,
-            name: 'IS_STAGING',
-            description: 'Are we pushing docker images to staging (opensearchstaging) or production (opensearchproject) account.'
-        )
     }
     stages {
         stage('docker-build') {
@@ -40,18 +35,15 @@ pipeline {
             }
             steps {
                 script {
+                    echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
                     git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
-                    def CREDENTIAL_ID = "jenkins-staging-docker-staging-credential"
-                    if (env.IS_STAGING == "false") {
-                        CREDENTIAL_ID = "jenkins-staging-docker-prod-token"
-                        sh "echo Switch to Production"
-                    }
+                    def CREDENTIAL_ID = "jenkins-staging-dockerhub-credential"
                     sh "echo Account: $CREDENTIAL_ID"
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh '''
-                            set -ex
+                            set -e
                             echo Login to $CREDENTIAL_ID
-                            docker logout && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                            docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
                         '''
                     }
                 }
