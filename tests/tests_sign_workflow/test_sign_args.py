@@ -33,7 +33,7 @@ class TestSignArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST])
     def test_sigtype_default(self) -> None:
-        self.assertEqual(SignArgs().sigtype, "")
+        self.assertEqual(SignArgs().sigtype, ".asc")
 
     @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--verbose"])
     def test_verbose_true(self) -> None:
