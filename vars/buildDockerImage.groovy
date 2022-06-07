@@ -39,7 +39,6 @@ void call(Map args = [:]) {
                             "-n ${build_number}"
                         ].join(' ')
                     ].join(' && ')),
-                //booleanParam(name: 'IS_STAGING', value: true)
             ]
         }
 
