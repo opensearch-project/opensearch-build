@@ -475,7 +475,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression { 
-                    return params.BUILD_DOCKER
+                    params.BUILD_DOCKER != 'do_not_build_docker'
                 }
             }
             agent {
