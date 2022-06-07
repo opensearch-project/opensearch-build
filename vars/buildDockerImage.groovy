@@ -19,8 +19,8 @@ void call(Map args = [:]) {
         dockerBuild: {
             build job: 'docker-build',
             parameters: [
-                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/peterzhuamazon/opensearch-build'),
-                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'opensearch-docker-tag-buildnumber'),
+                string(name: 'DOCKER_BUILD_GIT_REPOSITORY', value: 'https://github.com/opensearch-project/opensearch-build'),
+                string(name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', value: 'main'),
                 string(name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS', value: [
                         'id',
                         'pwd',
