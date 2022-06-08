@@ -3,7 +3,7 @@
       release-data-prepper-all-artifacts.library({identifier=jenkins@20211123, retriever=null})
       release-data-prepper-all-artifacts.pipeline(groovy.lang.Closure)
          release-data-prepper-all-artifacts.timeout({time=1, unit=HOURS})
-         release-data-prepper-all-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-ubuntu2004-data-prepper-pipeline-v1, reuseNode:false, stages:[:], args:-u root, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         release-data-prepper-all-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          release-data-prepper-all-artifacts.stage(Download Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.dir(archive, groovy.lang.Closure)
@@ -88,14 +88,18 @@
                 gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:0.22.1
                 docker logout
             )
-               release-data-prepper-all-artifacts.copyContainer({sourceImage=data-prepper:0.22.1-997908, sourceRegistry=http://public.ecr.aws/data-prepper-container-repository, destinationImage=data-prepper:latest, destinationRegistry=opensearchproject})
-                  copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                  copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                     copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                     copyContainer.sh(
-                gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 opensearchproject/data-prepper:latest
-                docker logout
-            )
+         release-data-prepper-all-artifacts.stage(Copy Docker Image to ECR, groovy.lang.Closure)
+            release-data-prepper-all-artifacts.script(groovy.lang.Closure)
+               release-data-prepper-all-artifacts.copyContainer({sourceImage=data-prepper:0.22.1-997908, sourceRegistry=http://public.ecr.aws/data-prepper-container-repository, destinationImage=data-prepper:0.22.1, destinationRegistry=public.ecr.aws/opensearchproject})
+                  copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
+                  copyContainer.string({credentialsId=jenkins-artifact-promotion-account, variable=AWS_ACCOUNT_ARTIFACT})
+                  copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
+                     copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
+                        copyContainer.sh(
+                        gcrane cp http://public.ecr.aws/data-prepper-container-repository/data-prepper:0.22.1-997908 public.ecr.aws/opensearchproject/data-prepper:0.22.1
+                        docker logout public.ecr.aws/opensearchproject
+                    )
          release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
