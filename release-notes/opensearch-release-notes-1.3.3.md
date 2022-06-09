@@ -27,14 +27,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## Maintenance
 
-### Opensearch Ml Common
+### Opensearch Ml Commons
 * Bump tribuo version to 4.2.1 ([#317](https://github.com/opensearch-project/ml-commons/pull/317))
 * Remove local RCF jar, move to maven dependency ([#319](https://github.com/opensearch-project/ml-commons/pull/319))
 * Version Increment to 1.3.3 OpenSearch release ([#331](https://github.com/opensearch-project/ml-commons/pull/331))
 
 ## Refactoring
 
-### Opensearch Ml Common
+### Opensearch Ml Commons
 * Refactor stats API ([#334](https://github.com/opensearch-project/ml-commons/pull/334))
 
 
