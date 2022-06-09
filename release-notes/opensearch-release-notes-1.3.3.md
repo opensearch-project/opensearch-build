@@ -2,9 +2,7 @@
 
 ## Release Details
 
-OpenSearch and OpenSearch Dashboards 1.3.3 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
-
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.1.0.md).
+OpenSearch Dashboards 1.3.3 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-1.3.3.md).
 
