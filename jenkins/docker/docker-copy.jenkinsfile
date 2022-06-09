@@ -40,6 +40,7 @@ pipeline {
                 stage('Parameters Check') {
                     steps {
                         script {
+                            currentBuild.description = "${SOURCE_IMAGE_REGISTRY}/${SOURCE_IMAGE} to ${DESTINATION_IMAGE_REGISTRY}/${DESTINATION_IMAGE}"
                             if( SOURCE_IMAGE.isEmpty() || DESTINATION_IMAGE.isEmpty()) {
                                         currentBuild.result = 'ABORTED'
                                         error('Make sure all the parameters are passed in.')
