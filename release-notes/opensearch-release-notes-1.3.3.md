@@ -12,7 +12,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Use current time as training data end time  ([#547](https://github.com/opensearch-project/anomaly-detection/pull/547))
 * Support writing features using filter aggregation ([#425](https://github.com/opensearch-project/anomaly-detection/pull/425))
 
-### Opensearch Ml Common
+### Opensearch Ml Commons
 * Add circuit breaker trigger count stat ([#274](https://github.com/opensearch-project/ml-commons/pull/274))
 
 ## Bug Fixes
