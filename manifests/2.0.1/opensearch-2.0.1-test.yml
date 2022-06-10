@@ -30,6 +30,12 @@ components:
         - with-security
         - without-security
 
+  - name: cross-cluster-replication
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
   - name: alerting
     integ-test:
       test-configs:
