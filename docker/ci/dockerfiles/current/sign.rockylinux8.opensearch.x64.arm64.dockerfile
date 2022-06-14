@@ -20,7 +20,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN dnf clean all && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -30,7 +30,7 @@ RUN groupadd -g 1000 opensearch && \
 
 # Add Python37 dependencies
 RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel \
-                   libffi-devel findutils rpm-build createrepo pinentry rpm-sign gnupg2
+                   libffi-devel findutils rpm-build createrepo pinentry rpm-sign gnupg2 && dnf clean all
 
 # Install Python37 binary
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
