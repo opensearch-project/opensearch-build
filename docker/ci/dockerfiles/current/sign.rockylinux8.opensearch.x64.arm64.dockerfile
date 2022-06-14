@@ -9,8 +9,6 @@
 
 FROM rockylinux:8
 
-ARG MAVEN_DIR=/usr/local/apache-maven
-
 # Ensure localedef running correct with root permission
 USER 0
 
