@@ -7,9 +7,8 @@ pipeline {
     agent {
         docker {
             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-data-prepper-pipeline-v1'
+            image 'alpine:3'
             alwaysPull true
-            args '-u root'
         }
     }
     parameters {
@@ -17,92 +16,142 @@ pipeline {
         string(name: 'DATA_PREPPER_BUILD_NUMBER', description: 'The build number of the Data Prepper build from GitHub to release.', trim: true)
     }
     stages {
-        stage('Download Archives') {
-            steps {
-                script {
-                    archivePath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/archive"
+        stage('Promote Archives') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
+                    args '-e JAVA_HOME=/opt/java/openjdk-11'
+                    alwaysPull true
+                }
+            }
+            stages {
+                stage('Download Archives') {
+                    steps {
+                        script {
+                            archivePath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/archive"
 
-                    dir('archive') {
-                        sh "curl -sSL ${archivePath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
-                        sh "curl -sSL ${archivePath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                            dir('archive') {
+                                sh "curl -sSL ${archivePath}/opensearch-data-prepper-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-${VERSION}-linux-x64.tar.gz"
+                                sh "curl -sSL ${archivePath}/opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz -o opensearch-data-prepper-jdk-${VERSION}-linux-x64.tar.gz"
+                            }
+                        }
+                    }
+                }
+                stage('Sign Archives') {
+                    steps {
+                        script {
+                            signatureType = '.sig'
+                            signArtifacts(
+                                    artifactPath: "${WORKSPACE}/archive",
+                                    sigtype: signatureType,
+                                    platform: 'linux'
+                            )
+                        }
+                    }
+                }
+                stage('Release Archives to Production Distribution Bucket') {
+                    steps {
+                        script {
+                            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                                s3Upload(file: 'archive/', bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "data-prepper/${VERSION}/")
+                            }
+                        }
                     }
                 }
             }
         }
-        stage('Download Maven Artifacts') {
-            steps {
-                script {
-                    mavenPath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/maven"
-                    group = "org/opensearch/dataprepper"
-                    artifacts = ["data-prepper-api"]
-                    fileTypes = ["-javadoc.jar", ".jar", ".pom", "-sources.jar", ".module"]
-                    checksums = ["", ".md5", ".sha1", ".sha256", ".sha512"]
 
-                    downloadArtifacts()
+        stage('Promote Docker') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'alpine:3'
+                    alwaysPull true
                 }
             }
-        }
-        stage('Sign Archives') {
-            steps {
-                script {
-                    signatureType = '.sig'
-                    signArtifacts(
-                            artifactPath: "${WORKSPACE}/archive",
-                            sigtype: signatureType,
-                            platform: 'linux'
-                    )
+            stages {
+                stage('Copy Docker Image to DockerHub') {
+                    steps {
+                        script {
+                            dockerCopyHub: {
+                                build job: 'docker-copy',
+                                parameters: [
+                                    string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                    string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                    string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchproject'),
+                                    string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
+                                ]
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        stage('Sign Maven Artifacts') {
-            steps {
-                script {
-                    signArtifacts(
-                            artifactPath: "${WORKSPACE}/maven",
-                            type: 'maven',
-                            platform: 'linux'
-                    )
-                }
-            }
-        }
-        stage('Release Archives to Production Distribution Bucket') {
-            steps {
-                script {
-                    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-                        s3Upload(file: 'archive/', bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "data-prepper/${VERSION}/")
+                stage('Copy Docker Image to ECR') {
+                    steps {
+                        script {
+                            dockerCopyECR: {
+                                build job: 'docker-copy',
+                                parameters: [
+                                    string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                    string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                    string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'public.ecr.aws/opensearchproject'),
+                                    string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
+                                ]
+                            }
+
+                        }
                     }
                 }
             }
         }
-        stage('Release Docker Image to DockerHub') {
-            steps {
-                script {
-                    copyContainer(
-                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
-                        destinationImage: "data-prepper:${VERSION}",
-                        destinationRegistry: 'opensearchproject',
-                    )
-                    copyContainer(
-                        sourceImage: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}",
-                        sourceRegistry: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}",
-                        destinationImage: "data-prepper:latest",
-                        destinationRegistry: 'opensearchproject',
-                    )
+
+        stage('Promote Maven') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
+                    args '-e JAVA_HOME=/opt/java/openjdk-11'
+                    alwaysPull true
                 }
             }
-        }
-        stage('Upload Artifacts to Sonatype') {
-            environment {
-                REPO_URL = "https://aws.oss.sonatype.org/"
-                STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
-                BUILD_ID = "${BUILD_ID}"
-            }
-            steps {
-                script {
-                    // stage artifacts for release with Sonatype
-                    withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                        sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven')
+            stages {
+                stage('Download Maven Artifacts') {
+                    steps {
+                        script {
+                            mavenPath = "${DATA_PREPPER_ARTIFACT_STAGING_SITE}/${VERSION}/${DATA_PREPPER_BUILD_NUMBER}/maven"
+                            group = "org/opensearch/dataprepper"
+                            artifacts = ["data-prepper-api"]
+                            fileTypes = ["-javadoc.jar", ".jar", ".pom", "-sources.jar", ".module"]
+                            checksums = ["", ".md5", ".sha1", ".sha256", ".sha512"]
+
+                            downloadArtifacts()
+                        }
+                    }
+                }
+                stage('Sign Maven Artifacts') {
+                    steps {
+                        script {
+                            signArtifacts(
+                                    artifactPath: "${WORKSPACE}/maven",
+                                    type: 'maven',
+                                    platform: 'linux'
+                            )
+                        }
+                    }
+                }
+                stage('Upload Artifacts to Sonatype') {
+                    environment {
+                        REPO_URL = "https://aws.oss.sonatype.org/"
+                        STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
+                        BUILD_ID = "${BUILD_ID}"
+                    }
+                    steps {
+                        script {
+                            // stage artifacts for release with Sonatype
+                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven')
+                            }
+                        }
                     }
                 }
             }
