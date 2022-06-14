@@ -43,7 +43,9 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
-    pip3 install pipenv awscli && pipenv --version
+    pip3 install pipenv awscli && \
+    pipenv --version && \
+    aws --version
 
 # Change User
 USER 1000
