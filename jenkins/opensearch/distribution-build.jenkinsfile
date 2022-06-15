@@ -285,7 +285,7 @@ pipeline {
                                     echo "Trigger rpm validation for x64 rpm ${bundleManifestUrl}"
                                     def rpmValidationResults =
                                         build job: 'rpm-validation',
-                                        propagate: false,
+                                        propagate: true,
                                         wait: true,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
@@ -459,7 +459,7 @@ pipeline {
                                     echo "Trigger rpm validation for arm64 rpm ${bundleManifestUrl}"
                                     def rpmValidationResults =
                                         build job: 'rpm-validation',
-                                        propagate: false,
+                                        propagate: true,
                                         wait: true,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
