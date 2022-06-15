@@ -3,7 +3,7 @@
       release-data-prepper-all-artifacts.library({identifier=jenkins@20211123, retriever=null})
       release-data-prepper-all-artifacts.pipeline(groovy.lang.Closure)
          release-data-prepper-all-artifacts.timeout({time=1, unit=HOURS})
-         release-data-prepper-all-artifacts.echo(Executing on agent [docker:[image:alpine:3, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         release-data-prepper-all-artifacts.echo(Executing on agent [label:none])
          release-data-prepper-all-artifacts.stage(Download Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.dir(archive, groovy.lang.Closure)

@@ -4,13 +4,7 @@ pipeline {
     options {
         timeout(time: 1, unit: 'HOURS')
     }
-    agent {
-        docker {
-            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'alpine:3'
-            alwaysPull true
-        }
-    }
+    agent none
     parameters {
         string(name: 'VERSION', description: 'The version of Data Prepper', trim: true)
         string(name: 'DATA_PREPPER_BUILD_NUMBER', description: 'The build number of the Data Prepper build from GitHub to release.', trim: true)
