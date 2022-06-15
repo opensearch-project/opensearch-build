@@ -24,7 +24,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN dnf clean all && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -69,7 +69,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && dnf install -y rpm-build createrepo && dnf clean all
+RUN . /etc/profile.d/rvm.sh && rvm install 2.4.0 && rvm --default use 2.4.0 && dnf install -y rpm-build rpm-sign createrepo pinentry && dnf clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.4.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
