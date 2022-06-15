@@ -20,7 +20,6 @@ void call(Map args = [:]) {
         echo "RPM Add Sign"
 
         withAWS(role: "${SIGN_ASM_ROLE}", roleAccount: "${SIGN_ASM_ACCOUNT}", duration: 900, roleSessionName: 'jenkins-signing-session') {
-            //s3Download(bucket: "${ARTIFACT_BUCKET_NAME}", file: "${prefixPath}", path: "${artifactPath}/",  force: true)
             withCredentials([
                 string(credentialsId: 'jenkins-rpm-signing-asm-pass-id', variable: 'SIGNING_PASS_ID'),
                 string(credentialsId: 'jenkins-rpm-signing-asm-secret-id', variable: 'SIGNING_SECRET_ID')])
