@@ -12,21 +12,22 @@
          release-data-prepper-all-artifacts.stage(Sign Archives, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.signArtifacts({artifactPath=/tmp/workspace/archive, sigtype=.sig, platform=linux})
+                  signArtifacts.echo(PGP Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_signer_client_role
+                export EXTERNAL_ID=signer_client_external_id
+                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+                export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/archive --sigtype=.sig --platform=linux
-        )
+                /tmp/workspace/sign.sh /tmp/workspace/archive --sigtype=.sig --platform=linux
+            )
          release-data-prepper-all-artifacts.stage(Release Archives to Production Distribution Bucket, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.withAWS({role=production-role-name, roleAccount=aws-account-artifact, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
@@ -77,21 +78,22 @@
          release-data-prepper-all-artifacts.stage(Sign Maven Artifacts, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.signArtifacts({artifactPath=/tmp/workspace/maven, type=maven, platform=linux})
+                  signArtifacts.echo(PGP Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_signer_client_role
+                export EXTERNAL_ID=signer_client_external_id
+                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+                export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/maven --type=maven --platform=linux
-        )
+                /tmp/workspace/sign.sh /tmp/workspace/maven --type=maven --platform=linux
+            )
          release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
                release-data-prepper-all-artifacts.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})

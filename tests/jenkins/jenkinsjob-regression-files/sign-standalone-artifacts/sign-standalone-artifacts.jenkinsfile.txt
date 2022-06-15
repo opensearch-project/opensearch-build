@@ -2,28 +2,29 @@
       sign-standalone-artifacts.legacySCM(groovy.lang.Closure)
       sign-standalone-artifacts.library({identifier=jenkins@20211123, retriever=null})
       sign-standalone-artifacts.pipeline(groovy.lang.Closure)
-         sign-standalone-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         sign-standalone-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          sign-standalone-artifacts.stage(sign, groovy.lang.Closure)
             sign-standalone-artifacts.script(groovy.lang.Closure)
                sign-standalone-artifacts.sh(mkdir /tmp/workspace/artifacts)
                sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_1_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_1_artifact.tar.gz)
                sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_2_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_2_artifact.tar.gz)
                sign-standalone-artifacts.signArtifacts({artifactPath=/tmp/workspace/artifacts, sigtype=.sig, platform=linux})
+                  signArtifacts.echo(PGP Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_signer_client_role
+                export EXTERNAL_ID=signer_client_external_id
+                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+                export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --platform=linux
-        )
+                /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --platform=linux
+            )
                sign-standalone-artifacts.uploadToS3({sourcePath=/tmp/workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})
                   uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      uploadToS3.s3Upload({file=/tmp/workspace/artifacts, bucket=dummy_bucket_name, path=sign_artifacts_job/dummy/upload/path/20/dist/signed})

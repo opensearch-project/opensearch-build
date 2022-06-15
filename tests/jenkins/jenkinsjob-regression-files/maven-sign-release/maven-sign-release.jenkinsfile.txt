@@ -11,21 +11,22 @@
                      downloadFromS3.s3Download({file=/tmp/workspace/artifacts, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.0.0/123/linux/x64/builds/, force=true})
                maven-sign-release.echo(Signing Maven artifacts.)
                maven-sign-release.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml, type=maven, platform=linux})
+                  signArtifacts.echo(PGP Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      signArtifacts.sh(
-            #!/bin/bash
-            set +x
-            export ROLE=dummy_signer_client_role
-            export EXTERNAL_ID=signer_client_external_id
-            export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-            export SIGNED_BUCKET=signer_client_signed_bucket
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_signer_client_role
+                export EXTERNAL_ID=signer_client_external_id
+                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+                export SIGNED_BUCKET=signer_client_signed_bucket
 
-            /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
-        )
+                /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
+            )
          maven-sign-release.stage(stage maven artifacts, groovy.lang.Closure)
             maven-sign-release.script(groovy.lang.Closure)
                maven-sign-release.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})

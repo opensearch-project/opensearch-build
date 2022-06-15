@@ -99,7 +99,7 @@ void call(Map args = [:]) {
         }
 
     }
-    else if (args.sigtype.equals('.sig')) {
+    else {
         echo "PGP Signature Signing"
 
         if( !fileExists("$WORKSPACE/sign.sh")) {
@@ -124,10 +124,6 @@ void call(Map args = [:]) {
             """
         }
 
-    }
-    else {
-        echo "Wrong sigtype, exit"
-        System.exit(1)
     }
 }
 

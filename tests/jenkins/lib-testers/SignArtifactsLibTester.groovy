@@ -24,9 +24,17 @@ class SignArtifactsLibTester extends LibFunctionTester {
         binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'signer_client_external_id')
         binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'signer_client_unsigned_bucket')
         binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
+        binding.setVariable('SIGN_ASM_ROLE', 'sign_asm_role')
+        binding.setVariable('SIGN_ASM_ACCOUNT', 'sign_asm_account')
+        binding.setVariable('SIGN_ASM_REGION', 'sign_asm_region')
+        binding.setVariable('SIGN_ASM_KEYID', 'sign_asm_keyid')
 
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
     }
 
     void parameterInvariantsAssertions(call) {
