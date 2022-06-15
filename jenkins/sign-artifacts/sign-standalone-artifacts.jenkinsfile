@@ -46,7 +46,6 @@ pipeline {
                             sigtype: SIGNATURE_TYPE,
                             platform: DISTRIBUTION_PLATFORM
                     )
-                    echo "out now"
 
                     filenamesForUrls = []
 
