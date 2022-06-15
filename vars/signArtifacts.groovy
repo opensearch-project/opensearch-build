@@ -32,20 +32,20 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Check Utility Versions"
-                        gpg_version_limit="2.2.0"
-                        rpm_version_limit="4.13.0" # https://bugzilla.redhat.com/show_bug.cgi?id=227632
+                        gpg_version_requirement="2.2.0"
+                        rpm_version_requirement="4.13.0" # https://bugzilla.redhat.com/show_bug.cgi?id=227632
 
                         gpg_version_check=`gpg --version | head -n 1 | grep -oE '[0-9.]+'`
-                        gpg_version_check_final=`echo \$gpg_version_check \$gpg_version_limit | tr ' ' '\n' | sort -V | head -n 1`
+                        gpg_version_check_final=`echo \$gpg_version_check \$gpg_version_requirement | tr ' ' '\n' | sort -V | head -n 1`
                         rpm_version_check=`rpm --version | head -n 1 | grep -oE '[0-9.]+'`
-                        rpm_version_check_final=`echo \$rpm_version_check \$rpm_version_limit | tr ' ' '\n' | sort -V | head -n 1`
+                        rpm_version_check_final=`echo \$rpm_version_check \$rpm_version_requirement | tr ' ' '\n' | sort -V | head -n 1`
 
-                        echo -e "gpg_version_limit gpg_version_check"
-                        echo -e "\$gpg_version_limit \$gpg_version_check_final"
-                        echo -e "rpm_version_limit rpm_version_check"
-                        echo -e "\$rpm_version_limit \$rpm_version_check_final"
+                        echo -e "gpg_version_requirement gpg_version_check"
+                        echo -e "\$gpg_version_requirement \$gpg_version_check"
+                        echo -e "rpm_version_requirement rpm_version_check"
+                        echo -e "\$rpm_version_requirement \$rpm_version_check"
 
-                        if [[ \$gpg_version_limit = \$gpg_version_check_final ]] && [[ \$rpm_version_limit = \$rpm_version_check_final ]]; then
+                        if [[ \$gpg_version_requirement = \$gpg_version_check_final ]] && [[ \$rpm_version_requirement = \$rpm_version_check_final ]]; then
                             echo "Utility version is equal or greater than set limit, continue."
                         else
                             echo "Utility version is lower than set limit, exit 1"
