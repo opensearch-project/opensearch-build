@@ -11,6 +11,12 @@ pipeline {
                     )
 
                     signArtifacts(
+                            artifactPath: "${WORKSPACE}/artifacts",
+                            sigtype: '.rpm',
+                            platform: 'linux'
+                    )
+
+                    signArtifacts(
                             artifactPath: "${WORKSPACE}/file.yml",
                             platform: 'linux',
                             type: 'maven'
