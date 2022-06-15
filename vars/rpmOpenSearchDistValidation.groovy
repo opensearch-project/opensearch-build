@@ -148,10 +148,15 @@ def call(Map args = [:]) {
             command: "start",
             product: "opensearch-performance-analyzer"
     )
+
+    echo "Sleep for few seconds before checking PA"
+    sleep(5)
+
     def running_status_PA = systemdCommands(
             command: "status",
             product: "opensearch-performance-analyzer"
     )
+
     if (running_status_PA.contains(active_status_message)) {
         println("After checking the status, the Performance-analyzer plugin is actively running!")
     } else {
