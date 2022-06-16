@@ -18,14 +18,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### Opensearch Anomaly Detection
 * Use current time as training data end time ([#547](https://github.com/opensearch-project/anomaly-detection/pull/547))
-* bump rcf to 3.0-rc3 ([#568](https://github.com/opensearch-project/anomaly-detection/pull/568))
+* Bump rcf to 3.0-rc3 ([#568](https://github.com/opensearch-project/anomaly-detection/pull/568))
 
-### Maintenance
+## Maintenance
 
 ### OpenSearch Alerting Dashboards Plugin
 * Incremented version to 2.0.1 ([#269](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/269))
 
-### Documentation
+## Documentation
 
 ### OpenSearch Alerting Dashboards Plugin
 * Draft release notes for 2.0.1 patch ([#265](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/265))
