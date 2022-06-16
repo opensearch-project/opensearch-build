@@ -43,7 +43,6 @@ void call(Map args = [:]) {
 
     withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
         println("Pulling Prod Yumrepo")
-        //s3Download(bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", file: "${localPath}", path: "${yumRepoProdPath}",  force: true)
         sh("aws s3 sync s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${yumRepoProdPath}/ ${artifactPath}/ --no-progress")
     }
 
@@ -93,6 +92,7 @@ void call(Map args = [:]) {
         mv -v repomd.pom repomd.xml
         mv -v repomd.pom.sig repomd.xml.sig
 
+        # This step is required as yum only accept .asc and signing workflow only support .sig
         cat repomd.xml.sig | gpg --enarmor | sed 's@ARMORED FILE@SIGNATURE@g' > repomd.xml.asc
 
         rm -vf repomd.xml.sig

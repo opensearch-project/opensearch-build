@@ -67,6 +67,7 @@
         mv -v repomd.pom repomd.xml
         mv -v repomd.pom.sig repomd.xml.sig
 
+        # This step is required as yum only accept .asc and signing workflow only support .sig
         cat repomd.xml.sig | gpg --enarmor | sed 's@ARMORED FILE@SIGNATURE@g' > repomd.xml.asc
 
         rm -vf repomd.xml.sig
