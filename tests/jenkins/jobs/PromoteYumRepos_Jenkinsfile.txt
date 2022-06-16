@@ -1,0 +1,82 @@
+   PromoteYumRepos_Jenkinsfile.run()
+      PromoteYumRepos_Jenkinsfile.pipeline(groovy.lang.Closure)
+         PromoteYumRepos_Jenkinsfile.echo(Executing on agent [label:none])
+         PromoteYumRepos_Jenkinsfile.stage(promote, groovy.lang.Closure)
+            PromoteYumRepos_Jenkinsfile.script(groovy.lang.Closure)
+               PromoteYumRepos_Jenkinsfile.promoteYumRepos({buildNumber=123, jobName=opensearch, manifest=tests/jenkins/data/opensearch-1.3.0.yml})
+                  promoteYumRepos.legacySCM(groovy.lang.Closure)
+                  promoteYumRepos.library({identifier=jenkins@20211123, retriever=null})
+                  promoteYumRepos.readYaml({file=tests/jenkins/data/opensearch-1.3.0.yml})
+                  InputManifest.asBoolean()
+                  promoteYumRepos.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteYumRepos.println(Pulling Prod Yumrepo)
+                     promoteYumRepos.sh(aws s3 sync s3://prod-bucket-name/releases/bundle/opensearch/1.x/yum/ /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/ --no-progress)
+                  promoteYumRepos.sh(
+        set -e
+        set +x
+        set +x
+
+        echo "Pulling 1.3.0 rpms"
+        cd /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum
+        curl -SLO https://ci.opensearch.org/dbc/opensearch/1.3.0/123/linux/x64/rpm/dist/opensearch/opensearch-1.3.0-linux-x64.rpm
+        curl -SLO https://ci.opensearch.org/dbc/opensearch/1.3.0/123/linux/arm64/rpm/dist/opensearch/opensearch-1.3.0-linux-arm64.rpm
+
+        ls -l
+
+        rm -vf repodata/repomd.xml.asc
+
+        echo "Update repo metadata"
+        createrepo --update .
+
+        # Rename .xml to .pom for signing
+        # Please do not add .xml to signer filter
+        # As maven have many .xml and we do not want to sign them
+        # This is an outlier case for yum repo only
+        mv -v repodata/repomd.xml repodata/repomd.pom
+
+        echo "Complete metadata update, awaiting signing repomd.xml"
+
+        cd -
+
+    )
+                  promoteYumRepos.signArtifacts({artifactPath=/tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom, sigtype=.sig, platform=linux})
+                     signArtifacts.echo(PGP Signature Signing)
+                     signArtifacts.fileExists(/tmp/workspace/sign.sh)
+                     signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
+                     signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
+                     signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                     signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        signArtifacts.sh(
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_signer_client_role
+                export EXTERNAL_ID=signer_client_external_id
+                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
+                export SIGNED_BUCKET=signer_client_signed_bucket
+
+                /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
+            )
+                  promoteYumRepos.sh(
+        set -e
+        set +x
+
+        cd /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/
+
+        ls -l
+
+        mv -v repomd.pom repomd.xml
+        mv -v repomd.pom.sig repomd.xml.sig
+
+        # This step is required as yum only accept .asc and signing workflow only support .sig
+        cat repomd.xml.sig | gpg --enarmor | sed 's@ARMORED FILE@SIGNATURE@g' > repomd.xml.asc
+
+        rm -vf repomd.xml.sig
+
+        ls -l
+        
+        cd -
+
+    )
+                  promoteYumRepos.withAWS({role=artifactPromotionRole, roleAccount=artifactsAccount, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     promoteYumRepos.println(Pushing Prod Yumrepo)
+                     promoteYumRepos.sh(aws s3 sync /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/ s3://prod-bucket-name/releases/bundle/opensearch/1.x/yum/ --no-progress)
