@@ -38,8 +38,7 @@ pipeline {
                     currentBuild.description = "${DISTRIBUTION_JOB_NAME} ${DISTRIBUTION_BUILD_NUMBER} ${INPUT_MANIFEST}"
                     promoteYumRepos(
                         buildNumber: "${DISTRIBUTION_BUILD_NUMBER}",
-                        jobName: "${DISTRIBUTION_JOB_NAME}",
-                        manifest: "${INPUT_MANIFEST}"
+                        jobName: "${DISTRIBUTION_JOB_NAME}"
                     )
                 }
             }
