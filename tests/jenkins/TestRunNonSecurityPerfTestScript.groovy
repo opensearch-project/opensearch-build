@@ -64,12 +64,6 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     void testRunNonSecurityPerfTestScript_verifyPackageInstallation() {
         runScript("jenkins/opensearch/perf-test.jenkinsfile")
 
-        def npmCommands = getCommandExecutions('sh', 'npm').findAll {
-            shCommand -> shCommand.contains('npm')
-        }
-
-        assertThat(npmCommands.size(), equalTo(1))
-
         def pipenvCommands = getCommandExecutions('sh', 'pipenv').findAll {
             shCommand -> shCommand.contains('pipenv')
         }

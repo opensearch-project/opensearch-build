@@ -61,12 +61,6 @@ class TestCCRPerfTest extends BuildPipelineTest {
     void testCCRPerfTestScript_verifyPackageInstallation() {
         runScript("jenkins/cross-cluster-replication/perf-test.jenkinsfile")
 
-        def npmCommands = getCommandExecutions('sh', 'npm').findAll {
-            shCommand -> shCommand.contains('npm')
-        }
-
-        assertThat(npmCommands.size(), equalTo(1))
-
         def pipenvCommands = getCommandExecutions('sh', 'pipenv').findAll {
             shCommand -> shCommand.contains('pipenv')
         }
