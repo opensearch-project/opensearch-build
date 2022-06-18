@@ -54,10 +54,6 @@ RUN pip3 install pip==21.3.1 awscli==1.22.12 dataclasses_json~=0.5 aws_requests_
 USER 1000
 WORKDIR /usr/share/opensearch
 
-# Install fpm for opensearch dashboards core
-RUN gem install fpm -v 1.14.2
-ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
-
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
