@@ -89,9 +89,8 @@ ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 10.24.1
-ARG NODE_VERSION_LIST="10.24.1 14.19.1"
-COPY --chown=1000:1000 config/build-opensearch-dashboards-entrypoint.sh /usr/share/opensearch
+ENV NODE_VERSION 16.14.2
+ARG NODE_VERSION_LIST="16.14.2"
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -104,9 +103,5 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
 # This will fail the docker build if any of the packages not exist
-RUN node -v
-RUN npm -v
-RUN yarn -v
-RUN fpm -v
-ENTRYPOINT ["bash", "/usr/share/opensearch/build-opensearch-dashboards-entrypoint.sh"]
-CMD ["$NODE_VERSION"]
+RUN node -v && npm -v && yarn -v
+RUN npm install -g fs-extra chalk@4.1.2 @aws-cdk/cloudformation-diff aws-cdk cdk-assume-role-credential-plugin@1.4.0

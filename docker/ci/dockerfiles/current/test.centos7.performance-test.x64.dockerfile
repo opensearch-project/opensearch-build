@@ -54,3 +54,27 @@ RUN pip3 install pip==21.3.1 awscli==1.22.12 dataclasses_json~=0.5 aws_requests_
 USER 1000
 WORKDIR /usr/share/opensearch
 
+# Install fpm for opensearch dashboards core
+RUN gem install fpm -v 1.14.2
+ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
+
+# Hard code node version and yarn version for now
+# nvm environment variables
+ENV NVM_DIR /usr/share/opensearch/.nvm
+ENV NODE_VERSION 16.14.2
+ARG NODE_VERSION_LIST="16.14.2"
+# install nvm
+# https://github.com/creationix/nvm#install-script
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+# install node and npm
+RUN source $NVM_DIR/nvm.sh && \
+    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@^1.21.1; done
+# add node and npm to path so the commands are available
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+# We use the version test to check if packages installed correctly
+# And get added to the PATH
+# This will fail the docker build if any of the packages not exist
+RUN node -v && npm -v && yarn -v
+RUN npm install -g fs-extra chalk@4.1.2 @aws-cdk/cloudformation-diff aws-cdk cdk-assume-role-credential-plugin@1.4.0
+
