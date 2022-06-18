@@ -5,8 +5,7 @@
 # compatible open source license.
 
 # This is a docker image specifically for standardize the ci/cd environment
-# for both developers and ci/cd tools in OpenSearch / OpenSearch-Dashboards
-# Please read the README.md file for all the information before using this dockerfile
+# for triggering and monitoring performance tests on Jenkins
 
 
 FROM centos:7
