@@ -30,7 +30,6 @@ class UploadToS3LibTester extends LibFunctionTester {
     }
 
     void configure(helper, binding){
-        binding.setVariable('ARTIFACT_UPLOAD_ROLE_NAME', 'Dummy_Upload_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
         helper.registerAllowedMethod("s3Upload", [Map])
