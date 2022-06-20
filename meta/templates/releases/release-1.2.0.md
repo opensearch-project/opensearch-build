@@ -31,7 +31,7 @@ Coming from [opensearch-build#567](https://github.com/opensearch-project/opensea
 
 ### Post Release
 
-- [ ] Ensure you have a release tag for `v2.1.0` in your repo. If not [create one](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) and open an issue in [build repo](https://github.com/opensearch-project/opensearch-build/issues)
+- [ ] Ensure you have a release tag for `v1.2.0` in your repo. If not [create one](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#tagging) and open an issue in [build repo](https://github.com/opensearch-project/opensearch-build/issues)
 - [ ] Create a [GitHub](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) release in your repo.
 - [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/meta/templates/releases/release-1.2.0.md).
 - [ ] Conduct a postmortem, and publish its results.
