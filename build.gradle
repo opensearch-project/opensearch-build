@@ -69,7 +69,7 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.337' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core?repo=jenkins-releases
+    coreVersion = '2.355' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core?repo=jenkins-releases
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         workflowCpsGlobalLibraryPluginVersion = '2.21.3' // https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-cps-global-lib?repo=jenkins-releases
@@ -77,7 +77,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2.94.1')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '2.12')
-        dependency('org.jenkins-ci.plugins', 'script-security', '1.78')
+        dependency('org.jenkins-ci.plugins', 'script-security', '1172.v35f6a_0b_8207e')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.10.1')
         dependency('org.jenkins-ci.plugins', 'junit', '1.55')
