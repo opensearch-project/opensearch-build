@@ -58,7 +58,7 @@ When creating a version label for the ongoing release, always create the next ve
 We create release issues in all component repos that link back to a parent release issue in this repository. 
 
 1. Locate the parent release issue, e.g. [opensearch-build#567](https://github.com/opensearch-project/opensearch-build/issues/567) for version 1.2.
-2. Clone the [release template](templates/releases/release-1.2.0.md) into a new `release-X.Y.Z.md`, e.g. [release-1.2.0.md](templates/releases/release-1.2.0.md). Update all `REPLACE` tags with actual versions and dates and commit and PR the file.
+2. Clone the [release template](templates/releases/release_template.md) into a new `release-X.Y.Z.md`, e.g. [release-1.2.0.md](templates/releases/release-1.2.0.md). Update all `REPLACE` tags with actual versions and dates and commit and PR the file.
 3. From [components](components), run `meta exec "gh issue create --label v1.2.0 --title 'Release version 1.2' --body-file ../../templates/releases/release-1.2.0.md"`.
 
 ### Check for Release Tags
