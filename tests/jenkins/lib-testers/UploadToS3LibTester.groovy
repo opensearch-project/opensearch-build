@@ -33,6 +33,10 @@ class UploadToS3LibTester extends LibFunctionTester {
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
