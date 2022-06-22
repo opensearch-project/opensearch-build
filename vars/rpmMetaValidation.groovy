@@ -64,11 +64,8 @@ def call(Map args = [:]) {
     }
     println("Validation all key digests starts: ")
     for (digest in keyList) {
-        if (presentKey.contains(digest)) {
-            println("Key digest \"$digest\" is validated to be present.")
-        } else {
-            error("Key digest \"$digest\" is not present.")
-        }
+        assert presentKey.contains(digest)
+        println("Key digest \"$digest\" is validated to be present.")
     }
     println("Validation for signature of RPM distribution completed.")
 }
