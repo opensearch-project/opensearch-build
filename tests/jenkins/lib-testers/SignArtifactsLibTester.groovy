@@ -26,8 +26,16 @@ class SignArtifactsLibTester extends LibFunctionTester {
                        "signed_bucket": "dummy_signed_bucket"]
         binding.setVariable('configs', configs)
         helper.registerAllowedMethod("readJSON", [Map.class], {c -> configs})
+        binding.setVariable('SIGN_ASM_ROLE', 'sign_asm_role')
+        binding.setVariable('SIGN_ASM_ACCOUNT', 'sign_asm_account')
+        binding.setVariable('SIGN_ASM_REGION', 'sign_asm_region')
+        binding.setVariable('SIGN_ASM_KEYID', 'sign_asm_keyid')
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
     }
 
     void parameterInvariantsAssertions(call) {

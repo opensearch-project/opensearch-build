@@ -13,7 +13,7 @@ pipeline {
             )
             string(
                 name: 'AGENT_LABEL',
-                description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+                description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host or Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host',
                 trim: true
             )
 
@@ -24,7 +24,7 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image 'opensearchstaging/ci-runner:ci-runner-centos7-systemd-base-integtest-v1'
+                    image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1'
                     args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
                     alwaysPull true
                 }

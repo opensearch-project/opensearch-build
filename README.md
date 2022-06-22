@@ -14,6 +14,7 @@
     - [Assembling a Distribution](#assembling-a-distribution)
     - [Building Patches](#building-patches)
     - [CI/CD Environment](#cicd-environment)
+    - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
     - [Signing Artifacts](#signing-artifacts)
   - [Making a Release](#making-a-release)
@@ -90,6 +91,27 @@ OpenSearch is often released with changes in `opensearch-min`, and no changes to
 We build, assemble, and test our artifacts on docker containers. We provide docker files in [docker/ci](docker/ci) folder, and images on [staging docker hub repositories](https://hub.docker.com/r/opensearchstaging/ci-runner/). All Jenkins pipelines can be found in [jenkins](./jenkins/). Jenkins itself is in the process of being made public and its CDK open-sourced.
 
 See [jenkins](./jenkins) and [docker](./docker) for more information.
+
+#### Latest Distribution Url
+
+The distribution url has a build number (from Jenkins job) embedded inside it. See this example where `3942` is the build number. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/3942/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
+
+
+The feature of `latest` distribution url is to make it build number agnostic. For the example above, its corresponding latest distribution url is as follows.
+
+https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/latest/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
+
+It resolves `latest` to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/index.json). This file has contents like this.
+
+```
+{"latest":"3942"}
+```
+
+The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for diffferent combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
+
+The resolution logic exists in [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
+
+All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins.
 
 #### Testing the Distribution
 

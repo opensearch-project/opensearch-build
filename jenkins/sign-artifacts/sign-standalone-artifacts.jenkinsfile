@@ -4,7 +4,7 @@ pipeline {
     agent {
         docker {
             label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-            image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+            image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2'
             alwaysPull true
         }
     }
@@ -25,7 +25,7 @@ pipeline {
                 description: 'What platform is this distribution build for?'
         )
         choice(
-                choices: ['','.sig', '.asc'],
+                choices: ['.sig', '.rpm'],
                 name: 'SIGNATURE_TYPE',
                 description: 'What is signature file type? Required only for linux signing.'
         )
@@ -52,11 +52,14 @@ pipeline {
                     println("Note: only supported file types will be signed")
 
                     for(filename in downloadedFiles){
-                        filenamesForUrls.add(filename)
                         if (DISTRIBUTION_PLATFORM == 'windows') {
+                            filenamesForUrls.add(filename)
                             filenamesForUrls.add('signed/' + filename)
-                        } else {
+                        } else if (SIGNATURE_TYPE.equals('.sig')) {
+                            filenamesForUrls.add(filename)
                             filenamesForUrls.add(filename + SIGNATURE_TYPE)
+                        } else {
+                            filenamesForUrls.add(filename)
                         }
                     }
 
@@ -79,7 +82,6 @@ pipeline {
                             artifactFileNames: filenamesForUrls,
                             uploadPath: finalUploadPath
                     )
-
                 }
             }
             post() {

@@ -4,5 +4,5 @@
          UploadToS3_Jenkinsfile.stage(sign, groovy.lang.Closure)
             UploadToS3_Jenkinsfile.script(groovy.lang.Closure)
                UploadToS3_Jenkinsfile.uploadToS3({sourcePath=/tmp/src/path, bucket=dummy_bucket, path=/upload/path})
-                  uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                  uploadToS3.withAWS({role=opensearch-bundle, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                      uploadToS3.s3Upload({file=/tmp/src/path, bucket=dummy_bucket, path=/upload/path})

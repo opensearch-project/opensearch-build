@@ -9,5 +9,5 @@
                   uploadIndexFile.writeJSON({file=index.json, json={latest=123}})
                   uploadIndexFile.echo(Uploading index.json to s3://dummy_bucket_name/test)
                   uploadIndexFile.uploadToS3({sourcePath=index.json, bucket=dummy_bucket_name, path=test/index.json})
-                     uploadToS3.withAWS({role=Dummy_Upload_Role, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     uploadToS3.withAWS({role=opensearch-bundle, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         uploadToS3.s3Upload({file=index.json, bucket=dummy_bucket_name, path=test/index.json})

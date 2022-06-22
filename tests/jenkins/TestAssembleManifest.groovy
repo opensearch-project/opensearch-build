@@ -15,6 +15,8 @@ class TestAssembleManifest extends BuildPipelineTest {
     void testAssembleManifest_rpm() {
         this.registerLibTester(new AssembleManifestLibTester('tests/data/opensearch-build-1.3.0-rpm.yml'))
 
+        this.registerLibTester(new SignArtifactsLibTester('.rpm', 'linux', "rpm/dist/opensearch", null, null))
+
         this.registerLibTester(new BuildYumRepoTester(
             'tests/data/opensearch-build-1.3.0-rpm.yml',
             'https://ci.opensearch.org/dbc/vars-build/1.3.0/123/linux/x64'

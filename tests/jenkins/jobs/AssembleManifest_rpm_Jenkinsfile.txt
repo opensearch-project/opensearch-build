@@ -12,6 +12,84 @@
                   BuildManifest.asBoolean()
                   BuildManifest.getArtifactRootUrlWithoutDistribution(https://ci.opensearch.org/dbc, vars-build, 123)
                   assembleManifest.sh(./assemble.sh "tests/data/opensearch-build-1.3.0-rpm.yml" --base-url https://ci.opensearch.org/dbc/vars-build/1.3.0/123/linux/x64)
+                  assembleManifest.signArtifacts({artifactPath=rpm/dist/opensearch, sigtype=.rpm, platform=linux})
+                     signArtifacts.echo(RPM Add Sign)
+                     signArtifacts.withAWS({role=sign_asm_role, roleAccount=sign_asm_account, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
+                        signArtifacts.string({credentialsId=jenkins-rpm-signing-asm-pass-id, variable=SIGNING_PASS_ID})
+                        signArtifacts.string({credentialsId=jenkins-rpm-signing-asm-secret-id, variable=SIGNING_SECRET_ID})
+                        signArtifacts.withCredentials([SIGNING_PASS_ID, SIGNING_SECRET_ID], groovy.lang.Closure)
+                           signArtifacts.sh(
+                        set -e
+                        set +x
+
+                        ARTIFACT_PATH="rpm/dist/opensearch"
+
+                        echo "------------------------------------------------------------------------"
+                        echo "Check Utility Versions"
+                        gpg_version_requirement="2.2.0"
+                        rpm_version_requirement="4.13.0" # https://bugzilla.redhat.com/show_bug.cgi?id=227632
+
+                        gpg_version_check=`gpg --version | head -n 1 | grep -oE '[0-9.]+'`
+                        gpg_version_check_final=`echo $gpg_version_check $gpg_version_requirement | tr ' ' '
+' | sort -V | head -n 1`
+                        rpm_version_check=`rpm --version | head -n 1 | grep -oE '[0-9.]+'`
+                        rpm_version_check_final=`echo $rpm_version_check $rpm_version_requirement | tr ' ' '
+' | sort -V | head -n 1`
+
+                        echo -e "gpg_version_requirement gpg_version_check"
+                        echo -e "$gpg_version_requirement $gpg_version_check"
+                        echo -e "rpm_version_requirement rpm_version_check"
+                        echo -e "$rpm_version_requirement $rpm_version_check"
+
+                        if [[ $gpg_version_requirement = $gpg_version_check_final ]] && [[ $rpm_version_requirement = $rpm_version_check_final ]]; then
+                            echo "Utility version is equal or greater than set limit, continue."
+                        else
+                            echo "Utility version is lower than set limit, exit 1"
+                            exit 1
+                        fi
+
+                        export GPG_TTY=`tty`
+
+                        echo "------------------------------------------------------------------------"
+                        echo "Setup RPM Macros"
+                        cp -v scripts/pkg/sign_templates/rpmmacros ~/.rpmmacros
+                        sed -i "s/##key_name##/OpenSearch project/g;s/##passphrase_name##/passphrase/g" ~/.rpmmacros
+
+                        echo "------------------------------------------------------------------------"
+                        echo "Import OpenSearch keys"
+                        aws secretsmanager get-secret-value --region "sign_asm_region" --secret-id "SIGNING_PASS_ID" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region "sign_asm_region" --secret-id "SIGNING_SECRET_ID" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+
+                        echo "------------------------------------------------------------------------"
+                        echo "Start Signing Rpm"
+
+                        if file $ARTIFACT_PATH | grep -q directory; then
+
+                            echo "Sign directory"
+                            for rpm_file in `ls $ARTIFACT_PATH`; do
+                                if file $ARTIFACT_PATH/$rpm_file | grep -q RPM; then
+                                    rpm --addsign $ARTIFACT_PATH/$rpm_file
+                                    rpm -qip $ARTIFACT_PATH/$rpm_file | grep Signature
+                                fi
+                            done
+
+                        elif file $ARTIFACT_PATH | grep -q RPM; then
+                            echo "Sign single rpm"
+                            rpm --addsign $ARTIFACT_PATH
+                            rpm -qip $ARTIFACT_PATH | grep Signature
+
+                        else
+                            echo "This is neither a directory nor a RPM pkg, exit 1"
+                            exit 1
+                        fi
+
+                        echo "------------------------------------------------------------------------"
+                        echo "Clean up gpg"
+                        gpg --batch --yes --delete-secret-keys sign_asm_keyid
+                        gpg --batch --yes --delete-keys sign_asm_keyid
+                        rm -v passphrase
+
+                    )
                   assembleManifest.buildYumRepo({baseUrl=https://ci.opensearch.org/dbc/vars-build/1.3.0/123/linux/x64, buildManifest=tests/data/opensearch-build-1.3.0-rpm.yml})
                      buildYumRepo.legacySCM(groovy.lang.Closure)
                      buildYumRepo.library({identifier=jenkins@20211123, retriever=null})

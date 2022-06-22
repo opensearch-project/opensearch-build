@@ -2,6 +2,7 @@ void call(Map args = [:]) {
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: args.inputManifest))
     def build_qualifier = inputManifest.build.qualifier
+    def build_number = args.buildNumber ?: "${BUILD_NUMBER}"
 
     if (build_qualifier != null && build_qualifier != 'null') {
         build_qualifier = "-" + build_qualifier
@@ -14,6 +15,7 @@ void call(Map args = [:]) {
     if (args.artifactUrlX64 == null || args.artifactUrlArm64 ==  null) {
         echo 'Skipping docker build, one of x64 or arm64 artifacts was not built.'
     } else {
+        echo 'Trigger docker-build'
         dockerBuild: {
             build job: 'docker-build',
             parameters: [
@@ -34,11 +36,23 @@ void call(Map args = [:]) {
                             "-a 'x64,arm64'",
                             "-r opensearchstaging/${filename}",
                             "-t '${filename}-x64.tgz,${filename}-arm64.tgz'",
-                            "-n ${BUILD_NUMBER}"
+                            "-n ${build_number}"
                         ].join(' ')
                     ].join(' && ')),
-                booleanParam(name: 'IS_STAGING', value: true)
             ]
+        }
+
+        echo 'Trigger docker create tag with build number'
+        if (args.buildOption == "build_docker_with_build_number_tag") {
+            dockerCopy: {
+                build job: 'docker-copy',
+                parameters: [
+                    string(name: 'SOURCE_IMAGE_REGISTRY', value: 'opensearchstaging'),
+                    string(name: 'SOURCE_IMAGE', value: "${filename}:${inputManifest.build.version}${build_qualifier}"),
+                    string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchstaging'),
+                    string(name: 'DESTINATION_IMAGE', value: "${filename}:${inputManifest.build.version}${build_qualifier}.${build_number}")
+                ]
+            }
         }
     }
 }
