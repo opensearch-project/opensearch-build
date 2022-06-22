@@ -17,6 +17,15 @@ components:
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: main
+<<<<<<< HEAD
     checks:
       - gradle:publish
       - gradle:properties:version
+=======
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+>>>>>>> 24e1719 (add job-scheduler to 2.1.0 manifest)
