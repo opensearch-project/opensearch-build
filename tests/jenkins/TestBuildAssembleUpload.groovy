@@ -22,7 +22,7 @@ class TestBuildAssembleUpload extends BuildPipelineTest {
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
         binding.setVariable('JOB_NAME', 'vars-build')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
-        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
+        binding.setVariable('aws_account_public', 'account')
         binding.setVariable('STAGE_NAME', 'stage')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'role')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'dummy')
