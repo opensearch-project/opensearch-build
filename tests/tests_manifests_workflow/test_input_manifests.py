@@ -75,7 +75,7 @@ class TestInputManifests(unittest.TestCase):
         mock_open.assert_has_calls([call(InputManifests.cron_jenkinsfile(), 'w')])
         mock_open.assert_has_calls([call(InputManifests.cron_jenkinsfile(), 'r')])
         mock_open().write.assert_called_once_with(
-            f"parameterizedCron '''\n{' ' * 12}H/10 * * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml;TARGET_JOB_NAME=distribution-build-test\n"
+            f"parameterizedCron '''\n{' ' * 12}H 1 * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml;TARGET_JOB_NAME=distribution-build-test\n"
         )
 
     def test_create_manifest_with_components(self) -> None:
