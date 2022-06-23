@@ -62,7 +62,3 @@ class Signer(ABC):
     @abstractmethod
     def sign(self, filename: str, signature_type: str) -> None:
         pass
-
-    @abstractmethod
-    def verify(self, filename: str) -> None:
-        pass
