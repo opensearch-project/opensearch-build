@@ -15,6 +15,7 @@ from typing import Any, List, Type, Union
 from manifests.build_manifest import BuildManifest
 from sign_workflow.signer_pgp import SignerPGP
 from sign_workflow.signer_windows import SignerWindows
+from sign_workflow.signers import Signers
 
 
 class SignArtifacts:
@@ -31,7 +32,7 @@ class SignArtifacts:
         self.artifact_type = artifact_type
         self.signature_type = signature_type
         self.platform = platform
-        self.__signer_type__(platform)
+        self.signer = Signers.create(platform)
 
     @abstractmethod
     def __sign__(self) -> None:
@@ -47,12 +48,12 @@ class SignArtifacts:
     def __sign_artifact__(self, artifact: str, basepath: Path) -> None:
         self.signer.sign_artifact(artifact, basepath, self.signature_type)
 
-    @classmethod
-    def __signer_type__(self, platform: str) -> None:
-        if (platform == "windows"):
-            self.signer = SignerWindows()
-        if (platform == "linux"):
-            self.signer = SignerPGP()
+    # @classmethod
+    # def __signer_type__(self, platform: str) -> None:
+    #     if (platform == "windows"):
+    #         self.signer = SignerWindows()
+    #     if (platform == "linux"):
+    #         self.signer = SignerPGP()
 
     @classmethod
     def __signer_class__(self, path: Path) -> Type[Any]:

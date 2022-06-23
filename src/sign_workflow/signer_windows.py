@@ -6,12 +6,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import logging
 import os
 from pathlib import Path
-from typing import List
 
 from git.git_repository import GitRepository
+from sign_workflow.signer import Signer
 
 """
 This class is responsible for signing an artifact using the OpenSearch-signer-client and verifying its signature.
@@ -19,28 +18,10 @@ The signed artifacts will be found in the subfolder called signed under the orig
 """
 
 
-class SignerWindows:
+class SignerWindows(Signer):
     git_repo: GitRepository
 
     ACCEPTED_FILE_TYPES = [".msi", ".exe", ".dll", ".sys", ".ps1", ".psm1", ".psd1", ".cat", ".zip"]
-
-    def __init__(self) -> None:
-        self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")
-        self.git_repo.execute("./bootstrap")
-        self.git_repo.execute("rm config.cfg")
-
-    def sign_artifact(self, artifact: str, basepath: Path, signature_type: str) -> None:
-        if not self.is_valid_file_type(artifact):
-            logging.info(f"Skipping signing of file {artifact}")
-            return
-        self.generate_signature_and_verify(artifact, basepath, signature_type)
-
-    def sign_artifacts(self, artifacts: List[str], basepath: Path, signature_type: str) -> None:
-        for artifact in artifacts:
-            if not self.is_valid_file_type(artifact):
-                logging.info(f"Skipping signing of file {artifact}")
-                continue
-            self.generate_signature_and_verify(artifact, basepath, signature_type)
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
         self.sign(artifact, basepath, signature_type)
@@ -49,16 +30,6 @@ class SignerWindows:
         return any(
             file_name.endswith(x) for x in SignerWindows.ACCEPTED_FILE_TYPES
         )
-
-    def get_repo_url(self) -> str:
-        if "GITHUB_TOKEN" in os.environ:
-            return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-signer-client.git"
-        return "https://github.com/opensearch-project/opensearch-signer-client.git"
-
-    def __remove_existing_signature__(self, signature_file: str) -> None:
-        if os.path.exists(signature_file):
-            logging.warning(f"Removing existing signature file {signature_file}")
-            os.remove(signature_file)
 
     def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
         filename = os.path.join(basepath, artifact)
