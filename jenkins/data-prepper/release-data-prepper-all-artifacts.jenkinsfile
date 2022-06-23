@@ -54,6 +54,13 @@ pipeline {
                     }
                 }
             }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
         }
         stage('Promote Docker') {
             agent {
@@ -90,6 +97,13 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
                         }
+                    }
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
                     }
                 }
             }
@@ -144,12 +158,12 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-    post() {
-        always {
-            script {
-                postCleanup()
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
             }
         }
     }
