@@ -10,7 +10,7 @@
             docker-copy.script(groovy.lang.Closure)
                docker-copy.copyContainer({sourceImage=alpine:3.15.4, sourceRegistry=public.ecr.aws/opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=public.ecr.aws/opensearchproject})
                   copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
-                  copyContainer.string({credentialsId=jenkins-artifact-promotion-account, variable=AWS_ACCOUNT_ARTIFACT})
+                  copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
                   copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
                      copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})

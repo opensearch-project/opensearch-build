@@ -1,5 +1,4 @@
 void call(Map args = [:]) {
-
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     List<Closure> fileActions = args.fileActions ?: []
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
@@ -21,7 +20,7 @@ void call(Map args = [:]) {
     baseName = "${productName}-min-${version}-${platform}-${architecture}"
 
     // Create checksums
-    echo("Create .sha512 for Min Snapshots Artifacts")
+    echo('Create .sha512 for Min Snapshots Artifacts')
     argsMap = [:]
     argsMap['artifactPath'] = srcDir
     for (Closure action : fileActions) { // running createSha512Checksums()
@@ -33,8 +32,13 @@ void call(Map args = [:]) {
         cp ${srcDir}/${baseName}.${extension}.sha512 ${srcDir}/${baseName}-latest.${extension}.sha512
         sed -i "s/.${extension}/-latest.${extension}/g" ${srcDir}/${baseName}-latest.${extension}.sha512
     """
-    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: "${srcDir}/${baseName}-latest.${extension}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}")
-        s3Upload(file: "${srcDir}/${baseName}-latest.${extension}.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}.sha512")
-    }
+    withCredentials([
+        string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+        string(credentialsId: 'jenkins-aws-production-account', variable: 'AWS_ACCOUNT_ARTIFACT'),
+        string(credentialsId: 'jenkins-artifact-production-bucket-name', variable: 'ARTIFACT_PRODUCTION_BUCKET_NAME')]) {
+            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                s3Upload(file: "${srcDir}/${baseName}-latest.${extension}", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}")
+                s3Upload(file: "${srcDir}/${baseName}-latest.${extension}.sha512", bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "${dstDir}/${baseName}-latest.${extension}.sha512")
+            }
+        }
 }
