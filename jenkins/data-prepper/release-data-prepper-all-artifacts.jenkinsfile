@@ -149,7 +149,7 @@ pipeline {
     post() {
         always {
             script {
-                sh("rm -rf $WORKSPACE/* && docker logout")
+                sh("rm -rf * && docker logout")
                 postCleanup()
             }
         }
