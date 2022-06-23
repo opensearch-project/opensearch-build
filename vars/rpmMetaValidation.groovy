@@ -41,4 +41,31 @@ def call(Map args = [:]) {
         println("Meta data for $key is validated")
     }
     println("Validation for meta data of RPM distribution completed.")
+
+    // Validate the distribution signature
+    def checksig = sh (
+            script: "rpm -K -v $distFile",
+            returnStdout: true
+    ).trim()
+    println("Signature check of the rpm distribution file is: \n" + checksig)
+    def keyList = ["Header V4 RSA/SHA512 Signature, key ID 9310d3fc", "Header SHA256 digest",
+                   "Header SHA1 digest", "Payload SHA256 digest",
+                   "V4 RSA/SHA512 Signature, key ID 9310d3fc", "MD5 digest"]
+    def presentKey = []
+    for (line in checksig.split('\n')) {
+        def key = line.split(':')[0].trim()
+        if (key == distFile) {
+            continue
+        } else {
+            assert line.split(':', 2)[1].trim().contains("OK")
+            println(key + " is validated as: " + line)
+            presentKey.add(key)
+        }
+    }
+    println("Validation all key digests starts: ")
+    for (digest in keyList) {
+        assert presentKey.contains(digest)
+        println("Key digest \"$digest\" is validated to be present.")
+    }
+    println("Validation for signature of RPM distribution completed.")
 }
