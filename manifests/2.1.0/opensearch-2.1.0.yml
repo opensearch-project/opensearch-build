@@ -43,3 +43,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: main
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
