@@ -11,6 +11,8 @@
 # This can only be used on Ubuntu 2004 X64 version, as QEMU 5.0 is required to get buildx work properly without segfault
 # https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1928075
 
+# This image can be used with these arguments: -u root -v /var/run/docker.sock:/var/run/docker.sock
+
 FROM ubuntu:20.04
 
 # Import necessary repository for installing qemu 5.0

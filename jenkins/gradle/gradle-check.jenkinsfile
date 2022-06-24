@@ -1,0 +1,123 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
+    // gradle check have a lot of issues running on containers
+    // Therefore, we directly run it on the agent node
+    agent {
+        node {
+            // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
+            label 'Jenkins-Agent-Ubuntu2004-X64-c54xlarge-Single-Host'
+        }
+    }
+    parameters {
+        string(
+            name: 'GIT_REPO_URL',
+            description: 'OpenSearch core repository url on git, can be either the official upstream url or your fork url.',
+            defaultValue: 'https://github.com/opensearch-project/OpenSearch.git',
+            trim: true
+        )
+        string(
+            name: 'GIT_REFERENCE',
+            description: 'Git branch, tag, commitid for reference to checkout commit of OpenSearch core before running the gradle check.',
+            defaultValue: 'main',
+            trim: true
+        )
+    }
+    triggers {
+        GenericTrigger(
+            genericVariables: [
+                [key: 'pr_from_sha', value: '$.pr_from_sha'],
+                [key: 'pr_from_clone_url', value: '$.pr_from_clone_url'],
+                [key: 'pr_to_clone_url', value: '$.pr_to_clone_url'],
+                [key: 'pr_title', value: '$.pr_title'],
+                [key: 'pr_number', value: '$.pr_number']
+            ],
+            tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
+            causeString: 'Triggered by PR on OpenSearch core repository',
+            printContributedVariables: false,
+            printPostContent: false
+        )
+    }
+    environment {
+        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
+        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
+        JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-8"
+        JAVA_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
+        USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+        TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
+    }
+    stages {
+        stage('Install jdk-8') {
+            tools {
+                jdk 'jdk-8'
+            }
+            steps {
+                echo "Install jdk-8"
+                sh("ls ${JAVA8_HOME}/.. | grep jdk-8")
+            }
+        }
+        stage('Install jdk-11') {
+           tools {
+               jdk 'jdk-11'
+           }
+            steps {
+                echo "Install jdk-11"
+                sh("ls ${JAVA11_HOME}/.. | grep jdk-11")
+            }
+        }
+        stage('Install jdk-17') {
+           tools {
+               jdk 'jdk-17'
+           }
+            steps {
+                echo "Install jdk-17"
+                sh("ls ${JAVA17_HOME}/.. | grep jdk-17")
+            }
+        }
+        stage('Run Gradle Check') {
+            steps {
+                script {
+                    sh("ls /var/jenkins/tools/hudson.model.JDK/ && env | grep JAVA")
+                    if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
+                        def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
+                        println("Triggered by PR: ${pr_url}")
+                        currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+
+                        runGradleCheck(
+                            gitRepoUrl: "${pr_from_clone_url}",
+                            gitReference: "${pr_from_sha}"
+                        )
+                    }
+                    else {
+                        println("Triggered by User or Triggered by Timer")
+                        def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
+                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+
+                        runGradleCheck(
+                            gitRepoUrl: "${GIT_REPO_URL}",
+                            gitReference: "${GIT_REFERENCE}"
+                        )
+                    }
+                }
+            }
+            post() {
+                always {
+                    script {
+                        sh("rm -rf *")
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
