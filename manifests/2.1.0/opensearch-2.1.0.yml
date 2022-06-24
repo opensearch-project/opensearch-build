@@ -32,6 +32,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '2.1'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
@@ -86,6 +92,12 @@ components:
     platforms:
       - darwin
       - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: main
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
