@@ -49,6 +49,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
+    checks:
+      - gradle:properties:version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: main
