@@ -8,8 +8,8 @@ pipeline {
     // Therefore, we directly run it on the agent node
     agent {
         node {
-            //label 'Jenkins-Agent-al2-x64-c54xlarge-Single-Host'
-            label 'Jenkins-Agent-Ubuntu2004-X64-m52xlarge-Docker-Builder'
+            // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
+            label 'Jenkins-Agent-Ubuntu2004-X64-c54xlarge-Single-Host'
         }
     }
     parameters {
