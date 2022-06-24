@@ -13,8 +13,7 @@ void call(Map args = [:]) {
     else {
         withCredentials([
             usernamePassword(credentialsId: "jenkins-gradle-check-s3-aws-credentials", usernameVariable: 'amazon_s3_access_key', passwordVariable: 'amazon_s3_secret_key'),
-            usernamePassword(credentialsId: "jenkins-gradle-check-s3-aws-resources", usernameVariable: 'amazon_s3_base_path', passwordVariable: 'amazon_s3_bucket'),
-            usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_BOT_USER', passwordVariable: 'GITHUB_BOT_TOKEN')]) {
+            usernamePassword(credentialsId: "jenkins-gradle-check-s3-aws-resources", usernameVariable: 'amazon_s3_base_path', passwordVariable: 'amazon_s3_bucket')]) {
 
             sh """
 
