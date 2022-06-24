@@ -49,3 +49,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: '2.1'
+    platforms:
+      - darwin
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
