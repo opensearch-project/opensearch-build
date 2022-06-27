@@ -23,15 +23,15 @@ class TestSignerPGP(unittest.TestCase):
             "something-1.0.0.0.jar",
         ]
         expected = [
-            call(os.path.join("path", "the-jar.jar"), ".asc"),
-            call(os.path.join("path", "the-zip.zip"), ".asc"),
-            call(os.path.join("path", "the-whl.whl"), ".asc"),
-            call(os.path.join("path", "the-rpm.rpm"), ".asc"),
-            call(os.path.join("path", "the-war.war"), ".asc"),
-            call(os.path.join("path", "the-pom.pom"), ".asc"),
-            call(os.path.join("path", "the-module.module"), ".asc"),
-            call(os.path.join("path", "the-tar.tar.gz"), ".asc"),
-            call(os.path.join("path", "something-1.0.0.0.jar"), ".asc"),
+            call("the-jar.jar", Path("path"), ".asc"),
+            call("the-zip.zip", Path("path"), ".asc"),
+            call("the-whl.whl", Path("path"), ".asc"),
+            call("the-rpm.rpm", Path("path"), ".asc"),
+            call("the-war.war", Path("path"), ".asc"),
+            call("the-pom.pom", Path("path"), ".asc"),
+            call("the-module.module", Path("path"), ".asc"),
+            call("the-tar.tar.gz", Path("path"), ".asc"),
+            call("something-1.0.0.0.jar", Path("path"), ".asc"),
         ]
         signer = SignerPGP()
         signer.sign = MagicMock()  # type: ignore
@@ -57,17 +57,17 @@ class TestSignerPGP(unittest.TestCase):
             "cratefile.crate"
         ]
         expected = [
-            call(os.path.join("path", "the-jar.jar"), ".sig"),
-            call(os.path.join("path", "the-zip.zip"), ".sig"),
-            call(os.path.join("path", "the-whl.whl"), ".sig"),
-            call(os.path.join("path", "the-rpm.rpm"), ".sig"),
-            call(os.path.join("path", "the-war.war"), ".sig"),
-            call(os.path.join("path", "the-pom.pom"), ".sig"),
-            call(os.path.join("path", "the-module.module"), ".sig"),
-            call(os.path.join("path", "the-tar.tar.gz"), ".sig"),
-            call(os.path.join("path", "something-1.0.0.0.jar"), ".sig"),
-            call(os.path.join("path", "opensearch_sql_cli-1.0.0-py3-none-any.whl"), ".sig"),
-            call(os.path.join("path", "cratefile.crate"), ".sig")
+            call("the-jar.jar", Path("path"), ".sig"),
+            call("the-zip.zip", Path("path"), ".sig"),
+            call("the-whl.whl", Path("path"), ".sig"),
+            call("the-rpm.rpm", Path("path"), ".sig"),
+            call("the-war.war", Path("path"), ".sig"),
+            call("the-pom.pom", Path("path"), ".sig"),
+            call("the-module.module", Path("path"), ".sig"),
+            call("the-tar.tar.gz", Path("path"), ".sig"),
+            call("something-1.0.0.0.jar", Path("path"), ".sig"),
+            call("opensearch_sql_cli-1.0.0-py3-none-any.whl", Path("path"), ".sig"),
+            call("cratefile.crate", Path("path"), ".sig")
         ]
         signer = SignerPGP()
         signer.sign = MagicMock()  # type: ignore
@@ -90,13 +90,13 @@ class TestSignerPGP(unittest.TestCase):
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_asc(self, mock_repo: Mock) -> None:
         signer = SignerPGP()
-        signer.sign("/path/the-jar.jar", ".asc")
+        signer.sign("the-jar.jar", Path("/path/"), ".asc")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_sig(self, mock_repo: Mock) -> None:
         signer = SignerPGP()
-        signer.sign("/path/the-jar.jar", ".sig")
+        signer.sign("the-jar.jar", Path("/path/"), ".sig")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])

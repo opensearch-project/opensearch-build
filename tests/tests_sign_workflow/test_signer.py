@@ -14,7 +14,7 @@ class TestSigner(unittest.TestCase):
         def is_valid_file_type(self, file_name: str) -> bool:
             return file_name.endswith('zip')
 
-        def sign(self, filename: str, signature_type: str) -> None:
+        def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
             pass
 
     @patch("sign_workflow.signer.GitRepository")

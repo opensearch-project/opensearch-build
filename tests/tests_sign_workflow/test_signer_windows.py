@@ -43,6 +43,6 @@ class TestSignerWindows(unittest.TestCase):
         signer = SignerWindows()
         os.mkdir = MagicMock()
         os.rename = MagicMock()
-        signer.sign("the-msi.msi", "/path/", ".asc")
+        signer.sign("the-msi.msi", Path("/path/"), ".asc")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-msi.msi -o /path/signed_the-msi.msi -p windows")])

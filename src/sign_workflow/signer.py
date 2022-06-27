@@ -55,5 +55,5 @@ class Signer(ABC):
             os.remove(signature_file)
 
     @abstractmethod
-    def sign(self, filename: str, signature_type: str) -> None:
+    def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
         pass

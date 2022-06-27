@@ -25,7 +25,7 @@ class SignerPGP(Signer):
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
         location = os.path.join(basepath, artifact)
-        self.sign(location, signature_type)
+        self.sign(artifact, basepath, signature_type)
         self.verify(location + signature_type)
 
     def is_valid_file_type(self, file_name: str) -> bool:
@@ -33,7 +33,8 @@ class SignerPGP(Signer):
             file_name.endswith(x) for x in SignerPGP.ACCEPTED_FILE_TYPES
         )
 
-    def sign(self, filename: str, signature_type: str) -> None:
+    def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
+        filename = os.path.join(basepath, artifact)
         signature_file = filename + signature_type
         self.__remove_existing_signature__(signature_file)
         signing_cmd = [
