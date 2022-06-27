@@ -6,7 +6,7 @@ from sign_workflow.signer_pgp import SignerPGP
 
 
 class TestSignerPGP(unittest.TestCase):
-    @patch("sign_workflow.signer_pgp.GitRepository")
+    @patch("sign_workflow.signer.GitRepository")
     def test_accepted_file_types_asc(self, git_repo: Mock) -> None:
         artifacts = [
             "bad-xml.xml",
@@ -38,7 +38,7 @@ class TestSignerPGP(unittest.TestCase):
         signer.sign_artifacts(artifacts, Path("path"), ".asc")
         self.assertEqual(signer.sign.call_args_list, expected)
 
-    @patch("sign_workflow.signer_pgp.GitRepository")
+    @patch("sign_workflow.signer.GitRepository")
     def test_accepted_file_types_sig(self, git_repo: Mock) -> None:
         artifacts = [
             "bad-xml.xml",

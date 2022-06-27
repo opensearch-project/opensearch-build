@@ -8,7 +8,7 @@ from sign_workflow.signer_windows import SignerWindows
 
 class TestSignerWindows(unittest.TestCase):
 
-    @patch("sign_workflow.signer_windows.GitRepository")
+    @patch("sign_workflow.signer.GitRepository")
     def test_accepted_file_types(self, git_repo: Mock) -> None:
         artifacts = [
             "bad-xml.xml",
