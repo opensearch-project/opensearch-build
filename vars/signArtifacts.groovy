@@ -15,15 +15,17 @@ SignArtifacts signs the given artifacts and saves the signature in the same dire
 @param Map[platform] <Required> - The distribution platform for signing.
 */
 void call(Map args = [:]) {
-
     if (args.sigtype.equals('.rpm')) {
-        echo "RPM Add Sign"
+        withCredentials([string(credentialsId: 'jenkins-rpm-signing-props', variable: 'configs')]) {
+                def props = readJSON(text: configs)
+                def signingAccount = props['account']
+                def signingPassphraseSecretsArn = props['passphrase_secrets_arn']
+                def signingSecretKeyIdSecretsArn = props['secret_key_id_secrets_arn']
+                def signingKeyId = props['key_id']
 
-        withAWS(role: "${SIGN_ASM_ROLE}", roleAccount: "${SIGN_ASM_ACCOUNT}", duration: 900, roleSessionName: 'jenkins-signing-session') {
-            withCredentials([
-                string(credentialsId: 'jenkins-rpm-signing-asm-pass-id', variable: 'SIGNING_PASS_ID'),
-                string(credentialsId: 'jenkins-rpm-signing-asm-secret-id', variable: 'SIGNING_SECRET_ID')])
-                {
+            echo 'RPM Add Sign'
+
+            withAWS(role: 'jenki-jenki-asm-assume-role', roleAccount: "${signingAccount}", duration: 900, roleSessionName: 'jenkins-signing-session') {
                     sh """
                         set -e
                         set +x
@@ -61,8 +63,8 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Import OpenSearch keys"
-                        aws secretsmanager get-secret-value --region "${SIGN_ASM_REGION}" --secret-id "${SIGNING_PASS_ID}" | jq -r .SecretBinary | base64 --decode > passphrase
-                        aws secretsmanager get-secret-value --region "${SIGN_ASM_REGION}" --secret-id "${SIGNING_SECRET_ID}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingPassphraseSecretsArn}" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingSecretKeyIdSecretsArn}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
 
                         echo "------------------------------------------------------------------------"
                         echo "Start Signing Rpm"
@@ -89,56 +91,61 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Clean up gpg"
-                        gpg --batch --yes --delete-secret-keys $SIGN_ASM_KEYID
-                        gpg --batch --yes --delete-keys $SIGN_ASM_KEYID
+                        gpg --batch --yes --delete-secret-keys ${signingKeyId}
+                        gpg --batch --yes --delete-keys ${signingKeyId}
                         rm -v passphrase
 
                     """
-
-                }
+            }
         }
-
     }
     else {
-        echo "PGP Signature Signing"
+        echo "PGP or Windows Signature Signing"
 
-        if( !fileExists("$WORKSPACE/sign.sh")) {
+        if (!fileExists("$WORKSPACE/sign.sh")) {
             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
         }
 
         importPGPKey()
-        
+
         String arguments = generateArguments(args)
 
         // Sign artifacts
-        withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+        def configSecret = args.platform == "windows" ? "signer-windows-config" : "signer-pgp-config"
+        withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
+                        string(credentialsId: configSecret, variable: 'configs')]) {
+            def creds = readJSON(text: configs)
+            def ROLE = creds['role']
+            def EXTERNAL_ID = creds['external_id']
+            def UNSIGNED_BUCKET = creds['unsigned_bucket']
+            def SIGNED_BUCKET = creds['signed_bucket']
+            def PROFILE_IDENTIFIER = creds['profile_identifier']
+            def PLATFORM_IDENTIFIER = creds['platform_identifier']
             sh """
-                #!/bin/bash
-                set +x
-                export ROLE=${SIGNER_CLIENT_ROLE}
-                export EXTERNAL_ID=${SIGNER_CLIENT_EXTERNAL_ID}
-                export UNSIGNED_BUCKET=${SIGNER_CLIENT_UNSIGNED_BUCKET}
-                export SIGNED_BUCKET=${SIGNER_CLIENT_SIGNED_BUCKET}
-
-                $WORKSPACE/sign.sh ${arguments}
-            """
+                   #!/bin/bash
+                   set +x
+                   export ROLE=$ROLE
+                   export EXTERNAL_ID=$EXTERNAL_ID
+                   export UNSIGNED_BUCKET=$UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=$SIGNED_BUCKET
+                   export PROFILE_IDENTIFIER=$PROFILE_IDENTIFIER
+                   export PLATFORM_IDENTIFIER=$PLATFORM_IDENTIFIER
+       
+                   $WORKSPACE/sign.sh ${arguments}
+               """
         }
-
     }
 }
 
 String generateArguments(args) {
-    String artifactPath = args.remove("artifactPath")
+    String artifactPath = args.remove('artifactPath')
     // artifactPath is mandatory and the first argument
     String arguments = artifactPath
     // generation command line arguments
-    args.each{key, value -> arguments += " --${key}=${value}"}
+    args.each { key, value -> arguments += " --${key }=${value }"}
     return arguments
 }
 
-void importPGPKey(){
-
-    sh "curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -"
-
+void importPGPKey() {
+    sh 'curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -'
 }
-

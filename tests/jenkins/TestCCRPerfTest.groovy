@@ -53,7 +53,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
 
         assertThat(s3DownloadCommands.size(), equalTo(1))
         assertThat(s3DownloadCommands, hasItem(
-            "{file=config.yml, bucket=test_bucket, path=test_config/config-ccr.yml, force=true}".toString()
+            "{file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config-ccr.yml, force=true}".toString()
         ))
     }
 

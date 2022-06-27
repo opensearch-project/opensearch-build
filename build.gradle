@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9', ext: 'pom'
     implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
     testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
@@ -69,19 +69,19 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.355' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-core?repo=jenkins-releases
+    coreVersion = '2.358' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
-        workflowCpsGlobalLibraryPluginVersion = '2.21.3' // https://mvnrepository.com/artifact/org.jenkins-ci.plugins.workflow/workflow-cps-global-lib?repo=jenkins-releases
+        workflowCpsGlobalLibraryPluginVersion = '570.v21311f4951f8' // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2.94.1')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
-        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '2.12')
+        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '449.v77f0e8b_845c4') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
         dependency('org.jenkins-ci.plugins', 'script-security', '1172.v35f6a_0b_8207e')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.10.1')
         dependency('org.jenkins-ci.plugins', 'junit', '1.55')
-        dependency('org.jenkins-ci.plugins', 'mailer', '1.34.2')
+        dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
 }
 

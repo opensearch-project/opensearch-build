@@ -10,25 +10,59 @@ on:
     - cron: 0 0 * * *
 
 jobs:
-
-  list-manifests:
+  list-manifests11:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
 
-  check:
-    needs: list-manifests
+  list-manifests17:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
+
+  manifest-checks-jdk11:
+    needs: list-manifests11
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
-      JDK_VERSION: 14
+      JDK_VERSION: 11
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
+        manifest: ${{ fromJson(needs.list-manifests11.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up JDK ${{ env.JDK_VERSION }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JDK_VERSION }}
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Pipenv and Dependencies
+        run: |
+          python -m pip install --upgrade pipenv wheel
+      - name: OpenSearch Manifests
+        run: |-
+          ./ci.sh ${{ matrix.manifest }} --snapshot
+
+  manifest-checks-jdk17:
+    needs: list-manifests17
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: 3.7
+      JDK_VERSION: 17
+    strategy:
+      matrix:
+        manifest: ${{ fromJson(needs.list-manifests17.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}

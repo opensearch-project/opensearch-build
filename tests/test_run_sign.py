@@ -33,8 +33,7 @@ class TestRunSign(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_sign.py", BUILD_MANIFEST])
     @patch("run_sign.SignArtifacts")
-    @patch("run_sign.Signer")
-    def test_main(self, mock_signer: Mock, mock_sign_artifacts: Mock, *mocks: Any) -> None:
+    def test_main(self, mock_sign_artifacts: Mock, *mocks: Any) -> None:
         main()
 
         mock_sign_artifacts.from_path.assert_called_once()
