@@ -9,7 +9,7 @@ pipeline {
     agent {
         node {
             // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
-            label 'Jenkins-Agent-Ubuntu2004-X64-c54xlarge-Single-Host'
+            label 'Jenkins-Agent-Ubuntu2004-X64-c518xlarge-Single-Host'
         }
     }
     parameters {
