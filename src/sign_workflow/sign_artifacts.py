@@ -10,11 +10,10 @@ import logging
 import os
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, List, Type, Union
+from typing import Any, List, Type
 
 from manifests.build_manifest import BuildManifest
-from sign_workflow.signer_pgp import SignerPGP
-from sign_workflow.signer_windows import SignerWindows
+from sign_workflow.signer import Signer
 from sign_workflow.signers import Signers
 
 
@@ -24,7 +23,7 @@ class SignArtifacts:
     artifact_type: str
     signature_type: str
     platform: str
-    signer: Union[SignerPGP, SignerWindows]
+    signer: Signer
 
     def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> None:
         self.target = target

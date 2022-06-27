@@ -8,16 +8,11 @@
 
 import logging
 import os
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
-from abc import ABC, abstractmethod
 
 from git.git_repository import GitRepository
-
-"""
-This class is responsible for signing an artifact using the OpenSearch-signer-client and verifying its signature.
-The signed artifacts will be found in the same location as the original artifacts.
-"""
 
 
 class Signer(ABC):

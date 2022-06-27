@@ -15,14 +15,15 @@ class TestSignArtifacts(unittest.TestCase):
         components = ['maven']
         artifact_type = 'dummy'
         sigtype = '.asc'
+        platform = 'linux'
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, platform)
         self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, platform)
         self.assertEqual(type(SignExistingArtifactsDir), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, mock_signer)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, platform)
         self.assertEqual(type(SignArtifactsExistingArtifactFile), type(klass.__class__))
 
     def test_signer_class(self) -> None:
@@ -38,11 +39,10 @@ class TestSignArtifacts(unittest.TestCase):
             Path(r"/dummy/path/artifact.tar.gz")),
             SignArtifactsExistingArtifactFile)
 
-    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
-    def test_sign_with_build_manifest(self, mock_signer: Mock) -> None:
+    def test_sign_with_build_manifest(self) -> None:
         manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
-        platform = MagicMock()
+        platform = 'windows'
         signer_with_manifest = SignWithBuildManifest(
             target=manifest,
             components=[],
@@ -63,11 +63,10 @@ class TestSignArtifacts(unittest.TestCase):
         ]
         signer.sign_artifacts.assert_called_with(expected, manifest.parent, sigtype)
 
-    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
-    def test_sign_existing_artifacts_file(self, mock_signer: Mock) -> None:
+    def test_sign_existing_artifacts_file(self) -> None:
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
-        platform = MagicMock()
+        platform = 'linux'
         signer_with_manifest = SignArtifactsExistingArtifactFile(
             target=path,
             components=['maven'],
@@ -82,14 +81,13 @@ class TestSignArtifacts(unittest.TestCase):
         signer.sign_artifact.assert_called_with(expected, path.parent, sigtype)
 
     @patch('os.walk')
-    @patch("sign_workflow.signer_pgp.SignerPGP", return_value=MagicMock())
-    def test_sign_existing_artifacts_folder(self, mock_signer: Mock, mock_os_walk: Mock) -> None:
+    def test_sign_existing_artifacts_folder(self, mock_os_walk: Mock) -> None:
         mock_os_walk.return_value = [
             ('dummy', (), ['tar_dummy_artifact_1.0.0.tar.gz', 'zip_dummy_artifact_1.1.0.zip'])
         ]
         path = Path('dummy')
         sigtype = '.sig'
-        platform = MagicMock()
+        platform = 'linux'
         signer_with_manifest = SignExistingArtifactsDir(
             target=path,
             components=['maven'],
