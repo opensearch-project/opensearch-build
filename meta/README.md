@@ -51,6 +51,12 @@ Install [ghi](https://github.com/stephencelis/ghi), e.g. `brew install ghi`.
 meta exec "ghi label 'v1.2.0' -c '#b94c47'"
 ```
 
+Alternate option if you are having issues with `ghi`:
+
+```
+meta exec "gh label create v2.2.0 -c '#537DB0'"
+```
+
 When creating a version label for the ongoing release, always create the next version's label as well.
 
 ### Create a Release Issue
