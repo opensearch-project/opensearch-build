@@ -41,4 +41,4 @@ components:
     ref: main
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: main
+    ref: 2.1
