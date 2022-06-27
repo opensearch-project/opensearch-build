@@ -13,11 +13,11 @@
                   BuildManifest.getArtifactRootUrlWithoutDistribution(https://ci.opensearch.org/dbc, vars-build, 123)
                   assembleManifest.sh(./assemble.sh "tests/data/opensearch-build-1.3.0-rpm.yml" --base-url https://ci.opensearch.org/dbc/vars-build/1.3.0/123/linux/x64)
                   assembleManifest.signArtifacts({artifactPath=rpm/dist/opensearch, sigtype=.rpm, platform=linux})
-                     signArtifacts.echo(RPM Add Sign)
-                     signArtifacts.withAWS({role=sign_asm_role, roleAccount=sign_asm_account, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
-                        signArtifacts.string({credentialsId=jenkins-rpm-signing-asm-pass-id, variable=SIGNING_PASS_ID})
-                        signArtifacts.string({credentialsId=jenkins-rpm-signing-asm-secret-id, variable=SIGNING_SECRET_ID})
-                        signArtifacts.withCredentials([SIGNING_PASS_ID, SIGNING_SECRET_ID], groovy.lang.Closure)
+                     signArtifacts.string({credentialsId=jenkins-rpm-signing-props, variable=configs})
+                     signArtifacts.withCredentials([configs], groovy.lang.Closure)
+                        signArtifacts.readJSON({text=configs})
+                        signArtifacts.echo(RPM Add Sign)
+                        signArtifacts.withAWS({role=jenki-jenki-asm-assume-role, roleAccount=1234, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
                            signArtifacts.sh(
                         set -e
                         set +x
@@ -57,8 +57,8 @@
 
                         echo "------------------------------------------------------------------------"
                         echo "Import OpenSearch keys"
-                        aws secretsmanager get-secret-value --region "sign_asm_region" --secret-id "SIGNING_PASS_ID" | jq -r .SecretBinary | base64 --decode > passphrase
-                        aws secretsmanager get-secret-value --region "sign_asm_region" --secret-id "SIGNING_SECRET_ID" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "ARN::123456" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "ARN::56789" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
 
                         echo "------------------------------------------------------------------------"
                         echo "Start Signing Rpm"
@@ -85,8 +85,8 @@
 
                         echo "------------------------------------------------------------------------"
                         echo "Clean up gpg"
-                        gpg --batch --yes --delete-secret-keys sign_asm_keyid
-                        gpg --batch --yes --delete-keys sign_asm_keyid
+                        gpg --batch --yes --delete-secret-keys abcd1234
+                        gpg --batch --yes --delete-keys abcd1234
                         rm -v passphrase
 
                     )

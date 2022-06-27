@@ -40,9 +40,9 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("BWC Tests failed to start. Missing parameter: AGENT_LABEL.")
                     }
-                    if (!fileExists("manifests/${TEST_MANIFEST}")) {
+                    if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
                         currentBuild.result = 'ABORTED'
-                        error("BWC Tests failed to start. Test manifest not found in manifests/${TEST_MANIFEST}.")
+                        error("BWC Tests failed to start. Test manifest was not provided or not found in manifests/${TEST_MANIFEST}.")
                     }
                     /*
                     Rebuilding of this job will result in considering the upstream build as self($JOB_NAME) See https://issues.jenkins.io/browse/JENKINS-61590 for bug
@@ -120,7 +120,7 @@ pipeline {
                         icon: ':white_check_mark:',
                         message: 'BWC Tests Successful',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
 
@@ -136,7 +136,7 @@ pipeline {
                         icon: ':warning:',
                         message: 'Failed BWC Tests',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
 
