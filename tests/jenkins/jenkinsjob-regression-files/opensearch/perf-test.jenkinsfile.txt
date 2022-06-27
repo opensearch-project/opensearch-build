@@ -43,8 +43,11 @@
         pipenv install "aws-cdk.core~=1.143.0" "aws_cdk.aws_ec2~=1.143.0" "aws_cdk.aws_iam~=1.143.0"
         pipenv install "boto3~=1.18" "setuptools~=57.4" "retry~=0.9"
     )
-                  runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
+                  runPerfTestScript.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+                  runPerfTestScript.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+                  runPerfTestScript.withCredentials([AWS_ACCOUNT_PUBLIC, ARTIFACT_BUCKET_NAME], groovy.lang.Closure)
+                     runPerfTestScript.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        runPerfTestScript.s3Download({file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true})
                   runPerfTestScript.usernamePassword({credentialsId=bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   runPerfTestScript.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                      runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
