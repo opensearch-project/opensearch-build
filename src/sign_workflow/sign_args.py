@@ -11,7 +11,8 @@ from typing import List
 
 
 class SignArgs:
-    ACCEPTED_SIGNATURE_FILE_TYPES = [".sig"]
+    ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
+    ACCEPTED_PLATFORM = ["linux", "windows"]
 
     target: Path
     components: List[str]
@@ -25,7 +26,7 @@ class SignArgs:
         parser.add_argument("-c", "--component", type=str, nargs='*', dest="components", help="Component or components to sign")
         parser.add_argument("--type", help="Artifact type")
         parser.add_argument("--sigtype", choices=self.ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of signature file.", default=".asc")
-        parser.add_argument("--platform", nargs="?", help="Distribution platform.", default="linux")
+        parser.add_argument("--platform", choices=self.ACCEPTED_PLATFORM, help="Distribution platform.", default="linux")
         parser.add_argument(
             "-v",
             "--verbose",

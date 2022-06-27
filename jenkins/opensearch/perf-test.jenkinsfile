@@ -194,7 +194,7 @@ pipeline {
                         icon: ':white_check_mark:',
                         message: 'Performance Tests Successful',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                     )
                     postCleanup()
                 }
@@ -208,7 +208,7 @@ pipeline {
                         icon: ':warning:',
                         message: 'Failed Performance Tests',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                     )
                     postCleanup()
                 }

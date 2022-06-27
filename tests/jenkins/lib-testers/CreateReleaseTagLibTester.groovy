@@ -1,4 +1,4 @@
-import jenkins.BuildManifest
+import jenkins.BundleManifest
 import org.yaml.snakeyaml.Yaml
 
 import static org.hamcrest.CoreMatchers.notNullValue
@@ -9,12 +9,12 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
 
     private String distManifest
     private String tagVersion
-    private ArrayList buildManifestComponentsList
+    private ArrayList bundleManifestComponentsList
 
     public CreateReleaseTagLibTester(distManifest, tagVersion){
         this.distManifest = distManifest
         this.tagVersion = tagVersion
-        this.buildManifestComponentsList = []
+        this.bundleManifestComponentsList = []
     }
 
     void parameterInvariantsAssertions(call){
@@ -25,7 +25,7 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
     boolean expectedParametersMatcher(call) {
         return call.args.distManifest.first().toString().equals(this.distManifest)
                 && call.args.tagVersion.first().toString().equals(this.tagVersion)
-                && this.buildManifestComponentsList.size() > 1
+                && this.bundleManifestComponentsList.size() > 1
     }
 
     String libFunctionName(){
@@ -42,11 +42,11 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
         InputStream inputStream = new FileInputStream(new File(this.distManifest));
         Yaml yaml = new Yaml()
         Map ymlMap = yaml.load(inputStream)
-        BuildManifest buildManifestObj = new BuildManifest(ymlMap)
-        this.buildManifestComponentsList = buildManifestObj.getNames()
+        BundleManifest bundleManifestObj = new BundleManifest(ymlMap)
+        this.bundleManifestComponentsList = bundleManifestObj.getNames()
         boolean checkFirst = true
-        for (component in this.buildManifestComponentsList) {
-            def repo = buildManifestObj.getRepo(component)
+        for (component in this.bundleManifestComponentsList) {
+            def repo = bundleManifestObj.getRepo(component)
             def version = tagVersion
             if (tagVersion.contains("-")) {
                 version = tagVersion.split("-").first() + ".0-" + tagVersion.split("-").last()
@@ -58,7 +58,7 @@ class CreateReleaseTagLibTester extends LibFunctionTester {
             }
             def out = ""
             if (checkFirst) {
-                out = buildManifestObj.getCommitId(component)
+                out = bundleManifestObj.getCommitId(component)
                 checkFirst = false
             }
             helper.addShMock("git ls-remote --tags $repo $version | awk 'NR==1{print \$1}'") { script ->

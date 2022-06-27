@@ -17,7 +17,7 @@ class TestPublishNotification extends BuildPipelineTest {
     void setUp() {
 
         this.registerLibTester(new PublishNotificationLibTester(
-                ':white_check_mark:', 'Successful Build' , 'extra', '1.2.0/opensearch-1.2.0.yml', 'BUILD_NOTICE_WEBHOOK'))
+                ':white_check_mark:', 'Successful Build' , 'extra', '1.2.0/opensearch-1.2.0.yml', 'jenkins-build-notice-webhook'))
 
         super.setUp()
     }

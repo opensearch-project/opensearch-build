@@ -10,7 +10,6 @@ import sys
 
 from sign_workflow.sign_args import SignArgs
 from sign_workflow.sign_artifacts import SignArtifacts
-from sign_workflow.signer import Signer
 from system import console
 
 
@@ -24,7 +23,7 @@ def main() -> int:
         components=args.components,
         artifact_type=args.type,
         signature_type=args.sigtype,
-        signer=Signer()
+        platform=args.platform
     )
 
     sign.sign()

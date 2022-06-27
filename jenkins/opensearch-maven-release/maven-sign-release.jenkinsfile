@@ -22,6 +22,7 @@ pipeline {
     }
     environment {
         ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     stages {
         stage('sign') {

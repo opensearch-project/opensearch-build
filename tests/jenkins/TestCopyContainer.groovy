@@ -13,7 +13,7 @@ class TestCopyContainer extends BuildPipelineTest {
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'sample-agent-AssumeRole')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', '1234567890')
         binding.setVariable('DATA_PREPPER_STAGING_CONTAINER_REPOSITORY', 'sample_dataprepper_ecr_url')
-         helper.registerAllowedMethod('withAWS', [Map, Closure], null)
+        helper.registerAllowedMethod('withAWS', [Map, Closure], null)
         super.setUp()
 
     }
