@@ -2,7 +2,16 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     options {
-            timeout(time: 2, unit: 'HOURS')
+        timeout(time: 2, unit: 'HOURS')
+        throttleJobProperty(
+            categories: [],
+            limitOneJobWithMatchingParams: false,
+            maxConcurrentPerNode: 0,
+            maxConcurrentTotal: 50,
+            paramsToUseForLimit: '',
+            throttleEnabled: true,
+            throttleOption: 'project',
+        )
     }
     // gradle check have a lot of issues running on containers
     // Therefore, we directly run it on the agent node
