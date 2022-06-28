@@ -1,3 +1,4 @@
+import os
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
@@ -43,5 +44,6 @@ class TestSignerWindows(unittest.TestCase):
     def test_signer_sign(self, mock_os_mkdir: Mock, mock_os_rename: Mock, mock_repo: Mock) -> None:
         signer = SignerWindows()
         signer.sign("the-msi.msi", Path("/path/"), ".asc")
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-msi.msi') + " -o " + os.path.join(Path("/path/"), 'signed_the-msi.msi') + " -p windows"
         mock_repo.assert_has_calls(
-            [call().execute("./opensearch-signer-client -i /path/the-msi.msi -o /path/signed_the-msi.msi -p windows")])
+            [call().execute(command)])

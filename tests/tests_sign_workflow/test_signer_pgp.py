@@ -1,3 +1,4 @@
+import os
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
@@ -90,12 +91,14 @@ class TestSignerPGP(unittest.TestCase):
     def test_signer_sign_asc(self, mock_repo: Mock) -> None:
         signer = SignerPGP()
         signer.sign("the-jar.jar", Path("/path/"), ".asc")
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.asc') + " -p pgp"
         mock_repo.assert_has_calls(
-            [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.asc -p pgp")])
+            [call().execute(command)])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_sig(self, mock_repo: Mock) -> None:
         signer = SignerPGP()
         signer.sign("the-jar.jar", Path("/path/"), ".sig")
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.sig') + " -p pgp"
         mock_repo.assert_has_calls(
-            [call().execute("./opensearch-signer-client -i /path/the-jar.jar -o /path/the-jar.jar.sig -p pgp")])
+            [call().execute(command)])

@@ -9,7 +9,6 @@
 import os
 from pathlib import Path
 
-from git.git_repository import GitRepository
 from sign_workflow.signer import Signer
 
 """
@@ -19,7 +18,6 @@ The signed artifacts will be found in the same location as the original artifact
 
 
 class SignerPGP(Signer):
-    git_repo: GitRepository
 
     ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
 

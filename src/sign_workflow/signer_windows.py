@@ -9,7 +9,6 @@
 import os
 from pathlib import Path
 
-from git.git_repository import GitRepository
 from sign_workflow.signer import Signer
 
 """
@@ -19,7 +18,6 @@ The signed artifacts will be found in the subfolder called signed under the orig
 
 
 class SignerWindows(Signer):
-    git_repo: GitRepository
 
     ACCEPTED_FILE_TYPES = [".msi", ".exe", ".dll", ".sys", ".ps1", ".psm1", ".psd1", ".cat", ".zip"]
 
