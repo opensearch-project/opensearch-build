@@ -46,6 +46,12 @@ class TestRpmMetaValidation extends BuildPipelineTest {
         helper.addShMock("rpm -qip $workspace/opensearch-1.3.1-linux-x64.rpm") { script ->
             return [stdout: out, exitValue: 0]
         }
+        def sigOut = "/tmp/workspace/opensearch-1.3.1-linux-x64.rpm:\n" + "Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n" +
+                "Header SHA256 digest: OK\n" + "Header SHA1 digest: OK\n" + "Payload SHA256 digest: OK\n" +
+                "V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n" + "MD5 digest: OK"
+        helper.addShMock("rpm -K -v $rpmDistribution") { script ->
+            return [stdout: sigOut, exitValue: 0]
+        }
     }
 
     @Test

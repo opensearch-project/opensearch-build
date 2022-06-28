@@ -1,0 +1,49 @@
+   RunGradleCheck_Jenkinsfile.run()
+      RunGradleCheck_Jenkinsfile.pipeline(groovy.lang.Closure)
+         RunGradleCheck_Jenkinsfile.echo(Executing on agent [label:none])
+         RunGradleCheck_Jenkinsfile.stage(gradle-check, groovy.lang.Closure)
+            RunGradleCheck_Jenkinsfile.script(groovy.lang.Closure)
+               RunGradleCheck_Jenkinsfile.runGradleCheck({gitRepoUrl=https://github.com/opensearch-project/OpenSearch, gitReference=main})
+                  runGradleCheck.legacySCM(groovy.lang.Closure)
+                  runGradleCheck.library({identifier=jenkins@20211123, retriever=null})
+                  runGradleCheck.usernamePassword({credentialsId=jenkins-gradle-check-s3-aws-credentials, usernameVariable=amazon_s3_access_key, passwordVariable=amazon_s3_secret_key})
+                  runGradleCheck.usernamePassword({credentialsId=jenkins-gradle-check-s3-aws-resources, usernameVariable=amazon_s3_base_path, passwordVariable=amazon_s3_bucket})
+                  runGradleCheck.withCredentials([[amazon_s3_access_key, amazon_s3_secret_key], [amazon_s3_base_path, amazon_s3_bucket]], groovy.lang.Closure)
+                     runGradleCheck.sh(
+
+                set -e
+                set +x
+
+                env | grep JAVA | grep HOME
+
+                echo "Git clone: https://github.com/opensearch-project/OpenSearch with ref: main"
+                rm -rf search
+                git clone https://github.com/opensearch-project/OpenSearch search
+                cd search/
+                git checkout -f main
+                git rev-parse HEAD
+
+                echo "Stop existing gradledaemon"
+                ./gradlew --stop
+                find ~/.gradle -type f -name "*.lock" -delete
+
+                echo "Check existing dockercontainer"
+                docker ps -a
+                docker stop `docker ps -qa` > /dev/null 2>&1 || echo
+                docker rm `docker ps -qa` > /dev/null 2>&1 || echo
+                echo "Stop existing dockercontainer"
+                docker ps -a
+
+                echo "Check docker-compose version"
+                docker-compose version
+
+                echo "Start gradlecheck"
+                GRADLE_CHECK_STATUS=0
+                ./gradlew check -Dtests.coverage=true --no-daemon --no-scan || GRADLE_CHECK_STATUS=1
+
+                if [ "$GRADLE_CHECK_STATUS" != 0 ]; then
+                    echo Gradle Check Failed!
+                    exit 1
+                fi
+
+            )

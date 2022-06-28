@@ -54,8 +54,14 @@ pipeline {
                     }
                 }
             }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
         }
-
         stage('Promote Docker') {
             agent {
                 docker {
@@ -68,7 +74,7 @@ pipeline {
                 stage('Copy Docker Image to DockerHub') {
                     steps {
                         script {
-                            dockerCopyHub: {
+                            def dockerCopyHub =
                                 build job: 'docker-copy',
                                 parameters: [
                                     string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
@@ -76,14 +82,13 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchproject'),
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
-                            }
                         }
                     }
                 }
                 stage('Copy Docker Image to ECR') {
                     steps {
                         script {
-                            dockerCopyECR: {
+                            def dockerCopyECR =
                                 build job: 'docker-copy',
                                 parameters: [
                                     string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
@@ -91,14 +96,18 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'public.ecr.aws/opensearchproject'),
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
-                            }
-
                         }
                     }
                 }
             }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
         }
-
         stage('Promote Maven') {
             agent {
                 docker {
@@ -143,19 +152,18 @@ pipeline {
                         script {
                             // stage artifacts for release with Sonatype
                             withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                sh('$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven')
+                                sh("$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven")
                             }
                         }
                     }
                 }
             }
-        }
-    }
-    post() {
-        always {
-            script {
-                sh("rm -rf $WORKSPACE/* && docker logout")
-                postCleanup()
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
             }
         }
     }

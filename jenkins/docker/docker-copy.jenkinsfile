@@ -8,7 +8,7 @@ pipeline {
     parameters {
         choice(
             name: 'SOURCE_IMAGE_REGISTRY', 
-            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
+            choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject', "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"],
             description: 'Choose the source image registry'
         )
         string(

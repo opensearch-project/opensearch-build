@@ -3,11 +3,11 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 pipeline {
     agent none
     options {
-        timeout(time: 10, unit: 'HOURS')
+        timeout(time: 15, unit: 'HOURS')
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-al2-x64-m52xlarge-Docker-Host-Perf-Test'
-        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2'
+        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-performance-test-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'perf-test'
     }

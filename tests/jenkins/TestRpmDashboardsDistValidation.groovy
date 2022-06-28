@@ -41,6 +41,12 @@ class TestRpmDashboardsDistValidation extends BuildPipelineTest {
         helper.addShMock("rpm -qip $workspace/opensearch-dashboards-1.3.0-linux-x64.rpm") { script ->
             return [stdout: out, exitValue: 0]
         }
+        def sigOut = "/tmp/workspace/opensearch-dashboards-1.3.0-linux-x64.rpm:\n" + "Header V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n" +
+                "Header SHA256 digest: OK\n" + "Header SHA1 digest: OK\n" + "Payload SHA256 digest: OK\n" +
+                "V4 RSA/SHA512 Signature, key ID 9310d3fc: OK\n" + "MD5 digest: OK"
+        helper.addShMock("rpm -K -v $rpmDistribution") { script ->
+            return [stdout: sigOut, exitValue: 0]
+        }
         def status_message = "opensearch-dashboards.service - \"OpenSearch Dashboards\"\n" +
                 "   Loaded: loaded (/usr/lib/systemd/system/opensearch-dashboards.service; disabled; vendor preset: disabled)\n" +
                 "   Active: active (running) since Mon 2022-04-04 21:38:58 UTC; 3 days ago\n" +
