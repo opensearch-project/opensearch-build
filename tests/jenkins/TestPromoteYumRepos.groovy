@@ -24,10 +24,12 @@ class TestPromoteYumRepos extends BuildPipelineTest {
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'artifactsAccount')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'prod-bucket-name')
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
-        binding.setVariable('SIGNER_CLIENT_ROLE', 'dummy_signer_client_role')
-        binding.setVariable('SIGNER_CLIENT_EXTERNAL_ID', 'signer_client_external_id')
-        binding.setVariable('SIGNER_CLIENT_UNSIGNED_BUCKET', 'signer_client_unsigned_bucket')
-        binding.setVariable('SIGNER_CLIENT_SIGNED_BUCKET', 'signer_client_signed_bucket')
+        def signer_client_creds = ["role": "dummy_role",
+                       "external_id": "dummy_ID",
+                       "unsigned_bucket": "dummy_unsigned_bucket",
+                       "signed_bucket": "dummy_signed_bucket"]
+        binding.setVariable('configs', signer_client_creds)
+        helper.registerAllowedMethod("readJSON", [Map.class], {c -> signer_client_creds})
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
