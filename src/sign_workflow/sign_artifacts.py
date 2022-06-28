@@ -47,13 +47,6 @@ class SignArtifacts:
     def __sign_artifact__(self, artifact: str, basepath: Path) -> None:
         self.signer.sign_artifact(artifact, basepath, self.signature_type)
 
-    # @classmethod
-    # def __signer_type__(self, platform: str) -> None:
-    #     if (platform == "windows"):
-    #         self.signer = SignerWindows()
-    #     if (platform == "linux"):
-    #         self.signer = SignerPGP()
-
     @classmethod
     def __signer_class__(self, path: Path) -> Type[Any]:
         if path.is_dir():
