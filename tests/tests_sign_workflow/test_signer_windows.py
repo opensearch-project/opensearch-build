@@ -1,4 +1,3 @@
-import os
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
@@ -39,10 +38,10 @@ class TestSignerWindows(unittest.TestCase):
         self.assertEqual(signer.sign.call_args_list, expected)
 
     @patch("sign_workflow.signer.GitRepository")
-    def test_signer_sign(self, mock_repo: Mock) -> None:
+    @patch('os.rename')
+    @patch('os.mkdir')
+    def test_signer_sign(self, mock_os_mkdir: Mock, mock_os_rename: Mock, mock_repo: Mock) -> None:
         signer = SignerWindows()
-        os.mkdir = MagicMock()
-        os.rename = MagicMock()
         signer.sign("the-msi.msi", Path("/path/"), ".asc")
         mock_repo.assert_has_calls(
             [call().execute("./opensearch-signer-client -i /path/the-msi.msi -o /path/signed_the-msi.msi -p windows")])
