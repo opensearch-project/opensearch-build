@@ -1,0 +1,92 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+        }
+}
+    parameters {
+        string(
+            name: 'PROMOTE_PRODUCT',
+            description: 'Comma separated list of product that we want to promote from staging to production. E.g.: opensearch, opensearch-dashboards.',
+            trim: true
+        )
+        string(
+            name: 'RELEASE_VERSION',
+            description: 'Official release version on production repository. E.g.: 2.0.1',
+            trim: true
+        )
+        string(
+            name: 'SOURCE_TAG',
+            description: 'Image tag in the staging E.g.: 2.0.1.3910',
+            trim: true
+        )
+        booleanParam(
+            name: 'DOCKER_HUB_PROMOTE',
+            defaultValue: true,
+            description: 'Promote the staging images to Docker Hub with the tag choices.'
+        )
+        booleanParam(
+            name: 'ECR_PROMOTE',
+            defaultValue: true,
+            description: 'Promote the staging images to ECR with the tag choices.'
+        )
+        booleanParam(
+            name: 'TAG_LATEST',
+            defaultValue: true,
+            description: 'Tag the copied image as latest'
+        )
+        booleanParam(
+            name: 'TAG_MAJOR_VERSION',
+            defaultValue: true,
+            description: 'Tag the copied image to be on the latest image for any build within its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
+        )
+    }
+
+    stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    currentBuild.description = "Promoting ${PROMOTE_PRODUCT} to production hub."
+                    if(PROMOTE_PRODUCT.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('Make sure at lease one product is added to be promoted.')
+                    }
+                }
+            }
+        }
+        stage('image-promote-to-prod') {
+            steps {
+                script {
+                    for (product in PROMOTE_PRODUCT.split(',')) {
+                        def productRepo = product.trim()
+                        println("Promoting \"$productRepo\" from staging to production.")
+//                         promoteContainer(
+//                             imageRepository: productRepo,
+//                             version: RELEASE_VERSION,
+//                             sourceTag: SOURCE_TAG,
+//                             dockerPromote: DOCKER_HUB_PROMOTE,
+//                             ecrPromote: ECR_PROMOTE,
+//                             latestTag: TAG_LATEST,
+//                             majorVersionTag: TAG_MAJOR_VERSION
+//                         )
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+                sh "docker logout"
+            }
+        }
+    }
+}
