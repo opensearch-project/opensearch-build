@@ -17,7 +17,7 @@ void call(Map args = [:]) {
 
     String buildnumber = args.buildNumber ?: 'none'
     if (buildnumber == 'none') {
-        println("User did not enter build number in jenkins parameter, exit 1")
+        println('User did not enter build number in jenkins parameter, exit 1')
         System.exit(1)
     }
 
@@ -40,72 +40,73 @@ void call(Map args = [:]) {
     String yumRepoProdPath = "releases/bundle/${filename}/${yumRepoVersion}/yum"
     String artifactPath = "${localPath}/${yumRepoProdPath}"
 
+    withCredentials([string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
+        string(credentialsId: 'jenkins-aws-production-account', variable: 'AWS_ACCOUNT_ARTIFACT'),
+        string(credentialsId: 'jenkins-artifact-production-bucket-name', variable: 'ARTIFACT_PRODUCTION_BUCKET_NAME')]) {
+            withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+                println('Pulling Prod Yumrepo')
+                sh("aws s3 sync s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${yumRepoProdPath}/ ${artifactPath}/ --no-progress")
+            }
 
-    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        println("Pulling Prod Yumrepo")
-        sh("aws s3 sync s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${yumRepoProdPath}/ ${artifactPath}/ --no-progress")
-    }
+        sh """
+            set -e
+            set +x
+            set +x
 
-    sh """
-        set -e
-        set +x
-        set +x
+            echo "Pulling ${revision} rpms"
+            cd ${artifactPath}
+            curl -SLO ${stagingYumPathX64}
+            curl -SLO ${stagingYumPathARM64}
 
-        echo "Pulling ${revision} rpms"
-        cd ${artifactPath}
-        curl -SLO ${stagingYumPathX64}
-        curl -SLO ${stagingYumPathARM64}
+            ls -l
 
-        ls -l
+            rm -vf repodata/repomd.xml.asc
 
-        rm -vf repodata/repomd.xml.asc
+            echo "Update repo metadata"
+            createrepo --update .
 
-        echo "Update repo metadata"
-        createrepo --update .
+            # Rename .xml to .pom for signing
+            # Please do not add .xml to signer filter
+            # As maven have many .xml and we do not want to sign them
+            # This is an outlier case for yum repo only
+            mv -v repodata/repomd.xml repodata/repomd.pom
 
-        # Rename .xml to .pom for signing
-        # Please do not add .xml to signer filter
-        # As maven have many .xml and we do not want to sign them
-        # This is an outlier case for yum repo only
-        mv -v repodata/repomd.xml repodata/repomd.pom
-
-        echo "Complete metadata update, awaiting signing repomd.xml"
+            echo "Complete metadata update, awaiting signing repomd.xml"
 
         cd -
 
     """
 
-    signArtifacts(
-        artifactPath: "${artifactPath}/repodata/repomd.pom",
-        sigtype: '.sig',
-        platform: 'linux'
-    )
+        signArtifacts(
+            artifactPath: "${artifactPath}/repodata/repomd.pom",
+            sigtype: '.sig',
+            platform: 'linux'
+            )
 
-    sh """
-        set -e
-        set +x
+        sh """
+            set -e
+            set +x
 
-        cd ${artifactPath}/repodata/
+            cd ${artifactPath}/repodata/
 
-        ls -l
+            ls -l
 
-        mv -v repomd.pom repomd.xml
-        mv -v repomd.pom.sig repomd.xml.sig
+            mv -v repomd.pom repomd.xml
+            mv -v repomd.pom.sig repomd.xml.sig
 
-        # This step is required as yum only accept .asc and signing workflow only support .sig
-        cat repomd.xml.sig | gpg --enarmor | sed 's@ARMORED FILE@SIGNATURE@g' > repomd.xml.asc
+            # This step is required as yum only accept .asc and signing workflow only support .sig
+            cat repomd.xml.sig | gpg --enarmor | sed 's@ARMORED FILE@SIGNATURE@g' > repomd.xml.asc
 
-        rm -vf repomd.xml.sig
+            rm -vf repomd.xml.sig
 
-        ls -l
-        
-        cd -
+            ls -l
 
+            cd -
     """
 
-    withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
-        println("Pushing Prod Yumrepo")
-        sh("aws s3 sync ${artifactPath}/ s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${yumRepoProdPath}/ --no-progress")
-    }
-
+        withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
+            println('Pushing Prod Yumrepo')
+            sh("aws s3 sync ${artifactPath}/ s3://${ARTIFACT_PRODUCTION_BUCKET_NAME}/${yumRepoProdPath}/ --no-progress")
+        }
+        }
 }
