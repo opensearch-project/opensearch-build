@@ -54,7 +54,6 @@ pipeline {
         JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
         JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
         JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-8"
-        JAVA_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
@@ -89,7 +88,7 @@ pipeline {
         stage('Run Gradle Check') {
             steps {
                 script {
-                    sh("ls /var/jenkins/tools/hudson.model.JDK/ && env | grep JAVA")
+                    sh("ls /var/jenkins/tools/hudson.model.JDK/")
                     if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
                         def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                         println("Triggered by PR: ${pr_url}")
@@ -114,6 +113,7 @@ pipeline {
             }
             post() {
                 always {
+                    archiveArtifacts artifacts: 'search/build/reports/jacoco/**/*.xml', onlyIfSuccessful: true
                     script {
                         sh("rm -rf *")
                         postCleanup()
