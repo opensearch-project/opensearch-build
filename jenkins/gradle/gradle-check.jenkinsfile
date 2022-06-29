@@ -44,7 +44,8 @@ pipeline {
                 [key: 'pr_title', value: '$.pr_title'],
                 [key: 'pr_number', value: '$.pr_number']
             ],
-            tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
+            token: 'peterzhuamazon-gradle-check',
+            //tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
             printContributedVariables: false,
             printPostContent: false
@@ -113,7 +114,8 @@ pipeline {
             }
             post() {
                 always {
-                    archiveArtifacts artifacts: 'search/build/reports/jacoco/**/*.xml', onlyIfSuccessful: true
+                    sh ("mv -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
                     script {
                         sh("rm -rf *")
                         postCleanup()
