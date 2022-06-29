@@ -22,7 +22,7 @@
                      promoteArtifacts.withAWS({role=opensearch-bundle, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         promoteArtifacts.s3Download({bucket=ARTIFACT_BUCKET_NAME, file=tests/jenkins/artifacts/tar, path=vars-build/2.0.0-rc1/33/linux/x64/tar/, force=true})
                      promoteArtifacts.readYaml({file=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch-dashboards/manifest.yml})
-                     promoteArtifacts.print(Actions [createSha512Checksums$_call_closure1@dc12e60, createSignatureFiles$_call_closure1@54fb1cd])
+                     promoteArtifacts.print(Actions [createSha512Checksums$_call_closure1@1cab138e, createSignatureFiles$_call_closure1@fea63d0])
                      promoteArtifacts.fileExists(tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch-dashboards/core-plugins)
                      promoteArtifacts.println(Signing Starts)
                      promoteArtifacts.println(Signing Core/Bundle Artifacts)
@@ -39,7 +39,9 @@
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=signer_client_creds})
+                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], signer_client_creds], groovy.lang.Closure)
+                           signArtifacts.readJSON({text=signer_client_creds})
                            signArtifacts.sh(
                 #!/bin/bash
                 set +x
@@ -57,7 +59,7 @@
                      promoteArtifacts.withAWS({role=opensearch-bundle, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         promoteArtifacts.s3Download({bucket=ARTIFACT_BUCKET_NAME, file=tests/jenkins/artifacts/rpm, path=vars-build/2.0.0-rc1/33/linux/x64/rpm/, force=true})
                      promoteArtifacts.readYaml({file=tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch-dashboards/manifest.yml})
-                     promoteArtifacts.print(Actions [createSha512Checksums$_call_closure1@dc12e60, createSignatureFiles$_call_closure1@54fb1cd])
+                     promoteArtifacts.print(Actions [createSha512Checksums$_call_closure1@1cab138e, createSignatureFiles$_call_closure1@fea63d0])
                      promoteArtifacts.fileExists(tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch-dashboards/core-plugins)
                      promoteArtifacts.println(Signing Starts)
                      promoteArtifacts.println(Signing Core/Bundle Artifacts)
@@ -74,7 +76,9 @@
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=signer_client_creds})
+                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], signer_client_creds], groovy.lang.Closure)
+                           signArtifacts.readJSON({text=signer_client_creds})
                            signArtifacts.sh(
                 #!/bin/bash
                 set +x
