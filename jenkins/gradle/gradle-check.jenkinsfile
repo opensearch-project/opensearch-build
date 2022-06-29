@@ -113,7 +113,8 @@ pipeline {
             }
             post() {
                 always {
-                    archiveArtifacts artifacts: 'search/build/reports/jacoco/**/*.xml', onlyIfSuccessful: true
+                    sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
                     script {
                         sh("rm -rf *")
                         postCleanup()

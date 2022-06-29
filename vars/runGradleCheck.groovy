@@ -16,6 +16,7 @@ void call(Map args = [:]) {
             usernamePassword(credentialsId: "jenkins-gradle-check-s3-aws-resources", usernameVariable: 'amazon_s3_base_path', passwordVariable: 'amazon_s3_bucket')]) {
 
             sh """
+                #!/bin/bash
 
                 set -e
                 set +x
