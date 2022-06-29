@@ -64,5 +64,6 @@ if [ "$RESULT" != "SUCCESS" ]; then
     exit 1
 else
     echo "Result: $RESULT"
+    echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml
     echo 0
 fi
