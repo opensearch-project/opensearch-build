@@ -113,7 +113,7 @@ pipeline {
             }
             post() {
                 always {
-                    sh ("mv -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
                     archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
                     script {
                         sh("rm -rf *")
