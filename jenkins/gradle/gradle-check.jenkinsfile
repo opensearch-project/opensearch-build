@@ -35,21 +35,21 @@ pipeline {
             trim: true
         )
     }
-    //triggers {
-    //    GenericTrigger(
-    //        genericVariables: [
-    //            [key: 'pr_from_sha', value: '$.pr_from_sha'],
-    //            [key: 'pr_from_clone_url', value: '$.pr_from_clone_url'],
-    //            [key: 'pr_to_clone_url', value: '$.pr_to_clone_url'],
-    //            [key: 'pr_title', value: '$.pr_title'],
-    //            [key: 'pr_number', value: '$.pr_number']
-    //        ],
-    //        tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
-    //        causeString: 'Triggered by PR on OpenSearch core repository',
-    //        printContributedVariables: false,
-    //        printPostContent: false
-    //    )
-    //}
+    triggers {
+        GenericTrigger(
+            genericVariables: [
+                [key: 'pr_from_sha', value: '$.pr_from_sha'],
+                [key: 'pr_from_clone_url', value: '$.pr_from_clone_url'],
+                [key: 'pr_to_clone_url', value: '$.pr_to_clone_url'],
+                [key: 'pr_title', value: '$.pr_title'],
+                [key: 'pr_number', value: '$.pr_number']
+            ],
+            tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
+            causeString: 'Triggered by PR on OpenSearch core repository',
+            printContributedVariables: false,
+            printPostContent: false
+        )
+    }
     environment {
         JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
         JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
