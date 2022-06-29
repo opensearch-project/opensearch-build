@@ -43,8 +43,6 @@ void call(Map args = [:]) {
             String build_manifest = "$prefixPath/$artifactPath/builds/$filename/manifest.yml"
             def buildManifest = readYaml(file: build_manifest)
 
-            print("Actions ${fileActions}")
-
             argsMap = [:]
             argsMap['sigtype'] = '.sig'
 
