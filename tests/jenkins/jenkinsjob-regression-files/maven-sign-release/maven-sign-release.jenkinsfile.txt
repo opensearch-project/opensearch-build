@@ -18,14 +18,16 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=signer_client_creds})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], signer_client_creds], groovy.lang.Closure)
+                     signArtifacts.readJSON({text=signer_client_creds})
                      signArtifacts.sh(
                 #!/bin/bash
                 set +x
-                export ROLE=dummy_signer_client_role
-                export EXTERNAL_ID=signer_client_external_id
-                export UNSIGNED_BUCKET=signer_client_unsigned_bucket
-                export SIGNED_BUCKET=signer_client_signed_bucket
+                export ROLE=dummy_role
+                export EXTERNAL_ID=dummy_ID
+                export UNSIGNED_BUCKET=dummy_unsigned_bucket
+                export SIGNED_BUCKET=dummy_signed_bucket
 
                 /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
             )
