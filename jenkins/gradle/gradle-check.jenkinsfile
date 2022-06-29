@@ -44,8 +44,7 @@ pipeline {
                 [key: 'pr_title', value: '$.pr_title'],
                 [key: 'pr_number', value: '$.pr_number']
             ],
-            token: 'peterzhuamazon-gradle-check',
-            //tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
+            tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
             printContributedVariables: false,
             printPostContent: false
