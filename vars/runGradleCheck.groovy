@@ -43,9 +43,9 @@ void call(Map args = [:]) {
 
                 env | grep JAVA | grep HOME
 
-                echo "Stop existing gradledaemon"
+                echo "Gradle clean cache and stop existing gradledaemon"
                 ./gradlew --stop
-                find ~/.gradle -type f -name "*.lock" -delete
+                rm -rf ~/.gradle
 
                 echo "Check existing dockercontainer"
                 docker ps -a
@@ -65,7 +65,7 @@ void call(Map args = [:]) {
 
                 echo "Start gradlecheck"
                 GRADLE_CHECK_STATUS=0
-                ./gradlew check -Dtests.coverage=true --no-daemon --no-scan || GRADLE_CHECK_STATUS=1
+                ./gradlew clean && ./gradlew check -Dtests.coverage=true --no-daemon --no-scan || GRADLE_CHECK_STATUS=1
 
                 if [ "\$GRADLE_CHECK_STATUS" != 0 ]; then
                     echo Gradle Check Failed!
