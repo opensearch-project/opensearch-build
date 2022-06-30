@@ -29,18 +29,11 @@ class TestPromoteArtifacts extends BuildPipelineTest {
 
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'https://ci.opensearch.org/dbc')
         binding.setVariable('DISTRIBUTION_JOB_NAME', 'vars-build')
-        binding.setVariable('ARTIFACT_BUCKET_NAME', 'artifact-bucket')
-        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'account')
         binding.setVariable('STAGE_NAME', 'stage')
         binding.setVariable('BUILD_URL', 'http://jenkins.us-east-1.elb.amazonaws.com/job/vars/42')
         binding.setVariable('DISTRIBUTION_BUILD_NUMBER', '33')
         binding.setVariable('DISTRIBUTION_PLATFORM', 'linux')
         binding.setVariable('DISTRIBUTION_ARCHITECTURE', 'x64')
-        binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'downloadRoleName')
-        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'publicAccount')
-        binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'artifactPromotionRole')
-        binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'artifactsAccount')
-        binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'prod-bucket-name')
         binding.setVariable('WORKSPACE', 'tests/jenkins')
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
         def configs = ["role": "dummy_role",
@@ -53,6 +46,10 @@ class TestPromoteArtifacts extends BuildPipelineTest {
         helper.registerAllowedMethod("git", [Map])
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)
