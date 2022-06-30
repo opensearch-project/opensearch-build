@@ -14,6 +14,7 @@ from typing import Any, List, Type
 
 from manifests.build_manifest import BuildManifest
 from sign_workflow.signer import Signer
+from sign_workflow.signers import Signers
 
 
 class SignArtifacts:
@@ -21,14 +22,16 @@ class SignArtifacts:
     component: str
     artifact_type: str
     signature_type: str
+    platform: str
     signer: Signer
 
-    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer) -> None:
+    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> None:
         self.target = target
         self.components = components
         self.artifact_type = artifact_type
         self.signature_type = signature_type
-        self.signer = signer
+        self.platform = platform
+        self.signer = Signers.create(platform)
 
     @abstractmethod
     def __sign__(self) -> None:
@@ -54,9 +57,9 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, signer: Signer) -> Any:
+    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> Any:
         klass = self.__signer_class__(path)
-        return klass(path, components, artifact_type, signature_type, signer)
+        return klass(path, components, artifact_type, signature_type, platform)
 
 
 class SignWithBuildManifest(SignArtifacts):

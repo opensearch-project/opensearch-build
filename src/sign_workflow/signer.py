@@ -8,21 +8,15 @@
 
 import logging
 import os
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
 from git.git_repository import GitRepository
 
-"""
-This class is responsible for signing an artifact using the OpenSearch-signer-client and verifying its signature.
-The signed artifacts will be found in the same location as the original artifacts.
-"""
 
-
-class Signer:
+class Signer(ABC):
     git_repo: GitRepository
-
-    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
 
     def __init__(self) -> None:
         self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")
@@ -42,15 +36,13 @@ class Signer:
                 continue
             self.generate_signature_and_verify(artifact, basepath, signature_type)
 
+    @abstractmethod
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
-        location = os.path.join(basepath, artifact)
-        self.sign(location, signature_type)
-        self.verify(location + signature_type)
+        pass
 
+    @abstractmethod
     def is_valid_file_type(self, file_name: str) -> bool:
-        return any(
-            file_name.endswith(x) for x in Signer.ACCEPTED_FILE_TYPES
-        )
+        pass
 
     def get_repo_url(self) -> str:
         if "GITHUB_TOKEN" in os.environ:
@@ -62,20 +54,6 @@ class Signer:
             logging.warning(f"Removing existing signature file {signature_file}")
             os.remove(signature_file)
 
-    def sign(self, filename: str, signature_type: str) -> None:
-        signature_file = filename + signature_type
-        self.__remove_existing_signature__(signature_file)
-        signing_cmd = [
-            "./opensearch-signer-client",
-            "-i",
-            filename,
-            "-o",
-            signature_file,
-            "-p",
-            "pgp",
-        ]
-        self.git_repo.execute(" ".join(signing_cmd))
-
-    def verify(self, filename: str) -> None:
-        verify_cmd = ["gpg", "--verify-files", filename]
-        self.git_repo.execute(" ".join(verify_cmd))
+    @abstractmethod
+    def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
+        pass

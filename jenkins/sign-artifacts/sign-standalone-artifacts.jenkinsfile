@@ -20,14 +20,14 @@ pipeline {
                 description: 'Path to upload to artifacts and signatures on s3. Eg: dummy_project/1.0'
         )
         choice(
-                choices: ['linux'],
+                choices: ['linux', 'windows'],
                 name: 'DISTRIBUTION_PLATFORM',
                 description: 'What platform is this distribution build for?'
         )
         choice(
                 choices: ['.sig', '.rpm'],
                 name: 'SIGNATURE_TYPE',
-                description: 'What is signature file type?'
+                description: 'What is signature file type? Required only for linux signing.'
         )
     }
     stages {
@@ -52,11 +52,13 @@ pipeline {
                     println("Note: only supported file types will be signed")
 
                     for(filename in downloadedFiles){
-                        if (SIGNATURE_TYPE.equals('.sig')) {
+                        if (DISTRIBUTION_PLATFORM == 'windows') {
+                            filenamesForUrls.add(filename)
+                            filenamesForUrls.add('signed/' + filename)
+                        } else if (SIGNATURE_TYPE.equals('.sig')) {
                             filenamesForUrls.add(filename)
                             filenamesForUrls.add(filename + SIGNATURE_TYPE)
-                        }
-                        else {
+                        } else {
                             filenamesForUrls.add(filename)
                         }
                     }
@@ -80,7 +82,6 @@ pipeline {
                             artifactFileNames: filenamesForUrls,
                             uploadPath: finalUploadPath
                     )
-
                 }
             }
             post() {

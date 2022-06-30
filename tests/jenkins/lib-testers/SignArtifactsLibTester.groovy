@@ -28,12 +28,12 @@ class SignArtifactsLibTester extends LibFunctionTester {
             helper.registerAllowedMethod('readJSON', [Map.class], { c -> configs })
         }
         else {
-            def signer_client_creds = ['role': 'dummy_role',
-                       'external_id': 'dummy_ID',
-                       'unsigned_bucket': 'dummy_unsigned_bucket',
-                       'signed_bucket': 'dummy_signed_bucket']
-            binding.setVariable('signer_client_creds', signer_client_creds)
-            helper.registerAllowedMethod('readJSON', [Map.class], { c -> signer_client_creds })
+            def configs = ["role": "dummy_role",
+                           "external_id": "dummy_ID",
+                           "unsigned_bucket": "dummy_unsigned_bucket",
+                           "signed_bucket": "dummy_signed_bucket"]
+            binding.setVariable('configs', configs)
+            helper.registerAllowedMethod('readJSON', [Map.class], { c -> configs })
         }
         helper.registerAllowedMethod('git', [Map])
         helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
