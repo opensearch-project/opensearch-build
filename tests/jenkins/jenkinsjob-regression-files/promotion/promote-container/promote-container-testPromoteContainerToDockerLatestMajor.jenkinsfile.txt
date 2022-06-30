@@ -8,29 +8,54 @@
             promote-docker-ecr.script(groovy.lang.Closure)
          promote-docker-ecr.stage(image-promote-to-prod, groovy.lang.Closure)
             promote-docker-ecr.script(groovy.lang.Closure)
-               promote-docker-ecr.promoteContainer({imageRepository=alpine, version=3.15.4, sourceTag=3.15.4-1234, dockerPromote=true, ecrPromote=false, latestTag=true, majorVersionTag=true})
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=opensearchproject})
+               promote-docker-ecr.promoteContainer({imageRepository=opensearch:2.0.1-2901, version=2.0.1, dockerPromote=true, ecrPromote=false, latestTag=true, majorVersionTag=true})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2.0.1, destinationRegistry=opensearchproject})
                      copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                      copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                         copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                         copyContainer.sh(
-                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:3.15.4
+                gcrane cp opensearchstaging/opensearch:2.0.1-2901 opensearchproject/opensearch:2.0.1
                 docker logout
             )
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3, destinationRegistry=opensearchproject})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2, destinationRegistry=opensearchproject})
                      copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                      copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                         copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                         copyContainer.sh(
-                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:3
+                gcrane cp opensearchstaging/opensearch:2.0.1-2901 opensearchproject/opensearch:2
                 docker logout
             )
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:latest, destinationRegistry=opensearchproject})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:latest, destinationRegistry=opensearchproject})
                      copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
                      copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                         copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
                         copyContainer.sh(
-                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:latest
+                gcrane cp opensearchstaging/opensearch:2.0.1-2901 opensearchproject/opensearch:latest
+                docker logout
+            )
+               promote-docker-ecr.promoteContainer({imageRepository=opensearch-dashboards:2.0.1-2345, version=2.0.1, dockerPromote=true, ecrPromote=false, latestTag=true, majorVersionTag=true})
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2.0.1, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 opensearchproject/opensearch-dashboards:2.0.1
+                docker logout
+            )
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 opensearchproject/opensearch-dashboards:2
+                docker logout
+            )
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:latest, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 opensearchproject/opensearch-dashboards:latest
                 docker logout
             )
          promote-docker-ecr.script(groovy.lang.Closure)

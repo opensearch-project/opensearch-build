@@ -4,15 +4,13 @@ import org.junit.Test
 
 class TestPromoteContainer extends BuildPipelineTest {
 
-    String PROMOTE_PRODUCT = 'alpine'
-    String RELEASE_VERSION = '3.15.4'
-    String SOURCE_TAG = '3.15.4-1234'
+    String PROMOTE_PRODUCT = 'opensearch:2.0.1-2901, opensearch-dashboards:2.0.1-2345'
+    String RELEASE_VERSION = '2.0.1'
 
     @Before
     void setUp() {
         binding.setVariable('PROMOTE_PRODUCT', PROMOTE_PRODUCT)
         binding.setVariable('RELEASE_VERSION', RELEASE_VERSION)
-        binding.setVariable('SOURCE_TAG', SOURCE_TAG)
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'dummy-agent-AssumeRole')

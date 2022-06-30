@@ -14,17 +14,12 @@ pipeline {
     parameters {
         string(
             name: 'PROMOTE_PRODUCT',
-            description: 'Comma separated list of product that we want to promote from staging to production. E.g.: opensearch, opensearch-dashboards, data-prepper.',
+            description: 'Comma separated list of product with its image tag that we want to promote from staging to production. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper1.5.0-19.',
             trim: true
         )
         string(
             name: 'RELEASE_VERSION',
             description: 'Official release version on production repository. E.g.: 2.0.1, 1.5.0.',
-            trim: true
-        )
-        string(
-            name: 'SOURCE_TAG',
-            description: 'Image tag in the staging repository. E.g.: 2.0.1.3910, 1.5.0-19',
             trim: true
         )
         booleanParam(
@@ -70,7 +65,6 @@ pipeline {
                         promoteContainer(
                             imageRepository: productRepo,
                             version: RELEASE_VERSION,
-                            sourceTag: SOURCE_TAG,
                             dockerPromote: DOCKER_HUB_PROMOTE,
                             ecrPromote: ECR_PROMOTE,
                             latestTag: TAG_LATEST,

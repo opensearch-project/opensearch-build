@@ -2,9 +2,8 @@
  * Promote image from staging docker to production docker hub or ECR repository.
  *
  * @param args A map of the following parameters
- * @param args.imageRepository The repository of staging image. E.g.: opensearch, opensearch-dashboards, data-prepper
+ * @param args.imageRepository The repository of staging image. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper
  * @param args.version The official version for release. E.g.: 2.0.1
- * @param args.sourceTag The image tag from the staging repo. E.g.: 2.0.1.3910
  * @param args.dockerPromote The boolean argument if promote containers from staging to production docker repo.
  * @param args.ecrPromote The boolean argument if promote containers from staging to production ECR repo.
  * @param args.latestTag The boolean argument if promote containers from staging to production with latest tag.
@@ -14,7 +13,8 @@ void call(Map args = [:]) {
 
     def imageRepo = args.imageRepository
     def version = args.version
-    def sourceTag = args.sourceTag
+    def imageProduct = imageRepo.split(':').first()
+    def sourceTag = imageRepo.split(':').last()
     def dockerPromote = args.dockerPromote
     def ecrPromote = args.ecrPromote
     def latestBoolean = args.latestTag
@@ -27,55 +27,56 @@ void call(Map args = [:]) {
 
     //Promoting docker images
     if (dockerPromote.toBoolean()) {
-        println("Promoting to production docker hub with with $version tag.")
+        println("Promoting $imageProduct to production docker hub with with $version tag.")
         copyContainer(
-                sourceImage: "$imageRepo:$sourceTag",
+                sourceImage: "$imageProduct:$sourceTag",
                 sourceRegistry: sourceReg,
-                destinationImage: "$imageRepo:$version",
+                destinationImage: "$imageProduct:$version",
                 destinationRegistry: dockerProduction
         )
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production docker hub with with $majorVersion tag.")
             copyContainer(
-                    sourceImage: "$imageRepo:$sourceTag",
+                    sourceImage: "$imageProduct:$sourceTag",
                     sourceRegistry: sourceReg,
-                    destinationImage: "$imageRepo:$majorVersion",
+                    destinationImage: "$imageProduct:$majorVersion",
                     destinationRegistry: dockerProduction
             )
         }
         if (latestBoolean.toBoolean()) {
             println("Promoting to production docker hub with with latest tag.")
             copyContainer(
-                    sourceImage: "$imageRepo:$sourceTag",
+                    sourceImage: "$imageProduct:$sourceTag",
                     sourceRegistry: sourceReg,
-                    destinationImage: "$imageRepo:latest",
+                    destinationImage: "$imageProduct:latest",
                     destinationRegistry: dockerProduction
             )
         }
     }
+    //Promoting image to ECR
     if (ecrPromote.toBoolean()) {
         println("Promoting to production ECR with with $version tag.")
         copyContainer(
-                sourceImage: "$imageRepo:$sourceTag",
+                sourceImage: "$imageProduct:$sourceTag",
                 sourceRegistry: sourceReg,
-                destinationImage: "$imageRepo:$version",
+                destinationImage: "$imageProduct:$version",
                 destinationRegistry: ecrProduction
         )
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production ECR with with $majorVersion tag.")
             copyContainer(
-                    sourceImage: "$imageRepo:$sourceTag",
+                    sourceImage: "$imageProduct:$sourceTag",
                     sourceRegistry: sourceReg,
-                    destinationImage: "$imageRepo:$majorVersion",
+                    destinationImage: "$imageProduct:$majorVersion",
                     destinationRegistry: ecrProduction
             )
         }
         if (latestBoolean.toBoolean()) {
             println("Promoting to production ECR with with latest tag.")
             copyContainer(
-                    sourceImage: "$imageRepo:$sourceTag",
+                    sourceImage: "$imageProduct:$sourceTag",
                     sourceRegistry: sourceReg,
-                    destinationImage: "$imageRepo:latest",
+                    destinationImage: "$imageProduct:latest",
                     destinationRegistry: ecrProduction
             )
         }

@@ -8,35 +8,66 @@
             promote-docker-ecr.script(groovy.lang.Closure)
          promote-docker-ecr.stage(image-promote-to-prod, groovy.lang.Closure)
             promote-docker-ecr.script(groovy.lang.Closure)
-               promote-docker-ecr.promoteContainer({imageRepository=alpine, version=3.15.4, sourceTag=3.15.4-1234, dockerPromote=false, ecrPromote=true, latestTag=true, majorVersionTag=true})
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=public.ecr.aws/opensearchproject})
+               promote-docker-ecr.promoteContainer({imageRepository=opensearch:2.0.1-2901, version=2.0.1, dockerPromote=false, ecrPromote=true, latestTag=true, majorVersionTag=true})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2.0.1, destinationRegistry=public.ecr.aws/opensearchproject})
                      copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
                      copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
                      copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
                         copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                            copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
                            copyContainer.sh(
-                        gcrane cp opensearchstaging/alpine:3.15.4-1234 public.ecr.aws/opensearchproject/alpine:3.15.4
+                        gcrane cp opensearchstaging/opensearch:2.0.1-2901 public.ecr.aws/opensearchproject/opensearch:2.0.1
                         docker logout public.ecr.aws/opensearchproject
                     )
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3, destinationRegistry=public.ecr.aws/opensearchproject})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2, destinationRegistry=public.ecr.aws/opensearchproject})
                      copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
                      copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
                      copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
                         copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                            copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
                            copyContainer.sh(
-                        gcrane cp opensearchstaging/alpine:3.15.4-1234 public.ecr.aws/opensearchproject/alpine:3
+                        gcrane cp opensearchstaging/opensearch:2.0.1-2901 public.ecr.aws/opensearchproject/opensearch:2
                         docker logout public.ecr.aws/opensearchproject
                     )
-                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:latest, destinationRegistry=public.ecr.aws/opensearchproject})
+                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1-2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:latest, destinationRegistry=public.ecr.aws/opensearchproject})
                      copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
                      copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
                      copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
                         copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                            copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
                            copyContainer.sh(
-                        gcrane cp opensearchstaging/alpine:3.15.4-1234 public.ecr.aws/opensearchproject/alpine:latest
+                        gcrane cp opensearchstaging/opensearch:2.0.1-2901 public.ecr.aws/opensearchproject/opensearch:latest
+                        docker logout public.ecr.aws/opensearchproject
+                    )
+               promote-docker-ecr.promoteContainer({imageRepository=opensearch-dashboards:2.0.1-2345, version=2.0.1, dockerPromote=false, ecrPromote=true, latestTag=true, majorVersionTag=true})
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2.0.1, destinationRegistry=public.ecr.aws/opensearchproject})
+                     copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
+                     copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
+                     copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
+                        copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                           copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
+                           copyContainer.sh(
+                        gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 public.ecr.aws/opensearchproject/opensearch-dashboards:2.0.1
+                        docker logout public.ecr.aws/opensearchproject
+                    )
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2, destinationRegistry=public.ecr.aws/opensearchproject})
+                     copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
+                     copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
+                     copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
+                        copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                           copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
+                           copyContainer.sh(
+                        gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 public.ecr.aws/opensearchproject/opensearch-dashboards:2
+                        docker logout public.ecr.aws/opensearchproject
+                    )
+                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:latest, destinationRegistry=public.ecr.aws/opensearchproject})
+                     copyContainer.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
+                     copyContainer.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
+                     copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
+                        copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                           copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
+                           copyContainer.sh(
+                        gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 public.ecr.aws/opensearchproject/opensearch-dashboards:latest
                         docker logout public.ecr.aws/opensearchproject
                     )
          promote-docker-ecr.script(groovy.lang.Closure)
