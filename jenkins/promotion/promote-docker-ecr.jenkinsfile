@@ -14,17 +14,17 @@ pipeline {
     parameters {
         string(
             name: 'PROMOTE_PRODUCT',
-            description: 'Comma separated list of product that we want to promote from staging to production. E.g.: opensearch, opensearch-dashboards.',
+            description: 'Comma separated list of product that we want to promote from staging to production. E.g.: opensearch, opensearch-dashboards, data-prepper.',
             trim: true
         )
         string(
             name: 'RELEASE_VERSION',
-            description: 'Official release version on production repository. E.g.: 2.0.1',
+            description: 'Official release version on production repository. E.g.: 2.0.1, 1.5.0.',
             trim: true
         )
         string(
             name: 'SOURCE_TAG',
-            description: 'Image tag in the staging E.g.: 2.0.1.3910',
+            description: 'Image tag in the staging repository. E.g.: 2.0.1.3910, 1.5.0-19',
             trim: true
         )
         booleanParam(
@@ -67,15 +67,15 @@ pipeline {
                     for (product in PROMOTE_PRODUCT.split(',')) {
                         def productRepo = product.trim()
                         println("Promoting \"$productRepo\" from staging to production.")
-//                         promoteContainer(
-//                             imageRepository: productRepo,
-//                             version: RELEASE_VERSION,
-//                             sourceTag: SOURCE_TAG,
-//                             dockerPromote: DOCKER_HUB_PROMOTE,
-//                             ecrPromote: ECR_PROMOTE,
-//                             latestTag: TAG_LATEST,
-//                             majorVersionTag: TAG_MAJOR_VERSION
-//                         )
+                        promoteContainer(
+                            imageRepository: productRepo,
+                            version: RELEASE_VERSION,
+                            sourceTag: SOURCE_TAG,
+                            dockerPromote: DOCKER_HUB_PROMOTE,
+                            ecrPromote: ECR_PROMOTE,
+                            latestTag: TAG_LATEST,
+                            majorVersionTag: TAG_MAJOR_VERSION
+                        )
                     }
                 }
             }

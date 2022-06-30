@@ -1,0 +1,39 @@
+   promote-docker-ecr.run()
+      promote-docker-ecr.legacySCM(groovy.lang.Closure)
+      promote-docker-ecr.library({identifier=jenkins@20211123, retriever=null})
+      promote-docker-ecr.pipeline(groovy.lang.Closure)
+         promote-docker-ecr.timeout({time=1, unit=HOURS})
+         promote-docker-ecr.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:false, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         promote-docker-ecr.stage(Parameters Check, groovy.lang.Closure)
+            promote-docker-ecr.script(groovy.lang.Closure)
+         promote-docker-ecr.stage(image-promote-to-prod, groovy.lang.Closure)
+            promote-docker-ecr.script(groovy.lang.Closure)
+               promote-docker-ecr.promoteContainer({imageRepository=alpine, version=3.15.4, sourceTag=3.15.4-1234, dockerPromote=true, ecrPromote=false, latestTag=true, majorVersionTag=true})
+                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:3.15.4
+                docker logout
+            )
+                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:3, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:3
+                docker logout
+            )
+                  promoteContainer.copyContainer({sourceImage=alpine:3.15.4-1234, sourceRegistry=opensearchstaging, destinationImage=alpine:latest, destinationRegistry=opensearchproject})
+                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
+                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
+                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
+                        copyContainer.sh(
+                gcrane cp opensearchstaging/alpine:3.15.4-1234 opensearchproject/alpine:latest
+                docker logout
+            )
+         promote-docker-ecr.script(groovy.lang.Closure)
+            promote-docker-ecr.postCleanup()
+               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+            promote-docker-ecr.sh(docker logout)
