@@ -2,7 +2,7 @@
  * Promote image from staging docker to production docker hub or ECR repository.
  *
  * @param args A map of the following parameters
- * @param args.imageRepository The repository of staging image. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper
+ * @param args.imageRepository The repository of staging image. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper:2.0.1-1234
  * @param args.version The official version for release. E.g.: 2.0.1
  * @param args.dockerPromote The boolean argument if promote containers from staging to production docker repo.
  * @param args.ecrPromote The boolean argument if promote containers from staging to production ECR repo.
@@ -21,7 +21,7 @@ void call(Map args = [:]) {
     def majorVersionBoolean = args.majorVersionTag
     def majorVersion = version.split("\\.").first()
 
-    def sourceReg = (imageRepo == 'data-prepper') ? ${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY} : "opensearchstaging"
+    def sourceReg = (imageProduct == 'data-prepper') ? "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}" : "opensearchstaging"
     def dockerProduction = "opensearchproject"
     def ecrProduction = "public.ecr.aws/opensearchproject"
 

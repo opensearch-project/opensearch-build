@@ -4,7 +4,7 @@ import org.junit.Test
 
 class TestPromoteContainer extends BuildPipelineTest {
 
-    String PROMOTE_PRODUCT = 'opensearch:2.0.1-2901, opensearch-dashboards:2.0.1-2345'
+    String PROMOTE_PRODUCT = 'opensearch:2.0.1.2901, opensearch-dashboards:2.0.1-2345, data-prepper:2.0.1.123'
     String RELEASE_VERSION = '2.0.1'
 
     @Before
