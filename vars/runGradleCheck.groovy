@@ -16,11 +16,10 @@ void call(Map args = [:]) {
             usernamePassword(credentialsId: "jenkins-gradle-check-s3-aws-resources", usernameVariable: 'amazon_s3_base_path', passwordVariable: 'amazon_s3_bucket')]) {
 
             sh """
+                #!/bin/bash
 
                 set -e
                 set +x
-
-                env | grep JAVA | grep HOME
 
                 echo "Git clone: ${git_repo_url} with ref: ${git_reference}"
                 rm -rf search
@@ -29,9 +28,24 @@ void call(Map args = [:]) {
                 git checkout -f ${git_reference}
                 git rev-parse HEAD
 
-                echo "Stop existing gradledaemon"
+                echo "Get Major Version"
+                OS_VERSION=`cat buildSrc/version.properties | grep opensearch | cut -d= -f2 | grep -oE '[0-9.]+'`
+                OS_MAJOR_VERSION=`echo \$OS_VERSION | grep -oE '[0-9]+' | head -n 1`
+                echo "Version: \$OS_VERSION, Major Version: \$OS_MAJOR_VERSION"
+
+                if [ "\$OS_MAJOR_VERSION" -lt 2 ]; then
+                    echo "Using JAVA 11"
+                    export JAVA_HOME=\$JAVA11_HOME
+                else
+                    echo "Using JAVA 17"
+                    export JAVA_HOME=\$JAVA17_HOME
+                fi
+
+                env | grep JAVA | grep HOME
+
+                echo "Gradle clean cache and stop existing gradledaemon"
                 ./gradlew --stop
-                find ~/.gradle -type f -name "*.lock" -delete
+                rm -rf ~/.gradle
 
                 echo "Check existing dockercontainer"
                 docker ps -a
@@ -43,9 +57,15 @@ void call(Map args = [:]) {
                 echo "Check docker-compose version"
                 docker-compose version
 
+                echo "Check existing processes"
+                ps -ef | grep [o]pensearch | wc -l
+                echo "Cleanup existing processes"
+                kill -9 `ps -ef | grep [o]pensearch | awk '{print \$2}'` > /dev/null 2>&1 || echo
+                ps -ef | grep [o]pensearch | wc -l
+
                 echo "Start gradlecheck"
                 GRADLE_CHECK_STATUS=0
-                ./gradlew check -Dtests.coverage=true --no-daemon --no-scan || GRADLE_CHECK_STATUS=1
+                ./gradlew clean && ./gradlew check -Dtests.coverage=true --no-daemon --no-scan || GRADLE_CHECK_STATUS=1
 
                 if [ "\$GRADLE_CHECK_STATUS" != 0 ]; then
                     echo Gradle Check Failed!

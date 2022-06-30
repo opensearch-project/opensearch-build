@@ -15,15 +15,17 @@ SignArtifacts signs the given artifacts and saves the signature in the same dire
 @param Map[platform] <Required> - The distribution platform for signing.
 */
 void call(Map args = [:]) {
-
     if (args.sigtype.equals('.rpm')) {
-        echo "RPM Add Sign"
+        withCredentials([string(credentialsId: 'jenkins-rpm-signing-props', variable: 'configs')]) {
+                def props = readJSON(text: configs)
+                def signingAccount = props['account']
+                def signingPassphraseSecretsArn = props['passphrase_secrets_arn']
+                def signingSecretKeyIdSecretsArn = props['secret_key_id_secrets_arn']
+                def signingKeyId = props['key_id']
 
-        withAWS(role: "${SIGN_ASM_ROLE}", roleAccount: "${SIGN_ASM_ACCOUNT}", duration: 900, roleSessionName: 'jenkins-signing-session') {
-            withCredentials([
-                string(credentialsId: 'jenkins-rpm-signing-asm-pass-id', variable: 'SIGNING_PASS_ID'),
-                string(credentialsId: 'jenkins-rpm-signing-asm-secret-id', variable: 'SIGNING_SECRET_ID')])
-                {
+            echo 'RPM Add Sign'
+
+            withAWS(role: 'jenki-jenki-asm-assume-role', roleAccount: "${signingAccount}", duration: 900, roleSessionName: 'jenkins-signing-session') {
                     sh """
                         set -e
                         set +x
@@ -61,8 +63,8 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Import OpenSearch keys"
-                        aws secretsmanager get-secret-value --region "${SIGN_ASM_REGION}" --secret-id "${SIGNING_PASS_ID}" | jq -r .SecretBinary | base64 --decode > passphrase
-                        aws secretsmanager get-secret-value --region "${SIGN_ASM_REGION}" --secret-id "${SIGNING_SECRET_ID}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingPassphraseSecretsArn}" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingSecretKeyIdSecretsArn}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
 
                         echo "------------------------------------------------------------------------"
                         echo "Start Signing Rpm"
@@ -89,13 +91,12 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Clean up gpg"
-                        gpg --batch --yes --delete-secret-keys $SIGN_ASM_KEYID
-                        gpg --batch --yes --delete-keys $SIGN_ASM_KEYID
+                        gpg --batch --yes --delete-secret-keys ${signingKeyId}
+                        gpg --batch --yes --delete-keys ${signingKeyId}
                         rm -v passphrase
 
                     """
-
-                }
+            }
         }
     }
     else {
@@ -132,22 +133,19 @@ void call(Map args = [:]) {
        
                    $WORKSPACE/sign.sh ${arguments}
                """
-
         }
     }
 }
 
 String generateArguments(args) {
-    String artifactPath = args.remove("artifactPath")
+    String artifactPath = args.remove('artifactPath')
     // artifactPath is mandatory and the first argument
     String arguments = artifactPath
     // generation command line arguments
-    args.each{key, value -> arguments += " --${key}=${value}"}
+    args.each { key, value -> arguments += " --${key }=${value }"}
     return arguments
 }
 
-void importPGPKey(){
-
-    sh "curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -"
-
+void importPGPKey() {
+    sh 'curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -'
 }
