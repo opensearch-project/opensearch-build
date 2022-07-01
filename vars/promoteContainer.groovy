@@ -28,57 +28,75 @@ void call(Map args = [:]) {
     //Promoting docker images
     if (dockerPromote.toBoolean()) {
         println("Promoting $imageProduct to production docker hub with with $version tag.")
-        copyContainer(
-                sourceImage: "$imageProduct:$sourceTag",
-                sourceRegistry: sourceReg,
-                destinationImage: "$imageProduct:$version",
-                destinationRegistry: dockerProduction
-        )
+        dockerCopy: {
+            build job: 'fake-docker-copy',
+                parameters: [
+                    string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                    string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                    string(name: 'DESTINATION_IMAGE_REGISTRY', value: dockerProduction),
+                    string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:${version}")
+                ]
+        }
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production docker hub with with $majorVersion tag.")
-            copyContainer(
-                    sourceImage: "$imageProduct:$sourceTag",
-                    sourceRegistry: sourceReg,
-                    destinationImage: "$imageProduct:$majorVersion",
-                    destinationRegistry: dockerProduction
-            )
+            dockerCopy: {
+                build job: 'fake-docker-copy',
+                    parameters: [
+                        string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                        string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: dockerProduction),
+                        string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:${majorVersion}")
+                    ]
+            }
         }
         if (latestBoolean.toBoolean()) {
             println("Promoting to production docker hub with with latest tag.")
-            copyContainer(
-                    sourceImage: "$imageProduct:$sourceTag",
-                    sourceRegistry: sourceReg,
-                    destinationImage: "$imageProduct:latest",
-                    destinationRegistry: dockerProduction
-            )
+            dockerCopy: {
+                build job: 'fake-docker-copy',
+                    parameters: [
+                        string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                        string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: dockerProduction),
+                        string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:latest")
+                    ]
+            }
         }
     }
     //Promoting image to ECR
     if (ecrPromote.toBoolean()) {
         println("Promoting to production ECR with with $version tag.")
-        copyContainer(
-                sourceImage: "$imageProduct:$sourceTag",
-                sourceRegistry: sourceReg,
-                destinationImage: "$imageProduct:$version",
-                destinationRegistry: ecrProduction
-        )
+        dockerCopy: {
+            build job: 'fake-docker-copy',
+                parameters: [
+                    string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                    string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                    string(name: 'DESTINATION_IMAGE_REGISTRY', value: ecrProduction),
+                    string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:${version}")
+                ]
+        }
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production ECR with with $majorVersion tag.")
-            copyContainer(
-                    sourceImage: "$imageProduct:$sourceTag",
-                    sourceRegistry: sourceReg,
-                    destinationImage: "$imageProduct:$majorVersion",
-                    destinationRegistry: ecrProduction
-            )
+            dockerCopy: {
+                build job: 'fake-docker-copy',
+                    parameters: [
+                        string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                        string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: ecrProduction),
+                        string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:${majorVersion}")
+                    ]
+            }
         }
         if (latestBoolean.toBoolean()) {
             println("Promoting to production ECR with with latest tag.")
-            copyContainer(
-                    sourceImage: "$imageProduct:$sourceTag",
-                    sourceRegistry: sourceReg,
-                    destinationImage: "$imageProduct:latest",
-                    destinationRegistry: ecrProduction
-            )
+            dockerCopy: {
+                build job: 'fake-docker-copy',
+                    parameters: [
+                        string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
+                        string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
+                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: ecrProduction),
+                        string(name: 'DESTINATION_IMAGE', value: "${imageProduct}:latest")
+                    ]
+            }
         }
     }
 }

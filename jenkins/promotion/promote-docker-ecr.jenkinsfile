@@ -13,8 +13,8 @@ pipeline {
 }
     parameters {
         string(
-            name: 'PROMOTE_PRODUCT',
-            description: 'Comma separated list of product with its image tag that we want to promote from staging to production. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper1.5.0-19.',
+            name: 'SOURCE_IMAGES',
+            description: 'Comma separated list of product with its image tag that we want to promote from staging to production. E.g.: opensearch:2.0.1.3910, opensearch-dashboards:2.0.1, data-prepper:1.5.0-19.',
             trim: true
         )
         string(
@@ -25,12 +25,12 @@ pipeline {
         booleanParam(
             name: 'DOCKER_HUB_PROMOTE',
             defaultValue: true,
-            description: 'Promote the staging images to Docker Hub with the tag choices.'
+            description: 'Promote SOURCE_IMAGES to `opensearchproject` production Docker Hub.'
         )
         booleanParam(
             name: 'ECR_PROMOTE',
             defaultValue: true,
-            description: 'Promote the staging images to ECR with the tag choices.'
+            description: 'Promote SOURCE_IMAGES to `gallery.ecr.aws/opensearchproject` production ECR repository.'
         )
         booleanParam(
             name: 'TAG_LATEST',
@@ -40,7 +40,7 @@ pipeline {
         booleanParam(
             name: 'TAG_MAJOR_VERSION',
             defaultValue: true,
-            description: 'Tag the copied image to be on the latest image for any build within its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
+            description: 'Tag the copied image with its major version. E.g.: 1.3.2 image will be tagged with 1 in the hub.'
         )
     }
 
@@ -48,10 +48,10 @@ pipeline {
         stage('Parameters Check') {
             steps {
                 script {
-                    currentBuild.description = "Promoting ${PROMOTE_PRODUCT} to production hub."
-                    if(PROMOTE_PRODUCT.isEmpty()) {
+                    currentBuild.description = "Promoting ${SOURCE_IMAGES} to production hub."
+                    if(SOURCE_IMAGES.isEmpty() || RELEASE_VERSION.isEmpty()) {
                         currentBuild.result = 'ABORTED'
-                        error('Make sure at lease one product is added to be promoted.')
+                        error('Make sure at lease one product is added to be promoted with proper release version.')
                     }
                 }
             }
@@ -59,7 +59,7 @@ pipeline {
         stage('image-promote-to-prod') {
             steps {
                 script {
-                    for (product in PROMOTE_PRODUCT.split(',')) {
+                    for (product in SOURCE_IMAGES.split(',')) {
                         def productRepo = product.trim()
                         println("Promoting \"$productRepo\" from staging to production.")
                         promoteContainer(
