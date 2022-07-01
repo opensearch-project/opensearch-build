@@ -9,7 +9,7 @@ class TestPromoteContainer extends BuildPipelineTest {
 
     @Before
     void setUp() {
-        binding.setVariable('PROMOTE_PRODUCT', PROMOTE_PRODUCT)
+        binding.setVariable('SOURCE_IMAGES', PROMOTE_PRODUCT)
         binding.setVariable('RELEASE_VERSION', RELEASE_VERSION)
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')

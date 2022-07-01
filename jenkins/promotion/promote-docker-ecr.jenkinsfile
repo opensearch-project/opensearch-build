@@ -19,7 +19,7 @@ pipeline {
         )
         string(
             name: 'RELEASE_VERSION',
-            description: 'Official release version on production repository. E.g.: 2.0.1, 1.5.0.',
+            description: 'Official release version on production repository. This is uniform for all source images. E.g.: 2.0.1, 1.5.0.',
             trim: true
         )
         booleanParam(

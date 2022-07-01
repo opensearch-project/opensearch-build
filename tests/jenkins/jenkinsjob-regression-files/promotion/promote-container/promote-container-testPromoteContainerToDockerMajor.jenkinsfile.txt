@@ -9,56 +9,38 @@
          promote-docker-ecr.stage(image-promote-to-prod, groovy.lang.Closure)
             promote-docker-ecr.script(groovy.lang.Closure)
                promote-docker-ecr.promoteContainer({imageRepository=opensearch:2.0.1.2901, version=2.0.1, dockerPromote=true, ecrPromote=false, latestTag=false, majorVersionTag=true})
-                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1.2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2.0.1, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp opensearchstaging/opensearch:2.0.1.2901 opensearchproject/opensearch:2.0.1
-                docker logout
-            )
-                  promoteContainer.copyContainer({sourceImage=opensearch:2.0.1.2901, sourceRegistry=opensearchstaging, destinationImage=opensearch:2, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp opensearchstaging/opensearch:2.0.1.2901 opensearchproject/opensearch:2
-                docker logout
-            )
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=opensearchstaging})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=opensearch:2.0.1.2901})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=opensearch:2.0.1})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=opensearchstaging})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=opensearch:2.0.1.2901})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=opensearch:2})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
                promote-docker-ecr.promoteContainer({imageRepository=opensearch-dashboards:2.0.1-2345, version=2.0.1, dockerPromote=true, ecrPromote=false, latestTag=false, majorVersionTag=true})
-                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2.0.1, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 opensearchproject/opensearch-dashboards:2.0.1
-                docker logout
-            )
-                  promoteContainer.copyContainer({sourceImage=opensearch-dashboards:2.0.1-2345, sourceRegistry=opensearchstaging, destinationImage=opensearch-dashboards:2, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp opensearchstaging/opensearch-dashboards:2.0.1-2345 opensearchproject/opensearch-dashboards:2
-                docker logout
-            )
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=opensearchstaging})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=opensearch-dashboards:2.0.1-2345})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=opensearch-dashboards:2.0.1})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=opensearchstaging})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=opensearch-dashboards:2.0.1-2345})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=opensearch-dashboards:2})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
                promote-docker-ecr.promoteContainer({imageRepository=data-prepper:2.0.1.123, version=2.0.1, dockerPromote=true, ecrPromote=false, latestTag=false, majorVersionTag=true})
-                  promoteContainer.copyContainer({sourceImage=data-prepper:2.0.1.123, sourceRegistry=dummy_dataprepper_ecr_url, destinationImage=data-prepper:2.0.1, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp dummy_dataprepper_ecr_url/data-prepper:2.0.1.123 opensearchproject/data-prepper:2.0.1
-                docker logout
-            )
-                  promoteContainer.copyContainer({sourceImage=data-prepper:2.0.1.123, sourceRegistry=dummy_dataprepper_ecr_url, destinationImage=data-prepper:2, destinationRegistry=opensearchproject})
-                     copyContainer.usernamePassword({credentialsId=jenkins-production-dockerhub-credential, usernameVariable=DOCKER_USERNAME, passwordVariable=DOCKER_PASSWORD})
-                     copyContainer.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
-                        copyContainer.sh({returnStdout=true, script=echo DOCKER_PASSWORD | docker login --username DOCKER_USERNAME --password-stdin})
-                        copyContainer.sh(
-                gcrane cp dummy_dataprepper_ecr_url/data-prepper:2.0.1.123 opensearchproject/data-prepper:2
-                docker logout
-            )
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=dummy_dataprepper_ecr_url})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=data-prepper:2.0.1.123})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=data-prepper:2.0.1})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
+                  promoteContainer.string({name=SOURCE_IMAGE_REGISTRY, value=dummy_dataprepper_ecr_url})
+                  promoteContainer.string({name=SOURCE_IMAGE, value=data-prepper:2.0.1.123})
+                  promoteContainer.string({name=DESTINATION_IMAGE_REGISTRY, value=opensearchproject})
+                  promoteContainer.string({name=DESTINATION_IMAGE, value=data-prepper:2})
+                  promoteContainer.build({job=docker-copy, parameters=[null, null, null, null]})
          promote-docker-ecr.script(groovy.lang.Closure)
             promote-docker-ecr.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

@@ -29,7 +29,7 @@ void call(Map args = [:]) {
     if (dockerPromote.toBoolean()) {
         println("Promoting $imageProduct to production docker hub with with $version tag.")
         dockerCopy: {
-            build job: 'fake-docker-copy',
+            build job: 'docker-copy',
                 parameters: [
                     string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                     string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
@@ -40,7 +40,7 @@ void call(Map args = [:]) {
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production docker hub with with $majorVersion tag.")
             dockerCopy: {
-                build job: 'fake-docker-copy',
+                build job: 'docker-copy',
                     parameters: [
                         string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                         string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
@@ -52,7 +52,7 @@ void call(Map args = [:]) {
         if (latestBoolean.toBoolean()) {
             println("Promoting to production docker hub with with latest tag.")
             dockerCopy: {
-                build job: 'fake-docker-copy',
+                build job: 'docker-copy',
                     parameters: [
                         string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                         string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
@@ -66,7 +66,7 @@ void call(Map args = [:]) {
     if (ecrPromote.toBoolean()) {
         println("Promoting to production ECR with with $version tag.")
         dockerCopy: {
-            build job: 'fake-docker-copy',
+            build job: 'docker-copy',
                 parameters: [
                     string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                     string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
@@ -77,7 +77,7 @@ void call(Map args = [:]) {
         if (majorVersionBoolean.toBoolean()) {
             println("Promoting to production ECR with with $majorVersion tag.")
             dockerCopy: {
-                build job: 'fake-docker-copy',
+                build job: 'docker-copy',
                     parameters: [
                         string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                         string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
@@ -89,7 +89,7 @@ void call(Map args = [:]) {
         if (latestBoolean.toBoolean()) {
             println("Promoting to production ECR with with latest tag.")
             dockerCopy: {
-                build job: 'fake-docker-copy',
+                build job: 'docker-copy',
                     parameters: [
                         string(name: 'SOURCE_IMAGE_REGISTRY', value: sourceReg),
                         string(name: 'SOURCE_IMAGE', value: "${imageProduct}:${sourceTag}"),
