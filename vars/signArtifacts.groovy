@@ -100,9 +100,9 @@ void call(Map args = [:]) {
         }
     }
     else {
-        echo 'PGP Signature Signing'
+        echo "PGP or Windows Signature Signing"
 
-        if ( !fileExists("$WORKSPACE/sign.sh")) {
+        if (!fileExists("$WORKSPACE/sign.sh")) {
             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
         }
 
@@ -111,24 +111,28 @@ void call(Map args = [:]) {
         String arguments = generateArguments(args)
 
         // Sign artifacts
+        def configSecret = args.platform == "windows" ? "signer-windows-config" : "signer-pgp-config"
         withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
-        string(credentialsId: 'jenkins-signer-client-creds', variable: 'signer_client_creds')]) {
-                def creds = readJSON(text: signer_client_creds)
-                def signerClientRole = creds['role']
-                def signerClientExternalId = creds['external_id']
-                def signerClientUnsignedBucket = creds['unsigned_bucket']
-                def signerClientSignedBucket = creds['signed_bucket']
-
+                        string(credentialsId: configSecret, variable: 'configs')]) {
+            def creds = readJSON(text: configs)
+            def ROLE = creds['role']
+            def EXTERNAL_ID = creds['external_id']
+            def UNSIGNED_BUCKET = creds['unsigned_bucket']
+            def SIGNED_BUCKET = creds['signed_bucket']
+            def PROFILE_IDENTIFIER = creds['profile_identifier']
+            def PLATFORM_IDENTIFIER = creds['platform_identifier']
             sh """
-                #!/bin/bash
-                set +x
-                export ROLE=${signerClientRole}
-                export EXTERNAL_ID=${signerClientExternalId}
-                export UNSIGNED_BUCKET=${signerClientUnsignedBucket}
-                export SIGNED_BUCKET=${signerClientSignedBucket}
-
-                $WORKSPACE/sign.sh ${arguments}
-            """
+                   #!/bin/bash
+                   set +x
+                   export ROLE=$ROLE
+                   export EXTERNAL_ID=$EXTERNAL_ID
+                   export UNSIGNED_BUCKET=$UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=$SIGNED_BUCKET
+                   export PROFILE_IDENTIFIER=$PROFILE_IDENTIFIER
+                   export PLATFORM_IDENTIFIER=$PLATFORM_IDENTIFIER
+       
+                   $WORKSPACE/sign.sh ${arguments}
+               """
         }
     }
 }
@@ -145,4 +149,3 @@ String generateArguments(args) {
 void importPGPKey() {
     sh 'curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -'
 }
-
