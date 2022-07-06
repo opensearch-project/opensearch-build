@@ -65,7 +65,7 @@ components:
     ref: '2.1'
     checks:
       - gradle:properties:version
-      - gradle:dependencies:opensearch.version: plugin
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability
     ref: '2.1'
