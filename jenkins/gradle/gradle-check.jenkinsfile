@@ -18,7 +18,9 @@ pipeline {
     agent {
         node {
             // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
-            label 'Jenkins-Agent-Ubuntu2004-X64-c518xlarge-Single-Host'
+            // The c524xlarge is the instance type that has the least amount of errors during gradle check
+            // https://github.com/opensearch-project/OpenSearch/issues/1975
+            label 'Jenkins-Agent-Ubuntu2004-X64-c524xlarge-Single-Host'
         }
     }
     parameters {
