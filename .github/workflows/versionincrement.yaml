@@ -62,7 +62,7 @@ jobs:
           branch: create-pull-request/${{ env.OPENSEARCH_VERSION }}
           title: '[AUTO] Version Increment to ${{ env.OPENSEARCH_VERSION }}'
           body: |
-            - Version Increment from **${{ env.OPENSEARCH_EXISTING_VERSION }}** to **${{ env.OPENSEARCH_VERSION }}**.
+            - Version Increment for **${{ matrix.repo }}** plugin to **${{ env.OPENSEARCH_VERSION }}**.
       - name: Check outputs
         run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
