@@ -48,7 +48,7 @@ jobs:
       - name: Version Increment plugin repo
         run: |
           echo "OpenSearch Core repo version on branch ${{ matrix.branch.opensearch_branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
-          ./gradlew setVersion -PnewVersion=${{ env.OPENSEARCH_VERSION }}
+          ./gradlew versionIncrement -PnewVersion=${{ env.OPENSEARCH_VERSION }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
