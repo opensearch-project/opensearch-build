@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
-      JDK_VERSION: 17
+      JDK_VERSION: 14
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
