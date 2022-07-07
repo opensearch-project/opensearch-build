@@ -53,9 +53,10 @@ pipeline {
         )
     }
     environment {
-        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
-        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
         JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-8"
+        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
+        JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-14"
+        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
@@ -76,6 +77,15 @@ pipeline {
             steps {
                 echo "Install jdk-11"
                 sh("ls ${JAVA11_HOME}/.. | grep jdk-11")
+            }
+        }
+        stage('Install jdk-14') {
+           tools {
+               jdk 'jdk-14'
+           }
+            steps {
+                echo "Install jdk-14"
+                sh("ls ${JAVA14_HOME}/.. | grep jdk-14")
             }
         }
         stage('Install jdk-17') {
