@@ -2,6 +2,12 @@
 
 ## Release Highlights
 
+
+* You can now configure nodes with [dynamic nodes roles](https://github.com/opensearch-project/OpenSearch/pull/3436), which allows for custom node roles that won't affect node start processes.
+* The [ML node role](https://github.com/opensearch-project/ml-commons/pull/346) can be configured for ML functions and tasks.
+* SQL and PPL queries now supports [relevance-based search](https://github.com/opensearch-project/sql/issues/182).
+* OpenSearch now supports [multi-term aggregation](https://github.com/opensearch-project/OpenSearch/pull/2687).
+
 ## Release Details
 
 OpenSearch and OpenSearch Dashboards 2.1.0 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
