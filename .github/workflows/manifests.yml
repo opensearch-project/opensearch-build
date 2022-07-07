@@ -1,13 +1,26 @@
 ---
 name: manifests
 
+#on:
+#  push:
+#  pull_request:
+#    paths:
+#      - manifests/**/*.yml
+#  schedule:
+#    - cron: 0 0 * * *
+
 on:
-  push:
-  pull_request:
-    paths:
-      - manifests/**/*.yml
-  schedule:
-    - cron: 0 0 * * *
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Log level
+        required: true
+        default: warning
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
 
 jobs:
 
@@ -25,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
-      JDK_VERSION: 14
+      JDK_VERSION: 17
     strategy:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
