@@ -126,6 +126,7 @@ pipeline {
             post() {
                 always {
                     sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    junit 'build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
                     script {
                         sh("rm -rf *")
