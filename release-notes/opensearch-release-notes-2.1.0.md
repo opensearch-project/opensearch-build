@@ -13,7 +13,7 @@
 
 OpenSearch and OpenSearch Dashboards 2.1.0 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
-OpenSearch Release Notes _coming soon_.
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.1.0.md).
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.1.0.md).
 
