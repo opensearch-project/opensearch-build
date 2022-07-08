@@ -9,6 +9,13 @@ pipeline {
         string(name: 'VERSION', description: 'The version of Data Prepper', trim: true)
         string(name: 'DATA_PREPPER_BUILD_NUMBER', description: 'The build number of the Data Prepper build from GitHub to release.', trim: true)
     }
+    environment {
+        DATA_PREPPER_ARTIFACT_STAGING_SITE = credentials('jenkins-data-prepper-artifact-staging-site')
+        DATA_PREPPER_STAGING_CONTAINER_REPOSITORY = credentials('jenkins-data-prepper-staging-container-repository')
+        ARTIFACT_PROMOTION_ROLE_NAME = credentials('jenkins-artifact-promotion-role')
+        AWS_ACCOUNT_ARTIFACT = credentials('jenkins-aws-production-account')
+        ARTIFACT_PRODUCTION_BUCKET_NAME = credentials('jenkins-artifact-production-bucket-name')
+    }
     stages {
         stage('Promote Archives') {
             agent {
@@ -49,7 +56,7 @@ pipeline {
                         script {
                             withAWS(role: "${ARTIFACT_PROMOTION_ROLE_NAME}", roleAccount: "${AWS_ACCOUNT_ARTIFACT}", duration: 900, roleSessionName: 'jenkins-session') {
                                 s3Upload(file: 'archive/', bucket: "${ARTIFACT_PRODUCTION_BUCKET_NAME}", path: "data-prepper/${VERSION}/")
-                            }
+                                }
                         }
                     }
                 }
@@ -128,7 +135,7 @@ pipeline {
                             checksums = ["", ".md5", ".sha1", ".sha256", ".sha512"]
 
                             downloadArtifacts()
-                        }
+                            }
                     }
                 }
                 stage('Sign Maven Artifacts') {
