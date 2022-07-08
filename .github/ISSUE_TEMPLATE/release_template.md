@@ -82,6 +82,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 - [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/release-tag/release-tag.jenkinsfile) for each component (Jenkins job name: release-tag-creation).
 - [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
+- [ ] If this is a major or minor version release, stop previous version's patch release.
 - [ ] Generate distribution release notes reviewed by PM team for opensearch-build repository.
 - [ ] Increment version for Helm Charts [(sample PR)](https://github.com/opensearch-project/helm-charts/pull/246) for the `{{ env.VERSION }}` release.
 - [ ] Increment version for Ansible Charts [(sample PR)](https://github.com/opensearch-project/ansible-playbook/pull/50) for the `{{ env.VERSION }}` release.
