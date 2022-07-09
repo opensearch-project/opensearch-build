@@ -2,6 +2,7 @@
       docker-copy.legacySCM(groovy.lang.Closure)
       docker-copy.library({identifier=jenkins@20211123, retriever=null})
       docker-copy.pipeline(groovy.lang.Closure)
+         docker-copy.credentials(jenkins-data-prepper-staging-container-repository)
          docker-copy.timeout({time=30})
          docker-copy.echo(Executing on agent [label:none])
          docker-copy.stage(Parameters Check, groovy.lang.Closure)
