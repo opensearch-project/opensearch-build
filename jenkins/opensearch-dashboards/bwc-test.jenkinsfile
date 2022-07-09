@@ -120,7 +120,7 @@ pipeline {
                         icon: ':white_check_mark:',
                         message: 'BWC Tests Successful',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
 
@@ -136,7 +136,7 @@ pipeline {
                         icon: ':warning:',
                         message: 'Failed BWC Tests',
                         extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                        credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
 
