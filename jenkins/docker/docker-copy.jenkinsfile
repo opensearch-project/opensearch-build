@@ -4,13 +4,10 @@ pipeline {
     options {
         timeout(time: 30)
     }
-    agent none
-    environment {
-        DATA_PREPPER_STAGING_CONTAINER_REPOSITORY = credentials('jenkins-data-prepper-staging-container-repository')
-    }
+    agent none  
     parameters {
         choice(
-            name: 'SOURCE_IMAGE_REGISTRY',
+            name: 'SOURCE_IMAGE_REGISTRY', 
             choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject', "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"],
             description: 'Choose the source image registry'
         )
@@ -20,7 +17,7 @@ pipeline {
             trim: true
         )
         choice(
-            name: 'DESTINATION_IMAGE_REGISTRY',
+            name: 'DESTINATION_IMAGE_REGISTRY', 
             choices: ['opensearchstaging', 'public.ecr.aws/opensearchstaging', 'opensearchproject', 'public.ecr.aws/opensearchproject'],
             description: 'Choose the destination image registry'
         )
@@ -31,7 +28,7 @@ pipeline {
         )
     }
     stages {
-        stage('Image Copy') {
+        stage("Image Copy") {
             agent {
                     docker {
                         label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
@@ -63,7 +60,7 @@ pipeline {
                         }
                     }
                 }
-            }
+            }  
             post() {
                 always {
                     script {
@@ -71,7 +68,7 @@ pipeline {
                         sh "docker logout ${DESTINATION_IMAGE_REGISTRY} && docker image prune -f --all"
                     }
                 }
-            }
+            }     
         }
     }
 }
