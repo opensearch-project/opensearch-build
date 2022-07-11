@@ -101,7 +101,7 @@ pipeline {
                     publishNotification(
                         icon: ':warning:',
                         message: 'Failed checking for build to trigger',
-                        credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                        credentialsId: 'jenkins-build-notice-webhook',
                         manifest: "${INPUT_MANIFEST}",
                         target_job_name: "${TARGET_JOB_NAME}"
                     )

@@ -518,7 +518,7 @@ pipeline {
                             icon: ':white_check_mark:',
                             message: 'Successful Build',
                             extra: stashed,
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            credentialsId: 'jenkins-build-notice-webhook',
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
@@ -534,7 +534,7 @@ pipeline {
                         publishNotification(
                             icon: ':warning:',
                             message: 'Failed Build',
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK',
+                            credentialsId: 'jenkins-build-notice-webhook',
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }

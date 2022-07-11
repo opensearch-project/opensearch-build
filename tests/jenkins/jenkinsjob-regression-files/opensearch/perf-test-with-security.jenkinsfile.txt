@@ -154,8 +154,8 @@ Performance tests without security for 1236 completed})
                   perf-test.findFiles({excludes=, glob=messages/*})
                   perf-test.dir(messages, groovy.lang.Closure)
                      perf-test.deleteDir()
-               perf-test.publishNotification({icon=:white_check_mark:, message=Performance Tests Successful, extra=, credentialsId=INTEG_TEST_WEBHOOK})
-                  publishNotification.string({credentialsId=INTEG_TEST_WEBHOOK, variable=WEBHOOK_URL})
+               perf-test.publishNotification({icon=:white_check_mark:, message=Performance Tests Successful, extra=, credentialsId=jenkins-integ-test-webhook})
+                  publishNotification.string({credentialsId=jenkins-integ-test-webhook, variable=WEBHOOK_URL})
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=perf-test

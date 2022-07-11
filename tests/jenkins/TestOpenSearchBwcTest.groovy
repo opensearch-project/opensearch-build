@@ -29,7 +29,7 @@ class TestOpenSearchBwcTest extends BuildPipelineTest {
                 'BWC Tests Successful',
                 '',
                 testManifest,
-                'INTEG_TEST_WEBHOOK'))
+                'jenkins-integ-test-webhook'))
         super.setUp()
 
         // Variables
