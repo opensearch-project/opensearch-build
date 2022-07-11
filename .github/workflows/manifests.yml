@@ -10,14 +10,14 @@ on:
     - cron: 0 0 * * *
 
 jobs:
-  list-manifests14:
+  list-manifests11:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<3)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
 
   list-manifests17:
     runs-on: ubuntu-latest
@@ -26,17 +26,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>3)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
 
-  manifest-checks-jdk14:
-    needs: list-manifests14
+  manifest-checks-jdk11:
+    needs: list-manifests11
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.7
-      JDK_VERSION: 14
+      JDK_VERSION: 11
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-manifests14.outputs.matrix) }}
+        manifest: ${{ fromJson(needs.list-manifests11.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
