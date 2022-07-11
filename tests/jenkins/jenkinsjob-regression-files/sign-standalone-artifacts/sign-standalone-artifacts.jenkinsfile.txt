@@ -2,6 +2,7 @@
       sign-standalone-artifacts.legacySCM(groovy.lang.Closure)
       sign-standalone-artifacts.library({identifier=jenkins@20211123, retriever=null})
       sign-standalone-artifacts.pipeline(groovy.lang.Closure)
+         sign-standalone-artifacts.credentials(jenkins-artifact-bucket-name)
          sign-standalone-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          sign-standalone-artifacts.stage(sign, groovy.lang.Closure)
             sign-standalone-artifacts.script(groovy.lang.Closure)

@@ -2,6 +2,7 @@
       maven-sign-release.legacySCM(groovy.lang.Closure)
       maven-sign-release.library({identifier=jenkins@20211123, retriever=null})
       maven-sign-release.pipeline(groovy.lang.Closure)
+         maven-sign-release.credentials(jenkins-artifact-bucket-name)
          maven-sign-release.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
          maven-sign-release.stage(sign, groovy.lang.Closure)
             maven-sign-release.script(groovy.lang.Closure)
