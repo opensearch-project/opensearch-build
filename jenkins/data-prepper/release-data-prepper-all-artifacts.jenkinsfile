@@ -135,7 +135,7 @@ pipeline {
                             checksums = ["", ".md5", ".sha1", ".sha256", ".sha512"]
 
                             downloadArtifacts()
-                            }
+                        }
                     }
                 }
                 stage('Sign Maven Artifacts') {
