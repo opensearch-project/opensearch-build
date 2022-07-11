@@ -94,7 +94,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 __Replace with links to all component tracking issues.__
 
-| Component | On track | Notes |
+| Component | On track | Release Notes |
 | --------- | -------- | ----- |
 | {COMPONENT_ISSUE_LINK} | {INDICATOR}} | {STATUS} |
 
