@@ -41,3 +41,38 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: '1.3'
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability
+    ref: '1.3'
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
