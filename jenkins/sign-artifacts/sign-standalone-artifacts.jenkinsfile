@@ -30,6 +30,9 @@ pipeline {
                 description: 'What is signature file type? Required only for linux signing.'
         )
     }
+    environment {
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+    }
     stages {
         stage('sign') {
             steps {
