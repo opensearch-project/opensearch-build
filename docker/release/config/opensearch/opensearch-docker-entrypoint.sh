@@ -8,6 +8,29 @@
 # If either process failed, the entire docker container will be removed
 # in favor of a newly started container
 
+function usage() {
+  echo ""
+  echo "This script serves as docker entrypoint and gets executed when a new container is created."
+  echo "--------------------------------------------------------------------------"
+  echo "Usage: $0 [args]"
+  echo "Optional arguments:"
+  echo -e "-h\t\tPrint this message."
+  echo "--------------------------------------------------------------------------"
+}
+
+while getopts ":h" option; do
+  case $option in
+  h)
+    usage
+    exit 1
+    ;;
+  \?)
+    echo "Invalid option -$OPTARG" >&2
+    usage
+    ;;
+  esac
+done
+
 # Export OpenSearch Home
 export OPENSEARCH_HOME=/usr/share/opensearch
 export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
@@ -35,11 +58,12 @@ function setupSecurityPlugin {
     SECURITY_PLUGIN="opensearch-security"
 
     if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-        if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+        if [ "$DISABLE_INSTALL_DEMO_CONFIG" == "true" ]; then
             echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
         else
-            echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+            echo -e "Executing install_demo_configuration.sh to install self-signed certificates and related settings for OpenSearch security plugin..."
             bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
+            echo "install_demo_configuration.sh exited with code $?"
         fi
 
         if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
