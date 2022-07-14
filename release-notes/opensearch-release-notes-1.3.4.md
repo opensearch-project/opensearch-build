@@ -14,9 +14,3 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Dashboards Reports
 * [1.3] Move HTML sanitization from client to server side (#382) ([#386](https://github.com/opensearch-project/dashboards-reports/pull/386))
 
-
-## MAINTENANCE
-
-### OpenSearch Dashboards Reports
-* Incremented version to 1.3.4. ([#389](https://github.com/opensearch-project/dashboards-reports/pull/389))
-
