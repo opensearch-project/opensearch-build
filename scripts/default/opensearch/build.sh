@@ -78,14 +78,7 @@ echo "COPY ${distributions}/*.zip"
 mkdir -p $OUTPUT/plugins
 cp ${distributions}/*.zip ./$OUTPUT/plugins
 
-#This is to check if a component has a plugin opensearch.zippublish applied and run publishMavenzipPublicationToZipstagingRepository.
-MAVEN_ZIP_PUBLISH_TASK="publishPluginZipPublicationToZipStagingRepository"
-if ./gradlew tasks -Dopensearch.version=$VERSION --all | grep -qw "^$MAVEN_ZIP_PUBLISH_TASK"
-then
-   ./gradlew publishPluginZipPublicationToZipStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
-    echo "Copying the Maven plugin Zips"
-    mkdir -p $OUTPUT/maven/org/opensearch/plugin
-    cp -r ./build/local-staging-repo/org/opensearch/plugin/. $OUTPUT/maven/org/opensearch/plugin
-else
-    echo "Not running publishMavenzipPublicationToZipstagingRepository"
-fi
+# Execute publishMavenzipPublicationToZipstagingRepository. task to publish plugin zips to local maven repo
+./gradlew publishPluginZipPublicationToZipStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+mkdir -p $OUTPUT/maven/org/opensearch
+cp -r ./build/local-staging-repo/org/opensearch/. $OUTPUT/maven/org/opensearch
