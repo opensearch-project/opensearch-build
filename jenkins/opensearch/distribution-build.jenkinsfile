@@ -91,7 +91,7 @@ pipeline {
                             String mavenPath = "$WORKSPACE/tar/builds/opensearch/maven"
 
                             if (fileExists(mavenPath)) {
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-sonatype-creds', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                     sh("$WORKSPACE/publish/publish-snapshot.sh ${mavenPath}")
                                 }
                             } else {
