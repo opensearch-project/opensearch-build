@@ -19,7 +19,7 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
                      signArtifacts.readJSON({text=configs})
                      signArtifacts.sh(

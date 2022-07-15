@@ -111,7 +111,7 @@ void call(Map args = [:]) {
         String arguments = generateArguments(args)
 
         // Sign artifacts
-        def configSecret = args.platform == "windows" ? "signer-windows-config" : "signer-pgp-config"
+        def configSecret = args.platform == "windows" ? "jenkins-signer-windows-config" : "jenkins-signer-client-creds"
         withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
                         string(credentialsId: configSecret, variable: 'configs')]) {
             def creds = readJSON(text: configs)
