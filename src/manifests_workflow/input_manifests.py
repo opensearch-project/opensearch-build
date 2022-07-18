@@ -111,6 +111,12 @@ class InputManifests(Manifests):
             "opensearch-dashboards": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"
         }
 
+        jdk_map = {
+            "1": "-e JAVA_HOME=/opt/java/openjdk-11",
+            "2": "-e JAVA_HOME=/opt/java/openjdk-17",
+            "3": "-e JAVA_HOME=/opt/java/openjdk-17"
+        }
+
         data: Dict = {
             "schema-version": "1.0",
             "build": {
@@ -119,7 +125,8 @@ class InputManifests(Manifests):
             },
             "ci": {
                 "image": {
-                    "name": image_map[self.prefix]
+                    "name": image_map[self.prefix],
+                    "args": jdk_map[version.split(".")[0]]
                 }
             },
             "components": [],
