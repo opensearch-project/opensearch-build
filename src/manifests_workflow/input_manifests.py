@@ -126,7 +126,7 @@ class InputManifests(Manifests):
             "ci": {
                 "image": {
                     "name": image_map[self.prefix],
-                    "args": jdk_map[version.split(".")[0]]
+                    "args": jdk_map.get(version.split(".")[0], jdk_map["3"])
                 }
             },
             "components": [],
