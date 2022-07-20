@@ -6,7 +6,7 @@ pipeline {
         timeout(time: 10, unit: 'HOURS')
     }
     environment {
-        AGENT_LABEL = 'Jenkins-Agent-al2-x64-m52xlarge-Docker-Host-Perf-Test'
+        AGENT_LABEL = 'Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Perf-Test'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-performance-test-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'ccr-perf-test'

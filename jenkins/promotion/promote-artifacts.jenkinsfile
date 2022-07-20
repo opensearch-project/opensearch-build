@@ -38,7 +38,7 @@ pipeline {
         stage('promote artifacts') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
                     alwaysPull true
                 }
