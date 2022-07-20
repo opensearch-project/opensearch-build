@@ -29,7 +29,7 @@
                   signArtifacts.withCredentials([configs], groovy.lang.Closure)
                      signArtifacts.readJSON({text=configs})
                      signArtifacts.echo(RPM Add Sign)
-                     signArtifacts.withAWS({role=jenki-jenki-asm-assume-role, roleAccount=null, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
+                     signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=null, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
                         signArtifacts.sh(
                         set -e
                         set +x
