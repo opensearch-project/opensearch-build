@@ -18,7 +18,7 @@ pipeline {
         stage('detect docker image + args') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
                     alwaysPull true
                 }
@@ -35,7 +35,7 @@ pipeline {
                 stage('build-linux-x64') {
                     agent {
                         docker {
-                            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                            label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -67,7 +67,7 @@ pipeline {
                         stage('build-archive-linux-arm64') {
                             agent {
                                 docker {
-                                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     alwaysPull true
@@ -92,7 +92,7 @@ pipeline {
                         stage('assemble-archive-linux-arm64') {
                             agent {
                                 docker {
-                                    label 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+                                    label 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     alwaysPull true
@@ -124,7 +124,7 @@ pipeline {
         }
         stage('docker build') {
             steps {
-                node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                node('Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host') {
                     script {
                         buildDockerImage(
                             inputManifest: "manifests/${INPUT_MANIFEST}",
@@ -138,7 +138,7 @@ pipeline {
     }
     post {
         success {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+            node('Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host') {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([
                         'build-linux-x64',
@@ -153,7 +153,7 @@ pipeline {
             }
         }
         failure {
-            node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+            node('Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host') {
                 script {
                     echo 'FAILURE'
 

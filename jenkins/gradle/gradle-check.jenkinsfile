@@ -20,7 +20,7 @@ pipeline {
             // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
             // The c524xlarge is the instance type that has the least amount of errors during gradle check
             // https://github.com/opensearch-project/OpenSearch/issues/1975
-            label 'Jenkins-Agent-Ubuntu2004-X64-c524xlarge-Single-Host'
+            label 'Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host'
         }
     }
     parameters {
