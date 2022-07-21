@@ -22,15 +22,15 @@
                   signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                   signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                   signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
-                  signArtifacts.string({credentialsId=jenkins-signer-client-signer-bucket, variable=SIGNER_CLIENT_SIGNER_BUCKET})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNER_BUCKET], groovy.lang.Closure)
+                  signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
                    export ROLE=SIGNER_CLIENT_ROLE
                    export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNER_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
                    /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
                )

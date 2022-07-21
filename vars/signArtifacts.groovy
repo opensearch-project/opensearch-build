@@ -137,14 +137,14 @@ void call(Map args = [:]) {
                 string(credentialsId: 'jenkins-signer-client-role', variable: 'SIGNER_CLIENT_ROLE'),
                 string(credentialsId: 'jenkins-signer-client-external-id', variable: 'SIGNER_CLIENT_EXTERNAL_ID'),
                 string(credentialsId: 'jenkins-signer-client-unsigned-bucket', variable: 'SIGNER_CLIENT_UNSIGNED_BUCKET'),
-                string(credentialsId: 'jenkins-signer-client-signer-bucket', variable: 'SIGNER_CLIENT_SIGNER_BUCKET')]) {
+                string(credentialsId: 'jenkins-signer-client-signed-bucket', variable: 'SIGNER_CLIENT_SIGNED_BUCKET')]) {
                 sh """
                    #!/bin/bash
                    set +x
                    export ROLE=$SIGNER_CLIENT_ROLE
                    export EXTERNAL_ID=$SIGNER_CLIENT_EXTERNAL_ID
                    export UNSIGNED_BUCKET=$SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=$SIGNER_CLIENT_SIGNER_BUCKET
+                   export SIGNED_BUCKET=$SIGNER_CLIENT_SIGNED_BUCKET
 
                    $WORKSPACE/sign.sh ${arguments}
                """
