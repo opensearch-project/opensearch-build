@@ -106,16 +106,15 @@ class InputManifests(Manifests):
                 self.add_to_cron(release_version)
 
     def create_manifest(self, version: str, components: List = []) -> InputManifest:
-        image_map = {
-            "opensearch": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
-            "opensearch-dashboards": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"
-        }
-
-        jdk_map = {
-            "1": "-e JAVA_HOME=/opt/java/openjdk-11",
-            "2": "-e JAVA_HOME=/opt/java/openjdk-17",
-            "3": "-e JAVA_HOME=/opt/java/openjdk-17"
-        }
+        templates_base_path = os.path.join(self.manifests_path(), "templates")
+        template_version_folder = version.split(".")[0] + ".x"
+        template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder,
+                                          "manifest.yml")
+        if os.path.exists(template_full_path):
+            input_manifest_templates = InputManifest.from_file(open(template_full_path))
+        else:
+            input_manifest_templates = InputManifest.from_file(open(os.path.join(templates_base_path, self.prefix,
+                                                                                 "2.x", "manifest.yml")))
 
         data: Dict = {
             "schema-version": "1.0",
@@ -123,12 +122,7 @@ class InputManifests(Manifests):
                 "name": self.name,
                 "version": version
             },
-            "ci": {
-                "image": {
-                    "name": image_map[self.prefix],
-                    "args": jdk_map.get(version.split(".")[0], jdk_map["3"])
-                }
-            },
+            "ci": input_manifest_templates.ci.__to_dict__(),
             "components": [],
         }
 

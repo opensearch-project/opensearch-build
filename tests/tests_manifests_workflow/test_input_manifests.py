@@ -37,8 +37,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "opensearch-dashboards", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2",
-                                 "args": "-e JAVA_HOME=/opt/java/openjdk-11"}},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2",}},
             },
         )
 
