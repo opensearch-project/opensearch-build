@@ -44,11 +44,16 @@
 
     )
                      promoteYumRepos.signArtifacts({artifactPath=/tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom, sigtype=.sig, platform=linux})
+<<<<<<< HEAD
                         signArtifacts.echo(PGP or Windows Signature Signing)
+=======
+                        signArtifacts.echo(PGP Signature Signing)
+>>>>>>> 071d6df (Update remaining env vars with credentials in jenkins libraries  (#2286))
                         signArtifacts.fileExists(/tmp/workspace/sign.sh)
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+<<<<<<< HEAD
                         signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                         signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                         signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
@@ -64,6 +69,21 @@
 
                    /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
                )
+=======
+                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=signer_client_creds})
+                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], signer_client_creds], groovy.lang.Closure)
+                           signArtifacts.readJSON({text=signer_client_creds})
+                           signArtifacts.sh(
+                #!/bin/bash
+                set +x
+                export ROLE=dummy_role
+                export EXTERNAL_ID=dummy_ID
+                export UNSIGNED_BUCKET=dummy_unsigned_bucket
+                export SIGNED_BUCKET=dummy_signed_bucket
+
+                /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
+            )
+>>>>>>> 071d6df (Update remaining env vars with credentials in jenkins libraries  (#2286))
                      promoteYumRepos.sh(
             set -e
             set +x
