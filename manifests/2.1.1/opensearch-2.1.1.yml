@@ -38,3 +38,9 @@ components:
     platforms:
       - darwin
       - linux
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: '2.1'
+    platforms:
+      - darwin
+      - linux
