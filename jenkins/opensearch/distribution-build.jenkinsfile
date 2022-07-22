@@ -67,17 +67,17 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshot-x64-tar') {
+                /*stage('build-snapshot-x64-darwin-tar') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
-                        docker {
-                            label AGENT_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
+                        node {
+                            label 'Jenkins-Agent-Mac-M1-Single-Host'
                         }
+                    }
+                    tools {
+                        jdk 'jdk-17'
                     }
                     steps {
                         script {
@@ -109,8 +109,8 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }
-                stage('build-snapshot-arm64-tar') {
+                }*/
+                /*stage('build-snapshot-arm64-tar') {
                     agent {
                         docker {
                             label AGENT_ARM64
@@ -139,15 +139,15 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }
+                } */
                 stage('build-and-test-x64-tar') {
                     agent {
-                        docker {
-                            label AGENT_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
+                        node {
+                            label 'Jenkins-Agent-Mac-M1-Single-Host'
                         }
+                    }
+                    tools {
+                        jdk 'jdk-17'
                     }
                     steps {
                         script {
@@ -225,7 +225,7 @@ pipeline {
                         }
                     }
                 }
-                stage('build-and-test-x64-rpm') {
+                /*stage('build-and-test-x64-rpm') {
                     agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-x64-rpm') {
@@ -314,8 +314,8 @@ pipeline {
                             }
                         }
                     }
-                }
-                stage('build-and-test-arm64-tar') {
+                }*/
+                /*stage('build-and-test-arm64-tar') {
                     agent {
                         docker {
                             label AGENT_ARM64
@@ -398,8 +398,8 @@ pipeline {
                             }
                         }
                     }
-                }
-                stage('build-and-test-arm64-rpm') {
+                }*/
+                /*stage('build-and-test-arm64-rpm') {
                     agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-arm64-rpm') {
@@ -488,10 +488,10 @@ pipeline {
                             }
                         }
                     }
-                }
+                }*/
             }
         }
-        stage('update index file') {
+        /*stage('update index file') {
             agent {
                 docker {
                     label AGENT_X64
@@ -507,8 +507,8 @@ pipeline {
                     )
                 }
             }
-        }
-        stage('docker build') {
+        }*/
+        /*stage('docker build') {
             when {
                 beforeAgent true
                 expression { 
@@ -537,7 +537,7 @@ pipeline {
                     )
                 }
             }
-        }
+        }*/
     }
     post {
         success {
