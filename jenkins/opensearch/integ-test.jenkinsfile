@@ -9,9 +9,6 @@ pipeline {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
     }
-    tools {
-        maven "maven-3.8.2"
-    }
     parameters {
         string(
             name: 'TEST_MANIFEST',
