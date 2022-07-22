@@ -38,7 +38,7 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: bundleManifest))
         })
 
-        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host')
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')

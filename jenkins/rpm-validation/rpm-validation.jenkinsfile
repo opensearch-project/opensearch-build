@@ -13,7 +13,7 @@ pipeline {
             )
             string(
                 name: 'AGENT_LABEL',
-                description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host or Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host',
+                description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host or Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host',
                 trim: true
             )
 

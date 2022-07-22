@@ -68,11 +68,19 @@ jobs:
             cd ${{ matrix.entry.path }}
           fi
           ./gradlew updateVersion -DnewVersion=${{ env.OPENSEARCH_VERSION }}
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 27448020
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.CIBOTAUTOPR }}
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
           author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
             Increment version to ${{ env.OPENSEARCH_VERSION }}

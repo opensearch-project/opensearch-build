@@ -6,8 +6,8 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+        AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
     }
     parameters {
@@ -67,17 +67,17 @@ pipeline {
         }
         stage('build') {
             parallel {
-                /*stage('build-snapshot-x64-darwin-tar') {
+                stage('build-snapshot-x64-tar') {
                     environment {
                         SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
                     }
                     agent {
-                        node {
-                            label 'Jenkins-Agent-Mac-M1-Single-Host'
+                        docker {
+                            label AGENT_X64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
                         }
-                    }
-                    tools {
-                        jdk 'jdk-17'
                     }
                     steps {
                         script {
@@ -91,7 +91,7 @@ pipeline {
                             String mavenPath = "$WORKSPACE/tar/builds/opensearch/maven"
 
                             if (fileExists(mavenPath)) {
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-sonatype-creds', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                     sh("$WORKSPACE/publish/publish-snapshot.sh ${mavenPath}")
                                 }
                             } else {
@@ -109,8 +109,8 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }*/
-                /*stage('build-snapshot-arm64-tar') {
+                }
+                stage('build-snapshot-arm64-tar') {
                     agent {
                         docker {
                             label AGENT_ARM64
@@ -139,15 +139,41 @@ pipeline {
                             postCleanup()
                         }
                     }
-                } */
-                stage('build-and-test-x64-tar') {
+                }
+                stage('macos-build-x64-tar') {
                     agent {
                         node {
                             label 'Jenkins-Agent-Mac-M1-Single-Host'
                         }
                     }
                     tools {
-                        jdk 'jdk-17'
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: "tar"
+                            )
+                        }
+                    }
+                    post {
+                        always {      
+                            script {
+                                postCleanup()
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-x64-tar') {
+                    agent {
+                        docker {
+                            label AGENT_X64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
                     }
                     steps {
                         script {
@@ -225,7 +251,7 @@ pipeline {
                         }
                     }
                 }
-                /*stage('build-and-test-x64-rpm') {
+                stage('build-and-test-x64-rpm') {
                     agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-x64-rpm') {
@@ -314,8 +340,8 @@ pipeline {
                             }
                         }
                     }
-                }*/
-                /*stage('build-and-test-arm64-tar') {
+                }
+                stage('build-and-test-arm64-tar') {
                     agent {
                         docker {
                             label AGENT_ARM64
@@ -398,8 +424,8 @@ pipeline {
                             }
                         }
                     }
-                }*/
-                /*stage('build-and-test-arm64-rpm') {
+                }
+                stage('build-and-test-arm64-rpm') {
                     agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-arm64-rpm') {
@@ -488,10 +514,10 @@ pipeline {
                             }
                         }
                     }
-                }*/
+                }
             }
         }
-        /*stage('update index file') {
+        stage('update index file') {
             agent {
                 docker {
                     label AGENT_X64
@@ -507,8 +533,8 @@ pipeline {
                     )
                 }
             }
-        }*/
-        /*stage('docker build') {
+        }
+        stage('docker build') {
             when {
                 beforeAgent true
                 expression { 
@@ -537,7 +563,7 @@ pipeline {
                     )
                 }
             }
-        }*/
+        }
     }
     post {
         success {
@@ -582,4 +608,3 @@ pipeline {
         }
     }
 }
-
