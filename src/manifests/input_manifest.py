@@ -136,6 +136,8 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
 
             def __to_dict__(self) -> dict:
                 return {
+                    "name": self.name
+                } if self.args is None else {
                     "name": self.name,
                     "args": self.args
                 }
