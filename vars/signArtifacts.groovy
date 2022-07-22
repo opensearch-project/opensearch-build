@@ -16,16 +16,14 @@ SignArtifacts signs the given artifacts and saves the signature in the same dire
 */
 void call(Map args = [:]) {
     if (args.sigtype.equals('.rpm')) {
-        withCredentials([string(credentialsId: 'jenkins-rpm-signing-props', variable: 'configs')]) {
-                def props = readJSON(text: configs)
-                def signingAccount = props['account']
-                def signingPassphraseSecretsArn = props['passphrase_secrets_arn']
-                def signingSecretKeyIdSecretsArn = props['secret_key_id_secrets_arn']
-                def signingKeyId = props['key_id']
-
+        withCredentials([
+        string(credentialsId: 'jenkins-rpm-signing-account-number', variable: 'RPM_SIGNING_ACCOUNT_NUMBER'),
+        string(credentialsId: 'jenkins-rpm-signing-passphrase-secrets-arn', variable: 'RPM_SIGNING_PASSPHRASE_SECRETS_ARN'),
+        string(credentialsId: 'jenkins-rpm-signing-secret-key-secrets-arn', variable: 'RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN'),
+        string(credentialsId: 'jenkins-rpm-signing-key-id', variable: 'RPM_SIGNING_KEY_ID')]) {
             echo 'RPM Add Sign'
 
-            withAWS(role: 'jenki-jenki-asm-assume-role', roleAccount: "${signingAccount}", duration: 900, roleSessionName: 'jenkins-signing-session') {
+            withAWS(role: 'jenkins-prod-rpm-signing-assume-role', roleAccount: "${RPM_SIGNING_ACCOUNT_NUMBER}", duration: 900, roleSessionName: 'jenkins-signing-session') {
                     sh """
                         set -e
                         set +x
@@ -63,8 +61,8 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Import OpenSearch keys"
-                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingPassphraseSecretsArn}" | jq -r .SecretBinary | base64 --decode > passphrase
-                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${signingSecretKeyIdSecretsArn}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${RPM_SIGNING_PASSPHRASE_SECRETS_ARN}" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "${RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN}" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
 
                         echo "------------------------------------------------------------------------"
                         echo "Start Signing Rpm"
@@ -91,8 +89,8 @@ void call(Map args = [:]) {
 
                         echo "------------------------------------------------------------------------"
                         echo "Clean up gpg"
-                        gpg --batch --yes --delete-secret-keys ${signingKeyId}
-                        gpg --batch --yes --delete-keys ${signingKeyId}
+                        gpg --batch --yes --delete-secret-keys ${RPM_SIGNING_KEY_ID}
+                        gpg --batch --yes --delete-keys ${RPM_SIGNING_KEY_ID}
                         rm -v passphrase
 
                     """
@@ -100,7 +98,7 @@ void call(Map args = [:]) {
         }
     }
     else {
-        echo "PGP or Windows Signature Signing"
+        echo 'PGP or Windows Signature Signing'
 
         if (!fileExists("$WORKSPACE/sign.sh")) {
             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
@@ -111,28 +109,46 @@ void call(Map args = [:]) {
         String arguments = generateArguments(args)
 
         // Sign artifacts
-        def configSecret = args.platform == "windows" ? "jenkins-signer-windows-config" : "jenkins-signer-client-creds"
-        withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
-                        string(credentialsId: configSecret, variable: 'configs')]) {
-            def creds = readJSON(text: configs)
-            def ROLE = creds['role']
-            def EXTERNAL_ID = creds['external_id']
-            def UNSIGNED_BUCKET = creds['unsigned_bucket']
-            def SIGNED_BUCKET = creds['signed_bucket']
-            def PROFILE_IDENTIFIER = creds['profile_identifier']
-            def PLATFORM_IDENTIFIER = creds['platform_identifier']
-            sh """
+        // def configSecret = args.platform == "windows" ? "jenkins-signer-windows-config" : "jenkins-signer-client-creds"
+        if (args.platform == 'windows') {
+            withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
+                string(credentialsId: 'jenkins-signer-windows-role', variable: 'SIGNER_WINDOWS_ROLE'),
+                string(credentialsId: 'jenkins-signer-windows-external-id', variable: 'SIGNER_WINDOWS_EXTERNAL_ID'),
+                string(credentialsId: 'jenkins-signer-windows-unsigned-bucket', variable: 'SIGNER_WINDOWS_UNSIGNED_BUCKET'),
+                string(credentialsId: 'jenkins-signer-windows-signed-bucket', variable: 'SIGNER_WINDOWS_SIGNED_BUCKET'),
+                string(credentialsId: 'jenkins-signer-windows-profile-identifier', variable: 'SIGNER_WINDOWS_PROFILE_IDENTIFIER'),
+                string(credentialsId: 'jenkins-signer-windows-platform-identifier', variable: 'SIGNER_WINDOWS_PLATFORM_IDENTIFIER')]) {
+                sh """
                    #!/bin/bash
                    set +x
-                   export ROLE=$ROLE
-                   export EXTERNAL_ID=$EXTERNAL_ID
-                   export UNSIGNED_BUCKET=$UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=$SIGNED_BUCKET
-                   export PROFILE_IDENTIFIER=$PROFILE_IDENTIFIER
-                   export PLATFORM_IDENTIFIER=$PLATFORM_IDENTIFIER
-       
+                   export ROLE=$SIGNER_WINDOWS_ROLE
+                   export EXTERNAL_ID=$SIGNER_WINDOWS_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=$SIGNER_WINDOWS_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=$SIGNER_WINDOWS_SIGNED_BUCKET
+                   export PROFILE_IDENTIFIER=$SIGNER_WINDOWS_PROFILE_IDENTIFIER
+                   export PLATFORM_IDENTIFIER=$SIGNER_WINDOWS_PLATFORM_IDENTIFIER
+
                    $WORKSPACE/sign.sh ${arguments}
                """
+                }
+        }
+        else {
+            withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
+                string(credentialsId: 'jenkins-signer-client-role', variable: 'SIGNER_CLIENT_ROLE'),
+                string(credentialsId: 'jenkins-signer-client-external-id', variable: 'SIGNER_CLIENT_EXTERNAL_ID'),
+                string(credentialsId: 'jenkins-signer-client-unsigned-bucket', variable: 'SIGNER_CLIENT_UNSIGNED_BUCKET'),
+                string(credentialsId: 'jenkins-signer-client-signed-bucket', variable: 'SIGNER_CLIENT_SIGNED_BUCKET')]) {
+                sh """
+                   #!/bin/bash
+                   set +x
+                   export ROLE=$SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=$SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=$SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=$SIGNER_CLIENT_SIGNED_BUCKET
+
+                   $WORKSPACE/sign.sh ${arguments}
+               """
+                }
         }
     }
 }
@@ -142,7 +158,7 @@ String generateArguments(args) {
     // artifactPath is mandatory and the first argument
     String arguments = artifactPath
     // generation command line arguments
-    args.each { key, value -> arguments += " --${key }=${value }"}
+    args.each { key, value -> arguments += " --${key }=${value }" }
     return arguments
 }
 

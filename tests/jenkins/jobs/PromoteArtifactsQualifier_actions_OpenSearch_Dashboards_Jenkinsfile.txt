@@ -38,19 +38,19 @@
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=configs})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                            signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
                )
                      promoteArtifacts.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
@@ -76,19 +76,19 @@
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=configs})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                        signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                            signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
                )
                      promoteArtifacts.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)

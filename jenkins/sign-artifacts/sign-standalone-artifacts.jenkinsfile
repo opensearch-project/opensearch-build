@@ -3,7 +3,7 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 pipeline {
     agent {
         docker {
-            label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+            label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
             image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2'
             alwaysPull true
         }
