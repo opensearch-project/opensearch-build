@@ -140,6 +140,32 @@ pipeline {
                         }
                     }
                 }
+                stage('macos-build-x64-tar') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-Mac-M1-Single-Host'
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: "tar"
+                            )
+                        }
+                    }
+                    post {
+                        always {      
+                            script {
+                                postCleanup()
+                            }
+                        }
+                    }
+                }
                 stage('build-and-test-x64-tar') {
                     agent {
                         docker {
@@ -582,4 +608,3 @@ pipeline {
         }
     }
 }
-
