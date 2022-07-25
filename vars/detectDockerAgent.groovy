@@ -5,11 +5,11 @@ Map call(Map args = [:]) {
     dockerImage = inputManifest.ci?.image?.name ?: 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
     dockerArgs = inputManifest.ci?.image?.args
     // Using default javaVersion as jdk-17
-    String javaVersion = 'jdk-17'
+    String javaVersion = 'openjdk-17'
     java.util.regex.Matcher jdkMatch = (dockerArgs =~ /openjdk-\d+/) 
     if (jdkMatch.find()) {
-            def jdkMatchLine = jdkMatch[0]
-            javaVersion = jdkMatchLine
+        def jdkMatchLine = jdkMatch[0]
+        javaVersion = jdkMatchLine
     }
     echo "Using Docker image ${dockerImage} (${dockerArgs})"
     echo "Using java version ${javaVersion}"
