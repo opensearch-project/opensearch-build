@@ -6,10 +6,10 @@ Map call(Map args = [:]) {
     dockerArgs = inputManifest.ci?.image?.args
     // Using default javaVersion as jdk-17
     String javaVersion = 'jdk-17'
-    java.util.regex.Matcher match = (dockerArgs =~ /jdk-\d+/) 
-    if (match.find()) {
-            def line = match[0]
-           javaVersion = line
+    java.util.regex.Matcher jdkMatch = (dockerArgs =~ /openjdk-\d+/) 
+    if (jdkMatch.find()) {
+            def jdkMatchLine = jdkMatch[0]
+            javaVersion = jdkMatchLine
     }
     echo "Using Docker image ${dockerImage} (${dockerArgs})"
     echo "Using java version ${javaVersion}"

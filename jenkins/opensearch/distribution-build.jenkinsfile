@@ -140,7 +140,7 @@ pipeline {
                         }
                     }
                 }
-                stage('macos-build-x64-tar') {
+                stage('build-macos-x64-tar') {
                     agent {
                         node {
                             label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
