@@ -4,7 +4,7 @@ Map call(Map args = [:]) {
     def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: manifest))
     dockerImage = inputManifest.ci?.image?.name ?: 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
     dockerArgs = inputManifest.ci?.image?.args
-    // Using default javaVersion as jdk-17
+    // Using default javaVersion as openjdk-17
     String javaVersion = 'openjdk-17'
     java.util.regex.Matcher jdkMatch = (dockerArgs =~ /openjdk-\d+/) 
     if (jdkMatch.find()) {
