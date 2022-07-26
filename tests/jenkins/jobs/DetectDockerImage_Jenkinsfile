@@ -10,6 +10,7 @@ pipeline {
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
+                    echo dockerAgent.javaVersion
                 }
             }
         }
@@ -21,6 +22,7 @@ pipeline {
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
+                    echo dockerAgent.javaVersion
                 }
             }
         }
@@ -32,6 +34,7 @@ pipeline {
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
+                    echo dockerAgent.javaVersion
                 }
             }
         }
@@ -43,6 +46,7 @@ pipeline {
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
+                    echo dockerAgent.javaVersion
                 }
             }
         }
