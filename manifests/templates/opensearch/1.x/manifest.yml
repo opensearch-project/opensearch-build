@@ -2,7 +2,7 @@
 schema-version: '1.0'
 build:
   name: OpenSearch
-  version: 1.3.4
+  version: 'replace'
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: tags/1.3.4
+    ref: main
     checks:
       - gradle:publish
       - gradle:properties:version

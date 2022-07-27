@@ -19,10 +19,7 @@ class InputManifestsOpenSearchDashboards(InputManifests):
     def files(self, name: str = "opensearch-dashboards") -> List:
         return InputManifests.files(name)
 
-    def update(
-        self,
-        min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]] = ComponentOpenSearchDashboardsMin,
-        component_klass: Type[ComponentOpenSearch] = None,
-        keep: bool = False,
-    ) -> None:
+    def update(self, min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]] =
+               ComponentOpenSearchDashboardsMin, component_klass: Type[ComponentOpenSearch] = None,
+               keep: bool = False) -> None:
         super().update(min_klass=ComponentOpenSearchDashboardsMin, component_klass=None, keep=keep)

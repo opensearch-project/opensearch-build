@@ -26,7 +26,7 @@ class ComponentOpenSearchMin(Component):
         return Component.branches(url)
 
     @classmethod
-    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> "ComponentOpenSearchMin":
+    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> 'ComponentOpenSearchMin':
         return ComponentOpenSearchMin(
             GitRepository("https://github.com/opensearch-project/OpenSearch.git", branch, path),
             snapshot,

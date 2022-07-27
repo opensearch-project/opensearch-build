@@ -21,7 +21,7 @@ class ComponentOpenSearchDashboardsMin(Component):
         return Component.branches(url)
 
     @classmethod
-    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> "ComponentOpenSearchDashboardsMin":
+    def checkout(self, path: str, branch: str = "main", snapshot: bool = False) -> 'ComponentOpenSearchDashboardsMin':
         with GitRepository(
             "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
             branch,

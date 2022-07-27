@@ -28,4 +28,9 @@ class Component:
         return branches
 
     def to_dict(self) -> Any:
-        return Manifest.compact({"name": self.name, "repository": self.git_repo.url, "ref": self.git_repo.ref, "checks": self.checks})
+        return Manifest.compact({
+            "name": self.name,
+            "repository": self.git_repo.url,
+            "ref": self.git_repo.ref,
+            "checks": self.checks
+        })

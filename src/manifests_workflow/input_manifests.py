@@ -114,20 +114,20 @@ class InputManifests(Manifests):
         templates_base_path = os.path.join(self.manifests_path(), "templates")
         template_version_folder = version.split(".")[0] + ".x"
         template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder, "manifest.yml")
-        if os.path.exists(template_full_path):
-            input_manifest_templates = InputManifest.from_file(open(template_full_path))
-        else:
-            input_manifest_templates = InputManifest.from_file(open(os.path.join(templates_base_path, self.prefix, "default", "manifest.yml")))
+        if not os.path.exists(template_full_path):
+            template_full_path = os.path.join(templates_base_path, self.prefix, "default", "manifest.yml")
 
-        input_manifest_templates.build.version = version
+        manifest = InputManifest.from_file(open(template_full_path))
+
+        manifest.build.version = version
         manifests_components = []
 
         for component in components:
             logging.info(f" Adding {component.name}")
             manifests_components.append(component.to_dict())
 
-        input_manifest_templates.components = InputComponents(manifests_components)  # type: ignore
-        return input_manifest_templates
+        manifest.components = InputComponents(manifests_components)  # type: ignore
+        return manifest
 
     def write_manifest(self, version: str, components: List = []) -> None:
         logging.info(f"Creating new version: {version}")

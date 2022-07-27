@@ -2,7 +2,7 @@
 schema-version: '1.0'
 build:
   name: OpenSearch
-  version: 3.0.0
+  version: 'replace'
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
