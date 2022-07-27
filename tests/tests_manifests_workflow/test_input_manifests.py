@@ -17,26 +17,52 @@ class TestInputManifests(unittest.TestCase):
         self.assertEqual(path, InputManifests.manifests_path())
 
     def test_create_manifest_opensearch(self) -> None:
-        input_manifests = InputManifests("opensearch")
+        input_manifests = InputManifests("OpenSearch")
         input_manifest = input_manifests.create_manifest("1.2.3", [])
         self.assertEqual(
             input_manifest.to_dict(),
             {
                 "schema-version": "1.0",
-                "build": {"name": "opensearch", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2"}},
+                "build": {"name": "OpenSearch", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+                                 "args": "-e JAVA_HOME=/opt/java/openjdk-11"}},
+            },
+        )
+
+    def test_create_manifest_opensearch_from_default(self) -> None:
+        input_manifests = InputManifests("OpenSearch")
+        input_manifest = input_manifests.create_manifest("0.2.3", [])
+        self.assertEqual(
+            input_manifest.to_dict(),
+            {
+                "schema-version": "1.0",
+                "build": {"name": "OpenSearch", "version": "0.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+                                 "args": "-e JAVA_HOME=/opt/java/openjdk-17"}},
             },
         )
 
     def test_create_manifest_opensearch_dashboards(self) -> None:
-        input_manifests = InputManifests("opensearch-dashboards")
+        input_manifests = InputManifests("OpenSearch Dashboards")
         input_manifest = input_manifests.create_manifest("1.2.3", [])
         self.assertEqual(
             input_manifest.to_dict(),
             {
                 "schema-version": "1.0",
-                "build": {"name": "opensearch-dashboards", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"}},
+                "build": {"name": "OpenSearch Dashboards", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2", }},
+            },
+        )
+
+    def test_create_manifest_opensearch_dashboards_from_default(self) -> None:
+        input_manifests = InputManifests("OpenSearch Dashboards")
+        input_manifest = input_manifests.create_manifest("4.2.3", [])
+        self.assertEqual(
+            input_manifest.to_dict(),
+            {
+                "schema-version": "1.0",
+                "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2", }},
             },
         )
 
