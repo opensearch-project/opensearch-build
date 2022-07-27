@@ -97,11 +97,11 @@ pipeline {
                             } else {
                                 echo "Skipping publishing snapshots, ${mavenPath} does not exist."
                             }
-                            echo("Uploading min snapshots to S3")
+                            /*echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
-                            )
+                            )*/
                         }
                     }
                     post {
@@ -127,11 +127,11 @@ pipeline {
                                 distribution: 'tar',
                                 snapshot: true
                             )
-                            echo("Uploading min snapshots to S3")
+                            /*echo("Uploading min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
-                            )
+                            )*/
                         }
                     }
                     post {
