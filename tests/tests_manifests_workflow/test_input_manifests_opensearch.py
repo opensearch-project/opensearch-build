@@ -22,8 +22,8 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                 "..",
                 "..",
                 "manifests",
-                "1.1.0",
-                "opensearch-1.1.0.yml",
+                "3.0.0",
+                "opensearch-3.0.0.yml",
             )
         )
         self.assertTrue(manifest in files)
