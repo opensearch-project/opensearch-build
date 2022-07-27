@@ -30,7 +30,7 @@ void call(Map args = [:]) {
     sh """
         cp ${srcDir}/${baseName}.${extension} ${srcDir}/${baseName}-latest.${extension}
         cp ${srcDir}/${baseName}.${extension}.sha512 ${srcDir}/${baseName}-latest.${extension}.sha512
-        sed -i '' "s/.${extension}/-latest.${extension}/g" ${srcDir}/${baseName}-latest.${extension}.sha512
+        sed -i "s/.${extension}/-latest.${extension}/g" ${srcDir}/${baseName}-latest.${extension}.sha512
     """
     withCredentials([
         string(credentialsId: 'jenkins-artifact-promotion-role', variable: 'ARTIFACT_PROMOTION_ROLE_NAME'),
