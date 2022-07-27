@@ -30,6 +30,7 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch("os.chdir")
+    @patch("manifests_workflow.input_manifests.InputComponents")
     @patch("manifests_workflow.input_manifests.InputManifest.from_file")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
@@ -38,7 +39,8 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
     @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch: MagicMock,
                     mock_component_opensearch_min: MagicMock, mock_input_manifest_from_path: MagicMock,
-                    mock_add_to_cron: MagicMock, mock_input_manifest_from_file: MagicMock, *mocks: MagicMock) -> None:
+                    mock_add_to_cron: MagicMock, mock_input_manifest_from_file: MagicMock,
+                    mock_input_manifest_component: MagicMock, *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
         mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
@@ -47,10 +49,9 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
         mock_input_manifest_from_path.return_value.components = {
             "common-utils": Component({"name": "common-utils", "repository": "git", "ref": "ref"})
         }
-        mock_input_manifest_from_file.return_value.ci.__to_dict__ = MagicMock
         manifests = InputManifestsOpenSearch()
         manifests.update()
-        self.assertEqual(mock_input_manifest().to_file.call_count, 2)
+        self.assertEqual(mock_input_manifest_from_file().to_file.call_count, 2)
         calls = [
             call(
                 os.path.join(
@@ -67,7 +68,7 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                 )
             ),
         ]
-        mock_input_manifest().to_file.assert_has_calls(calls)
+        mock_input_manifest_from_file().to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
             call('0.10.0'),
             call('0.9.0')

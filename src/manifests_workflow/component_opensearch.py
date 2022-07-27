@@ -23,7 +23,7 @@ class ComponentOpenSearch(Component):
         branch: str = "main",
         snapshot: bool = False,
         working_directory: str = None,
-    ) -> 'ComponentOpenSearch':
+    ) -> "ComponentOpenSearch":
         with GitRepository(
             f"https://github.com/opensearch-project/{name}.git",
             branch,

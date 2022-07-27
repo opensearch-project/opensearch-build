@@ -11,7 +11,7 @@ import re
 from abc import abstractmethod
 from typing import Dict, List, Type, Union
 
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponents, InputManifest
 from manifests.manifests import Manifests
 from manifests_workflow.component_opensearch import ComponentOpenSearch
 from manifests_workflow.component_opensearch_dashboards_min import ComponentOpenSearchDashboardsMin
@@ -48,7 +48,12 @@ class InputManifests(Manifests):
         return results
 
     @abstractmethod
-    def update(self, min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]], component_klass: Type[ComponentOpenSearch], keep: bool = False) -> None:
+    def update(
+        self,
+        min_klass: Union[Type[ComponentOpenSearchMin], Type[ComponentOpenSearchDashboardsMin]],
+        component_klass: Type[ComponentOpenSearch],
+        keep: bool = False,
+    ) -> None:
         known_versions = self.versions
         logging.info(f"Known versions: {known_versions}")
         main_versions: Dict = {}
@@ -108,29 +113,21 @@ class InputManifests(Manifests):
     def create_manifest(self, version: str, components: List = []) -> InputManifest:
         templates_base_path = os.path.join(self.manifests_path(), "templates")
         template_version_folder = version.split(".")[0] + ".x"
-        template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder,
-                                          "manifest.yml")
+        template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder, "manifest.yml")
         if os.path.exists(template_full_path):
             input_manifest_templates = InputManifest.from_file(open(template_full_path))
         else:
-            input_manifest_templates = InputManifest.from_file(open(os.path.join(templates_base_path, self.prefix,
-                                                                                 "2.x", "manifest.yml")))
+            input_manifest_templates = InputManifest.from_file(open(os.path.join(templates_base_path, self.prefix, "default", "manifest.yml")))
 
-        data: Dict = {
-            "schema-version": "1.0",
-            "build": {
-                "name": self.name,
-                "version": version
-            },
-            "ci": input_manifest_templates.ci.__to_dict__(),
-            "components": [],
-        }
+        input_manifest_templates.build.version = version
+        manifests_components = []
 
         for component in components:
             logging.info(f" Adding {component.name}")
-            data["components"].append(component.to_dict())
+            manifests_components.append(component.to_dict())
 
-        return InputManifest(data)
+        input_manifest_templates.components = InputComponents(manifests_components)  # type: ignore
+        return input_manifest_templates
 
     def write_manifest(self, version: str, components: List = []) -> None:
         logging.info(f"Creating new version: {version}")
@@ -152,10 +149,7 @@ class InputManifests(Manifests):
         if cron_entry in data:
             raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")
 
-        data = data.replace(
-            "parameterizedCron '''\n",
-            f"parameterizedCron '''\n{' ' * 12}{cron_entry}"
-        )
+        data = data.replace("parameterizedCron '''\n", f"parameterizedCron '''\n{' ' * 12}{cron_entry}")
 
         with open(jenkinsfile, "w") as f:
             f.write(data)
