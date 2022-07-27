@@ -23,6 +23,7 @@
     "common-utils": "git@github.com:opensearch-project/common-utils.git",
     "opensearch-build": "git@github.com:opensearch-project/opensearch-build.git",
     "ml-commons": "git@github.com:opensearch-project/ml-commons.git",
-    "geospatial": "git@github.com:opensearch-project/geospatial.git"
+    "geospatial": "git@github.com:opensearch-project/geospatial.git",
+    "dashboards-maps": "git@github.com:opensearch-project/dashboards-maps.git"
   }
 }

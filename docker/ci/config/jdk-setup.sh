@@ -19,15 +19,15 @@ JDKS=""
 case "${ARCH}" in
    aarch64|arm64)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
-       JDKS+="f287cdc2a688c2df247ea0d8bfe2863645b73848e4e5c35b02a8a3d2d6b69551@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u302b08.tar.gz "
-       JDKS+="0ba188a2a739733163cd0049344429d2284867e04ca452879be24f3b54320c9a@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.14%2B9/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.14_9.tar.gz "
-       JDKS+="302caf29f73481b2b914ba2b89705036010c65eb9bc8d7712b27d6e9bedf6200@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.2_8.tar.gz "
+       JDKS+="d10efb2afad3ed3d7bac9d3249cea77928aca6acb973cac0f90a2dd3606a3533@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_aarch64_linux_hotspot_8u332b09.tar.gz "
+       JDKS+="999fbd90b070f9896142f0eb28354abbeb367cbe49fd86885c626e2999189e0a@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.15_10.tar.gz "
+       JDKS+="2e3c19c1707205c6b90cc04b416e8d83078ed98417d5a69dce3cf7dc0d7cfbca@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.3_7.tar.gz "
        ;;
    amd64|x86_64)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
-       JDKS+="cc13f274becf9dd5517b6be583632819dfd4dd81e524b5c1b4f406bdaf0e063a@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u302b08.tar.gz "
-       JDKS+="1189bee178d11402a690edf3fbba0c9f2ada1d3a36ff78929d81935842ef24a9@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.14%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.14_9.tar.gz "
-       JDKS+="288f34e3ba8a4838605636485d0365ce23e57d5f2f68997ac4c2e4c01967cd48@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_x64_linux_hotspot_17.0.2_8.tar.gz "
+       JDKS+="adc13a0a0540d77f0a3481b48f10d61eb203e5ad4914507d489c2de3bd3d83da@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u332-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u332b09.tar.gz "
+       JDKS+="5fdb4d5a1662f0cca73fec30f99e67662350b1fa61460fa72e91eb9f66b54d0b@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz "
+       JDKS+="81f5bed21077f9fbb04909b50391620c78b9a3c376593c0992934719c0de6b73@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.3_7.tar.gz "
        ;;
    *)
        echo "Unsupported arch: ${ARCH}"

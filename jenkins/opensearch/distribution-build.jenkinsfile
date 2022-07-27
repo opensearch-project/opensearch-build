@@ -6,8 +6,8 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-al2-arm64-c6g4xlarge-Docker-Host'
+        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+        AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
     }
     parameters {
@@ -91,7 +91,7 @@ pipeline {
                             String mavenPath = "$WORKSPACE/tar/builds/opensearch/maven"
 
                             if (fileExists(mavenPath)) {
-                                withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                                withCredentials([usernamePassword(credentialsId: 'jenkins-sonatype-creds', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                     sh("$WORKSPACE/publish/publish-snapshot.sh ${mavenPath}")
                                 }
                             } else {
@@ -137,6 +137,32 @@ pipeline {
                     post {
                         always {
                             postCleanup()
+                        }
+                    }
+                }
+                stage('build-macos-x64-tar') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: "tar"
+                            )
+                        }
+                    }
+                    post {
+                        always {      
+                            script {
+                                postCleanup()
+                            }
                         }
                     }
                 }
@@ -582,4 +608,3 @@ pipeline {
         }
     }
 }
-

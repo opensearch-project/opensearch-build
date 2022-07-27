@@ -6,10 +6,22 @@ pipeline {
         timeout(time: 15, unit: 'HOURS')
     }
     environment {
-        AGENT_LABEL = 'Jenkins-Agent-al2-x64-m52xlarge-Docker-Host-Perf-Test'
+        AGENT_LABEL = 'Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Perf-Test'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-performance-test-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'perf-test'
+    }
+    triggers {
+        parameterizedCron '''
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 9 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+        '''
     }
     parameters {
         string(

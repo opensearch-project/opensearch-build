@@ -1,0 +1,97 @@
+---
+name: Increment Plugin Versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Log level
+        required: true
+        default: warning
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+jobs:
+  plugin-version-increment-sync:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        entry:
+          - {repo: alerting}
+          - {repo: anomaly-detection}
+          - {repo: asynchronous-search}
+          - {repo: common-utils}
+          - {repo: cross-cluster-replication}
+          - {repo: dashboards-reports, path: reports-scheduler}
+          - {repo: geospatial}
+          - {repo: index-management}
+          - {repo: job-scheduler}
+          - {repo: k-NN}
+          - {repo: ml-commons}
+          - {repo: notifications, path: notifications}
+          - {repo: observability, path: opensearch-observability}
+          - {repo: performance-analyzer}
+          - {repo: performance-analyzer-rca}
+          - {repo: security}
+          - {repo: sql}
+        branch:
+          - 'main'
+          - '2.x'
+          - '2.1'
+          - '2.2'
+    steps:
+      - name: Check out OpenSearch repo
+        uses: actions/checkout@v3
+        with:
+          repository: opensearch-project/OpenSearch
+          ref: ${{ matrix.branch }}
+      - name: Fetch OpenSearch version
+        run: |
+          OPENSEARCH_VERSION=$(cat buildSrc/version.properties | grep opensearch | cut -d= -f2 | grep -oE '[0-9.]+')
+          echo "OPENSEARCH_VERSION_NUMBER=$OPENSEARCH_VERSION" >> $GITHUB_ENV
+          OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
+          echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
+      - name: Check out plugin repo
+        uses: actions/checkout@v3
+        with:
+          repository: opensearch-project/${{ matrix.entry.repo }}
+          ref: ${{ matrix.branch }}
+      - name: Increment Version in ${{ matrix.entry.repo }}
+        run: |
+          echo "OpenSearch Core repo version on branch ${{ matrix.branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
+          if [ ${{ matrix.entry.path }} ]; then
+            echo "The gradle path is ${{ matrix.entry.path }}"
+            cd ${{ matrix.entry.path }}
+          fi
+          ./gradlew updateVersion -DnewVersion=${{ env.OPENSEARCH_VERSION }}
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 27448020
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
+          author: opensearch-ci-bot <opensearch-infra@amazon.com>
+          commit-message: |
+            Increment version to ${{ env.OPENSEARCH_VERSION }}
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
+          delete-branch: true
+          branch: create-pull-request/${{ env.OPENSEARCH_VERSION }}
+          title: '[AUTO] Increment version to ${{ env.OPENSEARCH_VERSION }}'
+          body: |
+            - Incremented version to **${{ env.OPENSEARCH_VERSION }}**.
+      - name: Check outputs
+        run: |-
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
