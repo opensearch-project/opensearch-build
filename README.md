@@ -148,10 +148,10 @@ MacOS signing supports signing macOS executables such as .app, .pkg and .dmg art
 The signing system uses Apple’s codesign tool to sign the artifacts. More details (https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html) 
 
 |  Types of signing/Details   | Digest           | Cipher  | Key Size|
-| ------------- |:-------------| :-----|
-| PGP      | SHA1 | AES-128 | 2048
-| Windows      | SHA256      |    RSA |
-| [RPM | SHA512      |    RSA | 4096
+| ------------- |:-------------| :-----| :-----|
+| PGP      | SHA1 | AES-128 | 2048 |
+| Windows      | SHA256      |    RSA | |
+| RPM | SHA512      |    RSA | 4096 |
 
 
 **Signing RPM artifacts:**
