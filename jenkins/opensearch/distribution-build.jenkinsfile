@@ -157,7 +157,7 @@ pipeline {
                                 distribution: 'tar',
                                 snapshot: true
                             )
-                            echo("Uploading min snapshots to S3")
+                            echo("Uploading darwin min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
