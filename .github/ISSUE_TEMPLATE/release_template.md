@@ -47,6 +47,7 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] Increment each component version to {{ env.VERSION }} and ensure working CI in component repositories.
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 - [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
+- [ ] OpenSearch / OpenSearch-Dashboards core cut branch early.
 
 ### Campaigns
 
