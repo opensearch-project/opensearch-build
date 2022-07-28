@@ -7,7 +7,7 @@ pipeline {
             categories: [],
             limitOneJobWithMatchingParams: false,
             maxConcurrentPerNode: 0,
-            maxConcurrentTotal: 50,
+            maxConcurrentTotal: 15,
             paramsToUseForLimit: '',
             throttleEnabled: true,
             throttleOption: 'project',
