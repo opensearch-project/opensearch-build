@@ -125,11 +125,37 @@ See [src/test_workflow](./src/test_workflow) for more information.
 
 #### Signing Artifacts
 
-The signing step takes the manifest file created from the build step and signs all its component artifacts using a tool called `opensearch-signer-client` (in progress of being open-sourced). The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
+For all types of Signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. The tool currently supports 3 platforms for signing.
 
 ```bash
 ./sign.sh builds/opensearch/manifest.yml
 ```
+
+**PGP**:
+
+Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .sig file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc as well as maven artifacts are signed using PGP signing. You can see how to verify the signatures by visiting the opensearch website (https://opensearch.org/verify-signatures.html).
+
+
+**Windows:**
+
+Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by Signtool.exe (https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
+Windows code signing uses EV (Extended Validated) code signing certificates.
+
+
+**MacOS:**
+
+MacOS signing supports signing macOS executables such as .app, .pkg and .dmg artifacts. 
+The signing system uses Apple’s codesign tool to sign the artifacts. More details (https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html) 
+
+|  Types of signing/Details   | Digest           | Cipher  | Key Size|
+| ------------- |:-------------| :-----|
+| PGP      | SHA1 | AES-128 | 2048
+| Windows      | SHA256      |    RSA |
+| [RPM | SHA512      |    RSA | 4096
+
+
+**Signing RPM artifacts:**
+We have an issue (https://github.com/opensearch-project/opensearch-build/issues/1547) open to add RPM signing functionality to the above signing system. However, temporarily we are signing the RPM artifacts via shell script which uses a macros template (https://github.com/opensearch-project/opensearch-build/blob/main/scripts/pkg/sign_templates/rpmmacros). More details in this commit (https://github.com/opensearch-project/opensearch-build/commit/950d55c1ed3f82e98120541fa40ff506338c1059). Currently we are only signing OpenSearch and OpenSearch dashboards RPM distribution using this method.
 
 See [src/sign_workflow](./src/sign_workflow) for more information.
 
