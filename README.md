@@ -125,8 +125,9 @@ See [src/test_workflow](./src/test_workflow) for more information.
 
 #### Signing Artifacts
 
-For all types of Signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. The tool currently supports 3 platforms for signing.
+For all types of Signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. The tool currently supports following platforms for signing.
 
+Usage:
 ```bash
 ./sign.sh builds/opensearch/manifest.yml
 ```
@@ -140,12 +141,6 @@ Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .
 
 Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by Signtool.exe (https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
 Windows code signing uses EV (Extended Validated) code signing certificates.
-
-
-**MacOS:**
-
-MacOS signing supports signing macOS executables such as .app, .pkg and .dmg artifacts. 
-The signing system uses Apple’s codesign tool to sign the artifacts. More details (https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html) 
 
 |  Types of signing/Details   | Digest           | Cipher  | Key Size|
 | ------------- |:-------------| :-----| :-----|
