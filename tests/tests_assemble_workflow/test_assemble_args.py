@@ -16,7 +16,18 @@ class TestAssembleArgs(unittest.TestCase):
 
     ASSEMBLE_PY = "./src/run_assembly.py"
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests", "1.1.0", "opensearch-1.1.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "manifests",
+            "templates",
+            "opensearch",
+            "1.x",
+            "os-template-1.1.0.yml",
+        )
+    )
 
     @patch("argparse._sys.argv", [ASSEMBLE_PY, OPENSEARCH_MANIFEST])
     def test_manifest(self) -> None:

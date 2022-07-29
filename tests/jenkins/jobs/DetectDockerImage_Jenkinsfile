@@ -6,7 +6,7 @@ pipeline {
                 script { 
                     currentBuild.description = "1.1.0/opensearch-1.1.0.yml"
                     dockerAgent = detectDockerAgent(
-                        manifest: 'manifests/1.1.0/opensearch-1.1.0.yml'
+                        manifest: 'manifests/templates/opensearch/1.x/os-template-1.1.0.yml'
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script { 
                     dockerAgent = detectDockerAgent(
-                        manifest: 'manifests/1.2.0/opensearch-1.2.0.yml'
+                        manifest: 'manifests/templates/opensearch/1.x/os-template-1.2.0.yml'
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script { 
                     dockerAgent = detectDockerAgent(
-                        manifest: 'manifests/1.1.0/opensearch-dashboards-1.1.0.yml'
+                        manifest: 'manifests/templates/opensearch-dashboards/1.x/osd-template-1.1.0.yml'
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
@@ -42,7 +42,7 @@ pipeline {
             steps {
                 script { 
                     dockerAgent = detectDockerAgent(
-                        manifest: 'manifests/1.2.0/opensearch-dashboards-1.2.0.yml'
+                        manifest: 'legacy-manifests/1.2.0/opensearch-dashboards-1.2.0.yml'
                     )
                     echo dockerAgent.image
                     echo dockerAgent.args
