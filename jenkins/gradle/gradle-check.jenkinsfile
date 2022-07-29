@@ -53,48 +53,48 @@ pipeline {
         )
     }
     environment {
-        JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-8"
-        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-11"
-        JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-14"
-        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/jdk-17"
+        JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-8"
+        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-11"
+        JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-14"
+        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-17"
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
     stages {
-        stage('Install jdk-8') {
+        stage('Install openjdk-8') {
             tools {
-                jdk 'jdk-8'
+                jdk 'openjdk-8'
             }
             steps {
-                echo "Install jdk-8"
-                sh("ls ${JAVA8_HOME}/.. | grep jdk-8")
-            }
-        }
-        stage('Install jdk-11') {
-           tools {
-               jdk 'jdk-11'
-           }
-            steps {
-                echo "Install jdk-11"
-                sh("ls ${JAVA11_HOME}/.. | grep jdk-11")
+                echo "Install openjdk-8"
+                sh("ls ${JAVA8_HOME}/.. | grep openjdk-8")
             }
         }
-        stage('Install jdk-14') {
+        stage('Install openjdk-11') {
            tools {
-               jdk 'jdk-14'
+               jdk 'openjdk-11'
            }
             steps {
-                echo "Install jdk-14"
-                sh("ls ${JAVA14_HOME}/.. | grep jdk-14")
+                echo "Install openjdk-11"
+                sh("ls ${JAVA11_HOME}/.. | grep openjdk-11")
             }
         }
-        stage('Install jdk-17') {
+        stage('Install openjdk-14') {
            tools {
-               jdk 'jdk-17'
+               jdk 'openjdk-14'
            }
             steps {
-                echo "Install jdk-17"
-                sh("ls ${JAVA17_HOME}/.. | grep jdk-17")
+                echo "Install openjdk-14"
+                sh("ls ${JAVA14_HOME}/.. | grep openjdk-14")
+            }
+        }
+        stage('Install openjdk-17') {
+           tools {
+               jdk 'openjdk-17'
+           }
+            steps {
+                echo "Install openjdk-17"
+                sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
             }
         }
         stage('Run Gradle Check') {
