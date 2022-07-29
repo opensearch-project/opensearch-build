@@ -47,6 +47,7 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] Increment each component version to {{ env.VERSION }} and ensure working CI in component repositories.
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 - [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
+- [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
 
 ### Campaigns
 
@@ -60,6 +61,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Release testing - _Ends __REPLACE_RELEASE-minus-6-days___
 
+- [ ] All components should have cut branch `<MajorVersion>.<MinorVersion>` for the release.
 - [ ] Declare a release candidate build, and provide the instructions with the release candidates for teams on testing (__REPLACE_RELEASE-minus-8-days__).
 - [ ] Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary else manually run the build workflow and declare new release candidate.
 - [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams. Teams test their components within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
