@@ -6,7 +6,7 @@
 * OpenSearch 2.1.0 supports version spoofing against 2.0.0 where it was [removed](https://github.com/opensearch-project/opensearch/pull/3530).
 * You can now configure nodes with [dynamic nodes roles](https://github.com/opensearch-project/OpenSearch/pull/3436), which allows for custom node roles that won't affect node start processes.
 * The [ML node role](https://github.com/opensearch-project/ml-commons/pull/346) can be configured for ML functions and tasks.
-* SQL and PPL queries now supports [relevance-based search](https://github.com/opensearch-project/sql/issues/182), including [match_function](https://github.com/opensearch-project/sql/pull/204], [match_phrase](https://github.com/opensearch-project/sql/pull/604), and [match_bool_prefix](https://github.com/opensearch-project/sql/pull/634).
+* SQL and PPL queries now supports [relevance-based search](https://github.com/opensearch-project/sql/issues/182), including [match_function](https://github.com/opensearch-project/sql/pull/204), [match_phrase](https://github.com/opensearch-project/sql/pull/604), and [match_bool_prefix](https://github.com/opensearch-project/sql/pull/634).
 * OpenSearch now supports [multi-term aggregation](https://github.com/opensearch-project/OpenSearch/pull/2687).
 
 ## Release Details
