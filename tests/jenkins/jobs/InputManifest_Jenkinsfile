@@ -14,7 +14,7 @@ pipeline {
         stage('input manifest 1.1.0') {
             steps {
                 script {
-                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/1.1.0/opensearch-1.1.0.yml"))
+                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/templates/opensearch/1.x/os-template-1.1.0.yml"))
                     echo inputManifest.ci
                     echo inputManifest.build.name
                     echo inputManifest.build.version
@@ -26,7 +26,7 @@ pipeline {
         stage('input manifest 1.2.0') {
             steps {
                 script {
-                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/1.2.0/opensearch-1.2.0.yml"))
+                    def inputManifest = lib.jenkins.InputManifest.new(readYaml(file: "manifests/templates/opensearch/1.x/os-template-1.2.0.yml"))
                     echo inputManifest.ci.image.name
                     echo inputManifest.ci.image.args
                     echo inputManifest.build.name

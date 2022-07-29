@@ -1,0 +1,50 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 1.0.0
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: tags/1.0.0
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: tags/1.0.0.0
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: tags/1.0.0.0
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: tags/1.0.0.0
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: tags/1.0.0.0
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: tags/1.0.0.0
+  # - name: performance-analyzer-rca
+  #   repository: https://github.com/opensearch-project/performance-analyzer-rca.git
+  #   ref: tags/1.0.0.0
+  # - name: performance-analyzer
+  #   repository: https://github.com/opensearch-project/performance-analyzer.git
+  #   ref: tags/1.0.0.0
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: tags/1.0.0.0
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: tags/1.0.0.0
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: tags/1.0.0.0
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: tags/1.0.0.0
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: tags/1.0.0.0
+    working_directory: reports-scheduler
+  - name: dashboards-notebooks
+    repository: https://github.com/opensearch-project/dashboards-notebooks.git
+    ref: tags/1.0.0.0
+    working_directory: opensearch-notebooks

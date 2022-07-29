@@ -5,7 +5,8 @@ on:
   push:
   pull_request:
     paths:
-      - manifests/**/*.yml
+      - 'manifests/**/*.yml'
+      - '!manifests/templates/**/'
   schedule:
     - cron: 0 0 * * *
 
