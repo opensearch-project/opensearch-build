@@ -35,8 +35,8 @@ class TestRunBuild(unittest.TestCase):
         "manifests",
     )
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "1.1.0", "opensearch-1.1.0.yml"))
-    OPENSEARCH_MANIFEST_1_2 = os.path.realpath(os.path.join(MANIFESTS, "1.2.0", "opensearch-1.2.0.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "1.x", "os-template-1.1.0.yml"))
+    OPENSEARCH_MANIFEST_1_2 = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "1.x", "os-template-1.2.0.yml"))
 
     @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "-p", "linux"])
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
@@ -84,8 +84,10 @@ class TestRunBuild(unittest.TestCase):
             os.path.dirname(__file__),
             "..",
             "manifests",
-            "1.1.0",
-            "opensearch-dashboards-1.1.0.yml",
+            "templates",
+            "opensearch-dashboards",
+            "1.x",
+            "osd-template-1.1.0.yml",
         )
     )
 

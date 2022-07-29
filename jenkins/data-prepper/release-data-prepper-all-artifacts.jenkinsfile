@@ -20,7 +20,7 @@ pipeline {
         stage('Promote Archives') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
                     args '-e JAVA_HOME=/opt/java/openjdk-11'
                     alwaysPull true
@@ -72,7 +72,7 @@ pipeline {
         stage('Promote Docker') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'alpine:3'
                     alwaysPull true
                 }
@@ -118,7 +118,7 @@ pipeline {
         stage('Promote Maven') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
                     args '-e JAVA_HOME=/opt/java/openjdk-11'
                     alwaysPull true
@@ -158,7 +158,7 @@ pipeline {
                     steps {
                         script {
                             // stage artifacts for release with Sonatype
-                            withCredentials([usernamePassword(credentialsId: 'Sonatype', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
+                            withCredentials([usernamePassword(credentialsId: 'jenkins-sonatype-creds', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
                                 sh("$WORKSPACE/publish/stage-maven-release.sh $WORKSPACE/maven")
                             }
                         }

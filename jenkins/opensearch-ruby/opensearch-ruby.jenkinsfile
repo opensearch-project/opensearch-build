@@ -19,8 +19,8 @@ pipeline {
         stage('ruby-build-sign-upload') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
                     alwaysPull true
                 }
             }
@@ -53,7 +53,7 @@ pipeline {
             }
             post {
                 always {
-                    node('Jenkins-Agent-al2-x64-c54xlarge-Docker-Host') {
+                    node('Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host') {
                         script {
                             postCleanup()
                         }

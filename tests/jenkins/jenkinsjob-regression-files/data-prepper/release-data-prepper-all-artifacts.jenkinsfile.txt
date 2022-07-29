@@ -22,19 +22,19 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    /tmp/workspace/sign.sh /tmp/workspace/archive --sigtype=.sig --platform=linux
                )
          release-data-prepper-all-artifacts.stage(Release Archives to Production Distribution Bucket, groovy.lang.Closure)
@@ -98,24 +98,24 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    /tmp/workspace/sign.sh /tmp/workspace/maven --type=maven --platform=linux
                )
          release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
-               release-data-prepper-all-artifacts.usernamePassword({credentialsId=Sonatype, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
+               release-data-prepper-all-artifacts.usernamePassword({credentialsId=jenkins-sonatype-creds, usernameVariable=SONATYPE_USERNAME, passwordVariable=SONATYPE_PASSWORD})
                release-data-prepper-all-artifacts.withCredentials([[SONATYPE_USERNAME, SONATYPE_PASSWORD]], groovy.lang.Closure)
                   release-data-prepper-all-artifacts.sh(/tmp/workspace/publish/stage-maven-release.sh /tmp/workspace/maven)
          release-data-prepper-all-artifacts.script(groovy.lang.Closure)

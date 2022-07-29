@@ -9,27 +9,29 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --platform=linux
                )
                SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=/tmp/workspace/artifacts, sigtype=.rpm, platform=linux})
-                  signArtifacts.string({credentialsId=jenkins-rpm-signing-props, variable=configs})
-                  signArtifacts.withCredentials([configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
+                  signArtifacts.string({credentialsId=jenkins-rpm-signing-account-number, variable=RPM_SIGNING_ACCOUNT_NUMBER})
+                  signArtifacts.string({credentialsId=jenkins-rpm-signing-passphrase-secrets-arn, variable=RPM_SIGNING_PASSPHRASE_SECRETS_ARN})
+                  signArtifacts.string({credentialsId=jenkins-rpm-signing-secret-key-secrets-arn, variable=RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN})
+                  signArtifacts.string({credentialsId=jenkins-rpm-signing-key-id, variable=RPM_SIGNING_KEY_ID})
+                  signArtifacts.withCredentials([RPM_SIGNING_ACCOUNT_NUMBER, RPM_SIGNING_PASSPHRASE_SECRETS_ARN, RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN, RPM_SIGNING_KEY_ID], groovy.lang.Closure)
                      signArtifacts.echo(RPM Add Sign)
-                     signArtifacts.withAWS({role=jenki-jenki-asm-assume-role, roleAccount=null, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
+                     signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=RPM_SIGNING_ACCOUNT_NUMBER, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
                         signArtifacts.sh(
                         set -e
                         set +x
@@ -69,8 +71,8 @@
 
                         echo "------------------------------------------------------------------------"
                         echo "Import OpenSearch keys"
-                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "null" | jq -r .SecretBinary | base64 --decode > passphrase
-                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "null" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "RPM_SIGNING_PASSPHRASE_SECRETS_ARN" | jq -r .SecretBinary | base64 --decode > passphrase
+                        aws secretsmanager get-secret-value --region us-west-2 --secret-id "RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN" | jq -r .SecretBinary | base64 --decode | gpg --quiet --import --pinentry-mode loopback --passphrase-file passphrase -
 
                         echo "------------------------------------------------------------------------"
                         echo "Start Signing Rpm"
@@ -97,8 +99,8 @@
 
                         echo "------------------------------------------------------------------------"
                         echo "Clean up gpg"
-                        gpg --batch --yes --delete-secret-keys null
-                        gpg --batch --yes --delete-keys null
+                        gpg --batch --yes --delete-secret-keys RPM_SIGNING_KEY_ID
+                        gpg --batch --yes --delete-keys RPM_SIGNING_KEY_ID
                         rm -v passphrase
 
                     )
@@ -108,18 +110,18 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
+                  signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
+                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
+                   export ROLE=SIGNER_CLIENT_ROLE
+                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
+                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
+                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
+
                    /tmp/workspace/sign.sh /tmp/workspace/file.yml --platform=linux --type=maven
                )

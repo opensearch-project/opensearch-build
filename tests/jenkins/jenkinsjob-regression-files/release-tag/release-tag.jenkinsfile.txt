@@ -3,7 +3,7 @@
       release-tag.library({identifier=jenkins@20211123, retriever=null})
       release-tag.pipeline(groovy.lang.Closure)
          release-tag.timeout({time=2, unit=HOURS})
-         release-tag.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         release-tag.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
          release-tag.stage(Create Release Tag, groovy.lang.Closure)
             release-tag.script(groovy.lang.Closure)
                release-tag.sh(curl -SLO https://artifacts.opensearch.org/releases/bundle/opensearch/1.1.0/opensearch-1.1.0-linux-x64.tar.gz && tar -xf opensearch-1.1.0-linux-x64.tar.gz opensearch-1.1.0/manifest.yml)
