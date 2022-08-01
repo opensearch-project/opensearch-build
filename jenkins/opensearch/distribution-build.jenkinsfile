@@ -80,7 +80,7 @@ pipeline {
                         inputManifest: "manifests/${INPUT_MANIFEST}",
                         outputFile: "commits.yml"
                     )
-                    archiveArtifacts artifacts: 'commits.yml', onlyIfSuccessful: false
+                    archiveArtifacts artifacts: 'commits.yml'
                 }
             }
         }
