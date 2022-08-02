@@ -138,7 +138,7 @@ The tool currently supports following platforms for signing.
 Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .sig file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc as well as maven artifacts are signed using PGP signing. See [this page](https://opensearch.org/verify-signatures.html) for how to verify signatures.
 
 
-#### Windows
+#### WINDOWS
 
 Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by [Signtool.exe](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
 Windows code signing uses EV (Extended Validated) code signing certificates.
