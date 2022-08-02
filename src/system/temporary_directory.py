@@ -10,6 +10,7 @@ import os
 import shutil
 import stat
 import tempfile
+import time
 from pathlib import Path
 from types import FunctionType
 from typing import Any
@@ -17,9 +18,21 @@ from typing import Any
 
 def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     excvalue = exc[1]
-    if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
-        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
-        func(path)
+    logging.debug(f"excvalue {excvalue}")
+    logging.debug(f"func {func.__name__}")
+    if func in (os.rmdir, os.remove, os.unlink):
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IWRITE | stat.S_IREAD)  # 0777
+        try_total = 3
+        for try_count in range(try_total):
+            try:
+                logging.debug(f'Try count: {try_count + 1}/{try_total}')
+                func_result = None
+                func_result = func(path)
+                if func_result is None:
+                    break
+            except Exception as ex:
+                logging.debug(func_result)
+                logging.debug(ex)
     else:
         raise
 
