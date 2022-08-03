@@ -1,0 +1,84 @@
+---
+schema-version: '1.0'
+name: OpenSearch
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: index-management
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        path.repo: [/tmp]
+
+  - name: anomaly-detection
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: asynchronous-search
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: alerting
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
+
+  - name: notifications
+    working-directory: notifications
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: sql
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        script.context.field.max_compilations_rate: 1000/1m
+
+  - name: k-NN
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: dashboards-reports
+    working-directory: reports-scheduler
+    integ-test:
+      test-configs:
+        - without-security
+
+  - name: opensearch-observability
+    working-directory: opensearch-observability
+    integ-test:
+      test-configs:
+        - without-security
+
+  - name: ml-commons
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: cross-cluster-replication
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
