@@ -65,6 +65,29 @@ pipeline {
                 }
             }
         }
+        stage('Get Repository Commits') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'opensearchstaging/ci-runner:ci-runner-alpine3-yq-v1'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    getRepositoryCommit(
+                        componentName: "${COMPONENT_NAME}",
+                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                        outputFile: "commits.yml"
+                    )
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'commits.yml'
+                }
+            }
+        }
         stage('build') {
             parallel {
                 stage('build-snapshot-x64-tar') {
