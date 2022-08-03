@@ -29,3 +29,9 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: '2.2'
+    checks:
+      - gradle:publish
+      - gradle:properties:version
