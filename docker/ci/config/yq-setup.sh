@@ -49,5 +49,6 @@ esac
 
 curl -SL https://github.com/mikefarah/yq/releases/download/$VERSION/$YQ_TYPE -o /usr/bin/yq
 chmod 755 /usr/bin/yq
+yq --version
 
 echo "Installed yq"
