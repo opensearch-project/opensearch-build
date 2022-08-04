@@ -28,7 +28,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: main
+    ref: '2.2'
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: '2.2'
