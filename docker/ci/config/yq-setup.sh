@@ -8,7 +8,7 @@
 
 # This script is to install yq properly on nix* server
 
-set -e
+set -ex
 
 PLATFORM_LIST=(linux freebsd openbsd darwin)
 for entry in ${PLATFORM_LIST[@]}; do
