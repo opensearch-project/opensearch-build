@@ -40,8 +40,8 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
                     mock_input_manifest_from_file: MagicMock, mock_input_manifest_component: MagicMock,
                     *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
-        mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
+        mock_component_opensearch_min.branches.return_value = ["main", "1.9.0"]
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="1.9.0")
         mock_input_manifest_from_path.return_value = MagicMock(components=[])
 
         manifests = InputManifestsOpenSearchDashboards()
@@ -51,12 +51,12 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
             call(
                 os.path.join(
                     InputManifestsOpenSearchDashboards.manifests_path(),
-                    "0.9.0",
-                    "opensearch-dashboards-0.9.0.yml",
+                    "1.9.0",
+                    "opensearch-dashboards-1.9.0.yml",
                 )
             )
         ]
         mock_input_manifest_from_file().to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
-            call('0.9.0')
+            call('1.9.0')
         ])

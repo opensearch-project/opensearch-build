@@ -107,6 +107,9 @@ class InputManifests(Manifests):
 
             # generate new manifests
             for release_version in sorted(main_versions.keys() - known_versions):
+                legacy_threshold_version = "1.3"
+                if release_version[:3] < legacy_threshold_version:
+                    continue
                 self.write_manifest(release_version, main_versions[release_version])
                 self.add_to_cron(release_version)
 

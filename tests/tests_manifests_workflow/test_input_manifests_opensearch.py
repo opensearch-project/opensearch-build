@@ -42,10 +42,10 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                     mock_add_to_cron: MagicMock, mock_input_manifest_from_file: MagicMock,
                     mock_input_manifest_component: MagicMock, *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
-        mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
+        mock_component_opensearch_min.branches.return_value = ["main", "1.9.0"]
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="1.9.0")
         mock_component_opensearch.return_value = MagicMock(name="common-utils")
-        mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
+        mock_component_opensearch.checkout.return_value = MagicMock(version="1.7.0")
         mock_input_manifest_from_path.return_value.components = {
             "common-utils": Component({"name": "common-utils", "repository": "git", "ref": "ref"})
         }
@@ -56,22 +56,22 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
             call(
                 os.path.join(
                     InputManifestsOpenSearch.manifests_path(),
-                    "0.10.0",
-                    "opensearch-0.10.0.yml",
+                    "1.7.0",
+                    "opensearch-1.7.0.yml",
                 )
             ),
             call(
                 os.path.join(
                     InputManifestsOpenSearch.manifests_path(),
-                    "0.9.0",
-                    "opensearch-0.9.0.yml",
+                    "1.9.0",
+                    "opensearch-1.9.0.yml",
                 )
             ),
         ]
         mock_input_manifest_from_file().to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
-            call('0.10.0'),
-            call('0.9.0')
+            call('1.7.0'),
+            call('1.9.0')
         ])
 
     @patch("os.makedirs")
@@ -85,11 +85,11 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
                                          *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
         mock_component_opensearch_min.branches.return_value = ["main"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="1.9.0")
         mock_component_opensearch.return_value = MagicMock(name="common-utils")
-        mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
+        mock_component_opensearch.checkout.return_value = MagicMock(version="1.10.0")
         manifests = InputManifestsOpenSearch()
         manifests.update()
         mock_component_opensearch_min.branches.assert_called()
-        mock_write_manifest.assert_called_with("0.9.0", [mock_component_opensearch_min.checkout.return_value])
-        mock_add_to_cron.assert_called_with("0.9.0")
+        mock_write_manifest.assert_called_with("1.9.0", [mock_component_opensearch_min.checkout.return_value])
+        mock_add_to_cron.assert_called_with("1.9.0")
