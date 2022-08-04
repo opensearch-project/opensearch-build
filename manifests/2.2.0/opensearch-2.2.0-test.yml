@@ -87,3 +87,8 @@ components:
     integ-test:
       test-configs:
         - with-security
+
+  - name: geospatial
+    integ-test:
+      test-configs:
+        - without-security
