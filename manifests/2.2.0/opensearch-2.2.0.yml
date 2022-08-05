@@ -88,7 +88,7 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
   - name: index-management
-      repository: https://github.com/opensearch-project/index-management.git
-      ref: '2.2'
-      checks:
-        - gradle:properties:version
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: '2.2'
+    checks:
+      - gradle:properties:version
