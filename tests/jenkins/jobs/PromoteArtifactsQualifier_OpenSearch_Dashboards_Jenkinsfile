@@ -1,0 +1,14 @@
+pipeline {
+    agent none
+    stages {
+        stage('promote') {
+            steps {
+                script {
+                    promoteArtifacts(
+                        manifest: 'tests/jenkins/data/opensearch-dashboards-2.0.0-rc1.yml'
+                    )
+                }
+            }
+        }
+    }
+}

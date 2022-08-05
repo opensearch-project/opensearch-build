@@ -1,9 +1,9 @@
 def call(Map args = [:]) {
 
     def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: args.distManifest))
+    def bundleManifestObj = lib.jenkins.BundleManifest.new(readYaml(file: args.distManifest))
 
-    def componentsName = buildManifestObj.getNames()
+    def componentsName = bundleManifestObj.getNames()
     def componetsNumber = componentsName.size()
     def version = args.tagVersion
     def untaggedRepoList = []
@@ -11,15 +11,20 @@ def call(Map args = [:]) {
 
     withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
         for (component in componentsName) {
-            def commitID = buildManifestObj.getCommitId(component)
-            def repo = buildManifestObj.getRepo(component)
+            def commitID = bundleManifestObj.getCommitId(component)
+            def repo = bundleManifestObj.getRepo(component)
             def push_url = "https://$GITHUB_TOKEN@" + repo.minus('https://')
             echo "Tagging $component at $commitID ..."
 
             dir (component) {
                 checkout([$class: 'GitSCM', branches: [[name: commitID]],
                           userRemoteConfigs: [[url: repo]]])
-                def tagVersion = "$version.0"
+                def tagVersion = version
+                if (version.contains("-")) {
+                    tagVersion = version.split("-").first() + ".0-" + version.split("-").last()
+                } else {
+                    tagVersion = "$version.0"
+                }
                 if (component == "OpenSearch" || component == "OpenSearch-Dashboards" || component == "functionalTestDashboards") {
                     tagVersion = version
                 }

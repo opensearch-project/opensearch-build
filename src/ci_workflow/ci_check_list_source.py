@@ -31,7 +31,7 @@ class CiCheckListSource(CiCheckList):
     }
 
     class InvalidCheckError(Exception):
-        def __init__(self, check: Any):
+        def __init__(self, check: Any) -> None:
             self.check = check
             super().__init__(f"Invalid check: {check.name}, must be one of {CiCheckListSource.CHECKS.keys()}.")
 

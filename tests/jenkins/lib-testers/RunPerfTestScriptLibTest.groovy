@@ -37,8 +37,8 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
         helper.registerAllowedMethod("downloadBuildManifest", [Map], {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: bundleManifest))
         })
-
-        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host')
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')
@@ -49,6 +49,8 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
         binding.setVariable('BUILD_URL', 'test://artifact.url')
         binding.setVariable('BUNDLE_MANIFEST', bundleManifest)
         binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
+        binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
         binding.setVariable('HAS_SECURITY', security)
         binding.setVariable('JOB_NAME', 'perf-test')
@@ -65,18 +67,26 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
     void parameterInvariantsAssertions(call) {
         assertThat(call.args.bundleManifest.first(), notNullValue())
         assertThat(call.args.buildId.first(), notNullValue())
-        assertThat(call.args.insecure.first(), notNullValue())
-        assertThat(call.args.workload.first(), notNullValue())
-        assertThat(call.args.testIterations.first(), notNullValue())
-        assertThat(call.args.warmupIterations.first(), notNullValue())
+        if (!this.insecure.isEmpty()) {
+            assertThat(call.args.insecure.first(), notNullValue())
+        }
+        if (!this.workload.isEmpty()) {
+            assertThat(call.args.workload.first(), notNullValue())
+        }
+        if (!this.testIterations.isEmpty()) {
+            assertThat(call.args.testIterations.first(), notNullValue())
+        }
+        if (!this.warmupIterations.isEmpty()) {
+            assertThat(call.args.warmupIterations.first(), notNullValue())
+        }
     }
 
     boolean expectedParametersMatcher(call) {
         return call.args.bundleManifest.first().toString().equals(this.bundleManifest) &&
             call.args.buildId.first().toString().equals(this.buildId) &&
-            call.args.workload.first().toString().equals(this.workload) &&
-            call.args.testIterations.first().toInteger().equals(this.testIterations.toInteger()) &&
-            call.args.warmupIterations.first().toInteger().equals(this.warmupIterations.toInteger())
+            (this.workload.isEmpty() || call.args.workload.first().toString().equals(this.workload)) &&
+            (this.testIterations.isEmpty() || call.args.testIterations.first().toInteger().equals(this.testIterations.toInteger())) &&
+            (this.warmupIterations.isEmpty() || call.args.warmupIterations.first().toInteger().equals(this.warmupIterations.toInteger()))
     }
 
     String libFunctionName() {

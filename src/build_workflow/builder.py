@@ -12,6 +12,10 @@ from build_workflow.build_target import BuildTarget
 
 
 class Builder(ABC):
+    component: Any
+    target: BuildTarget
+    output_path: str
+
     def __init__(self, component: Any, target: BuildTarget) -> None:
         self.output_path = "builds"
         self.component = component

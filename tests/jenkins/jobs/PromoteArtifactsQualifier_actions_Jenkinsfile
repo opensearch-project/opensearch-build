@@ -1,0 +1,15 @@
+pipeline {
+    agent none
+    stages {
+        stage('promote') {
+            steps {
+                script {
+                    promoteArtifacts(
+                        manifest: 'tests/jenkins/data/opensearch-2.0.0-rc1.yml',
+                        fileActions: [createSha512Checksums(), createSignatureFiles()]
+                    )
+                }
+            }
+        }
+    }
+}

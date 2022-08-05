@@ -9,19 +9,19 @@ import os
 import unittest
 from unittest.mock import MagicMock
 
-from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_recorder.test_recorder import LocalClusterLogs
 
 
 class TestLocalClusterLogs(unittest.TestCase):
 
-    def test(self):
+    def test(self) -> None:
         mock_parent_class = MagicMock()
 
         mock_parent_class._create_base_folder_structure.return_value = "test_base"
 
         mock_parent_class._copy_log_files = MagicMock()
 
-        logs = TestRecorder.LocalClusterLogs(mock_parent_class)
+        logs = LocalClusterLogs(mock_parent_class)
 
         mock_test_result_data = MagicMock()
 

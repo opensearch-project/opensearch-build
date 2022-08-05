@@ -1,0 +1,36 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 1.3.0
+  platform: linux
+  architecture: x64
+  distribution: rpm
+  location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/dist/opensearch-dashboards/opensearch-dashboards-1.3.0-linux-x64.rpm
+  id: '24'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: tags/1.3.0
+    commit_id: 00e06934211e9819f99aabbf139885682f33e95e
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/builds/opensearch-dashboards/dist/opensearch-dashboards-min-1.3.0-x64.rpm
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: tags/1.3.0.0
+    commit_id: 10b4bb8edebd84c204e2c860ffbe8486f9510a8e
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/builds/opensearch-dashboards/plugins/securityDashboards-1.3.0.zip
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: tags/1.3.0.0
+    commit_id: 5710e3dc6d654ed49d8012c318d9b21542e09487
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/builds/opensearch-dashboards/plugins/anomalyDetectionDashboards-1.3.0.zip
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: tags/1.3.0.0
+    commit_id: fec1eaf578f2b4ebbe95a972378b685eaf692def
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/builds/opensearch-dashboards/plugins/reportsDashboards-1.3.0.zip
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: tags/1.3.0.0
+    commit_id: 69fc0da7319db12ba3db81f3714ba81bddad6266
+    location: https://ci.opensearch.org/ci/dbc/Playground/tianleh-test/tianleh-osd-build-3-22/1.3.0/24/linux/x64/rpm/rpm/builds/opensearch-dashboards/plugins/ganttChartDashboards-1.3.0.zip

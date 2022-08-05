@@ -3,7 +3,7 @@ schema-version: '1.0'
 name: OpenSearch
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v1
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
     args: -e JAVA_HOME=/opt/java/openjdk-17
 components:
   - name: index-management
@@ -15,10 +15,6 @@ components:
         - without-security
       additional-cluster-configs:
         path.repo: [/tmp]
-    bwc-test:
-      test-configs:
-        - with-security
-        - without-security
 
   - name: anomaly-detection
     integ-test:
@@ -27,17 +23,9 @@ components:
       test-configs:
         - with-security
         - without-security
-    bwc-test:
-      test-configs:
-        - with-security
-        - without-security
 
   - name: asynchronous-search
     integ-test:
-      test-configs:
-        - with-security
-        - without-security
-    bwc-test:
       test-configs:
         - with-security
         - without-security
@@ -49,7 +37,9 @@ components:
         - without-security
       additional-cluster-configs:
         plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
-    bwc-test:
+
+  - name: cross-cluster-replication
+    integ-test:
       test-configs:
         - with-security
         - without-security
@@ -57,10 +47,6 @@ components:
   - name: notifications
     working-directory: notifications
     integ-test:
-      test-configs:
-        - with-security
-        - without-security
-    bwc-test:
       test-configs:
         - with-security
         - without-security
@@ -72,17 +58,9 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
-    bwc-test:
-      test-configs:
-        - with-security
-        - without-security
 
   - name: k-NN
     integ-test:
-      test-configs:
-        - with-security
-        - without-security
-    bwc-test:
       test-configs:
         - with-security
         - without-security
@@ -92,25 +70,15 @@ components:
     integ-test:
       test-configs:
         - without-security
-    bwc-test:
-      test-configs:
-        - without-security
 
-  - name: observability
+  - name: opensearch-observability
     working-directory: opensearch-observability
     integ-test:
-      test-configs:
-        - without-security
-    bwc-test:
       test-configs:
         - without-security
 
   - name: ml-commons
     integ-test:
-      test-configs:
-        - with-security
-        - without-security
-    bwc-test:
       test-configs:
         - with-security
         - without-security

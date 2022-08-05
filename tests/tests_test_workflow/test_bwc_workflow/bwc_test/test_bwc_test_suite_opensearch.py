@@ -6,12 +6,14 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from pathlib import Path
+from typing import Any, Tuple
+from unittest.mock import MagicMock, Mock, call, patch
 
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
-from manifests.bundle_manifest import BundleManifest
-from manifests.test_manifest import TestManifest
+from manifests.bundle_manifest import BundleComponent, BundleManifest
+from manifests.test_manifest import TestComponent, TestManifest
 from test_workflow.bwc_test.bwc_test_suite import InvalidTestConfigError, ScriptFinder
 from test_workflow.bwc_test.bwc_test_suite_opensearch import BwcTestSuiteOpenSearch
 
@@ -25,18 +27,18 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
     TEST_MANIFEST = os.path.join(DATA, "test_manifest.yml")
 
-    def setUp(self):
+    def setUp(self) -> None:
         os.chdir(os.path.dirname(__file__))
         self.bundle_manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.build_manifest = BuildManifest.from_path(self.BUILD_MANIFEST)
         self.test_manifest = TestManifest.from_path(self.TEST_MANIFEST)
-        self.work_dir = "test_dir"
+        self.work_dir = Path("test_dir")
         self.test_recorder = MagicMock()
         self.save_logs = MagicMock()
         self.test_recorder.test_results_logs = self.save_logs
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute(self, mock_test_recorder, *mock):
+    def test_execute(self, mock_test_recorder: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("index-management")
         bwc_test_suite = BwcTestSuiteOpenSearch(
             self.work_dir,
@@ -48,7 +50,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
 
         mock_execute_bwctest_sh = MagicMock()
         mock_execute_bwctest_sh.return_value = "success"
-        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh
+        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh  # type: ignore
 
         bwc_test_suite.execute_tests()
 
@@ -59,7 +61,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
 
     @patch("os.path.exists", return_value=True)
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_multiple_test_configs(self, mock_test_recorder, *mock):
+    def test_execute_with_multiple_test_configs(self, mock_test_recorder: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
         bwc_test_suite = BwcTestSuiteOpenSearch(
             self.work_dir,
@@ -70,7 +72,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
         )
         mock_execute_bwctest_sh = MagicMock()
         mock_execute_bwctest_sh.return_value = "success"
-        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh
+        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh  # type: ignore
 
         test_results = bwc_test_suite.execute_tests()
         self.assertEqual(len(test_results), 2)
@@ -84,7 +86,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
     @patch("os.path.exists", return_value=True)
     @patch.object(ScriptFinder, "find_bwc_test_script")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_working_directory(self, mock_test_recorder, mock_script_finder, *mock):
+    def test_execute_with_working_directory(self, mock_test_recorder: Mock, mock_script_finder: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
         bwc_test_suite = BwcTestSuiteOpenSearch(
             self.work_dir,
@@ -98,7 +100,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
 
         mock_execute_bwctest_sh = MagicMock()
         mock_execute_bwctest_sh.return_value = "success"
-        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh
+        bwc_test_suite.execute_bwctest_sh = mock_execute_bwctest_sh  # type: ignore
 
         bwc_test_suite.execute_tests()
 
@@ -109,13 +111,13 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
     @patch("test_workflow.bwc_test.bwc_test_suite.TestResultData")
     @patch("test_workflow.bwc_test.bwc_test_suite.GitRepository")
     @patch("test_workflow.bwc_test.bwc_test_suite.execute", return_value=True)
-    def test_execute_bwctest_sh(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, *mock):
+    def test_execute_bwctest_sh(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
 
         mock_find = MagicMock()
         mock_find.return_value = "./bwctest.sh"
 
-        ScriptFinder.find_bwc_test_script = mock_find
+        ScriptFinder.find_bwc_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "dir"
@@ -163,12 +165,12 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
     @patch("test_workflow.bwc_test.bwc_test_suite.TestResultData")
     @patch("test_workflow.bwc_test.bwc_test_suite.GitRepository")
     @patch("test_workflow.bwc_test.bwc_test_suite.execute", return_value=True)
-    def test_execute_bwctest_sh_script_do_not_exist(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, *mock):
+    def test_execute_bwctest_sh_script_do_not_exist(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
         mock_find = MagicMock()
         mock_find.return_value = "./bwctest.sh"
 
-        ScriptFinder.find_bwc_test_script = mock_find
+        ScriptFinder.find_bwc_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -187,7 +189,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
         # call the test target
         status = suite.execute_bwctest_sh("with-security")
 
-        self.assertIsNone(status)
+        self.assertEqual(0, status)
 
         mock_execute.assert_not_called()
         mock_test_result_data.assert_not_called()
@@ -195,12 +197,12 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
 
     @patch("os.path.exists")
     @patch("test_workflow.bwc_test.bwc_test_suite.GitRepository")
-    def test_is_security_enabled(self, mock_git, mock_path_exists, *mock):
+    def test_is_security_enabled(self, mock_git: Mock, mock_path_exists: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
         mock_find = MagicMock()
         mock_find.return_value = "./bwctest.sh"
 
-        ScriptFinder.find_bwc_test_script = mock_find
+        ScriptFinder.find_bwc_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -227,13 +229,13 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
     @patch("test_workflow.bwc_test.bwc_test_suite.logging")
     @patch("os.path.exists")
     @patch("test_workflow.bwc_test.bwc_test_suite.GitRepository")
-    def test_pretty_print_message(self, mock_git, mock_path_exists, mock_logging, *mock):
+    def test_pretty_print_message(self, mock_git: Mock, mock_path_exists: Mock, mock_logging: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
 
         mock_find = MagicMock()
         mock_find.return_value = "./bwctest.sh"
 
-        ScriptFinder.find_bwc_test_script = mock_find
+        ScriptFinder.find_bwc_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -257,7 +259,7 @@ class TestBwcSuiteOpenSearch(unittest.TestCase):
             call("==============================================="),
         ])
 
-    def __get_test_config_and_bundle_component(self, component_name):
+    def __get_test_config_and_bundle_component(self, component_name: str) -> Tuple[TestComponent, BundleComponent]:
         component = self.bundle_manifest.components[component_name]
         test_config = self.test_manifest.components[component.name]
         return test_config, component

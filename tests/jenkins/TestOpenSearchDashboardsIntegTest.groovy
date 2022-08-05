@@ -18,18 +18,18 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         def buildId = 215
         def buildManifest = "tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml"
         def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/${buildId}/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz"
-        def agentLabel = "Jenkins-Agent-al2-x64-c54xlarge-Docker-Host"
+        def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
 
         this.registerLibTester(new DetectTestDockerAgentLibTester())
         this.registerLibTester(new DownloadBuildManifestLibTester(buildManifestUrl, buildManifest))
-        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, buildManifest, "manifests/${testManifest}", "${buildId}"))
-        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName, buildId))
+        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, 'functionalTestDashboards', buildManifest, "manifests/${testManifest}"))
+        this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName))
         this.registerLibTester(new PublishNotificationLibTester(
                 ':white_check_mark:',
                 'Integration Tests Successful',
                 '',
                 testManifest,
-                'INTEG_TEST_WEBHOOK'))
+                'jenkins-integ-test-webhook'))
         super.setUp()
 
         // Variables
@@ -48,6 +48,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod('unstash', [String.class], null)
     }
 
     @Test

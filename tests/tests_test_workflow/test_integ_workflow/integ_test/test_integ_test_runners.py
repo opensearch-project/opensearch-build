@@ -12,7 +12,7 @@ from test_workflow.integ_test.integ_test_runners import IntegTestRunners
 
 class TestIntegTestRunners(unittest.TestCase):
 
-    def test_opensearch(self):
+    def test_opensearch(self) -> None:
 
         mock_args = MagicMock()
         mock_test_manifest = MagicMock()
@@ -29,12 +29,10 @@ class TestIntegTestRunners(unittest.TestCase):
             "OpenSearch Dashboards": mock_opensearch_dashboards_runner,
         }):
             runner = IntegTestRunners.from_test_manifest(mock_args, mock_test_manifest)
-
             self.assertEqual(runner, mock_opensearch_runner_object)
-
             mock_opensearch_runner.assert_called_once_with(mock_args, mock_test_manifest)
 
-    def test_opensearch_dashboards(self):
+    def test_opensearch_dashboards(self) -> None:
 
         mock_args = MagicMock()
         mock_test_manifest = MagicMock()
@@ -51,6 +49,5 @@ class TestIntegTestRunners(unittest.TestCase):
             "OpenSearch Dashboards": mock_opensearch_dashboards_runner,
         }):
             runner = IntegTestRunners.from_test_manifest(mock_args, mock_test_manifest)
-
             self.assertEqual(runner, mock_opensearch_dashboards_runner_object)
             mock_opensearch_dashboards_runner.assert_called_once_with(mock_args, mock_test_manifest)

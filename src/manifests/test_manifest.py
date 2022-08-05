@@ -4,7 +4,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Any, Optional
+from typing import Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
 
@@ -77,7 +77,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
         },
     }
 
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.name = str(data["name"])
         self.ci = self.Ci(data.get("ci", None))
@@ -92,14 +92,14 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
         }
 
     class Ci:
-        def __init__(self, data: Any):
+        def __init__(self, data: dict) -> None:
             self.image = None if data is None else self.Image(data.get("image", None))
 
         def __to_dict__(self) -> Optional[dict]:
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data: Any):
+            def __init__(self, data: dict) -> None:
                 self.name = data["name"]
                 self.args = data.get("args", None)
 
@@ -112,12 +112,12 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
 
 class TestComponents(Components['TestComponent']):
     @classmethod
-    def __create__(self, data: Any) -> 'TestComponent':
+    def __create__(self, data: dict) -> 'TestComponent':
         return TestComponent(data)
 
 
 class TestComponent(Component):
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.working_directory = data.get("working-directory", None)
         self.integ_test = data.get("integ-test", None)
@@ -135,4 +135,5 @@ class TestComponent(Component):
 
 TestManifest.VERSIONS = {"1.0": TestManifest}
 
+TestComponent.__test__ = False  # type: ignore[attr-defined]
 TestManifest.__test__ = False  # type: ignore[attr-defined]

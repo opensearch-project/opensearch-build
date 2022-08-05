@@ -1,0 +1,29 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch Dashboards
+  version: 2.2.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 2.x
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '2.2'
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '2.2'
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    working_directory: src/plugins/custom_import_map
+    ref: '2.2'
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    working_directory: dashboards-notifications
+    ref: '2.2'
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '2.2'

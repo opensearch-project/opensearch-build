@@ -22,8 +22,10 @@ class TestCheckoutArgs(unittest.TestCase):
             "..",
             "..",
             "manifests",
-            "1.1.0",
-            "opensearch-1.1.0.yml",
+            "templates",
+            "opensearch",
+            "1.x",
+            "os-template-1.1.0.yml",
         )
     )
 

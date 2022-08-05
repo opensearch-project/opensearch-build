@@ -2,7 +2,8 @@
 import logging
 import os
 import unittest
-from unittest.mock import MagicMock, call, patch
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, call, patch
 
 from paths.script_finder import ScriptFinder
 from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError
@@ -12,7 +13,7 @@ from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import Lo
 
 class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.dependency_installer_opensearch = MagicMock()
         self.dependency_installer_opensearch_dashboards = MagicMock()
 
@@ -29,7 +30,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         self.bundle_manifest_opensearch_dashboards = MagicMock()
         self.build_manifest_opensearch = MagicMock()
         self.build_manifest_opensearch_dashboards = MagicMock()
-        self.work_dir = "test_dir"
+        self.work_dir = Path("test_dir")
 
         self.test_recorder = MagicMock()
         self.save_logs = MagicMock()
@@ -40,12 +41,12 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_tests(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, mock_chdir):
+    def test_execute_tests(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock, mock_chdir: Mock) -> None:
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
-        ScriptFinder.find_integ_test_script = mock_find
+        ScriptFinder.find_integ_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -60,7 +61,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
         mock_create = MagicMock()
         mock_create.return_value.__enter__.return_value = ("test_endpoint", 1234)
-        LocalTestClusterOpenSearchDashboards.create = mock_create
+        LocalTestClusterOpenSearchDashboards.create = mock_create  # type: ignore
 
         suite = IntegTestSuiteOpenSearchDashboards(
             self.dependency_installer_opensearch,
@@ -76,7 +77,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         )
 
         mock_execute_integtest_sh = MagicMock()
-        suite.execute_integtest_sh = mock_execute_integtest_sh
+        suite.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
 
         # call the test target
         suite.execute_tests()
@@ -92,13 +93,13 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_integtest_sh(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_execute_integtest_sh(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
         logging.info(locals())
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
-        ScriptFinder.find_integ_test_script = mock_find
+        ScriptFinder.find_integ_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "dir"
@@ -125,7 +126,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         )
 
         # call the test target
-        status = suite.execute_integtest_sh("test_endpoint", 1234, True, ["with-security", "without-security"])
+        status = suite.execute_integtest_sh("test_endpoint", 1234, True, "with-security")
 
         self.assertEqual(status, "test_status")
         mock_execute.assert_called_once_with('./integtest.sh -b test_endpoint -p 1234 -s true -v 1.2.0',
@@ -133,7 +134,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
         mock_test_result_data.assert_called_once_with(
             "sql",
-            ["with-security", "without-security"],
+            "with-security",
             "test_status",
             "test_stdout",
             "",
@@ -149,11 +150,11 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
-        ScriptFinder.find_integ_test_script = mock_find
+        ScriptFinder.find_integ_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -175,9 +176,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         )
 
         # call the test target
-        status = suite.execute_integtest_sh("test_endpoint", 1234, True, ["with-security", "without-security"])
+        status = suite.execute_integtest_sh("test_endpoint", 1234, True, "without-security")
 
-        self.assertIsNone(status)
+        self.assertEqual(0, status)
 
         mock_execute.assert_not_called()
         mock_test_result_data.assert_not_called()
@@ -187,11 +188,11 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_is_security_enabled(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists):
+    def test_is_security_enabled(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
-        ScriptFinder.find_integ_test_script = mock_find
+        ScriptFinder.find_integ_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"
@@ -225,12 +226,12 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     @patch("test_workflow.integ_test.integ_test_suite.TestResultData")
     @patch("test_workflow.integ_test.integ_test_suite.GitRepository")
     @patch("test_workflow.integ_test.integ_test_suite.execute", return_value=True)
-    def test_pretty_print_message(self, mock_execute, mock_git, mock_test_result_data, mock_path_exists, mock_logging):
+    def test_pretty_print_message(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock, mock_logging: Mock) -> None:
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
-        ScriptFinder.find_integ_test_script = mock_find
+        ScriptFinder.find_integ_test_script = mock_find  # type: ignore
 
         mock_git_object = MagicMock()
         mock_git_object.dir = "https://test.github.com"

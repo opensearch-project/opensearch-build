@@ -6,7 +6,7 @@ from test_workflow.dependency_installer_opensearch_dashboards import DependencyI
 
 class DependencyInstallerOpenSearchDashboardsTests(unittest.TestCase):
 
-    def test(self):
+    def test(self) -> None:
         mock_root_url = MagicMock()
         mock_build_manifest = MagicMock()
         mock_bundle_manifest = MagicMock()

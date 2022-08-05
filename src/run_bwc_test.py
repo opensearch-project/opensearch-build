@@ -13,7 +13,7 @@ from test_workflow.bwc_test.bwc_test_runners import BwcTestRunners
 from test_workflow.test_args import TestArgs
 
 
-def main():
+def main() -> int:
     args = TestArgs()
 
     # Any logging.info call preceding to next line in the execution chain will make the console output not displaying logs in console.
@@ -26,7 +26,9 @@ def main():
     all_results.log()
 
     if all_results.failed():
-        sys.exit(1)
+        return 1
+    else:
+        return 0
 
 
 if __name__ == "__main__":

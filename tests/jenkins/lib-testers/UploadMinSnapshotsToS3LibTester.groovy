@@ -38,6 +38,10 @@ class UploadMinSnapshotsToS3LibTester extends LibFunctionTester {
         helper.addShMock('find tests/data/tar/builds/opensearch/dist -type f') { script ->
             return [stdout: "opensearch-min-1.3.0-linux-x64.tar.gz opensearch-dashboards-min-1.3.0-linux-x64.tar.gz", exitValue: 0]
         }
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)

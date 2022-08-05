@@ -32,5 +32,11 @@ class TestComponentManifest(unittest.TestCase):
         })
 
         self.assertEqual(len(list(manifest.components.select(focus=None))), 2)
-        self.assertEqual(len(list(manifest.components.select(focus="one"))), 1)
-        self.assertEqual(next(manifest.components.select(focus="two")).name, "two")
+        self.assertEqual(len(list(manifest.components.select(focus=[]))), 2)
+        self.assertEqual(len(list(manifest.components.select(focus=["one"]))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["one", "two"]))), 2)
+        self.assertEqual(next(manifest.components.select(focus=["two"])).name, "two")
+
+        with self.assertRaises(ValueError) as ctx:
+            self.assertEqual(len(list(manifest.components.select(focus=["one", "invalid"]))), 0)
+        self.assertEqual(str(ctx.exception), "Unknown component=invalid.")

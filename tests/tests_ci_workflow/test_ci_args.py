@@ -23,8 +23,10 @@ class TestCiArgs(unittest.TestCase):
             "..",
             "..",
             "manifests",
-            "1.1.0",
-            "opensearch-1.1.0.yml",
+            "templates",
+            "opensearch",
+            "1.x",
+            "os-template-1.1.0.yml",
         )
     )
 
@@ -50,13 +52,17 @@ class TestCiArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
     def test_component_default(self) -> None:
-        self.assertIsNone(CiArgs().component)
+        self.assertIsNone(CiArgs().components)
 
     @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
     def test_component(self) -> None:
-        self.assertEqual(CiArgs().component, "xyz")
+        self.assertEqual(CiArgs().components, ["xyz"])
 
-    @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "xyz"])
+    @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST, "--component", "foo", "bar"])
+    def test_components(self) -> None:
+        self.assertEqual(CiArgs().components, ["foo", "bar"])
+
+    @patch("argparse._sys.argv", [CI_PY, OPENSEARCH_MANIFEST])
     def test_script_path(self) -> None:
         self.assertEqual(CiArgs().script_path, self.CI_SH)
 

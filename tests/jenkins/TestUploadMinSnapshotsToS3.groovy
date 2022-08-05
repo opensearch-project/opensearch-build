@@ -8,7 +8,6 @@
 
 package jenkins.tests
 
-import com.kenai.jffi.Closure
 import jenkins.tests.BuildPipelineTest
 import org.junit.*
 

@@ -12,7 +12,12 @@ from test_workflow.perf_test.perf_args import PerfArgs
 
 
 class PerfTestRunner(abc.ABC):
-    def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
+    args: PerfArgs
+    test_manifest: BundleManifest
+    security: bool
+    tests_dir: str
+
+    def __init__(self, args: PerfArgs, test_manifest: BundleManifest) -> None:
         self.args = args
         self.test_manifest = test_manifest
 
@@ -20,5 +25,9 @@ class PerfTestRunner(abc.ABC):
         self.tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", f"{'with' if self.security else 'without'}-security")
         os.makedirs(self.tests_dir, exist_ok=True)
 
-    def run(self):
+    @abc.abstractmethod
+    def run_tests(self) -> None:
+        pass
+
+    def run(self) -> None:
         self.run_tests()

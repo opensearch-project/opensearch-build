@@ -8,11 +8,13 @@ import argparse
 import io
 import logging
 import sys
+from typing import List
 
 
 class CiArgs:
     manifest: io.TextIOWrapper
     snapshot: bool
+    components: List[str]
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Sanity test the OpenSearch Bundle")
@@ -24,7 +26,14 @@ class CiArgs:
             default=False,
             help="Build snapshot.",
         )
-        parser.add_argument("-c", "--component", type=str, help="Rebuild a single component.")
+        parser.add_argument(
+            "-c",
+            "--component",
+            type=str,
+            dest="components",
+            nargs='*',
+            help="Rebuild one or more components."
+        )
         parser.add_argument(
             "--keep",
             dest="keep",
@@ -43,7 +52,7 @@ class CiArgs:
         args = parser.parse_args()
         self.manifest = args.manifest
         self.snapshot = args.snapshot
-        self.component = args.component
+        self.components = args.components
         self.keep = args.keep
         self.logging_level = args.logging_level
         self.script_path = sys.argv[0].replace("/src/run_ci.py", "/ci.sh")

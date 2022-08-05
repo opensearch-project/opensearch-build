@@ -74,3 +74,7 @@ fi
 mkdir -p ./$OUTPUT/plugins
 notifCoreZipPath=$(ls core/build/distributions/ | grep .zip)
 cp -v core/build/distributions/$notifCoreZipPath ./$OUTPUT/plugins
+
+./gradlew publishPluginZipPublicationToZipStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+mkdir -p $OUTPUT/maven/org/opensearch/plugin
+cp -r ./build/local-staging-repo/org/opensearch/plugin/opensearch-notifications-core $OUTPUT/maven/org/opensearch/plugin/

@@ -14,9 +14,9 @@ pipeline {
                 script {
                     runIntegTestScript(
                         jobName: 'dummy_job',
+                        componentName: 'functionalTestDashboards',
                         buildManifest: 'tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml',
-                        testManifest: 'tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml',
-                        buildId: '215'
+                        testManifest: 'tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml'
                     )
                 }
             }

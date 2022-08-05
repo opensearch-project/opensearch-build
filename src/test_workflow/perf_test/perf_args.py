@@ -8,11 +8,22 @@
 # GitHub history for details.
 
 import argparse
+from typing import IO
 
 
 # Contains the arguments required to run a perf test.
 class PerfArgs:
-    def __init__(self):
+    bundle_manifest: IO
+    stack: str
+    config: IO
+    keep: bool
+    workload: str
+    workload_options: dict
+    warmup_iters: int
+    test_iters: int
+    insecure: bool
+
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.", required=True)
         parser.add_argument("--stack", dest="stack", help="Stack name for performance test")

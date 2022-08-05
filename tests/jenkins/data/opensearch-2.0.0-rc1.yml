@@ -1,0 +1,17 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 2.0.0
+  qualifier: rc1
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-v1
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: OpenSearch
+    ref: '2.0'
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    checks:
+      - gradle:publish
+      - gradle:properties:version

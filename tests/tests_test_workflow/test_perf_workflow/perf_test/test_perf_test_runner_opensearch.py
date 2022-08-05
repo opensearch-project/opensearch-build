@@ -6,7 +6,8 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import Mock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
@@ -36,9 +37,9 @@ class TestPerfTestRunnerOpenSearch(unittest.TestCase):
     @patch("os.chdir")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.GitRepository")
-    @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfTestCluster.create")
+    @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfSingleNodeCluster.create")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch.PerfTestSuite")
-    def test_run(self, mock_suite, mock_cluster, mock_git, mock_temp_directory, *mocks):
+    def test_run(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock, *mocks: Any) -> None:
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_cluster.return_value.__enter__.return_value = mock_cluster
 

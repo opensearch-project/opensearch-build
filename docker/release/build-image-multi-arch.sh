@@ -164,5 +164,5 @@ fi
 
 # Build multi-arch images
 PLATFORMS=`echo "${ARCHITECTURE_ARRAY[@]/#/linux/}" | sed 's/x64/amd64/g;s/ /,/g'` && echo PLATFORMS $PLATFORMS
-docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -t ${REPOSITORY}:${VERSION} -t ${REPOSITORY}:latest -f $DOCKERFILE --push $DIR
+docker buildx build --platform $PLATFORMS --build-arg VERSION=$VERSION --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -t ${REPOSITORY}:${VERSION} -f $DOCKERFILE --push $DIR
 

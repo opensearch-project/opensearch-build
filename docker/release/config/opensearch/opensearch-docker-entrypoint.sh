@@ -10,6 +10,7 @@
 
 # Export OpenSearch Home
 export OPENSEARCH_HOME=/usr/share/opensearch
+export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 
 # The virtual file /proc/self/cgroup should list the current cgroup
 # membership. For each hierarchy, you can follow the cgroup path from

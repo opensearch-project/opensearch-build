@@ -4,6 +4,12 @@
 # Disable brp-java-repack-jars, so jars will not be decompressed and repackaged
 %define __jar_repack 0
 
+# Generate digests, 8 means algorithm of sha256
+# This is different from rpm sig algorithm
+# Requires rpm version 4.12 + to generate but b/c run on older versions
+%define _source_filedigest_algorithm 8
+%define _binary_filedigest_algorithm 8
+
 # User Define Variables
 %define product_dir %{_datadir}/%{name}
 %define config_dir %{_sysconfdir}/%{name}
@@ -25,7 +31,7 @@ ExclusiveArch: %{_architecture}
 AutoReqProv: no
 
 %description
-OpenSearch makes it easy to ingest, search, visualize, and analyze your data.
+OpenSearch makes it easy to ingest, search, visualize, and analyze your data
 For more information, see: https://opensearch.org/
 
 %prep
@@ -69,6 +75,10 @@ if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/
     echo "Stop existing %{name}.service"
     systemctl --no-reload stop %{name}.service
 fi
+if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+    echo "Stop existing opensearch-performance-analyzer.service"
+    systemctl --no-reload stop opensearch-performance-analyzer.service
+fi
 # Create user and group if they do not already exist.
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent passwd %{name} > /dev/null 2>&1 || \
@@ -93,7 +103,7 @@ if ! grep -q '## OpenSearch Performance Analyzer' %{config_dir}/jvm.options; the
    echo '## OpenSearch Performance Analyzer' >> %{config_dir}/jvm.options
    echo "-Dclk.tck=$CLK_TCK" >> %{config_dir}/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> %{config_dir}/jvm.options
-   echo "-Djava.security.policy=file:///etc/opensearch/opensearch-performance-analyzer/opensearch_security.policy" >> %{config_dir}/jvm.options
+   echo "-Djava.security.policy=file://%{config_dir}/opensearch-performance-analyzer/opensearch_security.policy" >> %{config_dir}/jvm.options
    echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> %{config_dir}/jvm.options
 fi
 # Reload systemctl daemon
@@ -120,6 +130,10 @@ set -e
 if command -v systemctl >/dev/null && systemctl is-active %{name}.service >/dev/null; then
     echo "Stop existing %{name}.service"
     systemctl --no-reload stop %{name}.service
+fi
+if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+    echo "Stop existing opensearch-performance-analyzer.service"
+    systemctl --no-reload stop opensearch-performance-analyzer.service
 fi
 exit 0
 

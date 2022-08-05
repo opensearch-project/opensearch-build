@@ -43,10 +43,8 @@ class TestManifest(unittest.TestCase):
     def test_manifest_is_abstract(self) -> None:
         with self.assertRaises(TypeError) as context:
             Manifest(None)  # type: ignore[abstract]
-        self.assertEqual(
-            "Can't instantiate abstract class Manifest with abstract methods __init__",
-            context.exception.__str__(),
-        )
+        self.assertTrue(context.exception.__str__().startswith(
+            "Can't instantiate abstract class Manifest with abstract method"))
 
     def test_invalid_version_empty(self) -> None:
         manifest_path = os.path.join(self.data_path, "invalid-schema-version-empty.yml")

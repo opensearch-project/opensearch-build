@@ -7,7 +7,7 @@
 import argparse
 import logging
 import sys
-from typing import IO
+from typing import IO, List
 
 
 class BuildArgs:
@@ -20,15 +20,19 @@ class BuildArgs:
 
     manifest: IO
     snapshot: bool
-    component: str
+    components: List[str]
     keep: bool
     platform: str
     architecture: str
     distribution: str
 
     def __init__(self) -> None:
-        parser = argparse.ArgumentParser(description="Build an OpenSearch Bundle")
-        parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
+        parser = argparse.ArgumentParser(description="Build an OpenSearch Distribution")
+        parser.add_argument(
+            "manifest",
+            type=argparse.FileType("r"),
+            help="Manifest file."
+        )
         parser.add_argument(
             "-l",
             "--lock",
@@ -44,15 +48,34 @@ class BuildArgs:
             default=False,
             help="Build snapshot.",
         )
-        parser.add_argument("-c", "--component", type=str, help="Rebuild a single component.")
+        parser.add_argument(
+            "-c",
+            "--component",
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Rebuild one or more components."
+        )
         parser.add_argument(
             "--keep",
             dest="keep",
             action="store_true",
             help="Do not delete the working temporary directory.",
         )
-        parser.add_argument("-p", "--platform", type=str, choices=self.SUPPORTED_PLATFORMS, help="Platform to build.")
-        parser.add_argument("-a", "--architecture", type=str, choices=self.SUPPORTED_ARCHITECTURES, help="Architecture to build.")
+        parser.add_argument(
+            "-p",
+            "--platform",
+            type=str,
+            choices=self.SUPPORTED_PLATFORMS,
+            help="Platform to build."
+        )
+        parser.add_argument(
+            "-a",
+            "--architecture",
+            type=str,
+            choices=self.SUPPORTED_ARCHITECTURES,
+            help="Architecture to build."
+        )
         parser.add_argument(
             "-v",
             "--verbose",
@@ -77,7 +100,7 @@ class BuildArgs:
         self.manifest = args.manifest
         self.ref_manifest = args.manifest.name + ".lock" if args.lock else None
         self.snapshot = args.snapshot
-        self.component = args.component
+        self.components = args.components
         self.keep = args.keep
         self.platform = args.platform
         self.architecture = args.architecture

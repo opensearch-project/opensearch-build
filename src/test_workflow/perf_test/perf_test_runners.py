@@ -6,6 +6,7 @@
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
+from test_workflow.perf_test.perf_test_runner import PerfTestRunner
 from test_workflow.perf_test.perf_test_runner_opensearch import PerfTestRunnerOpenSearch
 from test_workflow.perf_test.perf_test_runner_opensearch_plugins import PerfTestRunnerOpenSearchPlugins
 
@@ -17,5 +18,5 @@ class PerfTestRunners:
     }
 
     @classmethod
-    def from_args(cls, args: PerfArgs, test_manifest: BundleManifest):
+    def from_args(cls, args: PerfArgs, test_manifest: BundleManifest) -> PerfTestRunner:
         return cls.RUNNERS.get(args.component, PerfTestRunnerOpenSearchPlugins)(args, test_manifest)

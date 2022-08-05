@@ -11,7 +11,12 @@ class UploadIndexFileLibTester extends LibFunctionTester {
 
     void configure(helper, binding) {
         binding.setVariable('BUILD_NUMBER', '123')
-        binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'dummy_bucket_name')
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
+
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
         helper.registerAllowedMethod("writeJSON", [Map])
     }

@@ -34,7 +34,7 @@ class BuildTarget:
         snapshot: bool = True,
         build_id: str = None,
         output_dir: str = "artifacts",
-    ):
+    ) -> None:
         self.build_id = os.getenv("BUILD_NUMBER") or build_id or uuid.uuid4().hex
         self.name = name
         self.version = version

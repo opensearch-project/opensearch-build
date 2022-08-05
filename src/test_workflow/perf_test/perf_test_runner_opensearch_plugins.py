@@ -7,8 +7,6 @@
 import os
 import subprocess
 
-import yaml
-
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory
@@ -18,25 +16,29 @@ from test_workflow.perf_test.perf_test_runner import PerfTestRunner
 
 
 class PerfTestRunnerOpenSearchPlugins(PerfTestRunner):
+    test_dir: str
+    command: str
+
     """
       Runner to execute the performance tests for opensearch plugins. The plugins need to define the test suite
     """
-    def __init__(self, args: PerfArgs, test_manifest: BundleManifest):
+    def __init__(self, args: PerfArgs, test_manifest: BundleManifest) -> None:
         super().__init__(args, test_manifest)
+        self.tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", self.args.component)
+        os.makedirs(self.tests_dir, exist_ok=True)
+        security_flag = "--without-security" if not self.security else ""
         self.command = (
-            f"python3 run_perf_test.py --config {yaml.safe_load(self.args.config)} "
-            f"--bundle-manifest {str(self.args.bundle_manifest.name)}"
+            f"bin/run_perf_test.sh --config {str(os.path.abspath(self.args.config.name))} "
+            f"--bundle-manifest {str(os.path.abspath(self.args.bundle_manifest.name))} "
+            f"--test-result-dir {str(self.tests_dir)} {security_flag}"
         )
 
-    def get_plugin_repo_url(self):
+    def get_plugin_repo_url(self) -> str:
         return f"https://github.com/opensearch-project/{self.args.component}.git"
 
-    def run_tests(self):
+    def run_tests(self) -> None:
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
-            current_workspace = os.path.join(work_dir.name, "plugin")
+            current_workspace = os.path.join(work_dir.name, self.args.component)
             with GitRepository(self.get_plugin_repo_url(), "main", current_workspace):
                 with WorkingDirectory(current_workspace):
-                    if self.security:
-                        subprocess.check_call(f"{self.command} -s", cwd=os.getcwd(), shell=True)
-                    else:
-                        subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
+                    subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)

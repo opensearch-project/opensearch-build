@@ -1,16 +1,36 @@
 import json
 import os
 import subprocess
+from typing import Any
 
+from manifests.bundle_manifest import BundleManifest
 from system.working_directory import WorkingDirectory
+from test_workflow.perf_test.perf_args import PerfArgs
 
 
 class PerfTestSuite:
+    manifest: BundleManifest
+    work_dir: str
+    endpoint: dict
+    security: bool
+    current_workspace: str
+    args: PerfArgs
+    command: str
+
     """
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
     """
-    def __init__(self, bundle_manifest, endpoint, security, current_workspace, test_results_path, args,
-                 owner="opensearch-devops", scenario="DEFAULT"):
+    def __init__(
+        self,
+        bundle_manifest: BundleManifest,
+        endpoint: Any,
+        security: bool,
+        current_workspace: str,
+        test_results_path: str,
+        args: PerfArgs,
+        owner: str = "opensearch-devops",
+        scenario: str = "DEFAULT"
+    ) -> None:
         self.manifest = bundle_manifest
         self.work_dir = current_workspace + "/mensor/"
         self.endpoint = endpoint
@@ -31,7 +51,7 @@ class PerfTestSuite:
             f" --scenario-type {scenario} --owner {owner}"
         )
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             current_workspace = os.path.join(self.current_workspace, self.work_dir)
             with WorkingDirectory(current_workspace):

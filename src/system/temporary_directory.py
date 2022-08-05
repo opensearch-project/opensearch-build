@@ -10,6 +10,7 @@ import os
 import shutil
 import stat
 import tempfile
+from pathlib import Path
 from types import FunctionType
 from typing import Any
 
@@ -24,7 +25,7 @@ def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
 
 
 class TemporaryDirectory:
-    def __init__(self, keep: bool = False, chdir: bool = False):
+    def __init__(self, keep: bool = False, chdir: bool = False) -> None:
         self.keep = keep
         self.name = tempfile.mkdtemp()
         if chdir:
@@ -32,6 +33,10 @@ class TemporaryDirectory:
             os.chdir(self.name)
         else:
             self.curdir = None
+
+    @property
+    def path(self) -> Path:
+        return Path(self.name)
 
     def __enter__(self) -> 'TemporaryDirectory':
         return self

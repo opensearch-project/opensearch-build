@@ -14,6 +14,7 @@
     - [Assembling a Distribution](#assembling-a-distribution)
     - [Building Patches](#building-patches)
     - [CI/CD Environment](#cicd-environment)
+    - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
     - [Signing Artifacts](#signing-artifacts)
   - [Making a Release](#making-a-release)
@@ -91,6 +92,27 @@ We build, assemble, and test our artifacts on docker containers. We provide dock
 
 See [jenkins](./jenkins) and [docker](./docker) for more information.
 
+#### Latest Distribution Url
+
+The distribution url has a build number (from Jenkins job) embedded inside it. See this example where `3942` is the build number. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/3942/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
+
+
+The feature of `latest` distribution url is to make it build number agnostic. For the example above, its corresponding latest distribution url is as follows.
+
+https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/latest/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
+
+It resolves `latest` to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/index.json). This file has contents like this.
+
+```
+{"latest":"3942"}
+```
+
+The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for diffferent combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
+
+The resolution logic exists in [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
+
+All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins.
+
 #### Testing the Distribution
 
 Tests the OpenSearch distribution, including integration, backwards-compatibility and performance tests.
@@ -103,11 +125,33 @@ See [src/test_workflow](./src/test_workflow) for more information.
 
 #### Signing Artifacts
 
-The signing step takes the manifest file created from the build step and signs all its component artifacts using a tool called `opensearch-signer-client` (in progress of being open-sourced). The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
+For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 
 
+Usage:
 ```bash
 ./sign.sh builds/opensearch/manifest.yml
 ```
+
+The tool currently supports following platforms for signing.
+#### PGP
+
+Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .sig file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc as well as maven artifacts are signed using PGP signing. See [this page](https://opensearch.org/verify-signatures.html) for how to verify signatures.
+
+
+#### WINDOWS
+
+Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by [Signtool.exe](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
+Windows code signing uses EV (Extended Validated) code signing certificates.
+
+|  Types of signing/Details   | Digest           | Cipher  | Key Size|
+| ------------- |:-------------| :-----| :-----|
+| PGP      | SHA1 | AES-128 | 2048 |
+| Windows      | SHA256      |    RSA | |
+| RPM | SHA512      |    RSA | 4096 |
+
+
+### Signing RPM artifacts
+RPM artifacts are signed via shell script which uses a [macros template](https://github.com/opensearch-project/opensearch-build/blob/main/scripts/pkg/sign_templates/rpmmacros). More details in this [commit](https://github.com/opensearch-project/opensearch-build/commit/950d55c1ed3f82e98120541fa40ff506338c1059). See [issue](https://github.com/opensearch-project/opensearch-build/issues/1547) to add RPM artifact signing functionality to the above signing system. Currently we are only signing OpenSearch and OpenSearch dashboards RPM distributions using this method.
 
 See [src/sign_workflow](./src/sign_workflow) for more information.
 

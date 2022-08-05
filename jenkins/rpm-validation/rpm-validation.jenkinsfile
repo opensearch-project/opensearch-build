@@ -1,0 +1,56 @@
+lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+    }
+    parameters {
+            string(
+                name: 'BUNDLE_MANIFEST_URL',
+                description: 'The bundle manifest url, required for yum staging repo file. (e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/2493/linux/x64/rpm/dist/opensearch/manifest.yml)',
+                trim: true
+            )
+            string(
+                name: 'AGENT_LABEL',
+                description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host or Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host',
+                trim: true
+            )
+
+        }
+
+    stages {
+        stage('RPM distribution validation starts:') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1'
+                    args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    currentBuild.description = BUNDLE_MANIFEST_URL
+                    rpmDistValidation(
+                        bundleManifestURL: "$BUNDLE_MANIFEST_URL"
+                    )
+                }
+            }
+            post {
+                always {
+                    sh "rm -rf $WORKSPACE/*"
+                    postCleanup()
+                }
+            }
+        }
+    }
+    post() {
+        success {
+            echo "Validation for the RPM distribution has been completed successfully."
+        }
+        failure {
+            echo "Validation for RPM distribution failed."
+        }
+    }
+}

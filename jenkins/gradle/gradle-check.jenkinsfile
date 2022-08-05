@@ -1,0 +1,151 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 2, unit: 'HOURS')
+        throttleJobProperty(
+            categories: [],
+            limitOneJobWithMatchingParams: false,
+            maxConcurrentPerNode: 0,
+            maxConcurrentTotal: 15,
+            paramsToUseForLimit: '',
+            throttleEnabled: true,
+            throttleOption: 'project',
+        )
+    }
+    // gradle check have a lot of issues running on containers
+    // Therefore, we directly run it on the agent node
+    agent {
+        node {
+            // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
+            // The c524xlarge is the instance type that has the least amount of errors during gradle check
+            // https://github.com/opensearch-project/OpenSearch/issues/1975
+            label 'Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host'
+        }
+    }
+    parameters {
+        string(
+            name: 'GIT_REPO_URL',
+            description: 'OpenSearch core repository url on git, can be either the official upstream url or your fork url.',
+            defaultValue: 'https://github.com/opensearch-project/OpenSearch.git',
+            trim: true
+        )
+        string(
+            name: 'GIT_REFERENCE',
+            description: 'Git branch, tag, commitid for reference to checkout commit of OpenSearch core before running the gradle check.',
+            defaultValue: 'main',
+            trim: true
+        )
+    }
+    triggers {
+        GenericTrigger(
+            genericVariables: [
+                [key: 'pr_from_sha', value: '$.pr_from_sha'],
+                [key: 'pr_from_clone_url', value: '$.pr_from_clone_url'],
+                [key: 'pr_to_clone_url', value: '$.pr_to_clone_url'],
+                [key: 'pr_title', value: '$.pr_title'],
+                [key: 'pr_number', value: '$.pr_number']
+            ],
+            tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
+            causeString: 'Triggered by PR on OpenSearch core repository',
+            printContributedVariables: false,
+            printPostContent: false
+        )
+    }
+    environment {
+        JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-8"
+        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-11"
+        JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-14"
+        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-17"
+        USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+        TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
+    }
+    stages {
+        stage('Install openjdk-8') {
+            tools {
+                jdk 'openjdk-8'
+            }
+            steps {
+                echo "Install openjdk-8"
+                sh("ls ${JAVA8_HOME}/.. | grep openjdk-8")
+            }
+        }
+        stage('Install openjdk-11') {
+           tools {
+               jdk 'openjdk-11'
+           }
+            steps {
+                echo "Install openjdk-11"
+                sh("ls ${JAVA11_HOME}/.. | grep openjdk-11")
+            }
+        }
+        stage('Install openjdk-14') {
+           tools {
+               jdk 'openjdk-14'
+           }
+            steps {
+                echo "Install openjdk-14"
+                sh("ls ${JAVA14_HOME}/.. | grep openjdk-14")
+            }
+        }
+        stage('Install openjdk-17') {
+           tools {
+               jdk 'openjdk-17'
+           }
+            steps {
+                echo "Install openjdk-17"
+                sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
+            }
+        }
+        stage('Run Gradle Check') {
+            steps {
+                script {
+                    sh("ls /var/jenkins/tools/hudson.model.JDK/")
+                    if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
+                        def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
+                        println("Triggered by GitHub: ${pr_to_clone_url}")
+                        if ("$pr_number" == "Null") {
+                            currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
+                        }
+                        else {
+                            currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+                        }
+
+                        runGradleCheck(
+                            gitRepoUrl: "${pr_from_clone_url}",
+                            gitReference: "${pr_from_sha}"
+                        )
+                    }
+                    else {
+                        println("Triggered by User or Triggered by Timer")
+                        def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
+                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+
+                        runGradleCheck(
+                            gitRepoUrl: "${GIT_REPO_URL}",
+                            gitReference: "${GIT_REFERENCE}"
+                        )
+                    }
+                }
+            }
+            post() {
+                always {
+                    sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                    junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
+                    archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
+                    script {
+                        sh("rm -rf *")
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}

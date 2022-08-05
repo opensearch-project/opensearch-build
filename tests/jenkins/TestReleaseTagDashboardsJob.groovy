@@ -13,14 +13,14 @@ class TestReleaseTagDashboardsJob extends BuildPipelineTest {
     @Before
     void setUp() {
 
-        def distManifest = 'tests/data/opensearch-dashboards-build-1.2.0.yml'
+        def distManifest = 'tests/jenkins/data/opensearch-dashboards-bundle-2.0.0-rc1.yml'
 
-        this.registerLibTester(new CreateReleaseTagLibTester(distManifest, '1.2.0'))
+        this.registerLibTester(new CreateReleaseTagLibTester(distManifest, '2.0.0-rc1'))
 
         super.setUp()
 
         // Variables for Release Tag Job
-        binding.setVariable('VERSION', '1.2.0')
+        binding.setVariable('VERSION', '2.0.0-rc1')
         binding.setVariable('PRODUCT', 'opensearch-dashboards')
         binding.setVariable('DISTRIBUTION_MANIFEST', distManifest)
 

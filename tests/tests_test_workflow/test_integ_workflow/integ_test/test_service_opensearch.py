@@ -6,20 +6,30 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, PropertyMock, call, mock_open, patch
+from typing import Any
+from unittest.mock import MagicMock, Mock, PropertyMock, call, mock_open, patch
 
 import requests
 
+from test_workflow.dependency_installer import DependencyInstaller
+from test_workflow.integ_test.service import ClusterCreationException
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
-from test_workflow.test_cluster import ClusterCreationException
 
 
 class ServiceOpenSearchTests(unittest.TestCase):
-    def setUp(self):
+    version: str
+    distribution: str
+    work_dir: str
+    additional_config: dict
+    dependency_installer: DependencyInstaller
+    save_logs: str
+
+    def setUp(self) -> None:
         self.version = "1.1.0"
+        self.distribution = "tar"
         self.work_dir = "test_work_dir"
         self.additional_config = {"script.context.field.max_compilations_rate": "1000/1m"}
-        self.dependency_installer = ""
+        self.dependency_installer = None
         self.save_logs = ""
 
     @patch("test_workflow.integ_test.service.Process.start")
@@ -27,12 +37,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process):
+    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
 
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             dependency_installer,
@@ -59,7 +70,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
         dependency_installer.download_dist.assert_called_once_with(self.work_dir)
-        mock_tarfile_open.assert_called_once_with(bundle_full_name, "r")
+        mock_tarfile_open.assert_called_once_with(bundle_full_name, "r:gz")
         mock_bundle_tar.extractall.assert_called_once_with(self.work_dir)
 
         self.assertEqual(mock_pid.call_count, 1)
@@ -70,12 +81,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
+    def test_start_security_disabled(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
 
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -119,12 +131,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open, mock_dump, mock_file, mock_pid, mock_process, mock_os_isdir):
+    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
 
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             dependency_installer,
@@ -167,13 +180,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_terminate(
         self,
-        mock_process_stderr_data,
-        mock_process_stdout_data,
-        mock_process_started,
-        mock_process_terminate
-    ):
+        mock_process_stderr_data: Mock,
+        mock_process_stdout_data: Mock,
+        mock_process_started: Mock,
+        mock_process_terminate: Mock
+    ) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -191,9 +205,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     @patch("test_workflow.integ_test.service.Process.terminate")
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=False)
-    def test_terminate_process_not_started(self, mock_process_started, mock_process_terminate):
+    def test_terminate_process_not_started(self, mock_process_started: Mock, mock_process_terminate: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -205,9 +220,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_terminate.assert_not_called()
         mock_process_started.assert_called_once()
 
-    def test_endpoint_port(self):
+    def test_endpoint_port(self) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -217,9 +233,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertEqual(service.endpoint(), "localhost")
         self.assertEqual(service.port(), 9200)
 
-    def test_url_security_enabled(self):
+    def test_url_security_enabled(self) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -228,9 +245,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertEqual(service.url(), "https://localhost:9200")
 
-    def test_url_security_disabled(self):
+    def test_url_security_disabled(self) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             False,
             self.dependency_installer,
@@ -241,9 +259,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     @patch("requests.get")
     @patch.object(ServiceOpenSearch, "url")
-    def test_get_service_response(self, mock_url, mock_requests_get):
+    def test_get_service_response(self, mock_url: Mock, mock_requests_get: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -264,9 +283,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch.object(ServiceOpenSearch, "service_alive", return_value=True)
     @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
-    def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data, mock_process_stdout_data, mock_service_alive, mock_time_sleep):
+    def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data: Mock, mock_process_stdout_data: Mock, mock_service_alive: Mock, mock_time_sleep: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -286,13 +306,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_always_fail_without_exception(
         self,
-        mock_process_stderr_data,
-        mock_process_stdout_data,
-        mock_service_alive,
-        mock_time_sleep
-    ):
+        mock_process_stderr_data: Mock,
+        mock_process_stdout_data: Mock,
+        mock_service_alive: Mock,
+        mock_time_sleep: Mock
+    ) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -315,14 +336,15 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_always_fail_with_exception(
         self,
-        mock_process_stderr_data,
-        mock_process_stdout_data,
-        mock_service_alive,
-        mock_time_sleep
-    ):
+        mock_process_stderr_data: Mock,
+        mock_process_stdout_data: Mock,
+        mock_service_alive: Mock,
+        mock_time_sleep: Mock
+    ) -> None:
 
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -348,13 +370,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
     def test_wait_for_service_suceed_on_third_attempt(
         self,
-        mock_process_stderr_data,
-        mock_process_stdout_data,
-        mock_service_alive,
-        mock_time_sleep
-    ):
+        mock_process_stderr_data: Mock,
+        mock_process_stdout_data: Mock,
+        mock_service_alive: Mock,
+        mock_time_sleep: Mock
+    ) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -369,9 +392,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertEqual(mock_process_stderr_data.call_count, 2)
 
     @patch.object(ServiceOpenSearch, "get_service_response")
-    def test_service_alive_green_available(self, mock_get_service_response):
+    def test_service_alive_green_available(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -388,9 +412,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearch, "get_service_response")
-    def test_service_alive_yellow_available(self, mock_get_service_response):
+    def test_service_alive_yellow_available(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -407,9 +432,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertTrue(service.service_alive())
 
     @patch.object(ServiceOpenSearch, "get_service_response")
-    def test_service_alive_red_unavailable(self, mock_get_service_response):
+    def test_service_alive_red_unavailable(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,
@@ -426,9 +452,10 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertFalse(service.service_alive())
 
     @patch.object(ServiceOpenSearch, "get_service_response")
-    def test_service_alive_unavailable(self, mock_get_service_response):
+    def test_service_alive_unavailable(self, mock_get_service_response: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
+            self.distribution,
             self.additional_config,
             True,
             self.dependency_installer,

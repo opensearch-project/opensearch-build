@@ -8,12 +8,13 @@
 # GitHub history for details.
 
 import argparse
+from typing import Any, Sequence, Union
 
 from test_workflow.test_args_path_validator import TestArgsPathValidator
 
 
 class TestKwargs(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(self, parser: Any, namespace: argparse.Namespace, values: Union[str, Sequence[Any], None], option_string: str = None) -> None:
         setattr(namespace, self.dest, dict())
         for value in values:
             key, value = value.split('=')

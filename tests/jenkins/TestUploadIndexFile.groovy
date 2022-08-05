@@ -14,7 +14,7 @@ class TestUploadIndexFile extends BuildPipelineTest {
     @Before
     void setUp() {
         this.registerLibTester(new UploadIndexFileLibTester('test'))
-        this.registerLibTester(new UploadToS3LibTester('index.json', 'dummy_bucket_name', 'test/index.json'))
+        this.registerLibTester(new UploadToS3LibTester('index.json', 'ARTIFACT_BUCKET_NAME', 'test/index.json'))
 
         super.setUp()
     }

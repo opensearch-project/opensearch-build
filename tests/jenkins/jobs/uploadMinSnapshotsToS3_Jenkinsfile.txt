@@ -35,6 +35,10 @@ ccc
         cp tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512 tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
         sed -i "s/.tar.gz/-latest.tar.gz/g" tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
     )
-                  uploadMinSnapshotsToS3.withAWS({role=dummy_role, roleAccount=1234, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz})
-                     uploadMinSnapshotsToS3.s3Upload({file=tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512, bucket=dummy_bucket, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512})
+                  uploadMinSnapshotsToS3.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})
+                  uploadMinSnapshotsToS3.string({credentialsId=jenkins-aws-production-account, variable=AWS_ACCOUNT_ARTIFACT})
+                  uploadMinSnapshotsToS3.string({credentialsId=jenkins-artifact-production-bucket-name, variable=ARTIFACT_PRODUCTION_BUCKET_NAME})
+                  uploadMinSnapshotsToS3.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT, ARTIFACT_PRODUCTION_BUCKET_NAME], groovy.lang.Closure)
+                     uploadMinSnapshotsToS3.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        uploadMinSnapshotsToS3.s3Upload({file=tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz})
+                        uploadMinSnapshotsToS3.s3Upload({file=tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/1.2.2-SNAPSHOT/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512})

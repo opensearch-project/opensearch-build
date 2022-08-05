@@ -63,20 +63,20 @@ To build components we rely on a common entry-point in the form of a `build.sh` 
 
 The following options are available in `build.sh`.
 
-| name               | description                                                             |
-|--------------------|-------------------------------------------------------------------------|
-| -s, --snapshot     | Build a snapshot instead of a release artifact, default is `false`.     |
-| -a, --architecture | Specify architecture to build, default is architecture of build system. |
-| -d, --distribution | Specify distribution to build, default is `tar`.                        |
-| -p, --platform     | Specify platform to build, default is platform of build system.         |
-| --component [name] | Rebuild a single component by name, e.g. `--component common-utils`.    |
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| -l, --lock         | Generate a stable reference manifest.                                   |
-| -v, --verbose      | Show more verbose output.                                               |
+| name                    | description                                                                            |
+|-------------------------|----------------------------------------------------------------------------------------|
+| -s, --snapshot          | Build a snapshot instead of a release artifact, default is `false`.                    |
+| -a, --architecture      | Specify architecture to build, default is architecture of build system.                |
+| -d, --distribution      | Specify distribution to build, default is `tar`.                                       |
+| -p, --platform          | Specify platform to build, default is platform of build system.                        |
+| --component [name ...]  | Rebuild a subset of components by name, e.g. `--component common-utils job-scheduler`. |
+| --keep                  | Do not delete the temporary working directory on both success or error.                |
+| -l, --lock              | Generate a stable reference manifest.                                                  |
+| -v, --verbose           | Show more verbose output.                                                              |
 
 ### Custom Build Scripts
 
-Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](../../scripts/components), then in the checked-out repository in `build/build.sh`, then default to a Gradle build implemented in [scripts/default/opensearch/build.sh](../../scripts/default/opensearch/build.sh).
+Each component build relies on a `build.sh` script that is used to prepare bundle artifacts for a particular bundle version that takes two arguments: version and target architecture. By default the tool will look for a script in [scripts/components](../../scripts/components), then in the checked-out repository in `scripts/build.sh`, then default to a Gradle build implemented in [scripts/default/opensearch/build.sh](../../scripts/default/opensearch/build.sh).
 
 ### Avoiding Rebuilds
 

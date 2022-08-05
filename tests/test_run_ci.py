@@ -7,7 +7,8 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import call, patch
+from typing import Any
+from unittest.mock import Mock, call, patch
 
 import pytest
 
@@ -16,23 +17,33 @@ from run_ci import main
 
 class TestRunCi(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def capfd(self, capfd):
+    def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
 
     @patch("argparse._sys.argv", ["run_ci.py", "--help"])
-    def test_usage(self):
+    def test_usage(self) -> None:
         with self.assertRaises(SystemExit):
             main()
 
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.1.1/opensearch-1.1.1.yml"))
+    OPENSEARCH_MANIFEST = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "manifests",
+            "templates",
+            "opensearch",
+            "1.x",
+            "os-template-1.1.0.yml"
+        )
+    )
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_MANIFEST])
     @patch("ci_workflow.ci_input_manifest.TemporaryDirectory")
     @patch("ci_workflow.ci_input_manifest.CiCheckLists.from_component")
-    def test_main(self, mock_lists, mock_temp, *mocks):
+    def test_main(self, mock_lists: Mock, mock_temp: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         main()
         self.assertNotEqual(mock_lists.call_count, 0)
@@ -43,7 +54,7 @@ class TestRunCi(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_TEST_MANIFEST])
     @patch("logging.info")
-    def test_main_test_manifest(self, mock_logging, *mocks):
+    def test_main_test_manifest(self, mock_logging: Mock, *mocks: Any) -> None:
         main()
         mock_logging.assert_has_calls([
             call("TestManifest schema validation succeeded"),
@@ -53,6 +64,6 @@ class TestRunCi(unittest.TestCase):
     OPENSEARCH_TEST_MANIFEST_NOT_EXIST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.4.0/opensearch-1.3.0-test.yml"))
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_TEST_MANIFEST_NOT_EXIST])
-    def test_main_test_manifest_empty(self, *mocks):
+    def test_main_test_manifest_empty(self, *mocks: Any) -> None:
         with self.assertRaises(SystemExit):
             main()

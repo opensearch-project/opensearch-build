@@ -1,0 +1,65 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 2.0.0-rc1
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-2.0.0-rc1-linux-x64.tar.gz
+  id: '3015'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: '2.0'
+    commit_id: 23ee797c0542271a36746e0beea33833cd7396ba
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-2.0.0-rc1-linux-x64.tar.gz
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: main
+    commit_id: ec2da5c44634f40dc97c3fdac4e85ff7139091b3
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    ref: '2.0'
+    commit_id: eb65d2d956872cb13c7cca340fff679468b86074
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/queryWorkbenchDashboards-2.0.0-rc1.zip
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/observability.git
+    ref: '2.0'
+    commit_id: 52ae188b9a38e96f1d666f51e56ed92998c1d745
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/observabilityDashboards-2.0.0-rc1.zip
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: '2.0'
+    commit_id: 69c54344eebb48d56deca823732954c27a10211c
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/ganttChartDashboards-2.0.0-rc1.zip
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: '2.0'
+    commit_id: 478ea41b5d962bcf40964ffc7e3f1131f7e1fc34
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/reportsDashboards-2.0.0-rc1.zip
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: '2.0'
+    commit_id: a39d9d307e9fbbaf6f23aefe794aa23022a68fa0
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/indexManagementDashboards-2.0.0-rc1.zip
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: '2.0'
+    commit_id: de11dd89cbdd431f5073901a74907125f1133baf
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/alertingDashboards-2.0.0-rc1.zip
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '2.0'
+    commit_id: 7420eb2b5115ad29c40a49de9b5acb42dd26bdc7
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/securityDashboards-2.0.0-rc1.zip
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '2.0'
+    commit_id: 3324c01f66ec9919cc6d69420c37f5687312f9c4
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/anomalyDetectionDashboards-2.0.0-rc1.zip
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.0'
+    commit_id: eb3af31759668a94727950d081e8a3a161f22918
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/3015/linux/x64/tar/builds/opensearch-dashboards/plugins/notificationsDashboards-2.0.0-rc1.zip

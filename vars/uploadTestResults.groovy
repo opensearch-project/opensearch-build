@@ -1,14 +1,21 @@
 void call(Map args = [:]) {
-    def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
-    
+    def lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifestFileName))
 
-    def artifactPath = buildManifest.getArtifactRoot(args.jobName, args.buildNumber)
-    echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
+    String buildId = buildManifest.build.id
+    echo "Build Id: ${buildId}"
 
-    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
-    }
+    def artifactPath = buildManifest.getArtifactRoot(args.jobName, buildId)
+    withCredentials([
+        string(credentialsId: 'jenkins-artifact-bucket-name', variable: 'ARTIFACT_BUCKET_NAME'),
+        string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+            echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
+
+            withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
+            }
+        }
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", args.jobName, args.buildNumber)
     lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/test-results/")

@@ -10,7 +10,7 @@ pipeline {
                             message: 'Successful Build',
                             extra: 'extra',
                             manifest: '1.2.0/opensearch-1.2.0.yml',
-                            credentialsId: 'BUILD_NOTICE_WEBHOOK'
+                            credentialsId: 'jenkins-build-notice-webhook'
                         )
                     }catch (Exception e) {
                         echo 'Exception occurred: ' + e.toString()

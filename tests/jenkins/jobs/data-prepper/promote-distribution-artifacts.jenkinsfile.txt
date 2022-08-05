@@ -2,7 +2,7 @@
       promote-distribution-artifacts.legacySCM(groovy.lang.Closure)
       promote-distribution-artifacts.library({identifier=jenkins@20211123, retriever=null})
       promote-distribution-artifacts.pipeline(groovy.lang.Closure)
-         promote-distribution-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+         promote-distribution-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
          promote-distribution-artifacts.stage(Download Staging Artifacts, groovy.lang.Closure)
             promote-distribution-artifacts.script(groovy.lang.Closure)
                promote-distribution-artifacts.sh(mkdir distribution)

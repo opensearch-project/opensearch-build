@@ -9,6 +9,8 @@ from test_workflow.integ_test.integ_test_start_properties import IntegTestStartP
 
 
 class IntegTestStartPropertiesOpenSearchDashboards(IntegTestStartProperties):
-    def __init__(self, path):
+    dependency_installer: DependencyInstallerOpenSearchDashboards
+
+    def __init__(self, path: str) -> None:
         super().__init__(path, "builds/opensearch-dashboards/manifest.yml", "dist/opensearch-dashboards/manifest.yml")
         self.dependency_installer = DependencyInstallerOpenSearchDashboards(self.path, self.build_manifest, self.bundle_manifest)

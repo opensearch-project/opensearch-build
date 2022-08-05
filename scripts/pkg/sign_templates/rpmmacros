@@ -1,0 +1,10 @@
+%_signature gpg
+%_gpg_path ~/.gnupg
+%_gpg_name ##key_name##
+%_gpg /usr/bin/gpg
+%__gpg_sign_cmd %{__gpg} \
+    gpg --no-verbose --no-armor --batch --yes --pinentry-mode loopback \
+    --passphrase-file ##passphrase_name## \
+    %{?_gpg_digest_algo:--digest-algo %{_gpg_digest_algo}} \
+    --no-secmem-warning \
+    -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha512 %{__plaintext_filename}

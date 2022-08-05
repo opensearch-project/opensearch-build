@@ -95,14 +95,22 @@ class TestBuildManifest(unittest.TestCase):
     def test_select(self) -> None:
         path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
         manifest = BuildManifest.from_path(path)
-        self.assertEqual(len(list(manifest.components.select(focus="common-utils"))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
+        self.assertEqual(len(list(manifest.components.select(focus=["common-utils", "job-scheduler"]))), 2)
 
-    def test_select_none(self) -> None:
+    def test_select_one_is_unknown(self) -> None:
         path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
         manifest = BuildManifest.from_path(path)
         with self.assertRaises(ValueError) as ctx:
-            self.assertEqual(len(list(manifest.components.select(focus="x"))), 0)
-        self.assertEqual(str(ctx.exception), "No components matched focus=x.")
+            self.assertEqual(len(list(manifest.components.select(focus=["common-utils", "x"]))), 0)
+        self.assertEqual(str(ctx.exception), "Unknown component=x.")
+
+    def test_select_two_are_unknown(self) -> None:
+        path = os.path.join(self.data_path, "build", "opensearch-build-schema-version-1.2.yml")
+        manifest = BuildManifest.from_path(path)
+        with self.assertRaises(ValueError) as ctx:
+            self.assertEqual(len(list(manifest.components.select(focus=["x", "y"]))), 0)
+        self.assertEqual(str(ctx.exception), "Unknown components=x,y.")
 
     def test_component_matches(self) -> None:
         self.assertTrue(BuildComponent({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""}).__matches__())
@@ -110,5 +118,7 @@ class TestBuildManifest(unittest.TestCase):
     def test_component_matches_focus(self) -> None:
         component = BuildComponent({"name": "x", "repository": "", "ref": "", "commit_id": "", "version": ""})
         self.assertTrue(component.__matches__(focus=None))
-        self.assertTrue(component.__matches__(focus="x"))
-        self.assertFalse(component.__matches__(focus="y"))
+        self.assertTrue(component.__matches__(focus=[]))
+        self.assertTrue(component.__matches__(focus=["x"]))
+        self.assertTrue(component.__matches__(focus=["x", "y"]))
+        self.assertFalse(component.__matches__(focus=["y"]))

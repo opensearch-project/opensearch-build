@@ -1,0 +1,29 @@
+pipeline {
+    agent none
+    stages {
+        stage('Test build manifest jenkins var') {
+            steps {
+                script {
+                    buildManifest(
+                        inputManifest: "tests/jenkins/data/opensearch-2.0.0.yml",
+                        distribution: "tar",
+                        snapshot: true
+                    )
+                    buildManifest(
+                        componentName: "job-scheduler",
+                        inputManifest: "tests/jenkins/data/opensearch-2.0.0.yml",
+                        distribution: "tar",
+                        snapshot: true
+                    )
+                    buildManifest(
+                        componentName: "common-utils",
+                        inputManifest: "tests/jenkins/data/opensearch-2.0.0.yml",
+                        distribution: "rpm",
+                        snapshot: true
+                    )
+                }
+            }
+        }
+    }
+}
+

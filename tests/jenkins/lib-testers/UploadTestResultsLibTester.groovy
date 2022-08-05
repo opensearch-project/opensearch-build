@@ -7,23 +7,19 @@ class UploadTestResultsLibTester extends LibFunctionTester {
     private String jobName
     private Integer buildNumber
 
-    public UploadTestResultsLibTester(buildManifestFileName, jobName, buildNumber) {
+    public UploadTestResultsLibTester(buildManifestFileName, jobName) {
         this.buildManifestFileName = buildManifestFileName
         this.jobName = jobName
-        this.buildNumber = buildNumber
     }
 
     void parameterInvariantsAssertions(call){
         assertThat(call.args.buildManifestFileName.first(), notNullValue())
         assertThat(call.args.jobName.first(), notNullValue())
-        assertThat(call.args.buildNumber.first(), notNullValue())
-        assert call.args.buildNumber.first().toString().isInteger()
     }
 
     boolean expectedParametersMatcher(call) {
         return call.args.buildManifestFileName.first().toString().equals(this.buildManifestFileName)
                 && call.args.jobName.first().toString().equals(this.jobName)
-                && call.args.buildNumber.first().toInteger().equals(this.buildNumber)
     }
 
     String libFunctionName() {
@@ -36,6 +32,10 @@ class UploadTestResultsLibTester extends LibFunctionTester {
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_ARTIFACT_BUCKET_NAME')
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'DUMMY_PUBLIC_ARTIFACT_URL')
         binding.setVariable('STAGE_NAME', 'DUMMY_STAGE_NAME')
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
             return helper.callClosure(closure)

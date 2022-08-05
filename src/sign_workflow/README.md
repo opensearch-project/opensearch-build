@@ -15,7 +15,7 @@ The following options are available.
 
 | name          | description                                                                           |
 |---------------|---------------------------------------------------------------------------------------|
-| --component   | The component name of the component whose artifacts will be signed.                   |
+| --component   | The component name(s) of the component(s) whose artifacts will be signed.             |
 | --type        | The artifact type to be signed. Currently one of 3 options: [plugins, maven, bundle]. |
 | -v, --verbose | Show more verbose output.                                                             |
 

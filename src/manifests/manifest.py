@@ -107,7 +107,7 @@ class Manifest(ABC, Generic[T]):
             )
 
     @abstractmethod
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         self.validate(data)
         self.version = str(data["schema-version"])
 
@@ -115,7 +115,7 @@ class Manifest(ABC, Generic[T]):
     def schema(self) -> Any:
         return self.SCHEMA
 
-    def validate(self, data: Any) -> None:
+    def validate(self, data: dict) -> None:
         v = Validator(self.schema)
         if not v.validate(data):
             raise ValueError(f"Invalid manifest schema: {v.errors}")

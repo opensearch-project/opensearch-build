@@ -2,10 +2,20 @@
       perf-test.legacySCM(groovy.lang.Closure)
       perf-test.library({identifier=jenkins@20211118, retriever=null})
       perf-test.pipeline(groovy.lang.Closure)
-         perf-test.timeout({time=10, unit=HOURS})
+         perf-test.timeout({time=15, unit=HOURS})
          perf-test.echo(Executing on agent [label:none])
+         perf-test.parameterizedCron(
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 9 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+        )
          perf-test.stage(validate-and-set-parameters, groovy.lang.Closure)
-            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
             perf-test.script(groovy.lang.Closure)
                perf-test.downloadBuildManifest({url=test://artifact.url, path=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
@@ -21,7 +31,7 @@
                   perf-test.writeFile({file=messages/perf-test.msg, text=Performance tests for #1236})
                   perf-test.stash({includes=messages/*, name=messages-perf-test})
          perf-test.stage(test-with-security, groovy.lang.Closure)
-            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
             perf-test.script(groovy.lang.Closure)
                perf-test.downloadBuildManifest({url=test://artifact.url, path=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
@@ -32,26 +42,24 @@
                perf-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-bundle.yml)
                perf-test.echo(BUILD_ID: 1236)
                perf-test.echo(Architecture: x64)
-               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=false, workload=nyc_taxis, testIterations=1, warmupIterations=1})
+               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=false, workload=nyc_taxis, testIterations=1, warmupIterations=1, stackNameSuffix=null})
                   runPerfTestScript.legacySCM(groovy.lang.Closure)
                   runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
                   runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   BuildManifest.asBoolean()
                   runPerfTestScript.sh(
-        npm install -g fs-extra
-        npm install -g chalk@4.1.2
-        npm install -g @aws-cdk/cloudformation-diff
-        npm install -g aws-cdk
-        npm install -g cdk-assume-role-credential-plugin@1.4.0
-    )
-                  runPerfTestScript.sh(
         pipenv install "dataclasses_json~=0.5" "aws_requests_auth~=0.4" "json2html~=1.3.0"
         pipenv install "aws-cdk.core~=1.143.0" "aws_cdk.aws_ec2~=1.143.0" "aws_cdk.aws_iam~=1.143.0"
         pipenv install "boto3~=1.18" "setuptools~=57.4" "retry~=0.9"
     )
-                  runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1)
+                  runPerfTestScript.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+                  runPerfTestScript.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+                  runPerfTestScript.withCredentials([AWS_ACCOUNT_PUBLIC, ARTIFACT_BUCKET_NAME], groovy.lang.Closure)
+                     runPerfTestScript.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        runPerfTestScript.s3Download({file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true})
+                  runPerfTestScript.usernamePassword({credentialsId=bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  runPerfTestScript.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     runPerfTestScript.sh(./test.sh perf-test --stack test-single-security-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([perf-test])
@@ -70,10 +78,14 @@ Performance tests with security for 1236 completed})
                uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
                uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                BuildManifest.asBoolean()
+               uploadTestResults.echo(Build Id: 1236)
                BuildManifest.getArtifactRoot(perf-test, 1236)
-               uploadTestResults.echo(Uploading to s3://test_bucket/perf-test/1.3.0/1236/linux/x64/tar)
-               uploadTestResults.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                  uploadTestResults.s3Upload({file=test-results, bucket=test_bucket, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
+               uploadTestResults.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+               uploadTestResults.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+               uploadTestResults.withCredentials([ARTIFACT_BUCKET_NAME, AWS_ACCOUNT_PUBLIC], groovy.lang.Closure)
+                  uploadTestResults.echo(Uploading to s3://ARTIFACT_BUCKET_NAME/perf-test/1.3.0/1236/linux/x64/tar)
+                  uploadTestResults.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     uploadTestResults.s3Upload({file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
                BuildManifest.getArtifactRootUrl(test://artifact.url, perf-test, 1236)
                Messages.asBoolean()
                Messages.add(test_stage, test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/)
@@ -82,7 +94,7 @@ Performance tests with security for 1236 completed})
          perf-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          perf-test.stage(test-without-security, groovy.lang.Closure)
-            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-al2-x64-c54xlarge-Docker-Host]])
+            perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
             perf-test.script(groovy.lang.Closure)
                perf-test.downloadBuildManifest({url=test://artifact.url, path=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
@@ -93,26 +105,24 @@ Performance tests with security for 1236 completed})
                perf-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-bundle.yml)
                perf-test.echo(BUILD_ID: 1236)
                perf-test.echo(Architecture: x64)
-               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=true, workload=nyc_taxis, testIterations=1, warmupIterations=1})
+               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-bundle.yml, buildId=1236, architecture=x64, insecure=true, workload=nyc_taxis, testIterations=1, warmupIterations=1, stackNameSuffix=null})
                   runPerfTestScript.legacySCM(groovy.lang.Closure)
                   runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
                   runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                   BuildManifest.asBoolean()
                   runPerfTestScript.sh(
-        npm install -g fs-extra
-        npm install -g chalk@4.1.2
-        npm install -g @aws-cdk/cloudformation-diff
-        npm install -g aws-cdk
-        npm install -g cdk-assume-role-credential-plugin@1.4.0
-    )
-                  runPerfTestScript.sh(
         pipenv install "dataclasses_json~=0.5" "aws_requests_auth~=0.4" "json2html~=1.3.0"
         pipenv install "aws-cdk.core~=1.143.0" "aws_cdk.aws_ec2~=1.143.0" "aws_cdk.aws_iam~=1.143.0"
         pipenv install "boto3~=1.18" "setuptools~=57.4" "retry~=0.9"
     )
-                  runPerfTestScript.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     runPerfTestScript.s3Download({file=config.yml, bucket=test_bucket, path=test_config/config.yml, force=true})
-                  runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1)
+                  runPerfTestScript.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+                  runPerfTestScript.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+                  runPerfTestScript.withCredentials([AWS_ACCOUNT_PUBLIC, ARTIFACT_BUCKET_NAME], groovy.lang.Closure)
+                     runPerfTestScript.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                        runPerfTestScript.s3Download({file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true})
+                  runPerfTestScript.usernamePassword({credentialsId=bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+                  runPerfTestScript.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                     runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([perf-test])
@@ -131,10 +141,14 @@ Performance tests without security for 1236 completed})
                uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
                uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-1.3.0-bundle.yml})
                BuildManifest.asBoolean()
+               uploadTestResults.echo(Build Id: 1236)
                BuildManifest.getArtifactRoot(perf-test, 1236)
-               uploadTestResults.echo(Uploading to s3://test_bucket/perf-test/1.3.0/1236/linux/x64/tar)
-               uploadTestResults.withAWS({role=opensearch-test, roleAccount=dummy_account, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                  uploadTestResults.s3Upload({file=test-results, bucket=test_bucket, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
+               uploadTestResults.string({credentialsId=jenkins-artifact-bucket-name, variable=ARTIFACT_BUCKET_NAME})
+               uploadTestResults.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
+               uploadTestResults.withCredentials([ARTIFACT_BUCKET_NAME, AWS_ACCOUNT_PUBLIC], groovy.lang.Closure)
+                  uploadTestResults.echo(Uploading to s3://ARTIFACT_BUCKET_NAME/perf-test/1.3.0/1236/linux/x64/tar)
+                  uploadTestResults.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
+                     uploadTestResults.s3Upload({file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
                BuildManifest.getArtifactRootUrl(test://artifact.url, perf-test, 1236)
                Messages.asBoolean()
                Messages.add(test_stage, test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/)
@@ -142,7 +156,7 @@ Performance tests without security for 1236 completed})
                   uploadTestResults.stash({includes=messages/*, name=messages-test_stage})
          perf-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-         perf-test.node(Jenkins-Agent-al2-x64-c54xlarge-Docker-Host, groovy.lang.Closure)
+         perf-test.node(Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
             perf-test.script(groovy.lang.Closure)
                Messages.asBoolean()
                Messages.get([perf-test])
@@ -150,8 +164,8 @@ Performance tests without security for 1236 completed})
                   perf-test.findFiles({excludes=, glob=messages/*})
                   perf-test.dir(messages, groovy.lang.Closure)
                      perf-test.deleteDir()
-               perf-test.publishNotification({icon=:white_check_mark:, message=Performance Tests Successful, extra=, credentialsId=INTEG_TEST_WEBHOOK})
-                  publishNotification.string({credentialsId=INTEG_TEST_WEBHOOK, variable=WEBHOOK_URL})
+               perf-test.publishNotification({icon=:white_check_mark:, message=Performance Tests Successful, extra=, credentialsId=jenkins-integ-test-webhook})
+                  publishNotification.string({credentialsId=jenkins-integ-test-webhook, variable=WEBHOOK_URL})
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=perf-test

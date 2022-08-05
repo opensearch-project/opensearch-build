@@ -12,12 +12,12 @@ import sys
 
 from checkout_workflow.checkout_args import CheckoutArgs
 from git.git_repository import GitRepository
-from manifests.input_manifest import InputManifest
+from manifests.input_manifest import InputComponentFromSource, InputManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 
 
-def main():
+def main() -> int:
     args = CheckoutArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
@@ -27,16 +27,17 @@ def main():
 
         for component in manifest.components.select():
             logging.info(f"Checking out {component.name}")
-
-            with GitRepository(
-                component.repository,
-                component.ref,
-                os.path.join(work_dir.name, component.name),
-                component.working_directory,
-            ) as repo:
-                logging.debug(f"Checked out {component.name} into {repo.dir}")
+            if type(component) is InputComponentFromSource:
+                with GitRepository(
+                    component.repository,
+                    component.ref,
+                    os.path.join(work_dir.name, component.name),
+                    component.working_directory,
+                ) as repo:
+                    logging.debug(f"Checked out {component.name} into {repo.dir}")
 
     logging.info(f"Done, checked out into {work_dir.name}.")
+    return 0
 
 
 if __name__ == "__main__":

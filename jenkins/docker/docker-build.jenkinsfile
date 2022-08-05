@@ -1,0 +1,61 @@
+pipeline {
+    options {
+        timeout(time: 3, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+            defaultValue: 'https://github.com/opensearch-project/opensearch-build',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY',
+            description: 'The git repository name that contains dockerfiles and the docker build script.',
+            trim: true
+        )
+        string(
+            defaultValue: 'main',
+            name: 'DOCKER_BUILD_GIT_REPOSITORY_REFERENCE',
+            description: 'The git reference (branch/tag/commit_id) of above repository.',
+            trim: true
+        )
+        string(
+            defaultValue: 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>',
+            name: 'DOCKER_BUILD_SCRIPT_WITH_COMMANDS',
+            description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
+            trim: true
+        )
+    }
+    stages {
+        stage('docker-build') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder'
+                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14'
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
+                    git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
+                    def CREDENTIAL_ID = "jenkins-staging-dockerhub-credential"
+                    sh "echo Account: $CREDENTIAL_ID"
+                    withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh '''
+                            set -e
+                            echo Login to $CREDENTIAL_ID
+                            docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
+                        '''
+                    }
+                }
+            }
+            post() {
+                always {
+                    script {
+                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        sh "docker logout && docker image prune -f --all"
+                    }
+                }
+            }
+        }
+    }
+}

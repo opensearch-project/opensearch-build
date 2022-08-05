@@ -20,7 +20,7 @@ from system import console
 from system.temporary_directory import TemporaryDirectory
 
 
-def main():
+def main() -> int:
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
@@ -36,7 +36,7 @@ def main():
         else:
             logging.info(f"Creating {args.ref_manifest}")
             manifest.to_file(args.ref_manifest)
-        exit(0)
+        return 0
 
     output_dir = BuildOutputDir(manifest.build.filename, args.distribution).dir
 
@@ -59,7 +59,7 @@ def main():
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
-        for component in manifest.components.select(focus=args.component, platform=target.platform):
+        for component in manifest.components.select(focus=args.components, platform=target.platform):
             logging.info(f"Building {component.name}")
 
             builder = Builders.builder_from(component, target)
@@ -74,6 +74,7 @@ def main():
         build_recorder.write_manifest()
 
     logging.info("Done.")
+    return 0
 
 
 if __name__ == "__main__":

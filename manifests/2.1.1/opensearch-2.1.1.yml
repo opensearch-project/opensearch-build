@@ -1,0 +1,40 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 2.1.1
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: '2.1'
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: '2.1'
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+    platforms:
+      - darwin
+      - linux
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: '2.1'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - darwin
+      - linux
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: '2.1'
+    platforms:
+      - darwin
+      - linux

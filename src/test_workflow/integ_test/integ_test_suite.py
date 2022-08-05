@@ -7,14 +7,33 @@
 import abc
 import logging
 import os
+from pathlib import Path
+from typing import Any, Dict
 
 from git.git_repository import GitRepository
+from manifests.build_manifest import BuildManifest
+from manifests.bundle_manifest import BundleManifest
 from paths.script_finder import ScriptFinder
 from system.execute import execute
+from test_workflow.dependency_installer import DependencyInstaller
+from test_workflow.test_recorder.log_recorder import LogRecorder
+from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
+from test_workflow.test_result.test_component_results import TestComponentResults
 
 
 class IntegTestSuite(abc.ABC):
+    work_dir: Path
+    component: Any
+    test_config: Any
+    test_recorder: TestRecorder
+    dependency_installer: DependencyInstaller
+    bundle_manifest: BundleManifest
+    build_manifest: BuildManifest
+    repo: GitRepository
+    save_logs: LogRecorder
+    additional_cluster_config: dict
+
     """
     Kicks off integration tests for a component based on test configurations provided in
     test_support_matrix.yml
@@ -22,14 +41,14 @@ class IntegTestSuite(abc.ABC):
 
     def __init__(
         self,
-        work_dir,
-        component,
-        test_config,
-        test_recorder,
-        dependency_installer,
-        bundle_manifest,
-        build_manifest
-    ):
+        work_dir: Path,
+        component: Any,
+        test_config: Any,
+        test_recorder: TestRecorder,
+        dependency_installer: DependencyInstaller,
+        bundle_manifest: BundleManifest,
+        build_manifest: BuildManifest
+    ) -> None:
         self.work_dir = work_dir
         self.component = component
         self.test_config = test_config
@@ -50,10 +69,10 @@ class IntegTestSuite(abc.ABC):
         self.additional_cluster_config = None
 
     @abc.abstractmethod
-    def execute_tests(self):
+    def execute_tests(self) -> TestComponentResults:
         pass
 
-    def execute_integtest_sh(self, endpoint, port, security, test_config):
+    def execute_integtest_sh(self, endpoint: str, port: int, security: bool, test_config: str) -> int:
         script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
         if os.path.exists(script):
             cmd = f"{script} -b {endpoint} -p {port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
@@ -76,21 +95,22 @@ class IntegTestSuite(abc.ABC):
             return status
         else:
             logging.info(f"{script} does not exist. Skipping integ tests for {self.component.name}")
+            return 0
 
-    def is_security_enabled(self, config):
+    def is_security_enabled(self, config: str) -> bool:
         if config in ["with-security", "without-security"]:
             return True if config == "with-security" else False
         else:
             raise InvalidTestConfigError("Unsupported test config: " + config)
 
-    def pretty_print_message(self, message):
+    def pretty_print_message(self, message: str) -> None:
         logging.info("===============================================")
         logging.info(message)
         logging.info("===============================================")
 
     @property
     @abc.abstractmethod
-    def test_artifact_files(self):
+    def test_artifact_files(self) -> Dict[str, str]:
         pass
 
 

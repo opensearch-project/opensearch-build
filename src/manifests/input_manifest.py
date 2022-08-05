@@ -39,7 +39,7 @@ components:
 import copy
 import itertools
 import logging
-from typing import Any, Callable, Iterator, Optional
+from typing import Callable, Iterator, List, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components
@@ -101,7 +101,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         },
     }
 
-    def __init__(self, data: Any):
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
 
         self.build = self.Build(data["build"])
@@ -123,14 +123,14 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         return manifest
 
     class Ci:
-        def __init__(self, data: Any):
+        def __init__(self, data: dict) -> None:
             self.image = None if data is None else self.Image(data.get("image", None))
 
         def __to_dict__(self) -> Optional[dict]:
             return None if self.image is None else {"image": self.image.__to_dict__()}
 
         class Image:
-            def __init__(self, data: Any):
+            def __init__(self, data: dict) -> None:
                 self.name = data["name"]
                 self.args = data.get("args", None)
 
@@ -141,7 +141,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                 }
 
     class Build:
-        def __init__(self, data: Any):
+        def __init__(self, data: dict) -> None:
             self.name: str = data["name"]
             self.version = data["version"]
             self.qualifier = data.get("qualifier", None)
@@ -168,39 +168,44 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
 
 class InputComponents(Components['InputComponent']):
     @classmethod
-    def __create__(self, data: Any) -> 'InputComponent':
+    def __create__(self, data: dict) -> 'InputComponent':
         return InputComponent._from(data)  # type: ignore[no-any-return]
 
     def __stabilize__(self) -> None:
         for component in self.values():
             component.__stabilize__()
 
-    def select(self, focus: str = None, platform: str = None) -> Iterator['InputComponent']:
+    def select(self, focus: List[str] = [], platform: str = None) -> Iterator['InputComponent']:
         """
         Select components.
 
-        :param str focus: Choose one component.
+        :param List[str] focus: Choose some components.
         :param str platform: Only components targeting a given platform.
         :return: Collection of components.
         :raises ValueError: Invalid platform or component name specified.
         """
+        if focus and len(focus) > 0:
+            invalid = [item for item in focus if item not in self]
+            if len(invalid) > 0:
+                raise ValueError(f"Unknown component{'s'[:len(invalid) != 1]}={','.join(invalid)}.")
+
         by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
         selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
 
         if not any(it):
-            raise ValueError(f"No components matched focus={focus}, platform={platform}.")
+            raise ValueError(f"No components matched focus={','.join(focus)}, platform={platform}.")
 
         return selected
 
 
 class InputComponent(Component):
-    def __init__(self, data: Any):
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.platforms = data.get("platforms", None)
         self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
 
     @classmethod
-    def _from(self, data: Any) -> 'InputComponent':
+    def _from(self, data: dict) -> 'InputComponent':
         if "repository" in data:
             return InputComponentFromSource(data)
         elif "dist" in data:
@@ -208,8 +213,14 @@ class InputComponent(Component):
         else:
             raise ValueError(f"Invalid component data: {data}")
 
-    def __matches__(self, focus: str = None, platform: str = None) -> bool:
-        matches = ((not focus) or (self.name == focus)) and ((not platform) or (not self.platforms) or (platform in self.platforms))
+    def __matches__(self, focus: List[str] = [], platform: str = None) -> bool:
+        matches = True
+
+        if focus and len(focus) > 0:
+            matches = matches and self.name in focus
+
+        if platform and self.platforms:
+            matches = matches and platform in self.platforms
 
         if not matches:
             logging.info(f"Skipping {self.name}")
@@ -221,7 +232,7 @@ class InputComponent(Component):
 
 
 class InputComponentFromSource(InputComponent):
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.repository = data["repository"]
         self.ref = data["ref"]
@@ -244,7 +255,7 @@ class InputComponentFromSource(InputComponent):
 
 
 class InputComponentFromDist(InputComponent):
-    def __init__(self, data: Any):
+    def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.dist = data["dist"]
 
@@ -258,7 +269,7 @@ class InputComponentFromDist(InputComponent):
 
 
 class Check:
-    def __init__(self, data: Any) -> None:
+    def __init__(self, data: dict) -> None:
         if isinstance(data, dict):
             if len(data) != 1:
                 raise ValueError(f"Invalid check format: {data}")

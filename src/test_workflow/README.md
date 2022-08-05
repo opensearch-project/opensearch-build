@@ -26,15 +26,15 @@ Testing is run via `./test.sh`.
 
 The following options are available.
 
-| name               | description                                                             |
-| ------------------ | ----------------------------------------------------------------------- |
-| test-type          | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
-| test-manifest-path | Specify a test manifest path.                                           |
-| --paths            | Location of manifest(s).                                                |
-| --test-run-id      | Unique identifier for a test run.                                       |
-| --component        | Test a specific component in a manifest.                                |
-| --keep             | Do not delete the temporary working directory on both success or error. |
-| -v, --verbose      | Show more verbose output.                                               |
+| name                   | description                                                             |
+| ---------------------- | ----------------------------------------------------------------------- |
+| test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
+| test-manifest-path     | Specify a test manifest path.                                           |
+| --paths                | Location of manifest(s).                                                |
+| --test-run-id          | Unique identifier for a test run.                                       |
+| --component [name ...] | Test a subset of specific components.                                   |
+| --keep                 | Do not delete the temporary working directory on both success or error. |
+| -v, --verbose          | Show more verbose output.                                               |
 
 ### Integration Tests
 
@@ -68,6 +68,15 @@ To run OpenSearch Dashboards integration tests.
 ./test.sh integ-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/bundle-build/1.2.0/869/linux/x64
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/bundle-build-dashboards/1.2.0/869/linux/x64 
 ```
+
+To run OpenSearch Dashboards integration tests with local artifacts on different distributions
+```bash
+./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/tar
+./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/rpm opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/rpm
+```
+
+:warning: RPM Test requires user to run the `./test.sh` command with sudo permission, as rpm requires root to install and start the service.
+
 
 ### Backwards Compatibility Tests
 

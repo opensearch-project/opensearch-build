@@ -13,7 +13,7 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 
 class TestPerfTestSuite(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.args = Mock()
         self.args.workload = "nyc_taxis"
         self.args.workload_options = "{}"
@@ -28,7 +28,7 @@ class TestPerfTestSuite(unittest.TestCase):
                                              current_workspace="current_workspace", test_results_path="test/results/",
                                              args=self.args)
 
-    def test_execute_default(self):
+    def test_execute_default(self) -> None:
         perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=self.endpoint, security=False,
                                         current_workspace="current_workspace", test_results_path="test/results/", args=self.args)
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):
@@ -40,7 +40,7 @@ class TestPerfTestSuite(unittest.TestCase):
                     " -b 41d5ae25183d4e699e92debfbe3f83bd -a x64 -p test/results/ --workload nyc_taxis"
                     " --workload-options '{}' --warmup-iters 0 --test-iters 1 --scenario-type DEFAULT --owner opensearch-devops")
 
-    def test_execute_different_owner_and_scenario(self):
+    def test_execute_different_owner_and_scenario(self) -> None:
         perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=self.endpoint, security=False,
                                         current_workspace="current_workspace", test_results_path="test/results/", args=self.args,
                                         owner="test-owner", scenario="CROSS_CLUSTER_REPLICATION")
@@ -54,13 +54,21 @@ class TestPerfTestSuite(unittest.TestCase):
                     " --workload-options '{}' --warmup-iters 0 --test-iters 1 --scenario-type CROSS_CLUSTER_REPLICATION"
                     " --owner test-owner")
 
-    def test_execute_with_dict_endpoint(self):
+    def test_execute_with_dict_endpoint(self) -> None:
         endpoint = {
             "default": ["cluster-1"],
             "second_cluster": ["cluster-2"]
         }
-        perf_test_suite = PerfTestSuite(bundle_manifest=self.manifest, endpoint=endpoint, security=False,
-                                        current_workspace="current_workspace", test_results_path="test/results/", args=self.args)
+
+        perf_test_suite = PerfTestSuite(
+            bundle_manifest=self.manifest,
+            endpoint=endpoint,
+            security=False,
+            current_workspace="current_workspace",
+            test_results_path="test/results/",
+            args=self.args
+        )
+
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):
             with patch("subprocess.check_call") as mock_check_call:
                 perf_test_suite.execute()

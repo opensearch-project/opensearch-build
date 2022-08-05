@@ -7,7 +7,8 @@
 import os
 import tempfile
 import unittest
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import Mock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_args import PerfArgs
@@ -40,7 +41,7 @@ class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
     @patch('test_workflow.perf_test.perf_test_runner_opensearch_plugins.subprocess')
     @patch("test_workflow.perf_test.perf_test_runner_opensearch_plugins.TemporaryDirectory")
     @patch("test_workflow.perf_test.perf_test_runner_opensearch_plugins.GitRepository")
-    def test_run(self, mock_git, mock_temp_directory, *mocks):
+    def test_run(self, mock_git: Mock, mock_temp_directory: Mock, *mocks: Any) -> None:
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
 
         perf_args = PerfArgs()
@@ -49,7 +50,7 @@ class PerfTestRunnerOpenSearchPlugins(unittest.TestCase):
         runner.run()
 
         mock_git.assert_called_with("https://github.com/opensearch-project/plugin-name.git", "main",
-                                    os.path.join(tempfile.gettempdir(), "plugin"))
+                                    os.path.join(tempfile.gettempdir(), "plugin-name"))
 
         self.assertEqual(mock_git.call_count, 1)
         self.assertEqual(mock_temp_directory.call_count, 1)
