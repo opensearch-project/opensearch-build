@@ -20,6 +20,10 @@ components:
     repository: https://github.com/opensearch-project/dashboards-maps.git
     working_directory: src/plugins/custom_import_map
     ref: '2.2'
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    working_directory: dashboards-notifications
+    ref: '2.2'
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: '2.2'
