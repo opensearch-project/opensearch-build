@@ -67,9 +67,11 @@ fi
 [[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-
+# Temp solution, see this issue for more details: https://github.com/opensearch-project/notifications/issues/501
+sed -i 's/apply plugin.*opensearch.pluginzip/\/\/&/g' core/build.gradle
 ./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
 ./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
+sed -i "s/\/\/.*apply plugin.*opensearch.pluginzip.*/apply plugin: 'opensearch.pluginzip'/g" core/build.gradle
 
 mkdir -p ./$OUTPUT/plugins
 notifCoreZipPath=$(ls core/build/distributions/ | grep .zip)
