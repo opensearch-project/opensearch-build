@@ -69,3 +69,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '2.2'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
