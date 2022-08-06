@@ -81,6 +81,17 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: '2.2'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: '2.2'
+    checks:
+      - gradle:properties:version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: '2.2'
