@@ -32,6 +32,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '2.2'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: '2.2'
