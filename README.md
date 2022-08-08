@@ -16,6 +16,7 @@
     - [CI/CD Environment](#cicd-environment)
     - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
+    - [Components Release Notes Check](#components-release-notes-check)
     - [Signing Artifacts](#signing-artifacts)
   - [Making a Release](#making-a-release)
     - [Releasing for Linux](#releasing-for-linux)
@@ -123,6 +124,31 @@ Tests the OpenSearch distribution, including integration, backwards-compatibilit
 
 See [src/test_workflow](./src/test_workflow) for more information.
 
+#### Components Release Notes Check 
+
+Pulls the latest CommitID based on user passed environment value of `GIT_LOG_DATE` and checks if the release notes exists or not. Outputs a formated markdown table and adds a comment to the github issue using user passed `GIT_ISSUE_NUMBER`, set `ADD_COMMENT` to false to just output the table.
+```
+# OpenSearch CommitID(after 2022-07-26) & Release Notes info
+|    Repo     |Branch|CommitID|Release Notes|
+|-------------|------|--------|-------------|
+|OpenSearch   |   2.2|4035bf7 |YES          |
+|common-utils |2.x   |7d53102 |NO           |
+|job-scheduler|   2.2|a501307 |YES          |
+|security     |main  |f7b6fe5 |YES          |
+|geospatial   |   2.2|a71475a |YES          |
+|k-NN         |2.x   |53185a0 |YES          |
+```
+
+The workflow uses the following environment values:
+* `GIT_LOG_DATE`: To check if commit exists after a specific date (in format yyyy-mm-dd, example 2022-07-26).
+* `ADD_COMMENT`: true/false (Default is true).
+* `GIT_ISSUE_NUMBER`: Build repo GitHub issue number to add the generated table as comment.
+* `GITHUB_TOKEN`: Token used to add the comment on the github issue.
+
+To run:
+```bash
+./run_releasenotes_check.sh manifests/2.2.0/opensearch-2.2.0.yml 
+```
 #### Signing Artifacts
 
 For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 

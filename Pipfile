@@ -24,7 +24,10 @@ atomicwrites = "*"
 validators = "*"
 yamlfix = "*"
 yamllint = "*"
-
+pytablewriter = "*"
+# With pytablewriter the python version expects >3.6, importlib-metadata and typed-ast has to be reimported with new versions.
+importlib-metadata = "*"
+typed-ast = "*"
 [dev-packages]
 
 [requires]
