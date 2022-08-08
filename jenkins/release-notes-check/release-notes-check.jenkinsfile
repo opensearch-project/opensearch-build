@@ -16,9 +16,9 @@ pipeline {
             description: 'in format yyyy-mm-dd, example 2022-07-26.',
             trim: true
         )
-        choice(
+        booleanParam(
             name: 'ADD_COMMENT',
-            choices: ['true', 'false'],
+            defaultValue: true,
             description: 'Adds MardownTable output as comment on GIT_ISSUE_NUMBER.', 
         )
         string(
@@ -65,7 +65,12 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        if (params.ADD_COMMENT) {
                             sh "./run_releasenotes_check.sh manifests/${INPUT_MANIFEST} --gitlogdate ${GIT_LOG_DATE} --addcomment --gitissuenumber ${GIT_ISSUE_NUMBER} --gittoken ${GITHUB_TOKEN}"
+                        }
+                        else {
+                            sh "./run_releasenotes_check.sh manifests/${INPUT_MANIFEST} --gitlogdate ${GIT_LOG_DATE}"
+                        }
                     }
                 }
             }
