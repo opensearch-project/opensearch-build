@@ -6,32 +6,20 @@ from typing import Any, List
 
 from pytablewriter import MarkdownTableWriter
 
-from checkout_workflow.checkout_args import CheckoutArgs
+from releasenotes_check_workflow.releasenotes_check_args import ReleaseNotesCheckArgs
 from git.git_repository import GitRepository
 from manifests.input_manifest import InputComponentFromSource, InputManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 
-# in format yyyy-mm-dd, example 2022-07-26
-gitLogDate = os.getenv('GIT_LOG_DATE')
-# Github issue to add the generated markdown table as a new comment
-gitIssueNumber = os.getenv('GIT_ISSUE_NUMBER')
-# Boolen if set to null, just prints on the console.
-addComment = os.getenv('ADD_COMMENT', default="true")
-# Token used to add comment on an issue
-userToken = os.getenv('GITHUB_TOKEN')
 
-
-def main(gitLogDate: str, addComment: str) -> int:
-    if gitLogDate is None:
-        print("No GIT_LOG_DATE environmental value passed")
-        sys.exit()
+def main() -> int:
     value_matrix = []  # type: List[Any]
-    args = CheckoutArgs()
+    args = ReleaseNotesCheckArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
     writer = MarkdownTableWriter(
-        table_name=f"{manifest.build.name} CommitID(after {gitLogDate}) & Release Notes info",
+        table_name=f"{manifest.build.name} CommitID(after {args.gitlogdate}) & Release Notes info",
         headers=["Repo", "Branch", "CommitID", "Release Notes"],
         value_matrix=value_matrix
     )
@@ -48,7 +36,7 @@ def main(gitLogDate: str, addComment: str) -> int:
                     component.working_directory,
                 ) as repo:
                     logging.debug(f"Checked out {component.name} into {repo.dir}")
-                    gitLogCmd = f'git log --after={gitLogDate} --pretty=format:"%h"'
+                    gitLogCmd = f'git log --after={args.gitlogdate} --pretty=format:"%h"'
                     gitLog = subprocess.check_output(gitLogCmd.split(), cwd=repo.dir).decode()
                     repo_list.append(component.name)
                     repo_list.append(component.ref)
@@ -68,12 +56,8 @@ def main(gitLogDate: str, addComment: str) -> int:
                     value_matrix.append(repo_list)
         writer.write_table()
         writer.dump("{}/table.txt".format(work_dir.name))
-        if addComment == "true":
-            if gitIssueNumber is not None:
-                comment_under_issue(gitIssueNumber, f'{work_dir.name}/table.txt', userToken)
-            else:
-                print("No GIT_ISSUE_NUMBER environmental value passed")
-                sys.exit()
+        if args.addcomment:
+                comment_under_issue(args.gitissuenumber, f'{work_dir.name}/table.txt', args.gittoken)
     return 0
 
 
@@ -95,4 +79,4 @@ def comment_under_issue(issue_number: str, comment_text: str, userToken: str) ->
 
 
 if __name__ == "__main__":
-    main(gitLogDate, addComment)
+    main()

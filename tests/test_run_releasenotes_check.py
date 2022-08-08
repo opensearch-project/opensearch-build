@@ -14,9 +14,6 @@ import pytest
 from run_releasenotes_check import main
 
 gitLogDate = '2022-07-26'
-# For testing addComment should be set to false
-addComment = 'false'
-
 
 class TestRunReleaseNotesCheck(unittest.TestCase):
     @pytest.fixture(autouse=True)
@@ -26,7 +23,7 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_releasenotes_check.py", "--help"])
     def test_usage(self) -> None:
         with self.assertRaises(SystemExit):
-            main(gitLogDate, addComment)
+            main()
 
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
@@ -43,8 +40,6 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         )
     )
 
-    @patch("argparse._sys.argv", ["run_releasenotes_check.py", OPENSEARCH_MANIFEST])
+    @patch("argparse._sys.argv", ["run_releasenotes_check.py", OPENSEARCH_MANIFEST, "--gitlogdate", gitLogDate])
     def test_main(self) -> None:
-        assert main(gitLogDate, addComment) == 0
-        if gitLogDate is None:
-            assert main(gitLogDate, addComment) == 1
+        assert main() == 0

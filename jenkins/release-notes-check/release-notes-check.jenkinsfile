@@ -65,7 +65,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                            sh "./run_releasenotes_check.sh manifests/${INPUT_MANIFEST}"
+                            sh "./run_releasenotes_check.sh manifests/${INPUT_MANIFEST} --gitlogdate ${GIT_LOG_DATE} --addcomment --gitissuenumber ${GIT_ISSUE_NUMBER} --gittoken ${GITHUB_TOKEN}"
                     }
                 }
             }
