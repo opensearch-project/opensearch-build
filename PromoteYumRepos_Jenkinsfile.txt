@@ -44,40 +44,16 @@
 
     )
                      promoteYumRepos.signArtifacts({artifactPath=/tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom, sigtype=.sig, platform=linux})
-<<<<<<< HEAD
                         signArtifacts.echo(PGP or Windows Signature Signing)
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-                        signArtifacts.echo(PGP or Windows Signature Signing)
-=======
-                        signArtifacts.echo(PGP Signature Signing)
->>>>>>> 071d6df (Update remaining env vars with credentials in jenkins libraries  (#2286))
-=======
-                        signArtifacts.echo(PGP or Windows Signature Signing)
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                         signArtifacts.fileExists(/tmp/workspace/sign.sh)
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                         signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                         signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                         signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
                         signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
                         signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
                            signArtifacts.sh(
                    #!/bin/bash
                    set +x
@@ -88,45 +64,6 @@
 
                    /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
                )
-=======
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=signer_client_creds})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], signer_client_creds], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=signer_client_creds})
-                           signArtifacts.sh(
-                #!/bin/bash
-                set +x
-                export ROLE=dummy_role
-                export EXTERNAL_ID=dummy_ID
-                export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                export SIGNED_BUCKET=dummy_signed_bucket
-
-                /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
-            )
->>>>>>> 071d6df (Update remaining env vars with credentials in jenkins libraries  (#2286))
-=======
-                        signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
-=======
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=configs})
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
-                           signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
-
-                   /tmp/workspace/sign.sh /tmp/workspace/artifacts/releases/bundle/opensearch/1.x/yum/repodata/repomd.pom --sigtype=.sig --platform=linux
-               )
-<<<<<<< HEAD
-=======
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                      promoteYumRepos.sh(
             set -e
             set +x

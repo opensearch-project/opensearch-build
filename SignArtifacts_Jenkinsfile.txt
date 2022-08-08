@@ -9,23 +9,11 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                   signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                   signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                   signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
                   signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
@@ -34,37 +22,6 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-<<<<<<< HEAD
-=======
-=======
-                  signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
-=======
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
-                     signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
-                     signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
-
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                    /tmp/workspace/sign.sh /tmp/workspace/artifacts --sigtype=.sig --platform=linux
                )
                SignArtifacts_Jenkinsfile.signArtifacts({artifactPath=/tmp/workspace/artifacts, sigtype=.rpm, platform=linux})
@@ -74,19 +31,7 @@
                   signArtifacts.string({credentialsId=jenkins-rpm-signing-key-id, variable=RPM_SIGNING_KEY_ID})
                   signArtifacts.withCredentials([RPM_SIGNING_ACCOUNT_NUMBER, RPM_SIGNING_PASSPHRASE_SECRETS_ARN, RPM_SIGNING_SECRET_KEY_ID_SECRETS_ARN, RPM_SIGNING_KEY_ID], groovy.lang.Closure)
                      signArtifacts.echo(RPM Add Sign)
-<<<<<<< HEAD
                      signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=RPM_SIGNING_ACCOUNT_NUMBER, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-                     signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=RPM_SIGNING_ACCOUNT_NUMBER, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
-=======
-                     signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=null, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
->>>>>>> 21fe974 (Change rpm signing role with new one (#2352))
-=======
-                     signArtifacts.withAWS({role=jenkins-prod-rpm-signing-assume-role, roleAccount=RPM_SIGNING_ACCOUNT_NUMBER, duration=900, roleSessionName=jenkins-signing-session}, groovy.lang.Closure)
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                         signArtifacts.sh(
                         set -e
                         set +x
@@ -165,22 +110,11 @@
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                   signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                   signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                   signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                   signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
                   signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
                   signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
                      signArtifacts.sh(
                    #!/bin/bash
                    set +x
@@ -189,37 +123,5 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-=======
-                  signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
-=======
-                  signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-                  signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                     signArtifacts.readJSON({text=configs})
-                     signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
-                     signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
-
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                    /tmp/workspace/sign.sh /tmp/workspace/file.yml --platform=linux --type=maven
                )

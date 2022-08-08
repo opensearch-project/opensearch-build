@@ -19,31 +19,6 @@ class SignArtifactsLibTester extends LibFunctionTester {
 
     void configure(helper, binding) {
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        if (this.sigtype.equals('.rpm')) {
-            def configs = ['account': '1234',
-            'passphrase_secrets_arn': 'ARN::123456',
-            'secret_key_id_secrets_arn': 'ARN::56789',
-            'key_id': 'abcd1234']
-            binding.setVariable('configs', configs)
-            helper.registerAllowedMethod('readJSON', [Map.class], { c -> configs })
-        }
-        else {
-            def configs = ["role": "dummy_role",
-                           "external_id": "dummy_ID",
-                           "unsigned_bucket": "dummy_unsigned_bucket",
-                           "signed_bucket": "dummy_signed_bucket"]
-            binding.setVariable('configs', configs)
-            helper.registerAllowedMethod('readJSON', [Map.class], { c -> configs })
-        }
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
         helper.registerAllowedMethod('git', [Map])
         helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
             closure.delegate = delegate

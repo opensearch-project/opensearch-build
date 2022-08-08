@@ -38,23 +38,11 @@
                         signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                         signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
                         signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                         signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
                         signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
                         signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
                         signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
                         signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                            signArtifacts.sh(
                    #!/bin/bash
                    set +x
@@ -63,7 +51,6 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-<<<<<<< HEAD
                    tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
                )
                      promoteArtifacts.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
@@ -94,27 +81,6 @@
                         signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
                         signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
                         signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-=======
-=======
-                        signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
-=======
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=configs})
-                           signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                            signArtifacts.sh(
                    #!/bin/bash
                    set +x
@@ -123,82 +89,6 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
-                   tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
-               )
-                     promoteArtifacts.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                        promoteArtifacts.s3Upload({bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=releases/core/opensearch/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/builds/opensearch/dist/, includePathPattern=**/opensearch-min-2.0.0-rc1-linux-x64*})
-                        promoteArtifacts.s3Upload({bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=releases/bundle/opensearch/2.0.0-rc1/, workingDir=tests/jenkins/artifacts/tar/vars-build/2.0.0-rc1/33/linux/x64/tar/dist/opensearch/, includePathPattern=**/opensearch-2.0.0-rc1-linux-x64*})
-                     promoteArtifacts.println(S3 download rpm artifacts before creating signatures)
-                     promoteArtifacts.withAWS({role=opensearch-bundle, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                        promoteArtifacts.s3Download({bucket=ARTIFACT_BUCKET_NAME, file=tests/jenkins/artifacts/rpm, path=vars-build/2.0.0-rc1/33/linux/x64/rpm/, force=true})
-                     promoteArtifacts.readYaml({file=tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch/manifest.yml})
-                     promoteArtifacts.fileExists(tests/jenkins/artifacts/rpm/vars-build/2.0.0-rc1/33/linux/x64/rpm/builds/opensearch/core-plugins)
-                     promoteArtifacts.println(Signing Starts)
-                     promoteArtifacts.println(Signing Core/Bundle Artifacts)
-                     promoteArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.rpm*,**/opensearch-2.0.0-rc1*.rpm*})
-                     promoteArtifacts.getPath()
-                     createSha512Checksums.sh({script=find tests/jenkins/tests/jenkins/file/found.zip -type f, returnStdout=true})
-                     createSha512Checksums.echo(Not generating sha for bbb in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
-                     createSha512Checksums.echo(Not generating sha for ccc in tests/jenkins/tests/jenkins/file/found.zip, doesn't match allowed types [.tar.gz, .zip, .rpm])
-                     promoteArtifacts.findFiles({glob=**/opensearch-min-2.0.0-rc1*.rpm*,**/opensearch-2.0.0-rc1*.rpm*})
-                     promoteArtifacts.getPath()
-                     createSignatureFiles.signArtifacts({sigtype=.sig, artifactPath=tests/jenkins/tests/jenkins/file/found.zip})
-                        signArtifacts.echo(PGP or Windows Signature Signing)
-                        signArtifacts.fileExists(tests/jenkins/sign.sh)
-                        signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
-                        signArtifacts.sh(curl -sSL https://artifacts.opensearch.org/publickeys/opensearch.pgp | gpg --import -)
-                        signArtifacts.usernamePassword({credentialsId=github_bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
-                        signArtifacts.string({credentialsId=jenkins-signer-client-role, variable=SIGNER_CLIENT_ROLE})
-                        signArtifacts.string({credentialsId=jenkins-signer-client-external-id, variable=SIGNER_CLIENT_EXTERNAL_ID})
-                        signArtifacts.string({credentialsId=jenkins-signer-client-unsigned-bucket, variable=SIGNER_CLIENT_UNSIGNED_BUCKET})
-                        signArtifacts.string({credentialsId=jenkins-signer-client-signed-bucket, variable=SIGNER_CLIENT_SIGNED_BUCKET})
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], SIGNER_CLIENT_ROLE, SIGNER_CLIENT_EXTERNAL_ID, SIGNER_CLIENT_UNSIGNED_BUCKET, SIGNER_CLIENT_SIGNED_BUCKET], groovy.lang.Closure)
-<<<<<<< HEAD
-                           signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
-
-=======
-                        signArtifacts.string({credentialsId=signer-pgp-config, variable=configs})
-=======
-                        signArtifacts.string({credentialsId=jenkins-signer-client-creds, variable=configs})
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-                        signArtifacts.withCredentials([[GITHUB_USER, GITHUB_TOKEN], configs], groovy.lang.Closure)
-                           signArtifacts.readJSON({text=configs})
-                           signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=dummy_role
-                   export EXTERNAL_ID=dummy_ID
-                   export UNSIGNED_BUCKET=dummy_unsigned_bucket
-                   export SIGNED_BUCKET=dummy_signed_bucket
-                   export PROFILE_IDENTIFIER=null
-                   export PLATFORM_IDENTIFIER=null
-       
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
-                           signArtifacts.sh(
-                   #!/bin/bash
-                   set +x
-                   export ROLE=SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
-
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                    tests/jenkins/sign.sh tests/jenkins/tests/jenkins/file/found.zip --sigtype=.sig
                )
                      promoteArtifacts.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)

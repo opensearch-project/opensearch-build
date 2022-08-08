@@ -1,0 +1,79 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+        string(
+            name: 'GIT_LOG_DATE',
+            description: 'in format yyyy-mm-dd, example 2022-07-26.',
+            trim: true
+        )
+        choice(
+            name: 'ADD_COMMENT',
+            choices: ['true', 'false'],
+            description: 'Adds MardownTable output as comment on GIT_ISSUE_NUMBER.', 
+        )
+        string(
+            name: 'GIT_ISSUE_NUMBER',
+            description: 'The release issue number from opensearch-build repo.',
+            trim: true
+        )
+    }
+    environment {
+        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+        GIT_LOG_DATE = "$GIT_LOG_DATE"
+        GIT_ISSUE_NUMBER = "$GIT_ISSUE_NUMBER"
+        ADD_COMMENT = "$ADD_COMMENT"
+    }
+    stages {
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    dockerAgent = detectDockerAgent()
+                    currentBuild.description = INPUT_MANIFEST
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('Generate MarkDown table') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                            sh "./run_releasenotes_check.sh manifests/${INPUT_MANIFEST}"
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+}

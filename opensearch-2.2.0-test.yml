@@ -82,7 +82,6 @@ components:
       test-configs:
         - with-security
         - without-security
-<<<<<<< HEAD
 
   - name: security
     integ-test:
@@ -93,5 +92,3 @@ components:
     integ-test:
       test-configs:
         - without-security
-=======
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)

@@ -9,7 +9,6 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-<<<<<<< HEAD
     ref: '2.2'
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
@@ -50,6 +49,3 @@ components:
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
     ref: '2.2'
-=======
-    ref: 2.x
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)

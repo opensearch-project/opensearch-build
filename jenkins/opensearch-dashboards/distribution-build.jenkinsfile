@@ -69,7 +69,11 @@ pipeline {
             agent {
                 docker {
                     label AGENT_X64
+<<<<<<< HEAD
                     image dockerAgent.image
+=======
+                    image 'opensearchstaging/ci-runner:ci-runner-alpine3-yq-v1'
+>>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                     alwaysPull true
                 }
             }

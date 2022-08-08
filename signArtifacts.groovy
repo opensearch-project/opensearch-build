@@ -23,19 +23,7 @@ void call(Map args = [:]) {
         string(credentialsId: 'jenkins-rpm-signing-key-id', variable: 'RPM_SIGNING_KEY_ID')]) {
             echo 'RPM Add Sign'
 
-<<<<<<< HEAD
             withAWS(role: 'jenkins-prod-rpm-signing-assume-role', roleAccount: "${RPM_SIGNING_ACCOUNT_NUMBER}", duration: 900, roleSessionName: 'jenkins-signing-session') {
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-            withAWS(role: 'jenkins-prod-rpm-signing-assume-role', roleAccount: "${RPM_SIGNING_ACCOUNT_NUMBER}", duration: 900, roleSessionName: 'jenkins-signing-session') {
-=======
-            withAWS(role: 'jenkins-prod-rpm-signing-assume-role', roleAccount: "${signingAccount}", duration: 900, roleSessionName: 'jenkins-signing-session') {
->>>>>>> 21fe974 (Change rpm signing role with new one (#2352))
-=======
-            withAWS(role: 'jenkins-prod-rpm-signing-assume-role', roleAccount: "${RPM_SIGNING_ACCOUNT_NUMBER}", duration: 900, roleSessionName: 'jenkins-signing-session') {
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                     sh """
                         set -e
                         set +x
@@ -110,19 +98,7 @@ void call(Map args = [:]) {
         }
     }
     else {
-<<<<<<< HEAD
         echo 'PGP or Windows Signature Signing'
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-        echo 'PGP or Windows Signature Signing'
-=======
-        echo "PGP or Windows Signature Signing"
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
-        echo 'PGP or Windows Signature Signing'
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
 
         if (!fileExists("$WORKSPACE/sign.sh")) {
             git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
@@ -133,14 +109,6 @@ void call(Map args = [:]) {
         String arguments = generateArguments(args)
 
         // Sign artifacts
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
         // def configSecret = args.platform == "windows" ? "jenkins-signer-windows-config" : "jenkins-signer-client-creds"
         if (args.platform == 'windows') {
             withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
@@ -171,10 +139,6 @@ void call(Map args = [:]) {
                 string(credentialsId: 'jenkins-signer-client-unsigned-bucket', variable: 'SIGNER_CLIENT_UNSIGNED_BUCKET'),
                 string(credentialsId: 'jenkins-signer-client-signed-bucket', variable: 'SIGNER_CLIENT_SIGNED_BUCKET')]) {
                 sh """
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
                    #!/bin/bash
                    set +x
                    export ROLE=$SIGNER_CLIENT_ROLE
@@ -185,40 +149,6 @@ void call(Map args = [:]) {
                    $WORKSPACE/sign.sh ${arguments}
                """
                 }
-<<<<<<< HEAD
-=======
-=======
-        def configSecret = args.platform == "windows" ? "signer-windows-config" : "signer-pgp-config"
-=======
-        def configSecret = args.platform == "windows" ? "jenkins-signer-windows-config" : "jenkins-signer-client-creds"
->>>>>>> 932dbb4 (Add jenkins prefix to signer credentials (#2342))
-        withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN'),
-                        string(credentialsId: configSecret, variable: 'configs')]) {
-            def creds = readJSON(text: configs)
-            def ROLE = creds['role']
-            def EXTERNAL_ID = creds['external_id']
-            def UNSIGNED_BUCKET = creds['unsigned_bucket']
-            def SIGNED_BUCKET = creds['signed_bucket']
-            def PROFILE_IDENTIFIER = creds['profile_identifier']
-            def PLATFORM_IDENTIFIER = creds['platform_identifier']
-            sh """
-=======
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
-                   #!/bin/bash
-                   set +x
-                   export ROLE=$SIGNER_CLIENT_ROLE
-                   export EXTERNAL_ID=$SIGNER_CLIENT_EXTERNAL_ID
-                   export UNSIGNED_BUCKET=$SIGNER_CLIENT_UNSIGNED_BUCKET
-                   export SIGNED_BUCKET=$SIGNER_CLIENT_SIGNED_BUCKET
-
-                   $WORKSPACE/sign.sh ${arguments}
-               """
-<<<<<<< HEAD
->>>>>>> 700c80d (Add signer to support signing windows artifacts (#2156))
-=======
-                }
->>>>>>> 528cdfc (Move clubbed secrets to individual secrets (#2356))
->>>>>>> cfb3960 (parent 3d7637ac459e56c4bc9e6b6ca8739390b6245a81)
         }
     }
 }
