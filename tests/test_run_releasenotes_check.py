@@ -15,6 +15,7 @@ from run_releasenotes_check import main
 
 gitLogDate = '2022-07-26'
 
+
 class TestRunReleaseNotesCheck(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def _capfd(self, capfd: Any) -> None:
@@ -40,6 +41,6 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
         )
     )
 
-    @patch("argparse._sys.argv", ["run_releasenotes_check.py", OPENSEARCH_MANIFEST, "--gitlogdate", gitLogDate])
+    @patch("argparse._sys.argv", ["run_releasenotes_check.py", "check", OPENSEARCH_MANIFEST, "--date", gitLogDate])
     def test_main(self) -> None:
         assert main() == 0

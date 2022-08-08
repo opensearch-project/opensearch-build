@@ -16,7 +16,7 @@
     - [CI/CD Environment](#cicd-environment)
     - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
-    - [Components Release Notes Check](#components-release-notes-check)
+    - [Checking Release Notes](#checking-release-notes)
     - [Signing Artifacts](#signing-artifacts)
   - [Making a Release](#making-a-release)
     - [Releasing for Linux](#releasing-for-linux)
@@ -124,16 +124,16 @@ Tests the OpenSearch distribution, including integration, backwards-compatibilit
 
 See [src/test_workflow](./src/test_workflow) for more information.
 
-#### Components Release Notes Check 
+#### Checking Release Notes
 
-Worflow to check if the release notes exists for the OpenSearch distribution. Uses the argument `gitlogdate` to parse the CommitID after the date and if any commit exists, checks for the release notes.
+Workflow to check if the release notes exists for OpenSearch and Dashboard distribution. Uses the argument `--date` to parse the CommitID and after the given `--date` if any commit exists checks for the release notes.
 
 To run:
 ```bash
-./run_releasenotes_check.sh manifests/2.2.0/opensearch-2.2.0.yml --gitlogdate 2022-07-26
+./release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
 ```
 
-See [src/releasenotes_check_workflow](./src/releasenotes_check_workflow) for more information.
+See [src/release_notes_workflow](./src/release_notes_workflow) for more information.
 #### Signing Artifacts
 
 For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 
