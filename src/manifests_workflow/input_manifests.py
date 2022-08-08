@@ -30,6 +30,10 @@ class InputManifests(Manifests):
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod
+    def legacy_manifests_path(self) -> str:
+        return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "legacy-manifests"))
+
+    @classmethod
     def jenkins_path(self) -> str:
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins"))
 
@@ -40,11 +44,12 @@ class InputManifests(Manifests):
     @classmethod
     def files(self, name: str) -> List:
         results = []
-        for filename in glob.glob(os.path.join(self.manifests_path(), f"**/{name}-*.yml")):
-            # avoids the -maven manifest
-            match = re.search(rf"^{name}-([0-9.]*).yml$", os.path.basename(filename))
-            if match:
-                results.append(filename)
+        for path in [self.manifests_path(), self.legacy_manifests_path()]:
+            for filename in glob.glob(os.path.join(path, f"**/{name}-*.yml")):
+                # avoids the -maven manifest
+                match = re.search(rf"^{name}-([0-9.]*).yml$", os.path.basename(filename))
+                if match:
+                    results.append(filename)
         return results
 
     @abstractmethod
