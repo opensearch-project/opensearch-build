@@ -22,9 +22,9 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
     localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || echo set locale
 
 # Add normal dependencies
-RUN yum clean all && \
+RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -44,9 +44,9 @@ RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
-#JDK setup
-COPY --chown=0:0 config/jdk-setup.sh /tmp
-RUN /tmp/jdk-setup.sh
+# Tools setup
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp
+RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Install higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \

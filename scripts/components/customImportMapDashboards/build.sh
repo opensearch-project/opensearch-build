@@ -13,7 +13,7 @@ function usage() {
     echo ""
     echo "Arguments:"
     echo -e "-v VERSION\t[Required] OpenSearch version."
-    echo -e "-q QUALIFIER\t[Optional] Build qualifier."
+    echo -e "-q QUALIFIER\t[Optional] Version qualifier."
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, ignored."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, ignored."
@@ -58,26 +58,24 @@ while getopts ":h:v:q:s:o:p:a:" arg; do
 done
 
 if [ -z "$VERSION" ]; then
-    echo "Error: You must specify the OpenSearch version"
+    echo "Error: You must specify the OpenSearch Dashboards version"
     usage
     exit 1
 fi
 
-[[ ! -z "$QUALIFIER" ]] && VERSION=$VERSION-$QUALIFIER
-[[ "$SNAPSHOT" == "true" ]] && VERSION=$VERSION-SNAPSHOT
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
+[ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
 
-# Temp solution, see this issue for more details: https://github.com/opensearch-project/notifications/issues/501
-sed -i 's/apply plugin.*opensearch.pluginzip/\/\/&/g' notifications/build.gradle
-./gradlew publishToMavenLocal -PexcludeTests="**/SesChannelIT*" -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
-./gradlew assemble --no-daemon --refresh-dependencies -DskipTests=true -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
-sed -i "s/\/\/.*apply plugin.*opensearch.pluginzip.*/apply plugin: 'opensearch.pluginzip'/g" notifications/build.gradle
-
-mkdir -p ./$OUTPUT/plugins
-
-notifCoreZipPath=$(ls notifications/build/distributions/ | grep .zip)
-cp -v notifications/build/distributions/$notifCoreZipPath ./$OUTPUT/plugins
-
-./gradlew publishPluginZipPublicationToZipStagingRepository -Dopensearch.version=$VERSION -Dbuild.snapshot=$SNAPSHOT -Dbuild.version_qualifier=$QUALIFIER
-mkdir -p $OUTPUT/maven/org/opensearch/plugin
-cp -r ./build/local-staging-repo/org/opensearch/plugin/notifications $OUTPUT/maven/org/opensearch/plugin/
+mkdir -p $OUTPUT/plugins
+PLUGIN_FOLDER=$(basename "$PWD")
+PLUGIN_NAME=customImportMapDashboards
+# TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
+# This makes it so there is a dependency on having Dashboards pulled already.
+cp -r ../$PLUGIN_FOLDER/ ../../../../OpenSearch-Dashboards/plugins
+echo "BUILD MODULES FOR $PLUGIN_NAME"
+(cd ../../../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && yarn osd bootstrap)
+echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
+(cd ../../../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && cd plugins/$PLUGIN_FOLDER && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+echo "COPY $PLUGIN_NAME.zip"
+cp -r ../../../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
+rm -rf ../../../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
