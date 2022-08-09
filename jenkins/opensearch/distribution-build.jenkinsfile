@@ -164,36 +164,36 @@ pipeline {
                         }
                     }
                 }
-                //stage('build-snapshot-macos-x64-tar') {
-                //    agent {
-                //        node {
-                //            label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
-                //        }
-                //    }
-                //    tools {
-                //        jdk dockerAgent.javaVersion
-                //    }
-                //    steps {
-                //        script {
-                //            buildManifest(
-                //                componentName: "${COMPONENT_NAME}",
-                //                inputManifest: "manifests/${INPUT_MANIFEST}",
-                //                distribution: 'tar',
-                //                snapshot: true
-                //            )
-                //            echo("Uploading darwin min snapshots to S3")
-                //            uploadMinSnapshotsToS3(
-                //                fileActions: [createSha512Checksums()],
-                //                distribution: 'tar'
-                //            )
-                //        }
-                //    }
-                //    post {
-                //        always {
-                //            postCleanup()
-                //        }
-                //    }
-                //}
+                stage('build-snapshot-macos-x64-tar') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading darwin min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
                 stage('build-and-test-x64-tar') {
                     agent {
                         docker {
