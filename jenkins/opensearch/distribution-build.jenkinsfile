@@ -48,6 +48,11 @@ pipeline {
             description: 'Publish the status of this build job or not.',
             defaultValue: true
         )
+        booleanParam(
+                    name: 'CREATE_GITHUB_ISSUE',
+                    description: 'To create a github issue for failing component or not.',
+                    defaultValue: true
+                )
     }
     stages {
         stage('detect docker image + args') {
@@ -265,7 +270,7 @@ pipeline {
                         }
                     }
                     post {
-                        always {      
+                        always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
@@ -443,7 +448,7 @@ pipeline {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) + 
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
                                     "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
                                     "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
                                 )
@@ -538,7 +543,7 @@ pipeline {
 
                                         postCleanup()
                                     }
-                                }                    
+                                }
                             }
                         }
                     }
@@ -565,7 +570,7 @@ pipeline {
         stage('docker build') {
             when {
                 beforeAgent true
-                expression { 
+                expression {
                     params.BUILD_DOCKER != 'do_not_build_docker'
                 }
             }
@@ -581,7 +586,7 @@ pipeline {
                 script {
                     echo "env.ARTIFACT_URL_X64_TAR: ${env.ARTIFACT_URL_X64_TAR}"
                     echo "env.ARTIFACT_URL_ARM64_TAR: ${env.ARTIFACT_URL_ARM64_TAR}"
-                    
+
                     buildDockerImage(
                         inputManifest: "manifests/${INPUT_MANIFEST}",
                         buildNumber: "${BUILD_NUMBER}",
@@ -597,11 +602,11 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
+                    if (params.PUBLISH_NOTIFICATION) {
                         def stashed = lib.jenkins.Messages.new(this).get([
-                            'build-and-test-x64-tar', 
+                            'build-and-test-x64-tar',
                             'assemble-archive-and-test-linux-x64-rpm',
-                            'build-and-test-arm64-tar', 
+                            'build-and-test-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm'
                         ])
 
@@ -621,13 +626,18 @@ pipeline {
         failure {
             node(AGENT_X64) {
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
+                    if (params.PUBLISH_NOTIFICATION) {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),
                             credentialsId: 'jenkins-build-notice-webhook',
                             manifest: "${INPUT_MANIFEST}"
                         )
+                    }
+                    if (params.CREATE_GITHUB_ISSUE) {
+                        createGithubIssue(
+                            message: buildFailureMessage()
+                            )
                     }
 
                     postCleanup()
