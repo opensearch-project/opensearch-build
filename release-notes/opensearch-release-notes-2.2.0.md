@@ -1,7 +1,7 @@
 # OpenSearch and Dashboards 2.2.0 Release Notes
 
 ## Release Highlights
-* OpenSearch 2.2 supports [logistic regression](https://github.com/opensearch-project/ml-commons/issues/318) and [RCFSummarize](https://github.com/opensearch-project/ml-commons/issues/356) machine learning algorithms.
+* OpenSearch 2.2.0 supports [logistic regression](https://github.com/opensearch-project/ml-commons/issues/318) and [RCFSummarize](https://github.com/opensearch-project/ml-commons/issues/356) machine learning algorithms.
 * With the [addition of the Lucene implementation](https://github.com/opensearch-project/k-NN/issues/380) of the HNSW algorithm, you can now choose from Lucene or the C-based Nmslib and Faiss libraries for approximate k-NN search.
 * You can now [search by relevance](https://github.com/opensearch-project/sql/issues/182) using SQL and PPL queries including [match_phrase_prefix](https://github.com/opensearch-project/sql/issues/186), [query_string](https://github.com/opensearch-project/sql/issues/191), and [highlights](https://github.com/opensearch-project/sql/issues/636).
 * You can now [upload your own custom region maps](https://github.com/opensearch-project/geospatial/issues/122) in GeoJSON format and use them for visualizations in OpenSearch Dashboards. You can also draw your own geographic boundaries on a visualization.
