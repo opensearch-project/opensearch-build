@@ -1,0 +1,59 @@
+lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
+
+pipeline {
+    options {
+        timeout(time: 30)
+    }
+    agent none  
+    parameters {
+        string(
+            name: 'IMAGE_FULL_NAME', 
+            description: "Example : 'opensearchstaging/opensearch:2.0.0', 'public.ecr.aws/opensearchstaging/opensearch:2.0.0', 'alpine:3', 'ubuntu:20.04'",
+            trim: true
+        )
+    }
+    stages {
+        stage("Image Scan (Trivy)") {
+            agent {
+                    docker {
+                        label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                        image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+                        args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                        alwaysPull true
+                    }
+            }
+            stages {
+                stage('Parameters Check') {
+                    steps {
+                        script {
+                            currentBuild.description = "Scanning: ${IMAGE_FULL_NAME}"
+                            if(IMAGE_FULL_NAME.isEmpty()) {
+                                        currentBuild.result = 'ABORTED'
+                                        error('Make sure all the parameters are passed in.')
+                            }
+                        }
+                    }
+                }
+                stage('Scan Images') {
+                    steps {
+                        script {
+                            scanDockerImage(
+                                imageFullName: "${IMAGE_FULL_NAME}",
+                                imageResultFile: "scan_docker_image"
+                            )
+                        }
+                    }
+                }
+            }  
+            post() {
+                always {
+                    archiveArtifacts artifacts: 'scan_docker_image.*'
+                    script {
+                        postCleanup()
+                        sh("trivy image --clear-cache")
+                    }
+                }
+            }     
+        }
+    }
+}

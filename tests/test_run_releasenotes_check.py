@@ -44,3 +44,8 @@ class TestRunReleaseNotesCheck(unittest.TestCase):
     @patch("argparse._sys.argv", ["run_releasenotes_check.py", "check", OPENSEARCH_MANIFEST, "--date", gitLogDate])
     def test_main(self) -> None:
         assert main() == 0
+
+    @patch("argparse._sys.argv", ["run_releasenotes_check.py", "check", OPENSEARCH_MANIFEST, "--date", gitLogDate, "--save"])
+    def test_main_with_save(self) -> None:
+        assert main() == 0
+        assert os.path.exists("table.md") is True

@@ -15,12 +15,12 @@ class GitLog:
 
     @property
     def commitID(self) -> str:
-        gitLogCmd = f'git log --date=local --after={self.date} --pretty=format:"%h"'
+        gitLogCmd = f'git log --date=short --after={self.date} --pretty=format:"%h"'
         commitID = subprocess.check_output(gitLogCmd.split(), cwd=self.gitrepo).decode()
         return commitID
 
     @property
     def commitDate(self) -> str:
-        gitLogCmd = f'git log --date=local --after={self.date} --pretty=format:"%as"'
+        gitLogCmd = f'git log --date=short --after={self.date} --pretty=format:"%ad"'
         commitDate = subprocess.check_output(gitLogCmd.split(), cwd=self.gitrepo).decode()
         return commitDate

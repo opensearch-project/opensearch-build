@@ -16,6 +16,24 @@ class TestInputManifests(unittest.TestCase):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
 
+    def test_legacy_manifests_path(self) -> None:
+        path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "legacy-manifests"))
+        self.assertEqual(path, InputManifests.legacy_manifests_path())
+
+    def test_files(self) -> None:
+        files = InputManifests.files("invalid")
+        self.assertEqual(len(files), 0)
+
+    def test_files_opensearch(self) -> None:
+        files = InputManifests.files("opensearch")
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.0", "opensearch-1.3.0.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-1.2.1.yml")) in files)
+
+    def test_files_opensearch_dashboards(self) -> None:
+        files = InputManifests.files("opensearch-dashboards")
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.3", "opensearch-dashboards-1.3.3.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-dashboards-1.2.1.yml")) in files)
+
     def test_create_manifest_opensearch(self) -> None:
         input_manifests = InputManifests("OpenSearch")
         input_manifest = input_manifests.create_manifest("1.2.3", [])

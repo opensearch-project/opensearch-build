@@ -10,7 +10,7 @@ import os
 import unittest
 from unittest.mock import patch
 
-from release_notes_workflow.releasenotes_check_args import ReleaseNotesCheckArgs
+from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
 
 
 class TestReleaseNotesCheckArgs(unittest.TestCase):
@@ -41,4 +41,8 @@ class TestReleaseNotesCheckArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "check", OPENSEARCH_MANIFEST, "--date", gitLogDate, "--verbose"])
     def test_verbose_true(self) -> None:
+        self.assertTrue(ReleaseNotesCheckArgs().logging_level, logging.DEBUG)
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "check", OPENSEARCH_MANIFEST, "--date", gitLogDate, "--verbose", "--save"])
+    def test_verbose_true_withsave(self) -> None:
         self.assertTrue(ReleaseNotesCheckArgs().logging_level, logging.DEBUG)

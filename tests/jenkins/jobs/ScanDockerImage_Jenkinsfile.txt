@@ -1,0 +1,12 @@
+   ScanDockerImage_Jenkinsfile.run()
+      ScanDockerImage_Jenkinsfile.pipeline(groovy.lang.Closure)
+         ScanDockerImage_Jenkinsfile.echo(Executing on agent [label:none])
+         ScanDockerImage_Jenkinsfile.stage(scan docker image, groovy.lang.Closure)
+            ScanDockerImage_Jenkinsfile.script(groovy.lang.Closure)
+               ScanDockerImage_Jenkinsfile.scanDockerImage({imageFullName=opensearchstaging/opensearch:2.0.0, imageResultFile=scan_docker_image})
+                  scanDockerImage.sh(
+        touch scan_docker_image.txt scan_docker_image.json
+        trivy image --clear-cache
+        trivy image --format table --output scan_docker_image.txt opensearchstaging/opensearch:2.0.0
+        trivy image --format json --output scan_docker_image.json opensearchstaging/opensearch:2.0.0
+    )

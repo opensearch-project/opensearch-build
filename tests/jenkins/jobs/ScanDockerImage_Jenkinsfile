@@ -1,0 +1,23 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+pipeline {
+    agent none
+    stages {
+        stage('scan docker image') {
+            steps {
+                script {
+                    scanDockerImage(
+                        imageFullName: "opensearchstaging/opensearch:2.0.0",
+                        imageResultFile: "scan_docker_image"
+                    )
+                }
+            }
+        }
+    }
+}

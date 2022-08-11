@@ -24,5 +24,6 @@ The following options are available.
 
 | name               | description                                                             |
 |--------------------|-------------------------------------------------------------------------|
-| --date             | Do not delete the temporary working directory on both success or error. |
+| --date             | Shows commit after a specific date.                                     |
+| --save             | Saves the table output to table.md.                                     |
 | -v, --verbose      | Show more verbose output.                                               |

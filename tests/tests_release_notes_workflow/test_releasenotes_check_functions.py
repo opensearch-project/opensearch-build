@@ -8,19 +8,25 @@ import unittest
 from subprocess import CalledProcessError
 
 from git.git_repository import GitRepository
-from release_notes_workflow.releasenotes_check import ReleaseNotesCheck, ReleaseNotesOpenSearch, ReleaseNotesOpenSearchPlugins
-from release_notes_workflow.releasenotes_gitlog import GitLog
+from release_notes_workflow.release_notes_component import ComponentReleaseNotes
+from release_notes_workflow.release_notes_gitlog import GitLog
 
 
 class TestReleaseNotesCheck(unittest.TestCase):
 
     def test_ReleaseNotesCheck(self) -> None:
-        check_for_release_notes = ReleaseNotesCheck("OpenSearch", "2.2.2", "/tmp/")
-        assert check_for_release_notes.check() == "NULL"
-        OpenSearchFile = ReleaseNotesOpenSearch("2.2.2")
-        assert OpenSearchFile.filename == '.release-notes-2.2.2.md'
-        OpenSearchPluginFile = ReleaseNotesOpenSearchPlugins("2.2.2")
-        assert OpenSearchPluginFile.filename == '.release-notes-2.2.2.0.md'
+        manifest_check_opensearch = ComponentReleaseNotes("OpenSearch", "2.2.0", "/tmp/")
+        assert manifest_check_opensearch.from_component() == ".release-notes-2.2.0.md"
+        manifest_check_opensearchplugin = ComponentReleaseNotes("common-utils", "2.2.0", "/tmp/")
+        assert manifest_check_opensearchplugin.from_component() == ".release-notes-2.2.0.0.md"
+
+    def test_ReleaseNotesCheckFunctions(self) -> None:
+        repo = GitRepository(
+            url="https://github.com/opensearch-project/common-utils",
+            ref="c3408f34961eb7e8ebc0510306f62238a457dbbc",
+        )
+        manifest_check = ComponentReleaseNotes("common-utils", "2.2.0", repo.dir)
+        assert manifest_check.exists() is True
 
     def test_gitlog_getcommitID(self) -> None:
         repo = GitRepository(

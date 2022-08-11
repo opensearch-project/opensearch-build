@@ -14,6 +14,7 @@ class ReleaseNotesCheckArgs:
     action: str
     manifest: IO
     date: str
+    save: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
@@ -34,10 +35,17 @@ class ReleaseNotesCheckArgs:
             dest="date",
             help="Date to retrive the commit (in format yyyy-mm-dd, example 2022-07-26)."
         )
+        parser.add_argument(
+            "--save",
+            action="store_true",
+            default=False,
+            help="Save the output of MarkDown table to a file table.md"
+        )
         args = parser.parse_args()
         self.logging_level = args.logging_level
         self.action = args.action
         self.manifest = args.manifest
         self.date = args.date
+        self.save = args.save
         if self.action == "check" and self.date is None:
             parser.error("check option requires --date argument")
