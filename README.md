@@ -126,7 +126,7 @@ See [src/test_workflow](./src/test_workflow) for more information.
 
 #### Checking Release Notes
 
-Workflow to check if the release notes exists for OpenSearch and Dashboard distribution. Uses the argument `--date` to parse the CommitID and after the given `--date` if any commit exists checks for the release notes.
+Workflow to check if the release notes exists for OpenSearch and Dashboard distribution. Shows commit after a specific date which from the user argument `--date`.
 
 To run:
 ```bash
