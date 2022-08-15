@@ -17,7 +17,6 @@
     - [Build Numbers](#build-numbers)
     - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
-    - [Checking Release Notes](#checking-release-notes)
     - [Signing Artifacts](#signing-artifacts)
       - [PGP](#pgp)
       - [Windows](#windows)
@@ -137,16 +136,6 @@ Tests the OpenSearch distribution, including integration, backwards-compatibilit
 
 See [src/test_workflow](./src/test_workflow) for more information.
 
-#### Checking Release Notes
-
-Workflow to check if the release notes exists for OpenSearch and Dashboard distribution. Shows commit after a specific date which from the user argument `--date`.
-
-To run:
-```bash
-./release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
-```
-
-See [src/release_notes_workflow](./src/release_notes_workflow) for more information.
 #### Signing Artifacts
 
 For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 
