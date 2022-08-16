@@ -24,6 +24,10 @@ atomicwrites = "*"
 validators = "*"
 yamlfix = "*"
 yamllint = "*"
+pytablewriter = "*"
+typed-ast = "*"
+zipp = "*"
+importlib-metadata = "*"
 
 [dev-packages]
 
