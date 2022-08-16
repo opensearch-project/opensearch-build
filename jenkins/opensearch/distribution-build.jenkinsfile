@@ -51,7 +51,7 @@ pipeline {
         booleanParam(
                     name: 'CREATE_GITHUB_ISSUE',
                     description: 'To create a github issue for failing component or not.',
-                    defaultValue: true
+                    defaultValue: false
                 )
     }
     stages {
