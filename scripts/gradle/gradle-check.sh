@@ -16,7 +16,8 @@ TIMEPASS=0
 TIMEOUT=7200
 RESULT="null"
 TRIGGER_TOKEN=$1
-PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$pr_title\", \"pr_number\": \"$pr_number\"}"
+PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:]' | tr '[:upper:]' '[:lower:]'`
+PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\"}"
 
 echo "Trigger Jenkins workflows"
 JENKINS_REQ=`curl -s -XPOST \
