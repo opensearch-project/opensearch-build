@@ -65,7 +65,7 @@ pipeline {
                 }
             }
         }
-        stage('Get Repository Commits') {
+        stage('Initialize the buildInfoYaml report') {
             agent {
                 docker {
                     label AGENT_X64
@@ -75,16 +75,18 @@ pipeline {
             }
             steps {
                 script {
-                    getRepositoryCommit(
-                        componentName: "${COMPONENT_NAME}",
-                        inputManifest: "manifests/${INPUT_MANIFEST}",
-                        outputFile: "commits.yml"
+                    buildInfoYaml(
+                        componentName: COMPONENT_NAME,
+                        inputManifest: "manifests/$INPUT_MANIFEST",
+                        outputFile: "buildInfo.yml",
+                        status: "NOT_STARTED",
+                        stage: "START"
                     )
+                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
                 }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'commits.yml'
                     postCleanup()
                 }
             }
@@ -132,6 +134,17 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
+                                        unstash "buildInfo_manifest"
+                                        buildInfoYaml(
+                                            componentName: COMPONENT_NAME,
+                                            inputManifest: "buildInfo.yml",
+                                            outputFile: "buildInfo.yml",
+                                            status: integTestResults.getId(),
+                                            stage: "integ_test_x64"
+                                        )
+                                        stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+
+
                                         env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (x64, tar)",
                                             status: integTestResults.getResult(),
@@ -152,6 +165,16 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
+
+                                        unstash "buildInfo_manifest"
+                                        buildInfoYaml(
+                                            componentName: COMPONENT_NAME,
+                                            inputManifest: "buildInfo.yml",
+                                            outputFile: "buildInfo.yml",
+                                            status: bwcTestResults.getId(),
+                                            stage: "bwc_test_x64"
+                                        )
+                                        stash includes: "buildInfo.yml", name: "buildInfo_manifest"
 
                                         env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (x64, tar)",
@@ -175,6 +198,28 @@ pipeline {
 
                                 postCleanup()
                             }
+                        }
+                        success {
+                            unstash "buildInfo_manifest"
+                            buildInfoYaml(
+                                componentName: COMPONENT_NAME,
+                                inputManifest: "buildInfo.yml",
+                                outputFile: "buildInfo.yml",
+                                status: "SUCCESS",
+                                stage: "x64_tar"
+                            )
+                            stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                        }
+                        failure {
+                            unstash "buildInfo_manifest"
+                            buildInfoYaml(
+                                componentName: COMPONENT_NAME,
+                                inputManifest: "buildInfo.yml",
+                                outputFile: "buildInfo.yml",
+                                status: "FAILURE",
+                                stage: "x64_tar"
+                            )
+                            stash includes: "buildInfo.yml", name: "buildInfo_manifest"
                         }
                     }
                 }
@@ -253,6 +298,28 @@ pipeline {
                                 }
                             }
                             post {
+                                success {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "SUCCESS",
+                                        stage: "x64_rpm"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                                }
+                                failure {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "FAILURE",
+                                        stage: "x64_rpm"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -339,6 +406,17 @@ pipeline {
                                                         string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                                     ]
 
+                                                unstash "buildInfo_manifest"
+                                                buildInfoYaml(
+                                                    componentName: COMPONENT_NAME,
+                                                    inputManifest: "buildInfo.yml",
+                                                    outputFile: "buildInfo.yml",
+                                                    status: integTestResults.getId(),
+                                                    stage: "integ_test_arm64"
+                                                )
+                                                stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+
+
                                                 env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                                     testType: "Integ Tests (arm64, tar)",
                                                     status: integTestResults.getResult(),
@@ -359,6 +437,16 @@ pipeline {
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                         string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                                     ]
+
+                                                unstash "buildInfo_manifest"
+                                                buildInfoYaml(
+                                                    componentName: COMPONENT_NAME,
+                                                    inputManifest: "buildInfo.yml",
+                                                    outputFile: "buildInfo.yml",
+                                                    status: bwcTestResults.getId(),
+                                                    stage: "bwc_test_arm64"
+                                                )
+                                                stash includes: "buildInfo.yml", name: "buildInfo_manifest"
 
                                                 env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                                     testType: "BWC Tests (arm64, tar)",
@@ -382,6 +470,28 @@ pipeline {
 
                                         postCleanup()
                                     }
+                                }
+                                success {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "SUCCESS",
+                                        stage: "arm64_tar"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                                }
+                                failure {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "FAILURE",
+                                        stage: "arm64_tar"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
                                 }
                             }
                         }
@@ -461,6 +571,28 @@ pipeline {
                                 }
                             }
                             post {
+                                success {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "SUCCESS",
+                                        stage: "arm64_rpm"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                                }
+                                failure {
+                                    unstash "buildInfo_manifest"
+                                    buildInfoYaml(
+                                        componentName: COMPONENT_NAME,
+                                        inputManifest: "buildInfo.yml",
+                                        outputFile: "buildInfo.yml",
+                                        status: "FAILURE",
+                                        stage: "arm64_rpm"
+                                    )
+                                    stash includes: "buildInfo.yml", name: "buildInfo_manifest"
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -527,6 +659,22 @@ pipeline {
         }
     }
     post {
+        always {
+            node(AGENT_X64) {
+                script {
+                    unstash "buildInfo_manifest"
+                    buildInfoYaml(
+                        componentName: COMPONENT_NAME,
+                        inputManifest: "buildInfo.yml",
+                        outputFile: "buildInfo.yml",
+                        status: currentBuild.result,
+                        stage: "COMPLETE"
+                    )
+                    archiveArtifacts artifacts: 'buildInfo.yml'
+                    postCleanup()
+                }
+            }
+        }
         success {
             node(AGENT_X64) {
                 script {
