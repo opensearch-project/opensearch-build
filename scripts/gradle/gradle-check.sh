@@ -25,7 +25,7 @@ JENKINS_REQ=`curl -s -XPOST \
      "$JENKINS_URL/generic-webhook-trigger/invoke" \
      --data "$(echo $PAYLOAD_JSON)"`
 
-echo $PAYLOAD_JSON | jq
+echo $PAYLOAD_JSON
 echo $JENKINS_REQ
 
 QUEUE_URL=$(echo $JENKINS_REQ | jq --raw-output '.jobs."gradle-check".url')
