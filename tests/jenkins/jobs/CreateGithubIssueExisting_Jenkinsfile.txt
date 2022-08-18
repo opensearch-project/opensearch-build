@@ -4,6 +4,8 @@
          CreateGithubIssueExisting_Jenkinsfile.stage(notify, groovy.lang.Closure)
             CreateGithubIssueExisting_Jenkinsfile.script(groovy.lang.Closure)
                CreateGithubIssueExisting_Jenkinsfile.createGithubIssue({message=[Error building OpenSearch, retry with: ./build.sh manifests/2.2.0/opensearch-2.2.0.yml --component OpenSearch --snapshot]})
+                  createGithubIssue.fileExists(/tmp/workspace/manifests)
+                  createGithubIssue.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
                   createGithubIssue.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})
                   createGithubIssue.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
                   createGithubIssue.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
