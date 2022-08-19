@@ -39,9 +39,6 @@ jobs:
           - {repo: security}
           - {repo: sql}
         branch:
-          - 'main'
-          - '2.x'
-          - '2.1'
           - '2.2'
     steps:
       - name: Check out OpenSearch repo
