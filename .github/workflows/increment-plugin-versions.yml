@@ -39,9 +39,6 @@ jobs:
           - {repo: security}
           - {repo: sql}
         branch:
-          - 'main'
-          - '2.x'
-          - '2.1'
           - '2.2'
     steps:
       - name: Check out OpenSearch repo
@@ -74,7 +71,7 @@ jobs:
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: 27448020
+          installation_id: 22958780
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
