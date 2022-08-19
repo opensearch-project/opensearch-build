@@ -1,5 +1,4 @@
 void call(Map args = [:]) {
-    echo "haha"
     sh(([
         './build.sh',
         args.inputManifest ?: "manifests/${INPUT_MANIFEST}",

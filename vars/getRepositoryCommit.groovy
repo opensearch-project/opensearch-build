@@ -14,7 +14,6 @@ void call(Map args = [:]) {
         OUTPUT_FILE=${args.outputFile}
         cp -v ${WORKSPACE}/${args.inputManifest} ${WORKSPACE}/\$OUTPUT_FILE
 
-
         if [ -z "${args.componentName}" ]; then
             echo "Component list not specified so search the entire input manifest: ${WORKSPACE}/${args.inputManifest}"
             read -r -a COMPONENT_LIST <<< `yq e '.components[].name' ${WORKSPACE}/${args.inputManifest} | tr '\n' ' '`
