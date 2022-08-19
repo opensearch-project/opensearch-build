@@ -118,6 +118,7 @@ pipeline {
                                             echo "Error running integtest for component ${local_component}"
                                             throw e
                                         } finally {
+                                            echo "Completed running integtest for component ${local_component}"
                                             uploadTestResults(
                                                 buildManifestFileName: BUILD_MANIFEST,
                                                 jobName: JOB_NAME
