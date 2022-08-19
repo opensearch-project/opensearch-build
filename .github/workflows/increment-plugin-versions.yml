@@ -71,7 +71,7 @@ jobs:
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          installation_id: 27448020
+          installation_id: 22958780
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
