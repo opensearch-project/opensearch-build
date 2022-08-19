@@ -21,7 +21,7 @@ def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     if func in (os.rmdir, os.remove, os.unlink):
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IWRITE | stat.S_IREAD)  # 0777 nix* / +wr windows
         try_total = 3
-        for try_count in range(try_total): # Re-run func to force deletion especially on windows
+        for try_count in range(try_total):  # Re-run func to force deletion especially on windows
             try:
                 logging.debug(f'Try count: {try_count + 1}/{try_total}')
                 func_result = None
