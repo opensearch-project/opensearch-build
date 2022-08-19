@@ -25,6 +25,7 @@ def call(Map args = [:]) {
         inputManifest.build.status = "IN_PROGRESS"
         inputManifest.build.number = "${BUILD_NUMBER}"
         inputManifest.results = [:]
+    } else if (args.stage == "COMPLETE") {
         inputManifest.components.each { component ->
             if (componentsList.contains(component.name)) {
                 // Convert ref from branch to commit
@@ -39,7 +40,6 @@ def call(Map args = [:]) {
                 }
             }
         }
-    } else if (args.stage == "COMPLETE") {
         inputManifest.build.status = status
     } else {
         stageField = args.stage
