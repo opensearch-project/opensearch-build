@@ -129,7 +129,7 @@ pipeline {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
                                     jobName: JOB_NAME,
-                                    buildNumber: $BUILD_NUMBER
+                                    buildNumber: env.BUILD_NUMBER
                                 )
                             }
                             postCleanup()
@@ -181,7 +181,7 @@ pipeline {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
                                     jobName: JOB_NAME,
-                                    buildNumber: BUILD_ID
+                                    buildNumber: env.BUILD_NUMBER
                                 )
                             }
                             postCleanup()

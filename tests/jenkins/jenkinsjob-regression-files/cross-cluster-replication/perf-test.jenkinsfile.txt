@@ -96,7 +96,7 @@ CCR Performance tests for 1236 completed})
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=perf-test
-BUILD_NUMBER=[1236]
+BUILD_NUMBER=[307]
 MESSAGE=CCR Performance Tests Successful
 BUILD_URL: test://artifact.url
 MANIFEST: null
