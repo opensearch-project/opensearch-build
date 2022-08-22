@@ -57,6 +57,26 @@ class TestGitRepository(unittest.TestCase):
         self.repo.output("echo hello")
         mock_subprocess.assert_called_with("echo hello", cwd=self.repo.dir, shell=True)
 
+    @patch("subprocess.check_output", return_value='927de30 2022-07-12'.encode())
+    def test_log(self, mock_subprocess: Any) -> None:
+        log = self.repo.log('2021-10-26')
+        last_commit = log[-1]
+        self.assertEqual(last_commit.id, "927de30")
+        self.assertEqual(last_commit.date, "2022-07-12")
+
+    @patch("subprocess.check_output", return_value=''.encode())
+    def test_log_empty(self, mock_subprocess: Any) -> None:
+        log = self.repo.log('2021-10-26')
+        self.assertEqual(len(log), 0)
+
+    @patch("subprocess.check_output", return_value='927de30 2022-07-12\n787d971 2022-04-28\n989143e 22-04-26\n8b376fc 2022-04-26\n023a2ac 2022-04-26'.encode())
+    def test_log_multiple(self, mock_subprocess: Any) -> None:
+        log = self.repo.log('2022-04-25')
+        self.assertEqual(len(log), 5)
+        last_commit = log[-1]
+        self.assertEqual(last_commit.id, "023a2ac")
+        self.assertEqual(last_commit.date, "2022-04-26")
+
 
 class TestGitRepositoryDir(unittest.TestCase):
     @patch('subprocess.check_call', return_value=0)
