@@ -15,28 +15,28 @@ pipeline {
                     buildInfoYaml(
                         componentName: "",
                         inputManifest: "tests/jenkins/data/opensearch-2.2.0.yml",
-                        outputFile: "tests/jenkins/data/buildInfo.yml",
+                        outputFile: "tests/jenkins/data/job.yml",
                         status: "NOT_STARTED",
                         stage: "START"
                     )
                     buildInfoYaml(
                         componentName: "",
-                        inputManifest: "tests/jenkins/data/buildInfo.yml",
-                        outputFile: "tests/jenkins/data/buildInfo.yml",
+                        inputManifest: "tests/jenkins/data/job.yml",
+                        outputFile: "tests/jenkins/data/job.yml",
                         status: "SUCCESS",
                         stage: "x64_tar"
                     )
                     buildInfoYaml(
                         componentName: "",
-                        inputManifest: "tests/jenkins/data/buildInfo.yml",
-                        outputFile: "tests/jenkins/data/buildInfo.yml",
+                        inputManifest: "tests/jenkins/data/job.yml",
+                        outputFile: "tests/jenkins/data/job.yml",
                         status: "6",
                         stage: "integ_test_x64"
                     )
                     buildInfoYaml(
                         componentName: "",
-                        inputManifest: "tests/jenkins/data/buildInfo.yml",
-                        outputFile: "tests/jenkins/data/buildInfo.yml",
+                        inputManifest: "tests/jenkins/data/job.yml",
+                        outputFile: "tests/jenkins/data/job.yml",
                         status: "SUCCESS",
                         stage: "COMPLETE"
                     )

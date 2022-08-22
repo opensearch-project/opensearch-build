@@ -37,7 +37,7 @@ def call(Map args = [:]) {
             if (componentsList.contains(component.name)) {
                 // Convert ref from branch to commit
                 dir(component.name) {
-                    checkout([$class           : 'GitSCM', branches: [[name: component.ref]],
+                    checkout([$class: 'GitSCM', branches: [[name: component.ref]],
                               userRemoteConfigs: [[url: component.repository]]])
                     def commitID = sh(
                             script: "git rev-parse HEAD",
@@ -53,9 +53,9 @@ def call(Map args = [:]) {
         echo("stage is $stageField")
         echo("status is $status")
         sourceyml.results.("$stageField".toString()) = status
-        sourceyml.results.duration = currentBuild.duration
-        sourceyml.results.startTimestamp = currentBuild.startTimeInMillis
     }
+    sourceyml.results.duration = currentBuild.duration
+    sourceyml.results.startTimestamp = currentBuild.startTimeInMillis
     writeYaml(file: outputyml, data: sourceyml, overwrite: true)
     sh ("cat $outputyml")
     stash includes: "job.yml", name: "job_yml"
