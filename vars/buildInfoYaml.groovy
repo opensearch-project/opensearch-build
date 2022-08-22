@@ -1,7 +1,14 @@
 def call(Map args = [:]) {
 
-    def inputManifest = readYaml(file: args.inputManifest)
-    def outputFile = args.outputFile
+    try {
+        unstash "job_yml"
+    } catch(Exception ex) {
+        echo("No job.yml exists in stashed. Please make sure inputManifest parameter is passed.")
+    }
+
+    def inputManifest = args.inputManifest ?: "job.yml"
+    def sourceyml = readYaml(file: inputManifest)
+    def outputyml = args.outputyml ?: "job.yml"
     def components = args.componentName
     def componentsList = []
     def status = args.status
@@ -14,19 +21,19 @@ def call(Map args = [:]) {
         }
     } else {
         echo ("Components parameter is null")
-        inputManifest.components.each { component ->
+        sourceyml.components.each { component ->
             componentsList.add(component.name)
         }
     }
     echo (componentsList.toString())
 
     if (args.stage == "START") {
-        echo("Initiate the buildInfo yaml file.")
-        inputManifest.build.status = "IN_PROGRESS"
-        inputManifest.build.number = "${BUILD_NUMBER}"
-        inputManifest.results = [:]
+        echo("Initiate the job info yaml file.")
+        sourceyml.build.status = "IN_PROGRESS"
+        sourceyml.build.number = "${BUILD_NUMBER}"
+        sourceyml.results = [:]
     } else if (args.stage == "COMPLETE") {
-        inputManifest.components.each { component ->
+        sourceyml.components.each { component ->
             if (componentsList.contains(component.name)) {
                 // Convert ref from branch to commit
                 dir(component.name) {
@@ -40,15 +47,16 @@ def call(Map args = [:]) {
                 }
             }
         }
-        inputManifest.build.status = status
+        sourceyml.build.status = status
     } else {
         stageField = args.stage
         echo("stage is $stageField")
         echo("status is $status")
-        inputManifest.results.("$stageField".toString()) = "$status"
-        inputManifest.results.duration = currentBuild.duration
-        inputManifest.results.startTimestamp = currentBuild.startTimeInMillis
+        sourceyml.results.("$stageField".toString()) = status
+        sourceyml.results.duration = currentBuild.duration
+        sourceyml.results.startTimestamp = currentBuild.startTimeInMillis
     }
-    writeYaml(file: outputFile, data: inputManifest, overwrite: true)
-    sh ("cat $outputFile")
+    writeYaml(file: outputyml, data: sourceyml, overwrite: true)
+    sh ("cat $outputyml")
+    stash includes: "job.yml", name: "job_yml"
 }
