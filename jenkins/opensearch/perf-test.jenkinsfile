@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@20211118', retriever: legacySCM(scm))
+lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
@@ -62,15 +62,15 @@ pipeline {
                 script {
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
-                        error('Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.')
+                        error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
                     }
                     if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
                         currentBuild.result = 'ABORTED'
-                        error('Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.')
+                        error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
                     }
                     if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
                         currentBuild.result = 'ABORTED'
-                        error('Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.')
+                        error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
                     }
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
@@ -78,7 +78,7 @@ pipeline {
                     )
                     String buildId = bundleManifestObj.getArtifactBuildId()
                     env.BUILD_ID = buildId
-                    env.HAS_SECURITY = bundleManifestObj.components.containsKey('security')
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
                     env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                     echo "HAS_SECURITY: ${env.HAS_SECURITY}"
                     lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
