@@ -10,3 +10,7 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: '2.2'
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    working_directory: dashboards-notifications
+    ref: '2.2'

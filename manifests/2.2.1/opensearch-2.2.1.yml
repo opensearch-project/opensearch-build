@@ -51,3 +51,21 @@ components:
     ref: '2.2'
     platforms:
       - linux
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.2'
+    platforms:
+      - linux
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-notifications-core
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.2'
+    platforms:
+      - linux
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
