@@ -98,7 +98,7 @@ pipeline {
                         uploadTestResults(
                             buildManifestFileName: BUILD_MANIFEST,
                             jobName: JOB_NAME
-                        )
+                            )
                     }
                     postCleanup()
                 }

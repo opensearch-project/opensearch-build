@@ -82,6 +82,7 @@ pipeline {
                     env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                     echo "HAS_SECURITY: ${env.HAS_SECURITY}"
                     lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
+                    currentBuild.description = "Running performance test for build number: ${BUILD_ID} Manifest: ${BUNDLE_MANIFEST_URL}"
                 }
             }
         }
@@ -128,7 +129,7 @@ pipeline {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
                                     jobName: JOB_NAME,
-                                    buildNumber: BUILD_ID
+                                    buildNumber: env.BUILD_NUMBER
                                 )
                             }
                             postCleanup()
@@ -180,7 +181,7 @@ pipeline {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
                                     jobName: JOB_NAME,
-                                    buildNumber: BUILD_ID
+                                    buildNumber: env.BUILD_NUMBER
                                 )
                             }
                             postCleanup()
