@@ -31,6 +31,7 @@ class UploadTestResultsLibTester extends LibFunctionTester {
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'DUMMY_AWS_ACCOUNT_PUBLIC')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'DUMMY_ARTIFACT_BUCKET_NAME')
         binding.setVariable('PUBLIC_ARTIFACT_URL', 'DUMMY_PUBLIC_ARTIFACT_URL')
+        binding.setVariable('env', ['BUILD_NUMBER': '487'])
         binding.setVariable('STAGE_NAME', 'DUMMY_STAGE_NAME')
         helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
             closure.delegate = delegate

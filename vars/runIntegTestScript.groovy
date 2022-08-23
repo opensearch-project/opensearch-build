@@ -21,7 +21,7 @@ void call(Map args = [:]) {
         'integ-test',
         "${args.testManifest}",
         "--component ${component}",
-        '--test-run-id 1',
+        "--test-run-id ${env.BUILD_NUMBER}",
         "--paths ${paths}",
     ].join(' '))
 }
