@@ -13,7 +13,7 @@ void call(Map args = [:]) {
             echo "Uploading to s3://${ARTIFACT_BUCKET_NAME}/${artifactPath}"
 
             withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/test-results")
+                s3Upload(file: 'test-results', bucket: "${ARTIFACT_BUCKET_NAME}", path: "${artifactPath}/${args.buildNumber}/test-results")
             }
         }
 
