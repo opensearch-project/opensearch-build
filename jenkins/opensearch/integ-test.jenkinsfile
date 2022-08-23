@@ -77,8 +77,6 @@ pipeline {
                         path: BUILD_MANIFEST
                     )
 
-                    
-
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
                     stash includes: '**', name: 'opensearch-build-repo'
