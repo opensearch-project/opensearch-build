@@ -22,7 +22,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         this.registerLibTester(new DetectTestDockerAgentLibTester())
         this.registerLibTester(new DownloadBuildManifestLibTester(buildManifestUrl, buildManifest))
-        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, 'functionalTestDashboards', buildManifest, "manifests/${testManifest}"))
+        this.registerLibTester(new RunIntegTestScriptLibTester(jobName, 'functionalTestDashboards', buildManifest, "manifests/${testManifest}", ''))
         this.registerLibTester(new UploadTestResultsLibTester(buildManifest, jobName))
         this.registerLibTester(new PublishNotificationLibTester(
                 ':white_check_mark:',
