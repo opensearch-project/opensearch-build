@@ -12,7 +12,7 @@ void call(Map args = [:]) {
         './test.sh',
         'bwc-test',
         "${args.testManifest}",
-        '--test-run-id 1',
+        "--test-run-id ${env.BUILD_NUMBER}",
         "--paths ${paths}",
     ].join(' '))
 }

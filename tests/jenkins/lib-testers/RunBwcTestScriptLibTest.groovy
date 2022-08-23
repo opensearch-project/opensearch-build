@@ -17,7 +17,7 @@ class RunBwcTestScriptLibTester extends LibFunctionTester {
     }
 
     void configure(helper, binding) {
-        binding.setVariable('env', ['BUILD_NUMBER': '987'])
+        binding.setVariable('env', ['BUILD_NUMBER': '487'])
     }
 
     void parameterInvariantsAssertions(call) {

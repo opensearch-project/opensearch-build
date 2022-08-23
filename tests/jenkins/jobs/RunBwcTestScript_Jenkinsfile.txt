@@ -11,4 +11,4 @@
                   BuildManifest.getArtifactRootUrl(dummy_job, 717)
                   runBwcTestScript.echo(Artifact root URL: https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
                   runBwcTestScript.echo(Paths: opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
-                  runBwcTestScript.sh(./test.sh bwc-test tests/jenkins/data/opensearch-1.3.0-test.yml --test-run-id 1 --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
+                  runBwcTestScript.sh(./test.sh bwc-test tests/jenkins/data/opensearch-1.3.0-test.yml --test-run-id null --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
