@@ -79,7 +79,7 @@ pipeline {
                         componentName: COMPONENT_NAME,
                         inputManifest: "manifests/$INPUT_MANIFEST",
                         status: "NOT_STARTED",
-                        stage: "START"
+                        stage: "INITIALIZE_STAGE"
                     )
                 }
             }
@@ -624,10 +624,10 @@ pipeline {
                     buildInfoYaml(
                         componentName: COMPONENT_NAME,
                         status: currentBuild.result,
-                        stage: "COMPLETE"
+                        stage: "FINALIZE_STAGE"
                     )
-                    unstash "job_yml"
-                    archiveArtifacts artifacts: 'job.yml'
+                    unstash "buildInfo_yml"
+                    archiveArtifacts artifacts: 'buildInfo.yml'
                     postCleanup()
                 }
             }

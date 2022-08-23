@@ -157,9 +157,5 @@ results:
   bwc_test_x64: NOT_STARTED
   integ_test_arm64: NOT_STARTED
   bwc_test_arm64: NOT_STARTED
-  x64_tar: NOT_STARTED
-  arm64_tar: NOT_STARTED
-  x64_rpm: NOT_STARTED
-  arm64_rpm: NOT_STARTED
   duration: 154442
   startTimestamp: 1660345758679

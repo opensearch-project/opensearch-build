@@ -79,7 +79,7 @@ pipeline {
                         componentName: COMPONENT_NAME,
                         inputManifest: "manifests/$INPUT_MANIFEST",
                         status: "NOT_STARTED",
-                        stage: "START"
+                        stage: "INITIALIZE_STAGE"
                     )
                 }
             }
@@ -137,7 +137,6 @@ pipeline {
                                             status: integTestResults.getId(),
                                             stage: "integ_test_x64"
                                         )
-
 
                                         env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (x64, tar)",
@@ -558,10 +557,10 @@ pipeline {
                     buildInfoYaml(
                         componentName: COMPONENT_NAME,
                         status: currentBuild.result,
-                        stage: "COMPLETE"
+                        stage: "FINALIZE_STAGE"
                     )
-                    unstash "job_yml"
-                    archiveArtifacts artifacts: 'job.yml'
+                    unstash "buildInfo_yml"
+                    archiveArtifacts artifacts: 'buildInfo.yml'
                     postCleanup()
                 }
             }
