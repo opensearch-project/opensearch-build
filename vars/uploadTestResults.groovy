@@ -9,7 +9,7 @@ void call(Map args = [:]) {
     def artifactPath = buildManifest.getArtifactRoot(args.jobName, buildId)
     def uploadPath = "${artifactPath}/test-results"
     if (args.buildNumber){
-        uploadPath = "${artifactPath}/${args.buildNumber}/test-results"
+        uploadPath = "${artifactPath}/test-results/${args.buildNumber}"
     }
     withCredentials([
         string(credentialsId: 'jenkins-artifact-bucket-name', variable: 'ARTIFACT_BUCKET_NAME'),
