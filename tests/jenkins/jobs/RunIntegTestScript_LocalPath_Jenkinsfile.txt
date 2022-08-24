@@ -14,4 +14,4 @@
                   runIntegTestScript.echo(User provides localPath, use local artifacts: tests/jenkins/artifacts/tar)
                   runIntegTestScript.echo(Paths: opensearch=tests/jenkins/artifacts/tar)
                   runIntegTestScript.echo(Component: OpenSearch)
-                  runIntegTestScript.sh(./test.sh integ-test tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 1 --paths opensearch=tests/jenkins/artifacts/tar)
+                  runIntegTestScript.sh(./test.sh integ-test tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id null --paths opensearch=tests/jenkins/artifacts/tar)
