@@ -4,7 +4,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import errno
 import logging
 import os
 import shutil
@@ -17,9 +16,20 @@ from typing import Any
 
 def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     excvalue = exc[1]
-    if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
-        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)  # 0777
-        func(path)
+    logging.debug(f"excvalue {excvalue}")
+    logging.debug(f"func {func.__name__}")
+    if func in (os.rmdir, os.remove, os.unlink):
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IWRITE | stat.S_IREAD)  # 0777 nix* / +wr windows
+        retry_total = 3
+        for retry_count in range(retry_total):  # Re-run func to force deletion especially on windows
+            try:
+                logging.debug(f'Try count: {retry_count + 1}/{retry_total}')
+                func_result = func(path)
+                if func_result is None:
+                    break
+            except Exception as ex:
+                logging.warn(func_result)
+                logging.warn(ex)
     else:
         raise
 
