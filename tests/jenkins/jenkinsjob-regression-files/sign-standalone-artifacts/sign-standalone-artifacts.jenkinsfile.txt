@@ -7,8 +7,36 @@
          sign-standalone-artifacts.stage(sign, groovy.lang.Closure)
             sign-standalone-artifacts.script(groovy.lang.Closure)
                sign-standalone-artifacts.sh(mkdir /tmp/workspace/artifacts)
-               sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_1_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_1_artifact.tar.gz)
-               sign-standalone-artifacts.sh(curl -SL https://www.dummy.com/dummy_2_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_2_artifact.tar.gz)
+               sign-standalone-artifacts.sh(
+            set +x
+            set -e
+
+            STATUS_CODES=`curl -IL https://www.dummy.com/dummy_1_artifact.tar.gz 2>&1 | grep -Eo "HTTP/[12] [0-9]+" | grep -Eo '[0-9][0-9][0-9]' | sort | uniq`
+            for resp_code in $STATUS_CODES; do
+                if echo $resp_code | grep -qEo '[45][0-9][0-9]'; then
+                    echo "Error url with error response code $resp_code, exit 1"
+                    exit 1
+                fi
+            done
+
+            echo "No error detected, valid response $resp_code, downloading https://www.dummy.com/dummy_1_artifact.tar.gz"
+            curl -SL https://www.dummy.com/dummy_1_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_1_artifact.tar.gz
+        )
+               sign-standalone-artifacts.sh(
+            set +x
+            set -e
+
+            STATUS_CODES=`curl -IL https://www.dummy.com/dummy_2_artifact.tar.gz 2>&1 | grep -Eo "HTTP/[12] [0-9]+" | grep -Eo '[0-9][0-9][0-9]' | sort | uniq`
+            for resp_code in $STATUS_CODES; do
+                if echo $resp_code | grep -qEo '[45][0-9][0-9]'; then
+                    echo "Error url with error response code $resp_code, exit 1"
+                    exit 1
+                fi
+            done
+
+            echo "No error detected, valid response $resp_code, downloading https://www.dummy.com/dummy_2_artifact.tar.gz"
+            curl -SL https://www.dummy.com/dummy_2_artifact.tar.gz -o /tmp/workspace/artifacts/dummy_2_artifact.tar.gz
+        )
                sign-standalone-artifacts.signArtifacts({artifactPath=/tmp/workspace/artifacts, sigtype=.sig, platform=linux})
                   signArtifacts.echo(PGP or Windows Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
