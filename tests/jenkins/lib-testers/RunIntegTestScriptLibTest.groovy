@@ -8,12 +8,14 @@ class RunIntegTestScriptLibTester extends LibFunctionTester {
     private String componentName
     private String buildManifest
     private String testManifest
+    private String localPath
 
-    public RunIntegTestScriptLibTester(jobName, componentName, buildManifest, testManifest){
+    public RunIntegTestScriptLibTester(jobName, componentName, buildManifest, testManifest, localPath){
         this.jobName = jobName
         this.componentName = componentName
         this.buildManifest = buildManifest
         this.testManifest = testManifest
+        this.localPath = localPath
     }
 
     void configure(helper, binding) {

@@ -166,6 +166,10 @@ class BuildManifest implements Serializable {
         return this.build.id
     }
 
+    public String getDistribution() {
+        return this.build.distribution
+    }
+
     public String getMinArtifact() {
         components.get(build.name.replace(' ','-'))?.artifacts?.get("dist")?.first()
     }

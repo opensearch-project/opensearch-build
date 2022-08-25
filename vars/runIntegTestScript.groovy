@@ -10,7 +10,8 @@ void call(Map args = [:]) {
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, buildId)
     echo "Artifact root URL: ${artifactRootUrl}"
 
-    String paths = generatePaths(buildManifest, artifactRootUrl)
+    String localPath = args.localPath ?: 'None'
+    String paths = generatePaths(buildManifest, artifactRootUrl, localPath)
     echo "Paths: ${paths}"
 
     String component = args.componentName
@@ -26,7 +27,7 @@ void call(Map args = [:]) {
     ].join(' '))
 }
 
-String generatePaths(buildManifest, artifactRootUrl) {
+String generatePaths(buildManifest, artifactRootUrl, localPath) {
     String name = buildManifest.build.name
     String version = buildManifest.build.version
     String platform = buildManifest.build.platform
@@ -34,7 +35,16 @@ String generatePaths(buildManifest, artifactRootUrl) {
     String distribution = buildManifest.build.distribution
     
     String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/latest/${platform}/${architecture}/${distribution}"
-    return name == 'OpenSearch' ? 
-        "opensearch=${artifactRootUrl}" :
-        "opensearch=${latestOpenSearchArtifactRootUrl} opensearch-dashboards=${artifactRootUrl}"
+    if (localPath.equals('None')) {
+        echo "No localPath found, download from url"
+        return name == 'OpenSearch' ? 
+            "opensearch=${artifactRootUrl}" :
+            "opensearch=${latestOpenSearchArtifactRootUrl} opensearch-dashboards=${artifactRootUrl}"
+    }
+    else {
+        echo "User provides localPath, use local artifacts: ${localPath}"
+        return name == 'OpenSearch' ?
+            "opensearch=${localPath}" :
+            "opensearch=${localPath} opensearch-dashboards=${localPath}"
+    }
 }
