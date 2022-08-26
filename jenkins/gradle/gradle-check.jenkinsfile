@@ -130,7 +130,7 @@ pipeline {
             }
             post() {
                 failure {
-                    archiveArtifacts artifacts: 'java_pid*.hprof'
+                    archiveArtifacts artifacts: 'search/java_pid*.hprof'
                 }
                 always {
                     sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
