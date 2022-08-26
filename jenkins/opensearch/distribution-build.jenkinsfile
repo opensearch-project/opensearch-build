@@ -199,7 +199,7 @@ pipeline {
                         }
                     }
                 }
-                stage('build-snapshot-windows-x64-tar') {
+                stage('build-snapshot-windows-x64-zip') {
                     agent {
                         node {
                             label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'

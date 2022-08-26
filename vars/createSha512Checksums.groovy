@@ -3,7 +3,7 @@ Closure call() {
 
     return { argsMap -> body: {
 
-        final foundFiles = sh(script: "find $argsMap.artifactPath -type f", returnStdout: true).split()
+        final foundFiles = sh(script: "find ${argsMap.artifactPath}/ -type f", returnStdout: true).split()
 
         for (file in foundFiles) {
             acceptTypeFound = false

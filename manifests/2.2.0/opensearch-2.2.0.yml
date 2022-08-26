@@ -15,10 +15,11 @@ components:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
-    repository: https://github.com/opensearch-project/common-utils.git
+    repository: https://github.com/opensearch-build/common-utils.git
     ref: tags/2.2.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:publish
       - gradle:properties:version
