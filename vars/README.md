@@ -46,7 +46,7 @@ See [postCleanup](./postCleanup.groovy).
 
 ### Running Integration Tests
 
-See [runIntegTests](./runIntegTests.groovy).
+See [runIntegTestScript](./runIntegTestScript.groovy).
 
 ### Uploading Test Results
 
