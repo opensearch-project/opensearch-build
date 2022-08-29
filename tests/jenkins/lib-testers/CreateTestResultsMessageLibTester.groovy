@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
@@ -20,7 +27,7 @@ class CreateTestResultsMessageLibTester extends LibFunctionTester {
 
     void configure(helper, binding) {
         binding.setVariable('STAGE_NAME', 'stage')
-        helper.registerAllowedMethod('findFiles', [Map.class], null)  
+        helper.registerAllowedMethod('findFiles', [Map.class], null)
     }
 
     void parameterInvariantsAssertions(call) {
