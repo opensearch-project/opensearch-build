@@ -133,6 +133,7 @@ pipeline {
                     sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
                     junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
+                    archiveArtifacts artifacts: '**/build/heapdump/*.hprof', allowEmptyArchive: true
                     script {
                         sh("rm -rf *")
                         postCleanup()
