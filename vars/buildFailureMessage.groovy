@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 import com.cloudbees.groovy.cps.NonCPS
 import org.apache.commons.io.IOUtils
 @NonCPS
@@ -11,7 +18,7 @@ def call(){
     logContent.eachLine() { line ->
         line=line.replace("\"", "")
         //Gets the exact match for Error building
-        def java.util.regex.Matcher match = (line =~ /$ERROR_STRING.*/) 
+        def java.util.regex.Matcher match = (line =~ /$ERROR_STRING.*/)
         if (match.find()) {
             line=match[0]
             message.add(line)

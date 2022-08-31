@@ -1,6 +1,13 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 void call(Map args = [:]) {
     text = ([
-        "${args.icon}", 
+        "${args.icon}",
         "JOB_NAME=${JOB_NAME}",
         "BUILD_NUMBER=[${BUILD_NUMBER}]",
         "MESSAGE=${args.message}",

@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 Map call(Map args = [:]) {
     def lib = library(identifier: "jenkins@20211123", retriever: legacySCM(scm))
     String manifest = args.manifest ?: "manifests/${INPUT_MANIFEST}"
@@ -6,7 +13,7 @@ Map call(Map args = [:]) {
     dockerArgs = inputManifest.ci?.image?.args
     // Using default javaVersion as openjdk-17
     String javaVersion = 'openjdk-17'
-    java.util.regex.Matcher jdkMatch = (dockerArgs =~ /openjdk-\d+/) 
+    java.util.regex.Matcher jdkMatch = (dockerArgs =~ /openjdk-\d+/)
     if (jdkMatch.find()) {
         def jdkMatchLine = jdkMatch[0]
         javaVersion = jdkMatchLine
