@@ -2,16 +2,9 @@
 
 ## Release Details
 
-OpenSearch and OpenSearch Dashboards 1.3.5 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
+OpenSearch and OpenSearch Dashboards 1.3.5 includes the following bug fixes, infrastructure and maintenance updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-1.3.5.md).
-
-## BREAKING CHANGES
-
-## FEATURES
-
-## ENHANCEMENTS
-
 ## BUG FIXES
 
 ### Opensearch
@@ -29,16 +22,8 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 * Fixed high severity security issue :  RCE vector in bundled Headless Chromium -[Issue](https://github.com/opensearch-project/dashboards-reports/security/advisories/GHSA-pm2x-4c64-x8g7) ([#424](https://github.com/opensearch-project/dashboards-reports/pull/424))
 
 ## INFRASTRUCTURE
-
 ### Opensearch Cross Cluster Replication
 * Added build.sh compatible with 1.3.x release ([#483](https://github.com/opensearch-project/cross-cluster-replication/pull/483))
-* Staging for version increment automation ([#466](https://github.com/opensearch-project/cross-cluster-replication/pull/466))
-
-## DOCUMENTATION
-
 ## MAINTENANCE
-
 ### Opensearch Security
 * Upgrade jackson-databind from 2.13.2 to 2.13.2.2 to match core's version.properties and upgrade kafka dependencies ([#2000](https://github.com/opensearch-project/security/pull/2000))
-
-## REFACTORING
