@@ -25,6 +25,9 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 ### Opensearch Security Dashboards Plugin
 * Get security_tenant search param from URL ([#1043](https://github.com/opensearch-project/security-dashboards-plugin/pull/1043))
 
+### Opensearch Reporting Dashboards Plugin
+* Fixed high severity security issue :  RCE vector in bundled Headless Chromium -[Issue](https://github.com/opensearch-project/dashboards-reports/security/advisories/GHSA-pm2x-4c64-x8g7) ([#424](https://github.com/opensearch-project/dashboards-reports/pull/424))
+
 ## INFRASTRUCTURE
 
 ### Opensearch Cross Cluster Replication
