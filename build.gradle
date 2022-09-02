@@ -31,7 +31,7 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9', ext: 'pom'
     implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
-    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.31'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
 }
@@ -56,20 +56,10 @@ sourceSets {
             srcDirs = ['tests/jenkins']
         }
     }
-
-    jobs {
-        groovy {
-            srcDirs 'src/jenkins/jobs'
-            compileClasspath += main.compileClasspath
-        }
-
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
 }
 
 sharedLibrary {
-    coreVersion = '2.358' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
+    coreVersion = '2.364' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         workflowCpsGlobalLibraryPluginVersion = '570.v21311f4951f8' // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
@@ -79,7 +69,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '449.v77f0e8b_845c4') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
         dependency('org.jenkins-ci.plugins', 'script-security', '1172.v35f6a_0b_8207e')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
-        dependency('org.jenkins-ci.plugins', 'git-client', '3.10.1')
+        dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
         dependency('org.jenkins-ci.plugins', 'junit', '1.55')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
@@ -126,4 +116,8 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
+}
+
+tasks.test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
 }

@@ -38,6 +38,7 @@ class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
         binding.setVariable('AGENT_LABEL', agentLabel)
         binding.setVariable('BUILD_MANIFEST', buildManifest)
         binding.setVariable('BUILD_ID', "${buildId}")
+        binding.setVariable('BUILD_BRANCH', "main")
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         
@@ -48,6 +49,7 @@ class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod("git", [Map])
     }
 
     @Test

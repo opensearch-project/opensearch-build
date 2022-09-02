@@ -2,7 +2,8 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
 pipeline {
     options {
-            timeout(time: 2, unit: 'HOURS')
+        timeout(time: 2, unit: 'HOURS')
+        skipDefaultCheckout true
     }
     agent none
     parameters {
@@ -31,11 +32,31 @@ pipeline {
             description: 'Use only with COMMENT: UPDATE',
             trim: true
         )
+        string(
+            name: 'BUILD_BRANCH',
+            description: "Build repo branch to use.",
+            defaultValue: "main",
+            trim: true
+        )
     }
     environment {
         AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+        BUILD_REPO = 'https://github.com/opensearch-project/opensearch-build.git'
     }
     stages {
+        stage('checkout the build repo') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                git url: BUILD_REPO, branch: BUILD_BRANCH
+                stash 'sourceRepo'
+            }
+        }
         stage('detect docker image + args') {
             agent {
                 docker {
@@ -45,19 +66,23 @@ pipeline {
                 }
             }
             steps {
+                unstash 'sourceRepo'
                 script {
                     dockerAgent = detectDockerAgent()
                     currentBuild.description = INPUT_MANIFEST
                 }
             }
-            post {
-                always {
-                    postCleanup()
-                }
-            }
         }
         stage('Parameters Check') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    alwaysPull true
+                }
+            }
             steps {
+                unstash 'sourceRepo'
                 script {
                     currentBuild.description = "Comment:${COMMENT}, Manifest:${INPUT_MANIFEST}"
                     if (GIT_LOG_DATE.isEmpty() || INPUT_MANIFEST.isEmpty()) {
@@ -84,6 +109,7 @@ pipeline {
                 }
             }
             steps {
+                unstash 'sourceRepo'
                 script {
                     withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         if (params.COMMENT == "ADD") {
@@ -115,10 +141,12 @@ pipeline {
                     }
                 }
             }
-            post {
-                always {
-                    postCleanup()
-                }
+        }
+    }
+    post {
+        always {
+            node(AGENT_X64) { 
+                postCleanup()
             }
         }
     }

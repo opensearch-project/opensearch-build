@@ -3,12 +3,14 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 pipeline {
     options {
         timeout(time: 3, unit: 'HOURS')
+        skipDefaultCheckout()
     }
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+        BUILD_REPO = 'https://github.com/opensearch-project/opensearch-build.git'
     }
     parameters {
         string(
@@ -26,11 +28,31 @@ pipeline {
             description: 'The agent label where the tests should be executed. For x64 use Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host,for arm64 use Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host',
             trim: true
         )
+        string(
+            name: 'BUILD_BRANCH',
+            description: "Build repo branch to use.",
+            defaultValue: "main",
+            trim: true
+        )
     }
     stages {
+        stage('checkout the build repo') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                git url: BUILD_REPO, branch: BUILD_BRANCH
+                stash(name: 'sourceRepo')
+            }
+        }
         stage('verify-parameters') {
             agent { label AGENT_LABEL }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     currentBuild.description = BUILD_MANIFEST_URL
                     if (AGENT_LABEL == '') {
@@ -60,6 +82,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script { 
                     DOCKER_AGENT = detectTestDockerAgent()
                 }
@@ -70,6 +93,7 @@ pipeline {
             // Can only be run in runner that is at least 50GB per container
             agent { label AGENT_LABEL }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
 
                     downloadBuildManifest(
@@ -159,6 +183,7 @@ pipeline {
         success {
             node(AGENT_LABEL) {
                 script {
+                    unstash(name: 'sourceRepo')
                     def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
                     publishNotification(
                         icon: ':white_check_mark:',
@@ -174,6 +199,7 @@ pipeline {
         }
         failure {
             node(AGENT_LABEL) {
+                unstash(name: 'sourceRepo')
                 script  {
                     def stashed = lib.jenkins.Messages.new(this).get(['integ-test'])
                     publishNotification(

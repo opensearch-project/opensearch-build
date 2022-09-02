@@ -4,12 +4,14 @@ pipeline {
     agent none
     options {
         timeout(time: 15, unit: 'HOURS')
+        skipDefaultCheckout()
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Perf-Test'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-performance-test-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'perf-test'
+        BUILD_REPO = 'https://github.com/opensearch-project/opensearch-build.git'
     }
     triggers {
         parameterizedCron '''
@@ -47,9 +49,27 @@ pipeline {
             description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
             trim: true
         )
+        string(
+            name: 'BUILD_BRANCH',
+            description: "Build repo branch to use.",
+            defaultValue: "main",
+            trim: true
+        )
     }
-
     stages {
+        stage('checkout the build repo') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                git url: BUILD_REPO, branch: BUILD_BRANCH
+                stash(name: 'sourceRepo')
+            }
+        }
         stage('validate-and-set-parameters') {
             agent {
                 docker {
@@ -59,6 +79,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
@@ -100,6 +121,7 @@ pipeline {
                         expression { return env.HAS_SECURITY.toBoolean() }
                     }
                     steps {
+                        unstash(name: 'sourceRepo')
                         script {
                             def bundleManifestObj = downloadBuildManifest(
                                 url: BUNDLE_MANIFEST_URL,
@@ -125,6 +147,7 @@ pipeline {
                     }
                     post {
                         success {
+                            unstash(name: 'sourceRepo')
                             script {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
@@ -151,6 +174,7 @@ pipeline {
                         }
                     }
                     steps {
+                        unstash(name: 'sourceRepo')
                         script {
                             def bundleManifestObj = downloadBuildManifest(
                                 url: BUNDLE_MANIFEST_URL,
@@ -177,6 +201,7 @@ pipeline {
                     }
                     post {
                         success {
+                            unstash(name: 'sourceRepo')
                             script {
                                 uploadTestResults(
                                     buildManifestFileName: BUNDLE_MANIFEST,
@@ -201,6 +226,7 @@ pipeline {
     post {
         success {
             node(AGENT_LABEL) {
+                unstash(name: 'sourceRepo')
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
                     publishNotification(
@@ -215,6 +241,7 @@ pipeline {
         }
         failure {
             node(AGENT_LABEL) {
+                unstash(name: 'sourceRepo')
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
                     publishNotification(

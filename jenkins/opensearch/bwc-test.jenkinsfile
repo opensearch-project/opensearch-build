@@ -3,11 +3,13 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 pipeline {
     options {
         timeout(time: 3, unit: 'HOURS')
+        skipDefaultCheckout()
     }
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
+        BUILD_REPO = 'https://github.com/opensearch-project/opensearch-build.git'
     }
     parameters {
         string(
@@ -25,8 +27,27 @@ pipeline {
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host.',
             trim: true
         )
+        string(
+            name: 'BUILD_BRANCH',
+            description: "Build repo branch to use.",
+            defaultValue: "main",
+            trim: true
+        )
     }
     stages {
+        stage('checkout the build repo') {
+            agent {
+                docker {
+                    label AGENT_LABEL
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                git url: BUILD_REPO, branch: BUILD_BRANCH
+                stash(name: 'sourceRepo')
+            }
+        }
         stage('verify-parameters') {
             agent {
                 node {
@@ -34,6 +55,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     currentBuild.description = TEST_MANIFEST
                     if (AGENT_LABEL == '') {
@@ -63,6 +85,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script { 
                     DOCKER_AGENT = detectTestDockerAgent()
                 }
@@ -78,6 +101,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     def buildManifestObj = downloadBuildManifest(
                         url: BUILD_MANIFEST_URL,
@@ -99,6 +123,7 @@ pipeline {
             post {
                 always {
                     script {
+                        unstash(name: 'sourceRepo')
                         uploadTestResults(
                             buildManifestFileName: BUILD_MANIFEST,
                             jobName: JOB_NAME
@@ -114,6 +139,7 @@ pipeline {
         success {
             node(AGENT_LABEL) {
                 script {
+                    unstash(name: 'sourceRepo')
                     def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
                     publishNotification(
                         icon: ':white_check_mark:',
@@ -122,13 +148,13 @@ pipeline {
                         credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
-
                     postCleanup()
                 }
             }
         }
         failure {
             node(AGENT_LABEL) {
+                unstash(name: 'sourceRepo')
                 script  {
                     def stashed = lib.jenkins.Messages.new(this).get(['bwc-test'])
                     publishNotification(
@@ -138,7 +164,6 @@ pipeline {
                         credentialsId: 'jenkins-integ-test-webhook',
                         manifest: TEST_MANIFEST,
                     )
-
                     postCleanup()
                 }
             }

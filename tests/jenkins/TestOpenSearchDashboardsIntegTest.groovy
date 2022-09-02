@@ -48,7 +48,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod('unstash', [String.class], null)
+        helper.registerAllowedMethod("git", [Map])
     }
 
     @Test

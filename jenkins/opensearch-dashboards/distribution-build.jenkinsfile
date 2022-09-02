@@ -3,12 +3,14 @@ lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
+        skipDefaultCheckout()
     }
     agent none
     environment {
         AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
+        BUILD_REPO = 'https://github.com/opensearch-project/opensearch-build.git'
     }
     parameters {
         string(
@@ -38,6 +40,12 @@ pipeline {
             defaultValue: "bwc-test-opensearch-dashboards",
             trim: true
         )
+        string(
+            name: 'BUILD_BRANCH',
+            description: "Build repo branch to use.",
+            defaultValue: "main",
+            trim: true
+        )
         choice(
             name: 'BUILD_DOCKER',
             description: 'Build docker image or not with options.',
@@ -50,6 +58,19 @@ pipeline {
         )
     }
     stages {
+        stage('checkout the build repo') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                git url: BUILD_REPO, branch: BUILD_BRANCH
+                stash(name: 'sourceRepo')
+            }
+        }
         stage('detect docker image + args') {
             agent {
                 docker {
@@ -59,6 +80,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script { 
                     currentBuild.description = "$INPUT_MANIFEST"
                     dockerAgent = detectDockerAgent()
@@ -74,6 +96,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     buildInfoYaml(
                         componentName: COMPONENT_NAME,
@@ -101,6 +124,7 @@ pipeline {
                         }
                     }
                     steps {
+                        unstash(name: 'sourceRepo')
                         script {
                             def buildManifestObj = buildAssembleUpload(
                                 componentName: "${COMPONENT_NAME}",
@@ -177,6 +201,7 @@ pipeline {
                     }
                     post {
                         always {
+                            unstash(name: 'sourceRepo')
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
@@ -184,7 +209,6 @@ pipeline {
                                     "\n${env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT}" +
                                     "\n${env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT}"
                                 )
-
                                 postCleanup()
                             }
                         }
@@ -203,6 +227,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     buildArchive(
                                         componentName: "${COMPONENT_NAME}",
@@ -229,6 +254,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     def buildManifestObj = archiveAssembleUpload(
                                         componentName: "${COMPONENT_NAME}",
@@ -266,6 +292,7 @@ pipeline {
                             }
                             post {
                                 always {
+                                    unstash(name: 'sourceRepo')
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
@@ -293,6 +320,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     buildArchive(
                                         componentName: "${COMPONENT_NAME}",
@@ -320,6 +348,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     def buildManifestObj = archiveAssembleUpload(
                                         componentName: "${COMPONENT_NAME}",
@@ -396,6 +425,7 @@ pipeline {
                             }
                             post {
                                 always {
+                                    unstash(name: 'sourceRepo')
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
@@ -403,7 +433,6 @@ pipeline {
                                             "\n${env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT}" +
                                             "\n${env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT}"
                                         )
-
                                         postCleanup()
                                     }
                                 }
@@ -424,6 +453,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     buildArchive(
                                         componentName: "${COMPONENT_NAME}",
@@ -450,6 +480,7 @@ pipeline {
                                 }
                             }
                             steps {
+                                unstash(name: 'sourceRepo')
                                 script {
                                     def buildManifestObj = archiveAssembleUpload(
                                         componentName: "${COMPONENT_NAME}",
@@ -486,6 +517,7 @@ pipeline {
                             }
                             post {
                                 always {
+                                    unstash(name: 'sourceRepo')
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
@@ -512,6 +544,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     uploadIndexFile(
                         indexFilePath: env.INDEX_FILE_PATH
@@ -535,6 +568,7 @@ pipeline {
                 }
             }
             steps {
+                unstash(name: 'sourceRepo')
                 script {
                     echo "env.ARTIFACT_URL_X64_TAR: ${env.ARTIFACT_URL_X64_TAR}"
                     echo "env.ARTIFACT_URL_ARM64_TAR: ${env.ARTIFACT_URL_ARM64_TAR}"
@@ -553,6 +587,7 @@ pipeline {
     post {
         always {
             node(AGENT_X64) {
+                unstash(name: 'sourceRepo')
                 script {
                     buildInfoYaml(
                         componentName: COMPONENT_NAME,
@@ -567,6 +602,7 @@ pipeline {
         }
         success {
             node(AGENT_X64) {
+                unstash(name: 'sourceRepo')
                 script {
                     if (params.PUBLISH_NOTIFICATION) { 
                         def stashed = lib.jenkins.Messages.new(this).get([
@@ -584,13 +620,13 @@ pipeline {
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
-
                     postCleanup()
                 }
             }
         }
         failure {
             node(AGENT_X64) {
+                unstash(name: 'sourceRepo')
                 script {
                     if (params.PUBLISH_NOTIFICATION) { 
                         publishNotification(
@@ -600,7 +636,6 @@ pipeline {
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
-
                     postCleanup()
                 }
             }
