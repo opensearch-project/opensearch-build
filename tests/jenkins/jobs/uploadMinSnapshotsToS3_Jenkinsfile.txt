@@ -30,9 +30,10 @@ ccc
 bbb
 ccc
 })
+                  uploadMinSnapshotsToS3.echo(Start copying files)
                   uploadMinSnapshotsToS3.sh(
-        cp tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz
-        cp tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512 tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
+        cp -v tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz
+        cp -v tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64.tar.gz.sha512 tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
         sed -i "s/.tar.gz/-latest.tar.gz/g" tests/data/tar/builds/opensearch/dist/opensearch-min-1.2.2-SNAPSHOT-linux-x64-latest.tar.gz.sha512
     )
                   uploadMinSnapshotsToS3.string({credentialsId=jenkins-artifact-promotion-role, variable=ARTIFACT_PROMOTION_ROLE_NAME})

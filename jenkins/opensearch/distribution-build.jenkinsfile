@@ -199,37 +199,37 @@ pipeline {
                         }
                     }
                 }
-                //stage('build-snapshot-windows-x64-tar') {
-                //    agent {
-                //        node {
-                //            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
-                //        }
-                //    }
-                //    tools {
-                //        jdk dockerAgent.javaVersion
-                //    }
-                //    steps {
-                //        script {
-                //            buildManifest(
-                //                componentName: "${COMPONENT_NAME}",
-                //                inputManifest: "manifests/${INPUT_MANIFEST}",
-                //                distribution: 'zip',
-                //                platform: 'windows',
-                //                snapshot: true
-                //            )
-                //            echo("Uploading windows min snapshots to S3")
-                //            uploadMinSnapshotsToS3(
-                //                fileActions: [createSha512Checksums()],
-                //                distribution: 'zip'
-                //            )
-                //        }
-                //    }
-                //    post {
-                //        always {
-                //            postCleanup()
-                //        }
-                //    }
-                //}
+                stage('build-snapshot-windows-x64-zip') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'zip',
+                                platform: 'windows',
+                                snapshot: true
+                            )
+                            echo("Uploading windows min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'zip'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
                 stage('build-and-test-x64-tar') {
                     agent {
                         docker {
