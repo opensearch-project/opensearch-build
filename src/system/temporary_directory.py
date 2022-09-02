@@ -19,7 +19,7 @@ def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     logging.debug(f"excvalue {excvalue}")
     logging.debug(f"func {func.__name__}")
     if func in (os.rmdir, os.remove, os.unlink):
-        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IREAD | stat.S_IWRITE)  # 0777 nix* / +wr windows
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO | stat.S_IREAD | stat.S_IWRITE)  # 0777 nix* / +rw windows
         retry_total = 3
         for retry_count in range(retry_total):  # Re-run func to force deletion especially on windows
             try:
