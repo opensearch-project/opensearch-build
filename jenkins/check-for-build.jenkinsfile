@@ -11,8 +11,6 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H/60 * * * * %INPUT_MANIFEST=2.2.1/opensearch-2.2.1.yml;TEST_MANIFEST=2.2.1/opensearch-2.2.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H/60 * * * * %INPUT_MANIFEST=2.2.1/opensearch-dashboards-2.2.1.yml;TEST_MANIFEST=2.2.1/opensearch-dashboards-2.2.1-test.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H 1 * * * %INPUT_MANIFEST=2.3.0/opensearch-dashboards-2.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
             H 1 * * * %INPUT_MANIFEST=2.3.0/opensearch-2.3.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch

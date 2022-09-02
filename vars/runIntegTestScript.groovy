@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 void call(Map args = [:]) {
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
 
@@ -33,11 +40,11 @@ String generatePaths(buildManifest, artifactRootUrl, localPath) {
     String platform = buildManifest.build.platform
     String architecture = buildManifest.build.architecture
     String distribution = buildManifest.build.distribution
-    
+
     String latestOpenSearchArtifactRootUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/${version}/latest/${platform}/${architecture}/${distribution}"
     if (localPath.equals('None')) {
         echo "No localPath found, download from url"
-        return name == 'OpenSearch' ? 
+        return name == 'OpenSearch' ?
             "opensearch=${artifactRootUrl}" :
             "opensearch=${latestOpenSearchArtifactRootUrl} opensearch-dashboards=${artifactRootUrl}"
     }

@@ -6,7 +6,7 @@
  * compatible open source license.
  */
 
-/*
+/**
 SignArtifacts signs the given artifacts and saves the signature in the same directory
 @param Map[artifactPath] <Required> - Path to yml or artifact file.
 @param Map[component] <Optional> - Path to yml or artifact file.
