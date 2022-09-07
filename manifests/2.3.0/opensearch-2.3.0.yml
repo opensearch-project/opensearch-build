@@ -82,7 +82,7 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: reportsDashboards
+  - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
     ref: '2.3'
     platforms:
