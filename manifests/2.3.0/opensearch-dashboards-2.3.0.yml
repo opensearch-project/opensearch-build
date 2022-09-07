@@ -25,3 +25,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
     ref: '2.3'
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    working_directory: src/plugins/custom_import_map
+    ref: '2.3'
