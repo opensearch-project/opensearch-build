@@ -10,6 +10,9 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: 2.x
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '2.3'
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/notifications.git
     working_directory: dashboards-notifications
