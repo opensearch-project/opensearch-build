@@ -32,7 +32,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 2.x
+    ref: '2.3'
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
     ref: '2.3'
