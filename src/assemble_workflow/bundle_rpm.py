@@ -10,16 +10,12 @@ import os
 import shutil
 import subprocess
 
+from assemble_workflow.bundle_linux_distro import BundleLinuxDistro
 from manifests.build_manifest import BuildManifest
 from system.os import rpm_architecture
 
 
-class BundleRpm:
-
-    def __init__(self, filename: str, package_path: str, min_path: str) -> None:
-        self.filename = filename
-        self.package_path = package_path
-        self.min_path = min_path
+class BundleRpm(BundleLinuxDistro):
 
     def extract(self, dest: str) -> None:
         cpio_basename = os.path.splitext(os.path.basename(self.package_path))[0]
@@ -54,14 +50,7 @@ class BundleRpm:
                 cwd=dest,
             )
 
-        # Move core folder destination so plugin install can proceed
-        logging.info(f"Move {min_source_path} to {min_dest_path} for plugin installation")
-        shutil.move(min_source_path, min_dest_path)
-
-        # Multiple modifications and env vars setups before install plugins
-        # As bin/opensearch-env is different between archive and package
-        # https://github.com/opensearch-project/OpenSearch/issues/2092
-        os.environ[f"{self.filename.upper()}_PATH_CONF"] = min_config_path
+        super().extract(min_source_path, min_dest_path, min_config_path)
 
     def build(self, name: str, dest: str, archive_path: str, build_cls: BuildManifest.Build) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
