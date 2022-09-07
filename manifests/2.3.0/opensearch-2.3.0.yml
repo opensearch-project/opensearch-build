@@ -73,3 +73,21 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: '2.3'
+    platforms:
+      - linux
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: '2.3'
+    platforms:
+      - linux
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
