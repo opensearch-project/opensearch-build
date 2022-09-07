@@ -40,6 +40,7 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-build/blob/main/meta/README.md#create-a-release-issue) that links back to this issue, update Components section with these links.
 - [ ] Ensure the label is created in each component repo for this new version, and the next minor release. [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos)
 - [ ] Ensure that all release issues created above are assigned to an owner in the component team.
+- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile)
 
 ### CI/CD (Feature Freeze) - _Ends __REPLACE_RELEASE-minus-14-days__
 
