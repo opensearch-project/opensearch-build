@@ -235,6 +235,7 @@ pipeline {
                         jdk dockerAgent.javaVersion
                     }
                     steps {
+                        unstash(name: 'sourceRepo')
                         script {
                             buildManifest(
                                 componentName: "${COMPONENT_NAME}",
