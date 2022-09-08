@@ -21,8 +21,13 @@ RUN apt-get update -y && apt-get install -y software-properties-common && add-ap
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && apt clean -y && pip3 install awscli==1.22.12
 
+# Install trivy to scan the docker images
+RUN curl -SL https://github.com/aquasecurity/trivy/releases/download/v0.30.4/trivy_0.30.4_Linux-64bit.deb -o /tmp/trivy_0.30.4_Linux-64bit.deb && \
+    dpkg -i /tmp/trivy_0.30.4_Linux-64bit.deb && rm /tmp/trivy_0.30.4_Linux-64bit.deb && \
+    trivy --version
+
 # Install JDK
-RUN curl -SL https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz -o /opt/jdk11.tar.gz && \
+RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \
     mkdir -p /opt/java/openjdk-11 && \
     tar -xzf /opt/jdk11.tar.gz --strip-components 1 -C /opt/java/openjdk-11/ && \
     rm /opt/jdk11.tar.gz

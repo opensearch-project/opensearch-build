@@ -5,14 +5,14 @@
          perf-test.timeout({time=15, unit=HOURS})
          perf-test.echo(Executing on agent [label:none])
          perf-test.parameterizedCron(
-            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 1 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
             H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
             H 17 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.4/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 9 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 9 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 9 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 9 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
         )
          perf-test.stage(validate-and-set-parameters, groovy.lang.Closure)
             perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
@@ -43,7 +43,7 @@
                perf-test.echo(BUNDLE_MANIFEST: tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml)
                perf-test.echo(BUILD_ID: 1236)
                perf-test.echo(Architecture: x64)
-               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml, buildId=1236, architecture=x64, insecure=true, workload=nyc_taxis, testIterations=1, warmupIterations=1, stackNameSuffix=null})
+               perf-test.runPerfTestScript({bundleManifest=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml, buildId=1236, architecture=x64, insecure=true, workload=nyc_taxis, testIterations=1, warmupIterations=1, stackNameSuffix=307})
                   runPerfTestScript.legacySCM(groovy.lang.Closure)
                   runPerfTestScript.library({identifier=jenkins@20211123, retriever=null})
                   runPerfTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml})
@@ -60,7 +60,7 @@
                         runPerfTestScript.s3Download({file=config.yml, bucket=ARTIFACT_BUCKET_NAME, path=test_config/config.yml, force=true})
                   runPerfTestScript.usernamePassword({credentialsId=bot_token_name, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
                   runPerfTestScript.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
-                     runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
+                     runPerfTestScript.sh(./test.sh perf-test --stack test-single-1236-x64-307 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 )
                Messages.asBoolean()
                Messages.asBoolean()
                Messages.get([perf-test])
@@ -74,7 +74,7 @@ Performance tests without security for 1236 completed)
 Performance tests without security for 1236 completed})
                   perf-test.stash({includes=messages/*, name=messages-perf-test})
          perf-test.script(groovy.lang.Closure)
-            perf-test.uploadTestResults({buildManifestFileName=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml, jobName=perf-test, buildNumber=1236})
+            perf-test.uploadTestResults({buildManifestFileName=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml, jobName=perf-test, buildNumber=307})
                uploadTestResults.legacySCM(groovy.lang.Closure)
                uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
                uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml})
@@ -86,11 +86,11 @@ Performance tests without security for 1236 completed})
                uploadTestResults.withCredentials([ARTIFACT_BUCKET_NAME, AWS_ACCOUNT_PUBLIC], groovy.lang.Closure)
                   uploadTestResults.echo(Uploading to s3://ARTIFACT_BUCKET_NAME/perf-test/1.3.0/1236/linux/x64/tar)
                   uploadTestResults.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
-                     uploadTestResults.s3Upload({file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results})
-               BuildManifest.getArtifactRootUrl(test://artifact.url, perf-test, 1236)
+                     uploadTestResults.s3Upload({file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results/307})
+               BuildManifest.getArtifactRootUrl(test://artifact.url, perf-test)
                Messages.asBoolean()
-               Messages.add(test_stage, test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/)
-                  uploadTestResults.writeFile({file=messages/test_stage.msg, text=test://artifact.url/perf-test/1.3.0/1236/linux/x64/tar/test-results/})
+               Messages.add(test_stage, https://ci.opensearch.org/ci/dbc/test://artifact.url/1.3.0/perf-test/linux/x64/tar/test-results/)
+                  uploadTestResults.writeFile({file=messages/test_stage.msg, text=https://ci.opensearch.org/ci/dbc/test://artifact.url/1.3.0/perf-test/linux/x64/tar/test-results/})
                   uploadTestResults.stash({includes=messages/*, name=messages-test_stage})
          perf-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
@@ -107,7 +107,7 @@ Performance tests without security for 1236 completed})
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=perf-test
-BUILD_NUMBER=[1236]
+BUILD_NUMBER=[307]
 MESSAGE=Performance Tests Successful
 BUILD_URL: test://artifact.url
 MANIFEST: null

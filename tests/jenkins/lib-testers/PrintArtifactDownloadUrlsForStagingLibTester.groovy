@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.core.IsNull.notNullValue
 

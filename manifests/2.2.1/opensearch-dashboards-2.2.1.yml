@@ -1,0 +1,51 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch Dashboards
+  version: 2.2.1
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: tags/2.2.1
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: tags/2.2.1
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: tags/2.2.1.0
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    working_directory: src/plugins/custom_import_map
+    ref: tags/2.2.1.0
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/notifications.git
+    working_directory: dashboards-notifications
+    ref: tags/2.2.1.0
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: tags/2.2.1.0
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: tags/2.2.1.0
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: tags/2.2.1.0
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: tags/2.2.1.0
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/observability.git
+    working_directory: dashboards-observability
+    ref: tags/2.2.1.0
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    working_directory: gantt-chart
+    ref: tags/2.2.1.0
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: dashboards-reports
+    ref: tags/2.2.1.0

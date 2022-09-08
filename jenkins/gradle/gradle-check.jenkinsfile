@@ -129,6 +129,9 @@ pipeline {
                 }
             }
             post() {
+                failure {
+                    archiveArtifacts artifacts: '**/build/heapdump/*.hprof', allowEmptyArchive: true
+                }
                 always {
                     sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
                     junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'

@@ -85,6 +85,10 @@ class BundleManifest implements Serializable {
         return this.build.id
     }
 
+    public String getDistribution() {
+        return this.build.distribution
+    }
+
     public String getCommitId (String name) {
         return this.components.get(name).commit_id
     }

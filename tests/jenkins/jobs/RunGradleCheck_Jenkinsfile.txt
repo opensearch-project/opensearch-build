@@ -24,16 +24,12 @@
 
                 echo "Get Major Version"
                 OS_VERSION=`cat buildSrc/version.properties | grep opensearch | cut -d= -f2 | grep -oE '[0-9.]+'`
+                JDK_MAJOR_VERSION=`cat buildSrc/version.properties | grep "bundled_jdk" | cut -d= -f2 | grep -oE '[0-9]+'  | head -n 1`
                 OS_MAJOR_VERSION=`echo $OS_VERSION | grep -oE '[0-9]+' | head -n 1`
                 echo "Version: $OS_VERSION, Major Version: $OS_MAJOR_VERSION"
 
-                if [ "$OS_MAJOR_VERSION" -lt 2 ]; then
-                    echo "Using JAVA 11"
-                    export JAVA_HOME=$JAVA11_HOME
-                else
-                    echo "Using JAVA 17"
-                    export JAVA_HOME=$JAVA17_HOME
-                fi
+                echo "Using JAVA $JDK_MAJOR_VERSION"
+                eval export JAVA_HOME='$JAVA'$JDK_MAJOR_VERSION'_HOME'
 
                 env | grep JAVA | grep HOME
 

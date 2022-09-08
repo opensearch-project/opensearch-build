@@ -8,6 +8,7 @@ pipeline {
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     parameters {
         string(
@@ -82,6 +83,9 @@ pipeline {
 
                     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
                     def componentList = buildManifestObj.getNames()
+                    String distribution = buildManifestObj.getDistribution()
+                    String buildId = buildManifestObj.getArtifactBuildId()
+                    String artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     echo "componentList: ${componentList}"
 
                     componentTests = [:]
@@ -91,6 +95,7 @@ pipeline {
                         // Or the stage will be fixed to the last item in return when new stages are triggered here
                         // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
                         def local_component = component
+                        def wait_seconds = componentList.indexOf(local_component) * 20
 
                         echo "Add Component: ${local_component}"
                         componentTests["Run Integtest ${local_component}"] = {
@@ -106,18 +111,28 @@ pipeline {
                                                 // Due to docker is mounting the agent directory so it can communicated with the agent
                                                 // This sometimes causes the workspace to retain last run test-results and ends with build failures
                                                 // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
-                                                sh("rm -rf test-results")
+                                                sh("rm -rf test-results ${WORKSPACE}/${distribution} && echo sleep ${wait_seconds} seconds && sleep ${wait_seconds}")
+                                                echo "Downloading from S3: ${artifactPath}"
+                                                downloadFromS3(
+                                                    destPath: "$WORKSPACE/artifacts",
+                                                    bucket: "${ARTIFACT_BUCKET_NAME}",
+                                                    path: "${artifactPath}/",
+                                                    force: true
+                                                )
+                                                sh("mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
                                                 runIntegTestScript(
                                                     jobName: BUILD_JOB_NAME,
                                                     componentName: "${local_component}",
                                                     buildManifest: BUILD_MANIFEST,
-                                                    testManifest: "manifests/${TEST_MANIFEST}"
+                                                    testManifest: "manifests/${TEST_MANIFEST}",
+                                                    localPath: "${WORKSPACE}/${distribution}"
                                                 )
                                             }
                                         } catch (e) {
                                             echo "Error running integtest for component ${local_component}"
                                             throw e
                                         } finally {
+                                            echo "Completed running integtest for component ${local_component}"
                                             uploadTestResults(
                                                 buildManifestFileName: BUILD_MANIFEST,
                                                 jobName: JOB_NAME

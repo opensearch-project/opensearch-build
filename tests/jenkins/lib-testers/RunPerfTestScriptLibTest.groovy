@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
@@ -45,7 +52,8 @@ class RunPerfTestScriptLibTester extends LibFunctionTester {
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('BUILD_ID', buildId)
-        binding.setVariable('BUILD_NUMBER', buildId)
+        binding.setVariable('env', ['BUILD_NUMBER': '307'])
+        binding.setVariable('BUILD_NUMBER', '307')
         binding.setVariable('BUILD_URL', 'test://artifact.url')
         binding.setVariable('BUNDLE_MANIFEST', bundleManifest)
         binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')

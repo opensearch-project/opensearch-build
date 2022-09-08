@@ -65,7 +65,7 @@ pipeline {
                 }
             }
         }
-        stage('Get Repository Commits') {
+        stage('Initialize the job info yaml report') {
             agent {
                 docker {
                     label AGENT_X64
@@ -75,16 +75,16 @@ pipeline {
             }
             steps {
                 script {
-                    getRepositoryCommit(
-                        componentName: "${COMPONENT_NAME}",
-                        inputManifest: "manifests/${INPUT_MANIFEST}",
-                        outputFile: "commits.yml"
+                    buildInfoYaml(
+                        componentName: COMPONENT_NAME,
+                        inputManifest: "manifests/$INPUT_MANIFEST",
+                        status: "NOT_STARTED",
+                        stage: "INITIALIZE_STAGE"
                     )
                 }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'commits.yml'
                     postCleanup()
                 }
             }
@@ -132,6 +132,12 @@ pipeline {
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
 
+                                        buildInfoYaml(
+                                            componentName: COMPONENT_NAME,
+                                            status: integTestResults.getId(),
+                                            stage: "integ_test_x64"
+                                        )
+
                                         env.ARTIFACT_URL_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                             testType: "Integ Tests (x64, tar)",
                                             status: integTestResults.getResult(),
@@ -152,6 +158,12 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
+
+                                        buildInfoYaml(
+                                            componentName: COMPONENT_NAME,
+                                            status: bwcTestResults.getId(),
+                                            stage: "bwc_test_x64"
+                                        )
 
                                         env.ARTIFACT_URL_X64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                             testType: "BWC Tests (x64, tar)",
@@ -339,6 +351,12 @@ pipeline {
                                                         string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                                     ]
 
+                                                buildInfoYaml(
+                                                    componentName: COMPONENT_NAME,
+                                                    status: integTestResults.getId(),
+                                                    stage: "integ_test_arm64"
+                                                )
+
                                                 env.ARTIFACT_URL_ARM64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
                                                     testType: "Integ Tests (arm64, tar)",
                                                     status: integTestResults.getResult(),
@@ -359,6 +377,12 @@ pipeline {
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                         string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                                     ]
+
+                                                buildInfoYaml(
+                                                    componentName: COMPONENT_NAME,
+                                                    status: bwcTestResults.getId(),
+                                                    stage: "bwc_test_arm64"
+                                                )
 
                                                 env.ARTIFACT_URL_ARM64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
                                                     testType: "BWC Tests (arm64, tar)",
@@ -527,6 +551,20 @@ pipeline {
         }
     }
     post {
+        always {
+            node(AGENT_X64) {
+                script {
+                    buildInfoYaml(
+                        componentName: COMPONENT_NAME,
+                        status: currentBuild.result,
+                        stage: "FINALIZE_STAGE"
+                    )
+                    unstash "buildInfo_yml"
+                    archiveArtifacts artifacts: 'buildInfo.yml'
+                    postCleanup()
+                }
+            }
+        }
         success {
             node(AGENT_X64) {
                 script {

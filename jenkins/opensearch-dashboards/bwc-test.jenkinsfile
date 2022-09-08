@@ -101,8 +101,7 @@ pipeline {
                     script {
                         uploadTestResults(
                             buildManifestFileName: BUILD_MANIFEST,
-                            jobName: JOB_NAME,
-                            buildNumber: BUILD_ID
+                            jobName: JOB_NAME
                         )
                     }
                     postCleanup()

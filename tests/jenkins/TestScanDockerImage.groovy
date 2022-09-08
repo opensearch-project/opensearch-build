@@ -11,21 +11,20 @@ import org.junit.Before
 import org.junit.Test
 
 
-class TestGetRepositoryCommit extends BuildPipelineTest {
+class TestScanDockerImage extends BuildPipelineTest {
 
     @Before
     void setUp() {
-        this.registerLibTester(new GetRepositoryCommitLibTester(
-            '',
-            'tests/jenkins/data/opensearch-2.0.0.yml',
-            'commits.yml'
+        this.registerLibTester(new ScanDockerImageLibTester(
+            "opensearchstaging/opensearch:2.0.0",
+            "scan_docker_image"
             )
         )
         super.setUp()
     }
 
     @Test
-    void testGetRepositoryCommit() {
-        super.testPipeline("tests/jenkins/jobs/GetRepositoryCommit_Jenkinsfile")
+    void testScanDockerImage() {
+        super.testPipeline("tests/jenkins/jobs/ScanDockerImage_Jenkinsfile")
     }
 }

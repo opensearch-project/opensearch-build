@@ -2,6 +2,7 @@
 name: releases
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: 0 0 * * *
 
@@ -24,7 +25,7 @@ jobs:
         version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
-      - uses: dblock/create-an-issue@v2.5
+      - uses: dblock/create-an-issue@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ matrix.version }}

@@ -9,13 +9,12 @@
 pipeline {
     agent none
     stages {
-        stage('get repository commits') {
+        stage('scan docker image') {
             steps {
                 script {
-                    getRepositoryCommit(
-                        componentName: "",
-                        inputManifest: "tests/jenkins/data/opensearch-2.0.0.yml",
-                        outputFile: "commits.yml"
+                    scanDockerImage(
+                        imageFullName: "opensearchstaging/opensearch:2.0.0",
+                        imageResultFile: "scan_docker_image"
                     )
                 }
             }

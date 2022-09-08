@@ -87,7 +87,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
         }
         assertThat(resultUploadScriptCommands.size(), equalTo(1))
         assertThat(resultUploadScriptCommands, hasItem(
-            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results}".toString()
+            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results/1236}".toString()
         ))
     }
 

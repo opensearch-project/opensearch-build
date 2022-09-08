@@ -82,10 +82,10 @@ class TestRunPerfTestScript extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(2))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-security-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
+            "./test.sh perf-test --stack test-single-security-1236-x64-307 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml  --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
         ))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
+            "./test.sh perf-test --stack test-single-1236-x64-307 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
         ))
 
         def resultUploadScriptCommands = getCommandExecutions('s3Upload', 'test-results').findAll {
@@ -93,7 +93,7 @@ class TestRunPerfTestScript extends BuildPipelineTest {
         }
         assertThat(resultUploadScriptCommands.size(), equalTo(2))
         assertThat(resultUploadScriptCommands, hasItem(
-            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results}".toString()
+            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results/307}".toString()
         ))
     }
 

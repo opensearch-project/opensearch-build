@@ -34,6 +34,7 @@ pipeline {
                         label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                         image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
                         args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                        alwaysPull true
                     }
             }
             stages {

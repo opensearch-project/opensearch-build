@@ -1,9 +1,16 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
 Closure call() {
     allowedFileTypes = [".tar.gz", ".zip", ".rpm"]
 
     return { argsMap -> body: {
 
-        final foundFiles = sh(script: "find $argsMap.artifactPath -type f", returnStdout: true).split()
+        final foundFiles = sh(script: "find ${argsMap.artifactPath} -type f", returnStdout: true).split()
 
         for (file in foundFiles) {
             acceptTypeFound = false

@@ -14,9 +14,14 @@
     - [Assembling a Distribution](#assembling-a-distribution)
     - [Building Patches](#building-patches)
     - [CI/CD Environment](#cicd-environment)
+    - [Build Numbers](#build-numbers)
     - [Latest Distribution Url](#latest-distribution-url)
     - [Testing the Distribution](#testing-the-distribution)
+    - [Checking Release Notes](#checking-release-notes)
     - [Signing Artifacts](#signing-artifacts)
+      - [PGP](#pgp)
+      - [Windows](#windows)
+    - [Signing RPM artifacts](#signing-rpm-artifacts)
   - [Making a Release](#making-a-release)
     - [Releasing for Linux](#releasing-for-linux)
     - [Releasing for FreeBSD](#releasing-for-freebsd)
@@ -92,26 +97,35 @@ We build, assemble, and test our artifacts on docker containers. We provide dock
 
 See [jenkins](./jenkins) and [docker](./docker) for more information.
 
+#### Build Numbers
+
+The distribution url and the build output manifest include a Jenkins auto-incremented build number. For example, the [manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) from [OpenSearch build 5905](https://build.ci.opensearch.org/job/distribution-build-opensearch/5905/) contains the following.
+
+```yml
+build:
+  name: OpenSearch
+  version: 2.2.0
+  platform: linux
+  architecture: x64
+  distribution: rpm
+  id: '5905'
+```
+
 #### Latest Distribution Url
 
-The distribution url has a build number (from Jenkins job) embedded inside it. See this example where `3942` is the build number. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/3942/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
+Use the `latest` keyword in the URL to obtain the latest build for a given version. For example `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/rpm/dist/opensearch/manifest.yml` redirects to [build 5905](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) at the time of writing this.
 
-
-The feature of `latest` distribution url is to make it build number agnostic. For the example above, its corresponding latest distribution url is as follows.
-
-https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/latest/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml
-
-It resolves `latest` to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.1.0/index.json). This file has contents like this.
+The `latest` keyword is resolved to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/index.json). This file has contents such as this.
 
 ```
-{"latest":"3942"}
+{"latest":"5905"}
 ```
 
-The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for diffferent combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
+The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for different combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
 
-The resolution logic exists in [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
+The resolution logic is implemented in the [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
 
-All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins.
+All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. For example, you can download the latest .tar.gz distribution build of OpenSearch 2.2.0 directly at `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.2.0-linux-x64.tar.gz`, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
 
 #### Testing the Distribution
 
@@ -123,22 +137,34 @@ Tests the OpenSearch distribution, including integration, backwards-compatibilit
 
 See [src/test_workflow](./src/test_workflow) for more information.
 
+#### Checking Release Notes
+
+Workflow to check if the release notes exists or not and shows the latest commit for OpenSearch and Dashboard distributions.
+
+To run:
+```bash
+./release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
+```
+
+See [src/release_notes_workflow](./src/release_notes_workflow) for more information.
 #### Signing Artifacts
 
 For all types of signing within OpenSearch project we use `opensearch-signer-client` (in progress of being open-sourced) which is a wrapper around internal signing system and is only available for authenticated users. The input requires a path to the build manifest or directory containing all the artifacts or a single artifact. 
 
 Usage:
+
 ```bash
 ./sign.sh builds/opensearch/manifest.yml
 ```
 
 The tool currently supports following platforms for signing.
-#### PGP
+
+##### PGP
 
 Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .sig file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc as well as maven artifacts are signed using PGP signing. See [this page](https://opensearch.org/verify-signatures.html) for how to verify signatures.
 
 
-#### WINDOWS
+##### Windows
 
 Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by [Signtool.exe](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
 Windows code signing uses EV (Extended Validated) code signing certificates.
@@ -150,8 +176,9 @@ Windows code signing uses EV (Extended Validated) code signing certificates.
 | RPM | SHA512      |    RSA | 4096 |
 
 
-### Signing RPM artifacts
-RPM artifacts are signed via shell script which uses a [macros template](https://github.com/opensearch-project/opensearch-build/blob/main/scripts/pkg/sign_templates/rpmmacros). More details in this [commit](https://github.com/opensearch-project/opensearch-build/commit/950d55c1ed3f82e98120541fa40ff506338c1059). See [issue](https://github.com/opensearch-project/opensearch-build/issues/1547) to add RPM artifact signing functionality to the above signing system. Currently we are only signing OpenSearch and OpenSearch dashboards RPM distributions using this method.
+#### Signing RPM artifacts
+
+RPM artifacts are signed via a legacy shell script which uses a [macros template](scripts/pkg/sign_templates/rpmmacros). See [this commit](https://github.com/opensearch-project/opensearch-build/commit/950d55c1ed3f82e98120541fa40ff506338c1059) for more information and [this issue](https://github.com/opensearch-project/opensearch-build/issues/1547) to add RPM artifact signing functionality to the above signing system. Currently we are only signing OpenSearch and OpenSearch dashboards RPM distributions using this method.
 
 See [src/sign_workflow](./src/sign_workflow) for more information.
 

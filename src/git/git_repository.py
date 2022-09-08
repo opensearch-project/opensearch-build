@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, List
 
+from git.git_commit import GitCommit
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -87,3 +88,14 @@ class GitRepository:
         if subdirname:
             dirname = os.path.join(self.dir, subdirname)
         return Path(dirname)
+
+    def log(self, after: str) -> List[GitCommit]:
+        result = []
+        cmd = f'git log --date=short --after={after} --pretty=format:"%h %ad"'
+        log = self.output(cmd).split("\n")
+        for line in log:
+            if len(line) == 0:
+                continue
+            parts = line.split(" ")
+            result.append(GitCommit(parts[0], parts[1]))
+        return result
