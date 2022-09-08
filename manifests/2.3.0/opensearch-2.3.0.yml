@@ -99,45 +99,37 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-- name: index-management
-  repository: https://github.com/opensearch-project/index-management.git
-  ref: '2.3'
-  platforms:
-    - linux
-  checks:
-    - gradle:properties:version
-- name: notifications-core
-  repository: https://github.com/opensearch-project/notifications.git
-  ref: '2.3'
-  platforms:
-    - linux
-  working_directory: notifications
-  checks:
-    - gradle:properties:version
-    - gradle:dependencies:opensearch.version: opensearch-notifications-core
-- name: notifications
-  repository: https://github.com/opensearch-project/notifications.git
-  ref: '2.3'
-  platforms:
-    - linux
-  working_directory: notifications
-  checks:
-    - gradle:properties:version
-    - gradle:dependencies:opensearch.version: notifications
-- name: asynchronous-search
-  repository: https://github.com/opensearch-project/asynchronous-search.git
-  ref: '2.3'
-  checks:
-    - gradle:properties:version
-    - gradle:dependencies:opensearch.version
-  platforms:
-    - linux
-- name: sql
-  repository: https://github.com/opensearch-project/sql.git
-  ref: 2.3'
-  platforms:
-    - linux
-  checks:
-    - gradle:properties:version
-    - gradle:dependencies:opensearch.version: opensearch-sql-plugin
-
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.3'
+    platforms:
+      - linux
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-notifications-core
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.3'
+    platforms:
+      - linux
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '2.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: 2.3'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
