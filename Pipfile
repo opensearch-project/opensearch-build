@@ -28,6 +28,7 @@ pytablewriter = "*"
 typed-ast = "*"
 zipp = "*"
 importlib-metadata = "*"
+ruamel-yaml = "*"
 
 [dev-packages]
 

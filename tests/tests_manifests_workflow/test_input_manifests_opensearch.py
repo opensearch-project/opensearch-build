@@ -33,13 +33,14 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
     @patch("manifests_workflow.input_manifests.InputComponents")
     @patch("manifests_workflow.input_manifests.InputManifest.from_file")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
     @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch: MagicMock,
                     mock_component_opensearch_min: MagicMock, mock_input_manifest_from_path: MagicMock,
-                    mock_add_to_cron: MagicMock, mock_input_manifest_from_file: MagicMock,
+                    mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock, mock_input_manifest_from_file: MagicMock,
                     mock_input_manifest_component: MagicMock, *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
         mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
@@ -73,15 +74,20 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
             call('0.10.0'),
             call('0.9.0')
         ])
+        mock_add_to_versionincrement_workflow.assert_has_calls([
+            call('0.10.0'),
+            call('0.9.0')
+        ])
 
     @patch("os.makedirs")
     @patch("os.chdir")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
     @patch("manifests_workflow.input_manifests_opensearch.InputManifestsOpenSearch.write_manifest")
     def test_update_with_latest_manifest(self, mock_write_manifest: MagicMock, mock_component_opensearch: MagicMock,
-                                         mock_component_opensearch_min: MagicMock, mock_add_to_cron: MagicMock,
+                                         mock_component_opensearch_min: MagicMock, mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
                                          *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
         mock_component_opensearch_min.branches.return_value = ["main"]
@@ -93,3 +99,4 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
         mock_component_opensearch_min.branches.assert_called()
         mock_write_manifest.assert_called_with("0.9.0", [mock_component_opensearch_min.checkout.return_value])
         mock_add_to_cron.assert_called_with("0.9.0")
+        mock_add_to_versionincrement_workflow.assert_called_with("0.9.0")
