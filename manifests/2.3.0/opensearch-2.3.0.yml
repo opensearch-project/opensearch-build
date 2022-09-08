@@ -57,6 +57,14 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: '2.3'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: '2.3'
