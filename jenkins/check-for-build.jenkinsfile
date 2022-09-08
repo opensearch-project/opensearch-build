@@ -13,8 +13,6 @@ pipeline {
         parameterizedCron '''
             H 1 * * * %INPUT_MANIFEST=2.4.0/opensearch-2.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=1.3.6/opensearch-1.3.6.yml;TARGET_JOB_NAME=distribution-build-opensearch
-            H/60 * * * * %INPUT_MANIFEST=2.3.0/opensearch-dashboards-2.3.0.yml;TEST_MANIFEST=2.3.0/opensearch-dashboards-2.3.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
-            H/60 * * * * %INPUT_MANIFEST=2.3.0/opensearch-2.3.0.yml;TEST_MANIFEST=2.3.0/opensearch-2.3.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards
         '''
