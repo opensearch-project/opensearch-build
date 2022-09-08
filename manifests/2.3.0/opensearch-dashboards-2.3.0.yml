@@ -10,8 +10,27 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: 2.x
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '2.3'
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '2.3'
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/observability.git
+    working_directory: dashboards-observability
+    ref: '2.3'
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    working_directory: gantt-chart
+    ref: '2.3'
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: dashboards-reports
+    ref: '2.3'
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    working_directory: src/plugins/custom_import_map
     ref: '2.3'
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/notifications.git
