@@ -127,7 +127,7 @@ components:
       - linux
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 2.3'
+    ref: '2.3'
     platforms:
       - linux
     checks:
