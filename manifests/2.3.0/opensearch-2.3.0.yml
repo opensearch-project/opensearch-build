@@ -117,3 +117,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '2.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
