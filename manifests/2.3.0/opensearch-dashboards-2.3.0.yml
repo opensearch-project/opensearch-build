@@ -43,3 +43,8 @@ components:
     repository: https://github.com/opensearch-project/sql.git
     working_directory: workbench
     ref: '2.3'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: '2.3'
+
+
