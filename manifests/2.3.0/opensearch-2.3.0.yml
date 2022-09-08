@@ -127,13 +127,21 @@ components:
       - linux
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 2.3'
+    ref: '2.3'
     platforms:
       - linux
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
-  - name: index-management
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: '2.3'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+ - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: '2.3'
     platforms:
