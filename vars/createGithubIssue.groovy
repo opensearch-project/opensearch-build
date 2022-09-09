@@ -8,6 +8,14 @@
 def call(Map args = [:]){
     def failureMessages = args.message
     List<String> failedComponents = []
+    def manifestPath = "${WORKSPACE}/manifests"
+
+    if (fileExists(manifestPath)) {
+        println("Manifest path exists, not checking out git repo")
+    } else {
+        println("Manifest path does not exists, checking out git repo")
+        git url: 'https://github.com/opensearch-project/opensearch-build.git', branch: 'main'
+    }
 
     if (failureMessages.size() == 1 && failureMessages[0] == "Build failed") {
         println("No component failed, skip creating github issue.")

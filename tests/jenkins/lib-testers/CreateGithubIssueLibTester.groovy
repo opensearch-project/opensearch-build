@@ -36,6 +36,7 @@ class CreateGithubIssueLibTester extends LibFunctionTester{
     void configure(Object helper, Object binding) {
         helper.registerAllowedMethod("withCredentials", [Map])
         helper.registerAllowedMethod("sleep", [Map])
+        helper.registerAllowedMethod("git", [Map])
         binding.setVariable('BUILD_URL', 'www.example.com/jobs/test/123/')
         binding.setVariable('INPUT_MANIFEST', '2.0.0/opensearch-2.0.0.yml')
     }
