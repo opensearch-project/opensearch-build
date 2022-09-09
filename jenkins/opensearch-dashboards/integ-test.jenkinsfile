@@ -17,7 +17,7 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/builds/opensearch-dashboards/manifest.yml.',
+            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/tar/builds/opensearch-dashboards/manifest.yml',
             trim: true
         )
         string(
