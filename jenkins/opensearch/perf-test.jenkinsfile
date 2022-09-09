@@ -26,7 +26,7 @@ pipeline {
     parameters {
         string(
             name: 'BUNDLE_MANIFEST_URL',
-            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            description: 'The distribution manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.3.0/6039/linux/x64/tar/dist/opensearch/manifest.yml',
             trim: true
         )
         string(
