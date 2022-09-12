@@ -100,6 +100,7 @@ pipeline {
                     if (TEST_ITERATIONS > 200) {
                         type='longevity'
                     }
+                    echo 'setting description'
                     currentBuild.description = "Running ${type} test for build number: ${BUILD_ID} Manifest: ${BUNDLE_MANIFEST_URL}"
                 }
             }
