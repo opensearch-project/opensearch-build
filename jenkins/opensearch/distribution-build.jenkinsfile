@@ -694,6 +694,7 @@ pipeline {
         }
         failure {
             node(AGENT_X64) {
+                checkout scm
                 script {
                     if (params.PUBLISH_NOTIFICATION) {
                         publishNotification(
