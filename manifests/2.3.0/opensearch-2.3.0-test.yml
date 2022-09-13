@@ -63,6 +63,7 @@ components:
     working-directory: reports-scheduler
     integ-test:
       test-configs:
+        - with-security
         - without-security
 
   - name: opensearch-observability
