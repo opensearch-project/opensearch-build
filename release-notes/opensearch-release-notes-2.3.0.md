@@ -115,7 +115,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Added release notes for 2.3 ([#250](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/250))
 
 
-### OpenSearch Ml Common
+### OpenSearch Ml Commons
 * Algorithm links added to javadoc ([#400](https://github.com/opensearch-project/ml-commons/pull/400))
 
 
@@ -143,7 +143,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Staging for version increment automation ([#204](https://github.com/opensearch-project/job-scheduler/pull/204)) ([#212](https://github.com/opensearch-project/job-scheduler/pull/212))
 
 
-### OpenSearch Ml Common
+### OpenSearch Ml Commons
 * Reenable KMEANS predict IT tests ([#401](https://github.com/opensearch-project/ml-commons/pull/401))
 * Upgrade to lucene snapshot ([#405](https://github.com/opensearch-project/ml-commons/pull/405))
 * Bump to version 2.3 ([#417](https://github.com/opensearch-project/ml-commons/pull/417))
