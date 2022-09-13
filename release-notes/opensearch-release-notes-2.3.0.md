@@ -137,7 +137,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Refactored dependency used by test mock. Adjusted OSD version used by test workflows ([#229](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/229))
 
 
-### OpenSearch
+### OpenSearch Job Scheduler
 * Removed version.yml ([#233](https://github.com/opensearch-project/job-scheduler/pull/233)) ([#235](https://github.com/opensearch-project/job-scheduler/pull/235))
 * Update to Gradle 7.5 ([#208](https://github.com/opensearch-project/job-scheduler/pull/208)) ([#228](https://github.com/opensearch-project/job-scheduler/pull/228))
 * Staging for version increment automation ([#204](https://github.com/opensearch-project/job-scheduler/pull/204)) ([#212](https://github.com/opensearch-project/job-scheduler/pull/212))
