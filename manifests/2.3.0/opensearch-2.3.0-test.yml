@@ -63,12 +63,14 @@ components:
     working-directory: reports-scheduler
     integ-test:
       test-configs:
+        - with-security
         - without-security
 
   - name: opensearch-observability
     working-directory: opensearch-observability
     integ-test:
       test-configs:
+        - with-security
         - without-security
 
   - name: ml-commons
