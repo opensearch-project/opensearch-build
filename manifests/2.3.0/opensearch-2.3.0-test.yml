@@ -70,6 +70,7 @@ components:
     working-directory: opensearch-observability
     integ-test:
       test-configs:
+        - with-security
         - without-security
 
   - name: ml-commons
