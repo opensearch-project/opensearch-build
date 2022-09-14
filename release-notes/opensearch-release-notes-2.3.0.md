@@ -43,7 +43,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch k-NN
-* Change initial size of DocIdSetBuilder (#502)
+* Change initial size of DocIdSetBuilder ([#502](https://github.com/opensearch-project/k-NN/pull/502))
 
 
 ### OpenSearch Notifications
@@ -78,7 +78,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch k-NN
-* Remove overallocation in faiss query path (#501)
+* Remove overallocation in faiss query path ([#501](https://github.com/opensearch-project/k-NN/pull/501))
 
 
 ### OpenSearch Security
@@ -192,6 +192,11 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Staging for version increment automation ([#204](https://github.com/opensearch-project/job-scheduler/pull/204)) ([#212](https://github.com/opensearch-project/job-scheduler/pull/212))
 
 
+### OpenSearch k-NN
+* Updated the BWC workflow to have 2.2.0 as the backward supported version in BWC tests ([#536](https://github.com/opensearch-project/k-NN/pull/536))
+* [AUTO] Increment version to 2.3.0-SNAPSHOT ([#526](https://github.com/opensearch-project/k-NN/pull/526))
+
+
 ### OpenSearch Ml Commons
 * Reenable KMEANS predict IT tests ([#401](https://github.com/opensearch-project/ml-commons/pull/401))
 * Upgrade to lucene snapshot ([#405](https://github.com/opensearch-project/ml-commons/pull/405))
@@ -224,7 +229,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ## REFACTORING
 
 ### OpenSearch k-NN
-* Replace terminology 'master' with 'cluster manager' (#521)
-* Nomenclature changes from Whitelist to Allowlist (#534)
+* Replace terminology 'master' with 'cluster manager' ([#521](https://github.com/opensearch-project/k-NN/pull/521))
+* Nomenclature changes from Whitelist to Allowlist ([#534](https://github.com/opensearch-project/k-NN/pull/534))
 
 
