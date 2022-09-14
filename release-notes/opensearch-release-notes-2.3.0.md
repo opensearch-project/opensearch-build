@@ -226,6 +226,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Increment version to 2.3.0.0 ([#1068](https://github.com/opensearch-project/security-dashboards-plugin/pull/1068))
 
 
+### OpenSearch Geospatial
+* Increment version to 2.3.0-SNAPSHOT ([#137](https://github.com/opensearch-project/geospatial/pull/137))
+
+
 ## REFACTORING
 
 ### OpenSearch k-NN
