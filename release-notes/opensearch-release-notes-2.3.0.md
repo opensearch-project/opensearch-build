@@ -20,12 +20,26 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## ENHANCEMENTS
 
+### OpenSearch Cross Cluster Replication
+* Add lastExecutionTime for autofollow coroutine ([#508](https://github.com/opensearch-project/cross-cluster-replication/pull/508))
+* Modified security artifacts to fetch from latest build version ([#474](https://github.com/opensearch-project/cross-cluster-replication/pull/474))
+* add updateVersion task ([#489](https://github.com/opensearch-project/cross-cluster-replication/pull/489))
+* Bumped snakeyaml version to address CVE-2022-25857 ([#540](https://github.com/opensearch-project/cross-cluster-replication/pull/540))
+
+### OpenSearch Dashboards Maps
+* Adds integration tests in the repo for customImportMap plugin ([#30](https://github.com/opensearch-project/dashboards-maps/pull/30))
+
+
 ### OpenSearch Index Management
 * Replica Count Validation when awareness replica balance is enabled ([#429](https://github.com/opensearch-project/index-management/pull/429))
 * Updated detekt plugin, snakeyaml dependency and code to reduce the number of issues after static analysis ([#483](https://github.com/opensearch-project/index-management/pull/483))
 * Transform max_clauses optimization: limit amount of modified buckets being processed at a time and added capping of pageSize to avoid maxClause exception ([#477](https://github.com/opensearch-project/index-management/pull/477))
 * Remove HOST_DENY_LIST usage as Notification plugin will own it ([#488](https://github.com/opensearch-project/index-management/pull/488))
 * Deprecate Master nonmenclature ([#502](https://github.com/opensearch-project/index-management/pull/502))
+
+
+### OpenSearch Index Management Dashboards Plugin
+* Change alignment of Snapshot Management panels in pages/Main/Main.tsx ([#236](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/236))
 
 
 ### OpenSearch k-NN
@@ -40,10 +54,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Point in time API security changes ([#2033](https://github.com/opensearch-project/security/pull/2033))
 
 
-### OpenSearch Security
-* Point in time API security changes ([#2033](https://github.com/opensearch-project/security/pull/2033))
-
-
 ### OpenSearch SQL
 * Refactor implementation of relevance queries ([#746](https://github.com/opensearch-project/sql/pull/746))
 * Extend query size limit using scroll ([#716](https://github.com/opensearch-project/sql/pull/716))
@@ -51,6 +61,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ## BUG FIXES
+
+### OpenSearch Cross Cluster Replication
+* Updating filters as well during Alias update ([#491](https://github.com/opensearch-project/cross-cluster-replication/pull/491))
+* Modified _stop replication API to remove any stale replication settings on existing index ([#410](https://github.com/opensearch-project/cross-cluster-replication/pull/410))
+* Fix for missing ShardReplicationTasks on new nodes ([#497](https://github.com/opensearch-project/cross-cluster-replication/pull/497))
+* For segrep enabled indices, use NRTReplicationEngine for replica shards ([#486](https://github.com/opensearch-project/cross-cluster-replication/pull/486))
 
 ### OpenSearch Index Management
 * Failed concurrent creates of ISM policies should return http 409 ([#464](https://github.com/opensearch-project/index-management/pull/464))
@@ -71,12 +87,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix legacy check in SecurityAdmin ([#2052](https://github.com/opensearch-project/security/pull/2052))
 
 
-### OpenSearch Security
-* Triple audit logging fix ([#1996](https://github.com/opensearch-project/security/pull/1996))
-* Add allowlist.yml to 3 places in securityadmin tool ([#2046](https://github.com/opensearch-project/security/pull/2046))
-* Fix legacy check in SecurityAdmin ([#2052](https://github.com/opensearch-project/security/pull/2052))
-
-
 ### OpenSearch Security Dashboards Plugin
 * Use expiration of tokens from the id token ([#1040](https://github.com/opensearch-project/security-dashboards-plugin/pull/1040))
 
@@ -86,6 +96,10 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ## INFRASTRUCTURE
+
+### OpenSearch Alerting
+* Deprecate the Master nomenclature. ([#548](https://github.com/opensearch-project/alerting/pull/548))
+
 
 ### OpenSearch Index Management
 * Staging for version increment automation ([#409](https://github.com/opensearch-project/index-management/pull/409))
@@ -107,6 +121,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## DOCUMENTATION
 
+### OpenSearch Anomaly Detection
+* Adding external property customDistributionUrl to let developer override default distribution Download url ([#380](https://github.com/opensearch-project/anomaly-detection/pull/380))
+* Replace Forum link in Anomaly Detection plugin README.md ([#659](https://github.com/opensearch-project/anomaly-detection/pull/659))
+
+
+### OpenSearch Alerting
+* Added 2.3 release notes. ([#551](https://github.com/opensearch-project/alerting/pull/551))
+
 ### OpenSearch Index Management
 * Added 2.3 release note ([#507](https://github.com/opensearch-project/index-management/pull/507))
 
@@ -126,6 +148,33 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ## MAINTENANCE
+
+### OpenSearch Anomaly Detection
+* Removed additional non-inclusive terms ([#644](https://github.com/opensearch-project/anomaly-detection/pull/644))
+* Bump version to 2.3 ([#658](https://github.com/opensearch-project/anomaly-detection/pull/658))
+
+
+
+### OpenSearch Alerting
+* Bumped version to 2.3.0. ([#547](https://github.com/opensearch-project/alerting/pull/547))
+
+
+### OpenSearch Anomaly Detection Dashboards
+* Bump to 2.3 ([#317](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/317))
+
+
+### OpenSearch Asynchronous Search
+* Bump version to 2.3.0 ([#174](https://github.com/opensearch-project/asynchronous-search/pull/174))
+* Replace terminology 'master' with 'cluster manager' ([#175](https://github.com/opensearch-project/asynchronous-search/pull/175))
+
+
+### OpenSearch Dashboards Reports
+* Bump version to 2.3.0 ([#454](https://github.com/opensearch-project/dashboards-reports/pull/454))
+
+
+### OpenSearch Dashboards Visualizations
+* Version bump to 2.3.0 ([#111](https://github.com/opensearch-project/dashboards-visualizations/pull/111))
+
 
 ### OpenSearch Index Management
 * Version upgrade to 2.3.0 ([#484](https://github.com/opensearch-project/index-management/pull/484))
@@ -161,11 +210,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Performance Analyzer
 * Upgrade netty version to 4.1.79 ([#249](https://github.com/opensearch-project/performance-analyzer/pull/249))
 * Jackson version bump ([#247](https://github.com/opensearch-project/performance-analyzer/pull/247))
-
-
-### OpenSearch Security
-* Increment version to 2.3.0.0 ([#2022](https://github.com/opensearch-project/security/pull/2022))
-* Update Gradle to 7.5.1 ([#2027](https://github.com/opensearch-project/security/pull/2027))
 
 
 ### OpenSearch Security
