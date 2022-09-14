@@ -14,8 +14,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.3.0.md).
 
-## BREAKING CHANGES
-
 ## FEATURES
 
 ### OpenSearch SQL
