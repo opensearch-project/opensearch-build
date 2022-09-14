@@ -9,7 +9,7 @@ pipeline {
         choice(
             choices: ['distribution-build-opensearch', 'distribution-build-opensearch-dashboards'],
             name: 'DISTRIBUTION_JOB_NAME',
-            description: 'What platform is this distribution build for?.'
+            description: 'The jenkins job name that is used for building the artifact'
         )
         string(
             defaultValue: '',
