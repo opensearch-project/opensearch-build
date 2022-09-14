@@ -59,3 +59,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: '2.x'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
