@@ -1,6 +1,10 @@
 # OpenSearch and Dashboards 2.3.0 Release Notes
 
 ## Release Highlights
+OpenSearch and OpenSearch Dashboards 2.3 unlocks new approaches to data replication, storage, and visualization with three experimental features. These features are disabled by default and can be enabled per the release documentation [link TK].
+* Segment replication offers users a new data replication strategy. With segment replication, OpenSearch copies Lucene file segments from the primary shard to its replicas, offering performance improvements for high-ingestion workloads.
+* Remote-backed storage lets users deploy cloud storage for increased data durability. Users can back up and restore data from their clusters on a per-index basis using cloud-based storage solutions.
+* A new drag-and-drop visualization tool lets users generate different types of visualizations more quickly and intuitively. Users can drag and drop data fields to generate line, bar, area, and metric charts.
 
 ## Release Details
 
