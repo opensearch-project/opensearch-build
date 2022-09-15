@@ -57,15 +57,6 @@ sourceSets {
         }
     }
 
-    jobs {
-        groovy {
-            srcDirs 'src/jenkins/jobs'
-            compileClasspath += main.compileClasspath
-        }
-
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
 }
 
 sharedLibrary {
@@ -126,4 +117,8 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
+}
+
+tasks.test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
 }
