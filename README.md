@@ -125,7 +125,11 @@ The file is updated when a distribution build job is completed for the given pro
 
 The resolution logic is implemented in the [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
 
-All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. For example, you can download the latest .tar.gz distribution build of OpenSearch 2.2.0 directly at `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.2.0-linux-x64.tar.gz`, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
+All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
+
+For example, you can download the latest .tar.gz distribution build of OpenSearch 2.2.0 directly at `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.2.0-linux-x64.tar.gz`, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
+
+For plugin artifacts, you can also use the `latest` keyword to get the latest plugin artifacts with a known version. E.g. in order to get performance-analyzer x64 tarball artifacts for 2.1.0, you can obtain it with link `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`, which will redirect you to `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/5757/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`.
 
 #### Testing the Distribution
 
