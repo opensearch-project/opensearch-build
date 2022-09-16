@@ -206,13 +206,13 @@ function runOpensearchDashboards {
     # paths. Therefore, OpenSearch-Dashboards provides a mechanism to override
     # reading the cgroup path from /proc/self/cgroup and instead uses the
     # cgroup path defined the configuration properties
-    # cpu.cgroup.path.override and cpuacct.cgroup.path.override.
+    # ops.cGroupOverrides.cpuPath and ops.cGroupOverrides.cpuAcctPath.
     # Therefore, we set this value here so that cgroup statistics are
     # available for the container this process will run in.
 
     exec "$@" \
-        --cpu.cgroup.path.override=/ \
-        --cpuacct.cgroup.path.override=/ \
+        --ops.cGroupOverrides.cpuPath=/ \
+        --ops.cGroupOverrides.cpuAcctPath=/ \
         "${longopts[@]}"
 }
 
