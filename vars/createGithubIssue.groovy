@@ -27,7 +27,10 @@ def call(Map args = [:]){
             if (failedComponents.contains(component.name)) {
                 println("Component ${component.name} failed, creating github issue")
                 compIndex = failedComponents.indexOf(component.name)
-                create_issue(component.name, component.repository, currentVersion, failureMessages[compIndex])
+                if (component.name == "OpenSearch"){
+                    create_issue(component.name, component.repository, currentVersion, failureMessages[compIndex])
+                }
+                // create_issue(component.name, component.repository, currentVersion, failureMessages[compIndex])
                 sleep(time:3,unit:"SECONDS")
             }
         }
