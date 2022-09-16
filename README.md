@@ -123,7 +123,8 @@ The `latest` keyword is resolved to a specific build number by checking an `inde
 
 The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for different combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
 
-The resolution logic is implemented in the [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-build/tree/main/deployment/lambdas/cf-url-rewriter). The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
+The resolution logic is implemented in the [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-ci/tree/main/resources/cf-url-rewriter). 
+The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
 
 All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
 
