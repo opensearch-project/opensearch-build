@@ -9,4 +9,4 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 1.0-healthcheck
+    ref: tags/1.0.0
