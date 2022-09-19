@@ -49,10 +49,10 @@ pipeline {
             defaultValue: true
         )
         booleanParam(
-                    name: 'CREATE_GITHUB_ISSUE',
-                    description: 'To create a github issue for failing component or not.',
-                    defaultValue: false
-                )
+            name: 'CREATE_GITHUB_ISSUE',
+            description: 'To create a github issue for failing component or not.',
+            defaultValue: true
+        )
     }
     stages {
         stage('detect docker image + args') {
