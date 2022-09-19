@@ -16,7 +16,6 @@ jobs:
       - id: set-matrix
         # produces a list of versions, e.g. ["1.0.0","1.0.0","1.0.1","1.1.0","1.2.0","2.0.0"]
         run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | cut -d'/' -f2 | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
-
   check:
     needs: list-manifest-versions
     runs-on: ubuntu-latest
@@ -25,11 +24,11 @@ jobs:
         version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
-      - uses: dblock/create-an-issue@v3.0.0
+      - uses: dblock/create-a-github-issue@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ matrix.version }}
         with:
-          search_existing: open, closed
+          search_existing: all
           update_existing: false
           filename: .github/ISSUE_TEMPLATE/release_template.md
