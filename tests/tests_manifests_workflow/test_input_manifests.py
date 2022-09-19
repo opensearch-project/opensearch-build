@@ -6,6 +6,7 @@
 
 import os
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from manifests_workflow.input_manifests import InputManifests
@@ -15,6 +16,10 @@ class TestInputManifests(unittest.TestCase):
     def test_manifests_path(self) -> None:
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
+
+    def test_workflows_path(self) -> None:
+        path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows"))
+        self.assertEqual(path, InputManifests.workflows_path())
 
     def test_legacy_manifests_path(self) -> None:
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "legacy-manifests"))
@@ -121,6 +126,18 @@ class TestInputManifests(unittest.TestCase):
         mock_open().write.assert_called_once_with(
             f"parameterizedCron '''\n{' ' * 12}H 1 * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml;TARGET_JOB_NAME=distribution-build-test\n"
         )
+
+    def test_versionincrement_workflow(self) -> None:
+        self.assertEqual(
+            InputManifests.versionincrement_workflow(),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows", "increment-plugin-versions.yml"))
+        )
+
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
+    def test_add_to_versionincrement_workflow(self, *mocks: Any) -> None:
+        input_manifests = InputManifests("test")
+        input_manifests.add_to_versionincrement_workflow('0.1.2')
 
     def test_create_manifest_with_components(self) -> None:
         pass

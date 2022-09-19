@@ -12,7 +12,6 @@ jobs:
     env:
       PYTHON_VERSION: 3.7
       JDK_VERSION: 14
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -33,9 +32,19 @@ jobs:
       - name: Update OpenSearch Manifests
         run: |
           ./manifests.sh update
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
           author: opensearch-ci-bot <opensearch-infra@amazon.com>
           commit-message: |
             Updated manifests.

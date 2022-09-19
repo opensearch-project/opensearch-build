@@ -11,6 +11,8 @@ import re
 from abc import abstractmethod
 from typing import Dict, List, Type, Union
 
+import ruamel.yaml
+
 from manifests.input_manifest import InputComponents, InputManifest
 from manifests.manifests import Manifests
 from manifests_workflow.component_opensearch import ComponentOpenSearch
@@ -30,6 +32,10 @@ class InputManifests(Manifests):
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
 
     @classmethod
+    def workflows_path(self) -> str:
+        return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows"))
+
+    @classmethod
     def legacy_manifests_path(self) -> str:
         return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "legacy-manifests"))
 
@@ -40,6 +46,10 @@ class InputManifests(Manifests):
     @classmethod
     def cron_jenkinsfile(self) -> str:
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
+
+    @classmethod
+    def versionincrement_workflow(self) -> str:
+        return os.path.join(self.workflows_path(), "increment-plugin-versions.yml")
 
     @classmethod
     def files(self, name: str) -> List:
@@ -114,6 +124,7 @@ class InputManifests(Manifests):
             for release_version in sorted(main_versions.keys() - known_versions):
                 self.write_manifest(release_version, main_versions[release_version])
                 self.add_to_cron(release_version)
+                self.add_to_versionincrement_workflow(release_version)
 
     def create_manifest(self, version: str, components: List = []) -> InputManifest:
         templates_base_path = os.path.join(self.manifests_path(), "templates")
@@ -160,3 +171,31 @@ class InputManifests(Manifests):
             f.write(data)
 
         logging.info(f"Wrote {jenkinsfile}")
+
+    def add_to_versionincrement_workflow(self, version: str) -> None:
+        versionincrement_workflow_file = self.versionincrement_workflow()
+        yaml = ruamel.yaml.YAML()
+        yaml.explicit_start = True  # type: ignore
+        yaml.preserve_quotes = True  # type: ignore
+
+        with open(versionincrement_workflow_file) as f:
+            data = yaml.load(f)
+
+        version_entry = []
+        major_version_entry = version.split(".")[0] + ".x"
+        minor_version_entry = version.rsplit(".", 1)[0]
+        if minor_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
+            print(f"Adding {minor_version_entry} to {versionincrement_workflow_file}")
+            version_entry.append(minor_version_entry)
+        if major_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
+            print(f"Adding {major_version_entry} to {versionincrement_workflow_file}")
+            version_entry.append(major_version_entry)
+
+        if version_entry:
+            branch_list = list(data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"])
+            branch_list.extend(version_entry)
+            data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"] = branch_list
+            yaml.indent(mapping=2, sequence=4, offset=2)
+            with open(versionincrement_workflow_file, 'w') as f:
+                yaml.dump(data, f)
+            logging.info("Added new version to the version increment workflow")

@@ -31,7 +31,7 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9', ext: 'pom'
     implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
-    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.31'
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.32'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
 }
@@ -57,15 +57,6 @@ sourceSets {
         }
     }
 
-    jobs {
-        groovy {
-            srcDirs 'src/jenkins/jobs'
-            compileClasspath += main.compileClasspath
-        }
-
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
 }
 
 sharedLibrary {
@@ -126,4 +117,8 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
+}
+
+tasks.test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
 }
