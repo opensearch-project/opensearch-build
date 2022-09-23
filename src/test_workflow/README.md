@@ -196,6 +196,8 @@ The development of `test-orchestration-pipeline` is tracked by meta issue [#123]
 
 It is a Jenkins job that runs integration tests on a build artifact. It reads the build artifact composition from the associated manifest files and spins up parallel, independent integrationTest runs for each component built inside the artifact. For instance, if the artifact is a full distribution, which has all OpenSearch plugins, the job will kick off integration test suite for each individual plugin. Each plugin integration tests would run against a dedicated single node cluster, which is created from the built artifact. Once all integration tests complete, this job publishes the test results to an S3 bucket.
 
+See the integration test [configuration file](jenkins/opensearch/integ-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/integ-test/)
+
 The development of `integTest` job is tracked by meta issue [#818](https://github.com/opensearch-project/opensearch-build/issues/818)
 
 #### bwcTest job 
@@ -204,6 +206,8 @@ It is a Jenkins job that runs bwc tests on the current version and compatible bw
 
 When the bwc test is triggered for a particular component, the tests set up their own cluster and test the required functionalities in the upgrade paths, for the example above, a multi-node cluster starts with bwc versions of OpenSearch and AD installed on it, one or more nodes are upgraded to the current version of OpenSearch and AD installed on it and backwards compatibility is tested. The plugins would add tests for all bwc versions (similar to OpenSearch core) and they can be triggered from the bwcTest job.
 
+See the bwc test [configuration file](jenkins/opensearch/bwc-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/bwc-test/)
+
 The development of the bwc test automation is tracked by meta issue [#90](https://github.com/opensearch-project/opensearch-build/issues/90).
 
 #### perfTest job
@@ -211,6 +215,20 @@ The development of the bwc test automation is tracked by meta issue [#90](https:
 It is a Jenkins job that runs performance tests on the bundled artifact using [OpenSearch Benchmark](https://github.com/opensearch-project/OpenSearch-Benchmark) (Mensor). It reads the bundle-manifest, config files and spins up a remote cluster with the bundled artifact installed on it. It will run performance test with and without security for specified architecture of the opensearch bundle. The job will kick off the single node cdk that sets up a remote cluster. It will then run the performance tests on those cluster using the mensor APIs from the whitelisted account and remote cluster endpoint(accessible to mensor system). These tests are bundle level tests. Any plugin on-boarding does not need to be a separate process. If the plugin is a part of the bundle, it is already onboarded. 
 
 Once the performance tests completes (usually takes 5-8 hours for nyc_taxis track), it will report the test results and publish a human readable report in S3 bucket.
+
+See the performance test [configuration file](jenkins/opensearch/perf-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/perf-test/)
+
+You can download the test results report using below url:
+
+```
+https://ci.opensearch.org/ci/dbc/perf-test/<version>/<distribution-build-number>/linux/x64/tar/test-results/<job-build-number>/perf-test/<with/without-security>/perf-test.html
+```
+You can download the json format for above results using same url and replacing `.html` with `.json`
+
+Example:
+https://ci.opensearch.org/ci/dbc/perf-test/1.3.6/6041/linux/x64/tar/test-results/678/perf-test/without-security/perf-test.html
+
+_Note: The without security test results might be not present for distribution that lacks the security plugin. As of now we only run performance tests on tarballs._
 
 Conversion of Performance Test results to HTML file and JSON file:
 
