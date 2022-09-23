@@ -216,7 +216,7 @@ It is a Jenkins job that runs performance tests on the bundled artifact using [O
 
 Once the performance tests completes (usually takes 5-8 hours for nyc_taxis track), it will report the test results and publish a human readable report in S3 bucket.
 
-See the bwc test [configuration file](jenkins/opensearch/perf-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/perf-test/)
+See the performance test [configuration file](jenkins/opensearch/perf-test.jenkinsfile) and related [jenkins job](https://build.ci.opensearch.org/job/perf-test/)
 
 You can download the test results report using below url:
 
