@@ -75,3 +75,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: '2.x'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
