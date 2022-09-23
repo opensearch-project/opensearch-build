@@ -94,9 +94,7 @@ OpenSearch is often released with changes in `opensearch-min`, and no changes to
 
 #### Min Snapshots
 
-Snapshots for core engine can be downloaded and used in CI's, local development, etc using below links:
-
-OpenSearch:
+Snapshots for OpenSearch core/min can be downloaded and used in CI's, local development, etc using below links:
 
 Linux:
 ```
