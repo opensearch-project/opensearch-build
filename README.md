@@ -13,6 +13,7 @@
     - [Building from Source](#building-from-source)
     - [Assembling a Distribution](#assembling-a-distribution)
     - [Building Patches](#building-patches)
+    - [Min snapshots](#min-snapshots)
     - [CI/CD Environment](#cicd-environment)
     - [Build Numbers](#build-numbers)
     - [Latest Distribution Url](#latest-distribution-url)
@@ -90,6 +91,24 @@ See [assemble workflow](src/assemble_workflow) for more information.
 A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.1.1.yml](/manifests/1.1.1/opensearch-1.1.1.yml) for an example.
 
 OpenSearch is often released with changes in `opensearch-min`, and no changes to plugins other than a version bump. This can be performed by a solo Engineer following [a cookbook](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin). See also [opensearch-build#1375](https://github.com/opensearch-project/opensearch-build/issues/1375) which aims to automate incrementing versions for the next development iteration.
+
+#### Min Snapshots
+
+Snapshots for OpenSearch core/min can be downloaded and used in CI's, local development, etc using below links:
+
+Linux:
+```
+https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-linux-x64-latest.tar.gz
+```
+Macos:
+```
+https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-darwin-x64-latest.tar.gz
+```
+
+Windows:
+```
+https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-windows-x64-latest.zip
+```
 
 #### CI/CD Environment
 
