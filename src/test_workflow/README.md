@@ -223,6 +223,8 @@ You can download the test results report using below url:
 ```
 https://ci.opensearch.org/ci/dbc/perf-test/<version>/<distribution-build-number>/linux/x64/tar/test-results/<job-build-number>/perf-test/<with/without-security>/perf-test.html
 ```
+You can download the json format for above results using same url and replacing `.html` with `.json`
+
 Example:
 https://ci.opensearch.org/ci/dbc/perf-test/1.3.6/6041/linux/x64/tar/test-results/678/perf-test/without-security/perf-test.html
 
