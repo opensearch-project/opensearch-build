@@ -1,6 +1,6 @@
    bwc-test.run()
-      bwc-test.legacySCM(groovy.lang.Closure)
-      bwc-test.library({identifier=jenkins@20211118, retriever=null})
+      bwc-test.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      bwc-test.library({identifier=jenkins@1.0.0, retriever=null})
       bwc-test.pipeline(groovy.lang.Closure)
          bwc-test.timeout({time=3, unit=HOURS})
          bwc-test.echo(Executing on agent [label:none])
