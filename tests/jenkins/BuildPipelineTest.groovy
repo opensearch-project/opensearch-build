@@ -10,7 +10,7 @@ package jenkins.tests
 
 import org.junit.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
+// import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import com.lesfurets.jenkins.unit.*
 import org.yaml.snakeyaml.Yaml
@@ -37,7 +37,7 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.0')
+                .defaultVersion('main')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')

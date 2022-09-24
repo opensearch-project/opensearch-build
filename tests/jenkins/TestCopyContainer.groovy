@@ -7,14 +7,18 @@
  */
 import jenkins.tests.BuildPipelineTest
 import org.junit.*
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestCopyContainer extends BuildPipelineTest {
 
     String sourceImage = 'alpine:3.15.4'
     String destinationImage = 'alpine:3.15.4'
 
+    @Override
     @Before
     void setUp() {
+
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
         binding.setVariable('DOCKER_PASSWORD', 'dummy_docker_password')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'sample-agent-AssumeRole')
@@ -23,6 +27,15 @@ class TestCopyContainer extends BuildPipelineTest {
         helper.registerAllowedMethod('withAWS', [Map, Closure], null)
         super.setUp()
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test

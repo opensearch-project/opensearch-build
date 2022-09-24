@@ -7,9 +7,12 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestReleaseTagDashboardsJob extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
 
@@ -23,6 +26,16 @@ class TestReleaseTagDashboardsJob extends BuildPipelineTest {
         binding.setVariable('VERSION', '2.0.0-rc1')
         binding.setVariable('PRODUCT', 'opensearch-dashboards')
         binding.setVariable('DISTRIBUTION_MANIFEST', distManifest)
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
 
     }
 

@@ -8,12 +8,15 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestPromoteContainer extends BuildPipelineTest {
 
     String PROMOTE_PRODUCT = 'opensearch:2.0.1.2901, opensearch-dashboards:2.0.1-2345, data-prepper:2.0.1.123'
     String RELEASE_VERSION = '2.0.1'
 
+    @Override
     @Before
     void setUp() {
         binding.setVariable('SOURCE_IMAGES', PROMOTE_PRODUCT)
@@ -27,6 +30,16 @@ class TestPromoteContainer extends BuildPipelineTest {
 
         helper.registerAllowedMethod('withAWS', [Map, Closure], null)
         super.setUp()
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
 
     }
 
