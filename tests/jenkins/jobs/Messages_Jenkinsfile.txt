@@ -1,5 +1,6 @@
    Messages_Jenkinsfile.run()
-      Messages_Jenkinsfile.library(jenkins)
+      Messages_Jenkinsfile.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      Messages_Jenkinsfile.library({identifier=jenkins@1.0.0, retriever=null})
       Messages_Jenkinsfile.pipeline(groovy.lang.Closure)
          Messages_Jenkinsfile.echo(Executing on agent [label:none])
          Messages_Jenkinsfile.stage(Example Build, groovy.lang.Closure)
