@@ -19,6 +19,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -27,6 +28,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -38,6 +40,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -46,6 +49,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -54,6 +58,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -62,6 +67,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
@@ -70,6 +76,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -78,6 +85,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -86,6 +94,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     working_directory: opensearch-observability
     checks:
       - gradle:properties:version
@@ -95,6 +104,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     working_directory: reports-scheduler
     checks:
       - gradle:properties:version
@@ -104,6 +114,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     working_directory: notifications
     checks:
       - gradle:properties:version
@@ -113,6 +124,7 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     working_directory: notifications
     checks:
       - gradle:properties:version
@@ -130,14 +142,16 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: alerting
-    repository: https://github.com/opensearch-project/alerting.git
-    ref: tags/2.3.0.0
+    repository: https://github.com/peterzhuamazon/alerting.git
+    ref: 'with-backport-572-2300'
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
@@ -146,5 +160,6 @@ components:
     ref: tags/2.3.0.0
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
