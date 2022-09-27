@@ -1,21 +1,7 @@
 ---
-name:  License Header Checker
+name: License Header Checker
 
-on: 
-  push:
-    paths:
-      - '**.js'
-      - '**.py'
-      - '**.groovy'
-      - '**.sh'
-      - '**.ts'
-  pull_request:
-    paths:                    
-      - '**.js'
-      - '**.py'
-      - '**.groovy'
-      - '**.sh'
-      - '**.ts'
+on: [push, pull_request]
 
 jobs:
   license-header-checker:
