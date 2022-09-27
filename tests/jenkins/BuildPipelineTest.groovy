@@ -10,7 +10,6 @@ package jenkins.tests
 
 import org.junit.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-// import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import com.lesfurets.jenkins.unit.*
 import org.yaml.snakeyaml.Yaml
