@@ -135,6 +135,7 @@ components:
       - gradle:dependencies:opensearch.version
     platforms:
       - linux
+      - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: tags/2.3.0.0
