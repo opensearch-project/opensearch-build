@@ -251,6 +251,7 @@ pipeline {
                                 componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 distribution: "zip",
+                                snapshot: true,
                                 platform: "windows"
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
