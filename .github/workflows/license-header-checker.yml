@@ -1,10 +1,24 @@
 ---
-name: Add License Header
+name:  License Header Checker
 
-on: [push, pull_request]
+on: 
+  push:
+    paths:
+      - '**.js'
+      - '**.py'
+      - '**.groovy'
+      - '**.sh'
+      - '**.ts'
+  pull_request:
+    paths:                    
+      - '**.js'
+      - '**.py'
+      - '**.groovy'
+      - '**.sh'
+      - '**.ts'
 
 jobs:
-  add-license-header:
+  license-header-checker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
