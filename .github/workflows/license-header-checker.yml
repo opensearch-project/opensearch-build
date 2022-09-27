@@ -1,0 +1,12 @@
+---
+name: Add License Header
+
+on: [push, pull_request]
+
+jobs:
+  add-license-header:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Add License Header
+        uses: kt3k/license_checker@v1.0.6
