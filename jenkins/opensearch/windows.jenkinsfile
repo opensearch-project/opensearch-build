@@ -199,7 +199,44 @@ pipeline {
                 //        }
                 //    }
                 //}
-                stage('build-snapshot-windows-x64-zip') {
+                //stage('build-snapshot-windows-x64-zip') {
+                //    agent {
+                //        node {
+                //            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
+                //        }
+                //    }
+                //    tools {
+                //        jdk dockerAgent.javaVersion
+                //    }
+                //    options {
+                //        skipDefaultCheckout true
+                //    }
+                //    steps {
+                //        //sh("rm -rf $WORKSPACE/* $WORKSPACE/.git*")
+                //        //sh("git config --system --list")
+                //        checkout scm
+                //        script {
+                //            buildManifest(
+                //                componentName: "${COMPONENT_NAME}",
+                //                inputManifest: "manifests/${INPUT_MANIFEST}",
+                //                distribution: 'zip',
+                //                platform: 'windows',
+                //                snapshot: true
+                //            )
+                //            //echo("Uploading windows min snapshots to S3")
+                //            //uploadMinSnapshotsToS3(
+                //            //    fileActions: [createSha512Checksums()],
+                //            //    distribution: 'zip'
+                //            //)
+                //        }
+                //    }
+                //    post {
+                //        always {
+                //            postCleanup()
+                //        }
+                //    }
+                //}
+                stage('build-and-test-windows-x64-zip') {
                     agent {
                         node {
                             label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
@@ -208,31 +245,34 @@ pipeline {
                     tools {
                         jdk dockerAgent.javaVersion
                     }
-                    options {
-                        skipDefaultCheckout true
-                    }
                     steps {
-                        //sh("rm -rf $WORKSPACE/* $WORKSPACE/.git*")
-                        //sh("git config --system --list")
-                        checkout scm
                         script {
-                            buildManifest(
+                            def buildManifestObj = buildAssembleUpload(
                                 componentName: "${COMPONENT_NAME}",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
-                                distribution: 'zip',
-                                platform: 'windows',
-                                snapshot: true
+                                distribution: "zip",
+                                platform: "windows"
                             )
-                            //echo("Uploading windows min snapshots to S3")
-                            //uploadMinSnapshotsToS3(
-                            //    fileActions: [createSha512Checksums()],
-                            //    distribution: 'zip'
-                            //)
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_WINDOWS_X64_ZIP = artifactUrl
+                            env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+
+                            echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
+                            echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+
                         }
                     }
                     post {
                         always {
-                            postCleanup()
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                )
+
+                                postCleanup()
+                            }
                         }
                     }
                 }
