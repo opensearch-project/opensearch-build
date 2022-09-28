@@ -1,6 +1,6 @@
    integ-test.run()
-      integ-test.legacySCM(groovy.lang.Closure)
-      integ-test.library({identifier=jenkins@20211118, retriever=null})
+      integ-test.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      integ-test.library({identifier=jenkins@1.0.0, retriever=null})
       integ-test.pipeline(groovy.lang.Closure)
          integ-test.credentials(jenkins-artifact-bucket-name)
          integ-test.timeout({time=3, unit=HOURS})

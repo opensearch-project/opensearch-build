@@ -15,8 +15,12 @@ import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.MatcherAssert.assertThat
 
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+
 class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
         this.registerLibTester(new RunPerfTestScriptLibTester(
@@ -29,6 +33,16 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
             false
         ))
         super.setUp()
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test

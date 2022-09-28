@@ -1,6 +1,6 @@
    release-tag.run()
-      release-tag.legacySCM(groovy.lang.Closure)
-      release-tag.library({identifier=jenkins@20211123, retriever=null})
+      release-tag.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      release-tag.library({identifier=jenkins@1.0.0, retriever=null})
       release-tag.pipeline(groovy.lang.Closure)
          release-tag.timeout({time=2, unit=HOURS})
          release-tag.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])

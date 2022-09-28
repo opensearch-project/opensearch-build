@@ -1,6 +1,6 @@
    release-data-prepper-all-artifacts.run()
-      release-data-prepper-all-artifacts.legacySCM(groovy.lang.Closure)
-      release-data-prepper-all-artifacts.library({identifier=jenkins@20211123, retriever=null})
+      release-data-prepper-all-artifacts.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      release-data-prepper-all-artifacts.library({identifier=jenkins@1.0.0, retriever=null})
       release-data-prepper-all-artifacts.pipeline(groovy.lang.Closure)
          release-data-prepper-all-artifacts.credentials(jenkins-data-prepper-artifact-staging-site)
          release-data-prepper-all-artifacts.credentials(jenkins-data-prepper-staging-container-repository)
