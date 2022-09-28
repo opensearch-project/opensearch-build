@@ -5,7 +5,7 @@
 # compatible open source license.
 
 # This is a docker image specifically for standardize the ci/cd environment
-# for both developers and ci/cd tools in OpenSearch / OpenSearch-Dashboards
+# for both developers and ci/cd pipeline for releasing Opensearch clients and other products
 # Please read the README.md file for all the information before using this dockerfile
 
 
