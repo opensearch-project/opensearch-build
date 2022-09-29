@@ -102,11 +102,17 @@ class DistZip(Dist):
 
     def __build__(self, name: str, dest: str) -> None:
         with ZipFile(name, "w", zipfile.ZIP_DEFLATED) as zip:
-            rootlen = len(self.archive_path) + 1
+            # root               : /tmp/tmp********/opensearch-<version+qualifier>
+            # leadingdir         : opensearch-<version+qualifier>
+            # root no leading dir: /tmp/tmp********/
+            # This is to preserve the leading directory `opensearch-<version+qualifier>` in zip
+            rootlen = len(self.archive_path)
+            leadingdirlen = len(os.path.basename(self.archive_path))
+            noleadingdirlen = rootlen - leadingdirlen
             for base, _, files in os.walk(self.archive_path):
                 for file in files:
                     fn = os.path.join(base, file)
-                    zip.write(fn, fn[rootlen:])
+                    zip.write(fn, fn[noleadingdirlen:])
 
 
 class DistRpm(Dist):
