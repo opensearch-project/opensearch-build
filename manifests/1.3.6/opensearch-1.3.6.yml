@@ -26,3 +26,22 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: '1.3'
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
