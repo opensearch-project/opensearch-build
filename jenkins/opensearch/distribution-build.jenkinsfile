@@ -749,7 +749,9 @@ pipeline {
             when {
                 beforeAgent true
                 allOf{
-                    equals(actual: params.BUILD_DOCKER, expected: 'do_not_build_docker')
+                    expression {
+                        params.BUILD_DOCKER != 'do_not_build_docker'
+                    }
                     anyOf{
                         equals(actual: params.BUILD_PLATFORM, expected: 'all')
                         equals(actual: params.BUILD_PLATFORM, expected: 'linux')
