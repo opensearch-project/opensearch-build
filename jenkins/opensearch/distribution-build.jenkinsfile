@@ -75,7 +75,9 @@ pipeline {
             steps {
                 script {
                     def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
+                    echo("User Entry Platforms: ${params.BUILD_PLATFORM}, ${build_platform_array}")
                     def all_platforms = "all linux macos windows"
+                    echo("All Supported Platforms: ${all_platforms}")
                     for (String plat : build_platform_array) {
                         if (! all_platforms.contains(plat)) {
                             currentBuild.result = 'ABORTED'
