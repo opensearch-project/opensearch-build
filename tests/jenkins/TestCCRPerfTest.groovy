@@ -24,30 +24,19 @@ class TestCCRPerfTest extends BuildPipelineTest {
     @Override   
     @Before
     void setUp() {
-        // this.registerLibTester(new RunPerfTestScriptLibTester(
-        //     'tests/jenkins/data/opensearch-1.3.0-bundle.yml',
-        //     '1236',
-        //     '',
-        //     '',
-        //     '',
-        //     '',
-        //     true
-        // ))
-        helper.registerAllowedMethod("s3Download", [Map])
-        helper.registerAllowedMethod("uploadTestResults", [Map])
-        helper.registerAllowedMethod("s3Upload", [Map])
-        helper.registerAllowedMethod("withAWS", [Map, Closure], {
-            args,
-            closure ->
-            closure.delegate = delegate
-            return helper.callClosure(closure)
-        })
-        helper.registerAllowedMethod('findFiles', [Map.class], null)
-        helper.registerAllowedMethod("withCredentials", [Map])
-        helper.registerAllowedMethod("downloadBuildManifest", [Map], {
-            c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-bundle.yml'))
-        })
-        helper.registerAllowedMethod('parameterizedCron', [String], null)
+
+        super.setUp()
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
+
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
@@ -72,18 +61,22 @@ class TestCCRPerfTest extends BuildPipelineTest {
         binding.setVariable('TEST_WORKLOAD', 'nyc_taxis')
         binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
         binding.setVariable('WARMUP_ITERATIONS', '1')
-
-        super.setUp()
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.0')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
+        
+        helper.registerAllowedMethod("s3Download", [Map])
+        helper.registerAllowedMethod("uploadTestResults", [Map])
+        helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], {
+            args,
+            closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("downloadBuildManifest", [Map], {
+            c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-bundle.yml'))
+        })
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
     }
 
     @Test
