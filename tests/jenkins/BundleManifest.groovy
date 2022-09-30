@@ -7,8 +7,15 @@
  * compatible open source license.
  */
 
+package jenkins.tests
 
-package jenkins
+import org.junit.*
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+import com.lesfurets.jenkins.unit.*
+import org.yaml.snakeyaml.Yaml
+
+// package jenkins
 
 
 class BundleManifest implements Serializable {

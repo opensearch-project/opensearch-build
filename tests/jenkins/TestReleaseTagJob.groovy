@@ -6,7 +6,7 @@
 
 
 import jenkins.tests.BuildPipelineTest
-import jenkins.BundleManifest
+import jenkins.tests.BundleManifest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
