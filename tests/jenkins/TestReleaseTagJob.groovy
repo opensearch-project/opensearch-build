@@ -4,7 +4,9 @@
  */
 
 
+
 import jenkins.tests.BuildPipelineTest
+import jenkins.BundleManifest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
@@ -16,6 +18,7 @@ class TestReleaseTagJob extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
+        super.setUp()
 
         def tagVersion = '1.1.0'
         def distManifest = 'tests/data/opensearch-build-1.1.0.yml'
@@ -54,9 +57,7 @@ class TestReleaseTagJob extends BuildPipelineTest {
             }
         }
 
-        super.setUp()
-
-        // Variables for Release Tag Job
+        // Variables for Release Tag 
         binding.setVariable('VERSION', '1.1.0')
         binding.setVariable('PRODUCT', 'opensearch')
         binding.setVariable('DISTRIBUTION_MANIFEST', distManifest)
