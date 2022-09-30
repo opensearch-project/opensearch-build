@@ -109,7 +109,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     environment {
@@ -160,7 +160,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -198,7 +198,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('macos')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('macos')
                         }
                     }
                     agent {
@@ -236,7 +236,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('windows')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -274,7 +274,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -379,7 +379,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -475,7 +475,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -579,7 +579,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -675,7 +675,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('windows')
+                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -745,7 +745,7 @@ pipeline {
                         params.BUILD_DOCKER != 'do_not_build_docker'
                     }
                     expression{
-                        param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
+                        params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
                     }
                 }
             }
