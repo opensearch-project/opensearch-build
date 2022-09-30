@@ -53,3 +53,12 @@ components:
       - gradle:dependencies:opensearch.version
     platforms:
       - linux
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability
+    ref: '1.3'
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
