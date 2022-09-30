@@ -62,3 +62,4 @@ components:
       - gradle:dependencies:opensearch.version
     platforms:
       - linux
+      - windows
