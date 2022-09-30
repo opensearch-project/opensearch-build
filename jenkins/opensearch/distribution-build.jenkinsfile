@@ -41,10 +41,11 @@ pipeline {
             defaultValue: "bwc-test",
             trim: true
         )
-        choice(
+        string(
             name: 'BUILD_PLATFORM',
-            description: 'Build all platform or specific platform related artifacts with option, maven snapshot is only on linux.',
-            choices: ['all', 'linux', 'macos', 'windows'],
+            description: "Build selected platform related artifacts, choices include 'all', 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
+            defaultValue: 'all',
+            trim: true
         )
         choice(
             name: 'BUILD_DOCKER',
@@ -107,9 +108,8 @@ pipeline {
                 stage('build-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     environment {
@@ -159,9 +159,8 @@ pipeline {
                 stage('build-snapshot-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -198,9 +197,8 @@ pipeline {
                 stage('build-snapshot-macos-x64-tar') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'macos')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('macos')
                         }
                     }
                     agent {
@@ -237,9 +235,8 @@ pipeline {
                 stage('build-snapshot-windows-x64-zip') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'windows')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -276,9 +273,8 @@ pipeline {
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -382,9 +378,8 @@ pipeline {
                 stage('build-and-test-linux-x64-rpm') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -479,9 +474,8 @@ pipeline {
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -584,9 +578,8 @@ pipeline {
                 stage('build-and-test-linux-arm64-rpm') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -681,9 +674,8 @@ pipeline {
                 stage('build-and-test-windows-x64-zip') {
                     when {
                         beforeAgent true
-                        anyOf{
-                            equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                            equals(actual: params.BUILD_PLATFORM, expected: 'windows')
+                        expression{
+                            param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -752,9 +744,8 @@ pipeline {
                     expression {
                         params.BUILD_DOCKER != 'do_not_build_docker'
                     }
-                    anyOf{
-                        equals(actual: params.BUILD_PLATFORM, expected: 'all')
-                        equals(actual: params.BUILD_PLATFORM, expected: 'linux')
+                    expression{
+                        param.BUILD_PLATFORM.contains('all') || param.BUILD_PLATFORM.contains('linux')
                     }
                 }
             }
