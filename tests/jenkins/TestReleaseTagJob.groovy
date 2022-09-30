@@ -10,7 +10,6 @@ import org.junit.Test
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import org.yaml.snakeyaml.Yaml
-import jenkins.BundleManifest
 
 class TestReleaseTagJob extends BuildPipelineTest {
 
