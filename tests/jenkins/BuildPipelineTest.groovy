@@ -1,4 +1,5 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * The OpenSearch Contributors require contributions made to
@@ -10,7 +11,7 @@ package jenkins.tests
 
 import org.junit.*
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.ProjectSource.projectSource
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import com.lesfurets.jenkins.unit.*
 import org.yaml.snakeyaml.Yaml
 
@@ -36,11 +37,11 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('<notNeeded>')
+                .defaultVersion('main')
                 .allowOverride(true)
                 .implicit(true)
-                .targetPath('<notNeeded>')
-                .retriever(projectSource())
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
 
@@ -51,6 +52,8 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
         binding.setVariable('scm', {})
 
         helper.registerAllowedMethod("legacySCM", [Closure.class], null)
+        
+        helper.registerAllowedMethod("modernSCM", [Map.class], null)
 
         helper.registerAllowedMethod("library", [Map.class], { Map args ->
             helper.getLibLoader().loadLibrary(args["identifier"])

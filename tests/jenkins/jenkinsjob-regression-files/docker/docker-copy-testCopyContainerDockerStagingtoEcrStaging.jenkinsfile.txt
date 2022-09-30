@@ -1,6 +1,6 @@
    docker-copy.run()
-      docker-copy.legacySCM(groovy.lang.Closure)
-      docker-copy.library({identifier=jenkins@20211123, retriever=null})
+      docker-copy.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      docker-copy.library({identifier=jenkins@1.0.0, retriever=null})
       docker-copy.pipeline(groovy.lang.Closure)
          docker-copy.timeout({time=30})
          docker-copy.echo(Executing on agent [label:none])
@@ -10,10 +10,7 @@
             docker-copy.script(groovy.lang.Closure)
                docker-copy.copyContainer({sourceImage=alpine:3.15.4, sourceRegistry=opensearchstaging, destinationImage=alpine:3.15.4, destinationRegistry=public.ecr.aws/opensearchstaging})
                   copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchstaging})
-                  copyContainer.sh(
-                 gcrane cp opensearchstaging/alpine:3.15.4 public.ecr.aws/opensearchstaging/alpine:3.15.4
-                 docker logout public.ecr.aws/opensearchstaging
-            )
+                  copyContainer.sh(gcrane cp opensearchstaging/alpine:3.15.4 public.ecr.aws/opensearchstaging/alpine:3.15.4; docker logout public.ecr.aws/opensearchstaging)
          docker-copy.script(groovy.lang.Closure)
             docker-copy.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

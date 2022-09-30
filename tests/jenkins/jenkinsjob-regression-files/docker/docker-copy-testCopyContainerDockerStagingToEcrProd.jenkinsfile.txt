@@ -1,6 +1,6 @@
    docker-copy.run()
-      docker-copy.legacySCM(groovy.lang.Closure)
-      docker-copy.library({identifier=jenkins@20211123, retriever=null})
+      docker-copy.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      docker-copy.library({identifier=jenkins@1.0.0, retriever=null})
       docker-copy.pipeline(groovy.lang.Closure)
          docker-copy.timeout({time=30})
          docker-copy.echo(Executing on agent [label:none])
@@ -14,10 +14,7 @@
                   copyContainer.withCredentials([ARTIFACT_PROMOTION_ROLE_NAME, AWS_ACCOUNT_ARTIFACT], groovy.lang.Closure)
                      copyContainer.withAWS({role=ARTIFACT_PROMOTION_ROLE_NAME, roleAccount=AWS_ACCOUNT_ARTIFACT, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         copyContainer.sh({returnStdout=true, script=aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/opensearchproject})
-                        copyContainer.sh(
-                        gcrane cp opensearchstaging/alpine:3.15.4 public.ecr.aws/opensearchproject/alpine:3.15.4
-                        docker logout public.ecr.aws/opensearchproject
-                    )
+                        copyContainer.sh(gcrane cp opensearchstaging/alpine:3.15.4 public.ecr.aws/opensearchproject/alpine:3.15.4; docker logout public.ecr.aws/opensearchproject)
          docker-copy.script(groovy.lang.Closure)
             docker-copy.postCleanup()
                postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

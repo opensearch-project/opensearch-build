@@ -14,10 +14,14 @@ import static org.hamcrest.CoreMatchers.hasItems
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+
 class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
     private String version
 
+    @Override
     @Before
     void setUp() {
 
@@ -45,6 +49,16 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('s3Upload', [Map], {})
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test

@@ -7,9 +7,12 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestMavenSignReleaseJob extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
 
@@ -35,6 +38,16 @@ class TestMavenSignReleaseJob extends BuildPipelineTest {
         binding.setVariable('SONATYPE_STAGING_PROFILE_ID', 'dummy_id')
 
         helper.registerAllowedMethod('checkout', [Map], {})
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
 
     }
 

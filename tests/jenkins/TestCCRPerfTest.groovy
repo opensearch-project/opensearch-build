@@ -1,4 +1,5 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * The OpenSearch Contributors require contributions made to
@@ -15,8 +16,12 @@ import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.MatcherAssert.assertThat
 
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+
 class TestCCRPerfTest extends BuildPipelineTest {
 
+    @Override   
     @Before
     void setUp() {
         this.registerLibTester(new RunPerfTestScriptLibTester(
@@ -29,6 +34,16 @@ class TestCCRPerfTest extends BuildPipelineTest {
             true
         ))
         super.setUp()
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test

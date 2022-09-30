@@ -1,4 +1,5 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * The OpenSearch Contributors require contributions made to
@@ -8,9 +9,12 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
 
@@ -35,6 +39,16 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         binding.setVariable('S3_FILE_UPLOAD_PATH', '/dummy/upload/path/')
         binding.setVariable('DISTRIBUTION_PLATFORM', platform)
         binding.setVariable('SIGNATURE_TYPE', sigtype)
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test

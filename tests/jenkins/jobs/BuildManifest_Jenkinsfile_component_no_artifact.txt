@@ -1,5 +1,6 @@
    BuildManifest_Jenkinsfile_component_no_artifact.run()
-      BuildManifest_Jenkinsfile_component_no_artifact.library(jenkins)
+      BuildManifest_Jenkinsfile_component_no_artifact.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      BuildManifest_Jenkinsfile_component_no_artifact.library({identifier=jenkins@1.0.0, retriever=null})
       BuildManifest_Jenkinsfile_component_no_artifact.pipeline(groovy.lang.Closure)
          BuildManifest_Jenkinsfile_component_no_artifact.echo(Executing on agent [label:none])
          BuildManifest_Jenkinsfile_component_no_artifact.stage(Build Manifest Properties, groovy.lang.Closure)

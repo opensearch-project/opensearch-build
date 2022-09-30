@@ -8,9 +8,12 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 import org.yaml.snakeyaml.Yaml
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
         def jobName = "dummy_job"
@@ -48,6 +51,16 @@ class TestOpenSearchDashboardsBwcTest extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test
