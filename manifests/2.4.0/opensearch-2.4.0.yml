@@ -83,3 +83,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: '2.x'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
