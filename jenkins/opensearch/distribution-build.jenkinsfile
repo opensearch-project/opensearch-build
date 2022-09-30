@@ -456,7 +456,7 @@ pipeline {
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_X64_RPM = artifactUrl
 
-                                    echo "buildManifestUrl (lnux, x64, rpm): ${buildManifestUrl}"
+                                    echo "buildManifestUrl (linux, x64, rpm): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, x64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
