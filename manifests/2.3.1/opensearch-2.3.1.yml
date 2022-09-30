@@ -14,3 +14,30 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: '2.3'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: '2.3'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: '2.3'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
