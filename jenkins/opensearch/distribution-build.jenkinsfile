@@ -41,7 +41,7 @@ pipeline {
             defaultValue: "bwc-test",
             trim: true
         )
-        string(
+        string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
             description: "Build selected platform related artifacts, choices include 'all', 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
             defaultValue: 'all',
@@ -64,6 +64,27 @@ pipeline {
         )
     }
     stages {
+        stage('verify-parameters') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
+                    def all_platforms = "all linux macos windows"
+                    for (String plat : build_platform_array) {
+                        if (! all_platforms.contains(plat)) {
+                            currentBuild.result = 'ABORTED'
+                            error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
+                        }
+                    }
+                }
+            }
+        }
         stage('detect docker image + args') {
             agent {
                 docker {
