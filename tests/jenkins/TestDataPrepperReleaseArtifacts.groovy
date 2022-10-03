@@ -78,6 +78,22 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     }
 
     @Test
+    public void releaseMajorVersionTag(){
+        String majorTag = true
+        binding.setVariable('RELEASE_MAJOR_TAG', majorTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-major-version.jenkinsfile')
+    }
+
+    @Test
+    public void releaseLatestVersionTag(){
+        String latestTag = true
+        binding.setVariable('RELEASE_LATEST_TAG', latestTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-latest-version.jenkinsfile')
+    }
+
+    @Test
     void 'downloads archives from the correct URLs'() {
         runScript('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
 
