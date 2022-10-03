@@ -1,8 +1,0 @@
-   PostCleanup_Jenkinsfile.run()
-      PostCleanup_Jenkinsfile.pipeline(groovy.lang.Closure)
-         PostCleanup_Jenkinsfile.script(groovy.lang.Closure)
-            PostCleanup_Jenkinsfile.postCleanup()
-               postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-         PostCleanup_Jenkinsfile.echo(Executing on agent [label:none])
-         PostCleanup_Jenkinsfile.stage(cleanup, groovy.lang.Closure)
-            PostCleanup_Jenkinsfile.script(groovy.lang.Closure)
