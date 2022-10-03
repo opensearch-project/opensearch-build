@@ -72,3 +72,57 @@ components:
     platforms:
       - linux
       - windows
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: plugin
+    platforms:
+      - linux
+      - windows
