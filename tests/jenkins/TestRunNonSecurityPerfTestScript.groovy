@@ -24,15 +24,55 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
-        this.registerLibTester(new RunPerfTestScriptLibTester(
-            'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml',
-            '1236',
-            'true',
-            'nyc_taxis',
-            '1',
-            '1',
-            false
-        ))
+        // this.registerLibTester(new RunPerfTestScriptLibTester(
+        //     'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml',
+        //     '1236',
+        //     'true',
+        //     'nyc_taxis',
+        //     '1',
+        //     '1',
+        //     false
+        // ))
+        helper.registerAllowedMethod("s3Download", [Map])
+        helper.registerAllowedMethod("uploadTestResults", [Map])
+        helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], {
+            args,
+            closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("downloadBuildManifest", [Map], {
+            c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml'))
+        })
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
+        binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
+        binding.setVariable('ARCHITECTURE', 'x64')
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')
+        binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
+        binding.setVariable('BUILD_ID', '1236')
+        binding.setVariable('env', ['BUILD_NUMBER': '307'])
+        binding.setVariable('BUILD_NUMBER', '307')
+        binding.setVariable('BUILD_URL', 'test://artifact.url')
+        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
+        binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
+        binding.setVariable('GITHUB_USER', 'test_user')
+        binding.setVariable('GITHUB_TOKEN', 'test_token')
+        binding.setVariable('HAS_SECURITY', true)
+        binding.setVariable('JOB_NAME', '307')
+        binding.setVariable('PERF_TEST_CONFIG_LOCATION', 'test_config')
+        binding.setVariable('PUBLIC_ARTIFACT_URL', 'test://artifact.url')
+        binding.setVariable('STAGE_NAME', 'test_stage')
+        binding.setVariable('TEST_ITERATIONS', '1')
+        binding.setVariable('TEST_WORKLOAD', 'nyc_taxis')
+        binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
+        binding.setVariable('WARMUP_ITERATIONS', '1')
+                
         super.setUp()
 
         helper.registerSharedLibrary(
@@ -97,7 +137,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-1236-x64-307 --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
+            "./test.sh perf-test --stack test-single-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml --config config.yml --without-security --workload nyc_taxis --test-iters 1 --warmup-iters 1 ".toString()
         ))
 
         def resultUploadScriptCommands = getCommandExecutions('s3Upload', 'test-results').findAll {
@@ -105,7 +145,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
         }
         assertThat(resultUploadScriptCommands.size(), equalTo(1))
         assertThat(resultUploadScriptCommands, hasItem(
-            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=perf-test/1.3.0/1236/linux/x64/tar/test-results/307}".toString()
+            "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=307/1.3.0/1236/linux/x64/tar/test-results}".toString()
         ))
     }
 

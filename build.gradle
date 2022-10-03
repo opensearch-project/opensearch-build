@@ -118,7 +118,3 @@ jacocoTestReport {
         xml.required = true
     }
 }
-
-tasks.test {
-    maxParallelForks = Runtime.getRuntime().availableProcessors()
-}

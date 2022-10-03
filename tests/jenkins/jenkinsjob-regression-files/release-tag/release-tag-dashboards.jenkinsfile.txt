@@ -10,7 +10,7 @@
                release-tag.echo(The release distribution manifest is downloaded to tests/jenkins/data/opensearch-dashboards-bundle-2.0.0-rc1.yml)
                release-tag.createReleaseTag({distManifest=tests/jenkins/data/opensearch-dashboards-bundle-2.0.0-rc1.yml, tagVersion=2.0.0-rc1})
                   createReleaseTag.legacySCM(groovy.lang.Closure)
-                  createReleaseTag.library({identifier=jenkins@20211123, retriever=null})
+                  createReleaseTag.library({identifier=jenkins@main, retriever=null})
                   createReleaseTag.readYaml({file=tests/jenkins/data/opensearch-dashboards-bundle-2.0.0-rc1.yml})
                   BundleManifest.asBoolean()
                   BundleManifest.getNames()

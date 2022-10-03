@@ -10,7 +10,7 @@
                release-tag.echo(The release distribution manifest is downloaded to tests/data/opensearch-build-1.1.0.yml)
                release-tag.createReleaseTag({distManifest=tests/data/opensearch-build-1.1.0.yml, tagVersion=1.1.0})
                   createReleaseTag.legacySCM(groovy.lang.Closure)
-                  createReleaseTag.library({identifier=jenkins@20211123, retriever=null})
+                  createReleaseTag.library({identifier=jenkins@main, retriever=null})
                   createReleaseTag.readYaml({file=tests/data/opensearch-build-1.1.0.yml})
                   BundleManifest.asBoolean()
                   BundleManifest.getNames()

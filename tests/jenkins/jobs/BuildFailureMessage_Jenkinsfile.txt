@@ -1,6 +1,0 @@
-   BuildFailureMessage_Jenkinsfile.run()
-      BuildFailureMessage_Jenkinsfile.pipeline(groovy.lang.Closure)
-         BuildFailureMessage_Jenkinsfile.echo(Executing on agent [label:none])
-         BuildFailureMessage_Jenkinsfile.stage(notify, groovy.lang.Closure)
-            BuildFailureMessage_Jenkinsfile.script(groovy.lang.Closure)
-               BuildFailureMessage_Jenkinsfile.buildFailureMessage()
