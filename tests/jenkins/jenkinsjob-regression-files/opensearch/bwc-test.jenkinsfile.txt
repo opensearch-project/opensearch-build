@@ -13,7 +13,7 @@
             bwc-test.script(groovy.lang.Closure)
                bwc-test.detectTestDockerAgent()
                   detectTestDockerAgent.legacySCM(groovy.lang.Closure)
-                  detectTestDockerAgent.library({identifier=jenkins@20211123, retriever=null})
+                  detectTestDockerAgent.library({identifier=jenkins@main, retriever=null})
                   detectTestDockerAgent.readYaml({file=manifests/tests/jenkins/data/opensearch-1.3.0-test.yml})
                   TestManifest.asBoolean()
                   detectTestDockerAgent.echo(Using Docker image opensearchstaging/ci-runner:ci-runner-centos7-v1 (null))
@@ -22,7 +22,7 @@
             bwc-test.script(groovy.lang.Closure)
                bwc-test.downloadBuildManifest({url=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.0/717/linux/x64/dist/opensearch/opensearch-1.3.0-linux-x64.tar.gz, path=tests/jenkins/data/opensearch-1.3.0-build.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
-                  downloadBuildManifest.library({identifier=jenkins@20211123, retriever=null})
+                  downloadBuildManifest.library({identifier=jenkins@main, retriever=null})
                   downloadBuildManifest.sh(curl -sSL https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.0/717/linux/x64/dist/opensearch/opensearch-1.3.0-linux-x64.tar.gz --output tests/jenkins/data/opensearch-1.3.0-build.yml)
                   downloadBuildManifest.readYaml({file=tests/jenkins/data/opensearch-1.3.0-build.yml})
                   BuildManifest.asBoolean()
@@ -31,17 +31,17 @@
                bwc-test.echo(BUILD_ID: 717)
                bwc-test.runBwcTestScript({jobName=dummy_job, buildManifest=tests/jenkins/data/opensearch-1.3.0-build.yml, testManifest=manifests/tests/jenkins/data/opensearch-1.3.0-test.yml, buildId=717})
                   runBwcTestScript.legacySCM(groovy.lang.Closure)
-                  runBwcTestScript.library({identifier=jenkins@20211123, retriever=null})
+                  runBwcTestScript.library({identifier=jenkins@main, retriever=null})
                   runBwcTestScript.readYaml({file=tests/jenkins/data/opensearch-1.3.0-build.yml})
                   BuildManifest.asBoolean()
                   BuildManifest.getArtifactRootUrl(dummy_job, 717)
                   runBwcTestScript.echo(Artifact root URL: https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
                   runBwcTestScript.echo(Paths: opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
-                  runBwcTestScript.sh(./test.sh bwc-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --test-run-id 487 --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
+                  runBwcTestScript.sh(./test.sh bwc-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --test-run-id 717 --paths opensearch=https://ci.opensearch.org/ci/dbc/dummy_job/1.3.0/717/linux/x64/tar)
          bwc-test.script(groovy.lang.Closure)
             bwc-test.uploadTestResults({buildManifestFileName=tests/jenkins/data/opensearch-1.3.0-build.yml, jobName=dummy_job})
                uploadTestResults.legacySCM(groovy.lang.Closure)
-               uploadTestResults.library({identifier=jenkins@20211123, retriever=null})
+               uploadTestResults.library({identifier=jenkins@main, retriever=null})
                uploadTestResults.readYaml({file=tests/jenkins/data/opensearch-1.3.0-build.yml})
                BuildManifest.asBoolean()
                uploadTestResults.echo(Build Id: 717)
@@ -72,7 +72,7 @@
                   publishNotification.withCredentials([WEBHOOK_URL], groovy.lang.Closure)
                      publishNotification.sh(curl -XPOST --header "Content-Type: application/json" --data '{"result_text":":white_check_mark:
 JOB_NAME=dummy_job
-BUILD_NUMBER=[123]
+BUILD_NUMBER=[717]
 MESSAGE=BWC Tests Successful
 BUILD_URL: htth://BUILD_URL_dummy.com
 MANIFEST: tests/jenkins/data/opensearch-1.3.0-test.yml

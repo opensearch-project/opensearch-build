@@ -24,15 +24,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
     @Override   
     @Before
     void setUp() {
-        this.registerLibTester(new RunPerfTestScriptLibTester(
-            'tests/jenkins/data/opensearch-1.3.0-bundle.yml',
-            '1236',
-            '',
-            '',
-            '',
-            '',
-            true
-        ))
+
         super.setUp()
 
         helper.registerSharedLibrary(
@@ -44,6 +36,47 @@ class TestCCRPerfTest extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
         )
+
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
+        binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
+        binding.setVariable('ARCHITECTURE', 'x64')
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')
+        binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
+        binding.setVariable('BUILD_ID', '1236')
+        binding.setVariable('env', ['BUILD_NUMBER': '307'])
+        binding.setVariable('BUILD_NUMBER', '307')
+        binding.setVariable('BUILD_URL', 'test://artifact.url')
+        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-bundle.yml')
+        binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
+        binding.setVariable('GITHUB_USER', 'test_user')
+        binding.setVariable('GITHUB_TOKEN', 'test_token')
+        binding.setVariable('HAS_SECURITY', true)
+        binding.setVariable('JOB_NAME', 'perf-test')
+        binding.setVariable('PERF_TEST_CONFIG_LOCATION', 'test_config')
+        binding.setVariable('PUBLIC_ARTIFACT_URL', 'test://artifact.url')
+        binding.setVariable('STAGE_NAME', 'test_stage')
+        binding.setVariable('TEST_ITERATIONS', '1')
+        binding.setVariable('TEST_WORKLOAD', 'nyc_taxis')
+        binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
+        binding.setVariable('WARMUP_ITERATIONS', '1')
+        
+        helper.registerAllowedMethod("s3Download", [Map])
+        helper.registerAllowedMethod("uploadTestResults", [Map])
+        helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], {
+            args,
+            closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('findFiles', [Map.class], null)
+        helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod("downloadBuildManifest", [Map], {
+            c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-bundle.yml'))
+        })
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
     }
 
     @Test

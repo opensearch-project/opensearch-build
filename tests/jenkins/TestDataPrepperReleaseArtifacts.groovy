@@ -29,7 +29,17 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         String sourceImageRepository = 'http://public.ecr.aws/data-prepper-container-repository'
 
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
+        // this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        helper.registerAllowedMethod('git', [Map])
+        helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
         super.setUp()
 
