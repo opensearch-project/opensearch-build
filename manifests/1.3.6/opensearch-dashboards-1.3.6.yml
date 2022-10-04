@@ -10,3 +10,34 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: '1.3'
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '1.3'
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '1.3'
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '1.3'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: '1.3'
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: '1.3'
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: dashboards-reports
+    ref: '1.3'
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    working_directory: gantt-chart
+    ref: '1.3'
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/observability.git
+    working_directory: dashboards-observability
+    ref: '1.3'
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: '1.3'

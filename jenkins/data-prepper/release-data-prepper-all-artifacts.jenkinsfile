@@ -11,6 +11,8 @@ pipeline {
     parameters {
         string(name: 'VERSION', description: 'The version of Data Prepper', trim: true)
         string(name: 'DATA_PREPPER_BUILD_NUMBER', description: 'The build number of the Data Prepper build from GitHub to release.', trim: true)
+        booleanParam(name: 'RELEASE_MAJOR_TAG', description: 'Whether to create major tag of docker image or not', defaultValue: false)
+        booleanParam(name: 'RELEASE_LATEST_TAG', description: 'Whether to create latest tag of docker image or not', defaultValue: false)
     }
     environment {
         DATA_PREPPER_ARTIFACT_STAGING_SITE = credentials('jenkins-data-prepper-artifact-staging-site')
@@ -92,6 +94,29 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchproject'),
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
+
+                            if (RELEASE_MAJOR_TAG) {
+                                def majorVersion = VERSION.tokenize(".")[0].trim()
+                                def dockerCopyHubMajor =
+                                    build job: 'docker-copy',
+                                    parameters: [
+                                        string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                        string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchproject'),
+                                        string(name: 'DESTINATION_IMAGE', value: "data-prepper:${majorVersion}")
+                                    ]
+                            }
+
+                            if (RELEASE_LATEST_TAG) {
+                                def dockerCopyHubLatest =
+                                    build job: 'docker-copy',
+                                    parameters: [
+                                        string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                        string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'opensearchproject'),
+                                        string(name: 'DESTINATION_IMAGE', value: "data-prepper:latest")
+                                    ]
+                            }
                         }
                     }
                 }
@@ -106,6 +131,29 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'public.ecr.aws/opensearchproject'),
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
+
+                            if (RELEASE_MAJOR_TAG) {
+                                def majorVersion = VERSION.tokenize(".")[0].trim()
+                                def dockerCopyECRMajor =
+                                    build job: 'docker-copy',
+                                    parameters: [
+                                        string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                        string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'public.ecr.aws/opensearchproject'),
+                                        string(name: 'DESTINATION_IMAGE', value: "data-prepper:${majorVersion}")
+                                    ]
+                            }
+
+                            if (RELEASE_LATEST_TAG) {
+                                def dockerCopyECRLatest =
+                                    build job: 'docker-copy',
+                                    parameters: [
+                                        string(name: 'SOURCE_IMAGE_REGISTRY', value: "${DATA_PREPPER_STAGING_CONTAINER_REPOSITORY}"),
+                                        string(name: 'SOURCE_IMAGE', value: "data-prepper:${VERSION}-${DATA_PREPPER_BUILD_NUMBER}"),
+                                        string(name: 'DESTINATION_IMAGE_REGISTRY', value: 'public.ecr.aws/opensearchproject'),
+                                        string(name: 'DESTINATION_IMAGE', value: "data-prepper:latest")
+                                    ]
+                            }
                         }
                     }
                 }

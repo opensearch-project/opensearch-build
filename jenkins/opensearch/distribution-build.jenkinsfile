@@ -43,8 +43,8 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'all', 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
-            defaultValue: 'all',
+            description: "Build selected platform related artifacts, choices include 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
+            defaultValue: 'linux macos windows',
             trim: true
         )
         choice(
@@ -64,44 +64,6 @@ pipeline {
         )
     }
     stages {
-        stage('verify-parameters') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image 'alpine:3'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
-                    echo("User Entry Platforms: ${params.BUILD_PLATFORM}, ${build_platform_array}")
-                    def all_platforms = "all linux macos windows"
-                    echo("All Supported Platforms: ${all_platforms}")
-                    for (String plat : build_platform_array) {
-                        if (! all_platforms.contains(plat)) {
-                            currentBuild.result = 'ABORTED'
-                            error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
-                        }
-                    }
-                }
-            }
-        }
-        stage('detect docker image + args') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image 'alpine:3'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    dockerAgent = detectDockerAgent()
-                    currentBuild.description = INPUT_MANIFEST
-                }
-            }
-        }
         stage('Initialize the job info yaml report') {
             agent {
                 docker {
@@ -126,13 +88,41 @@ pipeline {
                 }
             }
         }
+        stage('verify-parameters') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    echo("Detect Docker Images and Related Parameters")
+                    dockerAgent = detectDockerAgent()
+                    currentBuild.description = INPUT_MANIFEST
+
+                    echo("Verify Build Platforms")
+                    def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
+                    echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
+                    def all_platforms = "linux macos windows"
+                    echo("All Supported Platforms: '${all_platforms}'")
+                    for (String plat : build_platform_array) {
+                        if (! all_platforms.contains(plat)) {
+                            currentBuild.result = 'ABORTED'
+                            error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
+                        }
+                    }
+                }
+            }
+        }
         stage('build') {
             parallel {
                 stage('build-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     environment {
@@ -183,7 +173,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -221,7 +211,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('macos')
+                            params.BUILD_PLATFORM.contains('macos')
                         }
                     }
                     agent {
@@ -259,7 +249,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('windows')
+                            params.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -297,7 +287,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -402,7 +392,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -498,7 +488,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent {
@@ -602,7 +592,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                            params.BUILD_PLATFORM.contains('linux')
                         }
                     }
                     agent { label AGENT_X64 }
@@ -698,7 +688,7 @@ pipeline {
                     when {
                         beforeAgent true
                         expression{
-                            params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('windows')
+                            params.BUILD_PLATFORM.contains('windows')
                         }
                     }
                     agent {
@@ -768,7 +758,7 @@ pipeline {
                         params.BUILD_DOCKER != 'do_not_build_docker'
                     }
                     expression{
-                        params.BUILD_PLATFORM.contains('all') || params.BUILD_PLATFORM.contains('linux')
+                        params.BUILD_PLATFORM.contains('linux')
                     }
                 }
             }
