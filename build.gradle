@@ -71,7 +71,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'script-security', '1172.v35f6a_0b_8207e')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.jenkins-ci.plugins', 'junit', '1.55')
+        dependency('org.jenkins-ci.plugins', 'junit', '1143.v8d9a_e3355270')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
 }
