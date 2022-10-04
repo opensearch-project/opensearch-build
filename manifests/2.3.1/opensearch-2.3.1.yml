@@ -44,3 +44,6 @@ components:
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: '2.3'
+    platforms:
+      - linux
+      - windows
