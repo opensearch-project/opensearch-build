@@ -64,30 +64,6 @@ pipeline {
         )
     }
     stages {
-        stage('Initialize the job info yaml report') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image dockerAgent.image
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    buildInfoYaml(
-                        componentName: COMPONENT_NAME,
-                        inputManifest: "manifests/$INPUT_MANIFEST",
-                        status: "NOT_STARTED",
-                        stage: "INITIALIZE_STAGE"
-                    )
-                }
-            }
-            post {
-                always {
-                    postCleanup()
-                }
-            }
-        }
         stage('verify-parameters') {
             agent {
                 docker {
@@ -113,6 +89,30 @@ pipeline {
                             error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
                         }
                     }
+                }
+            }
+        }
+        stage('Initialize the job info yaml report') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    buildInfoYaml(
+                        componentName: COMPONENT_NAME,
+                        inputManifest: "manifests/$INPUT_MANIFEST",
+                        status: "NOT_STARTED",
+                        stage: "INITIALIZE_STAGE"
+                    )
+                }
+            }
+            post {
+                always {
+                    postCleanup()
                 }
             }
         }
