@@ -17,18 +17,27 @@ components:
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: main
+    platforms:
+      - linux
+      - windows
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
     ref: main
+    platforms:
+      - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
+    platforms:
+      - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
