@@ -76,5 +76,8 @@ chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.sh
 
 if [ "$PLATFORM" = "windows" ]; then
     chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.bat
+
+    # Temporary solution to run shell script on Windows through mingw
+    # Tracking issue: https://github.com/opensearch-project/security/issues/2148
     $OUTPUT/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
 fi
