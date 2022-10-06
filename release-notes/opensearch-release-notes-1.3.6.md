@@ -63,6 +63,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Bump version to 1.3.6 ([#1059](https://github.com/opensearch-project/observability/pull/1059))
 
 ### Opensearch Security
-* Updates jackson version to 2.13.4 ([#2128](https://github.com/opensearch-project/security/pull/2128))
+* Update jackson version to 2.13.4 ([#2128](https://github.com/opensearch-project/security/pull/2128))
 * Update Kafka Client to 3.0.2 ([#2129](https://github.com/opensearch-project/security/pull/2129))
 * Staging for version increment automation  ([#2029](https://github.com/opensearch-project/security/pull/2029))
