@@ -14,3 +14,6 @@ components:
     repository: https://github.com/opensearch-project/notifications.git
     working_directory: dashboards-notifications
     ref: '2.x'
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '2.x'
