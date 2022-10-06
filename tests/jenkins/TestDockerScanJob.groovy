@@ -18,7 +18,7 @@ class TestDockerScanJob extends BuildPipelineTest {
 
         super.setUp()
 
-        // Variables for Maven Sign Release job
+        // Variables
         binding.setVariable('IMAGE_FULL_NAME', 'alpine:3')
 
     }
