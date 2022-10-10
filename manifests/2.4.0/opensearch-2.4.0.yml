@@ -112,11 +112,10 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: tags/2.4.0.0
+    ref: '2.x'
     platforms:
       - linux
     working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-      
