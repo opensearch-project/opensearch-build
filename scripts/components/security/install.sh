@@ -17,13 +17,12 @@ function usage() {
     echo -e "-s SNAPSHOT\t[Optional] Build a snapshot, default is 'false'."
     echo -e "-p PLATFORM\t[Optional] Platform, default is 'uname -s'."
     echo -e "-a ARCHITECTURE\t[Optional] Build architecture, default is 'uname -m'."
-    echo -e "-d DISTRIBUTION\t[Optional] Distribution, default is 'tar'."
     echo -e "-f ARTIFACTS\t[Optional] Location of build artifacts."
     echo -e "-o OUTPUT\t[Optional] Output path."
     echo -e "-h help"
 }
 
-while getopts ":h:v:s:o:p:a:d:f:" arg; do
+while getopts ":h:v:q:s:o:p:a:f:" arg; do
     case $arg in
         h)
             usage
@@ -31,6 +30,9 @@ while getopts ":h:v:s:o:p:a:d:f:" arg; do
             ;;
         v)
             VERSION=$OPTARG
+            ;;
+        q)
+            QUALIFIER=$OPTARG
             ;;
         s)
             SNAPSHOT=$OPTARG
@@ -43,9 +45,6 @@ while getopts ":h:v:s:o:p:a:d:f:" arg; do
             ;;
         a)
             ARCHITECTURE=$OPTARG
-            ;;
-        d)
-            DISTRIBUTION=$OPTARG
             ;;
         f)
             ARTIFACTS=$ARTIFACTS
@@ -71,20 +70,14 @@ fi
 [ -z "$SNAPSHOT" ] && SNAPSHOT="false"
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
-[ -z "$DISTRIBUTION" ] && DISTRIBUTION="tar"
 
-# Make sure the cwd is where the script is located
-DIR="$(dirname "$0")"
-echo $DIR
-cd $DIR
+SECURITY_PLUGIN="opensearch-security"
+chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.sh
 
-## Copy the tar installation script into the bundle
-if [ "$DISTRIBUTION" = "tar" ]; then
-    cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
+if [ "$PLATFORM" = "windows" ]; then
+    chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.bat
 
-elif [ "$DISTRIBUTION" = "rpm" ]; then
-    cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
-    cp -va ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
-elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
-    cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
+    # Temporary solution to run shell script on Windows through MinGW
+    # Tracking issue: https://github.com/opensearch-project/security/issues/2148
+    $OUTPUT/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
 fi
