@@ -278,8 +278,10 @@ Each jenkins library should have a test case associated with it. Eg: [TestSignAr
   and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
 - If using remote libs from [opensearch-build-libraries](https://github.com/opensearch-project/opensearch-build-libraries) repository with tag (ex: 1.0.0), make sure
   both the Jenkins Test file as well as the Jenkins Job file are overriding the libs version with the same tag (ex: 1.0.0), or Jacoco test will fail to generate reports.
-  This would happen if the defaultVersion in BuildPipelineTest.groovy (using 'main' branch) have a different HEAD commit id compares to the tag commit id you defined to use.
+  This would happen if the defaultVersion in BuildPipelineTest.groovy (default to 'main') have a different HEAD commit id compares to the tag commit id you defined to use.
 ```
+super.setUp()
+......
 helper.registerSharedLibrary(
     library().name('jenkins')
         .defaultVersion('1.0.0')
