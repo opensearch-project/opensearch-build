@@ -23,18 +23,15 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
+        super.setUp()
+
         binding.setVariable('INPUT_MANIFEST', inputManifest)
         binding.setVariable('GIT_LOG_DATE', gitLogDate)
         binding.setVariable('COMMENT', comment)
         binding.setVariable('GIT_ISSUE_NUMBER', gitIssueNumber)
         binding.setVariable('COMMENT_UNIQUE_ID', commentUniqueID)
-
         binding.setVariable('AGENT_X64','Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
-        binding.setVariable('AGENT_ARM64','Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host')
-
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11'])
-
-        super.setUp()
 
         helper.registerSharedLibrary(
             library().name('jenkins')
@@ -45,14 +42,11 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
         )
-
     }
 
     @Test
     public void testReleaseNoteCheck() {
-
         super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-check.jenkinsfile")
     }
-
 }
