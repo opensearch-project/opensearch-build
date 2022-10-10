@@ -80,9 +80,11 @@ cd $DIR
 
 ## Copy the tar installation script into the bundle
 if [ "$DISTRIBUTION" = "tar" ]; then
-    cp ../../../scripts/legacy/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
+    cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
 
 elif [ "$DISTRIBUTION" = "rpm" ]; then
-    cp -a ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
-    cp -a ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
+    cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
+    cp -va ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
+elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
+    cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
 fi

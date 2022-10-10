@@ -71,12 +71,13 @@ fi
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
+SECURITY_PLUGIN="opensearch-security"
+chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.sh
+
 if [ "$PLATFORM" = "windows" ]; then
-    echo "Install Security Plugin Demo Configuration for Windows"
-    SECURITY_PLUGIN="opensearch-security"
-    cd $ARTOFACTS
-    ls -l
-    ls -l config/$SECURITY_PLUGIN
-    ./plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
-    ls -l config/$SECURITY_PLUGIN
+    chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.bat
+
+    # Temporary solution to run shell script on Windows through MinGW
+    # Tracking issue: https://github.com/opensearch-project/security/issues/2148
+    $OUTPUT/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
 fi
