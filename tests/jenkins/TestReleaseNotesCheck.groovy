@@ -33,6 +33,15 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
         binding.setVariable('AGENT_X64','Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11'])
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
     }
 
     @Test
