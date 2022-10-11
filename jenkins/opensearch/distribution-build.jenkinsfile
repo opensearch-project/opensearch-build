@@ -118,7 +118,7 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-snapshot-linux-x64-tar') {
+                stage('build-distribution-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
                         expression{
@@ -156,11 +156,6 @@ pipeline {
                             } else {
                                 echo "Skipping publishing snapshots, ${mavenPath} does not exist."
                             }
-                            echo("Uploading min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'tar'
-                            )
                         }
                     }
                     post {
@@ -168,17 +163,20 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }
-                stage('build-snapshot-linux-arm64-tar') {
+                }  
+                stage('build-opensearch-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
                         expression{
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
+                    environment {
+                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
+                    }
                     agent {
                         docker {
-                            label AGENT_ARM64
+                            label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
                             alwaysPull true
@@ -187,7 +185,7 @@ pipeline {
                     steps {
                         script {
                             buildManifest(
-                                componentName: "${COMPONENT_NAME}",
+                                componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64',
@@ -207,7 +205,45 @@ pipeline {
                         }
                     }
                 }
-                stage('build-snapshot-macos-x64-tar') {
+                stage('build-opensearch-snapshot-linux-arm64-tar') {
+                    when {
+                        beforeAgent true
+                        expression{
+                            params.BUILD_PLATFORM.contains('linux')
+                        }
+                    }
+                    agent {
+                        docker {
+                            label AGENT_ARM64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'x64',
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-opensearch-snapshot-macos-x64-tar') {
                     when {
                         beforeAgent true
                         expression{
@@ -225,7 +261,7 @@ pipeline {
                     steps {
                         script {
                             buildManifest(
-                                componentName: "${COMPONENT_NAME}",
+                                componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'darwin',
                                 architecture: 'x64',
@@ -245,7 +281,7 @@ pipeline {
                         }
                     }
                 }
-                stage('build-snapshot-windows-x64-zip') {
+                stage('build-opensearch-snapshot-windows-x64-zip') {
                     when {
                         beforeAgent true
                         expression{
@@ -263,7 +299,7 @@ pipeline {
                     steps {
                         script {
                             buildManifest(
-                                componentName: "${COMPONENT_NAME}",
+                                componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'windows',
                                 architecture: 'x64',
@@ -849,4 +885,3 @@ pipeline {
         }
     }
 }
-
