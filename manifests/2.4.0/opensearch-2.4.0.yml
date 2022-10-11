@@ -115,6 +115,7 @@ components:
     ref: '2.x'
     platforms:
       - linux
+      - windows
     working_directory: reports-scheduler
     checks:
       - gradle:properties:version
