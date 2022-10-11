@@ -72,6 +72,7 @@ fi
 [ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 
 SECURITY_PLUGIN="opensearch-security"
+ls -l $OUTPUT/plugins/$SECURITY_PLUGIN/tools
 chmod -c 755 $OUTPUT/plugins/$SECURITY_PLUGIN/tools/*.sh
 
 if [ "$PLATFORM" = "windows" ]; then
