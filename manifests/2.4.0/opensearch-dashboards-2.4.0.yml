@@ -21,3 +21,4 @@ components:
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
     ref: '2.x'
+    
