@@ -21,7 +21,7 @@ class TestWhileSourceScan extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.2')
+                .defaultVersion('main')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
