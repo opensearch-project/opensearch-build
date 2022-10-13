@@ -10,12 +10,14 @@ import logging
 from test_workflow.integ_test.distribution import Distribution
 from test_workflow.integ_test.distribution_rpm import DistributionRpm
 from test_workflow.integ_test.distribution_tar import DistributionTar
+from test_workflow.integ_test.distribution_zip import DistributionZip
 
 
 class Distributions:
     DISTRIBUTIONS_MAP = {
         "tar": DistributionTar,
         "rpm": DistributionRpm,
+        "zip": DistributionZip,
     }
 
     @classmethod
