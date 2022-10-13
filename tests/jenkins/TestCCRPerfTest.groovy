@@ -18,6 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+import org.yaml.snakeyaml.Yaml
 
 class TestCCRPerfTest extends BuildPipelineTest {
 
@@ -27,9 +28,12 @@ class TestCCRPerfTest extends BuildPipelineTest {
 
         super.setUp()
 
+        def load_version_yml = readYaml(file: 'jenkins_lib_version.yaml')
+        def version = load_version_yml.default
+
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.0')
+                .defaultVersion("${version}")
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -61,7 +65,6 @@ class TestCCRPerfTest extends BuildPipelineTest {
         binding.setVariable('TEST_WORKLOAD', 'nyc_taxis')
         binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
         binding.setVariable('WARMUP_ITERATIONS', '1')
-        
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])

@@ -37,18 +37,16 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('main')
+                .defaultVersion("main")
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
-
         helper.registerAllowedMethod("readYaml", [Map.class], { args ->
             return new Yaml().load((args.file as File).text)
         })
-
         binding.setVariable('scm', {})
 
         helper.registerAllowedMethod("legacySCM", [Closure.class], null)
