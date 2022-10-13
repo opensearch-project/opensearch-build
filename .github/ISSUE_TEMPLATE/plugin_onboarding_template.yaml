@@ -42,8 +42,8 @@ body:
       required: true
   -
     attributes:
-      description: "Does this plugin has all the necessary automated tests?"
-      label: "Does this plugin have necessary scripts to invoke integration and BWC tests?"
+      description: "Does this plugin have necessary scripts to invoke integration and BWC tests?"
+      label: "Does this plugin has all the necessary automated tests?"
     id: tests
     type: textarea
     validations:
