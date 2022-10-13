@@ -42,6 +42,14 @@ body:
       required: true
   -
     attributes:
+      description: "Does this plugin has all the necessary automated tests?"
+      label: "Does this plugin have necessary scripts to invoke integration and BWC tests?"
+    id: tests
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
       description: "Confirm that all the necessary reviews for this component has been completed."
       label: "Have you completed the required reviews including Security reviews, UX reviews?"
     id: reviews
