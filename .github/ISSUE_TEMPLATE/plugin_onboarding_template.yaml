@@ -10,7 +10,7 @@ body:
         Thanks for taking the time to submit on-boarding request!
   -
     attributes:
-      description: "Provide the name link of your plugin"
+      description: "Provide the name of your plugin"
       label: "What is the name of your plugin?"
     id: plugin-name
     type: textarea
