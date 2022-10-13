@@ -138,3 +138,12 @@ components:
       - windows
     checks:
       - gradle:properties:version
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '2.x'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
