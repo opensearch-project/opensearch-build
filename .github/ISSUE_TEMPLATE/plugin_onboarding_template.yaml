@@ -8,64 +8,56 @@ body:
     attributes:
       value: |
         Thanks for taking the time to submit on-boarding request!
-  -
-    attributes:
+  - attributes:
       description: "Provide the name link of your plugin"
       label: "What is the name of your plugin?"
     id: plugin-name
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Provide the GitHub link for your repository"
       label: "What is the link to your GitHub repo?"
     id: Github-link
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "What is the targeted OpenSearch release version for this plugin?"
       label: "Targeted release version"
     id: expected-release-version
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Is this OpenSearch, OpenSearch-dashboards plugin?"
       label: "What type of the plugin are we on-boarding?"
     id: Type
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Does this plugin have necessary scripts to invoke integration and BWC tests?"
       label: "Does this plugin has all the necessary automated tests?"
     id: tests
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Confirm that all the necessary reviews for this component has been completed."
       label: "Have you completed the required reviews including Security reviews, UX reviews?"
     id: reviews
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Do we need to enable any automated CVE scanning on this repo?"
       label: "Have you on-boarded automated security scanning for the GitHub repo associated with this plugin?"
     id: repo-scanning
     type: textarea
     validations:
       required: true
-  -
-    attributes:
+  - attributes:
       description: "Add any additional context along with contact details for this component here."
       label: "Additional context"
     id: additional-context
