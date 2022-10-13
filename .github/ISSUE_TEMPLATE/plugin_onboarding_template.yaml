@@ -62,8 +62,3 @@ body:
       label: "Additional context"
     id: additional-context
     type: textarea
-labels:
-  - on-boarding
-  - untriaged
-name: "On-board plugins"
-title: "[On-boarding] Onboard plugins to OpenSearch versions"
