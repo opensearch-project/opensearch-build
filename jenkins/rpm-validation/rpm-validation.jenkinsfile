@@ -1,4 +1,6 @@
-lib = library(identifier: 'jenkins@1.0.0', retriever: modernSCM([
+def load_version_yml = readYaml(file: 'jenkins_lib_version.yaml')
+def version = load_version_yml.default
+lib = library(identifier: "jenkins@${version}", retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))

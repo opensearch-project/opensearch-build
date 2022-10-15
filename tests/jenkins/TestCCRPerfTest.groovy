@@ -28,19 +28,6 @@ class TestCCRPerfTest extends BuildPipelineTest {
 
         super.setUp()
 
-        def load_version_yml = readYaml(file: 'jenkins_lib_version.yaml')
-        def version = load_version_yml.default
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion("${version}")
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
-
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
