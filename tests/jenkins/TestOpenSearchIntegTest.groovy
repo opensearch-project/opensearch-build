@@ -51,7 +51,6 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
-        
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
