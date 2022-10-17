@@ -9,10 +9,10 @@ import logging
 import os
 import shutil
 import subprocess
+from typing import List
 
 from manifests.build_manifest import BuildManifest
 from system.os import deb_architecture
-from typing import List
 
 
 class BundleLinuxDeb:
