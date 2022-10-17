@@ -9,12 +9,38 @@ import os
 import shutil
 import subprocess
 
-from assemble_workflow.bundle_linux_distro import BundleLinuxDistro
 from manifests.build_manifest import BuildManifest
 from system.os import deb_architecture
+from typing import List
 
 
-class BundleDeb(BundleLinuxDistro):
+class BundleLinuxDeb:
+
+    def __init__(self, filename: str, package_path: str, min_path: str) -> None:
+        self.filename = filename
+        self.package_path = package_path
+        self.min_path = min_path
+
+    def changelog_content(self, version: str) -> List[str]:
+        # instead of 'UNRELEASED' its possible to use 'stable'
+        # which will use gpg to sign with the given from 'OpenSearch Team <opensearch@amazon.com>'
+
+        return [
+            f"{self.filename} ({version}) UNRELEASED; urgency=low",
+            "",
+            "  * Initial release.",
+            "",
+            " -- OpenSearch Team <opensearch@amazon.com>  Fri, 14 Oct 2022 10:06:23 +0000"
+        ]
+
+    def generate_changelog_file(self, dest: str, version: str) -> None:
+        changelog_path = os.path.join(dest, 'debian', 'changelog')
+        logging.info(f"Write debian changelog to: {changelog_path}")
+
+        with open(changelog_path, 'w') as file:
+            for line in self.changelog_content(version):
+                file.write(line)
+                file.write('\n')
 
     def extract(self, dest: str) -> None:
         data_path = os.path.join(dest, "data.tar.gz")
@@ -52,7 +78,14 @@ class BundleDeb(BundleLinuxDistro):
                 cwd=dest,
             )
 
-        super().extract(min_source_path, min_dest_path, min_config_path)
+        # Move core folder destination so plugin install can proceed
+        logging.info(f"Move {min_source_path} to {min_dest_path} for plugin installation")
+        shutil.move(min_source_path, min_dest_path)
+
+        # Multiple modifications and env vars setups before install plugins
+        # As bin/opensearch-env is different between archive and package
+        # https://github.com/opensearch-project/OpenSearch/issues/2092
+        os.environ[f"{self.filename.upper()}_PATH_CONF"] = min_config_path
 
     def build(self, name: str, dest: str, archive_path: str, build_cls: BuildManifest.Build) -> None:
         # extract dest and build dest are not the same, this is restoring the extract dest
@@ -70,6 +103,7 @@ class BundleDeb(BundleLinuxDistro):
         shutil.move(min_dest_path, min_source_path)
 
         deb_version = build_cls.version.replace('-', '.')
+        self.generate_changelog_file(ext_dest, deb_version)
 
         bundle_cmd = " ".join(
             [

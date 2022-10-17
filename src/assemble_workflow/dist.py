@@ -13,19 +13,20 @@ import tarfile
 import zipfile
 from abc import ABC, abstractmethod
 
-from assemble_workflow.bundle_deb import BundleDeb
-from assemble_workflow.bundle_rpm import BundleRpm
+from assemble_workflow.bundle_linux_distro import BundleLinuxDistro
 from manifests.build_manifest import BuildManifest
 from system.zip_file import ZipFile
 
 
 class Dist(ABC):
+
     def __init__(self, name: str, path: str, min_path: str, build_cls: BuildManifest.Build) -> None:
         self.build_cls = build_cls
         self.name = name
         self.filename = name.lower()
         self.path = path
         self.min_path = min_path
+        self.bundle_linux_distro = BundleLinuxDistro(self.filename, self.path, self.min_path)
 
     @abstractmethod
     def __extract__(self, dest: str) -> None:
@@ -120,16 +121,16 @@ class DistZip(Dist):
 class DistDeb(Dist):
 
     def __extract__(self, dest: str) -> None:
-        BundleDeb(self.filename, self.path, self.min_path).extract(dest)
+        self.bundle_linux_distro.extract('deb', dest)
 
     def __build__(self, name: str, dest: str) -> None:
-        BundleDeb(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)
+        self.bundle_linux_distro.build('deb', name, dest, self.archive_path, self.build_cls)
 
 
 class DistRpm(Dist):
 
     def __extract__(self, dest: str) -> None:
-        BundleRpm(self.filename, self.path, self.min_path).extract(dest)
+        self.bundle_linux_distro.extract('rpm', dest)
 
     def __build__(self, name: str, dest: str) -> None:
-        BundleRpm(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)
+        self.bundle_linux_distro.build('rpm', name, dest, self.archive_path, self.build_cls)
