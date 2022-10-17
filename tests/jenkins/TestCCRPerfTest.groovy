@@ -73,9 +73,9 @@ class TestCCRPerfTest extends BuildPipelineTest {
     public void testCCRPerfTestScript_Pipeline() {
         super.testPipeline("jenkins/cross-cluster-replication/perf-test.jenkinsfile",
         "tests/jenkins/jenkinsjob-regression-files/cross-cluster-replication/perf-test.jenkinsfile")
-        System.out.println (" <<<<<<<  begin to printCallStack  >>>>>>")
+        System.out.println (" <<<<<<<  begin to printCallStack  >>>>>>>")
         printCallStack() 
-        System.out.println (" <<<<<<<  printCallStack ends >>>>>>")
+        System.out.println (" <<<<<<<  printCallStack ends >>>>>>>")
     }
 
     @Test
