@@ -14,7 +14,6 @@ import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import com.lesfurets.jenkins.unit.*
 import org.yaml.snakeyaml.Yaml
-
 /**
  * Base test class for testing Jenkins library code. This base test
  * sets up the project directory as the library and will execute
@@ -35,20 +34,19 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
     void setUp() {
         super.setUp()
 
+        def version = getVersion('jenkins_lib_version.yaml', 'default' )
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('main')
+                .defaultVersion("${version}")
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
-
         helper.registerAllowedMethod("readYaml", [Map.class], { args ->
             return new Yaml().load((args.file as File).text)
         })
-
         binding.setVariable('scm', {})
 
         helper.registerAllowedMethod("legacySCM", [Closure.class], null)
@@ -72,4 +70,10 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
         testers.each(tester -> tester.verifyParams(helper))
     }
 
+    def getVersion(yamlFile, key) {
+        Yaml yaml = new Yaml();
+        InputStream inputStream = new FileInputStream(yamlFile)
+        HashMap yamlMap = yaml.load(inputStream)
+        return yamlMap.get(key)
+    }
 }
