@@ -1,5 +1,5 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: opensearch
+Upstream-Name: opensearch-dashboards
 Upstream-Contact: opensearch@amazon.com
 Source: https://opensearch.org
 Files: *
@@ -21,7 +21,6 @@ License: Apache-2.0
  can be found in "/usr/share/common-licenses/Apache-2.0".
 
 Files: debian/*
-Copyright: 2013 Harri Pitkänen <hatapitk@iki.fi>
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

@@ -125,6 +125,7 @@ class DistDeb(Dist):
     def __build__(self, name: str, dest: str) -> None:
         BundleDeb(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)
 
+
 class DistRpm(Dist):
 
     def __extract__(self, dest: str) -> None:

@@ -7,9 +7,6 @@
 import logging
 import os
 import shutil
-import subprocess
-
-from manifests.build_manifest import BuildManifest
 
 
 class BundleLinuxDistro:

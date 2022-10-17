@@ -36,6 +36,7 @@ def deb_architecture(architecture: str) -> str:
 
     return deb_architecture_map[architecture]
 
+
 def rpm_architecture(architecture: str) -> str:
     # This would convert arch from "current_architecture" to rpm specific architecture alternatives
 

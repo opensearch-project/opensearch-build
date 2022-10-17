@@ -8,7 +8,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from system.os import current_architecture, current_platform, rpm_architecture
+from system.os import current_architecture, current_platform, rpm_architecture, deb_architecture
 
 
 class TestOs(unittest.TestCase):

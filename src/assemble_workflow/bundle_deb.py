@@ -77,7 +77,7 @@ class BundleDeb(BundleLinuxDistro):
                 '-f "OpenSearch Team"',
                 '-e "opensearch@amazon.com"',
                 '-i debuild',
-                '-p opensearch',
+                f'-p {self.filename}',
                 '-n',
                 '-r 1',
                 f"-u {deb_version}"
@@ -90,4 +90,4 @@ class BundleDeb(BundleLinuxDistro):
         # Move artifact to repo root before being published to {dest}
         # for dirpath, dirnames, filenames in os.walk(os.path.join('/tmp/opensearch*')):
         logging.info(f"Found deb file: {bundle_artifact_path}")
-        shutil.move(f"/tmp/opensearch_{deb_version}_{deb_architecture(build_cls.architecture)}.deb", name)
+        shutil.move(f"/tmp/{self.filename}_{deb_version}_{deb_architecture(build_cls.architecture)}.deb", name)
