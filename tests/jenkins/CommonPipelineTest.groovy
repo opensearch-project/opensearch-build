@@ -8,7 +8,6 @@ package jenkins.tests
 import com.lesfurets.jenkins.unit.RegressionTestHelper
 import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
 import org.junit.Before
-import org.yaml.snakeyaml.Yaml
 
 
 /**

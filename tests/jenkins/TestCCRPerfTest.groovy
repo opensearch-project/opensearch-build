@@ -18,7 +18,6 @@ import static org.hamcrest.MatcherAssert.assertThat
 
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
-import org.yaml.snakeyaml.Yaml
 
 class TestCCRPerfTest extends BuildPipelineTest {
 
@@ -27,6 +26,16 @@ class TestCCRPerfTest extends BuildPipelineTest {
     void setUp() {
 
         super.setUp()
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
 
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
@@ -52,6 +61,7 @@ class TestCCRPerfTest extends BuildPipelineTest {
         binding.setVariable('TEST_WORKLOAD', 'nyc_taxis')
         binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
         binding.setVariable('WARMUP_ITERATIONS', '1')
+        
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -73,7 +83,6 @@ class TestCCRPerfTest extends BuildPipelineTest {
     public void testCCRPerfTestScript_Pipeline() {
         super.testPipeline("jenkins/cross-cluster-replication/perf-test.jenkinsfile",
         "tests/jenkins/jenkinsjob-regression-files/cross-cluster-replication/perf-test.jenkinsfile")
-        printCallStack()
     }
 
     @Test

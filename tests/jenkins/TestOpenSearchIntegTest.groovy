@@ -29,6 +29,16 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         def artifactsPath = "${jobName}/1.3.0/${buildId}/linux/x64/tar/"
         def bucketName = 'job-s3-bucket-name'
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+        )
+
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('env', ['BUILD_NUMBER': "${buildId}"])
@@ -51,6 +61,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
+        
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
             closure.delegate = delegate
