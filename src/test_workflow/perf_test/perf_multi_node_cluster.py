@@ -50,5 +50,6 @@ class PerfMultiNodeCluster(PerfTestCluster):
             "master_node_count": int(self.cluster_config.master_nodes),
             "data_node_count": int(self.cluster_config.data_nodes),
             "ingest_node_count": int(self.cluster_config.ingest_nodes),
-            "client_node_count": int(self.cluster_config.client_nodes)
+            "client_node_count": int(self.cluster_config.client_nodes),
+            "use_50_percent_heap": self.cluster_config.use_50_percent_heap
         }
