@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 from assemble_workflow.bundle_opensearch_dashboards import BundleOpenSearchDashboards
 from manifests.build_manifest import BuildManifest
 from paths.script_finder import ScriptFinder
+from system.os import current_platform
 
 
 class TestBundleOpenSearchDashboards(unittest.TestCase):
@@ -73,7 +74,8 @@ class TestBundleOpenSearchDashboards(unittest.TestCase):
                 self.assertEqual(mock_copyfile.call_count, 1)
                 self.assertEqual(mock_check_call.call_count, 2)
 
-                install_plugin_bin = os.path.join(bundle.min_dist.archive_path, "bin", "opensearch-dashboards-plugin")
+                script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "opensearch-dashboards-plugin"
+                install_plugin_bin = os.path.join(bundle.min_dist.archive_path, "bin", script)
                 mock_check_call.assert_has_calls(
                     [
                         call(
