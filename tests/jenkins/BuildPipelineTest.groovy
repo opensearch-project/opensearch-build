@@ -37,7 +37,7 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('main')
+                .defaultVersion('1.0.3')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
