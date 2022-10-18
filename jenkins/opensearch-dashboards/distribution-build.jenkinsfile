@@ -43,7 +43,7 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux', 'macos', 'windows'. Can combine multiple platforms with space in between (maven snapshot is only on linux)",
+            description: "Build selected platform related artifacts, choices include 'linux'. Can combine multiple platforms with space in between",
             defaultValue: 'linux',
             trim: true
         )
