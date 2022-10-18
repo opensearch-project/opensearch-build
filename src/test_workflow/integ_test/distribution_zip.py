@@ -8,10 +8,9 @@
 import logging
 import os
 import subprocess
-import tarfile
 
-from test_workflow.integ_test.distribution import Distribution
 from system.zip_file import ZipFile
+from test_workflow.integ_test.distribution import Distribution
 
 
 class DistributionZip(Distribution):
@@ -28,8 +27,8 @@ class DistributionZip(Distribution):
 
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
-        with ZipFile(self.path, "r") as zip:
-            zip.extractall(dest)
+        with ZipFile(bundle_name, "r") as zip:
+            zip.extractall(self.work_dir)
 
     @property
     def start_cmd(self) -> str:

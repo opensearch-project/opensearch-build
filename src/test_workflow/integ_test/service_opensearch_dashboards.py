@@ -13,11 +13,11 @@ import requests
 import yaml
 from requests.models import Response
 
+from system.os import current_platform
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution
 from test_workflow.integ_test.distributions import Distributions
 from test_workflow.integ_test.service import Service
-from system.os import current_platform
 
 
 class ServiceOpenSearchDashboards(Service):
@@ -67,8 +67,8 @@ class ServiceOpenSearchDashboards(Service):
     def __remove_security(self) -> None:
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "securityDashboards")
         if os.path.isdir(self.security_plugin_dir):
-            plugin_script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "opensearch-dashboards-plugin"
-            subprocess.check_call(f"bash {plugin_script} remove --allow-root securityDashboards", cwd=self.executable_dir, shell=True)
+            plugin_script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "bash opensearch-dashboards-plugin"
+            subprocess.check_call(f"{plugin_script} remove --allow-root securityDashboards", cwd=self.executable_dir, shell=True)
 
         with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:
             yamlfile.close()
