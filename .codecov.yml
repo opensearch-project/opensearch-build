@@ -7,3 +7,4 @@ coverage:
 ignore:
   - '**/tests/*.py'
   - '**/test/*.js'
+  - '**/test/*.ts'
