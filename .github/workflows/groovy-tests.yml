@@ -12,11 +12,9 @@ jobs:
         with:
           java-version: 11
       - uses: actions/checkout@v2
-      - name: Update apt-get
-        run: |
-          sudo apt-get update
       - name: Run Tests
         run: |
+          sudo apt-get update
           ./gradlew test --info
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v2
