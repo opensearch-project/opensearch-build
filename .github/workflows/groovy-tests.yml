@@ -12,6 +12,9 @@ jobs:
         with:
           java-version: 11
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '20221012.1'
       - name: Run Tests
         run: |
           ./gradlew test --info
