@@ -5,13 +5,17 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    
     steps:
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: 11
       - uses: actions/checkout@v2
+      - name: Update apt-get
+        run: |
+          sudo apt-get update 
       - name: Run Tests
         run: |
           ./gradlew test --info
