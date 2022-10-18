@@ -288,15 +288,15 @@ helper.registerSharedLibrary(
         .allowOverride(true)
         .implicit(true)
         .targetPath('vars')
-        .retriever(gitSource('https://github.com/gaiksaya/opensearch-build-libraries-1.git'))
+        .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
         .build()
 )
 ```
 
 ```
-lib = library(identifier: 'jenkins@fix-version', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/gaiksaya/opensearch-build-libraries-1.git',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 ```
 
