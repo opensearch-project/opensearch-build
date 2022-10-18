@@ -5,7 +5,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest@20221002.2
+    runs-on: ubuntu22/20221002.2
     steps:
       - name: Setup Java
         uses: actions/setup-java@v1
