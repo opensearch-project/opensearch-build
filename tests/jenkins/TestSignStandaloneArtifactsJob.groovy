@@ -60,16 +60,6 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         binding.setVariable('S3_FILE_UPLOAD_PATH', '/dummy/upload/path/')
         binding.setVariable('DISTRIBUTION_PLATFORM', platform)
         binding.setVariable('SIGNATURE_TYPE', sigtype)
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.0')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
     }
 
     @Test

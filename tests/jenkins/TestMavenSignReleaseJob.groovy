@@ -55,16 +55,6 @@ class TestMavenSignReleaseJob extends BuildPipelineTest {
 
         helper.registerAllowedMethod('checkout', [Map], {})
 
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.0')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
-
     }
 
     @Test
