@@ -37,11 +37,11 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('1.0.3')
+                .defaultVersion('fix-version')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .retriever(gitSource('https://github.com/gaiksaya/opensearch-build-libraries-1.git'))
                 .build()
             )
 
