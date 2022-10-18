@@ -1,6 +1,6 @@
    sign-standalone-artifacts.run()
       sign-standalone-artifacts.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      sign-standalone-artifacts.library({identifier=jenkins@1.0.0, retriever=null})
+      sign-standalone-artifacts.library({identifier=jenkins@1.0.4, retriever=null})
       sign-standalone-artifacts.pipeline(groovy.lang.Closure)
          sign-standalone-artifacts.credentials(jenkins-artifact-bucket-name)
          sign-standalone-artifacts.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])

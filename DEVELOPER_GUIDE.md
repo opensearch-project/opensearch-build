@@ -294,7 +294,7 @@ helper.registerSharedLibrary(
 ```
 
 ```
-lib = library(identifier: 'jenkins@1.0.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
