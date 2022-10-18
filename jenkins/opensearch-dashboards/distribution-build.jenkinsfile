@@ -568,8 +568,13 @@ pipeline {
         stage('docker build') {
             when {
                 beforeAgent true
-                expression { 
-                    params.BUILD_DOCKER != 'do_not_build_docker'
+                allOf{
+                    expression {
+                        params.BUILD_DOCKER != 'do_not_build_docker'
+                    }
+                    expression{
+                        params.BUILD_PLATFORM.contains('linux')
+                    }
                 }
             }
             agent {
