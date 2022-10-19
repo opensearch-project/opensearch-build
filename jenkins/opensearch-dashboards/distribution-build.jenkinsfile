@@ -646,7 +646,7 @@ pipeline {
                     if (params.PUBLISH_NOTIFICATION) { 
                         publishNotification(
                             icon: ':warning:',
-                            message: 'Failed Build',
+                            message: buildFailureMessage(),
                             credentialsId: 'jenkins-build-notice-webhook',
                             manifest: "${INPUT_MANIFEST}"
                         )
