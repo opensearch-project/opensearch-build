@@ -10,6 +10,7 @@ import unittest
 from typing import Any
 from unittest.mock import MagicMock, Mock, PropertyMock, call, mock_open, patch
 
+from system.os import current_platform
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.service_opensearch_dashboards import ServiceOpenSearchDashboards
 
@@ -119,8 +120,9 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
             [call(os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "config", "opensearch_dashboards.yml"), "a")],
         )
 
+        plugin_script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "bash opensearch-dashboards-plugin"
         mock_check_call.assert_called_once_with(
-            "./opensearch-dashboards-plugin remove --allow-root securityDashboards",
+            f"{plugin_script} remove --allow-root securityDashboards",
             cwd=os.path.join("test_work_dir", "opensearch-dashboards-1.1.0", "bin"),
             shell=True
         )
