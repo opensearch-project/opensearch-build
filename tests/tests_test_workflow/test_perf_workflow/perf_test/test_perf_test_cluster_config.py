@@ -20,6 +20,7 @@ class TestPerfTestClusterConfig(unittest.TestCase):
         self.assertEqual(config.ingest_nodes, 0)
         self.assertEqual(config.client_nodes, 0)
         self.assertEqual(config.is_single_node_cluster, True)
+        self.assertEqual(config.use_50_percent_heap, "disable")
 
     def test_non_default_args(self) -> None:
         config = PerfTestClusterConfig(True, 1, 2, 3, 4)
@@ -29,3 +30,5 @@ class TestPerfTestClusterConfig(unittest.TestCase):
         self.assertEqual(config.ingest_nodes, 3)
         self.assertEqual(config.client_nodes, 4)
         self.assertEqual(config.is_single_node_cluster, False)
+        self.assertEqual(config.use_50_percent_heap, "enable")
+        self.assertEqual(config.use_50_percent_heap, None)
