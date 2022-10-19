@@ -84,7 +84,7 @@ class TestBundleLinuxDeb(unittest.TestCase):
         self.bundle_linux_deb.generate_changelog_file("dest", "2.3.4")
 
         self.assertEqual(file_mock.call_count, 1)
-        self.assertEqual('dest/debian/changelog',
+        self.assertEqual(os.path.join('dest', 'debian', 'changelog'),
                          file_mock.call_args_list[0][0][0])
 
         file_mock.return_value.write.assert_has_calls(
