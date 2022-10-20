@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     echo 'The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories'
-                    git url: "$DOCKER_BUILD_GIT_REPOSITORY", branch: "$DOCKER_BUILD_GIT_REPOSITORY_REFERENCE"
+                    checkout([$class: 'GitSCM', branches: [[name: "${DOCKER_BUILD_GIT_REPOSITORY_REFERENCE}" ]], userRemoteConfigs: [[url: "${DOCKER_BUILD_GIT_REPOSITORY}" ]]])
                     def CREDENTIAL_ID = "jenkins-staging-dockerhub-credential"
                     sh "echo Account: $CREDENTIAL_ID"
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
