@@ -55,6 +55,16 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
