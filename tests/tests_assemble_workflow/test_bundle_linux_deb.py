@@ -89,15 +89,10 @@ class TestBundleLinuxDeb(unittest.TestCase):
 
         file_mock.return_value.write.assert_has_calls(
             [
-                call('opensearch (2.3.4) UNRELEASED; urgency=low'),
+                call('opensearch (2.3.4) UNRELEASED; urgency=low\n'),
                 call('\n'),
-                call(''),
+                call('  * Initial release.\n'),
                 call('\n'),
-                call('  * Initial release.'),
-                call('\n'),
-                call(''),
-                call('\n'),
-                call(' -- OpenSearch Team <opensearch@amazon.com>  Fri, 14 Oct 2022 10:06:23 +0000'),
-                call('\n')
+                call(' -- OpenSearch Team <opensearch@amazon.com>  Fri, 14 Oct 2022 10:06:23 +0000\n')
             ]
         )

@@ -40,8 +40,7 @@ class BundleLinuxDeb:
 
         with open(changelog_path, 'w') as file:
             for line in self.changelog_content(version):
-                file.write(line)
-                file.write('\n')
+                file.write(f"{line}\n")
 
     def extract(self, dest: str) -> None:
         data_path = os.path.join(dest, "data.tar.gz")
