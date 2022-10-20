@@ -9,8 +9,6 @@ import os
 import unittest
 from unittest.mock import MagicMock, Mock, call, patch
 
-from assemble_workflow.bundle_linux_deb import BundleLinuxDeb
-from assemble_workflow.bundle_linux_rpm import BundleLinuxRpm
 from assemble_workflow.dist import DistDeb, DistRpm, DistTar
 from manifests.build_manifest import BuildManifest
 
