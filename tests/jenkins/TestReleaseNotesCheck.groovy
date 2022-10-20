@@ -10,7 +10,8 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
+import static org.assertj.core.api.Assertions.assertThat
 
 class TestReleaseNotesCheck extends BuildPipelineTest {
 
@@ -39,5 +40,18 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
     public void testReleaseNoteCheckPipeline() {
         super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-check.jenkinsfile")
+    }
+
+    @Test
+    public void releaseNoteExecuteWithoutErrors() {
+        runScript("jenkins/release-notes-check/release-notes-check.jenkinsfile")
+
+        assertJobStatusSuccess()
+
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('release_notes.sh')
+        }).isTrue()
     }
 }
