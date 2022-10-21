@@ -5,13 +5,23 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import sys
 
+from system import console
 from validation_workflow.validation_args import ValidationArgs
 
 
 def main() -> int:
-    ValidationArgs()
+
+    args = ValidationArgs()
+
+    console.configure(level=args.logging_level)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+    dist = args.DISTRIBUTION_MAP.get(args.distribution, None)
+    dist.download_artifacts(projects=args.projects, version=args.version, platform=args.platform, architectures=args.SUPPORTED_ARCHITECTURES)
+
     return 0
 
 

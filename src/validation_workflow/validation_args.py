@@ -6,30 +6,45 @@
 # compatible open source license.
 
 import argparse
+import logging
 
-from .rpm import Rpm
-from .tar import Tar
-from .yum import Yum
+from validation_workflow.validation_rpm import ValidationRpm
+from validation_workflow.validation_tar import ValidationTar
+from validation_workflow.validation_yum import ValidationYum
 
 
 class ValidationArgs:
-    SUPPORTED_DISTRIBUTIONS = ["tar", "yum", "rpm"]
+    SUPPORTED_DISTRIBUTIONS = [
+        "tar",
+        "yum",
+        "rpm"
+    ]
     SUPPORTED_PLATFORMS = ["linux"]
-    DISTRIBUTION_MAP = {"tar": Tar, "yum": Yum, "rpm": Rpm}
+    SUPPORTED_ARCHITECTURES = [
+        "x64",
+        "arm64",
+    ]
+    DISTRIBUTION_MAP = {
+        "tar": ValidationTar,
+        "yum": ValidationYum,
+        "rpm": ValidationRpm
+    }
+
+    version: str
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Download Artifacts.")
         parser.add_argument(
             "version",
             type=str,
-            help="Enter the Version"
+            help="Product version to validate"
         )
         parser.add_argument(
             "-d",
             "--distribution",
             type=str,
             choices=self.SUPPORTED_DISTRIBUTIONS,
-            help="Distribution to build.",
+            help="Distribution to validate.",
             default="tar",
             dest="distribution"
         )
@@ -38,14 +53,22 @@ class ValidationArgs:
             "--platform",
             type=str,
             choices=self.SUPPORTED_PLATFORMS,
-            help="Platform to build.",
+            help="Platform to validate.",
             default="linux"
         )
+        parser.add_argument(
+            "-v",
+            "--verbose",
+            help="Show more verbose output.",
+            action="store_const",
+            default=logging.INFO,
+            const=logging.DEBUG,
+            dest="logging_level",
+        )
+
         args = parser.parse_args()
         self.version = args.version
+        self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform
         self.projects = ["opensearch", "opensearch-dashboards"]
-
-        dist_class = self.DISTRIBUTION_MAP.get(self.distribution, None)
-        dist_class.download_urls(projects=self.projects, version=self.version, platform=self.platform)
