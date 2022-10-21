@@ -96,7 +96,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         EXTRA_PARAMS="--skip-os-packages"
         SUFFIX="$PLATFORM-x64"
     linux-deb-arm64)
-        TARGET="--$DISTRIBUTION"
+        TARGET="--$DISTRIBUTION-arm"
         EXT="$DISTRIBUTION"
         BUILD_PARAMS="build"
         EXTRA_PARAMS="--skip-archives"
