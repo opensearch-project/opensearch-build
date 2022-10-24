@@ -41,6 +41,16 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    working_directory: reports-scheduler
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
@@ -65,6 +75,15 @@ components:
       - gradle:dependencies:opensearch.version
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: main
     platforms:
       - linux
