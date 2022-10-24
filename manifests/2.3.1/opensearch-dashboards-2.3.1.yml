@@ -11,6 +11,10 @@ components:
     repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
     ref: '2.3'
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    working_directory: dashboards-reports
+    ref: '2.3'
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: '2.3'
