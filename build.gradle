@@ -63,7 +63,9 @@ sharedLibrary {
     coreVersion = '2.364' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
-        workflowCpsGlobalLibraryPluginVersion = '588.v576c103a_ff86' // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
+        // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
+        // Need to migrate to pipeline-groovy-lib later as workflow-cps-global-lib is deprecated now.
+        workflowCpsGlobalLibraryPluginVersion = '588.v576c103a_ff86'
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2.94.1')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
