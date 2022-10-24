@@ -90,7 +90,7 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         SUFFIX="$PLATFORM-arm64"
         ;;
     windows-zip-x64)
-        TARGET="--all-platforms"
+        TARGET="--windows"
         EXT="$DISTRIBUTION"
         BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
