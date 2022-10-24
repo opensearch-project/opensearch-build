@@ -1,6 +1,6 @@
    maven-sign-release.run()
       maven-sign-release.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      maven-sign-release.library({identifier=jenkins@1.0.0, retriever=null})
+      maven-sign-release.library({identifier=jenkins@1.0.4, retriever=null})
       maven-sign-release.pipeline(groovy.lang.Closure)
          maven-sign-release.credentials(jenkins-artifact-bucket-name)
          maven-sign-release.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])

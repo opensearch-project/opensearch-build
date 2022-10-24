@@ -34,6 +34,7 @@ class TestPerfMultiNodeCluster(unittest.TestCase):
         self.assertTrue("master_node_count=3" in test_cluster.params)
         self.assertTrue("client_node_count=0" in test_cluster.params)
         self.assertTrue("ingest_node_count=0" in test_cluster.params)
+        self.assertTrue("use_50_percent_heap=disable" in test_cluster.params)
 
     def test_multi_node_cluster_invalid_configuration(self) -> None:
         self.assertRaises(

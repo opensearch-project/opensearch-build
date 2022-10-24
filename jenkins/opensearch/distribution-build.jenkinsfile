@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -83,6 +83,12 @@ pipeline {
                     echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
                     def all_platforms = "linux macos windows"
                     echo("All Supported Platforms: '${all_platforms}'")
+
+                    if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
+                    }
+
                     for (String plat : build_platform_array) {
                         if (! all_platforms.contains(plat)) {
                             currentBuild.result = 'ABORTED'
