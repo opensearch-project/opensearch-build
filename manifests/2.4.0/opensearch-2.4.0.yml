@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
