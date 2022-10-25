@@ -7,7 +7,6 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
-// import static org.assertj.core.api.Assertions.assertThat
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.CoreMatchers.hasItems
