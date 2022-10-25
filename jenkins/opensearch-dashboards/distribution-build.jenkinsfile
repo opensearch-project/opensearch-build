@@ -653,6 +653,7 @@ pipeline {
         }
         failure {
             node(AGENT_X64) {
+                checkout scm
                 script {
                     if (params.PUBLISH_NOTIFICATION) { 
                         publishNotification(
@@ -665,7 +666,7 @@ pipeline {
                     if (params.CREATE_GITHUB_ISSUE) {
                         createGithubIssue(
                             message: buildFailureMessage()
-                            )
+                        )
                     }
 
                     postCleanup()
