@@ -7,7 +7,6 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
-import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.assertj.core.api.Assertions.assertThat
 
@@ -44,10 +43,16 @@ class TestDockerCopy extends BuildPipelineTest {
 
         assertJobStatusSuccess()
 
+        // Ensure 'docker login' is executed in an external shell script
         assertThat(helper.callStack.findAll { call ->
             call.methodName == 'sh'
         }.any { call ->
             callArgsToString(call).contains('docker login')
         }).isTrue()
+
+        // Validate the copyContainer docker-copy.sh is called
+        assertCallStack().contains("docker-copy.copyContainer")
+
+        printCallStack()
     }
 }
