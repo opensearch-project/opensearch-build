@@ -6,7 +6,6 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
-// import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.assertj.core.api.Assertions.assertThat
 
