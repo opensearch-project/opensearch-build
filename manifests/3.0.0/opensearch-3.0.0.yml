@@ -106,7 +106,7 @@ components:
     ref: main
     platforms:
       - linux
-      - windows      
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin

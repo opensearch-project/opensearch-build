@@ -98,7 +98,7 @@ components:
     ref: '2.3'
     platforms:
       - linux
-      - windows      
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
