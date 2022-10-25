@@ -7,7 +7,12 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
-import static org.assertj.core.api.Assertions.assertThat
+// import static org.assertj.core.api.Assertions.assertThat
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.hasItems
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.hamcrest.MatcherAssert.assertThat
 
 class TestDockerBuild extends BuildPipelineTest {
 
@@ -40,16 +45,28 @@ class TestDockerBuild extends BuildPipelineTest {
 
         assertJobStatusSuccess()
 
-        // Ensure 'docker login' is executed in an external shell script
-        assertThat(helper.callStack.findAll { call ->
-            call.methodName == 'sh'
-        }.any { call ->
-            callArgsToString(call).contains('docker login')
-        }).isTrue()
-
+        // Ensure the entire docker commanbd is executed in an external shell script exactelly once
+        def dockerLoginCommand = getCommands('docker').findAll {
+            shCommand -> shCommand.contains('docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS')
+        }
+        assertThat(dockerLoginCommand.size(), equalTo(1))
+        
         // Validate the docker-build.sh is called with correct predefined credential
         assertCallStack().contains("docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)")
 
         printCallStack()
     }
+
+    def getCommands(String commandString) {
+        def shCurlCommands = helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.collect { call ->
+            callArgsToString(call)
+        }.findAll { externalCommand ->
+            externalCommand.contains(commandString)
+        }
+
+        return shCurlCommands
+    }
+    
 }
