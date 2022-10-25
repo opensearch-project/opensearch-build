@@ -8,7 +8,11 @@ import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
-import static org.assertj.core.api.Assertions.assertThat
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.hasItems
+import static org.hamcrest.CoreMatchers.notNullValue
+import static org.hamcrest.MatcherAssert.assertThat
 
 class TestDockerCopy extends BuildPipelineTest {
 
@@ -43,16 +47,27 @@ class TestDockerCopy extends BuildPipelineTest {
 
         assertJobStatusSuccess()
 
-        // Ensure 'docker login' is executed in an external shell script
-        assertThat(helper.callStack.findAll { call ->
-            call.methodName == 'sh'
-        }.any { call ->
-            callArgsToString(call).contains('docker login')
-        }).isTrue()
+        // Ensure the gcrane is executed in an external shell script exactely once
+        def copyContainerCommand = getCommands('docker').findAll {
+            shCommand -> shCommand.contains('gcrane cp opensearchstaging/opensearch:1.3.2 opensearchproject/opensearch:1.3.2; docker logout')
+        }
+        assertThat(copyContainerCommand.size(), equalTo(1))
 
         // Validate the copyContainer docker-copy.sh is called
         assertCallStack().contains("docker-copy.copyContainer")
 
         printCallStack()
+    }
+
+    def getCommands(String commandString) {
+        def shCurlCommands = helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.collect { call ->
+            callArgsToString(call)
+        }.findAll { externalCommand ->
+            externalCommand.contains(commandString)
+        }
+
+        return shCurlCommands
     }
 }
