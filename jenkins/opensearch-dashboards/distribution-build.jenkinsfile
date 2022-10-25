@@ -57,6 +57,11 @@ pipeline {
             description: 'Publish the status of this build job or not.',
             defaultValue: true
         )
+        booleanParam(
+            name: 'CREATE_GITHUB_ISSUE',
+            description: 'To create a github issue for failing component or not.',
+            defaultValue: true
+        )
     }
     stages {
         stage('verify-parameters') {
@@ -656,6 +661,11 @@ pipeline {
                             credentialsId: 'jenkins-build-notice-webhook',
                             manifest: "${INPUT_MANIFEST}"
                         )
+                    }
+                    if (params.CREATE_GITHUB_ISSUE) {
+                        createGithubIssue(
+                            message: buildFailureMessage()
+                            )
                     }
 
                     postCleanup()
