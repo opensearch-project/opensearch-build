@@ -34,7 +34,13 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh 
+RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
+
+# Create user group
+RUN groupadd -g 1000 opensearch && \
+    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    mkdir -p /usr/share/opensearch && \
+    chown -R 1000:1000 /usr/share/opensearch
 
 # Install higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
@@ -56,8 +62,8 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
-# Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
+# Install ruby related dependencies
+RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -78,8 +84,15 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     pip3 install pipenv && pipenv --version
 
-ENV NODE_VERSION 10.24.1
+# Change User
+USER 1000
+WORKDIR /usr/share/opensearch
+
+# nvm environment variables
+ENV NVM_DIR /usr/share/opensearch/.nvm
+ENV NODE_VERSION 14.19.1
 ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0"
+
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -89,3 +102,9 @@ RUN source $NVM_DIR/nvm.sh && \
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+# We use the version test to check if packages installed correctly
+# And get added to the PATH
+# This will fail the docker build if any of the packages not exist
+RUN node -v
+RUN npm -v
+RUN yarn -v
