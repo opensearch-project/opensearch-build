@@ -1,3 +1,4 @@
+# Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
 #
 # The OpenSearch Contributors require contributions made to
@@ -32,11 +33,12 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
     @patch("manifests_workflow.input_manifests.InputComponents")
     @patch("manifests_workflow.input_manifests.InputManifest.from_file")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
     @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch_min: MagicMock,
-                    mock_input_manifest_from_path: MagicMock, mock_add_to_cron: MagicMock,
+                    mock_input_manifest_from_path: MagicMock, mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
                     mock_input_manifest_from_file: MagicMock, mock_input_manifest_component: MagicMock,
                     *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
@@ -58,5 +60,8 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
         ]
         mock_input_manifest_from_file().to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
+            call('0.9.0')
+        ])
+        mock_add_to_versionincrement_workflow.assert_has_calls([
             call('0.9.0')
         ])

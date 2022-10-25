@@ -1,0 +1,72 @@
+---
+name: Release standalone components
+description: Standalone components release template
+title: '[release]: '
+labels: [release, untriaged]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to submit release request!
+  -
+    attributes:
+      description: 'Provide the name of your component'
+      label: 'What is the name of your component?'
+    id: component-name
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Provide the GitHub link for your repository'
+      label: 'What is the link to your GitHub repo?'
+    id: Github-link
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'What is the targeted date for the release?'
+      label: 'Targeted release date'
+    id: expected-release-date
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Does this component need to be published to specific distribution channel(s) like pypi, npm, Docker etc..?'
+      label: 'Where should we publish this component?'
+    id: Type
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Please list the aftifact types along with any other additional information related to generated artifacts?'
+      label: 'What type of artifact(s) will be generated for this component?'
+    id: tests
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Confirm that all the necessary reviews for this component has been completed.'
+      label: 'Have you completed the required reviews including security reviews, UX reviews?'
+    id: reviews
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Do we need to enable any automated CVE scanning on this repo?'
+      label: 'Have you on-boarded automated security scanning for the GitHub repo associated with this component?'
+    id: repo-scanning
+    type: textarea
+    validations:
+      required: true
+  -
+    attributes:
+      description: 'Add any additional context along with contact details for this component here.'
+      label: 'Additional context'
+    id: additional-context
+    type: textarea

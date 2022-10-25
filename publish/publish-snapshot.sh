@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Copyright OpenSearch Contributors
 ###### Information ############################################################################
 # SPDX-License-Identifier: Apache-2.0
 #

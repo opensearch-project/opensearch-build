@@ -14,10 +14,14 @@ import static org.hamcrest.CoreMatchers.hasItems
 import static org.hamcrest.CoreMatchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
 
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
+
 class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
     private String version
 
+    @Override
     @Before
     void setUp() {
 
@@ -25,7 +29,17 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
 
         String sourceImageRepository = 'http://public.ecr.aws/data-prepper-container-repository'
 
-        this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
+        // this.registerLibTester(new SignArtifactsLibTester( '.sig', 'linux', "${workspace}/archive", null, null))
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        helper.registerAllowedMethod('git', [Map])
+        helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
         super.setUp()
 
@@ -51,6 +65,22 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
     void 'release-data-prepper-all-artifacts builds consistently with same inputs'() {
         testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
+    }
+
+    @Test
+    public void releaseMajorVersionTag(){
+        String majorTag = true
+        binding.setVariable('RELEASE_MAJOR_TAG', majorTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-major-version.jenkinsfile')
+    }
+
+    @Test
+    public void releaseLatestVersionTag(){
+        String latestTag = true
+        binding.setVariable('RELEASE_LATEST_TAG', latestTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-latest-version.jenkinsfile')
     }
 
     @Test

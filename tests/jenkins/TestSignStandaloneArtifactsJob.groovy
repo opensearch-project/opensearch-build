@@ -1,4 +1,5 @@
 /*
+ * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * The OpenSearch Contributors require contributions made to
@@ -8,9 +9,12 @@
 import jenkins.tests.BuildPipelineTest
 import org.junit.Before
 import org.junit.Test
+import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
+import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
 class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
 
+    @Override
     @Before
     void setUp() {
 
@@ -21,11 +25,32 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
         def platform = 'linux'
         def artifactPath = "${this.workspace}/artifacts"
 
-        this.registerLibTester(new SignArtifactsLibTester(sigtype, platform, artifactPath, null, null))
+        // this.registerLibTester(new SignArtifactsLibTester(sigtype, platform, artifactPath, null, null))
+        binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'github_bot_token_name')
+        helper.registerAllowedMethod('git', [Map])
+        helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod('withAWS', [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
 
-        this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(filenamesForUrls, 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
+        // this.registerLibTester(new PrintArtifactDownloadUrlsForStagingLibTester(filenamesForUrls, 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
 
-        this.registerLibTester(new UploadToS3LibTester(artifactPath, 'dummy_bucket_name', 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
+        // this.registerLibTester(new UploadToS3LibTester(artifactPath, 'dummy_bucket_name', 'sign_artifacts_job/dummy/upload/path/20/dist/signed'))
+        binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
+        binding.setVariable('ARTIFACT_BUCKET_NAME', 'dummy_bucket_name')
+        helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod("withCredentials", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+        helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })        
 
         super.setUp()
 

@@ -31,7 +31,7 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.9', ext: 'pom'
     implementation group: 'com.cloudbees', name: 'groovy-cps', version: '1.31'
-    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.31'
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '1.33'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
 }
@@ -40,7 +40,7 @@ configurations.all {
     resolutionStrategy {
         force group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
         force group: 'commons-codec', name: 'commons-codec', version: '1.15'
-        force group: 'com.google.protobuf', name: 'protobuf-java', version: '3.19.3'
+        force group: 'com.google.protobuf', name: 'protobuf-java', version: '3.21.7'
     }
 }
 
@@ -57,30 +57,23 @@ sourceSets {
         }
     }
 
-    jobs {
-        groovy {
-            srcDirs 'src/jenkins/jobs'
-            compileClasspath += main.compileClasspath
-        }
-
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
 }
 
 sharedLibrary {
     coreVersion = '2.364' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
-        workflowCpsGlobalLibraryPluginVersion = '570.v21311f4951f8' // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
+        // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
+        // Need to migrate to pipeline-groovy-lib later as workflow-cps-global-lib is deprecated now.
+        workflowCpsGlobalLibraryPluginVersion = '588.v576c103a_ff86'
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2.94.1')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
-        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '449.v77f0e8b_845c4') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
-        dependency('org.jenkins-ci.plugins', 'script-security', '1172.v35f6a_0b_8207e')
+        dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '456.vd8a_957db_5b_e9') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
+        dependency('org.jenkins-ci.plugins', 'script-security', '1184.v85d16b_d851b_3')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.jenkins-ci.plugins', 'junit', '1.55')
+        dependency('org.jenkins-ci.plugins', 'junit', '1143.v8d9a_e3355270')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
 }

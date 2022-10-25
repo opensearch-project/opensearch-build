@@ -1,3 +1,4 @@
+# Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
 #
 # The OpenSearch Contributors require contributions made to
@@ -250,5 +251,5 @@ class TestBundleOpenSearch(unittest.TestCase):
             with patch("shutil.copyfile") as mock_copyfile:
                 bundle.package(os.path.dirname(__file__))
                 mock_zipfile_open.assert_called_with("opensearch.zip", "w", zipfile.ZIP_DEFLATED)
-                mock_zipfile_write.assert_called_with(os.path.join(bundle.tmp_dir.name, "opensearch-1.3.0", "opensearch.txt"), "opensearch.txt")
+                mock_zipfile_write.assert_called_with(os.path.join(bundle.tmp_dir.name, "opensearch-1.3.0", "opensearch.txt"), os.path.join("opensearch-1.3.0", "opensearch.txt"))
                 self.assertEqual(mock_copyfile.call_count, 1)
