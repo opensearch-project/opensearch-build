@@ -53,7 +53,7 @@ class TestDockerCopy extends BuildPipelineTest {
         }
         assertThat(copyContainerCommand.size(), equalTo(1))
 
-        // Validate the copyContainer docker-copy.sh is called
+        // Validating docker-copy.jenkinsfile does run copyContainer.groovy 
         assertCallStack().contains("docker-copy.copyContainer")
 
         printCallStack()
