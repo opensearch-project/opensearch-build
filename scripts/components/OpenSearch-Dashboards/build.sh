@@ -116,25 +116,22 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         ;;
 esac
 
-echo "Setting node version"
-
-if [ "$PLATFORM" != "windows" ]; then
-    source $NVM_DIR/nvm.sh
-    nvm use
-else
-    volta install node@`cat .nvmrc`
-    volta install yarn
+NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
+if [ "$PLATFORM" = "windows" ]; then
+    NVM_CMD="volta install node@`cat .nvmrc` && volta install yarn"
 fi
+
+eval $NVM_CMD
 
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap
 
 echo "Building artifact"
 
-yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE --version-qualifier=$QUALIFIER
-
-mkdir -p "${OUTPUT}/dist"
-# Copy artifact to dist folder in bundle build output
-ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
-ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
-cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME
+#yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE --version-qualifier=$QUALIFIER
+#
+#mkdir -p "${OUTPUT}/dist"
+## Copy artifact to dist folder in bundle build output
+#ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
+#ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
+#cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME
