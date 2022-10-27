@@ -95,7 +95,7 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
 
-                            if (RELEASE_MAJOR_TAG) {
+                            if (params.RELEASE_MAJOR_TAG) {
                                 def majorVersion = VERSION.tokenize(".")[0].trim()
                                 def dockerCopyHubMajor =
                                     build job: 'docker-copy',
@@ -107,7 +107,7 @@ pipeline {
                                     ]
                             }
 
-                            if (RELEASE_LATEST_TAG) {
+                            if (params.RELEASE_LATEST_TAG) {
                                 def dockerCopyHubLatest =
                                     build job: 'docker-copy',
                                     parameters: [
@@ -132,7 +132,7 @@ pipeline {
                                     string(name: 'DESTINATION_IMAGE', value: "data-prepper:${VERSION}")
                                 ]
 
-                            if (RELEASE_MAJOR_TAG) {
+                            if (params.RELEASE_MAJOR_TAG) {
                                 def majorVersion = VERSION.tokenize(".")[0].trim()
                                 def dockerCopyECRMajor =
                                     build job: 'docker-copy',
@@ -144,7 +144,7 @@ pipeline {
                                     ]
                             }
 
-                            if (RELEASE_LATEST_TAG) {
+                            if (params.RELEASE_LATEST_TAG) {
                                 def dockerCopyECRLatest =
                                     build job: 'docker-copy',
                                     parameters: [
