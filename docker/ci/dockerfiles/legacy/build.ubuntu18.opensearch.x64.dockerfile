@@ -44,6 +44,12 @@ RUN curl -SL https://github.com/adoptium/temurin17-binaries/releases/download/jd
     mkdir -p /opt/java/openjdk-17 && \
     tar -xzf /opt/jdk17.tar.gz --strip-components 1 -C /opt/java/openjdk-17/ && \
     rm /opt/jdk17.tar.gz
+# JDK 19
+RUN curl -SL https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.1%2B10/OpenJDK19U-jdk_x64_linux_hotspot_19.0.1_10.tar.gz -o /opt/jdk19.tar.gz && \
+    mkdir -p /opt/java/openjdk-19 && \
+    tar -xzf /opt/jdk19.tar.gz --strip-components 1 -C /opt/java/openjdk-19/ && \
+    rm /opt/jdk19.tar.gz
+
 
 # ENV JDK
 ENV JAVA_HOME=/opt/java/openjdk-14 \
@@ -51,7 +57,8 @@ ENV JAVA_HOME=/opt/java/openjdk-14 \
     JAVA14_HOME=/opt/java/openjdk-14 \
     JAVA8_HOME=/opt/java/openjdk-8 \
     JAVA11_HOME=/opt/java/openjdk-11 \
-    JAVA17_HOME=/opt/java/openjdk-17
+    JAVA17_HOME=/opt/java/openjdk-17 \
+    JAVA19_HOME=/opt/java/openjdk-19
 
 # Sets user to opensearch as gradle check requires non-root user
 USER opensearch
