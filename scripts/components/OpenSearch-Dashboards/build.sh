@@ -116,15 +116,11 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         ;;
 esac
 
-echo "Setting node version"
-
-if [ "$PLATFORM" != "windows" ]; then
-    source $NVM_DIR/nvm.sh
-    nvm use
-else
-    volta install node@`cat .nvmrc`
-    volta install yarn
+NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
+if [ "$PLATFORM" = "windows" ]; then
+    NVM_CMD="volta install node@`cat .nvmrc` && volta install yarn"
 fi
+eval $NVM_CMD
 
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap
