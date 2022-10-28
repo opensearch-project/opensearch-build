@@ -57,6 +57,16 @@ components:
     platforms:
       - linux
       - windows
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: '2.3'
+    platforms:
+      - linux
+      - windows
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: '2.3'
@@ -79,6 +89,16 @@ components:
     ref: '2.3'
     platforms:
       - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: '2.3'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin

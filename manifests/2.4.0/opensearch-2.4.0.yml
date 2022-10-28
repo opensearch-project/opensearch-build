@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -92,6 +92,14 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: '2.x'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
     ref: '2.x'
@@ -140,7 +148,7 @@ components:
       - gradle:properties:version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
