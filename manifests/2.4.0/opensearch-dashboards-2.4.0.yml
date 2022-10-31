@@ -45,10 +45,15 @@ components:
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: '2.x'
+<<<<<<< HEAD
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     working_directory: src/plugins/custom_import_map
     ref: '2.x'
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
+=======
+  - name: searchRelevanceDashboards
+    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
+>>>>>>> 8b35085 (updated with dashboards-search-relevance)
     ref: '2.x'
