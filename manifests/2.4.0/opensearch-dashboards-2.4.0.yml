@@ -54,4 +54,4 @@ components:
     ref: '2.x'
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: '2.4'
+    ref: '2.x'
