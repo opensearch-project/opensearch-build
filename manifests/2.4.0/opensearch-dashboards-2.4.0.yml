@@ -49,3 +49,6 @@ components:
     repository: https://github.com/opensearch-project/dashboards-maps.git
     working_directory: src/plugins/custom_import_map
     ref: '2.x'
+  - name: securityAnalyticsDashboards
+    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
+    ref: '2.x'
