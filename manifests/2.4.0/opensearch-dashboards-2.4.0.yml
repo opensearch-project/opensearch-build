@@ -30,7 +30,7 @@ components:
     ref: '2.x'
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: '2.x'
+    ref: '2.4'
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: '2.x'
