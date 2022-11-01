@@ -16,7 +16,6 @@ pipeline {
             throttleOption: 'project',
         )
     }
-    agent none
     parameters {
         string(
             name: 'GIT_REPO_URL',
@@ -74,7 +73,6 @@ pipeline {
             }
             steps {
                 script {
-                    currentBuild.description = BUILD_MANIFEST_URL
                     if (AGENT_LABEL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Gradle Check (Jenkins) failed to start. Missing parameter: AGENT_LABEL.")
