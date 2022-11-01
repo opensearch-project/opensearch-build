@@ -73,7 +73,7 @@ case $PLATFORM in
     linux*)
         PLATFORM="linux"
         ;;
-    windows|*nt*)
+    windows*|*nt*)
         PLATFORM="windows"
         ;;
     *)
@@ -113,7 +113,7 @@ cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && pwd && ls -l && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 ZIP_NAME=`ls ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build | grep .zip`
 unzip ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$ZIP_NAME -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/
 # Reporting uses headless chromium to generate reports, which needs to be included in its artifact

@@ -120,6 +120,7 @@ NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
 if [ "$PLATFORM" = "windows" ]; then
     NVM_CMD="volta install node@`cat .nvmrc` && volta install yarn"
 fi
+eval $NVM_CMD
 
 eval $NVM_CMD
 
