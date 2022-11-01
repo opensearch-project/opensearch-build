@@ -39,8 +39,8 @@ class TestScriptFinder(unittest.TestCase):
 
     def test_find_build_script_component_override(self) -> None:
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "build.sh"),
-            ScriptFinder.find_build_script("OpenSearch", "OpenSearch", self.component_without_scripts),
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch-Dashboards", "build.sh"),
+            ScriptFinder.find_build_script("OpenSearch-Dashboards", "OpenSearch-Dashboards", self.component_without_scripts),
             msg="A component without scripts resolves to a component override.",
         )
 
@@ -60,8 +60,8 @@ class TestScriptFinder(unittest.TestCase):
 
     def test_find_build_script_component_script_in_folder_with_default(self) -> None:
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "build.sh"),
-            ScriptFinder.find_build_script("OpenSearch", "OpenSearch", self.component_with_scripts_folder),
+            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch-Dashboards", "build.sh"),
+            ScriptFinder.find_build_script("OpenSearch-Dashboards", "OpenSearch-Dashboards", self.component_with_scripts_folder),
             msg="A component with a scripts folder resolves to the override.",
         )
 
