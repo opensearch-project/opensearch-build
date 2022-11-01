@@ -81,96 +81,100 @@ pipeline {
                 }
             }
         }
-        stage('Install openjdk-8') {
-            tools {
-                jdk 'openjdk-8'
-            }
-            steps {
-                echo "Install openjdk-8"
-                sh("ls ${JAVA8_HOME}/.. | grep openjdk-8")
-            }
-        }
-        stage('Install openjdk-11') {
-           tools {
-               jdk 'openjdk-11'
-           }
-            steps {
-                echo "Install openjdk-11"
-                sh("ls ${JAVA11_HOME}/.. | grep openjdk-11")
-            }
-        }
-        stage('Install openjdk-14') {
-           tools {
-               jdk 'openjdk-14'
-           }
-            steps {
-                echo "Install openjdk-14"
-                sh("ls ${JAVA14_HOME}/.. | grep openjdk-14")
-            }
-        }
-        stage('Install openjdk-17') {
-           tools {
-               jdk 'openjdk-17'
-           }
-            steps {
-                echo "Install openjdk-17"
-                sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
-            }
-        }
-        stage('Install openjdk-19') {
-           tools {
-               jdk 'openjdk-19'
-           }
-            steps {
-                echo "Install openjdk-19"
-                sh("ls ${JAVA19_HOME}/.. | grep openjdk-19")
-            }
-        }
-        stage('Run Gradle Check') {
+        stage('Gradle Check') {
             // gradle check have a lot of issues running on containers
             // Therefore, we directly run it on the agent node
             agent { label AGENT_LABEL }
-            steps {
-                script {
-                    sh("ls /var/jenkins/tools/hudson.model.JDK/")
-                    if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
-                        def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
-                        println("Triggered by GitHub: ${pr_to_clone_url}")
-                        if ("$pr_number" == "Null") {
-                            currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
-                        }
-                        else {
-                            currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
-                        }
-
-                        runGradleCheck(
-                            gitRepoUrl: "${pr_from_clone_url}",
-                            gitReference: "${pr_from_sha}"
-                        )
+            stages {
+                stage('Install openjdk-8') {
+                    tools {
+                        jdk 'openjdk-8'
                     }
-                    else {
-                        println("Triggered by User or Triggered by Timer")
-                        def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
-                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
-
-                        runGradleCheck(
-                            gitRepoUrl: "${GIT_REPO_URL}",
-                            gitReference: "${GIT_REFERENCE}"
-                        )
+                    steps {
+                        echo "Install openjdk-8"
+                        sh("ls ${JAVA8_HOME}/.. | grep openjdk-8")
                     }
                 }
-            }
-            post() {
-                failure {
-                    archiveArtifacts artifacts: '**/build/heapdump/*.hprof', allowEmptyArchive: true
+                stage('Install openjdk-11') {
+                   tools {
+                       jdk 'openjdk-11'
+                   }
+                    steps {
+                        echo "Install openjdk-11"
+                        sh("ls ${JAVA11_HOME}/.. | grep openjdk-11")
+                    }
                 }
-                always {
-                    sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
-                    junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
-                    archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
-                    script {
-                        sh("rm -rf *")
-                        postCleanup()
+                stage('Install openjdk-14') {
+                   tools {
+                       jdk 'openjdk-14'
+                   }
+                    steps {
+                        echo "Install openjdk-14"
+                        sh("ls ${JAVA14_HOME}/.. | grep openjdk-14")
+                    }
+                }
+                stage('Install openjdk-17') {
+                   tools {
+                       jdk 'openjdk-17'
+                   }
+                    steps {
+                        echo "Install openjdk-17"
+                        sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
+                    }
+                }
+                stage('Install openjdk-19') {
+                   tools {
+                       jdk 'openjdk-19'
+                   }
+                    steps {
+                        echo "Install openjdk-19"
+                        sh("ls ${JAVA19_HOME}/.. | grep openjdk-19")
+                    }
+                }
+                stage('Run Gradle Check') {
+                    steps {
+                        script {
+                            sh("ls /var/jenkins/tools/hudson.model.JDK/")
+                            if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
+                                def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
+                                println("Triggered by GitHub: ${pr_to_clone_url}")
+                                if ("$pr_number" == "Null") {
+                                    currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
+                                }
+                                else {
+                                    currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+                                }
+
+                                runGradleCheck(
+                                    gitRepoUrl: "${pr_from_clone_url}",
+                                    gitReference: "${pr_from_sha}"
+                                )
+                            }
+                            else {
+                                println("Triggered by User or Triggered by Timer")
+                                def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
+                                currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+
+                                runGradleCheck(
+                                    gitRepoUrl: "${GIT_REPO_URL}",
+                                    gitReference: "${GIT_REFERENCE}"
+                                )
+                            }
+                        }
+                    }
+                    post() {
+                        failure {
+                            archiveArtifacts artifacts: '**/build/heapdump/*.hprof', allowEmptyArchive: true
+                        }
+                        always {
+                            sh ("cp -v `find search/build/reports/jacoco/ -name '*.xml' | head -n 1` codeCoverage.xml || echo")
+                            junit allowEmptyResults: true, testResults: '**/build/test-results/**/*.xml'
+                            archiveArtifacts artifacts: 'codeCoverage.xml', onlyIfSuccessful: true
+                            script {
+                                sh("rm -rf *")
+                                postCleanup()
+                            }
+                        }
                     }
                 }
             }
