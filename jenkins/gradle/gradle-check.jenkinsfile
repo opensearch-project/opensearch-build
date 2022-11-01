@@ -35,7 +35,7 @@ pipeline {
         // https://github.com/opensearch-project/OpenSearch/issues/1975
         choice(
             name: 'AGENT_LABEL',
-            description: 'Choose which jenkins agent to run gradle check',
+            description: 'Choose which jenkins agent to run gradle check on',
             choices: ['Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host', 'Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host'],
         )
     }
