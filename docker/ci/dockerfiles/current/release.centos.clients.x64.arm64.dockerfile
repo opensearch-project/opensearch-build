@@ -33,7 +33,7 @@ RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqli
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Create user group

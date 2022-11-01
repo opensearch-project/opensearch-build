@@ -59,6 +59,7 @@ pipeline {
         JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-11"
         JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-14"
         JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-17"
+        JAVA19_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-19"
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
@@ -115,6 +116,15 @@ pipeline {
             steps {
                 echo "Install openjdk-17"
                 sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
+            }
+        }
+        stage('Install openjdk-19') {
+           tools {
+               jdk 'openjdk-19'
+           }
+            steps {
+                echo "Install openjdk-19"
+                sh("ls ${JAVA19_HOME}/.. | grep openjdk-19")
             }
         }
         stage('Run Gradle Check') {
