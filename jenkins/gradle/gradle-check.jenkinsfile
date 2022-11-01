@@ -4,6 +4,7 @@ lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
 ]))
 
 pipeline {
+    agent none
     options {
         timeout(time: 2, unit: 'HOURS')
         throttleJobProperty(
