@@ -1,30 +1,26 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+//lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+//    $class: 'GitSCMSource',
+//    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+//]))
+
+lib = library(identifier: 'jenkins@gradle-check-windows-lib', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+    remote: 'https://github.com/peterzhuamazon/opensearch-build-libraries.git',
 ]))
 
 pipeline {
+    agent { label AGENT_LABEL }
     options {
         timeout(time: 2, unit: 'HOURS')
         throttleJobProperty(
             categories: [],
             limitOneJobWithMatchingParams: false,
             maxConcurrentPerNode: 0,
-            maxConcurrentTotal: 15,
+            maxConcurrentTotal: 20,
             paramsToUseForLimit: '',
             throttleEnabled: true,
             throttleOption: 'project',
         )
-    }
-    // gradle check have a lot of issues running on containers
-    // Therefore, we directly run it on the agent node
-    agent {
-        node {
-            // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
-            // The c524xlarge is the instance type that has the least amount of errors during gradle check
-            // https://github.com/opensearch-project/OpenSearch/issues/1975
-            label 'Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host'
-        }
     }
     parameters {
         string(
@@ -38,6 +34,14 @@ pipeline {
             description: 'Git branch, tag, commitid for reference to checkout commit of OpenSearch core before running the gradle check.',
             defaultValue: 'main',
             trim: true
+        )
+        // Must use agent with 1 executor or gradle check will show a lot of java-related errors
+        // The c524xlarge is the instance type that has the least amount of errors during gradle check
+        // https://github.com/opensearch-project/OpenSearch/issues/1975
+        choice(
+            name: 'AGENT_LABEL',
+            description: 'Choose which jenkins agent to run gradle check on',
+            choices: ['Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host', 'Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host'],
         )
     }
     triggers {
@@ -56,64 +60,82 @@ pipeline {
         )
     }
     environment {
-        JAVA8_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-8"
-        JAVA11_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-11"
-        JAVA14_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-14"
-        JAVA17_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-17"
-        JAVA19_HOME="/var/jenkins/tools/hudson.model.JDK/openjdk-19"
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
     stages {
-        stage('Install openjdk-8') {
-            tools {
-                jdk 'openjdk-8'
-            }
-            steps {
-                echo "Install openjdk-8"
-                sh("ls ${JAVA8_HOME}/.. | grep openjdk-8")
-            }
-        }
-        stage('Install openjdk-11') {
-           tools {
-               jdk 'openjdk-11'
-           }
-            steps {
-                echo "Install openjdk-11"
-                sh("ls ${JAVA11_HOME}/.. | grep openjdk-11")
-            }
-        }
-        stage('Install openjdk-14') {
-           tools {
-               jdk 'openjdk-14'
-           }
-            steps {
-                echo "Install openjdk-14"
-                sh("ls ${JAVA14_HOME}/.. | grep openjdk-14")
-            }
-        }
-        stage('Install openjdk-17') {
-           tools {
-               jdk 'openjdk-17'
-           }
-            steps {
-                echo "Install openjdk-17"
-                sh("ls ${JAVA17_HOME}/.. | grep openjdk-17")
-            }
-        }
-        stage('Install openjdk-19') {
-           tools {
-               jdk 'openjdk-19'
-           }
-            steps {
-                echo "Install openjdk-19"
-                sh("ls ${JAVA19_HOME}/.. | grep openjdk-19")
-            }
-        }
+        //stage('Install openjdk-8') {
+        //    tools {
+        //        jdk 'openjdk-8'
+        //    }
+        //    steps {
+        //        echo "Install openjdk-8"
+        //        sh("${JAVA8_HOME}/bin/java -version")
+        //    }
+        //}
+        //stage('Install openjdk-11') {
+        //   tools {
+        //       jdk 'openjdk-11'
+        //   }
+        //    steps {
+        //        echo "Install openjdk-11"
+        //        sh("${JAVA11_HOME}/bin/java -version")
+        //    }
+        //}
+        //stage('Install openjdk-14') {
+        //   tools {
+        //       jdk 'openjdk-14'
+        //   }
+        //    steps {
+        //        echo "Install openjdk-14"
+        //        sh("${JAVA14_HOME}/bin/java -version")
+        //    }
+        //}
+        //stage('Install openjdk-17') {
+        //   tools {
+        //       jdk 'openjdk-17'
+        //   }
+        //    steps {
+        //        echo "Install openjdk-17"
+        //        sh("${JAVA17_HOME}/bin/java -version")
+        //    }
+        //}
+        //stage('Install openjdk-19') {
+        //   tools {
+        //       jdk 'openjdk-19'
+        //   }
+        //    steps {
+        //        echo "Install openjdk-19"
+        //        sh("${JAVA19_HOME}/bin/java -version")
+        //    }
+        //}
         stage('Run Gradle Check') {
             steps {
                 script {
-                    sh("ls /var/jenkins/tools/hudson.model.JDK/")
+
+                    if (params.AGENT_LABEL.toLowerCase().contains('windows')) {
+                        echo("Windows Agent")
+                        sh("echo 'Not supporting Windows, exit 1' && exit 1")
+                    }
+                    else {
+                        echo("Linux Agent")
+                        env.JAVA8_HOME="/usr/lib/jvm/temurin-8-jdk-amd64"
+                        env.JAVA11_HOME="/usr/lib/jvm/temurin-11-jdk-amd64"
+                        env.JAVA14_HOME="/usr/lib/jvm/adoptopenjdk-14-amd64"
+                        env.JAVA17_HOME="/usr/lib/jvm/temurin-17-jdk-amd64"
+                        env.JAVA19_HOME="/usr/lib/jvm/temurin-19-jdk-amd64"
+                    }
+
+                    sh """
+                        set +x
+                        set -e
+                        for java_version in `env | grep JAVA | grep HOME`; do
+                            echo \$java_version
+                            java_path="`echo \$java_version | cut -d= -f2`/bin/java -version"
+                            eval \$java_path
+                        done
+                    """
+
                     if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
                         def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                         println("Triggered by GitHub: ${pr_to_clone_url}")
