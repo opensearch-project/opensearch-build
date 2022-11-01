@@ -16,16 +16,6 @@ pipeline {
             throttleOption: 'project',
         )
     }
-    // gradle check have a lot of issues running on containers
-    // Therefore, we directly run it on the agent node
-    agent {
-        node {
-            // Must use Ubuntu agent with 1 executor or gradle check will show a lot of java-related errors
-            // The c524xlarge is the instance type that has the least amount of errors during gradle check
-            // https://github.com/opensearch-project/OpenSearch/issues/1975
-            label 'Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host'
-        }
-    }
     parameters {
         string(
             name: 'GIT_REPO_URL',
@@ -38,6 +28,14 @@ pipeline {
             description: 'Git branch, tag, commitid for reference to checkout commit of OpenSearch core before running the gradle check.',
             defaultValue: 'main',
             trim: true
+        )
+        // Must use agent with 1 executor or gradle check will show a lot of java-related errors
+        // The c524xlarge is the instance type that has the least amount of errors during gradle check
+        // https://github.com/opensearch-project/OpenSearch/issues/1975
+        choice(
+            name: 'AGENT_LABEL',
+            description: 'Build docker image or not with options.',
+            choices: ['Jenkins-Agent-Ubuntu2004-X64-C524xlarge-Single-Host', 'Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host'],
         )
     }
     triggers {
@@ -64,6 +62,24 @@ pipeline {
         TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
     }
     stages {
+        stage('verify-parameters') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                    image 'alpine:3'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    currentBuild.description = BUILD_MANIFEST_URL
+                    if (AGENT_LABEL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
+                    }
+                }
+            }
+        }
         stage('Install openjdk-8') {
             tools {
                 jdk 'openjdk-8'
@@ -101,6 +117,9 @@ pipeline {
             }
         }
         stage('Run Gradle Check') {
+            // gradle check have a lot of issues running on containers
+            // Therefore, we directly run it on the agent node
+            agent { label AGENT_LABEL }
             steps {
                 script {
                     sh("ls /var/jenkins/tools/hudson.model.JDK/")
