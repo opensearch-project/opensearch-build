@@ -72,7 +72,6 @@ if [ "$PLATFORM" = "windows" ]; then
     NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn"
 fi
 
-
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'queryWorkbenchDashboards/workbench'
 PLUGIN_FOLDER=$(basename "$PWD")
