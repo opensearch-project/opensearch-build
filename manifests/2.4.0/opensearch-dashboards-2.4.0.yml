@@ -52,3 +52,6 @@ components:
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
     ref: '2.4'
+  - name: searchRelevanceDashboards
+    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
+    ref: '2.4'
