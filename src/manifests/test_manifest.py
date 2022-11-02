@@ -158,7 +158,7 @@ class TestComponent(Component):
         self.working_directory = data.get("working-directory", None)
         self.integ_test = data.get("integ-test", None)
         self.bwc_test = data.get("bwc-test", None)
-        self.topology = TestComponentTopology(self.integ_test.get("topology", None))
+        self.topology = TestComponentTopology(self.integ_test.get("topology", None)) if self.integ_test is not None else TestComponentTopology(None)
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
