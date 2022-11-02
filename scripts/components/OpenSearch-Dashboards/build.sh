@@ -123,6 +123,11 @@ fi
 
 eval $NVM_CMD
 
+echo yarn version
+yarn --version
+which yarn
+
+
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap
 
