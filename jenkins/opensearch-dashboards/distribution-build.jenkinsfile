@@ -43,8 +43,8 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux'. Can combine multiple platforms with space in between",
-            defaultValue: 'linux',
+            description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between",
+            defaultValue: 'linux windows',
             trim: true
         )
         choice(
@@ -81,7 +81,7 @@ pipeline {
                     echo("Verify Build Platforms")
                     def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
                     echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = "linux"
+                    def all_platforms = "linux windows"
                     echo("All Supported Platforms: '${all_platforms}'")
 
                     if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
@@ -553,6 +553,50 @@ pipeline {
                                         postCleanup()
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-windows-x64-zip') {
+                    when {
+                        beforeAgent true
+                        expression{
+                            params.BUILD_PLATFORM.contains('windows')
+                        }
+                    }
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'windows',
+                                architecture: 'x64',
+                                distribution: "zip"
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
+                            env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+
+                            echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
+                            echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+
+                        }
+                    }
+                    post {
+                        always {
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                )
+
+                                postCleanup()
                             }
                         }
                     }
