@@ -16,7 +16,7 @@ from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleComponent, BundleManifest
 from manifests.test_manifest import TestComponent, TestManifest
 from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError, ScriptFinder
-from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch, LocalTestCluster
+from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch, Topology
 
 
 @patch("os.makedirs")
@@ -36,9 +36,9 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         self.work_dir = Path("test_dir")
 
     @patch("os.path.exists", return_value=True)
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch.Topology")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_multiple_test_configs(self, mock_test_recorder: Mock, mock_local_test_cluster: Mock, *mock: Any) -> None:
+    def test_execute_with_multiple_test_configs(self, mock_test_recorder: Mock, mock_topology: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
         dependency_installer = MagicMock()
         integ_test_suite = IntegTestSuiteOpenSearch(
@@ -50,9 +50,9 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             self.work_dir,
             mock_test_recorder
         )
-        mock_local_test_cluster.create().__enter__.return_value = "localhost", 9200
+        mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
         mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
         mock_execute_integtest_sh.return_value = "success"
 
         test_results = integ_test_suite.execute_tests()
@@ -60,13 +60,13 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         self.assertTrue(test_results.failed)
 
         mock_execute_integtest_sh.assert_has_calls([
-            call("localhost", 9200, True, "with-security"),
-            call("localhost", 9200, False, "without-security")
+            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], True, "with-security"),
+            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], False, "without-security")
         ])
 
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch.Topology")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_build_dependencies(self, mock_test_recorder: Mock, mock_local_test_cluster: Mock, *mock: Any) -> None:
+    def test_execute_with_build_dependencies(self, mock_test_recorder: Mock, mock_topology: Mock, *mock: Any) -> None:
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("index-management")
         integ_test_suite = IntegTestSuiteOpenSearch(
@@ -79,10 +79,10 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             mock_test_recorder
         )
 
-        mock_local_test_cluster.create().__enter__.return_value = "localhost", 9200
+        mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
 
         mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
         mock_execute_integtest_sh.return_value = "success"
 
         integ_test_suite.execute_tests()
@@ -91,8 +91,8 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         )
 
         mock_execute_integtest_sh.assert_has_calls([
-            call("localhost", 9200, True, "with-security"),
-            call("localhost", 9200, False, "without-security")
+            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], True, "with-security"),
+            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], False, "without-security")
         ])
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
@@ -105,9 +105,9 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         mock_test_recorder.test_results_logs.return_value = mock_test_results_logs
 
         mock_create = MagicMock()
-        mock_create.return_value.__enter__.return_value = ("test_endpoint", 1234)
+        mock_create.return_value.__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "test", "port": 1234, "transport": 4321}], "cluster_manager_nodes": []}]
 
-        LocalTestCluster.create = mock_create  # type: ignore
+        Topology.create = mock_create  # type: ignore
 
         mock_execute.return_value = ("test_status", "test_stdout", "")
 
@@ -162,9 +162,9 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
     @patch("os.path.exists", return_value=True)
     @patch.object(ScriptFinder, "find_integ_test_script")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch.LocalTestCluster")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch.Topology")
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    def test_execute_with_working_directory(self, mock_test_recorder: Mock, mock_local_test_cluster: Mock, mock_script_finder: Mock, *mock: Any) -> None:
+    def test_execute_with_working_directory(self, mock_test_recorder: Mock, mock_topology: Mock, mock_script_finder: Mock, *mock: Any) -> None:
         test_config, component = self.__get_test_config_and_bundle_component("dashboards-reports")
         dependency_installer = MagicMock()
         integ_test_suite = IntegTestSuiteOpenSearch(
@@ -177,13 +177,17 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             mock_test_recorder
         )
 
-        mock_local_test_cluster.create().__enter__.return_value = "localhost", 9200
+        mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
         mock_script_finder.return_value = "integtest.sh"
 
         mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
         mock_execute_integtest_sh.return_value = "success"
 
-        integ_test_suite.execute_tests()
+        integ_test_suite.execute_tests()  # type: ignore
 
-        mock_execute_integtest_sh.assert_called_with("localhost", 9200, True, "with-security")
+        mock_execute_integtest_sh.assert_called_with(
+            [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}],
+            True,
+            "with-security"
+        )
