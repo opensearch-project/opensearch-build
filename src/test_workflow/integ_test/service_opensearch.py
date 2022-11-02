@@ -32,10 +32,11 @@ class ServiceOpenSearch(Service):
         additional_config: dict,
         security_enabled: bool,
         dependency_installer: DependencyInstaller,
-        work_dir: str
+        work_dir: str,
+        cluster_port: int = 9200
     ) -> None:
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
-
+        self.cluster_port = cluster_port
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
@@ -71,7 +72,7 @@ class ServiceOpenSearch(Service):
             yamlfile.write(yaml.dump(additional_config))
 
     def port(self) -> int:
-        return 9200
+        return self.cluster_port
 
     def check_service_response_text(self, response_text: str) -> bool:
         return ('"status":"green"' in response_text) or ('"status":"yellow"' in response_text)
