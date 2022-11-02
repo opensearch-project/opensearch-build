@@ -43,13 +43,13 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 2.x
+    ref: '2.4'
     platforms:
       - linux
       - windows
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 2.x
+    ref: '2.4'
     platforms:
       - linux
     checks:
@@ -104,7 +104,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: '2.x'
+    ref: '2.4'
     platforms:
       - linux
       - windows
