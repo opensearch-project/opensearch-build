@@ -69,7 +69,7 @@ fi
 
 NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
 if [ "$PLATFORM" = "windows" ]; then
-    NVM_CMD="volta install node@`cat ../OpenSearch-Dashboards/.nvmrc` && volta install yarn"
+    NVM_CMD="volta install node@`cat ../.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../package.json`"
 fi
 
 mkdir -p $OUTPUT/plugins
