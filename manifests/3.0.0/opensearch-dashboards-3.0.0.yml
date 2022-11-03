@@ -10,10 +10,6 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: main
-  - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/observability.git
-    working_directory: dashboards-observability
-    ref: main
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: main
@@ -27,10 +23,6 @@ components:
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/sql.git
     working_directory: workbench
-    ref: main
-  - name: customImportMapDashboards
-    repository: https://github.com/opensearch-project/dashboards-maps.git
-    working_directory: src/plugins/custom_import_map
     ref: main
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
