@@ -47,6 +47,11 @@ class TestOs(unittest.TestCase):
     def test_current_platform_lowercase(self, mock_subprocess: MagicMock) -> None:
         self.assertTrue(current_platform() == "windows")
 
+    # deb_architecture_alt
+    def test_deb_architecture(self) -> None:
+        self.assertEqual(deb_architecture('x64'), 'amd64')
+        self.assertEqual(deb_architecture('arm64'), 'arm64')
+
     # rpm_architecture_alt
     def test_rpm_architecture(self) -> None:
         self.assertEqual(rpm_architecture('x64'), 'x86_64')

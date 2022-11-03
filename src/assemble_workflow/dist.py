@@ -13,6 +13,7 @@ import tarfile
 import zipfile
 from abc import ABC, abstractmethod
 
+from assemble_workflow.bundle_deb import BundleDeb
 from assemble_workflow.bundle_rpm import BundleRpm
 from manifests.build_manifest import BuildManifest
 from system.zip_file import ZipFile
@@ -115,6 +116,14 @@ class DistZip(Dist):
                     fn = os.path.join(base, file)
                     zip.write(fn, fn[noleadingdirlen:])
 
+
+class DistDeb(Dist):
+
+    def __extract__(self, dest: str) -> None:
+        BundleDeb(self.filename, self.path, self.min_path).extract(dest)
+
+    def __build__(self, name: str, dest: str) -> None:
+        BundleDeb(self.filename, self.path, self.min_path).build(name, dest, self.archive_path, self.build_cls)
 
 class DistRpm(Dist):
 

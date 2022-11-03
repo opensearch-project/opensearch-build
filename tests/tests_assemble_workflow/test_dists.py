@@ -19,6 +19,7 @@ class TestDists(unittest.TestCase):
         self.dists = Dists
         self.manifest_tar = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-linux-1.1.1.yml"))
         self.manifest_zip = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-windows-1.3.0.yml"))
+        self.manifest_deb = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-deb-1.3.0.yml"))
         self.manifest_rpm = BuildManifest.from_path(os.path.join(os.path.dirname(__file__), "data/opensearch-build-rpm-1.3.0.yml"))
 
     def test_distribution_map(self) -> None:
@@ -26,6 +27,8 @@ class TestDists(unittest.TestCase):
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['tar'].extension, '.tar.gz')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['zip'].cls.__name__, 'DistZip')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['zip'].extension, '.zip')
+        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['deb'].cls.__name__, 'DistDeb')
+        self.assertEqual(self.dists.DISTRIBUTIONS_MAP['deb'].extension, '.deb')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['rpm'].cls.__name__, 'DistRpm')
         self.assertEqual(self.dists.DISTRIBUTIONS_MAP['rpm'].extension, '.rpm')
 
@@ -34,5 +37,7 @@ class TestDists(unittest.TestCase):
         self.assertEqual(return_cls_tar.__class__.__name__, 'DistTar')
         return_cls_zip = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_zip.build)
         self.assertEqual(return_cls_zip.__class__.__name__, 'DistZip')
+        return_cls_deb = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_deb.build)
+        self.assertEqual(return_cls_deb.__class__.__name__, 'DistDeb')
         return_cls_rpm = self.dists.create_dist("OpenSearch", "artifacts/dist", "opensearch-1.3.0", self.manifest_rpm.build)
         self.assertEqual(return_cls_rpm.__class__.__name__, 'DistRpm')

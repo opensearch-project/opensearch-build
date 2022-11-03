@@ -79,11 +79,10 @@ echo $DIR
 cd $DIR
 
 ## Setup default config
-
-if [ "$DISTRIBUTION" = "rpm" ]; then
+if [ "$DISTRIBUTION" = "rpm" -o "$DISTRIBUTION" = "deb" ]; then
     cp -v ../../../config/opensearch_dashboards.yml "$OUTPUT/../etc/opensearch-dashboards/"
     cp -a ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
-    cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/* "$OUTPUT/../"
+    cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
 else
     cp -v ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
 fi

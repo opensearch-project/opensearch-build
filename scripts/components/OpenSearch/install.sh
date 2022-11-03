@@ -82,9 +82,12 @@ cd $DIR
 if [ "$DISTRIBUTION" = "tar" ]; then
     cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
 
+elif [ "$DISTRIBUTION" = "deb" ]; then
+    cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
+    cp -va ../../../scripts/pkg/build_templates/opensearch/deb/* "$OUTPUT/../"
 elif [ "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
-    cp -va ../../../scripts/pkg/build_templates/opensearch/* "$OUTPUT/../"
+    cp -va ../../../scripts/pkg/build_templates/opensearch/rpm/* "$OUTPUT/../"
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
 fi
