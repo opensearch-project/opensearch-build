@@ -8,7 +8,7 @@
 
 import os
 from pathlib import Path
-
+import logging
 from sign_workflow.signer import Signer
 
 """
@@ -33,18 +33,37 @@ class SignerPGP(Signer):
 
     def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
         filename = os.path.join(basepath, artifact)
-        signature_file = filename + signature_type
+        signature_file = filename + ".sig"
         self.__remove_existing_signature__(signature_file)
-        signing_cmd = [
-            "./opensearch-signer-client",
-            "-i",
-            filename,
-            "-o",
-            signature_file,
-            "-p",
-            "pgp",
-        ]
+        # signing_cmd = [
+        #     "./opensearch-signer-client",
+        #     "-i",
+        #     filename,
+        #     "-o",
+        #     signature_file,
+        #     "-p",
+        #     "pgp",
+        # ]
+        signing_cmd = ["echo signed"]
         self.git_repo.execute(" ".join(signing_cmd))
+        if(signature_type == ".asc"):
+            self.__convert_to_asc(filename)
+
+    def __convert_to_asc(self, filename: str) -> None:
+        signature_file = filename + ".asc"       
+        self.__remove_existing_signature__(signature_file)
+        conversion_cmd = [
+            "gpg --enarmor",
+            "<",
+            filename,
+            ">",
+            signature_file,
+            "&&",
+            "sed -i 's/ARMORED FILE/SIGNATURE/g'",
+            signature_file
+        ]
+        logging.info('Coverting sig to asc signatures')
+        self.git_repo.execute(" ".join(conversion_cmd))
 
     def verify(self, filename: str) -> None:
         verify_cmd = ["gpg", "--verify-files", filename]
