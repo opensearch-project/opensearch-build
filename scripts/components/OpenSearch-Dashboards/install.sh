@@ -79,11 +79,11 @@ echo $DIR
 cd $DIR
 
 ## Setup default config
-if [ "$DISTRIBUTION" = "tar" ]; then
-    cp ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
 
-elif [ "$DISTRIBUTION" = "rpm" ]; then
-    cp ../../../config/opensearch_dashboards.yml "$OUTPUT/../etc/opensearch-dashboards/"
+if [ "$DISTRIBUTION" = "rpm" ]; then
+    cp -v ../../../config/opensearch_dashboards.yml "$OUTPUT/../etc/opensearch-dashboards/"
     cp -a ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
     cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/* "$OUTPUT/../"
+else
+    cp -v ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
 fi
