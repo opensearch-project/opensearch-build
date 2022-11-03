@@ -680,6 +680,7 @@ pipeline {
                             'assemble-archive-and-test-linux-x64-rpm',
                             'assemble-archive-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
+                            'build-and-test-windows-x64-zip'
                         ])
 
                         publishNotification(
