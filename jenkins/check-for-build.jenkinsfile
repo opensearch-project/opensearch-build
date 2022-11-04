@@ -20,8 +20,6 @@ pipeline {
             H 1 * * * %INPUT_MANIFEST=1.4.0/opensearch-dashboards-1.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux
             H 1 * * * %INPUT_MANIFEST=2.3.1/opensearch-2.3.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows
             H 1 * * * %INPUT_MANIFEST=2.3.1/opensearch-dashboards-2.3.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows
-            H/60 * * * * %INPUT_MANIFEST=2.4.0/opensearch-2.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows
-            H/60 * * * * %INPUT_MANIFEST=2.4.0/opensearch-dashboards-2.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows
         '''
