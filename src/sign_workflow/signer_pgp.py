@@ -6,9 +6,10 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 from pathlib import Path
-import logging
+
 from sign_workflow.signer import Signer
 
 """
@@ -22,9 +23,9 @@ class SignerPGP(Signer):
     ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
-            location = os.path.join(basepath, artifact)
-            self.sign(artifact, basepath, signature_type)
-            self.verify(location + signature_type)
+        location = os.path.join(basepath, artifact)
+        self.sign(artifact, basepath, signature_type)
+        self.verify(location + signature_type)
 
     def is_valid_file_type(self, file_name: str) -> bool:
         return any(
@@ -49,7 +50,7 @@ class SignerPGP(Signer):
             self.__convert_to_asc(filename, signature_file)
 
     def __convert_to_asc(self, filename: str, signature_file: str) -> None:
-        asc_signature_file = filename + ".asc"       
+        asc_signature_file = filename + ".asc"
         self.__remove_existing_signature__(asc_signature_file)
         conversion_cmd = [
             "gpg --enarmor",
