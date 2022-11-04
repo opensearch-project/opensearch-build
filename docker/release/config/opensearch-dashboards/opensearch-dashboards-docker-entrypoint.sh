@@ -189,6 +189,8 @@ function runOpensearchDashboards {
     if [[ -n "$VERSION_NUMBER" ]]; then
         vis_ds_block_check=`echo -e "$VERSION_NUMBER\n$viz_ds_block" | sort -V | head -n 1`
     fi
+    echo VERSION_NUMBER $VERSION_NUMBER
+    echo vis_ds_block_check $vis_ds_block_check
 
     longopts=()
     for opensearch_dashboards_var in ${opensearch_dashboards_vars[*]}; do
