@@ -66,6 +66,9 @@ COPY --from=linux_stage_0 --chown=$UID:$GID $OPENSEARCH_DASHBOARDS_HOME $OPENSEA
 # Setup OpenSearch-dashboards
 WORKDIR $OPENSEARCH_DASHBOARDS_HOME
 
+# Set PATH
+ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
+
 # Change user
 USER $UID
 
@@ -73,9 +76,6 @@ USER $UID
 EXPOSE 5601
 
 ARG BUILD_DATE
-
-# Set PATH
-ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
 
 # Label
 LABEL org.label-schema.schema-version="1.0" \
