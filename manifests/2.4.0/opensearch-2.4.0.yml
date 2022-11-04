@@ -43,7 +43,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '2.4'
+    ref: tags/2.4.0.0
     platforms:
       - linux
       - windows

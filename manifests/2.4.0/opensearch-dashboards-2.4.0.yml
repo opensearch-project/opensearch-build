@@ -27,7 +27,7 @@ components:
     ref: '2.4'
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: '2.4'
+    ref: tags/2.4.0.0
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     ref: '2.4'
