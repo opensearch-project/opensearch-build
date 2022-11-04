@@ -18,7 +18,6 @@ ARG UID=1000
 ARG GID=1000
 ARG TEMP_DIR=/tmp/opensearch-dashboards
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
-ARG VERSION
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -33,7 +32,7 @@ RUN groupadd -g $GID opensearch-dashboards && \
 # Prepare working directory
 COPY * $TEMP_DIR/
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
-    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/ && \
+    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-`echo $VERSION | cut -d. -f1`.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
     cp -v $TEMP_DIR/opensearch_dashboards-`echo $VERSION | cut -d. -f1`.x.yml $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
     cp -v $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
     echo "server.host: '0.0.0.0'" >> $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
@@ -71,14 +70,12 @@ USER $UID
 # Expose port
 EXPOSE 5601
 
+ARG VERSION
 ARG BUILD_DATE
 ARG NOTES
 
-# Set ENV
+# Set PATH
 ENV PATH=$PATH:$OPENSEARCH_DASHBOARDS_HOME/bin
-# Preserve version number after build so entrypoint can use it
-ENV VERSION_NUMBER=$VERSION
-
 
 # Label
 LABEL org.label-schema.schema-version="1.0" \

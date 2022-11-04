@@ -154,17 +154,6 @@ opensearch_dashboards_vars=(
     telemetry.optIn
     telemetry.optInStatusUrl
     telemetry.sendUsageFrom
-    vis_builder.enabled
-    data_source.enabled
-    data_source.encryption.wrappingKeyName
-    data_source.encryption.wrappingKeyNamespace
-    data_source.encryption.wrappingKey
-    data_source.audit.enabled
-    data_source.audit.appender.kind
-    data_source.audit.appender.path
-    data_source.audit.appender.layout.kind
-    data_source.audit.appender.layout.highlight
-    data_source.audit.appender.layout.pattern
 )
 
 function setupSecurityDashboardsPlugin {
@@ -185,23 +174,8 @@ function setupSecurityDashboardsPlugin {
 }
 
 function runOpensearchDashboards {
-    vis_ds_block="2.4.0"
-    if [[ -n "$VERSION_NUMBER" ]]; then
-        vis_ds_block_check=`echo -e "$VERSION_NUMBER\n$viz_ds_block" | sort -V | head -n 1`
-    fi
-    echo VERSION_NUMBER $VERSION_NUMBER
-    echo vis_ds_block_check $vis_ds_block_check
-
     longopts=()
     for opensearch_dashboards_var in ${opensearch_dashboards_vars[*]}; do
-
-        # viz_builer and data_source only available after 2.4.0
-        if [[ "$opensearch_dashboards_var" = *"vis_builder"* || "$opensearch_dashboards_var" = *"data_source"* ]]; then
-            if [[ "$vis_ds_block_check" != "$vis_ds_block" ]]; then
-                echo "$opensearch_dashboards_var is not available in opensearch-dashboards $vis_ds_block"
-                continue
-            fi
-        fi
 
         # 'opensearch.hosts' -> 'OPENSEARCH_URL'
         env_var=$(echo ${opensearch_dashboards_var^^} | tr . _)
