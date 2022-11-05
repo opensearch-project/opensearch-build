@@ -154,16 +154,6 @@ opensearch_dashboards_vars=(
     telemetry.optIn
     telemetry.optInStatusUrl
     telemetry.sendUsageFrom
-    data_source.enabled
-    data_source.encryption.wrappingKeyName
-    data_source.encryption.wrappingKeyNamespace
-    data_source.encryption.wrappingKey
-    data_source.audit.enabled
-    data_source.audit.appender.kind
-    data_source.audit.appender.path
-    data_source.audit.appender.layout.kind
-    data_source.audit.appender.layout.highlight
-    data_source.audit.appender.layout.pattern
 )
 
 function setupSecurityDashboardsPlugin {
