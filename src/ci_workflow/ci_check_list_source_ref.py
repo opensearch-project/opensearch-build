@@ -6,8 +6,8 @@
 # compatible open source license.
 
 import logging
-import subprocess
 import os
+import subprocess
 
 from ci_workflow.ci_check_list import CiCheckList
 from git.git_repository import GitRepository
