@@ -14,6 +14,7 @@ from ci_workflow.ci_target import CiTarget
 class CiCheckList(ABC):
     def __init__(self, component: Any, target: CiTarget) -> None:
         self.component = component
+        self.component_ref_is_commit = True if len(self.component.ref) == 40 and int(self.component.ref, 16) else False
         self.target = target
 
     @abstractmethod
