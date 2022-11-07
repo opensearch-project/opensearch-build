@@ -42,7 +42,8 @@ pipeline {
                     signArtifacts(
                         artifactPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
                         type: 'maven',
-                        platform: 'linux'
+                        platform: 'linux',
+                        sigtype: '.asc'
                     )
                 }
             }

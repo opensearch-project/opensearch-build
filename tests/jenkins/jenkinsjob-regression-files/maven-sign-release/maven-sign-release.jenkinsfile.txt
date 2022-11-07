@@ -13,7 +13,7 @@
                      downloadFromS3.withAWS({role=opensearch-bundle, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         downloadFromS3.s3Download({file=/tmp/workspace/artifacts, bucket=job-s3-bucket-name, path=distribution-build-opensearch/1.0.0/123/linux/x64/builds/, force=true})
                maven-sign-release.echo(Signing Maven artifacts.)
-               maven-sign-release.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml, type=maven, platform=linux})
+               maven-sign-release.signArtifacts({artifactPath=/tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml, type=maven, platform=linux, sigtype=.asc})
                   signArtifacts.echo(PGP or Windows Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
@@ -32,7 +32,7 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-                   /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux
+                   /tmp/workspace/sign.sh /tmp/workspace/artifacts/distribution-build-opensearch/1.0.0/123/linux/x64/builds/opensearch/manifest.yml --type=maven --platform=linux --sigtype=.asc
                )
          maven-sign-release.stage(stage maven artifacts, groovy.lang.Closure)
             maven-sign-release.script(groovy.lang.Closure)
