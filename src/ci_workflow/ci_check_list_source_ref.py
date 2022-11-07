@@ -21,7 +21,7 @@ class CiCheckListSourceRef(CiCheckList):
     def checkout(self, work_dir: str) -> None:
 
         # If ref is commit id, checkout the repository instead, as ls-remote does not allow non-branch/non-tag to be checked
-        if self.component_ref_is_commit:
+        if self.component_ref_is_sha1:
             self.git_repo = GitRepository(
                 self.component.repository, self.component.ref, os.path.join(work_dir, self.component.name), self.component.working_directory
             )
@@ -31,7 +31,7 @@ class CiCheckListSourceRef(CiCheckList):
     def check(self) -> None:
         logging.info(f"Checking {self.component.repository} at {self.component.ref}.")
 
-        if self.component_ref_is_commit:
+        if self.component_ref_is_sha1:
             logging.info(f"Detect {self.component.name} with ref {self.component.ref} in sha1 format, treat as commit.")
             results = subprocess.check_output(f"git cat-file -t {self.component.ref}", shell=True, cwd=self.git_repo.working_directory).decode().strip().split("\t")
             check_failure = False if len(results) == 1 and results[0] == 'commit' else True
@@ -43,7 +43,7 @@ class CiCheckListSourceRef(CiCheckList):
         if check_failure:
             raise CiCheckListSourceRef.MissingRefError(self.component.repository, self.component.ref)
         else:
-            if self.component_ref_is_commit:
+            if self.component_ref_is_sha1:
                 logging.info(f"Found {self.component.repository} at {self.component.ref}.")
             else:
                 logging.info(f"Found {self.component.repository} at {self.component.ref} ({results[0]}).")

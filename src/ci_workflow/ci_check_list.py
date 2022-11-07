@@ -16,10 +16,10 @@ class CiCheckList(ABC):
     def __init__(self, component: Any, target: CiTarget) -> None:
         self.component = component
         try:
-            self.component_ref_is_commit = True if len(self.component.ref) == 40 and int(self.component.ref, 16) else False
-            logging.debug("ref exists in component")
+            self.component_ref_is_sha1 = True if len(self.component.ref) == 40 and int(self.component.ref, 16) else False
+            logging.debug("sha1 exists in ref")
         except AttributeError:
-            logging.debug("ref does not exist in component")
+            logging.debug("sha1 not exist in ref")
         self.target = target
 
     @abstractmethod
