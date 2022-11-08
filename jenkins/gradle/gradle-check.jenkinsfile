@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.1.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -63,28 +63,22 @@ pipeline {
             steps {
                 script {
 
-                    if (params.AGENT_LABEL.toLowerCase().contains('windows')) {
-                        echo("Windows Agent")
-                        currentBuild.result = 'ABORTED'
-                        error("Not Supporting Windows")
-                    }
-                    else {
-                        echo("Linux Agent")
-                        env.JAVA8_HOME="/usr/lib/jvm/temurin-8-jdk-amd64"
-                        env.JAVA11_HOME="/usr/lib/jvm/temurin-11-jdk-amd64"
-                        env.JAVA14_HOME="/usr/lib/jvm/adoptopenjdk-14-amd64"
-                        env.JAVA17_HOME="/usr/lib/jvm/temurin-17-jdk-amd64"
-                        env.JAVA19_HOME="/usr/lib/jvm/temurin-19-jdk-amd64"
-                    }
-
                     sh """
                         set +x
                         set -e
-                        for java_version in `env | grep JAVA | grep HOME`; do
-                            echo \$java_version
-                            java_path="`echo \$java_version | cut -d= -f2`/bin/java -version"
-                            eval \$java_path
-                        done
+                        JAVA_HOME_LIST=`env | grep JAVA | grep HOME`
+                        echo "JAVA_HOME_LIST \$JAVA_HOME_LIST"
+
+                        if [ -n "\$JAVA_HOME_LIST" ] && [ "\$JAVA_HOME_LIST" != "" ]; then
+                            for java_version in \$JAVA_HOME_LIST; do
+                                echo \$java_version
+                                java_path="`echo \$java_version | cut -d= -f2`/bin/java -version"
+                                eval \$java_path
+                            done
+                        else
+                            echo "Missing JAVA_HOME information in env vars, exit 1"
+                            exit 1
+                        fi
                     """
 
                     if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
