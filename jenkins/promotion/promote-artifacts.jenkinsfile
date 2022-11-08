@@ -29,12 +29,12 @@ pipeline {
         choice(
             choices: ['linux', 'windows', 'darwin'],
             name: 'DISTRIBUTION_PLATFORM',
-            description: 'What platform is this distribution build for?.'
+            description: 'What platform is this distribution build for?'
         )
         choice(
-            choices: ['x64', 'arm64'],
+            choices: ['arm64', 'x64'],
             name: 'DISTRIBUTION_ARCHITECTURE',
-            description: 'What architecture is this distribution build for?.'
+            description: 'What architecture is this distribution build for? (Always run "arm64" before "x64")'
         )
     }
     stages {

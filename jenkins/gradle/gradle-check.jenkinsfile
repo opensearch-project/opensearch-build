@@ -85,10 +85,10 @@ pipeline {
                         def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                         println("Triggered by GitHub: ${pr_to_clone_url}")
                         if ("$pr_number" == "Null") {
-                            currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
+                            currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}<br>runner: ${AGENT_LABEL}"""
                         }
                         else {
-                            currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+                            currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}<br>runner: ${AGENT_LABEL}"""
                         }
 
                         runGradleCheck(
@@ -99,7 +99,7 @@ pipeline {
                     else {
                         println("Triggered by User or Triggered by Timer")
                         def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
-                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a><br>runner: ${AGENT_LABEL}"""
 
                         runGradleCheck(
                             gitRepoUrl: "${GIT_REPO_URL}",
