@@ -51,7 +51,7 @@ components:
     ref: '958ee64feb5c30c8ac801b0a369b7a8f0e5540b9'
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
-    ref: 'e4ab3d7a0c5250500b90e6d21d27716cb93ddd55'
+    ref: '026413a38c0197566cef052a8de6e8333489e82c'
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 'd9f1afa92b98b49f44521478fb2564de2c1d5905'
