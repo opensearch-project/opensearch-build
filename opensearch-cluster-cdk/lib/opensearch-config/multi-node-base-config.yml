@@ -1,0 +1,5 @@
+cluster.name: "my-stack"
+cluster.initial_master_nodes: ["seed"]
+discovery.seed_providers: ec2
+discovery.ec2.tag.role: manager
+network.host: 0.0.0.0
