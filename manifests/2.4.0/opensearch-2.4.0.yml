@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: '77ef9e304dd6ee95a600720a387a9735bbcf7bc9'
+    ref: '2.4'
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 'ef574043c64ad4cd73cf1214320a87509cb57aee'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '77137cf28917ba4210bc237a0f72dffe651e7529'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -34,7 +34,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: '3281e6700b8135bda0c1dfff37e958a1ab28463d'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -43,13 +43,13 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '982f28140c2c0c910aad30ac775b907b0c1a7f65'
+    ref: '2.4'
     platforms:
       - linux
       - windows
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 'a908e34e6a07fc1bd31d9099a0fb229a9901fcb8'
+    ref: '2.4'
     platforms:
       - linux
     checks:
@@ -57,7 +57,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '3e96daed51a64b57a2bc78c368f0a34b2d4852c0'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '3e96daed51a64b57a2bc78c368f0a34b2d4852c0'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -77,7 +77,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: '07a029deda1320fbb1c74cd2573990f3feb0634d'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -86,7 +86,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: '0b7c923827e0491f3a9f18e94ae288f6f93980b4'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -95,7 +95,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 'b9e46b2d0cdb13f5b551ee019e077d2ef35e2f39'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -104,7 +104,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 'a1527c5fceb6226d1ee4f4e54c1868bfb289bd94'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: dashboards-reports
     repository: https://github.com/opensearch-project/dashboards-reports.git
-    ref: 'ad7455c810b3760ab033a981596015a874a9356e'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -124,7 +124,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: '1068d88819f4d39b45865f5db5da9baaadc494aa'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -133,7 +133,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: '9944f2e9a263ee06e7da99d72cc88f7eb267633f'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -142,7 +142,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: '3e7fa41e87e8a7ace8796a2e520efebb41093234'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:properties:version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: '1bf862b9bbd72de150b62356e95b8ee6e9f11811'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: '22b6516b64f4e9ebcdf90a2c16f8bdac3c719a40'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - gradle:properties:version
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: '48854be0b8589825959b0c138d49ddf23ec84680'
+    ref: '2.4'
     platforms:
       - linux
       - windows
@@ -176,7 +176,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 'f998f00455d71edf7fa229ebd8209f43e7c9093e'
+    ref: '2.4'
     platforms:
       - linux
       - windows
