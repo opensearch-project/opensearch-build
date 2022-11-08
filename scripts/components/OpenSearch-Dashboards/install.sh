@@ -81,6 +81,9 @@ cd $DIR
 ## Setup default config
 
 MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
+if ! (ls ../../../config/ | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJOR_VERSION); then
+    MAJOR_VERSION="default"
+fi
 
 if [ "$DISTRIBUTION" = "rpm" ]; then
     cp -v ../../../config/opensearch_dashboards-$MAJOR_VERSION.x.yml "$OUTPUT/../etc/opensearch-dashboards/opensearch_dashboards.yml"

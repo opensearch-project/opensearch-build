@@ -34,8 +34,11 @@ RUN groupadd -g $GID opensearch-dashboards && \
 # Prepare working directory
 COPY * $TEMP_DIR/
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
-    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-`echo $VERSION | cut -d. -f1`.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
-    cp -v $TEMP_DIR/opensearch_dashboards-`echo $VERSION | cut -d. -f1`.x.yml $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
+    MAJOR_VERSION_ENTRYPOINT=`echo $VERSION | cut -d. -f1` && \
+    MAJOR_VERSION_YML=`echo $VERSION | cut -d. -f1` && \
+    if ! (ls $TEMP_DIR | grep -E "opensearch-dashboards-docker-entrypoint.*.x.yml" | grep \$MAJOR_VERSION); then MAJOR_VERSION_ENTRYPOINT="default"; fi && \
+    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-\$MAJOR_VERSION_ENTRYPOINT.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
+    cp -v $TEMP_DIR/opensearch_dashboards-\$MAJOR_VERSION_YML.x.yml $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
     cp -v $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
     echo "server.host: '0.0.0.0'" >> $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
     ls -l $OPENSEARCH_DASHBOARDS_HOME && \
