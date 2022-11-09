@@ -5,10 +5,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import subprocess
 import shutil
+import subprocess
 from subprocess import PIPE
 from system.temporary_directory import TemporaryDirectory
+
 
 yml_template = 'docker-compose.yml'
 yml_template_location = './src/validation_docker_workflow/'
@@ -40,8 +41,8 @@ class RunDocker():
         target_yml_file = tmp_dir.name + '/' + yml_template
         RunDocker.inplace_change(target_yml_file,'OS_IMAGE_PLACEHOLDER',OS_image)
         RunDocker.inplace_change(target_yml_file,'OSD_IMAGE_PLACEHOLDER',OSD_image)
-        RunDocker.inplace_change(target_yml_file,'OS1_NAME_PLACEHOLDER',OS1_name)
-        RunDocker.inplace_change(target_yml_file,'OS2_NAME_PLACEHOLDER',OS2_name)
+        RunDocker.inplace_change(target_yml_file,'OS1_NAME',OS1_name)
+        RunDocker.inplace_change(target_yml_file,'OS2_NAME',OS2_name)
         RunDocker.inplace_change(target_yml_file,'OSD_NAME_PLACEHOLDER',OSD_name)
 
         ## spin up containers

@@ -8,6 +8,7 @@
 import argparse
 import logging
 
+
 class DockerEcrArgs():
 
     def __init__(self) -> None:

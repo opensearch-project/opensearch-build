@@ -6,9 +6,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import json
 import logging
 import requests
-import json
 import subprocess
 from subprocess import PIPE
 
