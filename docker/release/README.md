@@ -104,7 +104,7 @@ Here are three example scenarios of using above variables:
      ```
 
 ### Disable Performance Analyzer Agent Cli and Related Configurations
-(This change is added since OpenSearch 2.4.0 and after OpenSearch 1.3.6)
+(This change is added after OpenSearch 2.4.0 and after OpenSearch 1.3.6)
 
   * 1 for OpenSearch:
     * __DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI__: Default to `null`, set to `true` disables running of [performance-analyzer-agent-cli](https://github.com/opensearch-project/performance-analyzer/blob/2.4/packaging/performance-analyzer-agent-cli) bundled with Performance Analyzer Plugin, which starts the performance analyzer root cause analysis (RCA) agent.
@@ -114,11 +114,11 @@ Here are some example scenarios of using above variables:
 #### Scenario 1: Original behavior, enable Performance Analyzer Agent Cli
   * OpenSearch:
      ```
-     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:2.4.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
      ```
 
 #### Scenario 2: Disable Performance Analyzer Agent Cli
   * OpenSearch:
      ```
-     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:2.4.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
      ```
