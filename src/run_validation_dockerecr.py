@@ -62,12 +62,16 @@ def main() -> int:
 
                 # clean up
                 CleanupDocker.cleanup('opensearch-node1-test', 'opensearch-node2-test', 'opensearch-dashboards-test', target_yml_file)
+                return 0
             else:
                 logging.info('The container is fail to run. Exiting the validation.')
+                return False
         else:
             logging.info('Image digest does not match between the dockerHub and local download. Exiting the validation.')
+            return False
     else:
         logging.info('docker_daemon check is fail. Exiting the validation.')
+        return False
 
 
 if __name__ == "__main__":

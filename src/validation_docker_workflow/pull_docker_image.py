@@ -16,7 +16,7 @@ If the image is currently existing at local, we want to remove it and download a
 
 
 class PullDockerImage():
-
+    @staticmethod
     def pull_image(image_name):
         local_inspect = "docker image inspect -f '{{ .Id }}' " + image_name
         local_remove = "docker image rm -f " + image_name

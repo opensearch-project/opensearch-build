@@ -22,7 +22,7 @@ It returns True if containers are Up.
 
 
 class RunDocker():
-
+    @staticmethod
     def inplace_change(filename, old_string, new_string):
 
         with open(filename) as f:
@@ -36,6 +36,7 @@ class RunDocker():
             s = s.replace(old_string, new_string)
             f.write(s)
 
+    @staticmethod
     def run_container(OS_image, OSD_image, OS1_name, OS2_name, OSD_name):
         # replace the placeholder in template docker-compose.yaml which is taken from sample in https://opensearch.org/docs/latest/opensearch/install/docker/#sample-docker-composeyml
         tmp_dir = TemporaryDirectory()

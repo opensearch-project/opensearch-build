@@ -23,8 +23,8 @@ It returns response status code and the response content.
 """
 
 
-class ApiTest():
-
+class ApiTest:
+    @staticmethod
     def api_test(api_request):
 
         response = requests.get(apiURL + api_request, headers=apiHeaders, verify=False)

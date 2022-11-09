@@ -17,7 +17,7 @@ This class is used to stop&remove docker containers created at step 3, and remov
 
 
 class CleanupDocker():
-
+    @staticmethod
     def cleanup(OS1_name, OS2_name, OSD_name, target_yml_file):
         # stop and remove containers
         docker_command = f'{"docker-compose -f"} {target_yml_file} {"stop"} {OS1_name} {OS2_name} {OSD_name} {"&&"} {"docker-compose -f"} {target_yml_file} {"rm -f"} {OS1_name} {OS2_name} {OSD_name}'
