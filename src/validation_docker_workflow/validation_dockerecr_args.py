@@ -15,7 +15,7 @@ class DockerEcrArgs():
         parser = argparse.ArgumentParser(
             description='Validating OpenSearch(OS) & OpenSearchDashboard(OSD) distribution build between opensearchproject and opensearchstaging at dockerHub/ECR',
             epilog='Example : ./checkdocker.sh opensearchproject/opensearch:latest opensearchproject/opensearch-dashboards:latest'
-            )
+        )
         parser.add_argument(
             "OS_image",
             type=str,
@@ -24,7 +24,7 @@ class DockerEcrArgs():
         parser.add_argument(
             "OSD_image",
             type=str,
-            help="The OpenSearchDashboard image <name>:<tag> that we want to validate, for example : 'opensearchproject/opensearch-dashboards:2.3.0' or 'opensearchproject/opensearch-dashboards:latest'",
+            help="The OpenSearchDashboard image <name>:<tag> that we want to validate, for example : opensearchproject/opensearch-dashboards:latest",
         )
         parser.add_argument(
             "-v",

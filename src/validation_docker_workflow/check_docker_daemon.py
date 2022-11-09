@@ -13,6 +13,8 @@ This class is to check if the client (Mac or Linux) has the docker daemon runnin
 If the docker daemon is not running, the called shell script will try to bring up the docker daemon.
 It retun 0 if the script runs without error.
 """
+
+
 class DockerDaemonRunning():
 
     def is_container_daemon_running():
