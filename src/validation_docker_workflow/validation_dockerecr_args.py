@@ -13,7 +13,7 @@ class DockerEcrArgs():
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(
             description='Validating OpenSearch(OS) & OpenSearchDashboard(OSD) distribution build between opensearchproject and opensearchstaging at dockerHub/ECR',
-            epilog='Example : python run_validation_dockerecr.py opensearchproject/opensearch:latest opensearchproject/opensearch-dashboards:latest'
+            epilog='Example : ./checkdocker.sh opensearchproject/opensearch:latest opensearchproject/opensearch-dashboards:latest'
             )
         parser.add_argument(
             "OS_image",
