@@ -25,7 +25,7 @@ It returns response status code and the response content.
 
 class ApiTest:
     @staticmethod
-    def api_test(api_request):
+    def api_test(api_request) -> None:
 
         response = requests.get(apiURL + api_request, headers=apiHeaders, verify=False)
         return response.status_code, response.text

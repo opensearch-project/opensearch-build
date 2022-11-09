@@ -17,7 +17,7 @@ It retun 0 if the script runs without error.
 
 class DockerDaemonRunning:
     @staticmethod
-    def is_container_daemon_running():
+    def is_container_daemon_running() -> None:
         check_docker_bash = "./src/validation_docker_workflow/check_docker_daemon.sh"
         result = subprocess.call([check_docker_bash])
         return (result)

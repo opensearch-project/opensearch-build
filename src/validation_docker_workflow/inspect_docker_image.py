@@ -26,7 +26,7 @@ It retuns False if the digest does not match.
 
 class InspectDockerImage():
     @staticmethod
-    def inspect_digest(image_short_id, image_name):
+    def inspect_digest(image_short_id, image_name) -> None:
         logging.info('Fetching token')
         # api_url = auth_token_url + auth_service_scope + image_name.split(':')[0].replace("opensearchproject","opensearchstaging") + ":pull"
         api_url = auth_token_url + auth_service_scope + image_name.split(':')[0] + ":pull"
