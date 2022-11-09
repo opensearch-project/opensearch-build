@@ -34,7 +34,7 @@ pipeline {
         choice(
             choices: ['arm64', 'x64'],
             name: 'DISTRIBUTION_ARCHITECTURE',
-            description: 'What architecture is this distribution build for? (Always run "arm64" before "x64")'
+            description: 'What architecture is this distribution build for?'
         )
     }
     stages {
