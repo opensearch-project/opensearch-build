@@ -53,6 +53,11 @@ pipeline {
             printContributedVariables: false,
             printPostContent: false
         )
+        parameterizedCron '''
+            H 1 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 9 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+        '''
     }
     environment {
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
