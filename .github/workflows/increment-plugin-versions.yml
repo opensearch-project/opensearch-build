@@ -68,6 +68,9 @@ jobs:
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
+      - name: Attempt to reuse existing pull request in plugin repo
+        run: git checkout create-pull-request/${{ env.OPENSEARCH_VERSION }}
+        continue-on-error: true
       - name: Increment Version in ${{ matrix.entry.repo }}
         run: |
           echo "OpenSearch Core repo version on branch ${{ matrix.branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
