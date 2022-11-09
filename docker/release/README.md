@@ -111,7 +111,7 @@ Here are three example scenarios of using above variables:
 
 Here are some example scenarios of using above variables:
 
-#### Scenario 1: Original behavior, enabled Performance Analyzer Agent Cli
+#### Scenario 1: Original behavior, enable Performance Analyzer Agent Cli
   * OpenSearch:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:2.4.0
