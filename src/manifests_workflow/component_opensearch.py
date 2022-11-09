@@ -21,12 +21,13 @@ class ComponentOpenSearch(Component):
         name: str,
         path: str,
         opensearch_version: str,
+        component_repo: str,
         branch: str = "main",
         snapshot: bool = False,
         working_directory: str = None,
     ) -> 'ComponentOpenSearch':
         with GitRepository(
-            f"https://github.com/opensearch-project/{name}.git",
+            component_repo,
             branch,
             path,
             working_directory,

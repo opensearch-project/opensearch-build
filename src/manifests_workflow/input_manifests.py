@@ -104,6 +104,7 @@ class InputManifests(Manifests):
                         name=component.name,
                         path=os.path.join(work_dir.name, component.name),
                         opensearch_version=manifest.build.version,
+                        component_repo=component.repository,
                         branch="main",
                     )
 
