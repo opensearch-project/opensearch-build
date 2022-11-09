@@ -6,18 +6,19 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import sys
 import logging
+import sys
 import time
 
 from system import console
-from validation_docker_workflow.validation_dockerecr_args import DockerEcrArgs
-from validation_docker_workflow.check_docker_daemon import DockerDaemonRunning
-from validation_docker_workflow.pull_docker_image import PullDockerImage
-from validation_docker_workflow.inspect_docker_image import InspectDockerImage
-from validation_docker_workflow.spinup_docker_container import RunDocker
 from validation_docker_workflow.api_test import ApiTest
+from validation_docker_workflow.check_docker_daemon import DockerDaemonRunning
 from validation_docker_workflow.cleanup_docker import CleanupDocker
+from validation_docker_workflow.inspect_docker_image import InspectDockerImage
+from validation_docker_workflow.pull_docker_image import PullDockerImage
+from validation_docker_workflow.spinup_docker_container import RunDocker
+from validation_docker_workflow.validation_dockerecr_args import DockerEcrArgs
+
 
 ## Validate the OpenSearch distribution artifacts on DockerHub - https://github.com/opensearch-project/opensearch-build/issues/2759
 def main() -> int:

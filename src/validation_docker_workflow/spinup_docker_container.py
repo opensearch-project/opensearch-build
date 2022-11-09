@@ -8,8 +8,8 @@
 import shutil
 import subprocess
 from subprocess import PIPE
-from system.temporary_directory import TemporaryDirectory
 
+from system.temporary_directory import TemporaryDirectory
 
 yml_template = 'docker-compose.yml'
 yml_template_location = './src/validation_docker_workflow/'

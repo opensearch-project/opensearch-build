@@ -8,9 +8,10 @@
 
 import json
 import logging
-import requests
 import subprocess
 from subprocess import PIPE
+
+import requests
 
 auth_token_url = "https://auth.docker.io/token?"
 auth_service_scope = "service=registry.docker.io&scope=repository:"

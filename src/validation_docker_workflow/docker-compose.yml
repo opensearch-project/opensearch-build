@@ -10,7 +10,7 @@ services:
       - discovery.seed_hosts=OS1_NAME,OS2_NAME
       - cluster.initial_cluster_manager_nodes=OS1_NAME,OS2_NAME
       - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m'
     ulimits:
       memlock:
         soft: -1
@@ -34,7 +34,7 @@ services:
       - discovery.seed_hosts=OS1_NAME,OS2_NAME
       - cluster.initial_cluster_manager_nodes=OS1_NAME,OS2_NAME
       - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m'
     ulimits:
       memlock:
         soft: -1
@@ -52,7 +52,7 @@ services:
     ports:
       - 5601:5601
     expose:
-      - "5601"
+      - '5601'
     environment:
       OPENSEARCH_HOSTS: '["https://OS1_NAME:9200","https://OS2_NAME:9200"]'
     networks:

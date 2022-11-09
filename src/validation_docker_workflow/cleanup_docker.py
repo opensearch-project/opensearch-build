@@ -9,7 +9,6 @@ import os
 import subprocess
 from subprocess import PIPE
 
-
 yml_template = 'docker-compose.yml'
 
 """
