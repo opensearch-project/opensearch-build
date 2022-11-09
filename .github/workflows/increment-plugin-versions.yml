@@ -68,6 +68,7 @@ jobs:
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
+          fetch-depth: 0
       - name: Attempt to reuse existing pull request in plugin repo
         run: git checkout create-pull-request/${{ env.OPENSEARCH_VERSION }}
         continue-on-error: true
