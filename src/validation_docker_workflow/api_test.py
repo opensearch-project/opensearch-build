@@ -6,8 +6,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import requests
 from typing import Any
+
+import requests
 
 apiURL = "https://127.0.0.1:9200/"  # default localhost OS API URL and port assigned in docker-compose.yml
 apiHeaders_auth = {"Authorization": "Basic YWRtaW46YWRtaW4="}  # default user/pass "admin/admin"
