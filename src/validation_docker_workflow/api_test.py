@@ -7,6 +7,7 @@
 # compatible open source license.
 
 import requests
+from typing import Any
 
 apiURL = "https://127.0.0.1:9200/"  # default localhost OS API URL and port assigned in docker-compose.yml
 apiHeaders_auth = {"Authorization": "Basic YWRtaW46YWRtaW4="}  # default user/pass "admin/admin"
@@ -24,8 +25,9 @@ It returns response status code and the response content.
 
 
 class ApiTest:
-    @staticmethod
-    def api_test(api_request) -> None:
+
+    @classmethod
+    def api_test(self, api_request: str) -> Any:
 
         response = requests.get(apiURL + api_request, headers=apiHeaders, verify=False)
         return response.status_code, response.text

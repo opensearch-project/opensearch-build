@@ -8,6 +8,7 @@
 import logging
 import subprocess
 from subprocess import PIPE
+from typing import Any
 
 """
 This class is to pull the artifact from the dockerHub.
@@ -16,8 +17,9 @@ If the image is currently existing at local, we want to remove it and download a
 
 
 class PullDockerImage():
-    @staticmethod
-    def pull_image(image_name) -> None:
+
+    @classmethod
+    def pull_image(self, image_name: str) -> Any:
         local_inspect = "docker image inspect -f '{{ .Id }}' " + image_name
         local_remove = "docker image rm -f " + image_name
         dockerHub_pull = "docker pull " + image_name
@@ -31,7 +33,7 @@ class PullDockerImage():
             if (result_remove.returncode == 0):
                 logging.info('Image is removed at local : ' + image_name)
             else:
-                logging.info('Image removal fail : return code ' + result_remove.returncode)
+                logging.info('Image removal fail : return code ' + str(result_remove.returncode))
         else:
             logging.info('Image does not exist at local, proceed with pull from the dockerHub')
 
@@ -42,3 +44,5 @@ class PullDockerImage():
             result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
             logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name)
             return (result_inspect.stdout)
+        else:
+            return ('error on pulling image : return code ' + str(result_remove.returncode))

@@ -8,6 +8,7 @@
 import shutil
 import subprocess
 from subprocess import PIPE
+from typing import Any
 
 from system.temporary_directory import TemporaryDirectory
 
@@ -22,8 +23,8 @@ It returns True if containers are Up.
 
 
 class RunDocker():
-    @staticmethod
-    def inplace_change(filename, old_string, new_string) -> None:
+    @classmethod
+    def inplace_change(self, filename: str, old_string: str, new_string: str) -> None:
 
         with open(filename) as f:
             s = f.read()
@@ -36,8 +37,8 @@ class RunDocker():
             s = s.replace(old_string, new_string)
             f.write(s)
 
-    @staticmethod
-    def run_container(OS_image, OSD_image, OS1_name, OS2_name, OSD_name) -> None:
+    @classmethod
+    def run_container(self, OS_image: str, OSD_image: str, OS1_name: str, OS2_name: str, OSD_name: str) -> Any:
         # replace the placeholder in template docker-compose.yaml which is taken from sample in https://opensearch.org/docs/latest/opensearch/install/docker/#sample-docker-composeyml
         tmp_dir = TemporaryDirectory()
         shutil.copy2(yml_template_location + yml_template, tmp_dir.name)
