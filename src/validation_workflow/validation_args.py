@@ -33,7 +33,7 @@ class ValidationArgs:
     version: str
 
     def __init__(self) -> None:
-        parser = argparse.ArgumentParser(description="Download Artifacts.")
+        parser = argparse.ArgumentParser(description="Validation Framework for Validation Workflow.")
         parser.add_argument(
             "version",
             type=str,

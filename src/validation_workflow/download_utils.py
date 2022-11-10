@@ -22,7 +22,8 @@ class DownloadUtils:
 
     @staticmethod
     def download(url: str, tmp_dir: TemporaryDirectory) -> bool:
-        response = requests.get(url, stream=True)  # get() method sends a GET request to the url
+        # This method writes the contents from the response object into temporary directory file name fetched from the end of the url.
+        response = requests.get(url, stream=True)
         path = tmp_dir.name + "/" + url.split("/")[-1]
-        val = bool(open(path, "wb").write(response.content))  # writes the contents from the response object into temporary directory file name fetched from the end of the url
-        return val
+        status = bool(open(path, "wb").write(response.content))
+        return status

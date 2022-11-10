@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 
 
 class Validation(ABC):
-    url = "https://artifacts.opensearch.org/releases/bundle/"
+    base_url = "https://artifacts.opensearch.org/releases/bundle/"
 
     def __init__(self, version: str, distribution: str, platform: str, projects: list) -> None:
         self.version = version
