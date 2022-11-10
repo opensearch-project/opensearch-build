@@ -10,6 +10,7 @@ import json
 import logging
 import subprocess
 from subprocess import PIPE
+from typing import Any
 
 import requests
 
@@ -27,7 +28,7 @@ It retuns False if the digest does not match.
 class InspectDockerImage():
 
     @classmethod
-    def inspect_digest(self, image_short_id: str, image_name: str) -> bool:
+    def inspect_digest(self, image_short_id: str, image_name: str) -> Any:
         logging.info('Fetching token')
         # api_url = auth_token_url + auth_service_scope + image_name.split(':')[0].replace("opensearchproject","opensearchstaging") + ":pull"
         api_url = auth_token_url + auth_service_scope + image_name.split(':')[0] + ":pull"
