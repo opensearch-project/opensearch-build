@@ -53,6 +53,11 @@ pipeline {
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
         )
         booleanParam(
+            name: 'UPDATE_LATEST_URL',
+            description: 'Update latest url so /latest/ is pointed to this build',
+            defaultValue: true
+        )
+        booleanParam(
             name: 'PUBLISH_NOTIFICATION',
             description: 'Publish the status of this build job or not.',
             defaultValue: true
@@ -614,9 +619,11 @@ pipeline {
             }
             steps {
                 script {
-                    uploadIndexFile(
-                        indexFilePath: env.INDEX_FILE_PATH
-                    )
+                    if (params.UPDATE_LATEST_URL) {
+                        uploadIndexFile(
+                            indexFilePath: env.INDEX_FILE_PATH
+                        )
+                    }
                 }
             }
         }
