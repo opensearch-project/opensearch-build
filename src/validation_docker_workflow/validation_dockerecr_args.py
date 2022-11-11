@@ -13,18 +13,44 @@ class DockerEcrArgs():
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(
-            description='Validating OpenSearch(OS) & OpenSearchDashboard(OSD) distribution build between opensearchproject and opensearchstaging at dockerHub/ECR',
-            epilog='Example : ./checkdocker.sh opensearchproject/opensearch:latest opensearchproject/opensearch-dashboards:latest'
+            description='Validating OpenSearch(OS) & OpenSearchDashboard(OSD) distribution build between opensearchproject and opensearchstaging at dockerHub/ECR\n',
+            epilog='Example : ./checkdocker.sh 2.3.0 2.3.0 2.3.0 2.3.0 --stgosbuild 6039 --stgosdbuild 4104\n'
         )
         parser.add_argument(
-            "OS_image",
+            "prod_OS_image_version",
             type=str,
-            help="The OpenSearch image <name>:<tag> that we want to validate, for example : 'opensearchproject/opensearch:2.4.0' or 'opensearchproject/opensearch:latest'",
+            help="The opensearchproject OpenSearch image <version> that we want to validate, for example : 2.3.0 or 2\n",
         )
         parser.add_argument(
-            "OSD_image",
+            "prod_OSD_image_version",
             type=str,
-            help="The OpenSearchDashboard image <name>:<tag> that we want to validate, for example : opensearchproject/opensearch-dashboards:latest",
+            help="The opensearchproject OpenSearchDashboard image <version> that we want to validate, for example : 2.3.0 or 2\n",
+        )
+        parser.add_argument(
+            "stg_OS_image_version",
+            type=str,
+            help="The opensearchstaging OpenSearch image <version> that we want to compare with, for example : 2.3.0\n",
+        )
+        parser.add_argument(
+            "stg_OSD_image_version",
+            type=str,
+            help="The opensearchstaging OpenSearchDashboard image <version> that we want to compare with, for example : 2.3.0\n",
+        )
+        parser.add_argument(
+            "--stgosbuild",
+            type=str,
+            default="",
+            required=False,
+            help="The opensearchstaging OpenSearch image build number if required, for example : 6039\n",
+            dest="stgosbuild",
+        )
+        parser.add_argument(
+            "--stgosdbuild",
+            type=str,
+            default="",
+            required=False,
+            help="The opensearchstaging OpenSearchDashboard image build number if required, for example : 4104\n",
+            dest="stgosdbuild",
         )
         parser.add_argument(
             "-v",
@@ -38,8 +64,24 @@ class DockerEcrArgs():
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
-        self.OS_image = args.OS_image
-        self.OSD_image = args.OSD_image
+        self.OS_image = 'opensearchproject/opensearch'
+        self.OSD_image = 'opensearchproject/opensearch-dashboards'
+        self.prod_OS_image_version = args.prod_OS_image_version
+        self.prod_OSD_image_version = args.prod_OSD_image_version
+        self.stg_OS_image_version = args.stg_OS_image_version
+        self.stg_OSD_image_version = args.stg_OSD_image_version
+        self.stgosbuild = args.stgosbuild
+        self.stgosdbuild = args.stgosdbuild
 
-        if (':' not in self.OS_image) or (':' not in self.OSD_image) or ('opensearchproject' not in self.OS_image) or ('opensearchproject' not in self.OSD_image):
-            parser.error("The image should be opensearchproject and contain a tag, for example : 'opensearchproject/opensearch:2.4.0 or 'opensearchproject/opensearch-dashboards:latest'")
+
+    def stg_tag(self, image_type: str) -> str:
+        return " ".join(
+            filter(
+                None,
+                [
+                    self.stg_OS_image_version if image_type == "OS" else self.stg_OSD_image_version,
+                    "." + self.stgosbuild if (self.stgosbuild != "") and (image_type == "OS") else None,
+                    "." + self.stgosdbuild if (self.stgosdbuild != "") and (image_type == "OSD") else None,
+                ],
+            )
+        )

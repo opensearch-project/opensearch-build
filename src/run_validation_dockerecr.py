@@ -30,35 +30,35 @@ def main() -> int:
     if (DockerDaemonRunning.is_container_daemon_running() == 0):
         logging.info('docker_daemon is running')
 
-        # STEP 1 . pull the images for OS and OSD
-        local_image_OS_short_id = PullDockerImage.pull_image(args.OS_image)
-        local_image_OSD_short_id = PullDockerImage.pull_image(args.OSD_image)
-        logging.info('the OS image ID is : ' + local_image_OS_short_id)
-        logging.info('the OSD image ID is : ' + local_image_OSD_short_id)
+        #STEP 1 . pull the images for OS and OSD
+        local_image_OS_id = PullDockerImage.pull_image(args.OS_image, args.prod_OS_image_version)
+        local_image_OSD_id = PullDockerImage.pull_image(args.OSD_image, args.prod_OSD_image_version)
+        logging.info('the OS image ID is : ' + local_image_OS_id)
+        logging.info('the OSD image ID is : ' + local_image_OSD_id +'\n\n')
 
         # STEP 2 . inspect image digest betwwen opensearchproject(downloaed/local) and opensearchstaging(dockerHub)
-        if (InspectDockerImage.inspect_digest(local_image_OS_short_id, args.OS_image)) and (InspectDockerImage.inspect_digest(local_image_OSD_short_id, args.OSD_image)):
-            logging.info('Image digest is validated')
+        if (InspectDockerImage.inspect_digest(local_image_OS_id, args.OS_image, args.prod_OS_image_version)) and (InspectDockerImage.inspect_digest(local_image_OSD_id, args.OSD_image, args.prod_OSD_image_version)):
+            logging.info('Image digest is validated\n\n')
 
             # STEP 3 . spin-up OS/OSD cluster
-            return_code, target_yml_file = RunDocker.run_container(args.OS_image, args.OSD_image, "opensearch-node1-test", "opensearch-node2-test", "opensearch-dashboards-test")
+            return_code, target_yml_file = RunDocker.run_container(args.OS_image, args.OSD_image, args.prod_OS_image_version, args.prod_OSD_image_version, "opensearch-node1-test", "opensearch-node2-test", "opensearch-dashboards-test")
             if (return_code):
                 logging.info('Cluster is running now')
-                logging.info('Sleeping 2 minutes for cluster to be ready for API test')
+                logging.info('Sleeping 2 minutes for cluster to be ready for API test\n\n')
                 time.sleep(120)
 
                 # STEP 4 . OS, OSD API validation
                 # Test case 1 . Get cluster info
                 status_code, response_text = ApiTest.api_test("")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text) if (status_code == 200) else logging.info('response error code :' + str(status_code))
+                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
 
                 # Test case 2 . Get plugin info
                 status_code, response_text = ApiTest.api_test("_cat/plugins?v")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text) if (status_code == 200) else logging.info('response error code :' + str(status_code))
+                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
 
                 # Test case 3 . Get health info
                 status_code, response_text = ApiTest.api_test("_cat/health?v")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text) if (status_code == 200) else logging.info('response error code :' + str(status_code))
+                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
 
                 # clean up
                 CleanupDocker.cleanup('opensearch-node1-test', 'opensearch-node2-test', 'opensearch-dashboards-test', target_yml_file)
@@ -67,7 +67,7 @@ def main() -> int:
                 logging.info('The container is fail to run. Exiting the validation.')
                 return False
         else:
-            logging.info('Image digest does not match between the dockerHub and local download. Exiting the validation.')
+            logging.info('Image digest does not match between the opensearchstaging at dockerHub and opensearchproject at local download. Exiting the validation.')
             return False
     else:
         logging.info('docker_daemon check is fail. Exiting the validation.')

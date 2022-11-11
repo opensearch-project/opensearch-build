@@ -19,30 +19,41 @@ If the image is currently existing at local, we want to remove it and download a
 class PullDockerImage():
 
     @classmethod
-    def pull_image(self, image_name: str) -> Any:
-        local_inspect = "docker image inspect -f '{{ .Id }}' " + image_name
-        local_remove = "docker image rm -f " + image_name
-        dockerHub_pull = "docker pull " + image_name
+    def pull_image(self, image_name: str, image_version: str) -> Any:
+        local_inspect = "docker image inspect -f '{{ .Id }}' " + image_name + ":" + image_version
+        local_remove = "docker image rm -f " + image_name + ":" + image_version
+        dockerHub_pull = "docker pull " + image_name + ":" + image_version
 
-        # Removing the image if it exists at local
-        result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        if (result_inspect.returncode == 0):
-            logging.info('Image exists at local : ' + result_inspect.stdout + ' : ' + image_name)
+        try:
+            result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+            logging.info('Image exists at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
             logging.info('removing the local image and pulling a fresh one from DockerHub')
-            result_remove = subprocess.run(local_remove, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-            if (result_remove.returncode == 0):
-                logging.info('Image is removed at local : ' + image_name)
-            else:
-                logging.info('Image removal fail : return code ' + str(result_remove.returncode))
-        else:
-            logging.info('Image does not exist at local, proceed with pull from the dockerHub')
+            try:
+                result_remove = subprocess.run(local_remove, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                logging.info('Image is removed at local : ' + image_name + ":" + image_version)
+            except (RuntimeError, TypeError, NameError) as e:
+                logging.info("Error: %s - %s." % (e.strerror))
+        except (RuntimeError, TypeError, NameError) as e:
+            logging.info("Error: %s - %s." % (e.strerror))
+        finally:
+            logging.info('Proceed with pulling from the dockerHub')
 
         # Pulling image from dockerHub and return the image Id
-        logging.info('Pulling ' + image_name + ' from the dockerHub')
-        result_pull = subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        if (result_pull.returncode == 0):
-            result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-            logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name)
-            return (result_inspect.stdout)
-        else:
-            return ('error on pulling image : return code ' + str(result_remove.returncode))
+        # logging.info('Pulling ' + image_name + ":" + image_version + ' from the dockerHub')
+        # result_pull = subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        # if (result_pull.returncode == 0):
+        #     result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        #     logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
+        #     return (result_inspect.stdout)
+        # else:
+        #     return ('error on pulling image : return code ' + str(result_remove.returncode))
+        try:
+            result_pull = subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+            try:
+                result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
+                return (result_inspect.stdout)
+            except (RuntimeError, TypeError, NameError) as e:
+                logging.info("Error: %s - %s." % (e.strerror))
+        except (RuntimeError, TypeError, NameError) as e:
+            logging.info("Error: %s - %s." % (e.strerror))

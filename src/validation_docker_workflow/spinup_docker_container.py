@@ -38,13 +38,13 @@ class RunDocker():
             f.write(s)
 
     @classmethod
-    def run_container(self, OS_image: str, OSD_image: str, OS1_name: str, OS2_name: str, OSD_name: str) -> Any:
+    def run_container(self, OS_image: str, OSD_image: str, OS_version: str, OSD_version: str, OS1_name: str, OS2_name: str, OSD_name: str) -> Any:
         # replace the placeholder in template docker-compose.yaml which is taken from sample in https://opensearch.org/docs/latest/opensearch/install/docker/#sample-docker-composeyml
         tmp_dir = TemporaryDirectory()
         shutil.copy2(yml_template_location + yml_template, tmp_dir.name)
         target_yml_file = tmp_dir.name + '/' + yml_template
-        RunDocker.inplace_change(target_yml_file, 'OS_IMAGE_PLACEHOLDER', OS_image)
-        RunDocker.inplace_change(target_yml_file, 'OSD_IMAGE_PLACEHOLDER', OSD_image)
+        RunDocker.inplace_change(target_yml_file, 'OS_IMAGE_PLACEHOLDER', OS_image + ":" + OS_version)
+        RunDocker.inplace_change(target_yml_file, 'OSD_IMAGE_PLACEHOLDER', OSD_image + ":" + OSD_version)
         RunDocker.inplace_change(target_yml_file, 'OS1_NAME', OS1_name)
         RunDocker.inplace_change(target_yml_file, 'OS2_NAME', OS2_name)
         RunDocker.inplace_change(target_yml_file, 'OSD_NAME_PLACEHOLDER', OSD_name)
