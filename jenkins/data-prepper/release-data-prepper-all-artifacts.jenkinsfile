@@ -195,7 +195,8 @@ pipeline {
                             signArtifacts(
                                     artifactPath: "${WORKSPACE}/maven",
                                     type: 'maven',
-                                    platform: 'linux'
+                                    platform: 'linux',
+                                    sigtype: '.asc'
                             )
                         }
                     }

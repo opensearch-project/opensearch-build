@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.1.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -53,6 +53,14 @@ pipeline {
             printContributedVariables: false,
             printPostContent: false
         )
+        parameterizedCron '''
+            H 1 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 4 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 9 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 12 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 20 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+        '''
     }
     environment {
         USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
@@ -63,38 +71,34 @@ pipeline {
             steps {
                 script {
 
-                    if (params.AGENT_LABEL.toLowerCase().contains('windows')) {
-                        echo("Windows Agent")
-                        currentBuild.result = 'ABORTED'
-                        error("Not Supporting Windows")
-                    }
-                    else {
-                        echo("Linux Agent")
-                        env.JAVA8_HOME="/usr/lib/jvm/temurin-8-jdk-amd64"
-                        env.JAVA11_HOME="/usr/lib/jvm/temurin-11-jdk-amd64"
-                        env.JAVA14_HOME="/usr/lib/jvm/adoptopenjdk-14-amd64"
-                        env.JAVA17_HOME="/usr/lib/jvm/temurin-17-jdk-amd64"
-                        env.JAVA19_HOME="/usr/lib/jvm/temurin-19-jdk-amd64"
-                    }
-
                     sh """
                         set +x
                         set -e
-                        for java_version in `env | grep JAVA | grep HOME`; do
-                            echo \$java_version
-                            java_path="`echo \$java_version | cut -d= -f2`/bin/java -version"
-                            eval \$java_path
-                        done
+                        JAVA_HOME_LIST=`env | grep JAVA | grep HOME`
+                        echo "JAVA_HOME_LIST \$JAVA_HOME_LIST"
+
+                        if [ -n "\$JAVA_HOME_LIST" ] && [ "\$JAVA_HOME_LIST" != "" ]; then
+                            for java_version in \$JAVA_HOME_LIST; do
+                                echo \$java_version
+                                java_path="`echo \$java_version | cut -d= -f2`/bin/java -version"
+                                eval \$java_path
+                            done
+                        else
+                            echo "Missing JAVA_HOME information in env vars, exit 1"
+                            exit 1
+                        fi
                     """
+
+                    def agent_name = params.AGENT_LABEL.tokenize('-')[2]
 
                     if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
                         def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                         println("Triggered by GitHub: ${pr_to_clone_url}")
                         if ("$pr_number" == "Null") {
-                            currentBuild.description = """<a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
+                            currentBuild.description = """runner: ${agent_name}<br><a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
                         }
                         else {
-                            currentBuild.description = """<a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+                            currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
                         }
 
                         runGradleCheck(
@@ -105,7 +109,7 @@ pipeline {
                     else {
                         println("Triggered by User or Triggered by Timer")
                         def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
-                        currentBuild.description = """git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+                        currentBuild.description = """runner: ${agent_name}<br>git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
 
                         runGradleCheck(
                             gitRepoUrl: "${GIT_REPO_URL}",
