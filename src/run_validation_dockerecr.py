@@ -11,12 +11,12 @@ import sys
 import time
 
 from system import console
-from validation_docker_workflow.api_test import ApiTest
 from validation_docker_workflow.check_docker_daemon import DockerDaemonRunning
 from validation_docker_workflow.cleanup_docker import CleanupDocker
 from validation_docker_workflow.inspect_docker_image import InspectDockerImage
 from validation_docker_workflow.pull_docker_image import PullDockerImage
 from validation_docker_workflow.spinup_docker_container import RunDocker
+from validation_docker_workflow.test_cases import TestCases
 from validation_docker_workflow.validation_dockerecr_args import DockerEcrArgs
 
 
@@ -57,21 +57,16 @@ def main() -> int:
                 time.sleep(120)
 
                 # STEP 4 . OS, OSD API validation
-                # Test case 1 . Get cluster info
-                status_code, response_text = ApiTest.api_test("")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
-
-                # Test case 2 . Get plugin info
-                status_code, response_text = ApiTest.api_test("_cat/plugins?v")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
-
-                # Test case 3 . Get health info
-                status_code, response_text = ApiTest.api_test("_cat/health?v")
-                logging.info('response code : ' + str(status_code) + ' result : \n' + response_text + '\n\n') if (status_code == 200) else logging.info('response error code :' + str(status_code))
+                test_result, counter = TestCases.test_cases()
 
                 # clean up
                 CleanupDocker.cleanup('opensearch-node1-test', 'opensearch-node2-test', 'opensearch-dashboards-test', target_yml_file)
-                return 0
+                if (test_result):
+                    logging.info('All tests Pass : ' + counter)
+                    return 0
+                else:
+                    logging.info('All tests Pass : ' + counter)
+                    return False
             else:
                 logging.info('The container is fail to run. Exiting the validation.')
                 return False
