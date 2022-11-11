@@ -14,27 +14,17 @@ class DockerEcrArgs():
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(
             description='Validating OpenSearch(OS) & OpenSearchDashboard(OSD) distribution build between opensearchproject and opensearchstaging at dockerHub/ECR\n',
-            epilog='Example : ./checkdocker.sh 2.3.0 2.3.0 2.3.0 2.3.0 --stgosbuild 6039 --stgosdbuild 4104\n'
+            epilog='Example : ./checkdocker.sh 2.3.0 2.3.0 --stgosbuild 6039 --stgosdbuild 4104\n'
         )
         parser.add_argument(
-            "prod_OS_image_version",
+            "OS_image_version",
             type=str,
-            help="The opensearchproject OpenSearch image <version> that we want to validate, for example : 2.3.0 or 2\n",
+            help="The opensearchproject OpenSearch image <version> that we want to validate, for example : 2.3.0 \n",
         )
         parser.add_argument(
-            "prod_OSD_image_version",
+            "OSD_image_version",
             type=str,
-            help="The opensearchproject OpenSearchDashboard image <version> that we want to validate, for example : 2.3.0 or 2\n",
-        )
-        parser.add_argument(
-            "stg_OS_image_version",
-            type=str,
-            help="The opensearchstaging OpenSearch image <version> that we want to compare with, for example : 2.3.0\n",
-        )
-        parser.add_argument(
-            "stg_OSD_image_version",
-            type=str,
-            help="The opensearchstaging OpenSearchDashboard image <version> that we want to compare with, for example : 2.3.0\n",
+            help="The opensearchproject OpenSearchDashboard image <version> that we want to validate, for example : 2.3.0 \n",
         )
         parser.add_argument(
             "--stgosbuild",
@@ -66,10 +56,8 @@ class DockerEcrArgs():
         self.logging_level = args.logging_level
         self.OS_image = 'opensearchproject/opensearch'
         self.OSD_image = 'opensearchproject/opensearch-dashboards'
-        self.prod_OS_image_version = args.prod_OS_image_version
-        self.prod_OSD_image_version = args.prod_OSD_image_version
-        self.stg_OS_image_version = args.stg_OS_image_version
-        self.stg_OSD_image_version = args.stg_OSD_image_version
+        self.OS_image_version = args.OS_image_version
+        self.OSD_image_version = args.OSD_image_version
         self.stgosbuild = args.stgosbuild
         self.stgosdbuild = args.stgosdbuild
 
@@ -78,7 +66,7 @@ class DockerEcrArgs():
             filter(
                 None,
                 [
-                    self.stg_OS_image_version if image_type == "OS" else self.stg_OSD_image_version,
+                    self.OS_image_version if image_type == "OS" else self.OSD_image_version,
                     "." + self.stgosbuild if (self.stgosbuild != "") and (image_type == "OS") else None,
                     "." + self.stgosdbuild if (self.stgosdbuild != "") and (image_type == "OSD") else None,
                 ],

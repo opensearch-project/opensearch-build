@@ -31,22 +31,22 @@ def main() -> int:
         logging.info('docker_daemon is running')
 
         # STEP 1 . pull the images for OS and OSD
-        local_image_OS_id = PullDockerImage.pull_image(args.OS_image, args.prod_OS_image_version)
-        local_image_OSD_id = PullDockerImage.pull_image(args.OSD_image, args.prod_OSD_image_version)
+        local_image_OS_id = PullDockerImage.pull_image(args.OS_image, args.OS_image_version)
+        local_image_OSD_id = PullDockerImage.pull_image(args.OSD_image, args.OSD_image_version)
         logging.info('the OS image ID is : ' + local_image_OS_id)
         logging.info('the OSD image ID is : ' + local_image_OSD_id + '\n\n')
 
         # STEP 2 . inspect image digest betwwen opensearchproject(downloaed/local) and opensearchstaging(dockerHub)
-        if (InspectDockerImage.inspect_digest(local_image_OS_id, args.OS_image, args.prod_OS_image_version)) \
-                and (InspectDockerImage.inspect_digest(local_image_OSD_id, args.OSD_image, args.prod_OSD_image_version)):
+        if (InspectDockerImage.inspect_digest(local_image_OS_id, args.OS_image, args.OS_image_version)) \
+                and (InspectDockerImage.inspect_digest(local_image_OSD_id, args.OSD_image, args.OSD_image_version)):
             logging.info('Image digest is validated\n\n')
 
             # STEP 3 . spin-up OS/OSD cluster
             return_code, target_yml_file = RunDocker.run_container(
                 args.OS_image,
                 args.OSD_image,
-                args.prod_OS_image_version,
-                args.prod_OSD_image_version,
+                args.OS_image_version,
+                args.OSD_image_version,
                 'opensearch-node1-test',
                 'opensearch-node2-test',
                 'opensearch-dashboards-test',
