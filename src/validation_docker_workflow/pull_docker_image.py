@@ -32,9 +32,9 @@ class PullDockerImage():
                 subprocess.run(local_remove, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
                 logging.info('Image is removed at local : ' + image_name + ":" + image_version)
             except (RuntimeError, TypeError, NameError) as e:
-                logging.info("Error: %s - %s." % (e.strerror))
+                logging.info("Error: Fatil to remove image")
         except (RuntimeError, TypeError, NameError) as e:
-            logging.info("Error: %s - %s." % (e.strerror))
+            logging.info("Error: Fail to inspect image")
         finally:
             logging.info('Proceed with pulling from the dockerHub')
 
@@ -45,6 +45,6 @@ class PullDockerImage():
                 logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
                 return (result_inspect.stdout)
             except (RuntimeError, TypeError, NameError) as e:
-                logging.info("Error: %s - %s." % (e.strerror))
+                logging.info("Error: Fail to inspect image")
         except (RuntimeError, TypeError, NameError) as e:
-            logging.info("Error: %s - %s." % (e.strerror))
+            logging.info("Error: Fail to pull image")
