@@ -29,7 +29,7 @@ class PullDockerImage():
             logging.info('Image exists at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
             logging.info('removing the local image and pulling a fresh one from DockerHub')
             try:
-                result_remove = subprocess.run(local_remove, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+                subprocess.run(local_remove, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
                 logging.info('Image is removed at local : ' + image_name + ":" + image_version)
             except (RuntimeError, TypeError, NameError) as e:
                 logging.info("Error: %s - %s." % (e.strerror))
@@ -38,17 +38,8 @@ class PullDockerImage():
         finally:
             logging.info('Proceed with pulling from the dockerHub')
 
-        # Pulling image from dockerHub and return the image Id
-        # logging.info('Pulling ' + image_name + ":" + image_version + ' from the dockerHub')
-        # result_pull = subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        # if (result_pull.returncode == 0):
-        #     result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        #     logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)
-        #     return (result_inspect.stdout)
-        # else:
-        #     return ('error on pulling image : return code ' + str(result_remove.returncode))
         try:
-            result_pull = subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+            subprocess.run(dockerHub_pull, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
             try:
                 result_inspect = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
                 logging.info('Image is pulled at local : ' + result_inspect.stdout + ' : ' + image_name + ":" + image_version)

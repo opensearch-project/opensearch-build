@@ -32,14 +32,14 @@ class InspectDockerImage():
     @classmethod
     def inspect_digest(self, image_id: str, image_name: str, prod_image_tag: str) -> Any:
 
-        image_tag = DockerEcrArgs().stg_tag('OSD').replace(" ","") if ("dashboards" in image_name) else DockerEcrArgs().stg_tag('OS').replace(" ","")
+        image_tag = DockerEcrArgs().stg_tag('OSD').replace(" ", "") if ("dashboards" in image_name) else DockerEcrArgs().stg_tag('OS').replace(" ", "")
         logging.info('Fetching access token from dockerHub')
-        api_url = auth_token_url + auth_service_scope + image_name.replace("opensearchproject","opensearchstaging") + ":pull"
+        api_url = auth_token_url + auth_service_scope + image_name.replace("opensearchproject", "opensearchstaging") + ":pull"
         response = requests.get(api_url)
         response_dict = json.loads(response.text)
 
         logging.info('Fetching mainfest from DockerHub')
-        api_url = registry_url + image_name.replace("opensearchproject","opensearchstaging") + "/manifests/" + image_tag
+        api_url = registry_url + image_name.replace("opensearchproject", "opensearchstaging") + "/manifests/" + image_tag
         access_token = response_dict['token']
 
         # set up all necessary token ( if you use VPN, it may slow down the response from dockerHub )
@@ -52,7 +52,7 @@ class InspectDockerImage():
         x = requests.get(api_url, headers=headersToken)
         response_dict = json.loads(x.text)
         dockerHub_image_digest = response_dict['config']['digest']
-        logging.info(dockerHub_image_digest + " --> DockerHub image digest " + image_name.replace("opensearchproject","opensearchstaging") + ":" + image_tag)
+        logging.info(dockerHub_image_digest + " --> DockerHub image digest " + image_name.replace("opensearchproject", "opensearchstaging") + ":" + image_tag)
 
         logging.info('Fetching mainfest from local')
         local_inspect = "docker image inspect --format '{{json .}}' " + image_id + " | jq -r '. | {Id: .Id}'"

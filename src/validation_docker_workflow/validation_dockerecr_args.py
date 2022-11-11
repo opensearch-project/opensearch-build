@@ -73,7 +73,6 @@ class DockerEcrArgs():
         self.stgosbuild = args.stgosbuild
         self.stgosdbuild = args.stgosdbuild
 
-
     def stg_tag(self, image_type: str) -> str:
         return " ".join(
             filter(
