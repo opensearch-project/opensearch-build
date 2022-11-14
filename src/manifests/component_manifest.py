@@ -50,7 +50,7 @@ class Components(Dict[str, ComponentType], Generic[ComponentType]):
         if "repository" in data:
             return ComponentFromSource(data)  # type: ignore[return-value]
         else:
-            return Component(data)
+            return Component(data)  # type: ignore[return-value]
 
     def __to_dict__(self) -> List[Dict[Any, Any]]:
         as_dict: Callable[[ComponentType], dict] = lambda component: component.__to_dict__()
