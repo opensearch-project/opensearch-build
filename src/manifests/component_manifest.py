@@ -42,7 +42,7 @@ class ComponentManifest(Manifest[ManifestType], Generic[ManifestType, Components
 class Components(Dict[str, ComponentType], Generic[ComponentType]):
     def __init__(self, data: Dict[Any, Any]) -> None:
         create_component: Callable[[Any], Tuple[str, ComponentType]] = lambda component: (
-        component["name"], self.__create__(component))
+            component["name"], self.__create__(component))
         super().__init__(map(create_component, data))
 
     @classmethod
