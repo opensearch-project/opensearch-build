@@ -21,6 +21,7 @@ class ComponentOpenSearch(Component):
         name: str,
         path: str,
         opensearch_version: str,
+        repo_url: str,
         branch: str = "main",
         snapshot: bool = False,
         working_directory: str = None,
