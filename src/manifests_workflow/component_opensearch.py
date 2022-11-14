@@ -27,7 +27,7 @@ class ComponentOpenSearch(Component):
         working_directory: str = None,
     ) -> 'ComponentOpenSearch':
         with GitRepository(
-            f"https://github.com/opensearch-project/{name}.git",
+            repo_url,
             branch,
             path,
             working_directory,
