@@ -38,8 +38,8 @@ class DependencyInstaller(abc.ABC):
         return self.download_or_copy(self.bundle_manifest.build.location, local_path)
 
     def __source_dest(self, path: str, category: str, dest: str) -> Tuple[str, str]:
-        source = "/".join([self.root_url, category, self.build_manifest.build.filename, path])
-        dest = os.path.realpath(os.path.join(dest, "/".join(path.split("/")[1:])))
+        source = os.path.join(self.root_url, category, self.build_manifest.build.filename, path)
+        dest = os.path.realpath(os.path.join(dest, os.path.join(*path.split(os.sep)[1:])))
         return (source, dest)
 
     def download(self, paths: List[str], category: str, dest: str) -> None:
