@@ -2,7 +2,7 @@
 
 ## Release Highlights
 
-The OpenSearch 2.4.0 release adds a number of new capabilities to help you enhance your search, analytics, and observability solutions. This release also marks the debut of the software’s first distribution for Windows environments, first security analytics plugin, first semantic search tools, and first solution for ingesting metric data from logs, plus new functionality to enhance cluster resiliency and protect and restore your data. Following are some highlights for this release. For a full list of the new and enhanced features, please review the _release notes_ [LINK TO BE ADDED].
+The OpenSearch 2.4.0 release adds a number of new capabilities to help you enhance your search, analytics, and observability solutions. This release also marks the debut of the software’s first distribution for Windows environments, first security analytics plugin, first semantic search tools, and first solution for ingesting metric data from logs, plus new functionality to enhance cluster resiliency and protect and restore your data. Following are some highlights for this release.
 
 ### New features
 
