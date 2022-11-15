@@ -60,7 +60,7 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.364' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
+    coreVersion = '2.378' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
     testHarnessVersion = '1736.vc72c458c5103' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/workflow/workflow-cps-global-lib/
@@ -73,7 +73,7 @@ sharedLibrary {
         dependency('org.jenkins-ci.plugins', 'script-security', '1184.v85d16b_d851b_3')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.jenkins-ci.plugins', 'junit', '1143.v8d9a_e3355270')
+        dependency('org.jenkins-ci.plugins', 'junit', '1159.v0b_396e1e07dd')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
 }
