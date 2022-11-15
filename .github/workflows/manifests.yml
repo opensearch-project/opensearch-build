@@ -2,7 +2,7 @@
 name: manifests
 
 on:
-  push:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'manifests/**/*.yml'
