@@ -142,7 +142,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: '3e7fa41e87e8a7ace8796a2e520efebb41093234'
+    ref: 'dd996b0c27c33382c8d7b4bf2b90917650c6cc2b'
     platforms:
       - linux
       - windows
