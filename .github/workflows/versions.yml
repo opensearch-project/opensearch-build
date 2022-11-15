@@ -13,13 +13,13 @@ jobs:
       PYTHON_VERSION: 3.7
       JDK_VERSION: 14
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv and Dependencies
