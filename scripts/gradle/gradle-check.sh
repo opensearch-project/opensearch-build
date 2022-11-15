@@ -61,7 +61,7 @@ fi
 
 echo "Please check jenkins url for logs: $WORKFLOW_URL"
 
-if [ "$RESULT" == "SUCCESS" || "$RESULT" == "UNSTABLE" ]; then
+if [ "$RESULT" == "SUCCESS" ] || [ "$RESULT" == "UNSTABLE" ]; then
     echo "Result: $RESULT"
     echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml
     echo 0
