@@ -25,7 +25,7 @@ OpenSearch 2.4.0 includes the following experimental features. Experimental feat
 * A new search relevance plugin lets you compare different search ranking techniques (including semantic search) side by side in the UI, so you can identify opportunities to fine-tune your results.
 * A new model serving framework allows you to upload your own ML models to OpenSearch.
 * OpenSearch Dashboards now supports multiple OpenSearch endpoints as data sources, allowing you to visualize data across different clusters in an environment through a single pane of glass.
-* A new security analytics plugin for OpenSearch and OpenSearch Dashboards provides tools to help you analyze security event logs, identify attack signatures, visualize threat patterns, and create security alerts.
+* A new security analytics plugin for OpenSearch and OpenSearch Dashboards includes tools to help you analyze security event logs, identify attack signatures, visualize threat patterns, and create security alerts.
 * With searchable snapshots, you can now search indexes that are stored as snapshots within remote repositories without needing to download all of the index data ahead of time.
 
 
