@@ -93,6 +93,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add patterns and grok command ([#813](https://github.com/opensearch-project/sql/pull/813))
 * Add category_field to AD command in PPL ([#952](https://github.com/opensearch-project/sql/pull/952))
 * A Generic ML Command in PPL ([#971](https://github.com/opensearch-project/sql/pull/971))
+* Catalog Implementation ([#819](https://github.com/opensearch-project/sql/pull/819))
+* Catalog to Datasource changes ([#1027](https://github.com/opensearch-project/sql/pull/1027))
+* Prometheus Connector Initial Code ([#878](https://github.com/opensearch-project/sql/pull/878))
+* Restricted catalog name to [a-zA-Z0-9_-] characters ([#876](https://github.com/opensearch-project/sql/pull/876))
+* Table function for supporting prometheus query_range function ([#875](https://github.com/opensearch-project/sql/pull/875))
+* List tables/metrics using information_schema in source command. ([#914](https://github.com/opensearch-project/sql/pull/914))
+* [Backport 2.4] Prometheus select metric and stats queries. ([#1020](https://github.com/opensearch-project/sql/pull/1020))
 
 
 ## Experimental Features
@@ -120,15 +127,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Integrate model inference to build neural query ([#20](https://github.com/opensearch-project/neural-search/pull/20))
 * Add text embedding processor to neural search ([#18](https://github.com/opensearch-project/neural-search/pull/18))
 
-
-### OpenSearch SQL
-* Catalog Implementation ([#819](https://github.com/opensearch-project/sql/pull/819))
-* Catalog to Datasource changes ([#1027](https://github.com/opensearch-project/sql/pull/1027))
-* Prometheus Connector Initial Code ([#878](https://github.com/opensearch-project/sql/pull/878))
-* Restricted catalog name to [a-zA-Z0-9_-] characters ([#876](https://github.com/opensearch-project/sql/pull/876))
-* Table function for supporting prometheus query_range function ([#875](https://github.com/opensearch-project/sql/pull/875))
-* List tables/metrics using information_schema in source command. ([#914](https://github.com/opensearch-project/sql/pull/914))
-* [Backport 2.4] Prometheus select metric and stats queries. ([#1020](https://github.com/opensearch-project/sql/pull/1020))
 
 ## ENHANCEMENTS
 
