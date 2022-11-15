@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: set-matrix
         # produces a list of versions, e.g. ["1.0.0","1.0.0","1.0.1","1.1.0","1.2.0","2.0.0"]
-        run: echo "{matrix}={$(ls manifests/**/opensearch*.yml | cut -d'/' -f2 | sort | uniq | jq -R -s -c 'split("\n")[:-1]')}" >> $GITHUB_OUTPUT
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | cut -d'/' -f2 | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
   check:
     needs: list-manifest-versions
     runs-on: ubuntu-latest
