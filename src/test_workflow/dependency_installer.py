@@ -9,9 +9,9 @@ import abc
 import concurrent.futures
 import logging
 import os
+import pathlib
 import shutil
 import urllib
-import pathlib
 from typing import List, Tuple
 
 import validators  # type:ignore
@@ -57,7 +57,7 @@ class DependencyInstaller(abc.ABC):
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         # Required to make sure validators.url is checking an actual url with '/'
         # else '\\' will fail the check even if it is a valid url format
-        # Ex: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/6452/windows/x64/zip\builds\opensearch\maven\org\opensearch\client\client-benchmarks\maven-metadata.xml 
+        # Ex: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/6452/windows/x64/zip\builds\opensearch\maven\org\opensearch\client\client-benchmarks\maven-metadata.xml
         source_url = source.replace('\\', '/')
         if validators.url(source_url):
             logging.info(f"Downloading {source_url} into {dest} ...")
