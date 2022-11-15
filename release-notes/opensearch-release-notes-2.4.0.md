@@ -2,9 +2,32 @@
 
 ## Release Highlights
 
-OpenSearch 2.4.0 is the first release with OpenSearch Security Analytics & Security Analytics Dashboards.
-Security Analytics consist of two plugins, security-analytics backend plugin for OpenSearch, and a securityAnalyticsDashboards frontend plugin for OpenSearch Dashboards.
-The Security Analytics Dashboards plugin lets you manage your Security Analytics plugin to generate critical security insights from their existing security event logs (such as firewall logs, windows logs, authentication audit logs, etc.) directly from OpenSearch Dashboards.
+The OpenSearch 2.4.0 release adds a number of new capabilities to help you enhance your search, analytics, and observability solutions. This release also marks the debut of the software’s first distribution for Windows environments, first security analytics plugin, first semantic search tools, and first solution for ingesting metric data from logs, plus new functionality to enhance cluster resiliency and protect and restore your data. Following are some highlights for this release. For a full list of the new and enhanced features, please review the _release notes_ [LINK TO BE ADDED].
+
+### New features
+
+* New Windows x64 distributions let you deploy OpenSearch and OpenSearch Dashboards directly in your Windows environment.
+* You can now ingest metric data into OpenSearch from Prometheus or from log data aggregated within OpenSearch, enabling you to analyze and correlate data across logs, traces, and metrics.
+* A new log patterns feature lets you automatically generate patterns from log data for visualization and correlation, enabling you to monitor patterns over time and identify issues.
+* Point-in-time search is accessible through an API, allowing you to run different queries against a dataset that is fixed in time.
+* New functionality in OpenSearch Dashboards lets you restore data from existing snapshots. Previously, restoring snapshots required using the restore API.
+* New geospatial functionality in OpenSearch Dashboards includes two new field types, making it possible to index and search geographic points represented as Cartesian coordinates or as Cartesian shapes. A new GeoHex grid aggregation feature supports datasets that use the Hexagonal Hierarchical Geospatial Indexing System (H3).
+* Cluster manager task throttling supports cluster resiliency by allowing you to set limits on the volume of tasks that nodes can submit to the cluster manager.
+* Search backpressure supports enhanced resiliency by protecting clusters against traffic surges and other issues that can overwhelm cluster resources.
+* A weighted zonal search request routing policy allows you to configure policies to route search traffic away from zones that have degraded performance or failures.
+* You can now create custom filters to refine your k-NN searches. The filtering is tightly integrated with the Lucene HNSW algorithm and allows you to apply k-NN searches more efficiently with better search results and performance.
+
+### Experimental features
+
+OpenSearch 2.4.0 includes the following experimental features. Experimental features are disabled by default. For instructions on how to enable them, see the version history (https://opensearch.org/docs/latest/version-history/) page for links to the documentation.
+
+* Semantic search tools let you use machine learning (ML) to enhance document search results. The release adds functionality that enables OpenSearch to learn an ML model tuned to your documents. Using a pretrained query generator, you can create query-response pairs tailored to your documents, which an ML model can use to learn to order search results based on your data.
+* A new search relevance plugin lets you compare different search ranking techniques (including semantic search) side by side in the UI, so you can identify opportunities to fine-tune your results.
+* A new model serving framework allows you to upload your own ML models to OpenSearch.
+* OpenSearch Dashboards now supports multiple OpenSearch endpoints as data sources, allowing you to visualize data across different clusters in an environment through a single pane of glass.
+* A new security analytics plugin for OpenSearch and OpenSearch Dashboards provides tools to help you analyze security event logs, identify attack signatures, visualize threat patterns, and create security alerts.
+* With searchable snapshots, you can now search indexes that are stored as snapshots within remote repositories without needing to download all of the index data ahead of time.
+
 
 ## Release Details
 
