@@ -69,7 +69,7 @@ fi
 
 NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
 if [ "$PLATFORM" = "windows" ]; then
-    NVM_CMD="volta install node@`cat ../../../../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../../../../OpenSearch-Dashboards/package.json`"
+    NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../../OpenSearch-Dashboards/package.json`"
 fi
 
 mkdir -p $OUTPUT/plugins
@@ -77,11 +77,11 @@ PLUGIN_FOLDER=$(basename "$PWD")
 PLUGIN_NAME=customImportMapDashboards
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
-cp -r ../$PLUGIN_FOLDER/ ../../../../OpenSearch-Dashboards/plugins
+cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../../../../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
+(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"
-cp -r ../../../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
-rm -rf ../../../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
+cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
+rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
