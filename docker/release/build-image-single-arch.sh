@@ -105,7 +105,7 @@ echo New workspace $DIR
 
 # Copy configs
 cp -v config/${PRODUCT}/* $DIR/
-cp -v ../../config/${PRODUCT_ALT}.yml $DIR/
+cp -v ../../config/${PRODUCT_ALT}*.yml $DIR/
 cp -v ../../scripts/opensearch-onetime-setup.sh $DIR/
 
 # Copy TGZ

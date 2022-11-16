@@ -16,7 +16,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
 
@@ -25,9 +25,10 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
+
 
   manifest-checks-jdk11:
     needs: list-manifests11
@@ -39,13 +40,13 @@ jobs:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests11.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv and Dependencies
@@ -65,13 +66,13 @@ jobs:
       matrix:
         manifest: ${{ fromJson(needs.list-manifests17.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JDK_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv and Dependencies

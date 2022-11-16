@@ -82,7 +82,10 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
-    pip3 install pipenv && pipenv --version
+    pip3 install pipenv && pipenv --version && pip install --upgrade pip
+
+# Install twine
+RUN pip3 install twine
 
 # Change User
 USER 1000
@@ -93,13 +96,13 @@ ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 14.19.1
 ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0"
 
-# install nvm
+# Install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-# install node and npm
+# Install node and npm
 RUN source $NVM_DIR/nvm.sh && \
     for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@^1.21.1; done
-# add node and npm to path so the commands are available
+# Add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # We use the version test to check if packages installed correctly

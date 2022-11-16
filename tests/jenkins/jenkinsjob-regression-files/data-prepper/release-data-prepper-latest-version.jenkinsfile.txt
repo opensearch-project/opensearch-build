@@ -92,7 +92,7 @@
                   release-data-prepper-all-artifacts.sh(curl -sSL http://staging-artifacts.cloudfront.net/0.22.1/997908/maven/org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha512 -o org/opensearch/dataprepper/data-prepper-api/0.22.1/data-prepper-api-0.22.1.module.sha512)
          release-data-prepper-all-artifacts.stage(Sign Maven Artifacts, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)
-               release-data-prepper-all-artifacts.signArtifacts({artifactPath=/tmp/workspace/maven, type=maven, platform=linux})
+               release-data-prepper-all-artifacts.signArtifacts({artifactPath=/tmp/workspace/maven, type=maven, platform=linux, sigtype=.asc})
                   signArtifacts.echo(PGP or Windows Signature Signing)
                   signArtifacts.fileExists(/tmp/workspace/sign.sh)
                   signArtifacts.git({url=https://github.com/opensearch-project/opensearch-build.git, branch=main})
@@ -111,7 +111,7 @@
                    export UNSIGNED_BUCKET=SIGNER_CLIENT_UNSIGNED_BUCKET
                    export SIGNED_BUCKET=SIGNER_CLIENT_SIGNED_BUCKET
 
-                   /tmp/workspace/sign.sh /tmp/workspace/maven --type=maven --platform=linux
+                   /tmp/workspace/sign.sh /tmp/workspace/maven --type=maven --platform=linux --sigtype=.asc
                )
          release-data-prepper-all-artifacts.stage(Upload Artifacts to Sonatype, groovy.lang.Closure)
             release-data-prepper-all-artifacts.script(groovy.lang.Closure)

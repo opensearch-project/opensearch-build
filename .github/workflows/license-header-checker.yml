@@ -7,6 +7,6 @@ jobs:
   license-header-checker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Add License Header
         uses: kt3k/license_checker@v1.0.6

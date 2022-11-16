@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.1.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -51,6 +51,11 @@ pipeline {
             name: 'BUILD_DOCKER',
             description: 'Build docker image or not with options.',
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
+        )
+        booleanParam(
+            name: 'UPDATE_LATEST_URL',
+            description: 'Update latest url so /latest/ is pointed to this build',
+            defaultValue: true
         )
         booleanParam(
             name: 'PUBLISH_NOTIFICATION',
@@ -614,9 +619,11 @@ pipeline {
             }
             steps {
                 script {
-                    uploadIndexFile(
-                        indexFilePath: env.INDEX_FILE_PATH
-                    )
+                    if (params.UPDATE_LATEST_URL) {
+                        uploadIndexFile(
+                            indexFilePath: env.INDEX_FILE_PATH
+                        )
+                    }
                 }
             }
         }

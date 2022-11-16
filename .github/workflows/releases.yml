@@ -12,7 +12,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         # produces a list of versions, e.g. ["1.0.0","1.0.0","1.0.1","1.1.0","1.2.0","2.0.0"]
         run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | cut -d'/' -f2 | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
@@ -23,7 +23,7 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: dblock/create-a-github-issue@v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
