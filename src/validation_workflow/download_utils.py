@@ -6,6 +6,8 @@
 # compatible open source license.
 
 
+import os
+
 import requests
 
 from system.temporary_directory import TemporaryDirectory
@@ -13,17 +15,15 @@ from system.temporary_directory import TemporaryDirectory
 
 class DownloadUtils:
     @staticmethod
-    def is_url_valid(url: str) -> int:
+    def is_url_valid(url: str) -> bool:
         response = requests.head(url)
-        if response.status_code == 200:
-            return 1
-        else:
-            return 0
+        status = bool(response.status_code == 200)
+        return status
 
     @staticmethod
     def download(url: str, tmp_dir: TemporaryDirectory) -> bool:
         # This method writes the contents from the response object into temporary directory file name fetched from the end of the url.
         response = requests.get(url, stream=True)
-        path = tmp_dir.name + "/" + url.split("/")[-1]
+        path = os.path.join(tmp_dir.name, os.path.basename(url))
         status = bool(open(path, "wb").write(response.content))
         return status

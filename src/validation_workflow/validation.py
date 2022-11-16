@@ -8,15 +8,12 @@
 
 from abc import ABC, abstractmethod
 
+from system.temporary_directory import TemporaryDirectory
+
 
 class Validation(ABC):
     base_url = "https://artifacts.opensearch.org/releases/bundle/"
-
-    def __init__(self, version: str, distribution: str, platform: str, projects: list) -> None:
-        self.version = version
-        self.distribution = distribution
-        self.platform = platform
-        self. projects = projects
+    tmp_dir = TemporaryDirectory()
 
     @classmethod
     @abstractmethod

@@ -14,11 +14,6 @@ from validation_workflow.validation_yum import ValidationYum
 
 
 class ValidationArgs:
-    SUPPORTED_DISTRIBUTIONS = [
-        "tar",
-        "yum",
-        "rpm"
-    ]
     SUPPORTED_PLATFORMS = ["linux"]
     SUPPORTED_ARCHITECTURES = [
         "x64",
@@ -30,20 +25,19 @@ class ValidationArgs:
         "rpm": ValidationRpm
     }
 
-    version: str
-
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Validation Framework for Validation Workflow.")
         parser.add_argument(
-            "version",
+            "--version",
             type=str,
+            required=True,
             help="Product version to validate"
         )
         parser.add_argument(
             "-d",
             "--distribution",
             type=str,
-            choices=self.SUPPORTED_DISTRIBUTIONS,
+            choices=self.DISTRIBUTION_MAP.keys(),
             help="Distribution to validate.",
             default="tar",
             dest="distribution"
@@ -55,6 +49,22 @@ class ValidationArgs:
             choices=self.SUPPORTED_PLATFORMS,
             help="Platform to validate.",
             default="linux"
+        )
+        parser.add_argument(
+            "--stgosbuild",
+            type=str,
+            required=False,
+            help="The opensearchstaging OpenSearch image build number if required, for example : 6039\n",
+            default="",
+            dest="stgosbuild",
+        )
+        parser.add_argument(
+            "--stgosdbuild",
+            type=str,
+            required=False,
+            help="The opensearchstaging OpenSearchDashboard image build number if required, for example : 4104\n",
+            default="",
+            dest="stgosdbuild",
         )
         parser.add_argument(
             "-v",
