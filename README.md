@@ -210,7 +210,7 @@ See [src/sign_workflow](./src/sign_workflow) for more information.
 
 #### Releasing for Linux / Windows
 
-The Linux / Windows release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)).
+The Linux / Windows release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#2649](https://github.com/opensearch-project/opensearch-build/issues/2649)).
 
 #### Releasing for FreeBSD
 
