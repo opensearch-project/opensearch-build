@@ -165,7 +165,7 @@ class InputManifests(Manifests):
             data = f.read()
 
         build_platform_dict = {"opensearch": "linux macos windows", "opensearch-dashboards": "linux windows"}
-        build_platform = build_platform_dict.get(self.prefix, "linux macos windows")
+        build_platform = build_platform_dict.get(self.prefix, "linux")
 
         cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;" \
                      f"TARGET_JOB_NAME=distribution-build-{self.prefix};" \
