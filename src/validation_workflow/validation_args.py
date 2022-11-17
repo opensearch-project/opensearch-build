@@ -15,10 +15,6 @@ from validation_workflow.validation_yum import ValidationYum
 
 class ValidationArgs:
     SUPPORTED_PLATFORMS = ["linux"]
-    SUPPORTED_ARCHITECTURES = [
-        "x64",
-        "arm64",
-    ]
     DISTRIBUTION_MAP = {
         "tar": ValidationTar,
         "yum": ValidationYum,

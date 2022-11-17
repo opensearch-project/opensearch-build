@@ -17,5 +17,5 @@ class Validation(ABC):
 
     @classmethod
     @abstractmethod
-    def download_artifacts(self, projects: list, version: str, platform: str, architectures: list) -> bool:
+    def download_artifacts(self, projects: list, version: str) -> bool:
         pass

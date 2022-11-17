@@ -14,10 +14,10 @@ from validation_workflow.validation import Validation
 class ValidationTar(Validation, DownloadUtils):
 
     @classmethod
-    def download_artifacts(self, projects: list, version: str, platform: str, architectures: list) -> bool:
+    def download_artifacts(self, projects: list, version: str) -> bool:
         for project in projects:
-            for architecture in architectures:
-                url = f"{self.base_url}{project}/{version}/{project}-{version}-{platform}-{architecture}.tar.gz"
+            for architecture in ["x64", "arm64"]:
+                url = f"{self.base_url}{project}/{version}/{project}-{version}-linux-{architecture}.tar.gz"
                 if ValidationTar.is_url_valid(url) and ValidationTar.download(url, self.tmp_dir):
                     logging.info(f"Valid URL - {url} and Download Successful !")
                 else:

@@ -16,9 +16,9 @@ class TestValidationTar(unittest.TestCase):
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=True)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=True)
     def test_download_artifacts_true(self, download_utils_is_url_valid: Mock, download_utils_download: Mock) -> None:
-        self.assertTrue(ValidationYum.download_artifacts(["opensearch", "opensearch-dashboards"], "2.1.0", "linux", ["x64", "arm64"]), 1)
+        self.assertTrue(ValidationYum.download_artifacts(["opensearch", "opensearch-dashboards"], "2.1.0"), 1)
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=False)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=True)
     def test_download_artifacts_throws_exception(self, download_utils_is_url_valid: Mock, download_utils_download: Mock) -> None:
-        self.assertRaises(Exception, ValidationYum.download_artifacts, ["opensearch", "opensearch-dashboards"], "2.11.0", "linux", ["x64", "arm64"])
+        self.assertRaises(Exception, ValidationYum.download_artifacts, ["opensearch", "opensearch-dashboards"], "2.11.0")

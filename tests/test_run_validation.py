@@ -31,7 +31,7 @@ class TestRunValidation(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "1.3.6", "--platform", "linux"])
+    @patch("argparse._sys.argv", ["run_validation.py", "--version", "1.3.6"])
     @patch("src.validation_workflow.validation_tar.ValidationTar.download_artifacts", return_value=True)
     @patch("run_validation.main", return_value=0)
     def test_main_default(self, mock_tar: Mock, *mocks: Any) -> None:
@@ -39,7 +39,7 @@ class TestRunValidation(unittest.TestCase):
         self.assertEqual(ValidationArgs().distribution, "tar")
         self.assertNotEqual(ValidationArgs().distribution, "rpm")
 
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "rpm", "--platform", "linux"])
+    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "rpm"])
     @patch("src.validation_workflow.validation_rpm.ValidationRpm.download_artifacts", return_value=True)
     @patch("run_validation.main", return_value=0)
     def test_main_rpm(self, mock_tar: Mock, *mocks: Any) -> None:
@@ -47,7 +47,7 @@ class TestRunValidation(unittest.TestCase):
         self.assertEqual(ValidationArgs().distribution, "rpm")
         self.assertNotEqual(ValidationArgs().distribution, "tar")
 
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "yum", "--platform", "linux"])
+    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "yum"])
     @patch("src.validation_workflow.validation_yum.ValidationYum.download_artifacts", return_value=True)
     @patch("run_validation.main", return_value=0)
     def test_main_yum(self, mock_tar: Mock, *mocks: Any) -> None:

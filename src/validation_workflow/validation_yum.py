@@ -14,7 +14,7 @@ from validation_workflow.validation import Validation
 class ValidationYum(Validation, DownloadUtils):
 
     @classmethod
-    def download_artifacts(self, projects: list, version: str, platform: str, architectures: list) -> bool:
+    def download_artifacts(self, projects: list, version: str) -> bool:
         for project in projects:
             url = f"{self.base_url}{project}/{version[0:1]}.x/{project}-{version[0:1]}.x.repo"
             if ValidationYum.is_url_valid(url) and ValidationYum.download(url, self.tmp_dir):
