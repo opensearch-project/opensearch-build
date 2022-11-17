@@ -117,6 +117,10 @@ class TestInputManifests(unittest.TestCase):
             os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "jenkins", "check-for-build.jenkinsfile"))
         )
 
+    def test_build_platform(self) -> None:
+        self.assertEqual(InputManifests.build_platform().get("opensearch"), "linux macos windows")
+        self.assertEqual(InputManifests.build_platform().get("opensearch-dashboards"), "linux windows")
+
     @patch("builtins.open", new_callable=mock_open)
     def test_add_to_cron(self, mock_open: MagicMock) -> None:
         mock_open().read.return_value = "parameterizedCron '''\n"
