@@ -62,6 +62,19 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                         "type": "dict",
                         "schema": {
                             "build-dependencies": {"type": "list"},
+                            "topology": {
+                                "type": "list", "required": False,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "cluster_name": {"required": True, "type": "string"},
+                                        "data_nodes": {"type": "integer", "required": True},
+                                        "cluster_manager_nodes": {"type": "integer"}
+                                    }
+
+                                }
+
+                            },
                             "test-configs": {"type": "list", "allowed": ["with-security", "without-security"]},
                             "additional-cluster-configs": {"type": "dict"},
                         },
@@ -117,12 +130,35 @@ class TestComponents(Components['TestComponent']):
         return TestComponent(data)
 
 
+class ClusterConfig:
+    def __init__(self, cluster_config_data: dict):
+        self.cluster_name = cluster_config_data['cluster_name']
+        self.data_nodes = cluster_config_data['data_nodes']
+        self.cluster_manager_nodes = cluster_config_data['cluster_manager_nodes'] if "cluster_manager_nodes" in cluster_config_data.keys() else 0
+        assert self.cluster_manager_nodes == 0, "Cluster manager nodes are not supported so use value 0 or skip this parameter"
+
+
+class TestComponentTopology:
+    def __init__(self, data: dict):
+        if data is not None:
+            self.cluster_configs = []
+            total_nodes = 0
+            for cluster_config_data in data:
+                cluster_config = ClusterConfig(cluster_config_data)
+                total_nodes += cluster_config.data_nodes + cluster_config.cluster_manager_nodes
+                self.cluster_configs.append(cluster_config)
+            assert total_nodes <= 100, "More than 100 nodes(data_nodes and cluster_manager_nodes) over all clusters are not supported"
+        else:
+            self.cluster_configs = [ClusterConfig({'cluster_name': 'cluster1', 'data_nodes': 1, 'cluster_manager_nodes': 0})]  # type: ignore[assignment]
+
+
 class TestComponent(Component):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.working_directory = data.get("working-directory", None)
         self.integ_test = data.get("integ-test", None)
         self.bwc_test = data.get("bwc-test", None)
+        self.topology = TestComponentTopology(self.integ_test.get("topology", None)) if self.integ_test is not None else TestComponentTopology(None)
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:

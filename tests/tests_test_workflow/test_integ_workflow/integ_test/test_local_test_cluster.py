@@ -49,7 +49,7 @@ class LocalTestClusterTests(unittest.TestCase):
             self.manifest,
             self.security_enabled,
             self.component_test_config,
-            mock_test_recorder
+            mock_test_recorder,
         )
 
         cluster.start()
@@ -60,7 +60,8 @@ class LocalTestClusterTests(unittest.TestCase):
             self.additional_cluster_config,
             self.security_enabled,
             self.dependency_installer,
-            os.path.join(self.work_dir, "local-test-cluster")
+            os.path.join(self.work_dir, "local-test-cluster"),
+            9200
         )
 
         mock_service_object.start.assert_called_once()

@@ -94,7 +94,7 @@ esac
 
 NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
 if [ "$PLATFORM" = "windows" ]; then
-    NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn"
+    NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../../OpenSearch-Dashboards/package.json`"
 fi
 
 CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"

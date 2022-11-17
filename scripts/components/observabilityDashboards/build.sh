@@ -67,6 +67,11 @@ fi
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 [ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
 
+NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
+if [ "$PLATFORM" = "windows" ]; then
+    NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../../OpenSearch-Dashboards/package.json`"
+fi
+
 mkdir -p $OUTPUT/plugins
 # For hybrid plugin it actually resides in 'observability/dashboards-observability'
 PLUGIN_FOLDER=$(basename "$PWD")
@@ -75,9 +80,9 @@ PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && yarn osd bootstrap)
+(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../../OpenSearch-Dashboards && source $NVM_DIR/nvm.sh && nvm use && cd plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+(cd ../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER

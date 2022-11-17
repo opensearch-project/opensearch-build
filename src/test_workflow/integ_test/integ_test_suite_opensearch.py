@@ -15,7 +15,7 @@ from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.dependency_installer_opensearch import DependencyInstallerOpenSearch
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite, InvalidTestConfigError
-from test_workflow.integ_test.local_test_cluster import LocalTestCluster
+from test_workflow.integ_test.topology import Topology
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
@@ -72,7 +72,10 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         if "additional-cluster-configs" in self.test_config.integ_test.keys():
             self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
-        with LocalTestCluster.create(
+        if self.additional_cluster_config is None:
+            self.additional_cluster_config = {"cluster.name": "opensearch1"}
+        with Topology.create(
+            self.test_config.topology.cluster_configs,
             self.dependency_installer,
             self.work_dir,
             self.component.name,
@@ -80,11 +83,11 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.bundle_manifest,
             security,
             config,
-            self.test_recorder,
-        ) as (endpoint, port):
-            self.pretty_print_message("Running integration tests for " + self.component.name)
+            self.test_recorder
+        ) as (endpoints):
             os.chdir(self.work_dir)
-            return self.execute_integtest_sh(endpoint, port, security, config)
+            self.pretty_print_message("Running integration tests for " + self.component.name)
+            return self.multi_execute_integtest_sh(endpoints, security, config)
 
     @property
     def test_artifact_files(self) -> dict:

@@ -9,6 +9,7 @@ import abc
 import concurrent.futures
 import logging
 import os
+import pathlib
 import shutil
 import urllib
 from typing import List, Tuple
@@ -38,8 +39,8 @@ class DependencyInstaller(abc.ABC):
         return self.download_or_copy(self.bundle_manifest.build.location, local_path)
 
     def __source_dest(self, path: str, category: str, dest: str) -> Tuple[str, str]:
-        source = "/".join([self.root_url, category, self.build_manifest.build.filename, path])
-        dest = os.path.realpath(os.path.join(dest, "/".join(path.split("/")[1:])))
+        source = os.path.join(self.root_url, category, self.build_manifest.build.filename, path)
+        dest = os.path.realpath(os.path.join(dest, os.path.join(*pathlib.Path(path).parts[1:])))
         return (source, dest)
 
     def download(self, paths: List[str], category: str, dest: str) -> None:
@@ -54,9 +55,13 @@ class DependencyInstaller(abc.ABC):
 
     def download_or_copy(self, source: str, dest: str) -> str:
         os.makedirs(os.path.dirname(dest), exist_ok=True)
-        if validators.url(source):
-            logging.info(f"Downloading {source} into {dest} ...")
-            urllib.request.urlretrieve(source, dest)
+        # Required to make sure validators.url is checking an actual url with '/'
+        # else '\\' will fail the check even if it is a valid url format
+        # Ex: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/6452/windows/x64/zip\builds\opensearch\maven\org\opensearch\client\client-benchmarks\maven-metadata.xml
+        source_url = source.replace('\\', '/')
+        if validators.url(source_url):
+            logging.info(f"Downloading {source_url} into {dest} ...")
+            urllib.request.urlretrieve(source_url, dest)
         else:
             logging.info(f"Copying {source} into {dest} ...")
             source = os.path.realpath(source)

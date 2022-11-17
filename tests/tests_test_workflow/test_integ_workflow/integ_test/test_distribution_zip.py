@@ -43,7 +43,7 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
             mock_zipfile_extractall.assert_called_with(self.work_dir)
 
     def test_start_cmd(self) -> None:
-        self.assertEqual(self.distribution_zip.start_cmd, "./opensearch-windows-install.bat")
+        self.assertEqual(self.distribution_zip.start_cmd, ".\\opensearch-windows-install.bat")
 
     @patch("subprocess.check_call")
     def test_uninstall(self, check_call_mock: Mock) -> None:
@@ -85,7 +85,7 @@ class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
             mock_zipfile_extractall.assert_called_with(self.work_dir)
 
     def test_start_cmd(self) -> None:
-        self.assertEqual(self.distribution_zip.start_cmd, "./opensearch-dashboards.bat")
+        self.assertEqual(self.distribution_zip.start_cmd, ".\\opensearch-dashboards.bat")
 
     @patch("subprocess.check_call")
     def test_uninstall(self, check_call_mock: Mock) -> None:
