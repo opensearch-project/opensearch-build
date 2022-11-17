@@ -24,6 +24,11 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifests(Manifests):
+    BUILD_PLATFORM = {
+        "opensearch": "linux macos windows",
+        "opensearch-dashboards": "linux windows"
+    }
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.prefix = name.lower().replace(" ", "-")
@@ -48,10 +53,6 @@ class InputManifests(Manifests):
     @classmethod
     def cron_jenkinsfile(self) -> str:
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
-
-    @classmethod
-    def build_platform(self) -> dict:
-        return {"opensearch": "linux macos windows", "opensearch-dashboards": "linux windows"}
 
     @classmethod
     def versionincrement_workflow(self) -> str:
@@ -168,7 +169,7 @@ class InputManifests(Manifests):
         with open(jenkinsfile, "r") as f:
             data = f.read()
 
-        build_platform = self.build_platform().get(self.prefix, "linux")
+        build_platform = self.BUILD_PLATFORM.get(self.prefix, "linux")
 
         cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;" \
                      f"TARGET_JOB_NAME=distribution-build-{self.prefix};" \
