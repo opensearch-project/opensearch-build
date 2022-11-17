@@ -15,8 +15,9 @@ class ValidationTar(Validation, DownloadUtils):
 
     @classmethod
     def download_artifacts(self, projects: list, version: str) -> bool:
+        architectures = ["x64", "arm64"]
         for project in projects:
-            for architecture in ["x64", "arm64"]:
+            for architecture in architectures:
                 url = f"{self.base_url}{project}/{version}/{project}-{version}-linux-{architecture}.tar.gz"
                 if ValidationTar.is_url_valid(url) and ValidationTar.download(url, self.tmp_dir):
                     logging.info(f"Valid URL - {url} and Download Successful !")

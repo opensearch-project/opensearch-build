@@ -3,7 +3,7 @@ The input requires a mandatory version number , optional --distribution types(ta
 
 *Usage*
 ```
-./validation.sh 2.3.0 --distribution rpm --platform linux 
+./validation.sh --version 2.3.0 --distribution rpm --platform linux 
 ```
 The following options are available.
 
