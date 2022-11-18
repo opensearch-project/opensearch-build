@@ -13,4 +13,3 @@ components:
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 2.x
-
