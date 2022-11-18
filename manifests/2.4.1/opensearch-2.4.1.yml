@@ -2,7 +2,7 @@
 schema-version: '1.0'
 build:
   name: OpenSearch
-  version: 2.5.0
+  version: 2.4.1
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
@@ -10,16 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 2.x
-    checks:
-      - gradle:publish
-      - gradle:properties:version
-  - name: common-utils
-    repository: https://github.com/opensearch-project/common-utils.git
-    ref: 2.x
-    platforms:
-      - linux
-      - windows
+    ref: '2.4'
     checks:
       - gradle:publish
       - gradle:properties:version
