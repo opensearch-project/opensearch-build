@@ -1,0 +1,12 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch Dashboards
+  version: 2.5.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 2.x
