@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: OpenSearch Team <opensearch@amazon.com>
 Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.5.0
-Homepage: http://www.debian.org
+Homepage: https://opensearch.org/
 
 Package: opensearch-dashboards
 Architecture: any
