@@ -37,7 +37,7 @@ class TestBundleLinuxDeb(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 2)
-        self.assertEqual(['ar', '-xf', f"--output={self.artifacts_path}", self.package_path, 'data.tar.gz'], args_list[0][0][0])
+        self.assertEqual(['ar', '-xf', self.package_path, 'data.tar.gz'], args_list[0][0][0])
         self.assertEqual(['tar', '-zvxf', '-'], args_list[1][0][0])
         self.assertEqual(shutil_copy2_mock.call_count, 0)
         self.assertEqual(shutil_move_mock.call_count, 1)

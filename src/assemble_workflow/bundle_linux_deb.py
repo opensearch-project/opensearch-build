@@ -55,7 +55,6 @@ class BundleLinuxDeb:
                 [
                     'ar',
                     '-xf',
-                    f'--output={dest}',
                     self.package_path,
                     'data.tar.gz'
                 ],
