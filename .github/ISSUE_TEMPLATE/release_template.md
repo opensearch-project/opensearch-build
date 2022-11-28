@@ -46,17 +46,17 @@ To aid in understanding the state of the release there is a table with status in
 
 __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
-### Release branch readiness - _Ends __REPLACE_RELEASE-minus-14-days__
+### Release Branch - _Ends __REPLACE_RELEASE-minus-14-days__
 
 - [ ] Component versions are auto-incremented to {{ env.VERSION }} version
 - [ ] Plugins team to ensure working CI in component repositories and merge the version increment PRs.
 - [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
 - [ ] All component repos create `<MajorVersion>.<MinorVersion>` branch for the release.
 
-### CI/CD (Feature Freeze) - _Ends __REPLACE_RELEASE-minus-12-days__
+### Feature Freeze - _Ends __REPLACE_RELEASE-minus-12-days__
 
-- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
-- [ ] Create Jenkins workflows that run daily snapshot builds for OpenSearch and OpenSearch Dashboards.
+- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features.
+- [ ] Create Jenkins workflows that run daily snapshot builds for [OpenSearch](https://build.ci.opensearch.org/job/distribution-build-opensearch/) and [OpenSearch Dashboards](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/).
 - [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 
 ### Code Complete - _Ends __REPLACE_RELEASE-minus-10-days___
