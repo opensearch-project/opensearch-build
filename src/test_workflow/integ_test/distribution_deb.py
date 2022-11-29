@@ -12,7 +12,7 @@ import subprocess
 from test_workflow.integ_test.distribution import Distribution
 
 
-class DistributionRpm(Distribution):
+class DistributionDeb(Distribution):
     def __init__(self, filename: str, version: str, work_dir: str) -> None:
         super().__init__(filename, version, work_dir)
 
@@ -26,21 +26,19 @@ class DistributionRpm(Distribution):
 
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
-        logging.info("rpm installation requires sudo, script will exit if current user does not have sudo access")
-        rpm_install_cmd = " ".join(
+        logging.info("deb installation requires sudo, script will exit if current user does not have sudo access")
+        deb_install_cmd = " ".join(
             [
-                'yum',
-                'remove',
-                '-y',
+                'dpkg',
+                '--purge',
                 self.filename,
                 '&&',
-                'yum',
-                'install',
-                '-y',
+                'dpkg',
+                '--install',
                 bundle_name
             ]
         )
-        subprocess.check_call(rpm_install_cmd, cwd=self.work_dir, shell=True)
+        subprocess.check_call(deb_install_cmd, cwd=self.work_dir, shell=True)
 
     @property
     def start_cmd(self) -> str:
@@ -48,4 +46,4 @@ class DistributionRpm(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"yum remove -y {self.filename}", shell=True)
+        subprocess.check_call(f"dpkg --purge {self.filename}", shell=True)

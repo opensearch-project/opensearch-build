@@ -231,7 +231,7 @@ At this moment there's no official MacOS distribution. However, this project doe
 The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
 
 ```bash
-./checkout.sh manfiests/1.3.0/opensearch-1.3.0.yml
+./checkout.sh manifests/1.3.0/opensearch-1.3.0.yml
 ```
 
 See [src/checkout_workflow](./src/checkout_workflow) for more information.

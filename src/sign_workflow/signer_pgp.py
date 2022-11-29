@@ -20,7 +20,7 @@ The signed artifacts will be found in the same location as the original artifact
 
 class SignerPGP(Signer):
 
-    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
+    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm", ".deb"]
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
         location = os.path.join(basepath, artifact)

@@ -8,6 +8,7 @@
 import logging
 
 from test_workflow.integ_test.distribution import Distribution
+from test_workflow.integ_test.distribution_deb import DistributionDeb
 from test_workflow.integ_test.distribution_rpm import DistributionRpm
 from test_workflow.integ_test.distribution_tar import DistributionTar
 from test_workflow.integ_test.distribution_zip import DistributionZip
@@ -16,6 +17,7 @@ from test_workflow.integ_test.distribution_zip import DistributionZip
 class Distributions:
     DISTRIBUTIONS_MAP = {
         "tar": DistributionTar,
+        "deb": DistributionDeb,
         "rpm": DistributionRpm,
         "zip": DistributionZip,
     }
