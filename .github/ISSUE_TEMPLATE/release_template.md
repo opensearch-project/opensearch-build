@@ -40,7 +40,7 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-build/blob/main/meta/README.md#create-a-release-issue) that links back to this issue, update Components section with these links.
 - [ ] Ensure the label is created in each component repo for this new version, and the next minor release. [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos)
 - [ ] Ensure that all release issues created above are assigned to an owner in the component team.
-- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile)
+- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile).
 
 ### Campaigns
 
@@ -48,7 +48,7 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Release Branch - _Ends __REPLACE_RELEASE-minus-14-days__
 
-- [ ] Component versions are auto-incremented to {{ env.VERSION }} version
+- [ ] Component versions are auto-incremented to {{ env.VERSION }} version.
 - [ ] Plugins team to ensure working CI in component repositories and merge the version increment PRs.
 - [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
 - [ ] All component repos create `<MajorVersion>.<MinorVersion>` branch for the release.
@@ -75,8 +75,8 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] Performance tests do not show a regression
-- [ ] Longevity tests do not show any issues
+- [ ] Performance tests do not show a regression.
+- [ ] Longevity tests do not show any issues.
 
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 
