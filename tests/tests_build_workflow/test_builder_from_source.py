@@ -30,7 +30,7 @@ class TestBuilderFromSource(unittest.TestCase):
         )
 
         self.builder_distribution = BuilderFromSource(
-            InputComponentFromSource({"name": "OpenSearch", "repository": "url", "ref": "ref"}),
+            InputComponentFromSource({"name": "OpenSearch-Dashboards", "repository": "url", "ref": "ref"}),
             BuildTarget(
                 name="OpenSearch",
                 version="1.3.0",
@@ -99,7 +99,7 @@ class TestBuilderFromSource(unittest.TestCase):
             " ".join(
                 [
                     "bash",
-                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "build.sh")),
+                    os.path.realpath(os.path.join(ScriptFinder.component_scripts_path, "OpenSearch-Dashboards", "build.sh")),
                     "-v 1.3.0",
                     "-p linux",
                     "-a x64",
@@ -109,7 +109,7 @@ class TestBuilderFromSource(unittest.TestCase):
                 ]
             )
         )
-        build_recorder.record_component.assert_called_with("OpenSearch", mock_git_repo.return_value)
+        build_recorder.record_component.assert_called_with("OpenSearch-Dashboards", mock_git_repo.return_value)
 
     @patch("build_workflow.builder_from_source.GitRepository")
     def test_build_distribution_support(self, mock_git_repo: Mock) -> None:
