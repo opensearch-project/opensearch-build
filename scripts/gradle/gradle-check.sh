@@ -53,19 +53,21 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
             RUNNING=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .building)
         done
 
-        echo "Complete the run, checking results now......"
-        RESULT=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .result)
+        if [ "$RUNNING" = "true" ]; then
+            echo "Timed out"
+            RESULT="TIMEOUT"
+        else
+            echo "Complete the run, checking results now......"
+            RESULT=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .result)
+        fi
 
     fi
 fi
 
 echo "Please check jenkins url for logs: $WORKFLOW_URL"
-
+echo "Result: $RESULT"
 if [ "$RESULT" == "SUCCESS" ] || [ "$RESULT" == "UNSTABLE" ]; then
-    echo "Result: $RESULT"
     echo "Get codeCoverage.xml" && curl -SLO ${WORKFLOW_URL}artifact/codeCoverage.xml
-    echo 0
 else
-    echo "Result: $RESULT"
     exit 1
 fi
