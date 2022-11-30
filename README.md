@@ -151,7 +151,7 @@ For example, you can download the latest .tar.gz distribution build of OpenSearc
 
 For plugin artifacts, you can also use the `latest` keyword to get the latest plugin artifacts with a known version. E.g. in order to get performance-analyzer x64 tarball artifacts for 2.1.0, you can obtain it with link `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`, which will redirect you to `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/5757/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`.
 
-For bundled artifacts, here are some examples for LINUX and Windos:
+For bundled artifacts, here are some examples for LINUX and Windows:
 * Linux Tar: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.4.0-linux-x64.tar.gz`
 * Windows Zip: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/windows/x64/zip/dist/opensearch/opensearch-2.4.0-windows-x64.zip`
 
