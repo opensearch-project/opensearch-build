@@ -19,7 +19,9 @@ FROM ubuntu:20.04
 RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y
 
 # Install necessary packages
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && apt clean -y && pip3 install awscli==1.22.12
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && \
+    apt-get install -y debmake debhelper-compat && \
+    apt-get clean -y && pip3 install awscli==1.22.12
 
 # Install trivy to scan the docker images
 RUN curl -SL https://github.com/aquasecurity/trivy/releases/download/v0.30.4/trivy_0.30.4_Linux-64bit.deb -o /tmp/trivy_0.30.4_Linux-64bit.deb && \
