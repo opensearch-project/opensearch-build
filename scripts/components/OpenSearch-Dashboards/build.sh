@@ -95,12 +95,14 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         BUILD_PARAMS="build-platform"
         EXTRA_PARAMS="--skip-os-packages"
         SUFFIX="$PLATFORM-x64"
+        ;;
     linux-deb-arm64)
         TARGET="--$DISTRIBUTION-arm"
         EXT="$DISTRIBUTION"
         BUILD_PARAMS="build"
         EXTRA_PARAMS="--skip-archives"
         SUFFIX="arm64"
+        ;;
     linux-deb-x64)
         TARGET="--$DISTRIBUTION"
         EXT="$DISTRIBUTION"
