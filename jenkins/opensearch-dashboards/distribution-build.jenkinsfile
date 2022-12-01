@@ -187,7 +187,7 @@ pipeline {
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
                                         )
-                                    } 
+                                    }
                                 },
                                 'bwc-test': {
                                     Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
@@ -397,7 +397,7 @@ pipeline {
                                             Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
                                             echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
                                             if (!skipIntegTests) {
-                                                def integTestResults = 
+                                                def integTestResults =
                                                     build job: INTEG_TEST_JOB_NAME,
                                                     propagate: false,
                                                     wait: true,
@@ -651,7 +651,7 @@ pipeline {
                 script {
                     echo "env.ARTIFACT_URL_LINUX_X64_TAR: ${env.ARTIFACT_URL_LINUX_X64_TAR}"
                     echo "env.ARTIFACT_URL_LINUX_ARM64_TAR: ${env.ARTIFACT_URL_LINUX_ARM64_TAR}"
-                    
+
                     buildDockerImage(
                         inputManifest: "manifests/${INPUT_MANIFEST}",
                         buildNumber: "${BUILD_NUMBER}",
@@ -681,14 +681,20 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
-                        def stashed = lib.jenkins.Messages.new(this).get([
+                    List<String> stages = []
+                    if (params.BUILD_PLATFORM.contains('linux')) {
+                        stages = [
                             'build-and-test-linux-x64-tar',
                             'assemble-archive-and-test-linux-x64-rpm',
-                            'assemble-archive-and-test-linux-arm64-tar',
+                            'build-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
-                            'build-and-test-windows-x64-zip'
-                        ])
+                        ]
+                    }
+                    if (params.BUILD_PLATFORM.contains('windows')){
+                        stages.add('build-and-test-windows-x64-zip')
+                    }
+                    if (params.PUBLISH_NOTIFICATION) {
+                        def stashed = lib.jenkins.Messages.new(this).get(stages)
 
                         publishNotification(
                             icon: ':white_check_mark:',
@@ -707,7 +713,7 @@ pipeline {
             node(AGENT_X64) {
                 checkout scm
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
+                    if (params.PUBLISH_NOTIFICATION) {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),

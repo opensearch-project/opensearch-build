@@ -174,7 +174,7 @@ pipeline {
                             postCleanup()
                         }
                     }
-                }  
+                }
                 stage('build-opensearch-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
@@ -853,14 +853,21 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    if (params.PUBLISH_NOTIFICATION) {
-                        def stashed = lib.jenkins.Messages.new(this).get([
+                    List<String> stages = []
+                    if (params.BUILD_PLATFORM.contains('linux')) {
+                        stages = [
                             'build-and-test-linux-x64-tar',
                             'assemble-archive-and-test-linux-x64-rpm',
                             'build-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
-                            'build-and-test-windows-x64-zip'
-                        ])
+                        ]
+                    }
+                    if (params.BUILD_PLATFORM.contains('windows')){
+                        stages.add('build-and-test-windows-x64-zip')
+                    }
+
+                    if (params.PUBLISH_NOTIFICATION) {
+                        def stashed = lib.jenkins.Messages.new(this).get(stages)
 
                         publishNotification(
                             icon: ':white_check_mark:',
