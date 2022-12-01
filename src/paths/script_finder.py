@@ -26,6 +26,7 @@ class ScriptFinder:
     For build.sh and integtest.sh scripts, given a component name and a checked-out Git repository,
     it will look in the following locations, in order:
       * <component_scripts_path>/<component_name>/<script-name>
+      * /<component_name>/<script-name> in the component's Git repository
       * root of the component's Git repository
       * /scripts/<script-name> in the component's Git repository
       * <default_scripts_path>/<script-name>
