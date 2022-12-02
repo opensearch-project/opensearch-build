@@ -38,6 +38,7 @@ components:
       - gradle:dependencies:opensearch.version
     platforms:
       - linux
+      - windows
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
     ref: '1.3'
