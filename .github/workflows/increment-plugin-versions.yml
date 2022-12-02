@@ -33,24 +33,29 @@ jobs:
           - {repo: index-management}
           - {repo: job-scheduler}
           - {repo: k-NN}
+          - {repo: neural-search}
           - {repo: ml-commons}
           - {repo: notifications, path: notifications}
           - {repo: observability, path: opensearch-observability}
           - {repo: performance-analyzer}
           - {repo: performance-analyzer-rca}
           - {repo: security}
+          - {repo: security-analytics}
           - {repo: sql}
         branch:
+          - 1.x
           - '1.3'
           - 2.x
+          - '2.2'
+          - '2.3'
           - '2.4'
+          - '2.5'
           - 3.x
           - '3.0'
-          - '2.3'
-          - 1.x
-          - '2.5'
         exclude:
           - {entry: {repo: geospatial}, branch: '1.3'}
+          - {entry: {repo: neural-search}, branch: '1.3'}
+          - {entry: {repo: security-analytics}, branch: '1.3'}
           - {entry: {repo: notifications, path: notifications}, branch: '1.3'}
     steps:
       - name: Check out OpenSearch repo
