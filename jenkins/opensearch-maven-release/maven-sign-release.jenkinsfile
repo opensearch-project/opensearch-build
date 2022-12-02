@@ -22,6 +22,10 @@ pipeline {
             description: 'Version of the OpenSearch distribution artifacts to be staged.',
             trim: true
         )
+        booleanParam(
+            defaultValue: false,
+            description: 'Auto promote maven staging artifacts to prod',
+            name: 'AUTO_RELEASE_STAGING_TO_PROD')
     }
     environment {
         ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
@@ -53,6 +57,7 @@ pipeline {
                 REPO_URL = "https://aws.oss.sonatype.org/"
                 STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
                 BUILD_ID = "${BUILD_ID}"
+                AUTO_RELEASE = "${AUTO_RELEASE_STAGING_TO_PROD}"
             }
             steps {
                 script {
