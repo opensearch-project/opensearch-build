@@ -111,3 +111,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '2.3'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
