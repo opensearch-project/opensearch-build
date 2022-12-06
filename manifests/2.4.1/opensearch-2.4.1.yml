@@ -83,7 +83,7 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
-    repository: https://github.com/opensearch-project/observability.git
+    repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: '2.4'
     platforms:
       - linux
@@ -103,7 +103,25 @@ components:
       - gradle:dependencies:opensearch.version
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: tags/2.4.0.0
+    ref: '2.4'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '2.4'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '2.4'
     platforms:
       - linux
       - windows

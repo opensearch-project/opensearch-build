@@ -28,7 +28,7 @@ components:
     working_directory: gantt-chart
     ref: '1.3'
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/observability.git
+    repository: https://github.com/opensearch-project/dashboards-observability.git
     working_directory: dashboards-observability
     ref: '1.3'
   - name: alertingDashboards
@@ -38,6 +38,6 @@ components:
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
     ref: '1.3'
   - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reports.git
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
     working_directory: dashboards-reports
     ref: '1.3'

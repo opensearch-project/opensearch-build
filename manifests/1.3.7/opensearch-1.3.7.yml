@@ -59,7 +59,7 @@ components:
     platforms:
       - linux
   - name: opensearch-observability
-    repository: https://github.com/opensearch-project/observability
+    repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: '1.3'
     working_directory: opensearch-observability
     checks:
