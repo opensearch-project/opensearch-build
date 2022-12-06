@@ -47,7 +47,7 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: dashboards-reports
-    repository: https://github.com/opensearch-project/dashboards-reports.git
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: '2.4'
     platforms:
       - linux
