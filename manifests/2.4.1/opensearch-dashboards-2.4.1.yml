@@ -10,8 +10,8 @@ components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
     ref: '2.4'
-  - name: searchRelevanceDashboards
-    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '2.4'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/observability.git
@@ -21,10 +21,19 @@ components:
     repository: https://github.com/opensearch-project/dashboards-reports.git
     working_directory: dashboards-reports
     ref: '2.4'
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '2.4'
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     ref: '2.4'
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     working_directory: src/plugins/custom_import_map
+    ref: '2.4'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: '2.4'
+  - name: searchRelevanceDashboards
+    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: '2.4'
