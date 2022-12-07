@@ -182,4 +182,3 @@ components:
       - windows
     checks:
       - gradle:properties:version
-
