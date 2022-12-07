@@ -52,6 +52,6 @@ components:
     repository: https://github.com/opensearch-project/sql.git
     working_directory: workbench
     ref: '2.4'
-    - name: securityAnalyticsDashboards
+  - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
     ref: '2.4'
