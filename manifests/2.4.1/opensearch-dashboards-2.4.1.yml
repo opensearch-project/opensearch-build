@@ -55,4 +55,3 @@ components:
     - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
     ref: '2.4'
-  
