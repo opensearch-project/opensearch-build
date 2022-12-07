@@ -131,12 +131,12 @@ components:
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: '2.4'
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: plugin
     platforms:
       - linux
       - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
     ref: '2.4'
