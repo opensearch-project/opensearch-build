@@ -63,8 +63,7 @@ pipeline {
         '''
     }
     environment {
-        USER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
-        TIMER_BUILD_CAUSE = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
+        BUILD_CAUSE = currentBuild.getBuildCauses()
     }
     stages {
         stage('Run Gradle Check') {
@@ -91,7 +90,9 @@ pipeline {
 
                     def agent_name = params.AGENT_LABEL.tokenize('-')[2]
 
-                    if (env.USER_BUILD_CAUSE.equals('[]') && env.TIMER_BUILD_CAUSE.equals('[]')) {
+                    echo("Build Cause: ${BUILD_CAUSE}")
+
+                    if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
                         def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                         println("Triggered by GitHub: ${pr_to_clone_url}")
                         if ("$pr_number" == "Null") {
