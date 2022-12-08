@@ -8,7 +8,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from system.os import current_architecture, current_platform, rpm_architecture
+from system.os import current_architecture, current_platform, deb_architecture, rpm_architecture
 
 
 class TestOs(unittest.TestCase):
@@ -46,6 +46,11 @@ class TestOs(unittest.TestCase):
     @patch("subprocess.check_output", return_value="Windows".encode())
     def test_current_platform_lowercase(self, mock_subprocess: MagicMock) -> None:
         self.assertTrue(current_platform() == "windows")
+
+    # deb_architecture_alt
+    def test_deb_architecture(self) -> None:
+        self.assertEqual(deb_architecture('x64'), 'amd64')
+        self.assertEqual(deb_architecture('arm64'), 'arm64')
 
     # rpm_architecture_alt
     def test_rpm_architecture(self) -> None:

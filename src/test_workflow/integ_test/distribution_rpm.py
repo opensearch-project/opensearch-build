@@ -47,5 +47,5 @@ class DistributionRpm(Distribution):
         return f"systemctl start {self.filename}"
 
     def uninstall(self) -> None:
-        logging.info("Uninstall {self.filename} package after the test")
+        logging.info(f"Uninstall {self.filename} package after the test")
         subprocess.check_call(f"yum remove -y {self.filename}", shell=True)

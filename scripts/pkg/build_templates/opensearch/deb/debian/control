@@ -1,0 +1,12 @@
+Source: opensearch
+Section: database
+Priority: optional
+Maintainer: OpenSearch Team <opensearch@amazon.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.5.0
+Homepage: https://opensearch.org/
+
+Package: opensearch
+Architecture: any
+Multi-Arch: foreign
+Description: OpenSearch

@@ -103,6 +103,20 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         TARGET="$PLATFORM-arm64-$PACKAGE"
         SUFFIX="$PLATFORM-arm64"
         ;;
+    linux-deb-x64)
+        PACKAGE="deb"
+        EXT="deb"
+        TYPE="packages"
+        TARGET="deb"
+        SUFFIX="amd64"
+        ;;
+    linux-deb-arm64)
+        PACKAGE="deb"
+        EXT="deb"
+        TYPE="packages"
+        TARGET="arm64-deb"
+        SUFFIX="arm64"
+        ;;
     linux-rpm-x64)
         PACKAGE="rpm"
         EXT="rpm"

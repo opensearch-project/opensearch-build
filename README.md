@@ -151,6 +151,10 @@ For example, you can download the latest .tar.gz distribution build of OpenSearc
 
 For plugin artifacts, you can also use the `latest` keyword to get the latest plugin artifacts with a known version. E.g. in order to get performance-analyzer x64 tarball artifacts for 2.1.0, you can obtain it with link `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/latest/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`, which will redirect you to `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.1.0/5757/linux/x64/tar/builds/opensearch/plugins/opensearch-performance-analyzer-2.1.0.0.zip`.
 
+For bundled artifacts, here are some examples for LINUX and Windows:
+* Linux Tar: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.4.0-linux-x64.tar.gz`
+* Windows Zip: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/windows/x64/zip/dist/opensearch/opensearch-2.4.0-windows-x64.zip`
+
 #### Testing the Distribution
 
 Tests the OpenSearch distribution, including integration, backwards-compatibility and performance tests.
@@ -208,17 +212,13 @@ See [src/sign_workflow](./src/sign_workflow) for more information.
 
 ### Making a Release
 
-#### Releasing for Linux
+#### Releasing for Linux / Windows
 
-The Linux release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)).
+The Linux / Windows release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#2649](https://github.com/opensearch-project/opensearch-build/issues/2649)).
 
 #### Releasing for FreeBSD
 
 The FreeBSD ports and packages for OpenSearch are managed by a community [OpenSearch Team](https://wiki.freebsd.org/OpenSearch) at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
-
-#### Releasing for Windows
-
-At this moment there's no official Windows distribution. However, this project does support building and assembling OpenSearch for Windows, with some caveats. See [opensearch-build#33](https://github.com/opensearch-project/opensearch-build/issues/33) for details.
 
 #### Releasing for MacOS
 
@@ -231,7 +231,7 @@ At this moment there's no official MacOS distribution. However, this project doe
 The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
 
 ```bash
-./checkout.sh manfiests/1.3.0/opensearch-1.3.0.yml
+./checkout.sh manifests/1.3.0/opensearch-1.3.0.yml
 ```
 
 See [src/checkout_workflow](./src/checkout_workflow) for more information.

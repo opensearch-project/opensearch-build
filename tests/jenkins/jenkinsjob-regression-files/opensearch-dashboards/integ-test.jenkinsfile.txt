@@ -2,7 +2,7 @@
       integ-test.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
       integ-test.library({identifier=jenkins@1.0.4, retriever=null})
       integ-test.pipeline(groovy.lang.Closure)
-         integ-test.timeout({time=3, unit=HOURS})
+         integ-test.timeout({time=4, unit=HOURS})
          integ-test.echo(Executing on agent [label:none])
          integ-test.stage(verify-parameters, groovy.lang.Closure)
             integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])
