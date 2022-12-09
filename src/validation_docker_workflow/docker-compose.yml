@@ -1,0 +1,66 @@
+---
+version: '3'
+services:
+  OS1_NAME:
+    image: OS_IMAGE_PLACEHOLDER
+    container_name: OS1_NAME
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=OS1_NAME
+      - discovery.seed_hosts=OS1_NAME,OS2_NAME
+      - cluster.initial_cluster_manager_nodes=OS1_NAME,OS2_NAME
+      - bootstrap.memory_lock=true
+      - 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+  OS2_NAME:
+    image: OS_IMAGE_PLACEHOLDER
+    container_name: OS2_NAME
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=OS2_NAME
+      - discovery.seed_hosts=OS1_NAME,OS2_NAME
+      - cluster.initial_cluster_manager_nodes=OS1_NAME,OS2_NAME
+      - bootstrap.memory_lock=true
+      - 'OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+    networks:
+      - opensearch-net
+  OSD_NAME_PLACEHOLDER:
+    image: OSD_IMAGE_PLACEHOLDER
+    container_name: OSD_NAME_PLACEHOLDER
+    ports:
+      - 5601:5601
+    expose:
+      - '5601'
+    environment:
+      OPENSEARCH_HOSTS: '["https://OS1_NAME:9200","https://OS2_NAME:9200"]'
+    networks:
+      - opensearch-net
+
+volumes:
+  opensearch-data1:
+  opensearch-data2:
+
+networks:
+  opensearch-net:
