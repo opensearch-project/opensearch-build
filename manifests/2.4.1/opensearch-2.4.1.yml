@@ -176,7 +176,7 @@ components:
       - gradle:properties:version
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: a12f04e3c6710a0e00e367b7d2550c9127cfe721
+    ref: 2c21de6d3724402d5a33bad9f78a176bef661e07
     platforms:
       - linux
       - windows
