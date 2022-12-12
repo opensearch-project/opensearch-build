@@ -9,6 +9,8 @@
 
 FROM ubuntu:20.04
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl python3 python3-pip build-essential jq && \
     apt-get install -y debmake debhelper-compat && \
