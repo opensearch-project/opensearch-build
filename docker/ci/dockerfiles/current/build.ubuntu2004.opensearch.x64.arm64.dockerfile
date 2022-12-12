@@ -31,7 +31,11 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     ln -sfn /usr/share/pyshared/lsb_release.py /usr/local/lib/python3.7/site-packages/lsb_release.py && \
-    pip3 install pipenv awscli && pipenv --version && aws --version
+    pip3 install pipenv && pipenv --version
+
+# More pip installation
+RUN pip3 install pip==21.3.1
+RUN pip3 install awscli==1.22.12
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
