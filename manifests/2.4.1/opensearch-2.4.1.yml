@@ -83,7 +83,7 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
-    repository: https://github.com/opensearch-project/dashboards-observability.git
+    repository: https://github.com/opensearch-project/observability.git
     ref: d4e55483b48214fdc34580ac3888718029a6fc6c
     platforms:
       - linux

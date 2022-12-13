@@ -28,7 +28,7 @@ components:
     working_directory: gantt-chart
     ref: 88249bcc83da0797fff7fa2ec831daf0ce047409
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/dashboards-observability.git
+    repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
     ref: 33d7f35f1faf05ea9672774dd983764fb2b09c92
   - name: alertingDashboards
