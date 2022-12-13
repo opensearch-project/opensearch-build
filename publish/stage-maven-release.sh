@@ -187,18 +187,4 @@ if [ "$auto_publish" = true ] ; then
     echo "==========================================="
     echo "Done."
     echo "==========================================="
-
-    echo "==========================================="
-    echo "Dropping Staging Repository ${staging_repo_id}."
-    echo "==========================================="
-    mvn --settings="${mvn_settings}" \
-      org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-drop \
-      -DnexusUrl="${REPO_URL}" \
-      -DserverId=nexus \
-      -DstagingProfileId="${STAGING_PROFILE_ID}" \
-      -DstagingRepositoryId="${staging_repo_id}"
-
-    echo "==========================================="
-    echo "Done."
-    echo "==========================================="
 fi
