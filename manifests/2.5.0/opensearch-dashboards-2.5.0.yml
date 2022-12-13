@@ -13,3 +13,7 @@ components:
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 2.x
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/sql.git
+    working_directory: workbench
+    ref: 2.x
