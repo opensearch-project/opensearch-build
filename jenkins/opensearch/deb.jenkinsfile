@@ -240,12 +240,12 @@ pipeline {
                 //    }
                 //}
                 stage('build-and-test-linux-x64-deb') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
-                        }
-                    }
+                    //when {
+                    //    beforeAgent true
+                    //    expression{
+                    //        params.BUILD_PLATFORM.contains('linux')
+                    //    }
+                    //}
                     agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-x64-deb') {
