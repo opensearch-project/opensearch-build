@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Copyright OpenSearch Contributors
 ###### Information ############################################################################
+# Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
 #
 # The OpenSearch Contributors require contributions made to
@@ -89,6 +89,7 @@ fi
 }
 
 staged_repo=$1
+auto_publish=$2
 
 workdir=$(mktemp -d)
 
@@ -137,7 +138,7 @@ echo "Deploying artifacts under ${artifact_path} to Staging Repository ${staging
 echo "==========================================="
 
 mvn --settings="${mvn_settings}" \
-  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5:deploy-staged-repository \
+  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:deploy-staged-repository \
   -DrepositoryDirectory="${staged_repo}" \
   -DnexusUrl="${REPO_URL}" \
   -DserverId=nexus \
@@ -149,3 +150,55 @@ mvn --settings="${mvn_settings}" \
 echo "==========================================="
 echo "Done."
 echo "==========================================="
+
+## Below commands will be executed if the user checks AUTO_RELEASE_STAGING_TO_PROD parameter in the
+## maven-sign-release job. See https://github.com/sonatype/nexus-maven-plugins/blob/main/staging/maven-plugin/README.md
+## for command reference.
+if [ "$auto_publish" = true ] ; then
+    export MAVEN_OPTS=--add-opens=java.base/java.util=ALL-UNNAMED ## See https://issues.sonatype.org/browse/NEXUS-31214
+
+    echo "==========================================="
+    echo "Closing Staging Repository ${staging_repo_id}."
+    echo "==========================================="
+
+    mvn --settings="${mvn_settings}" \
+      org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-close \
+      -DnexusUrl="${REPO_URL}" \
+      -DserverId=nexus \
+      -DautoReleaseAfterClose=true \
+      -DstagingProfileId="${STAGING_PROFILE_ID}" \
+      -DstagingRepositoryId="${staging_repo_id}"
+
+    echo "==========================================="
+    echo "Done."
+    echo "==========================================="
+
+    echo "==========================================="
+    echo "Release Staging Repository ${staging_repo_id}."
+    echo "==========================================="
+
+    mvn --settings="${mvn_settings}" \
+      org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-release \
+      -DnexusUrl="${REPO_URL}" \
+      -DserverId=nexus \
+      -DstagingProfileId="${STAGING_PROFILE_ID}" \
+      -DstagingRepositoryId="${staging_repo_id}"
+
+    echo "==========================================="
+    echo "Done."
+    echo "==========================================="
+
+    echo "==========================================="
+    echo "Dropping Staging Repository ${staging_repo_id}."
+    echo "==========================================="
+    mvn --settings="${mvn_settings}" \
+      org.sonatype.plugins:nexus-staging-maven-plugin:1.6.13:rc-drop \
+      -DnexusUrl="${REPO_URL}" \
+      -DserverId=nexus \
+      -DstagingProfileId="${STAGING_PROFILE_ID}" \
+      -DstagingRepositoryId="${staging_repo_id}"
+
+    echo "==========================================="
+    echo "Done."
+    echo "==========================================="
+fi
