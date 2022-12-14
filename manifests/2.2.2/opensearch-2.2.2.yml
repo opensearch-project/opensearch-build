@@ -27,7 +27,6 @@ components:
     ref: '2.2'
     platforms:
       - linux
-      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
