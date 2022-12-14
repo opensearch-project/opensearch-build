@@ -22,6 +22,14 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: '2.2'
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: '2.2'
