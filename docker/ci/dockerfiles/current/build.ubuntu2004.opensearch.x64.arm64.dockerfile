@@ -7,7 +7,7 @@
 # This is a docker image specifically for assembling the DEB version of OpenSearch/OpenSearch-Dashboards
 # This is not capable of building k-NN plugin as it lacks the necessary old version of glibc on CentOS7
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
