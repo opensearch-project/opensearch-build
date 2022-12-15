@@ -15,7 +15,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y
 
 # Install python37 binaries
-RUN apt-get update -y && apt-get install -y python3.7-full && \
+RUN apt-get update -y && apt-get install python3 && \
+    apt-get install -y python3.7-full python3.7-dev && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
 
