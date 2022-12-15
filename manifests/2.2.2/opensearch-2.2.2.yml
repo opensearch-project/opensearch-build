@@ -14,6 +14,17 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: '2.2'
+    platforms:
+      - linux
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: '2.2'
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
     ref: '2.2'
@@ -30,14 +41,3 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
-  - name: common-utils
-    repository: https://github.com/opensearch-project/common-utils.git
-    ref: '2.2'
-    platforms:
-      - linux
-    checks:
-      - gradle:publish
-      - gradle:properties:version
-  - name: security
-    repository: https://github.com/opensearch-project/security.git
-    ref: '2.2'
