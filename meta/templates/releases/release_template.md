@@ -59,6 +59,7 @@ If including changes in this release, increment the version on `__{REPLACE_MAJOR
 
 - [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website).
 - [ ] Verify all issued labeled for this release are closed or labelled for the next release.
+- [ ] Verify the release date mentioned in release notes is correct and matches actual release date.
 
 ### Post Release
 
