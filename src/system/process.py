@@ -80,12 +80,14 @@ class Process:
 
     @property
     def stdout_data(self) -> Any:
-        self.stdout.seek(0)
+        if self.started:
+            self.stdout.seek(0)
         return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
     def stderr_data(self) -> Any:
-        self.stderr.seek(0)
+        if self.started:
+            self.stderr.seek(0)
         return self.stderr.read() if self.stderr else self.__stderr_data__
 
 
