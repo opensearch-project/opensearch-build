@@ -1,6 +1,6 @@
    perf-test.run()
       perf-test.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      perf-test.library({identifier=jenkins@1.0.0, retriever=null})
+      perf-test.library({identifier=jenkins@1.0.4, retriever=null})
       perf-test.pipeline(groovy.lang.Closure)
          perf-test.timeout({time=15, unit=HOURS})
          perf-test.echo(Executing on agent [label:none])

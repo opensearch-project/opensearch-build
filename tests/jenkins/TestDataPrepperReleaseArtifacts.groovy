@@ -59,22 +59,28 @@ class TestDataPrepperReleaseArtifacts extends BuildPipelineTest {
         })
 
         helper.registerAllowedMethod('s3Upload', [Map], {})
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.0')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
     }
 
     @Test
     void 'release-data-prepper-all-artifacts builds consistently with same inputs'() {
         testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-all-artifacts.jenkinsfile')
+    }
+
+    @Test
+    public void releaseMajorVersionTag(){
+        String majorTag = true
+        binding.setVariable('RELEASE_MAJOR_TAG', majorTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-major-version.jenkinsfile')
+    }
+
+    @Test
+    public void releaseLatestVersionTag(){
+        String latestTag = true
+        binding.setVariable('RELEASE_LATEST_TAG', latestTag)
+        testPipeline('jenkins/data-prepper/release-data-prepper-all-artifacts.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/data-prepper/release-data-prepper-latest-version.jenkinsfile')
     }
 
     @Test

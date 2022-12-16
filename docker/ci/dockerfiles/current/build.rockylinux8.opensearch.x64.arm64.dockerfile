@@ -45,7 +45,7 @@ RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Install higher version of maven 3.8.x

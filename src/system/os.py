@@ -26,6 +26,17 @@ def current_platform() -> str:
         return subprocess.check_output(["uname", "-s"]).decode().strip().lower()
 
 
+def deb_architecture(architecture: str) -> str:
+    # This would convert arch from "current_architecture" to deb specific architecture alternatives
+
+    deb_architecture_map = {
+        "x64": "amd64",
+        "arm64": "arm64",
+    }
+
+    return deb_architecture_map[architecture]
+
+
 def rpm_architecture(architecture: str) -> str:
     # This would convert arch from "current_architecture" to rpm specific architecture alternatives
 

@@ -14,6 +14,7 @@ from typing import Dict, List, Type, Union
 
 import ruamel.yaml
 
+from manifests.component_manifest import ComponentFromSource
 from manifests.input_manifest import InputComponents, InputManifest
 from manifests.manifests import Manifests
 from manifests_workflow.component_opensearch import ComponentOpenSearch
@@ -23,6 +24,11 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class InputManifests(Manifests):
+    BUILD_PLATFORM = {
+        "opensearch": "linux macos windows",
+        "opensearch-dashboards": "linux windows"
+    }
+
     def __init__(self, name: str) -> None:
         self.name = name
         self.prefix = name.lower().replace(" ", "-")
@@ -99,21 +105,23 @@ class InputManifests(Manifests):
                     if component.name == self.name:
                         continue
 
-                    logging.info(f"Checking out {component.name}#main")
-                    component = component_klass.checkout(
-                        name=component.name,
-                        path=os.path.join(work_dir.name, component.name),
-                        opensearch_version=manifest.build.version,
-                        branch="main",
-                    )
+                    if type(component) is ComponentFromSource:
+                        logging.info(f"Checking out {component.name}#main")
+                        component = component_klass.checkout(
+                            name=component.name,
+                            path=os.path.join(work_dir.name, component.name),
+                            opensearch_version=manifest.build.version,
+                            repo_url=component.repository,
+                            branch="main",
+                        )
 
-                    component_version = component.version
-                    if component_version:
-                        release_version = ".".join(component_version.split(".")[:3])
-                        if release_version not in main_versions.keys():
-                            main_versions[release_version] = []
-                        main_versions[release_version].append(component)
-                        logging.info(f"{component.name}#main is version {release_version} (from {component_version})")
+                        component_version = component.version
+                        if component_version:
+                            release_version = ".".join(component_version.split(".")[:3])
+                            if release_version not in main_versions.keys():
+                                main_versions[release_version] = []
+                            main_versions[release_version].append(component)
+                            logging.info(f"{component.name}#main is version {release_version} (from {component_version})")
 
             # summarize
             logging.info("Found versions on main:")
@@ -161,7 +169,11 @@ class InputManifests(Manifests):
         with open(jenkinsfile, "r") as f:
             data = f.read()
 
-        cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;TARGET_JOB_NAME=distribution-build-{self.prefix}\n"
+        build_platform = self.BUILD_PLATFORM.get(self.prefix, "linux")
+
+        cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;" \
+                     f"TARGET_JOB_NAME=distribution-build-{self.prefix};" \
+                     f"BUILD_PLATFORM={build_platform}\n"
 
         if cron_entry in data:
             raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")

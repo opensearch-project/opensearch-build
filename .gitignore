@@ -21,8 +21,10 @@ out.txt
 /dist/
 /test-results/
 
+/deb/
 /rpm/
 /tar/
+/tar.gz/
 /zip/
 
 /.vscode/

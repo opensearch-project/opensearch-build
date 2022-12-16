@@ -17,7 +17,7 @@ class BuildArgs:
         "x64",
         "arm64",
     ]
-    SUPPORTED_DISTRIBUTIONS = ["tar", "zip", "rpm"]
+    SUPPORTED_DISTRIBUTIONS = ["tar", "zip", "rpm", "deb"]
 
     manifest: IO
     snapshot: bool

@@ -16,7 +16,7 @@ class TestComponentOpenSearch(unittest.TestCase):
     @patch("os.makedirs")
     @patch.object(GitRepository, "__checkout__")
     def test_checkout(self, *mocks: MagicMock) -> None:
-        component = ComponentOpenSearch.checkout("common-utils", "path", "1.1.0")
+        component = ComponentOpenSearch.checkout("common-utils", "path", "1.1.0", "git")
         self.assertEqual(component.name, "common-utils")
         self.assertFalse(component.snapshot)
 

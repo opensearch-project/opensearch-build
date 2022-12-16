@@ -89,6 +89,27 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         EXTRA_PARAMS="--skip-os-packages"
         SUFFIX="$PLATFORM-arm64"
         ;;
+    windows-zip-x64)
+        TARGET="--windows"
+        EXT="$DISTRIBUTION"
+        BUILD_PARAMS="build-platform"
+        EXTRA_PARAMS="--skip-os-packages"
+        SUFFIX="$PLATFORM-x64"
+        ;;
+    linux-deb-arm64)
+        TARGET="--$DISTRIBUTION-arm"
+        EXT="$DISTRIBUTION"
+        BUILD_PARAMS="build"
+        EXTRA_PARAMS="--skip-archives"
+        SUFFIX="arm64"
+        ;;
+    linux-deb-x64)
+        TARGET="--$DISTRIBUTION"
+        EXT="$DISTRIBUTION"
+        BUILD_PARAMS="build"
+        EXTRA_PARAMS="--skip-archives"
+        SUFFIX="amd64"
+        ;;
     linux-rpm-x64)
         TARGET="--$DISTRIBUTION"
         EXT="$DISTRIBUTION"
@@ -109,9 +130,12 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         ;;
 esac
 
-echo "Setting node version"
-source $NVM_DIR/nvm.sh
-nvm use
+NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
+if [ "$PLATFORM" = "windows" ]; then
+    NVM_CMD="volta install node@`cat .nvmrc` && volta install yarn@`jq -r '.engines.yarn' package.json`"
+fi
+
+eval $NVM_CMD
 
 echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
 yarn osd bootstrap

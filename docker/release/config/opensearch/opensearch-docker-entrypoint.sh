@@ -26,11 +26,7 @@ export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 # will run in.
 export OPENSEARCH_JAVA_OPTS="-Dopensearch.cgroups.hierarchy.override=/ $OPENSEARCH_JAVA_OPTS"
 
-# Holds the PID of opensearch and performance analyzer processes.
-declare OPENSEARCH_PID
-declare PA_PID
-
-##Security Plugin
+# Security Plugin
 function setupSecurityPlugin {
     SECURITY_PLUGIN="opensearch-security"
 
@@ -49,21 +45,23 @@ function setupSecurityPlugin {
         else
             echo "Enabling OpenSearch Security Plugin"
         fi
+    else
+        echo "OpenSearch Security Plugin does not exist, disable by default"
     fi
 }
 
-# Trap function that is used to terminate opensearch and performance analyzer
-# when a relevant signal is caught.
-function terminateProcesses {
-    if kill -0 $OPENSEARCH_PID >& /dev/null; then
-        echo "Killing opensearch process $OPENSEARCH_PID"
-        kill -TERM $OPENSEARCH_PID
-        wait $OPENSEARCH_PID
-    fi
-    if kill -0 $PA_PID >& /dev/null; then
-        echo "Killing performance analyzer process $PA_PID"
-        kill -TERM $PA_PID
-        wait $PA_PID
+# Performance Analyzer Plugin
+function setupPerformanceAnalyzerPlugin {
+    PERFORMANCE_ANALYZER_PLUGIN="opensearch-performance-analyzer"
+    if [ -d "$OPENSEARCH_HOME/plugins/$PERFORMANCE_ANALYZER_PLUGIN" ]; then
+        if [ "$DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI" = "true" ]; then
+            echo "Disabling execution of $OPENSEARCH_HOME/bin/$PERFORMANCE_ANALYZER_PLUGIN/performance-analyzer-agent-cli for OpenSearch Performance Analyzer Plugin"
+        else
+            echo "Enabling execution of OPENSEARCH_HOME/bin/$PERFORMANCE_ANALYZER_PLUGIN/performance-analyzer-agent-cli for OpenSearch Performance Analyzer Plugin"
+            $OPENSEARCH_HOME/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/performance-analyzer.log 2>&1 &
+        fi
+    else
+        echo "OpenSearch Performance Analyzer Plugin does not exist, disable by default"
     fi
 }
 
@@ -97,33 +95,11 @@ function runOpensearch {
     done < <(env)
 
     setupSecurityPlugin
-
-    # Enable job control so we receive SIGCHLD when a child process terminates
-    set -m
-
-    # Make sure we terminate the child processes in the event of us received TERM (e.g. "docker container stop"), INT (e.g. ctrl-C), EXIT (this script terminates for an unexpected reason), or CHLD (one of the processes terminated unexpectedly)
-    trap terminateProcesses TERM INT EXIT CHLD
+    setupPerformanceAnalyzerPlugin
 
     # Start opensearch
-    "$@" "${opensearch_opts[@]}" &
-    OPENSEARCH_PID=$!
+    "$@" "${opensearch_opts[@]}"
 
-    # Start performance analyzer agent
-    $OPENSEARCH_HOME/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/performance-analyzer.log 2>&1 &
-    PA_PID=$!
-
-    # Wait for the child processes to terminate
-    wait $OPENSEARCH_PID
-    local opensearch_exit_code=$?
-    echo "OpenSearch exited with code ${opensearch_exit_code}"
-
-    wait $PA_PID
-    echo "Performance analyzer exited with code $?"
-
-    # This script should exit with the same code as the opensearch command, but
-    # it would be a breaking change. Next line should be uncommented for the
-    # next major release.
-    # exit ${opensearch_exit_code}
 }
 
 # Prepend "opensearch" command if no argument was provided or if the first

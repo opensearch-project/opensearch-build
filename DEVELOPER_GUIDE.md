@@ -276,7 +276,29 @@ Each jenkins library should have a test case associated with it. Eg: [TestSignAr
 - Jenkins' library test should extend [BuildPipelineTest.groovy](tests/jenkins/BuildPipelineTest.groovy)
 - Create a dummy job such as [Hello_Jenkinsfile](tests/jenkins/jobs/Hello_Jenkinsfile) to call and test the function
   and output [Hello_Jenkinsfile.txt](tests/jenkins/jobs/Hello_Jenkinsfile.txt)
+- If using remote libs from [opensearch-build-libraries](https://github.com/opensearch-project/opensearch-build-libraries) repository with tag (ex: 1.0.0), make sure
+  both the Jenkins Test file as well as the Jenkins Job file are overriding the libs version with the same tag (ex: 1.0.0), or Jacoco test will fail to generate reports.
+  This would happen if defaultVersion in BuildPipelineTest.groovy (default to 'main') have a different HEAD commit id compares to tag commit id you defined to use.
+```
+super.setUp()
+......
+helper.registerSharedLibrary(
+    library().name('jenkins')
+        .defaultVersion('1.0.0')
+        .allowOverride(true)
+        .implicit(true)
+        .targetPath('vars')
+        .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+        .build()
+)
+```
 
+```
+lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+```
 
 #### Testing in Jenkins
 * [Build_OpenSearch_Dashboards_Jenkinsfile](tests/jenkins/jobs/Build_OpenSearch_Dashboards_Jenkinsfile): is similar to [OpenSearch Dashboards Jenkinsfile](jenkins/opensearch-dashboards/Jenkinsfile) w/o notifications.

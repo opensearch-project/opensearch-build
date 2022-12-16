@@ -74,16 +74,6 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
         binding.setVariable('WARMUP_ITERATIONS', '1')
                 
         super.setUp()
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.0')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-        )
     }
 
     @Test

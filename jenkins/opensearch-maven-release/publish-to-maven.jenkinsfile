@@ -1,0 +1,61 @@
+lib = library(identifier: 'jenkins@1.5.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211130'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'BUILD_ID',
+            description: 'Build ID of the OpenSearch distribution artifacts to be staged and released',
+            trim: true
+        )
+        string(
+            name: 'VERSION',
+            description: 'Version of the OpenSearch distribution artifacts to be staged and released',
+            trim: true
+        )
+    }
+    environment {
+        ARTIFACT_PATH = "distribution-build-opensearch/${VERSION}/${BUILD_ID}/linux/x64/tar/builds"
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+        REPO_URL = "https://aws.oss.sonatype.org/"
+        STAGING_PROFILE_ID = "${SONATYPE_STAGING_PROFILE_ID}"
+        BUILD_ID = "${BUILD_ID}"
+    }
+    stages {
+        stage('sign-stage-and-release') {
+            steps {
+                script {
+                    echo "Downloading from S3."
+                    downloadFromS3(
+                        destPath: "$WORKSPACE/artifacts",
+                        bucket: "${ARTIFACT_BUCKET_NAME}",
+                        path: "${ARTIFACT_PATH}/",
+                        force: true
+                    )
+                    echo "Signing, Staging and Publishing Maven artifacts."
+                    publishToMaven(
+                        signingArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/manifest.yml",
+                        mavenArtifactsPath: "$WORKSPACE/artifacts/$ARTIFACT_PATH/opensearch/maven",
+                        autoPublish: true
+                    )
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}

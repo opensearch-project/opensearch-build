@@ -1,0 +1,64 @@
+---
+name: On-board plugins
+description: On-board plugins
+title: '[On-boarding]: '
+labels: [on-boarding, untriaged]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to submit on-boarding request!
+  - type: textarea
+    attributes:
+      description: 'Provide the name link of your plugin'
+      label: 'What is the name of your plugin?'
+    id: plugin-name
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Provide the GitHub link for your repository'
+      label: 'What is the link to your GitHub repo?'
+    id: Github-link
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'What is the targeted OpenSearch release version for this plugin?'
+      label: 'Targeted release version'
+    id: expected-release-version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Is this OpenSearch, OpenSearch-dashboards plugin?'
+      label: 'What type of the plugin are we on-boarding?'
+    id: Type
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Does this plugin have necessary scripts to invoke integration and BWC tests?'
+      label: 'Does this plugin has all the necessary automated tests?'
+    id: tests
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Confirm that all the necessary reviews for this component has been completed.'
+      label: 'Have you completed the required reviews including Security reviews, UX reviews?'
+    id: reviews
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Do we need to enable any automated CVE scanning on this repo?'
+      label: 'Have you on-boarded automated security scanning for the GitHub repo associated with this plugin?'
+    id: repo-scanning
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      description: 'Add any additional context along with contact details for this component here.'
+      label: 'Additional context'
+    id: additional-context
