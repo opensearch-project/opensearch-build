@@ -93,3 +93,13 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    working_directory: opensearch-observability
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
