@@ -93,6 +93,15 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 2.x

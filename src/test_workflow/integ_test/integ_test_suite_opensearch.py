@@ -86,7 +86,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
             self.test_recorder
         ) as (endpoints):
             os.chdir(self.work_dir)
-            self.pretty_print_message("Running integration tests for " + self.component.name)
+            self.pretty_print_message("Running integration tests for " + self.component.name + " " + config)
             return self.multi_execute_integtest_sh(endpoints, security, config)
 
     @property

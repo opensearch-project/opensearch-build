@@ -105,7 +105,7 @@ class IntegTestSuite(abc.ABC):
             )
             self.save_logs.save_test_result_data(test_result_data)
             if stderr:
-                logging.info("Integration test run failed for component " + self.component.name)
+                logging.info("Stderr reported for component: " + self.component.name)
                 logging.info(stderr)
             return status
         else:
