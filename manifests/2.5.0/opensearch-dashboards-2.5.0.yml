@@ -22,6 +22,6 @@ components:
     working_directory: dashboards-notifications
     ref: 2.x
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/dashboards-observability.git
+    repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
     ref: 2.x
