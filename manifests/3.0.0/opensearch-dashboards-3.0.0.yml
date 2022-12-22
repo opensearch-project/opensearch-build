@@ -14,7 +14,7 @@ components:
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: main
   - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reports.git
+    repository: https://github.com/opensearch-project/dreporting.git
     working_directory: dashboards-reports
     ref: main
   - name: securityDashboards
@@ -30,10 +30,6 @@ components:
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
     working_directory: dashboards-observability
-    ref: main
-  - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reporting.git
-    working_directory: dashboards-reports
     ref: main
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
