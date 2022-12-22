@@ -22,7 +22,7 @@ components:
     working_directory: dashboards-observability
     ref: tags/2.4.1.0
   - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    repository: https://github.com/opensearch-project/dashboards-reports
     working_directory: dashboards-reports
     ref: tags/2.4.1.0
   - name: securityDashboards
