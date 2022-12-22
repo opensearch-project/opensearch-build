@@ -28,7 +28,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: main
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/dashboards-observability.git
+    repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
     ref: main
   - name: ganttChartDashboards
