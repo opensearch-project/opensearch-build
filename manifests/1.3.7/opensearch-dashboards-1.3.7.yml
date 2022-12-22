@@ -38,6 +38,6 @@ components:
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
     ref: tags/1.3.7.0
   - name: reportsDashboards
-    repository: https://github.com/opensearch-project/dashboards-reports.git
+    repository: https://github.com/opensearch-project/reporting.git
     working_directory: dashboards-reports
     ref: tags/1.3.7.0
