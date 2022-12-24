@@ -228,7 +228,6 @@ pipeline {
                                     "\n${env.ARTIFACT_URL_LINUX_X64_TAR_INTEG_TEST_RESULT}" +
                                     "\n${env.ARTIFACT_URL_LINUX_X64_TAR_BWC_TEST_RESULT}"
                                 )
-
                                 postCleanup()
                             }
                         }
@@ -266,14 +265,7 @@ pipeline {
                             }
                             post {
                                 always {
-                                    script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                            "\n${env.RPM_VALIDATION_LINUX_X64_RPM_TEST_RESULT}"
-                                        )
-                                        postCleanup()
-                                    }
+                                    postCleanup()
                                 }
                             }
                         }
@@ -326,7 +318,8 @@ pipeline {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
+                                            "\n${env.RPM_VALIDATION_LINUX_X64_RPM_TEST_RESULT}"
                                         )
                                         postCleanup()
                                     }
@@ -470,7 +463,6 @@ pipeline {
                                             "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_INTEG_TEST_RESULT}" +
                                             "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_BWC_TEST_RESULT}"
                                         )
-
                                         postCleanup()
                                     }
                                 }
@@ -700,12 +692,10 @@ pipeline {
                     if (params.BUILD_PLATFORM.contains('linux')) {
                         stages = [
                             'build-and-test-linux-x64-tar',
-                            'build-and-test-linux-x64-rpm',
                             'build-and-test-linux-arm64-tar',
-                            'build-and-test-linux-arm64-rpm',
                             'assemble-archive-and-test-linux-x64-rpm',
+                            'assemble-archive-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
-                            'assemble-archive-and-test-linux-arm64-tar'
                         ]
                     }
                     if (params.BUILD_PLATFORM.contains('windows')){
