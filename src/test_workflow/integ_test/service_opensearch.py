@@ -41,7 +41,7 @@ class ServiceOpenSearch(Service):
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
 
-    def start(self) -> None:
+    def start(self) -> any:
         self.dist.install(self.download())
 
         self.opensearch_yml_dir = os.path.join(self.dist.config_dir, "opensearch.yml")
@@ -55,6 +55,7 @@ class ServiceOpenSearch(Service):
 
         self.process_handler.start(self.dist.start_cmd, self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
+        return self.process_handler.pid, self.process_handler.stdout_data, self.process_handler.stderr_data
 
     def uninstall(self) -> None:
         self.dist.uninstall()

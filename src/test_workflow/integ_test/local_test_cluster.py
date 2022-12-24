@@ -43,7 +43,7 @@ class LocalTestCluster(TestCluster):
             component_test_config,
             security_enabled,
             additional_cluster_config,
-            test_recorder.local_cluster_logs,
+            test_recorder,
             cluster_port
         )
 
