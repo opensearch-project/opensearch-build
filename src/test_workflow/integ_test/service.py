@@ -9,7 +9,7 @@ import abc
 import logging
 import os
 import time
-from typing import Dict
+from typing import Any, Dict
 
 import requests
 from requests.models import Response
@@ -51,7 +51,7 @@ class Service(abc.ABC):
         self.install_dir = ""
 
     @abc.abstractmethod
-    def start(self) -> None:
+    def start(self) -> Any:
         """
         Start a service.
         """

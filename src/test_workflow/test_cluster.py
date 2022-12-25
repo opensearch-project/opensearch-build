@@ -13,8 +13,8 @@ from typing import Any, Generator, List, Tuple
 from test_workflow.integ_test.service import Service
 from test_workflow.integ_test.service_termination_result import ServiceTerminationResult
 from test_workflow.test_recorder.log_recorder import LogRecorder
-from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class TestCluster(abc.ABC):
@@ -26,7 +26,6 @@ class TestCluster(abc.ABC):
     save_logs: LogRecorder
     all_services: List[Service]
     termination_result: ServiceTerminationResult
-    trans_pid: str
     trans_stdout: str
     trans_stderr: str
 
@@ -80,7 +79,7 @@ class TestCluster(abc.ABC):
         self.all_services = [self.service] + self.dependencies
 
         for service in self.all_services:
-            self.trans_pid, self.trans_stdout, self.trans_stderr = service.start()
+            self.trans_stdout, self.trans_stderr = service.start()
 
         for service in self.all_services:
             service.wait_for_service()
