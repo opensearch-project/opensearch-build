@@ -15,7 +15,7 @@ from test_workflow.integ_test.service_termination_result import ServiceTerminati
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
-
+from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 
 class TestCluster(abc.ABC):
     work_dir: str
@@ -26,6 +26,7 @@ class TestCluster(abc.ABC):
     save_logs: LogRecorder
     all_services: List[Service]
     termination_result: ServiceTerminationResult
+    trans_pid: str
     trans_stdout: str
     trans_stderr: str
 
@@ -79,7 +80,7 @@ class TestCluster(abc.ABC):
         self.all_services = [self.service] + self.dependencies
 
         for service in self.all_services:
-            self.trans_stdout, self.trans_stderr = service.start()
+            service.start()
 
         for service in self.all_services:
             service.wait_for_service()
@@ -102,8 +103,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            self.trans_stdout + termination_result.stdout_data,
-            self.trans_stderr + termination_result.stderr_data,
+            ServiceOpenSearch.trans_stdout + termination_result.stdout_data,
+            ServiceOpenSearch.trans_stderr + termination_result.stderr_data,
             termination_result.log_files
         )
 

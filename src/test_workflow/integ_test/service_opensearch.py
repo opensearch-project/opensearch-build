@@ -7,7 +7,6 @@
 
 import logging
 import os
-from typing import Any, Tuple
 
 import requests
 import yaml
@@ -25,8 +24,6 @@ class ServiceOpenSearch(Service):
     install_dir: str
     opensearch_yml_dir: str
     security_plugin_dir: str
-    trans_stdout: str
-    trans_stderr: str
 
     def __init__(
         self,
@@ -43,8 +40,10 @@ class ServiceOpenSearch(Service):
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
+        self._trans_stdout = ""
+        self._trans_stderr = ""
 
-    def start(self) -> Tuple[Any, Any]:
+    def start(self) -> None:
         self.dist.install(self.download())
 
         self.opensearch_yml_dir = os.path.join(self.dist.config_dir, "opensearch.yml")
@@ -59,7 +58,24 @@ class ServiceOpenSearch(Service):
         self.process_handler.start(self.dist.start_cmd, self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
-        return self.process_handler.stdout_data, self.process_handler.stderr_data
+        ServiceOpenSearch.trans_stdout = self.process_handler.stdout_data
+        ServiceOpenSearch.trans_stderr = self.process_handler.stderr_data
+
+    @property
+    def trans_stdout(self) -> str:
+        return self._trans_stdout
+
+    @property
+    def trans_stderr(self) -> str:
+        return self._trans_stderr
+
+    @trans_stdout.setter
+    def trans_stdout(self, value) -> None:
+        self._trans_stdout = value
+
+    @trans_stderr.setter
+    def trans_stderr(self, value) -> None:
+        self._trans_stderr = value
 
     def uninstall(self) -> None:
         self.dist.uninstall()
