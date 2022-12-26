@@ -11,11 +11,12 @@ from contextlib import contextmanager
 from typing import Any, Generator, List, Tuple
 
 from test_workflow.integ_test.service import Service
+from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_termination_result import ServiceTerminationResult
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
-from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
+
 
 class TestCluster(abc.ABC):
     work_dir: str
