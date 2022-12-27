@@ -692,7 +692,6 @@ pipeline {
                     if (params.BUILD_PLATFORM.contains('linux')) {
                         stages = [
                             'build-and-test-linux-x64-tar',
-                            'build-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-x64-rpm',
                             'assemble-archive-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
