@@ -11,6 +11,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 
 from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards
 from test_workflow.integ_test.service import ServiceTerminationResult
+from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 
@@ -42,6 +43,9 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
         self.save_logs = ""
         self.dependency_installer = ""
         self.test_recorder = ""
+
+        ServiceOpenSearch.trans_stdout = ""
+        ServiceOpenSearch.trans_stderr = ""
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
