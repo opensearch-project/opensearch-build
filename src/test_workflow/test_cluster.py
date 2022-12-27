@@ -11,8 +11,10 @@ from contextlib import contextmanager
 from typing import Any, Generator, List, Tuple
 
 from test_workflow.integ_test.service import Service
+from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_termination_result import ServiceTerminationResult
 from test_workflow.test_recorder.log_recorder import LogRecorder
+from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
 
@@ -37,7 +39,7 @@ class TestCluster(abc.ABC):
         component_test_config: str,
         security_enabled: bool,
         additional_cluster_config: dict,
-        save_logs: LogRecorder,
+        test_recorder: TestRecorder,
         cluster_port: int = 9200
     ) -> None:
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
@@ -45,7 +47,8 @@ class TestCluster(abc.ABC):
         self.component_test_config = component_test_config
         self.security_enabled = security_enabled
         self.additional_cluster_config = additional_cluster_config
-        self.save_logs = save_logs
+        self.test_recorder = test_recorder
+        self.save_logs = test_recorder.local_cluster_logs
         self.all_services = []
         self.termination_result = None
 
@@ -98,8 +101,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            termination_result.stdout_data,
-            termination_result.stderr_data,
+            ServiceOpenSearch.trans_stdout + termination_result.stdout_data,
+            ServiceOpenSearch.trans_stderr + termination_result.stderr_data,
             termination_result.log_files
         )
 

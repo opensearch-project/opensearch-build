@@ -124,11 +124,11 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
 
         mock_log_files = MagicMock()
         mock_service_opensearch_dashboards_object.terminate.return_value = ServiceTerminationResult(
-            123, "test stdout_data", "test stderr_data", mock_log_files)
+            123, "test  stdout_data", "test  stderr_data", mock_log_files)
 
         mock_log_files_opensearch = MagicMock()
         mock_service_opensearch_object.terminate.return_value = ServiceTerminationResult(
-            123, "test stdout_data", "test stderr_data", mock_log_files_opensearch)
+            123, "test  stdout_data", "test  stderr_data", mock_log_files_opensearch)
 
         mock_test_result_data_object = MagicMock()
         mock_test_result_data.return_value = mock_test_result_data_object
@@ -143,15 +143,15 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
                 self.component_name,
                 self.component_test_config,
                 123,
-                "test stdout_data",
-                "test stderr_data",
+                "test  stdout_data",
+                "test  stderr_data",
                 mock_log_files_opensearch
             ),
             call(self.component_name,
                  self.component_test_config,
                  123,
-                 "test stdout_data",
-                 "test stderr_data",
+                 "test  stdout_data",
+                 "test  stderr_data",
                  mock_log_files)
         ])
 
