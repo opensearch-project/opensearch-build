@@ -42,8 +42,8 @@ class ServiceOpenSearch(Service):
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
-        self.trans_stdout = ""
-        self.trans_stderr = ""
+        self.trans_stdout
+        self.trans_stderr
 
     def start(self) -> None:
         self.dist.install(self.download())
