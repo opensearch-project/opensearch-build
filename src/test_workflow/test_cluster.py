@@ -27,9 +27,6 @@ class TestCluster(abc.ABC):
     save_logs: LogRecorder
     all_services: List[Service]
     termination_result: ServiceTerminationResult
-    trans_pid: str
-    trans_stdout: str
-    trans_stderr: str
 
     """
     Abstract base class for all types of test clusters.
@@ -104,8 +101,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            ServiceOpenSearch.trans_stdout + termination_result.stdout_data,    # type: ignore
-            ServiceOpenSearch.trans_stderr + termination_result.stderr_data,    # type: ignore
+            ServiceOpenSearch.trans_stdout + termination_result.stdout_data,
+            ServiceOpenSearch.trans_stderr + termination_result.stderr_data,
             termination_result.log_files
         )
 
