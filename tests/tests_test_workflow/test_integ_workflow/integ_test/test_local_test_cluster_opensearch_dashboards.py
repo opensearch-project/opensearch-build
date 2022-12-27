@@ -159,7 +159,7 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
                  mock_log_files)
         ])
 
-        self.assertEqual(mock_local_cluster_logs.save_test_result_data.call_count, 2)
+        self.assertEqual(mock_local_cluster_logs.save_test_result_data.call_count, 0)
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
