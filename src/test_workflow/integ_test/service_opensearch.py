@@ -35,15 +35,15 @@ class ServiceOpenSearch(Service):
         security_enabled: bool,
         dependency_installer: DependencyInstaller,
         work_dir: str,
-        cluster_port: int = 9200
+        cluster_port: int = 9200,
+        trans_stdout: str = "",
+        trans_stderr: str = ""
     ) -> None:
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
         self.cluster_port = cluster_port
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
-        self.trans_stdout
-        self.trans_stderr
 
     def start(self) -> None:
         self.dist.install(self.download())

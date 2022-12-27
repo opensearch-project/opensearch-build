@@ -27,8 +27,6 @@ class TestCluster(abc.ABC):
     save_logs: LogRecorder
     all_services: List[Service]
     termination_result: ServiceTerminationResult
-    trans_stdout: str
-    trans_stderr: str
 
     """
     Abstract base class for all types of test clusters.
