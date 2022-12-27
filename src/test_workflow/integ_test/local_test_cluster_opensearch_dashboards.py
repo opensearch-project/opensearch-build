@@ -46,7 +46,7 @@ class LocalTestClusterOpenSearchDashboards(TestCluster):
             component_test_config,
             security_enabled,
             additional_cluster_config,
-            test_recorder.local_cluster_logs
+            test_recorder
         )
 
         self.manifest_opensearch = bundle_manifest_opensearch
