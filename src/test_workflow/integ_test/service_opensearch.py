@@ -58,23 +58,23 @@ class ServiceOpenSearch(Service):
         self.process_handler.start(self.dist.start_cmd, self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
-        ServiceOpenSearch.trans_stdout = self.process_handler.stdout_data
-        ServiceOpenSearch.trans_stderr = self.process_handler.stderr_data
+        ServiceOpenSearch.trans_stdout = self.process_handler.stdout_data   # type: ignore
+        ServiceOpenSearch.trans_stderr = self.process_handler.stderr_data   # type: ignore
 
     @property
     def trans_stdout(self) -> str:
         return self._trans_stdout
 
+    @trans_stdout.setter
+    def trans_stdout(self, value: str) -> None:
+        self._trans_stdout = value
+
     @property
     def trans_stderr(self) -> str:
         return self._trans_stderr
 
-    @trans_stdout.setter
-    def trans_stdout(self, value) -> None:
-        self._trans_stdout = value
-
     @trans_stderr.setter
-    def trans_stderr(self, value) -> None:
+    def trans_stderr(self, value: str) -> None:
         self._trans_stderr = value
 
     def uninstall(self) -> None:
