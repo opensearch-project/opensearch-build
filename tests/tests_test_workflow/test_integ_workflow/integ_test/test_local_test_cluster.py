@@ -33,8 +33,8 @@ class LocalTestClusterTests(unittest.TestCase):
         self.dependency_installer = None
         self.test_recorder = None
 
-        ServiceOpenSearch.trans_stdout = "test"
-        ServiceOpenSearch.trans_stderr = "test"
+        ServiceOpenSearch.trans_stdout = ""
+        ServiceOpenSearch.trans_stderr = ""
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
     def test_start(self, mock_service: Mock) -> None:
