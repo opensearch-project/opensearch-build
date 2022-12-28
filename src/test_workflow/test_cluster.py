@@ -101,8 +101,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            ServiceOpenSearch.trans_stdout + termination_result.stdout_data,
-            ServiceOpenSearch.trans_stderr + termination_result.stderr_data,
+            ServiceOpenSearch.transport_stdout + termination_result.stdout_data,
+            ServiceOpenSearch.transport_stderr + termination_result.stderr_data,
             termination_result.log_files
         )
 
