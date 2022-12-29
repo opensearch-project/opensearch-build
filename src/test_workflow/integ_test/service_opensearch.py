@@ -24,8 +24,6 @@ class ServiceOpenSearch(Service):
     install_dir: str
     opensearch_yml_dir: str
     security_plugin_dir: str
-    transport_stdout: str
-    transport_stderr: str
 
     def __init__(
         self,
@@ -35,7 +33,7 @@ class ServiceOpenSearch(Service):
         security_enabled: bool,
         dependency_installer: DependencyInstaller,
         work_dir: str,
-        cluster_port: int = 9200,
+        cluster_port: int = 9200
     ) -> None:
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
         self.cluster_port = cluster_port
@@ -57,9 +55,6 @@ class ServiceOpenSearch(Service):
 
         self.process_handler.start(self.dist.start_cmd, self.install_dir)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
-
-        ServiceOpenSearch.transport_stdout = self.process_handler.stdout_data
-        ServiceOpenSearch.transport_stderr = self.process_handler.stderr_data
 
     def uninstall(self) -> None:
         self.dist.uninstall()

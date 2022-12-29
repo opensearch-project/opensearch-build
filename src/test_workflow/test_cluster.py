@@ -11,10 +11,8 @@ from contextlib import contextmanager
 from typing import Any, Generator, List, Tuple
 
 from test_workflow.integ_test.service import Service
-from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 from test_workflow.integ_test.service_termination_result import ServiceTerminationResult
 from test_workflow.test_recorder.log_recorder import LogRecorder
-from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
 
@@ -39,7 +37,7 @@ class TestCluster(abc.ABC):
         component_test_config: str,
         security_enabled: bool,
         additional_cluster_config: dict,
-        test_recorder: TestRecorder,
+        save_logs: LogRecorder,
         cluster_port: int = 9200
     ) -> None:
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
@@ -47,10 +45,11 @@ class TestCluster(abc.ABC):
         self.component_test_config = component_test_config
         self.security_enabled = security_enabled
         self.additional_cluster_config = additional_cluster_config
-        self.test_recorder = test_recorder
-        self.save_logs = test_recorder.local_cluster_logs
+        self.save_logs = save_logs
         self.all_services = []
         self.termination_result = None
+        self.start_stdout = ""
+        self.start_stderr = ""
 
     @classmethod
     @contextmanager
@@ -83,6 +82,9 @@ class TestCluster(abc.ABC):
         for service in self.all_services:
             service.wait_for_service()
 
+        self.start_stdout = self.service.process_handler.stdout_data
+        self.start_stderr = self.service.process_handler.stderr_data
+
     def terminate(self) -> None:
         if self.service:
             self.termination_result = self.service.terminate()
@@ -101,8 +103,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            ServiceOpenSearch.transport_stdout + termination_result.stdout_data,
-            ServiceOpenSearch.transport_stderr + termination_result.stderr_data,
+            self.start_stdout + termination_result.stdout_data,
+            self.start_stderr + termination_result.stderr_data,
             termination_result.log_files
         )
 

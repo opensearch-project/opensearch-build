@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+
 from typing import List
 
 from manifests.bundle_manifest import BundleManifest
@@ -42,7 +43,7 @@ class LocalTestCluster(TestCluster):
             component_test_config,
             security_enabled,
             additional_cluster_config,
-            test_recorder,
+            test_recorder.local_cluster_logs,
             cluster_port
         )
 
