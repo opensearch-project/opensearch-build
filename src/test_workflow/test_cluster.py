@@ -48,8 +48,8 @@ class TestCluster(abc.ABC):
         self.save_logs = save_logs
         self.all_services = []
         self.termination_result = None
-        self.start_stdout = ""
-        self.start_stderr = ""
+        self.start_stdout_data = ""
+        self.start_stderr_data = ""
 
     @classmethod
     @contextmanager
@@ -82,8 +82,8 @@ class TestCluster(abc.ABC):
         for service in self.all_services:
             service.wait_for_service()
 
-        self.start_stdout = self.service.process_handler.stdout_data
-        self.start_stderr = self.service.process_handler.stderr_data
+        self.start_stdout_data = self.service.process_handler.stdout_data
+        self.start_stderr_data = self.service.process_handler.stderr_data
 
     def terminate(self) -> None:
         if self.service:
@@ -103,8 +103,8 @@ class TestCluster(abc.ABC):
             self.component_name,
             self.component_test_config,
             termination_result.return_code,
-            self.start_stdout + termination_result.stdout_data,
-            self.start_stderr + termination_result.stderr_data,
+            self.start_stdout_data + termination_result.stdout_data,
+            self.start_stderr_data + termination_result.stderr_data,
             termination_result.log_files
         )
 
