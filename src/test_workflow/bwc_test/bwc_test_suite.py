@@ -90,7 +90,7 @@ class BwcTestSuite(abc.ABC):
                 logging.info(stderr)
             return status
         else:
-            logging.info(f"{script} does not exist. Skipping integ tests for {self.component.name}")
+            logging.info(f"{script} does not exist. Skipping BWC tests for {self.component.name}")
             return 0
 
     def is_security_enabled(self, config: str) -> bool:
