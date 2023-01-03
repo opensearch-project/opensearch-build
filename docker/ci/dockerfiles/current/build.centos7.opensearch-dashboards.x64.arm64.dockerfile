@@ -94,7 +94,7 @@ ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 10.24.1
-ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0"
+ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1"
 COPY --chown=1000:1000 config/build-opensearch-dashboards-entrypoint.sh /usr/share/opensearch
 # install nvm
 # https://github.com/creationix/nvm#install-script
