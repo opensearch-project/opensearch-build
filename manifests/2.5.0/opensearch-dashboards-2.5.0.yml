@@ -22,6 +22,13 @@ components:
     working_directory: dashboards-notifications
     ref: 2.x
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/observability.git
-    working_directory: dashboards-observability
+    repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 2.x
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    ref: 2.x
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    working_directory: gantt-chart
+    ref: 2.x
+  
