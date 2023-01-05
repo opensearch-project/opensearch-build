@@ -108,7 +108,6 @@ components:
     platforms:
       - linux
       - windows
-    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -121,3 +120,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
