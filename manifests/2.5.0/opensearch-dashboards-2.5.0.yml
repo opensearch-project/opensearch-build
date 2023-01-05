@@ -31,4 +31,3 @@ components:
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
     ref: 2.x
-  
