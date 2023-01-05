@@ -279,7 +279,7 @@ pipeline {
                             agent {
                                 docker {
                                     label AGENT_X64
-                                    image 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1'
+                                    image 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1.1'
                                     alwaysPull true
                                 }
                             }
