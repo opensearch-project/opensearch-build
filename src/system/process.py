@@ -5,9 +5,9 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 import logging
+import os
 import subprocess
 import tempfile
-import time
 from typing import Any
 
 import psutil
@@ -25,8 +25,8 @@ class Process:
         if self.started:
             raise ProcessStartedError(self.pid)
 
-        self.stdout = tempfile.NamedTemporaryFile(mode="r+")
-        self.stderr = tempfile.NamedTemporaryFile(mode="r+")
+        self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+        self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False)
 
         self.process = subprocess.Popen(
             command,
@@ -35,7 +35,6 @@ class Process:
             stdout=self.stdout,
             stderr=self.stderr,
         )
-        time.sleep(1)
 
     def terminate(self) -> int:
         if not self.started:
@@ -56,13 +55,15 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.__stdout_data__ = self.stdout.read()
+            self.__stdout_data__ = open(self.stdout.name, 'r').read()
             self.stdout.close()
+            os.remove(self.stdout.name)
             self.stdout = None
 
         if self.stderr:
-            self.__stderr_data__ = self.stderr.read()
+            self.__stderr_data__ = open(self.stderr.name, 'r').read()
             self.stderr.close()
+            os.remove(self.stderr.name)
             self.stderr = None
 
         self.return_code = self.process.returncode
@@ -80,14 +81,10 @@ class Process:
 
     @property
     def stdout_data(self) -> Any:
-        if self.started:
-            self.stdout.seek(0)
         return self.stdout.read() if self.stdout else self.__stdout_data__
 
     @property
     def stderr_data(self) -> Any:
-        if self.started:
-            self.stderr.seek(0)
         return self.stderr.read() if self.stderr else self.__stderr_data__
 
 
