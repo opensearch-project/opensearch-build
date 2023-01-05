@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && apt install -y gnupg && \
     gpg --keyserver keyserver.ubuntu.com --recv-keys F23C5A6CF475977595C89F51BA6932366A755776 && \
     gpg --export F23C5A6CF475977595C89F51BA6932366A755776 | tee /usr/share/keyrings/ppa-deadsnakes.gpg > /dev/null && \
-    echo "deb [signed-by=/usr/share/keyrings/ppa-deadsnakes.gpg] http://ppa.launchpad.net/deadsnakes/ppa/ubuntu focal main" > /etc/apt/sources.list.d/ppa-deadsnakes.list
+    echo "deb [signed-by=/usr/share/keyrings/ppa-deadsnakes.gpg] http://ppa.launchpad.net/deadsnakes/ppa/ubuntu bionic main" > /etc/apt/sources.list.d/ppa-deadsnakes.list
 
 # Install python37 binaries
 RUN apt-get update -y && apt-get install -y python3.7-full && \
