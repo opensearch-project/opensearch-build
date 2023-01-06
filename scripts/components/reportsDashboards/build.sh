@@ -66,38 +66,12 @@ fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 [ -z "$PLATFORM" ] && PLATFORM=$(uname -s | awk '{print tolower($0)}')
-[ -z "$ARCHITECTURE" ] && ARCHITECTURE=`uname -m`
 [ ! -z "$QUALIFIER" ] && QUALIFIER_IDENTIFIER="-$QUALIFIER"
-
-case $PLATFORM in
-    linux*)
-        PLATFORM="linux"
-        ;;
-    windows*|*nt*)
-        PLATFORM="windows"
-        ;;
-    *)
-        echo "Unsupported platform: $PLATFORM"
-        exit 1
-        ;;
-esac
-
-case $ARCHITECTURE in
-    x64|arm64)
-        CHROMIUM_TARGET="chromium-$PLATFORM-$ARCHITECTURE.zip"
-        ;;
-    *)
-        echo "Unsupported architecture: $ARCHITECTURE"
-        exit 1
-        ;;
-esac
 
 NVM_CMD="source $NVM_DIR/nvm.sh && nvm use"
 if [ "$PLATFORM" = "windows" ]; then
     NVM_CMD="volta install node@`cat ../../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../../OpenSearch-Dashboards/package.json`"
 fi
-
-CHROMIUM_URL="https://github.com/opensearch-project/dashboards-reports/releases/download/chromium-1.12.0.0/$CHROMIUM_TARGET"
 
 MINOR_VERSION=${VERSION%.*}
 git clone --branch $MINOR_VERSION --single-branch https://github.com/opensearch-project/OpenSearch-Dashboards ../../OpenSearch-Dashboards || echo repo exists
@@ -116,13 +90,6 @@ echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 (cd ../../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_FOLDER && yarn plugin_helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 ZIP_NAME=`ls ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build | grep .zip`
 unzip ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$ZIP_NAME -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/
-# Reporting uses headless chromium to generate reports, which needs to be included in its artifact
-echo "DOWNLOADING CHROMIUM FOR $PLUGIN_NAME"
-mkdir -p ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
-curl -SL "$CHROMIUM_URL" -o $CHROMIUM_TARGET
-echo "PUTTING CHROMIUM INSIDE $PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip"
-unzip "$CHROMIUM_TARGET" -d ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/opensearch-dashboards/$PLUGIN_NAME
-(cd ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build && zip -ur $PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip opensearch-dashboards)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
