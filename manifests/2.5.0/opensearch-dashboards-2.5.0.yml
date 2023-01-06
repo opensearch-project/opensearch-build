@@ -25,3 +25,6 @@ components:
     repository: https://github.com/opensearch-project/observability.git
     working_directory: dashboards-observability
     ref: 2.x
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: 2.x
