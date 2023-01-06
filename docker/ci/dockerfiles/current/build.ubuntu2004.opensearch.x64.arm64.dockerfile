@@ -23,7 +23,7 @@ RUN apt-get update -y && apt-get install python3 && \
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl build-essential git jq && \
     apt-get install -y debmake debhelper-compat && \
-    apt-get install -y libxrender1 libxtst6 libasound2 && \
+    apt-get install -y libxrender1 libxtst6 libasound2 libxi6 libgconf-2-4 && \
     apt-get clean -y
 
 # Install pip packages
