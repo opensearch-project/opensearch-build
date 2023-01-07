@@ -28,7 +28,26 @@ class DistributionTar(Distribution):
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
         with tarfile.open(bundle_name, 'r:gz') as bundle_tar:
-            bundle_tar.extractall(self.work_dir)
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner) 
+                
+            
+            safe_extract(bundle_tar, self.work_dir)
 
     @property
     def start_cmd(self) -> str:
