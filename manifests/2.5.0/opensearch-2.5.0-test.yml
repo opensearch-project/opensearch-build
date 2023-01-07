@@ -55,6 +55,9 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
+    bwc-test:
+      test-configs:
+        - with-security
 
   - name: k-NN
     integ-test:
@@ -81,6 +84,9 @@ components:
       test-configs:
         - with-security
         - without-security
+    bwc-test:
+      test-configs:
+        - with-security
 
   - name: ml-commons
     integ-test:
