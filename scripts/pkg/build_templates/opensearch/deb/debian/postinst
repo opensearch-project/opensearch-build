@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
@@ -19,7 +19,7 @@ log_dir=/var/log/opensearch
 
 # Apply Security Settings
 if [ -d ${product_dir}/plugins/opensearch-security ]; then
-    sh ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
 fi
 chown -R opensearch.opensearch ${config_dir}
 chown -R opensearch.opensearch ${log_dir}
