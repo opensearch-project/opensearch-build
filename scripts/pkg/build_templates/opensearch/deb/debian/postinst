@@ -7,11 +7,11 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# deb postinst script
+# deb opensearch postinst script
 
 set -e
 
-echo "Running postinst script"
+echo "Running OpenSearch Post-Installation Script"
 
 product_dir=/usr/share/opensearch
 config_dir=/etc/opensearch

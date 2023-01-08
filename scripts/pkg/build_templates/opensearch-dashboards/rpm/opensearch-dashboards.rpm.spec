@@ -82,7 +82,7 @@ fi
 # Reload other configs
 systemd-tmpfiles --create %{name}.conf
 # Messages
-echo "### NOT starting on installation, please execute the following statements to configure opensearch service to start automatically using systemd"
+echo "### NOT starting on installation, please execute the following statements to configure opensearch-dashboards service to start automatically using systemd"
 echo " sudo systemctl daemon-reload"
 echo " sudo systemctl enable opensearch-dashboards.service"
 echo "### You can start opensearch-dashboards service by executing"
