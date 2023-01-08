@@ -107,13 +107,13 @@ class BundleLinuxDeb:
         bundle_cmd = " ".join(
             [
                 'debmake',
-                '-f "OpenSearch Team"',
-                '-e "opensearch@amazon.com"',
-                '-i debuild',
-                f'-p {self.filename}',
-                '-n',
-                '-r 1',
-                f"-u {deb_version}"
+                '--fullname "OpenSearch Team"',
+                '--email "opensearch@amazon.com"',
+                '--invoke debuild',
+                f'--package {self.filename}',
+                '--native',
+                '--revision 1',
+                f"--upstreamversion {deb_version}"
             ]
         )
 
