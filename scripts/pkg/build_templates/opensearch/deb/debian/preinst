@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright OpenSearch Contributors
 # SPDX-License-Identifier: Apache-2.0
