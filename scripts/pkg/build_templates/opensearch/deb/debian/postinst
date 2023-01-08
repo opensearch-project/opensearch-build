@@ -15,14 +15,14 @@ echo "Running postinst script"
 
 product_dir=/usr/share/opensearch
 config_dir=/etc/opensearch
+data_dir=/var/lib/opensearch
 log_dir=/var/log/opensearch
+pid_dir=/var/run/opensearch
 
 # Apply Security Settings
 if [ -d ${product_dir}/plugins/opensearch-security ]; then
     bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
 fi
-chown -R opensearch.opensearch ${config_dir}
-chown -R opensearch.opensearch ${log_dir}
 
 # Apply PerformanceAnalyzer Settings
 chmod a+rw /tmp
@@ -57,6 +57,13 @@ if [ -d ${product_dir}/plugins/opensearch-security ]; then
     echo "### Create opensearch demo certificates in ${config_dir}/"
     echo " See demo certs creation log in ${log_dir}/install_demo_configuration.log"
 fi
+
+# Set owner
+chown -R opensearch.opensearch ${product_dir}
+chown -R opensearch.opensearch ${config_dir}
+chown -R opensearch.opensearch ${log_dir}
+chown -R opensearch.opensearch ${data_dir}
+chown -R opensearch.opensearch ${pid_dir}
 
 exit 0
 

@@ -17,13 +17,12 @@ if [ -z "$1" ]; then
 fi
 
 curdir=$1
-name=opensearch
-product_dir=/usr/share/${name}
-config_dir=/etc/${name}
-data_dir=/var/lib/${name}
-log_dir=/var/log/${name}
-pid_dir=/var/run/${name}
-buildroot=${curdir}/debian/${name}
+product_dir=/usr/share/opensearch
+config_dir=/etc/opensearch
+data_dir=/var/lib/opensearch
+log_dir=/var/log/opensearch
+pid_dir=/var/run/opensearch
+buildroot=${curdir}/debian/opensearch
 
 # Create necessary directories
 mkdir -p ${buildroot}
