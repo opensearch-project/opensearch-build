@@ -14,8 +14,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 2.x
   - name: queryWorkbenchDashboards
-    repository: https://github.com/opensearch-project/sql.git
-    working_directory: workbench
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: 2.x
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/notifications.git
