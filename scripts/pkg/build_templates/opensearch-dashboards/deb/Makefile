@@ -1,10 +1,10 @@
 all: install
 
 install:
-	mkdir -p $(CURDIR)/debian/opensearch
-	cp -a $(CURDIR)/etc $(CURDIR)/debian/opensearch/etc
-	cp -a $(CURDIR)/usr $(CURDIR)/debian/opensearch/usr
-	cp -a $(CURDIR)/var $(CURDIR)/debian/opensearch/var
+	mkdir -p $(CURDIR)/debian/opensearch-dashboards
+	cp -a $(CURDIR)/etc $(CURDIR)/debian/opensearch-dashboards/etc
+	cp -a $(CURDIR)/usr $(CURDIR)/debian/opensearch-dashboards/usr
+	cp -a $(CURDIR)/var $(CURDIR)/debian/opensearch-dashboards/var
 
 clean: ;
 
