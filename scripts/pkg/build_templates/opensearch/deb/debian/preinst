@@ -7,16 +7,16 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# deb preinst script
+# deb opensearch preinst script
 
 set -e
 
-echo "Running preinst script"
+echo "Running OpenSearch Pre-Installation Script"
 
 # Stop existing service
 if command -v systemctl >/dev/null && systemctl is-active opensearch.service >/dev/null; then
     echo "Stop existing opensearch.service"
-    systemctl --no-reload stop %{name}.service
+    systemctl --no-reload stop opensearch.service
 fi
 if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
     echo "Stop existing opensearch-performance-analyzer.service"
