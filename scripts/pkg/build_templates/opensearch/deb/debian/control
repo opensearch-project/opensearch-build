@@ -12,4 +12,3 @@ Architecture: any
 Description: An open source distributed and RESTful search engine
     OpenSearch makes it easy to ingest, search, visualize, and analyze your data
     For more information, see: https://opensearch.org/
-License: Apache-2.0

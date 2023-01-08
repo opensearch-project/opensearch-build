@@ -10,7 +10,7 @@
 all: install
 
 install:
-	debmake_opensearch_install.sh $(CURDIR)
+	$(shell debmake_opensearch_install.sh $(CURDIR))
 
 clean: ;
 
