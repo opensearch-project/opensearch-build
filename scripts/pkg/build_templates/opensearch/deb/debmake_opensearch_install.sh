@@ -30,7 +30,7 @@ mkdir -p ${buildroot}${pid_dir}
 mkdir -p ${buildroot}${product_dir}/plugins
 
 # Install directories/files
-cp -va ${curdir}/etc ${curdir}/usr ${curdir}/var ${buildroot}/
+cp -a ${curdir}/etc ${curdir}/usr ${curdir}/var ${buildroot}/
 chmod -c 0755 ${buildroot}${product_dir}/bin/*
 if [ -d ${buildroot}${product_dir}/plugins/opensearch-security ]; then
     chmod -c 0755 ${buildroot}${product_dir}/plugins/opensearch-security/tools/*

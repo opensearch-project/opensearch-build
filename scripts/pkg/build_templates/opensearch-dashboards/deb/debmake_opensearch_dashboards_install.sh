@@ -34,7 +34,7 @@ mkdir -p ${buildroot}${log_dir}
 # Install directories/files
 # Service files stored in /usr/lib/systemd for pkg installation, /etc/systemd is meant for manual changes by sysadmin
 rm -rvf ${curdir}/etc/systemd
-cp -va ${curdir}/etc ${curdir}/usr ${curdir}/var ${buildroot}/
+cp -a ${curdir}/etc ${curdir}/usr ${curdir}/var ${buildroot}/
 chmod -c 0755 ${buildroot}${product_dir}/bin/*
 
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
