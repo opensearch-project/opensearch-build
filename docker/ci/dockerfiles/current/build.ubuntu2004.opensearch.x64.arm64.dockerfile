@@ -32,6 +32,13 @@ RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
     pip3 install pipenv && pipenv --version && \
     pip3 install awscli==1.22.12 && aws --version
 
+# Install aptly and required changes to debmake
+# Remove lintian for now due to it takes nearly 20 minutes for OpenSearch as well as nearly an hour for OpenSearch-Dashboards during debmake
+RUN curl -o- https://www.aptly.info/pubkey.txt | apt-key add - && \
+    echo "deb http://repo.aptly.info/ squeeze main" | tee -a /etc/apt/sources.list.d/aptly.list && \
+    apt-get update -y && apt-get install -y aptly && apt-get clean -y && \
+    dpkg -r lintian
+
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
