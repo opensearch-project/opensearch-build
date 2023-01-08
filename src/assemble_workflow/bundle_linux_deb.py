@@ -113,6 +113,7 @@ class BundleLinuxDeb:
                 f'--package {self.filename}',
                 '--native',
                 '--revision 1',
+                '--no-lintian',
                 f"--upstreamversion {deb_version}"
             ]
         )
