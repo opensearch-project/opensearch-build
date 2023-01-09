@@ -22,8 +22,6 @@ override_dh_builddeb:
 override_dh_gencontrol:
 	dh_gencontrol -- -DLicense=Apache-2.0
 
-override_dh_auto_configure-indep:
-
 #override_dh_auto_install:
 #	dh_auto_install -- prefix=/usr
 
