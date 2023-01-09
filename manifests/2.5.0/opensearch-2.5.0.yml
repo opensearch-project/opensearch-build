@@ -73,6 +73,14 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
+  - name: reporting
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
     ref: 2.x
@@ -108,7 +116,6 @@ components:
     platforms:
       - linux
       - windows
-    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
