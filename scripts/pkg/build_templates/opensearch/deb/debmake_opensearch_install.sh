@@ -40,10 +40,6 @@ fi
 ln -s ${data_dir} ${buildroot}${product_dir}/data
 ln -s ${log_dir}  ${buildroot}${product_dir}/logs
 
-# Performance Analyzer Settings
-echo 'true' > ${buildroot}${data_dir}/rca_enabled.conf
-echo 'true' > ${buildroot}${config_dir}/performance_analyzer_enabled.conf
-echo 'true' > ${buildroot}${config_dir}/rca_enabled.conf
 # Change Permissions
 chmod -Rf a+rX,u+w,g-w,o-w ${buildroot}/*
 
