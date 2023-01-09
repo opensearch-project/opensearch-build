@@ -30,3 +30,6 @@ components:
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
     ref: 2.x
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: 2.x
