@@ -71,14 +71,11 @@ fi
 ## Setup Performance Analyzer Agent
 mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
 
-## Setup necessary configurations
-# Create data directory by default
-# Do nothing if the directory already exists
-if [ -d "$OUTPUT/data" ]; then
-    mkdir -p $OUTPUT/data
-fi
+## Create data directory by default
+## Do nothing if the directory already exists
+mkdir -p $OUTPUT/data
 
-# Performance Analyzer Configs
+## Performance Analyzer Configs
 echo 'true' > $OUTPUT/data/rca_enabled.conf
 echo 'true' > $OUTPUT/config/performance_analyzer_enabled.conf
 echo 'true' > $OUTPUT/config/rca_enabled.conf
