@@ -138,3 +138,19 @@ class DependencyInstallerOpenSearchTests(unittest.TestCase):
             "https://ci.opensearch.org/x/y/builds/opensearch/plugins/opensearch-job-scheduler-1.1.0.0.zip",
             os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
         )
+
+    @patch("os.makedirs")
+    @patch("shutil.copyfile")
+    @patch("urllib.request.urlretrieve")
+    def test_install_build_dependencies_remote_with_backslash_url(self, mock_request: Mock, mock_copyfile: Mock, mock_makedirs: Mock) -> None:
+        dependency_installer_url_with_backslash = DependencyInstallerOpenSearch(
+            "https://ci.opensearch.org/x/y/", BuildManifest.from_path(self.BUILD_MANIFEST), BundleManifest.from_path(self.DIST_MANIFEST_REMOTE)
+        )
+        dependencies = dict({"opensearch-job-scheduler": "1.1.0.0"})
+        dependency_installer_url_with_backslash.install_build_dependencies(dependencies, os.path.dirname(__file__))
+        mock_makedirs.assert_called_with(os.path.dirname(__file__), exist_ok=True)
+        mock_copyfile.assert_not_called()
+        mock_request.assert_called_once_with(
+            "https://ci.opensearch.org/x/y/builds/opensearch/plugins/opensearch-job-scheduler-1.1.0.0.zip",
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "opensearch-job-scheduler-1.1.0.0.zip")),
+        )
