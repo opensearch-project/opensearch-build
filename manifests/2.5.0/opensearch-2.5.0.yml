@@ -16,7 +16,7 @@ components:
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -34,7 +34,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -43,13 +43,13 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
     checks:
@@ -57,7 +57,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -66,7 +66,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -75,7 +75,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -85,7 +85,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -95,7 +95,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -104,7 +104,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -113,7 +113,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -122,7 +122,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -131,7 +131,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
