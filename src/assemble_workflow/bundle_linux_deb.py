@@ -23,11 +23,15 @@ class BundleLinuxDeb:
         self.min_path = min_path
 
     def changelog_content(self, version: str) -> List[str]:
-        # instead of 'UNRELEASED' its possible to use 'stable'
+        # In the changelog content we are dynamically generate this part for now.
+        # Instead of 'UNRELEASED' its possible to use 'stable'
         # which will use gpg to sign with the given from 'OpenSearch Team <opensearch@amazon.com>'
+        # Debian official documentation suggest using 'unstable' to replace 'UNRELEASED'
+        # since deb signing is disabled in checks by default
+        # https://www.debian.org/doc/manuals/maint-guide/update.en.html
 
         return [
-            f"{self.filename} ({version}) UNRELEASED; urgency=low",
+            f"{self.filename} ({version}) unstable; urgency=low",
             "",
             "  * Initial release.",
             "",
