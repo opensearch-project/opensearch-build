@@ -79,7 +79,6 @@ components:
         - without-security
 
   - name: opensearch-observability
-    working-directory: opensearch-observability
     integ-test:
       test-configs:
         - with-security
