@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 2.x
+    ref: '2.5'
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -108,7 +108,6 @@ components:
     platforms:
       - linux
       - windows
-    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -121,6 +120,15 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: 2.x
