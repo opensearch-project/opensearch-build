@@ -42,3 +42,12 @@ components:
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: '2.5'
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: '2.5'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: '2.5'
+  - name: securityAnalyticsDashboards
+    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
+    ref: 2.x
