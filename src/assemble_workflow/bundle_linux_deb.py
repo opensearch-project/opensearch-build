@@ -27,11 +27,12 @@ class BundleLinuxDeb:
         # Instead of 'UNRELEASED' its possible to use 'stable'
         # which will use gpg to sign with the given from 'OpenSearch Team <opensearch@amazon.com>'
         # Debian official documentation suggest using 'unstable' to replace 'UNRELEASED'
-        # since deb signing is disabled in checks by default
+        # but it is still asking a key to sign during build, therefore use 'UNRELEASED' here
+        # as part of changelog content only
         # https://www.debian.org/doc/manuals/maint-guide/update.en.html
 
         return [
-            f"{self.filename} ({version}) unstable; urgency=low",
+            f"{self.filename} ({version}) UNRELEASED; urgency=low",
             "",
             "  * Initial release.",
             "",
