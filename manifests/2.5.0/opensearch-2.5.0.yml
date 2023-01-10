@@ -163,4 +163,4 @@ components:
       - windows
     checks:
       - gradle:properties:version
-      - gradle:dependencies:opensearch.version: security-analytics
+      - gradle:dependencies:opensearch.version
