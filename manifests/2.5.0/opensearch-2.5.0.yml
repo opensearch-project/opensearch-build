@@ -189,11 +189,3 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
-  - name: security-analytics
-    repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 2.x
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
