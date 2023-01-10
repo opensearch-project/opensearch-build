@@ -47,7 +47,6 @@ components:
     platforms:
       - linux
       - windows
-    working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
