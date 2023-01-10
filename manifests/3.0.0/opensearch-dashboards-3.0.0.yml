@@ -14,8 +14,7 @@ components:
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: main
   - name: reportsDashboards
-    repository: https://github.com/opensearch-project/reporting.git
-    working_directory: dashboards-reports
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: main
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
