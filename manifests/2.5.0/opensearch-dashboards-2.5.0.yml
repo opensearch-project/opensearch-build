@@ -20,8 +20,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: '2.5'
   - name: notificationsDashboards
-    repository: https://github.com/opensearch-project/notifications.git
-    working_directory: dashboards-notifications
+    repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: '2.5'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
