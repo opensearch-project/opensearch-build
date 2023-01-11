@@ -43,7 +43,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
@@ -75,7 +75,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 2.x
+    ref: '2.5'
     platforms:
       - linux
       - windows
