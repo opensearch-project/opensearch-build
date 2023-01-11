@@ -60,10 +60,6 @@ mkdir -p %{buildroot}%{product_dir}/performance-analyzer-rca
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
 ln -s %{log_dir}  %{buildroot}%{product_dir}/logs
-# Performance Analyzer Settings
-echo 'true' > %{buildroot}%{data_dir}/rca_enabled.conf
-echo 'true' > %{buildroot}%{config_dir}/performance_analyzer_enabled.conf
-echo 'true' > %{buildroot}%{config_dir}/rca_enabled.conf
 # Change Permissions
 chmod -Rf a+rX,u+w,g-w,o-w %{buildroot}/*
 exit 0
@@ -155,9 +151,6 @@ exit 0
 %config(noreplace) %{config_dir}/%{name}.yml
 %config(noreplace) %{config_dir}/jvm.options
 %config(noreplace) %{config_dir}/log4j2.properties
-%config(noreplace) %{config_dir}/performance_analyzer_enabled.conf
-%config(noreplace) %{data_dir}/rca_enabled.conf
-%config(noreplace) %{config_dir}/rca_enabled.conf
 
 # Service files
 %attr(0644, root, root) %{_prefix}/lib/systemd/system/%{name}.service
