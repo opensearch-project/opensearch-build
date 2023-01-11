@@ -50,4 +50,4 @@ components:
     ref: '2.5'
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
-    ref: 2.x
+    ref: '2.5'
