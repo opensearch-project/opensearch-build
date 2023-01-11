@@ -44,7 +44,7 @@ while getopts ":h:v:s:o:p:a:f:" arg; do
             ARCHITECTURE=$OPTARG
             ;;
         f)
-            ARTIFACTS=$ARTIFACTS
+            ARTIFACTS=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
@@ -71,13 +71,20 @@ fi
 ## Setup Performance Analyzer Agent
 mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
 
-## Create data directory by default
-## Do nothing if the directory already exists
-mkdir -p $OUTPUT/data
+## Setup Performance Analyzer Agent
+mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
 
 ## Performance Analyzer Configs
-echo 'true' > $OUTPUT/data/rca_enabled.conf
-echo 'true' > $OUTPUT/config/performance_analyzer_enabled.conf
-echo 'true' > $OUTPUT/config/rca_enabled.conf
+if echo $ARTIFACTS | grep -Eo '/deb/|/rpm/'; then
+    echo "DEB/RPM configs"
+    echo 'true' > $OUTPUT/../var/lib/opensearch/rca_enabled.conf
+    echo 'true' > $OUTPUT/../var/lib/opensearch/performance_analyzer_enabled.conf
+else
+    ## Create data directory by default
+    ## Do nothing if the directory already exists
+    echo "non-DEB/non-RPM configs"
+    mkdir -p $OUTPUT/data
 
-
+    echo 'true' > $OUTPUT/data/rca_enabled.conf
+    echo 'true' > $OUTPUT/data/performance_analyzer_enabled.conf
+fi

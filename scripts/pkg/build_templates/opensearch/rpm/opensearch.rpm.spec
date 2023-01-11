@@ -151,9 +151,6 @@ exit 0
 %config(noreplace) %{config_dir}/%{name}.yml
 %config(noreplace) %{config_dir}/jvm.options
 %config(noreplace) %{config_dir}/log4j2.properties
-%config(noreplace) %{config_dir}/performance_analyzer_enabled.conf
-%config(noreplace) %{data_dir}/rca_enabled.conf
-%config(noreplace) %{config_dir}/rca_enabled.conf
 
 # Service files
 %attr(0644, root, root) %{_prefix}/lib/systemd/system/%{name}.service
