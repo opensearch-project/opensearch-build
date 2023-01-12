@@ -72,6 +72,13 @@ if [ "$PLATFORM" = "windows" ]; then
     NVM_CMD="volta install node@`cat ../OpenSearch-Dashboards/.nvmrc` && volta install yarn@`jq -r '.engines.yarn' ../OpenSearch-Dashboards/package.json`"
 fi
 
+HELPER_CMD=$(jq -r '.scripts.plugin_helpers' package.json)
+if [ "$HELPER_CMD" != null ]; then
+    HELPER_STRING=plugin_helpers
+else
+    HELPER_STRING=plugin-helpers
+fi
+
 mkdir -p $OUTPUT/plugins
 PLUGIN_NAME=$(basename "$PWD")
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
@@ -80,7 +87,7 @@ cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
 (cd ../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_NAME && yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+(cd ../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_NAME && yarn $HELPER_STRING build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME
