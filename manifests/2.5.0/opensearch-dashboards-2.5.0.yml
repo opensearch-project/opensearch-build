@@ -40,7 +40,7 @@ components:
     ref: 'ef7d93ce3dd8cdcc66f275a9d3ea9a173dfcaa37'
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
-    ref: '176f5abc7574d83498c13dabb3ff312d3e00d650'
+    ref: 'e9117ee6b84895a4f1c7b06da9a5f0eb7997133f'
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: 'a3abe69de477e0f6082e72b59e3f9b126a7ff4e9'
