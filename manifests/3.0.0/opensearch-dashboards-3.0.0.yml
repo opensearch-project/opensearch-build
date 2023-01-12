@@ -35,6 +35,5 @@ components:
     working_directory: gantt-chart
     ref: main
   - name: notificationsDashboards
-    repository: https://github.com/opensearch-project/notifications.git
-    working_directory: dashboards-notifications
+    repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: main
