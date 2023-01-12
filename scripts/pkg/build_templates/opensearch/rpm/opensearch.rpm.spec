@@ -158,6 +158,8 @@ exit 0
 %config(noreplace) %{config_dir}/%{name}.yml
 %config(noreplace) %{config_dir}/jvm.options
 %config(noreplace) %{config_dir}/log4j2.properties
+%config(noreplace) %{data_dir}/rca_enabled.conf
+%config(noreplace) %{data_dir}/performance_analyzer_enabled.conf
 
 # Service files
 %attr(0644, root, root) %{_prefix}/lib/systemd/system/%{name}.service
@@ -166,8 +168,6 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/sysctl.d/%{name}.conf
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
-%config(noreplace) %{data_dir}/rca_enabled.conf
-%config(noreplace) %{data_dir}/performance_analyzer_enabled.conf
 
 # Main dirs
 %{product_dir}/bin
