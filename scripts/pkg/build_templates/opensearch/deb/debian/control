@@ -1,5 +1,12 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
 Source: opensearch
-Section: database
+Section: web
 Priority: optional
 Maintainer: OpenSearch Team <opensearch@amazon.com>
 Build-Depends: debhelper-compat (= 12)
@@ -8,5 +15,6 @@ Homepage: https://opensearch.org/
 
 Package: opensearch
 Architecture: any
-Multi-Arch: foreign
-Description: OpenSearch
+Description: An open source distributed and RESTful search engine
+    OpenSearch makes it easy to ingest, search, visualize, and analyze your data
+    For more information, see: https://opensearch.org/

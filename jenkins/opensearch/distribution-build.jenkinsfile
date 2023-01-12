@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.1.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.5.4', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -12,6 +12,7 @@ pipeline {
         AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
+        IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
     }
     parameters {
         string(
@@ -531,6 +532,86 @@ pipeline {
                         }
                     }
                 }
+                stage('build-and-test-linux-x64-deb') {
+                    when {
+                        beforeAgent true
+                        expression{
+                            params.BUILD_PLATFORM.contains('linux')
+                        }
+                    }
+                    agent { label AGENT_X64 }
+                    stages {
+                        stage('build-archive-linux-x64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('assemble-archive-and-test-linux-x64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image IMAGE_DEB
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_LINUX_X64_DEB = artifactUrl
+
+                                    echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
+                                    echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
+
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
+
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
@@ -731,6 +812,86 @@ pipeline {
                         }
                     }
                 }
+                stage('build-and-test-linux-arm64-deb') {
+                    when {
+                        beforeAgent true
+                        expression{
+                            params.BUILD_PLATFORM.contains('linux')
+                        }
+                    }
+                    agent { label AGENT_ARM64 }
+                    stages {
+                        stage('build-archive-linux-arm64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_ARM64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('assemble-archive-and-test-linux-arm64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_ARM64
+                                    image IMAGE_DEB
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_LINUX_ARM64_DEB = artifactUrl
+
+                                    echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
+                                    echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
+
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
+
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 stage('build-and-test-windows-x64-zip') {
                     when {
                         beforeAgent true
@@ -858,8 +1019,10 @@ pipeline {
                         stages = [
                             'build-and-test-linux-x64-tar',
                             'assemble-archive-and-test-linux-x64-rpm',
+                            'assemble-archive-and-test-linux-x64-deb',
                             'build-and-test-linux-arm64-tar',
                             'assemble-archive-and-test-linux-arm64-rpm',
+                            'assemble-archive-and-test-linux-arm64-deb',
                         ]
                     }
                     if (params.BUILD_PLATFORM.contains('windows')){
