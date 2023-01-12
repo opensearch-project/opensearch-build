@@ -71,13 +71,9 @@ fi
 ## Setup Performance Analyzer Agent
 mv $OUTPUT/plugins/opensearch-performance-analyzer/performance-analyzer-rca $OUTPUT/
 
-## Create data directory by default
-## Do nothing if the directory already exists
-mkdir -p $OUTPUT/data
-
 ## Performance Analyzer Configs
-echo 'true' > $OUTPUT/data/rca_enabled.conf
-echo 'true' > $OUTPUT/config/performance_analyzer_enabled.conf
-echo 'true' > $OUTPUT/config/rca_enabled.conf
-
-
+if echo $ARTIFACTS | grep -Eo '/deb/|/rpm/'; then
+    echo "DEB/RPM configs"
+    echo 'true' > $OUTPUT/../var/lib/opensearch/rca_enabled.conf
+    echo 'true' > $OUTPUT/../var/lib/opensearch/performance_analyzer_enabled.conf
+fi
