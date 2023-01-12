@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+# deb opensearch postinst script
+
+set -e
+
+echo "Running OpenSearch Post-Installation Script"
+
+product_dir=/usr/share/opensearch
+config_dir=/etc/opensearch
+data_dir=/var/lib/opensearch
+log_dir=/var/log/opensearch
+pid_dir=/var/run/opensearch
+
+# Apply Security Settings
+if [ -d ${product_dir}/plugins/opensearch-security ]; then
+    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+fi
+
+# Apply PerformanceAnalyzer Settings
+chmod a+rw /tmp
+if ! grep -q '## OpenSearch Performance Analyzer' ${config_dir}/jvm.options; then
+   # Add Performance Analyzer settings in ${config_dir}/jvm.options
+   CLK_TCK=`/usr/bin/getconf CLK_TCK`
+   echo >> ${config_dir}/jvm.options
+   echo '## OpenSearch Performance Analyzer' >> ${config_dir}/jvm.options
+   echo "-Dclk.tck=$CLK_TCK" >> ${config_dir}/jvm.options
+   echo "-Djdk.attach.allowAttachSelf=true" >> ${config_dir}/jvm.options
+   echo "-Djava.security.policy=file://${config_dir}/opensearch-performance-analyzer/opensearch_security.policy" >> ${config_dir}/jvm.options
+   echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> ${config_dir}/jvm.options
+fi
+
+# Reload systemctl daemon
+if command -v systemctl > /dev/null; then
+    systemctl daemon-reload
+fi
+
+# Reload other configs
+sysctl -p /usr/lib/sysctl.d/opensearch.conf > /dev/null 2>&1
+systemd-tmpfiles --create opensearch.conf
+
+# Messages
+echo "### NOT starting on installation, please execute the following statements to configure opensearch service to start automatically using systemd"
+echo " sudo systemctl daemon-reload"
+echo " sudo systemctl enable opensearch.service"
+echo "### You can start opensearch service by executing"
+echo " sudo systemctl start opensearch.service"
+
+if [ -d ${product_dir}/plugins/opensearch-security ]; then
+    echo "### Create opensearch demo certificates in ${config_dir}/"
+    echo " See demo certs creation log in ${log_dir}/install_demo_configuration.log"
+fi
+
+# Set owner
+chown -R opensearch.opensearch ${product_dir}
+chown -R opensearch.opensearch ${config_dir}
+chown -R opensearch.opensearch ${log_dir}
+chown -R opensearch.opensearch ${data_dir}
+chown -R opensearch.opensearch ${pid_dir}
+
+exit 0
+
+
