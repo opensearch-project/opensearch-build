@@ -60,6 +60,13 @@ mkdir -p %{buildroot}%{product_dir}/performance-analyzer-rca
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
 ln -s %{log_dir}  %{buildroot}%{product_dir}/logs
+# Pre-populate PA configs if not present
+if [ ! -f %{buildroot}%{data_dir}/rca_enabled.conf ]; then
+    echo 'true' > %{buildroot}%{data_dir}/rca_enabled.conf
+fi
+if [ ! -f %{buildroot}%{data_dir}/performance_analyzer_enabled.conf ]; then
+    echo 'true' > %{buildroot}%{data_dir}/performance_analyzer_enabled.conf
+fi
 # Change Permissions
 chmod -Rf a+rX,u+w,g-w,o-w %{buildroot}/*
 exit 0
@@ -159,6 +166,8 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/sysctl.d/%{name}.conf
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
+%config(noreplace) %{data_dir}/rca_enabled.conf
+%config(noreplace) %{data_dir}/performance_analyzer_enabled.conf
 
 # Main dirs
 %{product_dir}/bin
@@ -173,7 +182,6 @@ exit 0
 
 # Symlinks
 %{product_dir}/data
-%{product_dir}/data/*.conf
 %{product_dir}/logs
 
 %changelog
