@@ -173,6 +173,7 @@ exit 0
 
 # Symlinks
 %{product_dir}/data
+%{product_dir}/data/*.conf
 %{product_dir}/logs
 
 %changelog
