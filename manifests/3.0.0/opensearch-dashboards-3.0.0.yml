@@ -20,15 +20,13 @@ components:
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: main
   - name: queryWorkbenchDashboards
-    repository: https://github.com/opensearch-project/sql.git
-    working_directory: workbench
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: main
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: main
   - name: observabilityDashboards
-    repository: https://github.com/opensearch-project/observability.git
-    working_directory: dashboards-observability
+    repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: main
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
