@@ -1,10 +1,16 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+# deb opensearch-dashboards Makefile
+
 all: install
 
 install:
-	mkdir -p $(CURDIR)/debian/opensearch
-	cp -a $(CURDIR)/etc $(CURDIR)/debian/opensearch/etc
-	cp -a $(CURDIR)/usr $(CURDIR)/debian/opensearch/usr
-	cp -a $(CURDIR)/var $(CURDIR)/debian/opensearch/var
+	./debmake_opensearch_dashboards_install.sh $(CURDIR)
 
 clean: ;
 

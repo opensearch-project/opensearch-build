@@ -23,8 +23,13 @@ class BundleLinuxDeb:
         self.min_path = min_path
 
     def changelog_content(self, version: str) -> List[str]:
-        # instead of 'UNRELEASED' its possible to use 'stable'
+        # In the changelog content we are dynamically generate this part for now.
+        # Instead of 'UNRELEASED' its possible to use 'stable'
         # which will use gpg to sign with the given from 'OpenSearch Team <opensearch@amazon.com>'
+        # Debian official documentation suggest using 'unstable' to replace 'UNRELEASED'
+        # but it is still asking a key to sign during build, therefore use 'UNRELEASED' here
+        # as part of changelog content only
+        # https://www.debian.org/doc/manuals/maint-guide/update.en.html
 
         return [
             f"{self.filename} ({version}) UNRELEASED; urgency=low",
@@ -107,13 +112,13 @@ class BundleLinuxDeb:
         bundle_cmd = " ".join(
             [
                 'debmake',
-                '-f "OpenSearch Team"',
-                '-e "opensearch@amazon.com"',
-                '-i debuild',
-                f'-p {self.filename}',
-                '-n',
-                '-r 1',
-                f"-u {deb_version}"
+                '--fullname "OpenSearch Team"',
+                '--email "opensearch@amazon.com"',
+                '--invoke debuild',
+                f'--package {self.filename}',
+                '--native',
+                '--revision 1',
+                f"--upstreamversion {deb_version}"
             ]
         )
 
