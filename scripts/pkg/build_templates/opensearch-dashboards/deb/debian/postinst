@@ -29,9 +29,9 @@ systemd-tmpfiles --create opensearch-dashboards.conf
 
 # Messages
 echo "### NOT starting on installation, please execute the following statements to configure opensearch-dashboards service to start automatically using systemd"
-echo " sudo systemctl enable opensearch-dashboards.service"
+echo " systemctl enable opensearch-dashboards.service"
 echo "### You can start opensearch-dashboards service by executing"
-echo " sudo systemctl start opensearch-dashboards.service"
+echo " systemctl start opensearch-dashboards.service"
 
 # Set owner
 chown -R opensearch-dashboards.opensearch-dashboards ${product_dir}
