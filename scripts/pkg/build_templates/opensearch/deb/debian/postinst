@@ -48,7 +48,6 @@ systemd-tmpfiles --create opensearch.conf
 
 # Messages
 echo "### NOT starting on installation, please execute the following statements to configure opensearch service to start automatically using systemd"
-echo " sudo systemctl daemon-reload"
 echo " sudo systemctl enable opensearch.service"
 echo "### You can start opensearch service by executing"
 echo " sudo systemctl start opensearch.service"
