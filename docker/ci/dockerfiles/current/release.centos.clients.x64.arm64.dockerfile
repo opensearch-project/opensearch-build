@@ -26,6 +26,12 @@ RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packag
     yum update -y && \
     yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh epel-release
 
+# Install dotnet
+ARG DOT_NET_LIST="5.0 6.0"
+RUN rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm && \
+    for dotnet_version in $DOT_NET_LIST; do yum install -y dotnet-sdk-$dotnet_version; done
+
+
 # Add Python37 dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
@@ -133,3 +139,4 @@ RUN npm -v
 RUN yarn -v
 RUN openssl version
 RUN osslsigncode --version
+RUN dotnet --version
