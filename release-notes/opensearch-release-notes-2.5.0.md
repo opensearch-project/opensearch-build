@@ -10,7 +10,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## Release Highlights
 
-The OpenSearch 2.5.0 release adds new tools and enhancements to help you advance your search, analytics, and observability workloads. This release includes the software’s first Debian distribution and first administrative user interface, along with support for multi-layered maps and the ability to analyze traces in the Jaeger schema. The release also includes Indexing and search improvements for Lucene-based k-NN search functionality, and Security Analytics tools are now generally available. Following are some highlights for this release.
+The OpenSearch 2.5.0 release adds new tools and enhancements to help you advance your search, analytics, and observability workloads. This release includes the software’s first Debian distribution and first administrative user interface, along with support for multi-layered maps and the ability to analyze traces in the Jaeger schema. The release also includes indexing and search improvements for Lucene-based k-NN search functionality, and Security Analytics tools are now generally available. Following are some highlights for this release.
 
 ### New features
 
@@ -25,7 +25,6 @@ The OpenSearch 2.5.0 release adds new tools and enhancements to help you advance
 ### Experimental features
 
 OpenSearch 2.5.0 includes the following experimental features. Experimental features are disabled by default. For instructions on how to enable them, see the version history (https://opensearch.org/docs/latest/version-history/) page which includes links to the documentation.
-
 * Request-level durability allows you to deploy remote-backed storage on a per-index basis, supporting data durability for cloud-based backup and restore operations.
 * As an enhancement to semantic search functionality, the model-serving framework now allows users to serve machine learning (ML) models on ML nodes that can take advantage of CUDA-compatible GPUs.
 
@@ -37,10 +36,10 @@ OpenSearch 2.5.0 includes the following experimental features. Experimental feat
 * Introduce tooltip fields to document layer specification ([#124](https://github.com/opensearch-project/dashboards-maps/pull/124))
 * Add support for WKT format ([#165](https://github.com/opensearch-project/dashboards-maps/pull/165))
 * Add global time filter bar to maps ([#131](https://github.com/opensearch-project/dashboards-maps/pull/131))
-* Support custom layer to Maps ([#150](https://github.com/opensearch-project/dashboards-maps/pull/150))
+* Support custom layer for maps ([#150](https://github.com/opensearch-project/dashboards-maps/pull/150))
 * Support geo_shape visualization in documents layer ([#111](https://github.com/opensearch-project/dashboards-maps/pull/111))
 * Introduce saved object plugin into maps plugin ([#67](https://github.com/opensearch-project/dashboards-maps/pull/67))
-* Add new layer functions for opensearch map layer ([#66](https://github.com/opensearch-project/dashboards-maps/pull/66))
+* Add new layer functions for OpenSearch map layer ([#66](https://github.com/opensearch-project/dashboards-maps/pull/66))
 * Add map page and add basic layers panel ([#40](https://github.com/opensearch-project/dashboards-maps/pull/40))
 * Add layer panel component ([#51](https://github.com/opensearch-project/dashboards-maps/pull/51))
 * Add base map layer functions ([#62](https://github.com/opensearch-project/dashboards-maps/pull/62))
@@ -51,7 +50,7 @@ OpenSearch 2.5.0 includes the following experimental features. Experimental feat
 ### OpenSearch Observability Dashboards Plugin
 * Add log pattern table ([#1187](https://github.com/opensearch-project/observability/pull/1187))
 * Implementing search feature ([#1286](https://github.com/opensearch-project/observability/pull/1286))
-* Traces jaeger ([#150](https://github.com/opensearch-project/dashboards-observability/pull/150))
+* Add support for raw Jaeger schema data ([#150](https://github.com/opensearch-project/dashboards-observability/pull/150))
 
 
 ### OpenSearch Index Management Dashboards Plugin
@@ -182,7 +181,7 @@ OpenSearch 2.5.0 includes the following experimental features. Experimental feat
 * Add watermark generator ([#959](https://github.com/opensearch-project/sql/issues/959))
 * Add stream context and window trigger ([#958](https://github.com/opensearch-project/sql/issues/958))
 * Add micro batch streaming execution ([#1044](https://github.com/opensearch-project/sql/pull/1044))
-* Add Streaming Plan Impl ([#1068](https://github.com/opensearch-project/sql/issues/1068))
+* Add Streaming Plan Implementation ([#1068](https://github.com/opensearch-project/sql/issues/1068))
 * Add CBRT to the V2 engine ([#1081](https://github.com/opensearch-project/sql/issues/1081))
 * Add CBRT function to the PPL ([#1097](https://github.com/opensearch-project/sql/issues/1097))
 * Add timeout option to SQL CLI tool. ([#1076](https://github.com/opensearch-project/sql/issues/1076))
