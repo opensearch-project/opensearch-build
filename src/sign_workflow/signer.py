@@ -17,8 +17,10 @@ from git.git_repository import GitRepository
 
 class Signer(ABC):
     git_repo: GitRepository
+    overwrite: bool
 
-    def __init__(self) -> None:
+    def __init__(self, overwrite: bool) -> None:
+        self.overwrite = overwrite
         self.git_repo = GitRepository(self.get_repo_url(), "HEAD", working_subdirectory="src")
         self.git_repo.execute("./bootstrap")
         self.git_repo.execute("rm config.cfg")

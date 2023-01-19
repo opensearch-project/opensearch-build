@@ -17,15 +17,15 @@ class TestSigners(unittest.TestCase):
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_PGP(self, mock_repo: Mock) -> None:
-        signer = Signers.create("linux")
+        signer = Signers.create("linux", True)
         self.assertIs(type(signer), SignerPGP)
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_windows(self, mock_repo: Mock) -> None:
-        signer = Signers.create("windows")
+        signer = Signers.create("windows", True)
         self.assertIs(type(signer), SignerWindows)
 
     def test_signer_invalid(self) -> None:
         with self.assertRaises(ValueError) as ctx:
-            Signers.create("mac")
+            Signers.create("mac", False)
         self.assertEqual(str(ctx.exception), "Unsupported type of platform for signing: mac")

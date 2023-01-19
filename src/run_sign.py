@@ -23,7 +23,8 @@ def main() -> int:
         components=args.components,
         artifact_type=args.type,
         signature_type=args.sigtype,
-        platform=args.platform
+        platform=args.platform,
+        overwrite=args.overwrite
     )
 
     sign.sign()

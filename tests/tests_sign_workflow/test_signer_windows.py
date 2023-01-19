@@ -27,31 +27,43 @@ class TestSignerWindows(unittest.TestCase):
             "the-ps1.ps1",
             "the-psm1.psm1",
             "the-cat.cat",
-            "the-zip.zip",
             "random-file.txt",
             "something-1.0.0.0.jar",
         ]
         expected = [
-            call("the-msi.msi", Path("path"), ".asc"),
-            call("the-exe.exe", Path("path"), ".asc"),
-            call("the-dll.dll", Path("path"), ".asc"),
-            call("the-sys.sys", Path("path"), ".asc"),
-            call("the-ps1.ps1", Path("path"), ".asc"),
-            call("the-psm1.psm1", Path("path"), ".asc"),
-            call("the-cat.cat", Path("path"), ".asc"),
-            call("the-zip.zip", Path("path"), ".asc"),
+            call("the-msi.msi", Path("path"), 'null'),
+            call("the-exe.exe", Path("path"), 'null'),
+            call("the-dll.dll", Path("path"), 'null'),
+            call("the-sys.sys", Path("path"), 'null'),
+            call("the-ps1.ps1", Path("path"), 'null'),
+            call("the-psm1.psm1", Path("path"), 'null'),
+            call("the-cat.cat", Path("path"), 'null'),
         ]
-        signer = SignerWindows()
+        signer = SignerWindows(True)
         signer.sign = MagicMock()  # type: ignore
-        signer.sign_artifacts(artifacts, Path("path"), ".asc")
+        signer.sign_artifacts(artifacts, Path("path"), 'null')
         self.assertEqual(signer.sign.call_args_list, expected)
 
     @patch("sign_workflow.signer.GitRepository")
     @patch('os.rename')
     @patch('os.mkdir')
     def test_signer_sign(self, mock_os_mkdir: Mock, mock_os_rename: Mock, mock_repo: Mock) -> None:
-        signer = SignerWindows()
-        signer.sign("the-msi.msi", Path("/path/"), ".asc")
-        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-msi.msi') + " -o " + os.path.join(Path("/path/"), 'signed_the-msi.msi') + " -p windows"
+        signer = SignerWindows(False)
+        signer.sign("the-msi.msi", Path("/path/"), "null")
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-msi.msi') + " -o " + os.path.join(Path("/path/"), 'signed_the-msi.msi') + " -p windows -r False"
         mock_repo.assert_has_calls(
             [call().execute(command)])
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_sign_command_for_overwrite(self, mock_repo: Mock) -> None:
+        signer = SignerWindows(True)
+        signer.sign("the-msi.msi", Path("/path/"), 'null')
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-msi.msi') + " -o " + os.path.join(Path("/path/"), 'the-msi.msi') + " -p windows" + " -r True"
+        mock_repo.assert_has_calls(
+            [call().execute(command)])
+
+    @patch("sign_workflow.signer.GitRepository")
+    def test_signer_verify(self, mock_repo: Mock) -> None:
+        signer = SignerWindows(True)
+        signer.verify("/path/the-msi.msi")
+        mock_repo.assert_has_calls([call().execute("osslsigncode verify -in /path/the-msi.msi")])
