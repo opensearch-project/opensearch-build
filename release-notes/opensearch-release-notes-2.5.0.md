@@ -1,18 +1,10 @@
 # OpenSearch and OpenSearch Dashboards 2.5.0 Release Notes
 
-## Release Details
-
-OpenSearch and OpenSearch Dashboards 2.5.0 includes the following feature, enhancement, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
-
-OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.5.0.md).
-
-OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.5.0.md).
-
 ## Release Highlights
 
 The OpenSearch 2.5.0 release adds new tools and enhancements to help you advance your search, analytics, and observability workloads. This release includes the software’s first Debian distribution and first administrative user interface, along with support for multi-layered maps and the ability to analyze traces in the Jaeger schema. The release also includes indexing and search improvements for Lucene-based k-NN search functionality, and Security Analytics tools are now generally available. Following are some highlights for this release.
 
-### New features
+### New Features
 
 * You can now perform common administrative operations on your OpenSearch indexes, such as CRUD (Create, Read, Update, and Delete) functions, through an admin user interface.
 * OpenSearch 2.5.0 lets you analyze trace data collected by the open-source Jaeger solution. Select Data Prepper or Jaeger as your trace data source as part of the OpenSearch Dashboards Observability feature.
@@ -22,11 +14,19 @@ The OpenSearch 2.5.0 release adds new tools and enhancements to help you advance
 * Administrators can now view the health of their cluster at the awareness attribute level when shard allocation awareness is configured.
 * You can now search your rollup indexes using query string search queries.
 
-### Experimental features
+### Experimental Features
 
 OpenSearch 2.5.0 includes the following experimental features. Experimental features are disabled by default. For instructions on how to enable them, see the version history (https://opensearch.org/docs/latest/version-history/) page which includes links to the documentation.
 * Request-level durability allows you to deploy remote-backed storage on a per-index basis, supporting data durability for cloud-based backup and restore operations.
 * As an enhancement to semantic search functionality, the model-serving framework now allows users to serve machine learning (ML) models on ML nodes that can take advantage of CUDA-compatible GPUs.
+
+## Release Details
+
+OpenSearch and OpenSearch Dashboards 2.5.0 includes the following feature, enhancement, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.5.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.5.0.md).
 
 
 ## FEATURE
