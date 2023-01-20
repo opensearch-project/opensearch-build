@@ -16,6 +16,7 @@ class Distribution(ABC):
         self.filename = filename
         self.version = version
         self.work_dir = work_dir
+        self.require_sudo = False
 
     @property
     @abstractmethod
@@ -26,10 +27,17 @@ class Distribution(ABC):
         pass
 
     @property
-    @abstractmethod
-    def config_dir(self) -> str:
+    def config_filename(self) -> str:
         """
-        Return the config directory for the distribution
+        Return the config filename for the distribution
+        """
+        return f"{self.filename.replace('-', '_')}.yml"
+
+    @property
+    @abstractmethod
+    def config_path(self) -> str:
+        """
+        Return the config path for the distribution
         """
         pass
 
