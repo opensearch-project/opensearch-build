@@ -5,6 +5,9 @@
 # OpenSearch home directory
 OPENSEARCH_HOME=/usr/share/opensearch
 
+# k-NN Lib Path
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/share/opensearch/plugins/opensearch-knn/lib
+
 # OpenSearch Java path
 #OPENSEARCH_JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto
 
