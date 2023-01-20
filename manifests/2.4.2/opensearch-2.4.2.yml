@@ -14,3 +14,12 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: '2.4'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:publish
+      - gradle:properties:version
