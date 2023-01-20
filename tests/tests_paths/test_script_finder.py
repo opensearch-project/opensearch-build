@@ -168,35 +168,35 @@ class TestScriptFinder(unittest.TestCase):
 
     def test_find_bwc_test_script_component_override(self) -> None:
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("OpenSearch", self.component_without_scripts),
             msg="A component without scripts resolves to a component override.",
         )
 
     def test_find_bwc_test_script_component_script(self) -> None:
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("OpenSearch", self.component_with_scripts),
             msg="A component with a script resolves to the script at the root.",
         )
 
     def test_find_bwc_test_script_component_script_in_folder(self) -> None:
         self.assertEqual(
-            os.path.join(self.component_with_scripts_folder, "scripts", "bwctest.sh"),
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("foobar", self.component_with_scripts_folder),
             msg="A component with a scripts folder resolves to an override.",
         )
 
     def test_find_bwc_test_script_component_script_in_folder_with_default(self) -> None:
         self.assertEqual(
-            os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "bwctest.sh"),
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("OpenSearch", self.component_with_scripts_folder),
             msg="A component with a scripts folder resolves to a script in that folder.",
         )
 
     def test_find_bwc_test_script_component_script_in_component_folder(self) -> None:
         self.assertEqual(
-            os.path.join(self.component_with_scripts_in_component_folder, "Component", "bwctest.sh"),
+            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("Component", self.component_with_scripts_in_component_folder),
             msg="A component with a script in component folder resolves to the override.",
         )
