@@ -61,7 +61,6 @@ components:
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
     ref: '1.3'
-    working_directory: opensearch-observability
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -98,16 +97,6 @@ components:
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: '1.3'
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version
-    platforms:
-      - linux
-      - windows
-  - name: dashboards-reports
-    repository: https://github.com/opensearch-project/reporting.git
-    ref: '1.3'
-    working_directory: reports-scheduler
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
