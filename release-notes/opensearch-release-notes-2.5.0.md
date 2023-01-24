@@ -22,7 +22,7 @@ OpenSearch 2.5.0 includes the following experimental features. Experimental feat
 
 ## Release Details
 
-OpenSearch and OpenSearch Dashboards 2.5.0 includes the following feature, enhancement, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+[OpenSearch and OpenSearch Dashboards 2.5.0](https://opensearch.org/versions/opensearch-2-5-0.html) includes the following feature, enhancement, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.5.0.md).
 
