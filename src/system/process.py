@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 import logging
+import os
 import subprocess
 import tempfile
 from typing import Any
@@ -24,8 +25,8 @@ class Process:
         if self.started:
             raise ProcessStartedError(self.pid)
 
-        self.stdout = tempfile.NamedTemporaryFile(mode="r+")
-        self.stderr = tempfile.NamedTemporaryFile(mode="r+")
+        self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+        self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False)
 
         self.process = subprocess.Popen(
             command,
@@ -54,13 +55,15 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.__stdout_data__ = self.stdout.read()
+            self.__stdout_data__ = open(self.stdout.name, 'r').read()
             self.stdout.close()
+            os.remove(self.stdout.name)
             self.stdout = None
 
         if self.stderr:
-            self.__stderr_data__ = self.stderr.read()
+            self.__stderr_data__ = open(self.stderr.name, 'r').read()
             self.stderr.close()
+            os.remove(self.stderr.name)
             self.stderr = None
 
         self.return_code = self.process.returncode
