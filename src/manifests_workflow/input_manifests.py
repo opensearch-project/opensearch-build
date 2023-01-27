@@ -28,6 +28,10 @@ class InputManifests(Manifests):
         "opensearch": "linux macos windows",
         "opensearch-dashboards": "linux windows"
     }
+    BUILD_DISTRIBUTION = {
+        "opensearch": "tar rpm deb zip",
+        "opensearch-dashboards": "tar rpm deb zip"
+    }
 
     def __init__(self, name: str) -> None:
         self.name = name
@@ -170,10 +174,12 @@ class InputManifests(Manifests):
             data = f.read()
 
         build_platform = self.BUILD_PLATFORM.get(self.prefix, "linux")
+        build_distribution = self.BUILD_DISTRIBUTION.get(self.prefix, "tar")
 
         cron_entry = f"H 1 * * * %INPUT_MANIFEST={version}/{self.prefix}-{version}.yml;" \
                      f"TARGET_JOB_NAME=distribution-build-{self.prefix};" \
-                     f"BUILD_PLATFORM={build_platform}\n"
+                     f"BUILD_PLATFORM={build_platform};" \
+                     f"BUILD_DISTRIBUTION={build_distribution}\n"
 
         if cron_entry in data:
             raise ValueError(f"{jenkinsfile} already contains an entry for {self.prefix} {version}")
