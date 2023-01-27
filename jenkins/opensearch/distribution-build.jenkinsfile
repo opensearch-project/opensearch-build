@@ -50,7 +50,7 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
-            description: "Build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on linux)",
+            description: "Build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
             defaultValue: 'tar rpm deb zip',
             trim: true
         )
