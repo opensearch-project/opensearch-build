@@ -44,8 +44,14 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between",
+            description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
             defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'BUILD_DISTRIBUTION',
+            description: "Build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
             trim: true
         )
         choice(
@@ -101,6 +107,25 @@ pipeline {
                             error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
                         }
                     }
+
+                    echo("Verify Build Distributions")
+                    def build_distribution_array = params.BUILD_DISTRIBUTION.tokenize(' ')
+                    echo("User Entry Distributions: '${params.BUILD_DISTRIBUTION}', ${build_distribution_array}")
+                    def all_distributions = "tar rpm deb zip"
+                    echo("All Supported Platforms: '${all_distributions}'")
+
+                    if (params.BUILD_DISTRIBUTION == null || params.BUILD_DISTRIBUTION == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
+                    }
+
+                    for (String plat : build_distribution_array) {
+                        if (! all_distributions.contains(plat)) {
+                            currentBuild.result = 'ABORTED'
+                            error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
+                        }
+                    }
+
                 }
             }
         }
@@ -133,8 +158,13 @@ pipeline {
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('tar')
+                            }
                         }
                     }
                     agent {
@@ -237,8 +267,13 @@ pipeline {
                 stage('build-and-test-linux-x64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('rpm')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -332,8 +367,13 @@ pipeline {
                 stage('build-and-test-linux-x64-deb') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('deb')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -412,8 +452,13 @@ pipeline {
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('tar')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -554,8 +599,13 @@ pipeline {
                 stage('build-and-test-linux-arm64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('rpm')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -654,8 +704,13 @@ pipeline {
                 stage('build-and-test-linux-arm64-deb') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('deb')
+                            }
                         }
                     }
                     agent { label AGENT_ARM64 }
@@ -734,8 +789,13 @@ pipeline {
                 stage('build-and-test-windows-x64-zip') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('windows')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('windows')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('zip')
+                            }
                         }
                     }
                     agent {
@@ -805,6 +865,9 @@ pipeline {
                     expression{
                         params.BUILD_PLATFORM.contains('linux')
                     }
+                    expression{
+                        params.BUILD_DISTRIBUTION.contains('tar')
+                    }
                 }
             }
             agent {
@@ -851,17 +914,25 @@ pipeline {
                 script {
                     List<String> stages = []
                     if (params.BUILD_PLATFORM.contains('linux')) {
-                        stages = [
-                            'build-and-test-linux-x64-tar',
-                            'assemble-archive-and-test-linux-x64-rpm',
-                            'assemble-archive-and-test-linux-x64-deb',
-                            'assemble-archive-and-test-linux-arm64-tar',
-                            'assemble-archive-and-test-linux-arm64-rpm',
-                            'assemble-archive-and-test-linux-arm64-deb',
-                        ]
+                        if (params.BUILD_DISTRIBUTION.contains('tar')) {
+                            stages = [
+                                'build-and-test-linux-x64-tar',
+                                'assemble-archive-and-test-linux-arm64-tar',
+                            ]
+                        }
+                        if (params.BUILD_DISTRIBUTION.contains('rpm')) {
+                            stages.add('assemble-archive-and-test-linux-x64-rpm')
+                            stages.add('assemble-archive-and-test-linux-arm64-rpm')
+                        }
+                        if (params.BUILD_DISTRIBUTION.contains('deb')) {
+                            stages.add('assemble-archive-and-test-linux-x64-deb')
+                            stages.add('assemble-archive-and-test-linux-arm64-deb')
+                        }
                     }
                     if (params.BUILD_PLATFORM.contains('windows')){
-                        stages.add('build-and-test-windows-x64-zip')
+                        if (params.BUILD_DISTRIBUTION.contains('zip')) {
+                            stages.add('build-and-test-windows-x64-zip')
+                        }
                     }
                     if (params.PUBLISH_NOTIFICATION) {
                         def stashed = lib.jenkins.Messages.new(this).get(stages)
