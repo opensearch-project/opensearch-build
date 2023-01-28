@@ -55,13 +55,11 @@ components:
   - name: opensearch-reports
     integ-test:
       test-configs:
-        - with-security
         - without-security
 
   - name: opensearch-observability
     integ-test:
       test-configs:
-        - with-security
         - without-security
 
   - name: ml-commons
