@@ -76,3 +76,12 @@ components:
     platforms:
       - linux
       - windows
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
