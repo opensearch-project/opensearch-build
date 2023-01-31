@@ -14,6 +14,8 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
+            H 1 * * * %INPUT_MANIFEST=2.5.1/opensearch-dashboards-2.5.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 1 * * * %INPUT_MANIFEST=2.5.1/opensearch-2.5.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=2.6.0/opensearch-2.6.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=2.6.0/opensearch-dashboards-2.6.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=2.4.2/opensearch-dashboards-2.4.2.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
