@@ -92,7 +92,7 @@ pipeline {
                             build job: "${TARGET_JOB_NAME}", parameters: [
                             string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
                             string(name: 'TEST_MANIFEST', value: "${TEST_MANIFEST}"),
-                            string(name: 'BUILD_PLATFORM', value: "${BUILD_PLATFORM}")
+                            string(name: 'BUILD_PLATFORM', value: "${BUILD_PLATFORM}"),
                             string(name: 'BUILD_DISTRIBUTION', value: "${BUILD_DISTRIBUTION}")
                             ], wait: true
 
