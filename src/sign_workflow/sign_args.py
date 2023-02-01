@@ -20,14 +20,46 @@ class SignArgs:
     type: str
     sigtype: str
     platform: str
+    overwrite: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Sign artifacts")
-        parser.add_argument("target", type=Path, help="Path to local manifest file or artifact directory")
-        parser.add_argument("-c", "--component", type=str, nargs='*', dest="components", help="Component or components to sign")
-        parser.add_argument("--type", help="Artifact type")
-        parser.add_argument("--sigtype", choices=self.ACCEPTED_SIGNATURE_FILE_TYPES, help="Type of signature file.", default=".sig")
-        parser.add_argument("--platform", choices=self.ACCEPTED_PLATFORM, help="Distribution platform.", default="linux")
+        parser.add_argument(
+            "target",
+            type=Path,
+            help="Path to local manifest file or artifact directory"
+        )
+        parser.add_argument(
+            "-c",
+            "--component",
+            type=str,
+            nargs='*',
+            dest="components",
+            help="Component or components to sign"
+        )
+        parser.add_argument(
+            "--type",
+            help="Artifact type"
+        )
+        parser.add_argument(
+            "--sigtype",
+            choices=self.ACCEPTED_SIGNATURE_FILE_TYPES,
+            help="Type of signature file.",
+            default=".sig"
+        )
+        parser.add_argument(
+            "--platform",
+            choices=self.ACCEPTED_PLATFORM,
+            help="Distribution platform.",
+            default="linux"
+        )
+        parser.add_argument(
+            "--overwrite",
+            action="store_true",
+            help="Overwrite existing artifacts or signature files.",
+            default=False,
+            dest="overwrite"
+        )
         parser.add_argument(
             "-v",
             "--verbose",
@@ -45,3 +77,4 @@ class SignArgs:
         self.sigtype = args.sigtype
         self.components = args.components
         self.platform = args.platform
+        self.overwrite = args.overwrite

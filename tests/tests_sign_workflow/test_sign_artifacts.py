@@ -24,14 +24,15 @@ class TestSignArtifacts(unittest.TestCase):
         artifact_type = 'dummy'
         sigtype = '.asc'
         platform = 'linux'
+        overwrite = False
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, platform)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/manifest.yml"), components, artifact_type, sigtype, platform, overwrite)
         self.assertEqual(type(SignWithBuildManifest), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, platform)
+        klass = SignArtifacts.from_path(Path(os.path.dirname(__file__)), components, artifact_type, sigtype, platform, overwrite)
         self.assertEqual(type(SignExistingArtifactsDir), type(klass.__class__))
 
-        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, platform)
+        klass = SignArtifacts.from_path(Path(r"/dummy/path/artifact.tar.gz"), components, artifact_type, sigtype, platform, overwrite)
         self.assertEqual(type(SignArtifactsExistingArtifactFile), type(klass.__class__))
 
     def test_signer_class(self) -> None:
@@ -52,12 +53,14 @@ class TestSignArtifacts(unittest.TestCase):
         manifest = Path(os.path.join(os.path.dirname(__file__), "data", "opensearch-build-1.1.0.yml"))
         sigtype = '.asc'
         platform = 'windows'
+        overwrite = False
         signer_with_manifest = SignWithBuildManifest(
             target=manifest,
             components=[],
             artifact_type="maven",
             signature_type=sigtype,
-            platform=platform
+            platform=platform,
+            overwrite=overwrite
         )
         signer = MagicMock()
         signer_with_manifest.signer = signer
@@ -77,12 +80,14 @@ class TestSignArtifacts(unittest.TestCase):
         path = Path(r"/dummy/path/file.tar.gz")
         sigtype = '.sig'
         platform = 'linux'
+        overwrite = False
         signer_with_manifest = SignArtifactsExistingArtifactFile(
             target=path,
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
-            platform=platform
+            platform=platform,
+            overwrite=overwrite
         )
         signer = MagicMock()
         signer_with_manifest.signer = signer
@@ -99,12 +104,14 @@ class TestSignArtifacts(unittest.TestCase):
         path = Path('dummy')
         sigtype = '.sig'
         platform = 'linux'
+        overwrite = False
         signer_with_manifest = SignExistingArtifactsDir(
             target=path,
             components=['maven'],
             artifact_type='dummy',
             signature_type=sigtype,
-            platform=platform
+            platform=platform,
+            overwrite=overwrite
         )
         signer = MagicMock()
         signer_with_manifest.signer = signer

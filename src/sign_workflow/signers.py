@@ -26,6 +26,6 @@ class Signers:
         return klass  # type: ignore[return-value]
 
     @classmethod
-    def create(cls, platform: str) -> Signer:
+    def create(cls, platform: str, overwrite: bool) -> Signer:
         klass = cls.from_platform(platform)
-        return klass()  # type: ignore[no-any-return, operator]
+        return klass(overwrite)  # type: ignore[no-any-return, operator]

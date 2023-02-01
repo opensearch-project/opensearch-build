@@ -19,7 +19,6 @@ The signed artifacts will be found in the same location as the original artifact
 
 
 class SignerPGP(Signer):
-
     ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm", ".deb"]
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
@@ -35,7 +34,9 @@ class SignerPGP(Signer):
     def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
         filename = os.path.join(basepath, artifact)
         signature_file = filename + ".sig"
-        self.__remove_existing_signature__(signature_file)
+        if not self.overwrite:
+            self.__remove_existing_signature__(signature_file)
+
         signing_cmd = [
             "./opensearch-signer-client",
             "-i",
@@ -44,9 +45,11 @@ class SignerPGP(Signer):
             signature_file,
             "-p",
             "pgp",
+            "-r",
+            str(self.overwrite)
         ]
         self.git_repo.execute(" ".join(signing_cmd))
-        if(signature_type == ".asc"):
+        if (signature_type == ".asc"):
             self.__convert_to_asc(filename, signature_file)
 
     def __convert_to_asc(self, filename: str, signature_file: str) -> None:
