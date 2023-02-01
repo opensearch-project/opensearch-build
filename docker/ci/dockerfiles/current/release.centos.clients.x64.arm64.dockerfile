@@ -89,7 +89,7 @@ RUN pip3 install twine cmake==3.24.1.1
 
 # Install openssl1.1.1
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
-RUN yum install -y curl libcurl-devel libfaketime && yum remove -y openssl-devel perl-core pcre-devel && yum clean all && \
+RUN yum install -y curl libcurl-devel libfaketime perl-core pcre-devel && yum remove -y openssl-devel && yum clean all && \
     mkdir -p /tmp/openssl && cd /tmp/openssl && \
     curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
     ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
