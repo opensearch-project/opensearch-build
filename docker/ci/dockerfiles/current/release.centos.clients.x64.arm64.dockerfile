@@ -8,14 +8,9 @@
 # for both developers and ci/cd pipeline for releasing Opensearch clients and other products
 # Please read the README.md file for all the information before using this dockerfile
 
-
 FROM centos:7
 
 ARG MAVEN_DIR=/usr/local/apache-maven
-
-# Ensure localedef running correct with root permission
-USER 0
-
 # Setup ENV to prevent ASCII data issues with Python3
 RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
     echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
@@ -24,7 +19,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 # Add normal dependencies
 RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh epel-release
 
 # Add Python37 dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
@@ -85,7 +80,20 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     pip3 install pipenv && pipenv --version && pip install --upgrade pip
 
 # Install twine
-RUN pip3 install twine
+RUN pip3 install twine cmake==3.24.1.1
+
+# Install openssl1.1.1
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
+RUN yum install -y curl libcurl-devel libfaketime && yum remove -y openssl-devel perl-core pcre-devel && yum clean all && \
+    mkdir -p /tmp/openssl && cd /tmp/openssl && \
+    curl -sSL -o- https://ftp.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
+    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
+    echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
+
+# Install osslsigncode
+RUN mkdir -p /tmp/osslsigncode && cd /tmp/osslsigncode && source /etc/profile.d/openssl.sh && \
+    curl -sSL -o- https://github.com/mtrojnar/osslsigncode/archive/refs/tags/2.5.tar.gz  | tar -xz --strip-components 1 && \
+    mkdir -p build && cd build && cmake -S .. && cmake --build . && cmake --install . && osslsigncode --version
 
 # Change User
 USER 1000
