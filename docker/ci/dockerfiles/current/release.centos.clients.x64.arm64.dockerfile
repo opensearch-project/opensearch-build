@@ -91,7 +91,7 @@ RUN pip3 install twine cmake==3.24.1.1
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
 RUN yum install -y curl libcurl-devel libfaketime && yum remove -y openssl-devel perl-core pcre-devel && yum clean all && \
     mkdir -p /tmp/openssl && cd /tmp/openssl && \
-    curl -sSL -o- https://ftp.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
+    curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
     ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
 
