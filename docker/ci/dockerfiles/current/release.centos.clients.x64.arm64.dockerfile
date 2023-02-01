@@ -8,9 +8,14 @@
 # for both developers and ci/cd pipeline for releasing Opensearch clients and other products
 # Please read the README.md file for all the information before using this dockerfile
 
+
 FROM centos:7
 
 ARG MAVEN_DIR=/usr/local/apache-maven
+
+# Ensure localedef running correct with root permission
+USER 0
+
 # Setup ENV to prevent ASCII data issues with Python3
 RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
     echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
