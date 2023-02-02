@@ -99,6 +99,8 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby related dependencies
+# Need to run either `. /usr/share/opensearch/.rvm/scripts/rvm` in sh or `source /usr/share/opensearch/.rvm/scripts/rvm`
+# before using the rvm command for any activities
 RUN . /usr/share/opensearch/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
     rvm install jruby-9.3.0.0
 
