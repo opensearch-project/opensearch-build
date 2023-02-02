@@ -63,7 +63,7 @@ SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
 # Install ruby related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0
+RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && rvm install jruby-9.3.0.0
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
