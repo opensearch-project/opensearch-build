@@ -32,7 +32,7 @@ pipeline {
             description: 'What is the platform of the distribution?'
         )
         choice(
-            choices: ['tar', 'rpm', 'deb' 'zip'],
+            choices: ['tar', 'rpm', 'deb', 'zip'],
             name: 'DISTRIBUTION_NAME',
             description: 'What is the name of the distribution??'
         )
