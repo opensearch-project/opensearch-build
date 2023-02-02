@@ -18,19 +18,23 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
 
         self.work_dir = os.path.join(os.path.dirname(__file__), "data")
         self.product = "opensearch"
+        self.product_dashboards = "opensearch-dashboards"
         self.version = "2.4.0"
         self.distribution_zip = DistributionZip(self.product, self.version, self.work_dir)
+        self.distribution_zip_dashboards = DistributionZip(self.product_dashboards, self.version, self.work_dir)
 
     def test_distribution_zip_vars(self) -> None:
         self.assertEqual(self.distribution_zip.filename, self.product)
         self.assertEqual(self.distribution_zip.version, self.version)
         self.assertEqual(self.distribution_zip.work_dir, self.work_dir)
+        self.assertEqual(self.distribution_zip.require_sudo, False)
 
     def test_install_dir(self) -> None:
         self.assertEqual(self.distribution_zip.install_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}"))
 
-    def test_config_dir(self) -> None:
-        self.assertEqual(self.distribution_zip.config_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}", "config"))
+    def test_config_path(self) -> None:
+        self.assertEqual(self.distribution_zip.config_path, os.path.join(self.work_dir, f"{self.product}-{self.version}", "config", "opensearch.yml"))
+        self.assertEqual(self.distribution_zip_dashboards.config_path, os.path.join(self.work_dir, f"{self.product_dashboards}-{self.version}", "config", "opensearch_dashboards.yml"))
 
     def test_install(self) -> None:
         with patch("test_workflow.integ_test.distribution_zip.ZipFile") as mock_zipfile_open:
@@ -71,8 +75,8 @@ class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
     def test_install_dir(self) -> None:
         self.assertEqual(self.distribution_zip.install_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}"))
 
-    def test_config_dir(self) -> None:
-        self.assertEqual(self.distribution_zip.config_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}", "config"))
+    def test_config_path(self) -> None:
+        self.assertEqual(self.distribution_zip.config_path, os.path.join(self.work_dir, f"{self.product}-{self.version}", "config", "opensearch_dashboards.yml"))
 
     def test_install(self) -> None:
         with patch("test_workflow.integ_test.distribution_zip.ZipFile") as mock_zipfile_open:

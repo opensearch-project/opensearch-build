@@ -63,7 +63,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
-        mock_process.assert_called_once_with("./opensearch-tar-install.sh", os.path.join(self.work_dir, "opensearch-1.1.0"))
+        mock_process.assert_called_once_with("./opensearch-tar-install.sh", os.path.join(self.work_dir, "opensearch-1.1.0"), False)
 
         mock_dump.assert_called_once_with(self.additional_config)
 
