@@ -37,13 +37,22 @@ if ! grep -q '## OpenSearch Performance Analyzer' ${config_dir}/jvm.options; the
    echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> ${config_dir}/jvm.options
 fi
 
+# Set owner
+chown -R opensearch.opensearch ${product_dir}
+chown -R opensearch.opensearch ${config_dir}
+chown -R opensearch.opensearch ${log_dir}
+chown -R opensearch.opensearch ${data_dir}
+chown -R opensearch.opensearch ${pid_dir}
+
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
     systemctl daemon-reload
 fi
 
 # Reload other configs
-sysctl -p /usr/lib/sysctl.d/opensearch.conf > /dev/null 2>&1
+if command -v systemctl > /dev/null; then
+    systemctl restart systemd-sysctl.service || true
+fi
 systemd-tmpfiles --create opensearch.conf
 
 # Messages
@@ -57,14 +66,6 @@ if [ -d ${product_dir}/plugins/opensearch-security ]; then
     echo "### Create opensearch demo certificates in ${config_dir}/"
     echo " See demo certs creation log in ${log_dir}/install_demo_configuration.log"
 fi
-
-# Set owner
-chown -R opensearch.opensearch ${product_dir}
-chown -R opensearch.opensearch ${config_dir}
-chown -R opensearch.opensearch ${log_dir}
-chown -R opensearch.opensearch ${data_dir}
-chown -R opensearch.opensearch ${pid_dir}
-
 exit 0
 
 
