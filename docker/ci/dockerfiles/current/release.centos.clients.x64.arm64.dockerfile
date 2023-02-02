@@ -53,24 +53,6 @@ RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Install PKG builder dependencies with rvm
-RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
-    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
-    curl -sSL https://get.rvm.io | bash -s stable
-
-# Switch shell for rvm related commands
-SHELL ["/bin/bash", "-lc"]
-CMD ["/bin/bash", "-l"]
-
-# Install ruby related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0
-
-ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
-ENV RVM_HOME=/usr/local/rvm/bin
-ENV GEM_HOME=/usr/share/opensearch/.gem
-ENV GEM_PATH=$GEM_HOME
-ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
-
 # Install Python37 binary
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
     cd Python-3.7.7 && \
@@ -100,9 +82,33 @@ RUN mkdir -p /tmp/osslsigncode && cd /tmp/osslsigncode && source /etc/profile.d/
     curl -sSL -o- https://github.com/mtrojnar/osslsigncode/archive/refs/tags/2.5.tar.gz  | tar -xz --strip-components 1 && \
     mkdir -p build && cd build && cmake -S .. && cmake --build . && cmake --install . && osslsigncode --version
 
+# Install rvm dependencies
+RUN yum install -y patch make ruby openssl-devel && yum clean all
+
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
+
+# Install PKG builder dependencies with rvm
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
+    curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import - && \
+    curl -sSL https://get.rvm.io | bash -s stable
+
+# Switch shell for rvm related commands
+SHELL ["/bin/bash", "-lc"]
+CMD ["/bin/bash", "-l"]
+
+# Install ruby related dependencies
+# Need to run either `. /usr/share/opensearch/.rvm/scripts/rvm` or `source /usr/share/opensearch/.rvm/scripts/rvm` 
+# and force bash if needed before using the rvm command for any activities, or rvm will not correctly use version
+RUN . /usr/share/opensearch/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
+    rvm install jruby-9.3.0.0
+
+ENV RUBY_HOME=/usr/share/opensearch/.rvm/rubies/ruby-2.6.0/bin
+ENV RVM_HOME=/usr/share/opensearch/.rvm/bin
+ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV GEM_PATH=$GEM_HOME
+ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
@@ -124,3 +130,5 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN node -v
 RUN npm -v
 RUN yarn -v
+RUN openssl version
+RUN osslsigncode --version
