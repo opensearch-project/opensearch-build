@@ -29,6 +29,7 @@ class TestSignerPGP(unittest.TestCase):
             "the-tar.tar.gz",
             "random-file.txt",
             "something-1.0.0.0.jar",
+            "the-tgz.tgz"
         ]
         expected = [
             call("the-jar.jar", Path("path"), ".asc"),
@@ -40,6 +41,7 @@ class TestSignerPGP(unittest.TestCase):
             call("the-module.module", Path("path"), ".asc"),
             call("the-tar.tar.gz", Path("path"), ".asc"),
             call("something-1.0.0.0.jar", Path("path"), ".asc"),
+            call("the-tgz.tgz", Path("path"), ".asc")
         ]
         signer = SignerPGP(False)
         signer.sign = MagicMock()  # type: ignore
@@ -62,7 +64,8 @@ class TestSignerPGP(unittest.TestCase):
             "random-file.txt",
             "something-1.0.0.0.jar",
             "opensearch_sql_cli-1.0.0-py3-none-any.whl",
-            "cratefile.crate"
+            "cratefile.crate",
+            "the-tgz.tgz"
         ]
         expected = [
             call("the-jar.jar", Path("path"), ".sig"),
@@ -75,7 +78,8 @@ class TestSignerPGP(unittest.TestCase):
             call("the-tar.tar.gz", Path("path"), ".sig"),
             call("something-1.0.0.0.jar", Path("path"), ".sig"),
             call("opensearch_sql_cli-1.0.0-py3-none-any.whl", Path("path"), ".sig"),
-            call("cratefile.crate", Path("path"), ".sig")
+            call("cratefile.crate", Path("path"), ".sig"),
+            call("the-tgz.tgz", Path("path"), ".sig")
         ]
         signer = SignerPGP(False)
         signer.sign = MagicMock()  # type: ignore
