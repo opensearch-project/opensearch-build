@@ -28,7 +28,6 @@ jobs:
           - {repo: asynchronous-search}
           - {repo: common-utils}
           - {repo: cross-cluster-replication}
-          - {repo: dashboards-reports, path: reports-scheduler}
           - {repo: geospatial}
           - {repo: index-management}
           - {repo: job-scheduler}
@@ -36,9 +35,10 @@ jobs:
           - {repo: neural-search}
           - {repo: ml-commons}
           - {repo: notifications, path: notifications}
-          - {repo: observability, path: opensearch-observability}
+          - {repo: observability}
           - {repo: performance-analyzer}
           - {repo: performance-analyzer-rca}
+          - {repo: reporting}
           - {repo: security}
           - {repo: security-analytics}
           - {repo: sql}
