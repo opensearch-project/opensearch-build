@@ -15,6 +15,7 @@ Documentation=https://opensearch.org/
 Type=notify
 RuntimeDirectory=opensearch
 PrivateTmp=true
+EnvironmentFile=-/etc/default/opensearch
 EnvironmentFile=-/etc/sysconfig/opensearch
 WorkingDirectory=/usr/share/opensearch
 User=opensearch

@@ -7,6 +7,7 @@
 
 import logging
 import os
+import subprocess
 
 import requests
 import yaml
@@ -22,7 +23,7 @@ class ServiceOpenSearch(Service):
     dist: Distribution
     dependency_installer: DependencyInstaller
     install_dir: str
-    opensearch_yml_dir: str
+    opensearch_yml_path: str
     security_plugin_dir: str
 
     def __init__(
@@ -44,8 +45,18 @@ class ServiceOpenSearch(Service):
     def start(self) -> None:
         self.dist.install(self.download())
 
-        self.opensearch_yml_dir = os.path.join(self.dist.config_dir, "opensearch.yml")
+        self.opensearch_yml_path = self.dist.config_path
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
+
+        # Additional for sql
+        print("start catalog")
+        self.catalog_json_path = os.path.join(self.install_dir, "catalog.json")
+        os.system(f"curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/src/test/resources/catalog/catalog.json -o {self.catalog_json_path}")
+        subprocess.check_call(
+            f"echo y | {self.dist.keystore_cmd} add-file plugins.query.federation.datasources.config catalog.json",
+            shell=True,
+            cwd=self.install_dir,
+        )
 
         if not self.security_enabled and os.path.isdir(self.security_plugin_dir):
             self.__add_plugin_specific_config({"plugins.security.disabled": "true"})
@@ -53,7 +64,7 @@ class ServiceOpenSearch(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start(self.dist.start_cmd, self.install_dir)
+        self.process_handler.start(self.dist.start_cmd, self.install_dir, self.dist.require_sudo)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
     def uninstall(self) -> None:
@@ -68,7 +79,7 @@ class ServiceOpenSearch(Service):
         return requests.get(url, verify=False, auth=("admin", "admin"))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
-        with open(self.opensearch_yml_dir, "a") as yamlfile:
+        with open(self.opensearch_yml_path, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 
     def port(self) -> int:

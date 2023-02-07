@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.5.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.5.6', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -29,12 +29,17 @@ pipeline {
         choice(
             choices: ['linux', 'windows', 'darwin'],
             name: 'DISTRIBUTION_PLATFORM',
-            description: 'What platform is this distribution build for?'
+            description: 'What is the platform of the distribution?'
+        )
+        choice(
+            choices: ['tar', 'rpm', 'deb', 'zip'],
+            name: 'DISTRIBUTION_NAME',
+            description: 'What is the name of the distribution??'
         )
         choice(
             choices: ['arm64', 'x64'],
             name: 'DISTRIBUTION_ARCHITECTURE',
-            description: 'What architecture is this distribution build for?'
+            description: 'What is the architecture of the distribution?'
         )
     }
     stages {

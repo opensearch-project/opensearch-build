@@ -22,8 +22,8 @@ class DistributionTar(Distribution):
         return os.path.join(self.work_dir, f"{self.filename}-{self.version}")
 
     @property
-    def config_dir(self) -> str:
-        return os.path.join(self.install_dir, "config")
+    def config_path(self) -> str:
+        return os.path.join(self.install_dir, "config", self.config_filename)
 
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
@@ -41,3 +41,9 @@ class DistributionTar(Distribution):
     def uninstall(self) -> None:
         logging.info(f"Cleanup {self.work_dir}/* content after the test")
         subprocess.check_call(f"rm -rf {self.work_dir}/*", shell=True)
+
+    @property
+    def keystore_cmd(self) -> str:
+        if self.filename == "opensearch-dashboards":
+            logging.info("keystore command is not used for OpenSearch Dashboards")
+        return os.path.join("bin", "opensearch-keystore")

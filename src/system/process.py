@@ -16,17 +16,20 @@ import psutil
 class Process:
     def __init__(self) -> None:
         self.process: subprocess.Popen[bytes] = None
+        self.require_sudo: bool = False
         self.stdout: Any = None
         self.stderr: Any = None
         self.__stdout_data__: str = None
         self.__stderr_data__: str = None
 
-    def start(self, command: str, cwd: str) -> None:
+    def start(self, command: str, cwd: str, require_sudo: bool = False) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
         self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False)
         self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+
+        self.require_sudo = require_sudo
 
         self.process = subprocess.Popen(
             command,
@@ -47,10 +50,10 @@ class Process:
             logging.debug(f"Found child process with pid {child.pid}")
             if child.pid != self.process.pid:
                 logging.debug(f"Sending SIGKILL to {child.pid} ")
-                child.kill()
+                child.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {child.pid}", shell=True)
         logging.info(f"Sending SIGKILL to PID {self.process.pid}")
 
-        self.process.kill()
+        self.process.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {self.process.pid}", shell=True)
 
         logging.info(f"Process killed with exit code {self.process.returncode}")
 

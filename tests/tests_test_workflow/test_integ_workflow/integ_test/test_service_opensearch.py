@@ -33,12 +33,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.dependency_installer = None
         self.save_logs = ""
 
+    @patch("subprocess.check_call")
+    @patch("os.system")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
+    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock, mock_os: Mock, mock_subprocess: Mock) -> None:
 
         dependency_installer = MagicMock()
 
@@ -63,7 +65,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
-        mock_process.assert_called_once_with("./opensearch-tar-install.sh", os.path.join(self.work_dir, "opensearch-1.1.0"))
+        mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+
+        mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
+                                           shell=True,
+                                           cwd=os.path.join(self.work_dir, "opensearch-1.1.0"))
+
+        mock_process.assert_called_once_with("./opensearch-tar-install.sh", os.path.join(self.work_dir, "opensearch-1.1.0"), False)
 
         mock_dump.assert_called_once_with(self.additional_config)
 
@@ -76,13 +84,15 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         self.assertEqual(mock_pid.call_count, 1)
 
+    @patch("subprocess.check_call")
+    @patch("os.system")
     @patch("os.path.isdir")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
+    def test_start_security_disabled(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock, mock_os: Mock, mock_subprocess: Mock) -> None:
 
         dependency_installer = MagicMock()
 
@@ -117,6 +127,12 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
+        mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+
+        mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
+                                           shell=True,
+                                           cwd=os.path.join(self.work_dir, "opensearch-1.1.0"))
+
         mock_dump.assert_has_calls([call({"plugins.security.disabled": "true"}), call(self.additional_config)])
 
         mock_file.assert_has_calls(
@@ -126,13 +142,15 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file_handler_for_security.write.assert_called_once_with(mock_dump_result_for_security)
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
+    @patch("subprocess.check_call")
+    @patch("os.system")
     @patch("os.path.isdir")
     @patch("test_workflow.integ_test.service.Process.start")
     @patch('test_workflow.integ_test.service.Process.pid', new_callable=PropertyMock, return_value=12345)
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
+    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock, mock_os: Mock, mock_subprocess: Mock) -> None:
 
         dependency_installer = MagicMock()
 
@@ -165,6 +183,12 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         # call test target function
         service.start()
+
+        mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+
+        mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
+                                           shell=True,
+                                           cwd=os.path.join(self.work_dir, "opensearch-1.1.0"))
 
         mock_dump.assert_has_calls([call(self.additional_config)])
 

@@ -24,12 +24,15 @@ class TestDistributionTar(unittest.TestCase):
         self.assertEqual(self.distribution_tar.filename, 'opensearch')
         self.assertEqual(self.distribution_tar.version, '1.3.0')
         self.assertEqual(self.distribution_tar.work_dir, self.work_dir)
+        self.assertEqual(self.distribution_tar.require_sudo, False)
 
     def test_install_dir(self) -> None:
         self.assertEqual(self.distribution_tar.install_dir, os.path.join(self.work_dir, "opensearch-1.3.0"))
+        self.assertEqual(self.distribution_tar_dashboards.install_dir, os.path.join(self.work_dir, "opensearch-dashboards-1.3.0"))
 
-    def test_config_dir(self) -> None:
-        self.assertEqual(self.distribution_tar.config_dir, os.path.join(self.work_dir, "opensearch-1.3.0", "config"))
+    def test_config_path(self) -> None:
+        self.assertEqual(self.distribution_tar.config_path, os.path.join(self.work_dir, "opensearch-1.3.0", "config", "opensearch.yml"))
+        self.assertEqual(self.distribution_tar_dashboards.config_path, os.path.join(self.work_dir, "opensearch-dashboards-1.3.0", "config", "opensearch_dashboards.yml"))
 
     def test_install(self) -> None:
         with patch("tarfile.open") as mock_tarfile_open:
@@ -52,3 +55,6 @@ class TestDistributionTar(unittest.TestCase):
 
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])
+
+    def test_keystore_cmd(self) -> None:
+        self.assertEqual(self.distribution_tar.keystore_cmd, "bin/opensearch-keystore")

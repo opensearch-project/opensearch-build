@@ -2,7 +2,7 @@
       perf-test.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
       perf-test.library({identifier=jenkins@1.0.4, retriever=null})
       perf-test.pipeline(groovy.lang.Closure)
-         perf-test.timeout({time=15, unit=HOURS})
+         perf-test.timeout({time=14, unit=DAYS})
          perf-test.echo(Executing on agent [label:none])
          perf-test.parameterizedCron(
             H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.1/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
