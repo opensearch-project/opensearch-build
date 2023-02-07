@@ -238,7 +238,7 @@ pipeline {
                                 componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
-                                architecture: 'x64',
+                                architecture: 'arm64',
                                 distribution: 'tar',
                                 snapshot: true
                             )
