@@ -78,12 +78,6 @@ RUN yum clean all && \
     yum update -y && \
     yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
 
-# Add Dashboards dependencies (mainly for cypress)
-RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
-
-# Add Python37 dependencies
-RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
-
 # Create user group
 RUN dnf install -y sudo && \
     groupadd -g 1000 opensearch && \
