@@ -35,3 +35,6 @@ components:
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: main
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    ref: main
