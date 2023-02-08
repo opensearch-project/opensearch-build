@@ -50,7 +50,7 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
         self.assertEqual(self.distribution_zip.start_cmd, ".\\opensearch-windows-install.bat")
 
     def test_keystore_cmd(self) -> None:
-        self.assertEqual(self.distribution_zip.keystore_cmd, "bin\\opensearch-keystore.bat")
+        self.assertEqual(self.distribution_zip.keystore_cmd, os.path.join("bin", "opensearch-keystore.bat"))
 
     @patch("subprocess.check_call")
     def test_uninstall(self, check_call_mock: Mock) -> None:

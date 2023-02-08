@@ -65,8 +65,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
+        catalog_path = os.path.join(self.work_dir, "opensearch-1.1.0", "catalog.json")
         mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/"
-                                   "src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+                                   f"src/test/resources/catalog/catalog.json -o {catalog_path}")
 
         mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
                                            shell=True,
@@ -129,8 +130,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
+        catalog_path = os.path.join(self.work_dir, "opensearch-1.1.0", "catalog.json")
         mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/"
-                                   "src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+                                   f"src/test/resources/catalog/catalog.json -o {catalog_path}")
 
         mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
                                            shell=True,
@@ -188,8 +190,9 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
+        catalog_path = os.path.join(self.work_dir, "opensearch-1.1.0", "catalog.json")
         mock_os.assert_called_with("curl -SL https://raw.githubusercontent.com/opensearch-project/sql/2.4/integ-test/"
-                                   "src/test/resources/catalog/catalog.json -o test_work_dir/opensearch-1.1.0/catalog.json")
+                                   f"src/test/resources/catalog/catalog.json -o {catalog_path}")
 
         mock_subprocess.assert_called_with("echo y | bin/opensearch-keystore add-file plugins.query.federation.datasources.config catalog.json",
                                            shell=True,
