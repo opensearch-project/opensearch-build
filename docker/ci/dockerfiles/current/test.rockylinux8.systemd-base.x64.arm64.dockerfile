@@ -27,7 +27,7 @@ RUN dnf clean all && \
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Yarn dependencies
-RUN dnf groupinstall -y "Development Tools" && yum install -y cmake && yum clean all && rm -rf /var/cache/yum/*
+RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake && dnf clean all
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
