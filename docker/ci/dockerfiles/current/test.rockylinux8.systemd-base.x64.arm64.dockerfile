@@ -19,12 +19,15 @@ ENV container docker
 USER 0
 
 # Add normal dependencies
-RUN yum clean all && \
-    yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
+RUN dnf clean all && \
+    dnf update -y && \
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
 
 # Add Dashboards dependencies (mainly for cypress)
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+
+# Add Yarn dependencies
+RUN dnf groupinstall -y "Development Tools" && yum install -y cmake && yum clean all && rm -rf /var/cache/yum/*
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -74,9 +77,9 @@ FROM rockylinux:8
 USER 0
 
 # Add normal dependencies
-RUN yum clean all && \
-    yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
+RUN dnf clean all && \
+    dnf update -y && \
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
 
 # Create user group
 RUN dnf install -y sudo && \
@@ -84,7 +87,7 @@ RUN dnf install -y sudo && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which yum`, `which kill`" >> /etc/sudoers.d/opensearch
+    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which kill`" >> /etc/sudoers.d/opensearch
 
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
@@ -99,16 +102,16 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/opensearch && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Add Python37 dependencies
-RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies (mainly for cypress)
-RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Reports dependencies
-RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
 
 # Add Yarn dependencies
-RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
+RUN dnf groupinstall -y "Development Tools" && dnf clean all
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
@@ -126,7 +129,7 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3
 
 # Add other dependencies
-RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
+RUN dnf install -y epel-release && dnf clean all && dnf install -y chromium jq && dnf clean all && \
     pip3 install pip==21.3.1 && \
     pip3 install cmake==3.21.3 && \
     pip3 install awscli==1.22.12 && \
