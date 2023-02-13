@@ -5,7 +5,7 @@
 # compatible open source license.
 
 # This is a docker image specifically for setting up systemd env base for services with root user
-# It is initially designed to test yum installation, but can be used for anything that requires systemd
+# It is initially designed to test pkg installation, but can be used for anything that requires systemd
 # It used the method posted by Daniel Walsh: https://developers.redhat.com/blog/2014/05/05/running-systemd-within-docker-container
 
 # In order to run images with systemd, you need to run in privileged mode: `docker run --privileged -it -v /sys/fs/cgroup:/sys/fs/cgroup:ro <image_tag>`
