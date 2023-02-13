@@ -64,14 +64,16 @@ sharedLibrary {
     testHarnessVersion = '1934.v90a_c07cf5b_21' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
+        workflowCpsGlobalLibraryPluginVersion = '609.vd95673f149b_b'
         dependency('io.jenkins.plugins', 'pipeline-groovy-lib', '613.v9c41a_160233f')
-        dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '2803.v1a_f77ffcc773')
+        dependency('org.jenkins-ci.plugins.workflow', 'workflow-cps', '3606.v0b_d8b_e512dcf')
         dependency('org.jenkins-ci.plugins.workflow', 'workflow-multibranch', '2.26.1')
         dependency('org.jenkins-ci.plugins', 'pipeline-input-step', '456.vd8a_957db_5b_e9') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/pipeline-input-step/
         dependency('org.jenkins-ci.plugins', 'script-security', '1229.v4880b_b_e905a_6')
         dependency('org.jenkins-ci.plugins', 'credentials', '1112.vc87b_7a_3597f6')
         dependency('org.jenkins-ci.plugins', 'git-client', '3.11.1')
-        dependency('org.jenkins-ci.plugins', 'junit', '1166.va_436e268e972')
+        dependency('org.apache.sshd', 'sshd-core', '2.9.2')
+        dependency('org.jenkins-ci.plugins', 'junit', '1166.1168.vd6b_8042a_06de')
         dependency('org.jenkins-ci.plugins', 'mailer', '408.vd726a_1130320') // https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/mailer/
     }
 }
