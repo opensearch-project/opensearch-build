@@ -113,6 +113,10 @@ RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 # Add Yarn dependencies
 RUN dnf groupinstall -y "Development Tools" && dnf clean all
 
+# Tools setup
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
+RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
+
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
