@@ -4,6 +4,11 @@
       perf-test.pipeline(groovy.lang.Closure)
          perf-test.timeout({time=10, unit=HOURS})
          perf-test.echo(Executing on agent [label:none])
+         perf-test.parameterizedCron(
+            0 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            0 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+
+        )
          perf-test.stage(validate-and-set-parameters, groovy.lang.Closure)
             perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
             perf-test.script(groovy.lang.Closure)
