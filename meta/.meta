@@ -26,6 +26,8 @@
     "opensearch-build": "git@github.com:opensearch-project/opensearch-build.git",
     "ml-commons": "git@github.com:opensearch-project/ml-commons.git",
     "geospatial": "git@github.com:opensearch-project/geospatial.git",
-    "dashboards-maps": "git@github.com:opensearch-project/dashboards-maps.git"
+    "dashboards-maps": "git@github.com:opensearch-project/dashboards-maps.git",
+    "neural-search": "git@github.com:opensearch-project/neural-search.git",
+    "security-analytics": "git@github.com:opensearch-project/security-analytics.git"
   }
 }

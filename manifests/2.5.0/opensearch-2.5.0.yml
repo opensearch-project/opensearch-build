@@ -172,23 +172,6 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: index-management
-    repository: https://github.com/opensearch-project/index-management.git
-    ref: tags/2.5.0.0
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-  - name: alerting
-    repository: https://github.com/opensearch-project/alerting.git
-    ref: tags/2.5.0.0
-    platforms:
-      - linux
-      - windows
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version: alerting
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: tags/2.5.0.0
