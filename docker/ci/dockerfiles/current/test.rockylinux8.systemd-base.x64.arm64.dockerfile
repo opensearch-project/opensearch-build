@@ -62,7 +62,7 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 COPY --chown=1000:1000 config/yarn-version.sh /tmp
-RUN npm install -g yarn@`/tmp/yarn-version.sh`
+RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
 RUN npm install -g cypress@$CYPRESS_VERSION && npm cache verify
 
