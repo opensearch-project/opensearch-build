@@ -17,9 +17,10 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+ref=$1
+
 JSON_BASE="https://raw.githubusercontent.com/opensearch-project/OpenSearch-Dashboards/${ref}/package.json"
 
 YARN_VERSION=`curl -s -o- $JSON_BASE | yq -r '.engines.yarn'`
 
 echo $YARN_VERSION
-
