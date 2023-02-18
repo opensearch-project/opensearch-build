@@ -35,6 +35,10 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
+# install yq
+COPY --chown=0:0 config/yq-setup.sh /tmp/
+RUN /tmp/yq-setup.sh
+
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
