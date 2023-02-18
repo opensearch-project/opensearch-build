@@ -50,6 +50,10 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
 RUN pip3 install pip==21.3.1 awscli==1.22.12 dataclasses_json~=0.5 aws_requests_auth~=0.4 json2html~=1.3.0 aws-cdk.core~=1.143.0 aws_cdk.aws_ec2~=1.143.0 \
                  aws_cdk.aws_iam~=1.143.0 boto3~=1.18 setuptools~=57.4 retry~=0.9
 
+# install yq
+COPY --chown=0:0 config/yq-setup.sh /tmp/
+RUN /tmp/yq-setup.sh
+
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
@@ -63,8 +67,9 @@ ARG NODE_VERSION_LIST="16.14.2"
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 # install node and npm
+COPY --chown=1000:1000 config/yarn-version.sh /tmp
 RUN source $NVM_DIR/nvm.sh && \
-    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@^1.21.1; done
+    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@`/tmp/yarn-version.sh main`; done
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
