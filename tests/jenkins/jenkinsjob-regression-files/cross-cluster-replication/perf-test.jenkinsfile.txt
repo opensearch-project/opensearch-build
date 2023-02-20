@@ -5,8 +5,8 @@
          perf-test.timeout({time=10, unit=HOURS})
          perf-test.echo(Executing on agent [label:none])
          perf-test.parameterizedCron(
-            0 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            0 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;
+            H 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;
 
         )
          perf-test.stage(validate-and-set-parameters, groovy.lang.Closure)
