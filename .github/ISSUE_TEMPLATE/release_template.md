@@ -40,19 +40,24 @@ To aid in understanding the state of the release there is a table with status in
 - [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-build/blob/main/meta/README.md#create-a-release-issue) that links back to this issue, update Components section with these links.
 - [ ] Ensure the label is created in each component repo for this new version, and the next minor release. [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos)
 - [ ] Ensure that all release issues created above are assigned to an owner in the component team.
-- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile)
-
-### CI/CD (Feature Freeze) - _Ends __REPLACE_RELEASE-minus-14-days__
-
-- [ ] Create Jenkins workflows that run daily snapshot builds for OpenSearch and OpenSearch Dashboards. 
-- [ ] Increment each component version to {{ env.VERSION }} and ensure working CI in component repositories.
-- [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
-- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features
-- [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
+- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile).
 
 ### Campaigns
 
 __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
+
+### Release Branch - _Ends __REPLACE_RELEASE-minus-14-days__
+
+- [ ] Component versions are auto-incremented to {{ env.VERSION }} version.
+- [ ] Plugins team to ensure working CI in component repositories and merge the version increment PRs.
+- [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
+- [ ] All component repos create `<MajorVersion>.<MinorVersion>` branch for the release.
+
+### Feature Freeze - _Ends __REPLACE_RELEASE-minus-12-days__
+
+- [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features.
+- [ ] Create Jenkins workflows that run daily snapshot builds for [OpenSearch](https://build.ci.opensearch.org/job/distribution-build-opensearch/) and [OpenSearch Dashboards](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/).
+- [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 
 ### Code Complete - _Ends __REPLACE_RELEASE-minus-10-days___
 
@@ -62,16 +67,16 @@ __REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
 
 ### Release testing - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] All components should have cut branch `<MajorVersion>.<MinorVersion>` for the release.
 - [ ] Declare a release candidate build, and provide the instructions with the release candidates for teams on testing (__REPLACE_RELEASE-minus-8-days__).
 - [ ] Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary else manually run the build workflow and declare new release candidate.
+- [ ] After generate the release candidates, raise PR to lock input manifest refs of both OS and OSD builds with the commit ids from distribution manifest of the release candidates.
 - [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams. Teams test their components within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
 - [ ] Publish all test results in the comments of this issue.
 
 ### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] Performance tests do not show a regression
-- [ ] Longevity tests do not show any issues
+- [ ] Performance tests do not show a regression.
+- [ ] Longevity tests do not show any issues.
 
 ### Release - _Ends {__REPLACE_RELEASE-day}_
 

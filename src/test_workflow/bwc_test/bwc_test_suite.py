@@ -86,11 +86,11 @@ class BwcTestSuite(abc.ABC):
             )
             self.save_logs.save_test_result_data(test_result_data)
             if stderr:
-                logging.info("BWC test run failed for component " + self.component.name)
+                logging.info("Stderr reported for running BWC tests on component: " + self.component.name)
                 logging.info(stderr)
             return status
         else:
-            logging.info(f"{script} does not exist. Skipping integ tests for {self.component.name}")
+            logging.info(f"{script} does not exist. Skipping BWC tests for {self.component.name}")
             return 0
 
     def is_security_enabled(self, config: str) -> bool:

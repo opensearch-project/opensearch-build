@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 import logging
+import os
 import subprocess
 import tempfile
 from typing import Any
@@ -15,17 +16,20 @@ import psutil
 class Process:
     def __init__(self) -> None:
         self.process: subprocess.Popen[bytes] = None
+        self.require_sudo: bool = False
         self.stdout: Any = None
         self.stderr: Any = None
         self.__stdout_data__: str = None
         self.__stderr_data__: str = None
 
-    def start(self, command: str, cwd: str) -> None:
+    def start(self, command: str, cwd: str, require_sudo: bool = False) -> None:
         if self.started:
             raise ProcessStartedError(self.pid)
 
-        self.stdout = tempfile.NamedTemporaryFile(mode="r+")
-        self.stderr = tempfile.NamedTemporaryFile(mode="r+")
+        self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+        self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+
+        self.require_sudo = require_sudo
 
         self.process = subprocess.Popen(
             command,
@@ -46,21 +50,23 @@ class Process:
             logging.debug(f"Found child process with pid {child.pid}")
             if child.pid != self.process.pid:
                 logging.debug(f"Sending SIGKILL to {child.pid} ")
-                child.kill()
+                child.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {child.pid}", shell=True)
         logging.info(f"Sending SIGKILL to PID {self.process.pid}")
 
-        self.process.kill()
+        self.process.kill() if self.require_sudo is False else subprocess.check_call(f"sudo kill -9 {self.process.pid}", shell=True)
 
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.__stdout_data__ = self.stdout.read()
+            self.__stdout_data__ = open(self.stdout.name, 'r').read()
             self.stdout.close()
+            os.remove(self.stdout.name)
             self.stdout = None
 
         if self.stderr:
-            self.__stderr_data__ = self.stderr.read()
+            self.__stderr_data__ = open(self.stderr.name, 'r').read()
             self.stderr.close()
+            os.remove(self.stderr.name)
             self.stderr = None
 
         self.return_code = self.process.returncode

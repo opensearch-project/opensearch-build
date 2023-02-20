@@ -6,6 +6,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 from pathlib import Path
 
@@ -18,8 +19,7 @@ The signed artifacts will be found in the same location as the original artifact
 
 
 class SignerPGP(Signer):
-
-    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm"]
+    ACCEPTED_FILE_TYPES = [".zip", ".jar", ".war", ".pom", ".module", ".tar.gz", ".whl", ".crate", ".rpm", ".deb", ".tgz"]
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
         location = os.path.join(basepath, artifact)
@@ -33,8 +33,10 @@ class SignerPGP(Signer):
 
     def sign(self, artifact: str, basepath: Path, signature_type: str) -> None:
         filename = os.path.join(basepath, artifact)
-        signature_file = filename + signature_type
-        self.__remove_existing_signature__(signature_file)
+        signature_file = filename + ".sig"
+        if not self.overwrite:
+            self.__remove_existing_signature__(signature_file)
+
         signing_cmd = [
             "./opensearch-signer-client",
             "-i",
@@ -43,8 +45,29 @@ class SignerPGP(Signer):
             signature_file,
             "-p",
             "pgp",
+            "-r",
+            str(self.overwrite)
         ]
         self.git_repo.execute(" ".join(signing_cmd))
+        if (signature_type == ".asc"):
+            self.__convert_to_asc(filename, signature_file)
+
+    def __convert_to_asc(self, filename: str, signature_file: str) -> None:
+        asc_signature_file = filename + ".asc"
+        self.__remove_existing_signature__(asc_signature_file)
+        conversion_cmd = [
+            "gpg --enarmor",
+            "<",
+            signature_file,
+            ">",
+            asc_signature_file,
+            "&&",
+            "sed -i 's/ARMORED FILE/SIGNATURE/g'",
+            asc_signature_file
+        ]
+        logging.info('Coverting .sig to .asc')
+        self.git_repo.execute(" ".join(conversion_cmd))
+        self.__remove_existing_signature__(signature_file)
 
     def verify(self, filename: str) -> None:
         verify_cmd = ["gpg", "--verify-files", filename]

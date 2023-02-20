@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@1.5.6', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -12,6 +12,7 @@ pipeline {
         AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
         AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
+        IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
     }
     parameters {
         string(
@@ -43,14 +44,25 @@ pipeline {
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux'. Can combine multiple platforms with space in between",
-            defaultValue: 'linux',
+            description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            defaultValue: 'linux windows',
+            trim: true
+        )
+        string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
+            name: 'BUILD_DISTRIBUTION',
+            description: "Build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            defaultValue: 'tar rpm deb zip',
             trim: true
         )
         choice(
             name: 'BUILD_DOCKER',
             description: 'Build docker image or not with options.',
             choices: ['build_docker', 'build_docker_with_build_number_tag', 'do_not_build_docker'],
+        )
+        booleanParam(
+            name: 'UPDATE_LATEST_URL',
+            description: 'Update latest url so /latest/ is pointed to this build',
+            defaultValue: true
         )
         booleanParam(
             name: 'PUBLISH_NOTIFICATION',
@@ -81,7 +93,7 @@ pipeline {
                     echo("Verify Build Platforms")
                     def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
                     echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = "linux"
+                    def all_platforms = "linux windows"
                     echo("All Supported Platforms: '${all_platforms}'")
 
                     if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
@@ -95,6 +107,25 @@ pipeline {
                             error("Missing parameter: BUILD_PLATFORM (possible entries: ${all_platforms}).")
                         }
                     }
+
+                    echo("Verify Build Distributions")
+                    def build_distribution_array = params.BUILD_DISTRIBUTION.tokenize(' ')
+                    echo("User Entry Distributions: '${params.BUILD_DISTRIBUTION}', ${build_distribution_array}")
+                    def all_distributions = "tar rpm deb zip"
+                    echo("All Supported Platforms: '${all_distributions}'")
+
+                    if (params.BUILD_DISTRIBUTION == null || params.BUILD_DISTRIBUTION == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
+                    }
+
+                    for (String plat : build_distribution_array) {
+                        if (! all_distributions.contains(plat)) {
+                            currentBuild.result = 'ABORTED'
+                            error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
+                        }
+                    }
+
                 }
             }
         }
@@ -127,8 +158,13 @@ pipeline {
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('tar')
+                            }
                         }
                     }
                     agent {
@@ -182,7 +218,7 @@ pipeline {
                                             status: integTestResults.getResult(),
                                             absoluteUrl: integTestResults.getAbsoluteUrl()
                                         )
-                                    } 
+                                    }
                                 },
                                 'bwc-test': {
                                     Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
@@ -223,7 +259,6 @@ pipeline {
                                     "\n${env.ARTIFACT_URL_LINUX_X64_TAR_INTEG_TEST_RESULT}" +
                                     "\n${env.ARTIFACT_URL_LINUX_X64_TAR_BWC_TEST_RESULT}"
                                 )
-
                                 postCleanup()
                             }
                         }
@@ -232,8 +267,13 @@ pipeline {
                 stage('build-and-test-linux-x64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('rpm')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -317,6 +357,90 @@ pipeline {
                                             lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
                                             "\n${env.RPM_VALIDATION_LINUX_X64_RPM_TEST_RESULT}"
                                         )
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-linux-x64-deb') {
+                    when {
+                        beforeAgent true
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('deb')
+                            }
+                        }
+                    }
+                    agent { label AGENT_X64 }
+                    stages {
+                        stage('build-archive-linux-x64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('assemble-archive-and-test-linux-x64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_X64
+                                    image IMAGE_DEB
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'x64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_LINUX_X64_DEB = artifactUrl
+
+                                    echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
+                                    echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
+
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
 
                                         postCleanup()
                                     }
@@ -328,8 +452,13 @@ pipeline {
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('tar')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -357,7 +486,13 @@ pipeline {
                             }
                             post {
                                 always {
-                                    postCleanup()
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
+                                        postCleanup()
+                                    }
                                 }
                             }
                         }
@@ -392,7 +527,7 @@ pipeline {
                                             Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
                                             echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
                                             if (!skipIntegTests) {
-                                                def integTestResults = 
+                                                def integTestResults =
                                                     build job: INTEG_TEST_JOB_NAME,
                                                     propagate: false,
                                                     wait: true,
@@ -454,7 +589,6 @@ pipeline {
                                             "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_INTEG_TEST_RESULT}" +
                                             "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_BWC_TEST_RESULT}"
                                         )
-
                                         postCleanup()
                                     }
                                 }
@@ -465,8 +599,13 @@ pipeline {
                 stage('build-and-test-linux-arm64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('rpm')
+                            }
                         }
                     }
                     agent { label AGENT_X64 }
@@ -494,7 +633,13 @@ pipeline {
                             }
                             post {
                                 always {
-                                    postCleanup()
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
+                                        postCleanup()
+                                    }
                                 }
                             }
                         }
@@ -549,10 +694,142 @@ pipeline {
                                             lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
                                             "\n${env.RPM_VALIDATION_LINUX_ARM64_RPM_TEST_RESULT}"
                                         )
+                                        postCleanup()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-linux-arm64-deb') {
+                    when {
+                        beforeAgent true
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('linux')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('deb')
+                            }
+                        }
+                    }
+                    agent { label AGENT_ARM64 }
+                    stages {
+                        stage('build-archive-linux-arm64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_ARM64
+                                    image dockerAgent.image
+                                    args dockerAgent.args
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    buildArchive(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                }
+                            }
+                            post {
+                                always {
+                                    postCleanup()
+                                }
+                            }
+                        }
+                        stage('assemble-archive-and-test-linux-arm64-deb') {
+                            agent {
+                                docker {
+                                    label AGENT_ARM64
+                                    image IMAGE_DEB
+                                    alwaysPull true
+                                }
+                            }
+                            steps {
+                                script {
+                                    def buildManifestObj = archiveAssembleUpload(
+                                        componentName: "${COMPONENT_NAME}",
+                                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                                        platform: 'linux',
+                                        architecture: 'arm64',
+                                        distribution: 'deb',
+                                        stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
+                                    )
+                                    String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                                    env.ARTIFACT_URL_LINUX_ARM64_DEB = artifactUrl
+
+                                    echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
+                                    echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
+
+                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
+
+                                }
+                            }
+                            post {
+                                always {
+                                    script {
+                                        lib.jenkins.Messages.new(this).add(
+                                            "${STAGE_NAME}",
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                        )
 
                                         postCleanup()
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                stage('build-and-test-windows-x64-zip') {
+                    when {
+                        beforeAgent true
+                        allOf{
+                            expression {
+                                params.BUILD_PLATFORM.contains('windows')
+                            }
+                            expression{
+                                params.BUILD_DISTRIBUTION.contains('zip')
+                            }
+                        }
+                    }
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
+                        }
+                    }
+                    steps {
+                        script {
+                            def buildManifestObj = buildAssembleUpload(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'windows',
+                                architecture: 'x64',
+                                distribution: "zip"
+                            )
+                            String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
+                            env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
+                            env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
+
+                            echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
+                            echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+
+                        }
+                    }
+                    post {
+                        always {
+                            script {
+                                lib.jenkins.Messages.new(this).add(
+                                    "${STAGE_NAME}",
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
+                                )
+                                postCleanup()
                             }
                         }
                     }
@@ -570,9 +847,11 @@ pipeline {
             }
             steps {
                 script {
-                    uploadIndexFile(
-                        indexFilePath: env.INDEX_FILE_PATH
-                    )
+                    if (params.UPDATE_LATEST_URL) {
+                        uploadIndexFile(
+                            indexFilePath: env.INDEX_FILE_PATH
+                        )
+                    }
                 }
             }
         }
@@ -585,6 +864,9 @@ pipeline {
                     }
                     expression{
                         params.BUILD_PLATFORM.contains('linux')
+                    }
+                    expression{
+                        params.BUILD_DISTRIBUTION.contains('tar')
                     }
                 }
             }
@@ -600,7 +882,7 @@ pipeline {
                 script {
                     echo "env.ARTIFACT_URL_LINUX_X64_TAR: ${env.ARTIFACT_URL_LINUX_X64_TAR}"
                     echo "env.ARTIFACT_URL_LINUX_ARM64_TAR: ${env.ARTIFACT_URL_LINUX_ARM64_TAR}"
-                    
+
                     buildDockerImage(
                         inputManifest: "manifests/${INPUT_MANIFEST}",
                         buildNumber: "${BUILD_NUMBER}",
@@ -630,13 +912,30 @@ pipeline {
         success {
             node(AGENT_X64) {
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
-                        def stashed = lib.jenkins.Messages.new(this).get([
-                            'build-and-test-linux-x64-tar',
-                            'assemble-archive-and-test-linux-x64-rpm',
-                            'assemble-archive-and-test-linux-arm64-tar',
-                            'assemble-archive-and-test-linux-arm64-rpm',
-                        ])
+                    List<String> stages = []
+                    if (params.BUILD_PLATFORM.contains('linux')) {
+                        if (params.BUILD_DISTRIBUTION.contains('tar')) {
+                            stages = [
+                                'build-and-test-linux-x64-tar',
+                                'assemble-archive-and-test-linux-arm64-tar',
+                            ]
+                        }
+                        if (params.BUILD_DISTRIBUTION.contains('rpm')) {
+                            stages.add('assemble-archive-and-test-linux-x64-rpm')
+                            stages.add('assemble-archive-and-test-linux-arm64-rpm')
+                        }
+                        if (params.BUILD_DISTRIBUTION.contains('deb')) {
+                            stages.add('assemble-archive-and-test-linux-x64-deb')
+                            stages.add('assemble-archive-and-test-linux-arm64-deb')
+                        }
+                    }
+                    if (params.BUILD_PLATFORM.contains('windows')){
+                        if (params.BUILD_DISTRIBUTION.contains('zip')) {
+                            stages.add('build-and-test-windows-x64-zip')
+                        }
+                    }
+                    if (params.PUBLISH_NOTIFICATION) {
+                        def stashed = lib.jenkins.Messages.new(this).get(stages)
 
                         publishNotification(
                             icon: ':white_check_mark:',
@@ -655,7 +954,7 @@ pipeline {
             node(AGENT_X64) {
                 checkout scm
                 script {
-                    if (params.PUBLISH_NOTIFICATION) { 
+                    if (params.PUBLISH_NOTIFICATION) {
                         publishNotification(
                             icon: ':warning:',
                             message: buildFailureMessage(),

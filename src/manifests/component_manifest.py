@@ -41,12 +41,16 @@ class ComponentManifest(Manifest[ManifestType], Generic[ManifestType, Components
 
 class Components(Dict[str, ComponentType], Generic[ComponentType]):
     def __init__(self, data: Dict[Any, Any]) -> None:
-        create_component: Callable[[Any], Tuple[str, ComponentType]] = lambda component: (component["name"], self.__create__(component))
+        create_component: Callable[[Any], Tuple[str, ComponentType]] = lambda component: (
+            component["name"], self.__create__(component))
         super().__init__(map(create_component, data))
 
     @classmethod
     def __create__(self, data: dict) -> ComponentType:
-        return Component(data)  # type: ignore[return-value]
+        if "repository" in data:
+            return ComponentFromSource(data)  # type: ignore[return-value]
+        else:
+            return Component(data)  # type: ignore[return-value]
 
     def __to_dict__(self) -> List[Dict[Any, Any]]:
         as_dict: Callable[[ComponentType], dict] = lambda component: component.__to_dict__()
@@ -98,3 +102,14 @@ class Component:
             logging.info(f"Skipping {self.name}")
 
         return matches
+
+
+class ComponentFromSource(Component):
+    repository: str
+
+    def __init__(self, data: dict) -> None:
+        super().__init__(data)
+        self.repository = data["repository"]
+
+    def __to_dict__(self) -> dict:
+        return {"name": self.name, "repository": self.repository}

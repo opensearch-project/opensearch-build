@@ -1,0 +1,17 @@
+---
+schema-version: '1.0'
+name: OpenSearch Dashboards
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
+components:
+  - name: OpenSearch-Dashboards
+    bwc-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: functionalTestDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security

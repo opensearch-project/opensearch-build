@@ -23,6 +23,7 @@ RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
 
 # Add normal dependencies
 RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+    yum install epel-release -y && \
     yum update -y && \
     yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh
 
@@ -45,7 +46,7 @@ RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Install higher version of maven 3.8.x

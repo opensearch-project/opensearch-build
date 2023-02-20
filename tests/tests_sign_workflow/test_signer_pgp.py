@@ -29,6 +29,7 @@ class TestSignerPGP(unittest.TestCase):
             "the-tar.tar.gz",
             "random-file.txt",
             "something-1.0.0.0.jar",
+            "the-tgz.tgz"
         ]
         expected = [
             call("the-jar.jar", Path("path"), ".asc"),
@@ -40,8 +41,9 @@ class TestSignerPGP(unittest.TestCase):
             call("the-module.module", Path("path"), ".asc"),
             call("the-tar.tar.gz", Path("path"), ".asc"),
             call("something-1.0.0.0.jar", Path("path"), ".asc"),
+            call("the-tgz.tgz", Path("path"), ".asc")
         ]
-        signer = SignerPGP()
+        signer = SignerPGP(False)
         signer.sign = MagicMock()  # type: ignore
         signer.verify = MagicMock()  # type: ignore
         signer.sign_artifacts(artifacts, Path("path"), ".asc")
@@ -62,7 +64,8 @@ class TestSignerPGP(unittest.TestCase):
             "random-file.txt",
             "something-1.0.0.0.jar",
             "opensearch_sql_cli-1.0.0-py3-none-any.whl",
-            "cratefile.crate"
+            "cratefile.crate",
+            "the-tgz.tgz"
         ]
         expected = [
             call("the-jar.jar", Path("path"), ".sig"),
@@ -75,9 +78,10 @@ class TestSignerPGP(unittest.TestCase):
             call("the-tar.tar.gz", Path("path"), ".sig"),
             call("something-1.0.0.0.jar", Path("path"), ".sig"),
             call("opensearch_sql_cli-1.0.0-py3-none-any.whl", Path("path"), ".sig"),
-            call("cratefile.crate", Path("path"), ".sig")
+            call("cratefile.crate", Path("path"), ".sig"),
+            call("the-tgz.tgz", Path("path"), ".sig")
         ]
-        signer = SignerPGP()
+        signer = SignerPGP(False)
         signer.sign = MagicMock()  # type: ignore
         signer.verify = MagicMock()  # type: ignore
         signer.sign_artifacts(artifacts, Path("path"), ".sig")
@@ -85,28 +89,32 @@ class TestSignerPGP(unittest.TestCase):
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_verify_asc(self, mock_repo: Mock) -> None:
-        signer = SignerPGP()
+        signer = SignerPGP(True)
         signer.verify("/path/the-jar.jar.asc")
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.asc")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_verify_sig(self, mock_repo: Mock) -> None:
-        signer = SignerPGP()
+        signer = SignerPGP(True)
         signer.verify("/path/the-jar.jar.sig")
         mock_repo.assert_has_calls([call().execute("gpg --verify-files /path/the-jar.jar.sig")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_asc(self, mock_repo: Mock) -> None:
-        signer = SignerPGP()
+        signer = SignerPGP(False)
         signer.sign("the-jar.jar", Path("/path/"), ".asc")
-        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.asc') + " -p pgp"
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.sig') + " -p pgp -r False"
+        conversion_cmd = "gpg --enarmor < " + os.path.join(Path("/path/"), 'the-jar.jar.sig') + " > " +\
+                         os.path.join(Path("/path/"), 'the-jar.jar.asc') + " && sed -i 's/ARMORED FILE/SIGNATURE/g' " +\
+                         os.path.join(Path("/path/"), 'the-jar.jar.asc')
         mock_repo.assert_has_calls(
             [call().execute(command)])
+        mock_repo.assert_has_calls([call().execute(conversion_cmd)])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_sign_sig(self, mock_repo: Mock) -> None:
-        signer = SignerPGP()
+        signer = SignerPGP(False)
         signer.sign("the-jar.jar", Path("/path/"), ".sig")
-        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.sig') + " -p pgp"
+        command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"), 'the-jar.jar') + " -o " + os.path.join(Path("/path/"), 'the-jar.jar.sig') + " -p pgp -r False"
         mock_repo.assert_has_calls(
             [call().execute(command)])

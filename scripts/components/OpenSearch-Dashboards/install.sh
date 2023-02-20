@@ -48,7 +48,7 @@ while getopts ":h:v:s:o:p:a:d:f:" arg; do
             DISTRIBUTION=$OPTARG
             ;;
         f)
-            ARTIFACTS=$ARTIFACTS
+            ARTIFACTS=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"
@@ -79,11 +79,15 @@ echo $DIR
 cd $DIR
 
 ## Setup default config
-if [ "$DISTRIBUTION" = "tar" ]; then
-    cp ../../../config/opensearch_dashboards.yml "$OUTPUT/config/"
+MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
+if ! (ls ../../../config/ | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJOR_VERSION); then
+    MAJOR_VERSION="default"
+fi
 
-elif [ "$DISTRIBUTION" = "rpm" ]; then
-    cp ../../../config/opensearch_dashboards.yml "$OUTPUT/../etc/opensearch-dashboards/"
+if [ "$DISTRIBUTION" = "rpm" -o "$DISTRIBUTION" = "deb" ]; then
+    cp -v ../../../config/opensearch_dashboards-$MAJOR_VERSION.x.yml "$OUTPUT/../etc/opensearch-dashboards/opensearch_dashboards.yml"
     cp -a ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
-    cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/* "$OUTPUT/../"
+    cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
+else
+    cp -v ../../../config/opensearch_dashboards-$MAJOR_VERSION.x.yml "$OUTPUT/config/opensearch_dashboards.yml"
 fi

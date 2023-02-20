@@ -22,7 +22,7 @@ class ServiceOpenSearch(Service):
     dist: Distribution
     dependency_installer: DependencyInstaller
     install_dir: str
-    opensearch_yml_dir: str
+    opensearch_yml_path: str
     security_plugin_dir: str
 
     def __init__(
@@ -32,10 +32,11 @@ class ServiceOpenSearch(Service):
         additional_config: dict,
         security_enabled: bool,
         dependency_installer: DependencyInstaller,
-        work_dir: str
+        work_dir: str,
+        cluster_port: int = 9200
     ) -> None:
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
-
+        self.cluster_port = cluster_port
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
@@ -43,7 +44,7 @@ class ServiceOpenSearch(Service):
     def start(self) -> None:
         self.dist.install(self.download())
 
-        self.opensearch_yml_dir = os.path.join(self.dist.config_dir, "opensearch.yml")
+        self.opensearch_yml_path = self.dist.config_path
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
 
         if not self.security_enabled and os.path.isdir(self.security_plugin_dir):
@@ -52,7 +53,7 @@ class ServiceOpenSearch(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start(self.dist.start_cmd, self.install_dir)
+        self.process_handler.start(self.dist.start_cmd, self.install_dir, self.dist.require_sudo)
         logging.info(f"Started OpenSearch with parent PID {self.process_handler.pid}")
 
     def uninstall(self) -> None:
@@ -67,11 +68,11 @@ class ServiceOpenSearch(Service):
         return requests.get(url, verify=False, auth=("admin", "admin"))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
-        with open(self.opensearch_yml_dir, "a") as yamlfile:
+        with open(self.opensearch_yml_path, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 
     def port(self) -> int:
-        return 9200
+        return self.cluster_port
 
     def check_service_response_text(self, response_text: str) -> bool:
         return ('"status":"green"' in response_text) or ('"status":"yellow"' in response_text)

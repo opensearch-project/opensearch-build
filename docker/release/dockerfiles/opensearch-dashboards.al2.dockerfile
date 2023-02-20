@@ -18,6 +18,8 @@ ARG UID=1000
 ARG GID=1000
 ARG TEMP_DIR=/tmp/opensearch-dashboards
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
+ARG VERSION
+ARG NOTES
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -32,8 +34,13 @@ RUN groupadd -g $GID opensearch-dashboards && \
 # Prepare working directory
 COPY * $TEMP_DIR/
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
-    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint.sh $OPENSEARCH_DASHBOARDS_HOME/ && \
-    cp -v $TEMP_DIR/opensearch_dashboards.yml $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
+    MAJOR_VERSION_ENTRYPOINT=`echo $VERSION | cut -d. -f1` && \
+    MAJOR_VERSION_YML=`echo $VERSION | cut -d. -f1` && \
+    if ! (ls $TEMP_DIR | grep -E "opensearch-dashboards-docker-entrypoint-.*.x.sh" | grep $MAJOR_VERSION_ENTRYPOINT); then MAJOR_VERSION_ENTRYPOINT="default"; fi && \
+    if ! (ls $TEMP_DIR | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJOR_VERSION_YML); then MAJOR_VERSION_YML="default"; fi && \
+    cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-$MAJOR_VERSION_ENTRYPOINT.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
+    cp -v $TEMP_DIR/opensearch_dashboards-$MAJOR_VERSION_YML.x.yml $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
+    cp -v $TEMP_DIR/opensearch.example.org.* $OPENSEARCH_DASHBOARDS_HOME/config/ && \
     echo "server.host: '0.0.0.0'" >> $OPENSEARCH_DASHBOARDS_HOME/config/opensearch_dashboards.yml && \
     ls -l $OPENSEARCH_DASHBOARDS_HOME && \
     rm -rf $TEMP_DIR
@@ -72,9 +79,7 @@ USER $UID
 # Expose port
 EXPOSE 5601
 
-ARG VERSION
 ARG BUILD_DATE
-ARG NOTES
 
 # Label
 LABEL org.label-schema.schema-version="1.0" \
