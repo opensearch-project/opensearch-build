@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: '2.x'
+    ref: 2.x
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -34,7 +34,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -43,7 +43,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -63,7 +63,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -72,7 +72,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -81,7 +81,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -90,7 +90,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
