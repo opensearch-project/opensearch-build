@@ -140,7 +140,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 2.x
+    ref: tags/2.6.0.0
     platforms:
       - linux
       - windows
