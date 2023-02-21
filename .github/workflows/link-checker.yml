@@ -4,7 +4,7 @@ on:
   push:
 
 permissions:
-  contents: read # to fetch code (actions/checkout)
+  contents: read
 jobs:
   linkchecker:
     runs-on: ubuntu-latest
