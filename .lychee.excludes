@@ -1,0 +1,3 @@
+http://staging-artifacts.cloudfront.net/*
+https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/*
+http://public.ecr.aws/data-prepper-container-repository

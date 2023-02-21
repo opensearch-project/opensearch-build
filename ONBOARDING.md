@@ -1,7 +1,6 @@
 
 - [Component Onboarding](#component-onboarding)
   - [Onboard to OpenSearch Meta](#onboard-to-opensearch-meta)
-    - [opensearch-build](#opensearch-build)
     - [opensearch-plugins](#opensearch-plugins)
   - [Onboard to Build Workflow](#onboard-to-build-workflow)
   - [Onboard to `test-workflow`](#onboard-to-test-workflow)
@@ -11,15 +10,6 @@
 This document describes steps to onboard a new plugin to release workflow for continuous integration and testing.
 
 ### Onboard to OpenSearch Meta
-
-#### opensearch-build
-
-Add the new plugin to the [opensearch-build meta](meta/README.md) is used to create issues across components included in a distribution, e.g. [opensearch-build#819](https://github.com/opensearch-project/opensearch-build/pull/819), which added [cross-cluster-replication](https://github.com/opensearch-project/cross-cluster-replication).
-
-```bash
-$ cd meta
-$ meta project import plugin git@github.com:opensearch-project/plugin.git
-```
 
 #### opensearch-plugins
 
