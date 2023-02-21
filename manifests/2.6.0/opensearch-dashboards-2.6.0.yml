@@ -36,7 +36,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 2.x
   - name: anomalyDetectionDashboards
-    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
     ref: 2.x
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
@@ -48,5 +48,8 @@ components:
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: 2.x
   - name: securityAnalyticsDashboards
-    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
+    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
+    ref: 2.x
+  - name: mlCommonsDashboards
+    repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: 2.x
