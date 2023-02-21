@@ -23,3 +23,23 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.4'
+    platforms:
+      - linux
+      - windows
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-notifications-core
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: '2.4'
+    platforms:
+      - linux
+      - windows
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
