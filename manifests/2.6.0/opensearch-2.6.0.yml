@@ -112,12 +112,72 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: 2.x
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+  - name: security-analytics
+    repository: https://github.com/opensearch-project/security-analytics.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
