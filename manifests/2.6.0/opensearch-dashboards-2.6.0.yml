@@ -50,6 +50,3 @@ components:
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin
     ref: '2.6'
-  - name: mlCommonsDashboards
-    repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: '2.6'
