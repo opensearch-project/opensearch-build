@@ -2,6 +2,8 @@
       docker-build.pipeline(groovy.lang.Closure)
          docker-build.timeout({time=3, unit=HOURS})
          docker-build.echo(Executing on agent [label:none])
+         docker-build.stage(Parameters Check, groovy.lang.Closure)
+            docker-build.script(groovy.lang.Closure)
          docker-build.stage(docker-build, groovy.lang.Closure)
             docker-build.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:], args:-u root -v /var/run/docker.sock:/var/run/docker.sock, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder]])
             docker-build.script(groovy.lang.Closure)
