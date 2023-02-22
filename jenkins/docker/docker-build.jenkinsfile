@@ -24,6 +24,16 @@ pipeline {
         )
     }
     stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    if(! DOCKER_BUILD_GIT_REPOSITORY.startsWith('https://github.com/opensearch-project/')) {
+                        currentBuild.result = 'ABORTED'
+                        error('The repository needs to be an opensearch-project repository')
+                    }
+                }
+            }
+        }
         stage('docker-build') {
             agent {
                 docker {
