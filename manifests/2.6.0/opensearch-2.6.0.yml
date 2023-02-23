@@ -34,7 +34,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 10f1f07c2b78461c37de6672ce397271af48da69
+    ref: 1d91e120e5134ce5d10245d142e79982739be9d5
     platforms:
       - linux
       - windows
@@ -96,7 +96,7 @@ components:
       - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 87e2c3597e4df7c2810594742a0e27f86b8d09fb
+    ref: 71d860410efa00a44290be030a9e148b29cd4fe9
     platforms:
       - linux
       - windows
@@ -158,7 +158,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 27788088a015814bc4d07825c0037416dfb91225
+    ref: 9ed4016c5034ea8c9feea963b014391ab1b6f202
     platforms:
       - linux
       - windows
@@ -166,7 +166,7 @@ components:
       - gradle:properties:version
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 2d7390c99e631e5534ceca88bb33d81bae207edf
+    ref: 74a54533b7f6a2fa2d2d808c2217d0cde61183fd
     platforms:
       - linux
       - windows

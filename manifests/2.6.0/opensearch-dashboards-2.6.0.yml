@@ -18,7 +18,7 @@ components:
     ref: 09c28e9e4bc0c10179aa689ba7d03bba1704dd97
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 45843e2aa60f329077cb5c9167ec73b42174dcfb
+    ref: c0464990e3ba502d6def838edf14a0d7ef5bea92
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: 0fd9587a2de9186d53485909a07b0b4800801014
@@ -40,7 +40,7 @@ components:
     ref: 3e432e5f8835c308227629791468bdf80bf402cf
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
-    ref: ddb8e4924595316fa2df777820ad418dc656ae60
+    ref: 4ef399706e953e8a0e97f9fbaa18e9a729822042
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
     ref: 8bd0c738eceb7ecc81e361f157696317f2b75b94
