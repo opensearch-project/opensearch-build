@@ -11,7 +11,7 @@ import subprocess
 
 def current_architecture() -> str:
     architecture = subprocess.check_output(["uname", "-m"]).decode().strip()
-    if architecture == "x86_64":
+    if architecture == "x86_64" or architecture == "amd64":
         return "x64"
     elif architecture == "aarch64" or architecture == "arm64":
         return "arm64"
