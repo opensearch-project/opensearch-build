@@ -90,7 +90,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: d6d7c7839c64c240953c12cce3a623d7a67748f0
+    ref: 766cf3f713fb7621faa8546ca5c2f37f5a847009
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 975402a8e51b39f82d8815267fd3975093e40bde
+    ref: 7d4bab9eb18b0939f10fe1ab5b106e1fd1017361
     platforms:
       - linux
       - windows
