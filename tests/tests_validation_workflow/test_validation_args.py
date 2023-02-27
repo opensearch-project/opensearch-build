@@ -24,12 +24,25 @@ class TestValidationArgs(unittest.TestCase):
         self.assertNotEqual(ValidationArgs().version, "2.1.0")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.1.0", "--distribution", "rpm"])
-    def test_distribution(self) -> None:
+    def test_rpm_distribution(self) -> None:
         self.assertEqual(ValidationArgs().distribution, "rpm")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker"])
+    def test_docker_distribution(self) -> None:
+        self.assertEqual(ValidationArgs().distribution, "docker")
+        self.assertNotEqual(ValidationArgs().distribution, "yum")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--platform", "linux"])
     def test_platform_default(self) -> None:
         self.assertEqual(ValidationArgs().platform, "linux")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--os_build_number", "6039"])
+    def test_os_build_number(self) -> None:
+        self.assertEqual(ValidationArgs().os_build_number, "6039")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--osd_build_number", "4100"])
+    def test_osd_build_number(self) -> None:
+        self.assertNotEqual(ValidationArgs().osd_build_number, "4104")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0"])
     def test_verbose_default(self) -> None:

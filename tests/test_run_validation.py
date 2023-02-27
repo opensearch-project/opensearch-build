@@ -13,8 +13,7 @@ from unittest.mock import Mock, patch
 import pytest
 from pytest import CaptureFixture
 
-from src.run_validation import main
-from src.validation_workflow.validation_args import ValidationArgs
+from run_validation import main
 
 
 class TestRunValidation(unittest.TestCase):
@@ -31,26 +30,9 @@ class TestRunValidation(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "1.3.6"])
-    @patch("src.validation_workflow.validation_tar.ValidationTar.download_artifacts", return_value=True)
-    @patch("run_validation.main", return_value=0)
-    def test_main_default(self, mock_tar: Mock, *mocks: Any) -> None:
-        self.assertEqual(ValidationArgs().version, "1.3.6")
-        self.assertEqual(ValidationArgs().distribution, "tar")
-        self.assertNotEqual(ValidationArgs().distribution, "rpm")
+    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "tar"])
+    @patch('run_validation.ValidationTestRunner')
+    def test_main(self, mock_tar: Mock, *mocks: Any) -> None:
 
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "rpm"])
-    @patch("src.validation_workflow.validation_rpm.ValidationRpm.download_artifacts", return_value=True)
-    @patch("run_validation.main", return_value=0)
-    def test_main_rpm(self, mock_tar: Mock, *mocks: Any) -> None:
-        self.assertEqual(ValidationArgs().version, "2.1.0")
-        self.assertEqual(ValidationArgs().distribution, "rpm")
-        self.assertNotEqual(ValidationArgs().distribution, "tar")
-
-    @patch("argparse._sys.argv", ["run_validation.py", "--version", "2.1.0", "--distribution", "yum"])
-    @patch("src.validation_workflow.validation_yum.ValidationYum.download_artifacts", return_value=True)
-    @patch("run_validation.main", return_value=0)
-    def test_main_yum(self, mock_tar: Mock, *mocks: Any) -> None:
-        self.assertEqual(ValidationArgs().version, "2.1.0")
-        self.assertEqual(ValidationArgs().distribution, "yum")
-        self.assertNotEqual(ValidationArgs().distribution, "tar")
+        result = main()
+        self.assertTrue(result)

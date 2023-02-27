@@ -7,15 +7,39 @@
 
 
 from abc import ABC, abstractmethod
+from typing import Any
 
-from system.temporary_directory import TemporaryDirectory
+from validation_workflow.validation_args import ValidationArgs
 
 
 class Validation(ABC):
-    base_url = "https://artifacts.opensearch.org/releases/bundle/"
-    tmp_dir = TemporaryDirectory()
 
-    @classmethod
+    def __init__(self, args: ValidationArgs) -> None:
+        super().__init__()
+        self.args = args
+
+    def run(self) -> Any:
+        try:
+            return self.download_artifacts() and self.installation() and self.start_cluster() and self.validation() and self.cleanup()
+        except Exception:
+            return False
+
     @abstractmethod
-    def download_artifacts(self, projects: list, version: str) -> bool:
+    def download_artifacts(self) -> bool:
+        pass
+
+    @abstractmethod
+    def installation(self) -> bool:
+        pass
+
+    @abstractmethod
+    def start_cluster(self) -> bool:
+        pass
+
+    @abstractmethod
+    def validation(self) -> bool:
+        pass
+
+    @abstractmethod
+    def cleanup(self) -> bool:
         pass
