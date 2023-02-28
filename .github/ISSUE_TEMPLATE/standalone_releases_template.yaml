@@ -8,6 +8,13 @@ body:
     attributes:
       value: |
         Thanks for taking the time to submit release request!
+  - type: textarea
+    attributes:
+      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#onboarding-to-universal--1-click-release-process)'
+      label: 'Did you read the on-boarding document'
+    id: document
+    validations:
+      required: true
   -
     attributes:
       description: 'Provide the name of your component'
