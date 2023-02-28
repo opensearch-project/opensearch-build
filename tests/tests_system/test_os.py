@@ -20,6 +20,10 @@ class TestOs(unittest.TestCase):
     def test_x86_64_return_x64_architecture(self, mock_subprocess: MagicMock) -> None:
         self.assertTrue(current_architecture() == "x64")
 
+    @patch("subprocess.check_output", return_value="amd64".encode())
+    def test_amd64_return_x64_architecture(self, mock_subprocess: MagicMock) -> None:
+        self.assertTrue(current_architecture() == "x64")
+
     @patch("subprocess.check_output", return_value="aarch64".encode())
     def test_aarch64_return_arm64_architecture(self, mock_subprocess: MagicMock) -> None:
         self.assertTrue(current_architecture() == "arm64")
