@@ -5,6 +5,15 @@
          perf-test.timeout({time=14, unit=DAYS})
          perf-test.echo(Executing on agent [label:none])
          perf-test.parameterizedCron(
+            H 10 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 10 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 10 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 10 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 10 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 10 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 10 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 10 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.8/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+
             H 15 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.9/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
             H 15 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.9/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
             H 15 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.9/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
@@ -32,6 +41,10 @@
             H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
             H 4 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
             H 4 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 4 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 4 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
         )
          perf-test.stage(validate-and-set-parameters, groovy.lang.Closure)
             perf-test.echo(Executing on agent [docker:[image:opensearchstaging/ci-runner:ci-runner-centos7-v1, reuseNode:false, stages:[:], args:, alwaysPull:true, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host]])
