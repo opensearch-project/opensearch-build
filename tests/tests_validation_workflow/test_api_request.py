@@ -15,19 +15,18 @@ class TestApiTest(unittest.TestCase):
 
     @patch('validation_workflow.api_request.subprocess.run')
     def test_api_get(self, mock_run: Mock) -> None:
-        mock_run.return_value.stdout = b'{"key": "value"}'
+        mock_run.return_value.stdout = b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{"key": "value"}'
         mock_run.return_value.stderr = b''
-        mock_run.return_value.returncode = 0
 
         request_url = 'http://localhost:9200'
         api_test = ApiTest(request_url)
         status_code, response_text = api_test.api_get()
 
-        self.assertEqual(status_code, 0)
+        self.assertEqual(status_code, 200)
         self.assertEqual(response_text, '{"key": "value"}')
 
         mock_run.assert_called_once_with(
-            ['curl', request_url, '-u', 'admin:admin', '--insecure'],
+            ['curl', request_url, '-u', 'admin:admin', '--insecure', '-i'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
