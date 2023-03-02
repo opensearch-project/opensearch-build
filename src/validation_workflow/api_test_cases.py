@@ -49,4 +49,4 @@ class ApiTestCases:
             else:
                 fail_counter += 1
 
-        return (fail_counter == 0, "There are " + str(pass_counter) + "/" + str(pass_counter + fail_counter) + " test cases Pass")
+        return (fail_counter == 0, f"There are {pass_counter}/{pass_counter + fail_counter} test cases Pass")
