@@ -21,9 +21,6 @@ class ApiTest:
         self.request_url = request_url
 
     def api_get(self) -> Any:
-        self.command = ['curl', self.request_url, '-u', 'admin:admin', '--insecure', '-i']
+        self.command = ['curl', self.request_url, '-u', 'admin:admin', '--insecure']
         result = subprocess.run(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        response = result.stdout.decode().strip()
-        response_code = int(response.split()[1])
-        response_content = response.split('\r\n\r\n', 1)[1]
-        return response_code, response_content
+        return result.returncode, result.stdout.decode('utf-8')

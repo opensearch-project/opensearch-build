@@ -101,8 +101,6 @@ class ValidateDocker(Validation):
                     logging.info(f'All tests Pass : {_counter}')
                     return True
                 else:
-                    logging.info(f'Not all tests Pass : {_counter}')
-                    self.cleanup()
                     raise Exception(f'Not all tests Pass : {_counter}')
             else:
                 raise Exception('The container failed to start. Exiting the validation.')
