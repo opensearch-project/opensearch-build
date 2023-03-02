@@ -104,6 +104,8 @@ class ValidateDocker(Validation):
                     raise Exception(f'Not all tests Pass : {_counter}')
             else:
                 raise Exception('The container failed to start. Exiting the validation.')
+        else:
+            return True
 
     def check_http_request(self) -> bool:
         try:
