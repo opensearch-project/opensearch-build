@@ -6,9 +6,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-from typing import Any
-
 import subprocess
+from typing import Any
 
 """
 This class is to run API test againt on local OpenSearch API URL with default port 9200.
