@@ -28,10 +28,10 @@ class ApiTestCases:
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
         test_cases = [
-            ['https://localhost:9200/', 200, '"number" : "' + self.opensearch_image_version + '"'],
-            ['https://localhost:9200/_cat/plugins?v', 200, ''],
-            ['https://localhost:9200/_cat/health?v', 200, 'green'],
-            ['http://localhost:5601/api/status', 200, '"number":"' + self.opensearch_dashboards_image_version + '"']
+            ['https://localhost:9200/', 0, '"number" : "' + self.opensearch_image_version + '"'],
+            ['https://localhost:9200/_cat/plugins?v', 0, ''],
+            ['https://localhost:9200/_cat/health?v', 0, 'green'],
+            ['http://localhost:5601/api/status', 0, '"number":"' + self.opensearch_dashboards_image_version + '"']
         ]
 
         for test_case in test_cases:
@@ -40,6 +40,7 @@ class ApiTestCases:
             validate_string = test_case.__getitem__(2)
 
             status_code, response_text = ApiTest(str(request_url)).api_get()
+            logging.info(f"Test Request -> {str(request_url)}")
             logging.info(f"\nStatus_code ->{status_code} \nresponse_text ->{response_text}")
             time.sleep(3)
 
@@ -48,4 +49,4 @@ class ApiTestCases:
             else:
                 fail_counter += 1
 
-        return (fail_counter == 0, f"There are {pass_counter}/{pass_counter + fail_counter} test cases Pass")
+        return (fail_counter == 0, "There are " + str(pass_counter) + "/" + str(pass_counter + fail_counter) + " test cases Pass")

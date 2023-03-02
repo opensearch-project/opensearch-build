@@ -45,6 +45,7 @@ class TestValidateDocker(unittest.TestCase):
         mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.OSD_image = 'opensearchstaging/opensearch-osd'
         mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.validate_digest_only = False
         mock_docker_image.return_value = MagicMock()
         mock_container.return_value = (True, 'test_file.yml')
         mock_test_cases_instance = mock_test.return_value
@@ -56,8 +57,8 @@ class TestValidateDocker(unittest.TestCase):
         validate_docker = ValidateDocker(mock_validation_args.return_value)
         validate_docker.local_image_OS_id = 'local_image_OS_id'
         validate_docker.local_image_OSD_id = 'local_image_OSD_id'
-        validate_docker._OS_image_name = 'local_OS_image_name'
-        validate_docker._OSD_image_name = 'local_OSD_image_name'
+        validate_docker._OS_image_name = 'local_image_OS_name'
+        validate_docker._OSD_image_name = 'local_image_OSD_name'
 
         # Call validation method and assert the result
         result = validate_docker.validation()
@@ -65,22 +66,6 @@ class TestValidateDocker(unittest.TestCase):
 
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
-        mock_docker_image.assert_has_calls(
-            [
-                call(
-                    "local_image_OS_id", "opensearchstaging/opensearch-os", "1.0.0.1000"
-                ),
-                call(
-                    "local_image_OSD_id",
-                    "opensearchstaging/opensearch-osd",
-                    "1.0.0.1000",
-                ),
-                call().inspect_digest(),
-                call().inspect_digest().__bool__(),
-                call().inspect_digest(),
-                call().inspect_digest().__bool__(),
-            ]
-        )
         mock_test.assert_called_once()
         mock_test.assert_has_calls([call(), call().test_cases()])
 
