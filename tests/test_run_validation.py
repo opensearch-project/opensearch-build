@@ -35,4 +35,4 @@ class TestRunValidation(unittest.TestCase):
     def test_main(self, mock_tar: Mock, *mocks: Any) -> None:
 
         result = main()
-        self.assertTrue(result)
+        self.assertEqual(result, 0)

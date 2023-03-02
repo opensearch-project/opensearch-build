@@ -40,6 +40,7 @@ class ApiTestCases:
             validate_string = test_case.__getitem__(2)
 
             status_code, response_text = ApiTest(str(request_url)).api_get()
+            logging.info(f"Test Request -> {str(request_url)}")
             logging.info(f"\nStatus_code ->{status_code} \nresponse_text ->{response_text}")
             time.sleep(3)
 
