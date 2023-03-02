@@ -54,11 +54,11 @@ See https://github.com/opensearch-project/opensearch-build/issues/1234 for detai
 
 1. Please ensure that [opensearch-ci-bot](https://github.com/opensearch-ci-bot) has the write access to your repository. If not, request by creating an [issue](https://github.com/opensearch-project/opensearch-build/issues) in this repository.
 1. Add a webhook token as credentials to [CI system](https://build.ci.opensearch.org/) using configuration as code.
-1. Create a Jenkins workflow that utilizes one of the [build libraries](https://github.com/opensearch-project/opensearch-build-libraries#library-details)to publish the artifacts to right platform. Please check the [library requirements and retrieval methods](https://github.com/opensearch-project/opensearch-build-libraries#jenkins-shared-libraries) before using it.
+1. Create a Jenkins workflow that utilizes one of the [build libraries](https://github.com/opensearch-project/opensearch-build-libraries#library-details) to publish the artifacts to right platform. Please check the [library requirements and retrieval methods](https://github.com/opensearch-project/opensearch-build-libraries#jenkins-shared-libraries) before using it.
 1. For publishing to a new platform (other than ones specified above) a new library needs to be added. (ETA: 2 weeks)
 1. **Release Drafter**: Release drafter is a GitHub Action workflow that drafts a release that may or may not contain the release artifacts. The drafted release acts as a trigger to the Jenkins workflow. It also acts as a staging environment for release artifacts. This is to make sure the build environment remains the same even for release artifacts. [Example](https://github.com/opensearch-project/opensearch-py/blob/main/.github/workflows/release-drafter.yml)
     * _**2 Person Review**_ It is highly recommended to add 2PR approval for any release workflow. In universal release process this can be added to release-drafter workflow as that is the starting point to trigger any release. See how to [add the mechanism in the workflow](https://github.com/opensearch-project/opensearch-dsl-py/pull/102). The mentioned solution creates an issues that notifies and assignes the reviewers. [Example](https://github.com/gaiksaya/opensearch-dsl-py/issues/6)_
-1. **Jenkins Workflow:** Once the Jenkins workflow is added to the repository, onboard the workflow to public CI system https://build.ci.opensearch.org/
+1. **Jenkins Workflow:** Once the Jenkins workflow is added to the repository, onboard the workflow to publicly available [CI system](https://build.ci.opensearch.org/)
     1. Create a `New Item`
     2. Name it `<component-name>-release`
     3. Select `Pipeline` as type of the project
