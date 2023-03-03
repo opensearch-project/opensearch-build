@@ -6,6 +6,7 @@
 # compatible open source license.
 
 
+import logging
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -18,11 +19,18 @@ class Validation(ABC):
         super().__init__()
         self.args = args
 
+    def check_url(self, url: str) -> bool:
+        if self.is_url_valid(url) and self.download(url, self.tmp_dir):  # type: ignore
+            logging.info(f"Valid URL - {url} and Download Successful !")
+            return True
+        else:
+            raise Exception(f"Invalid url - {url}")
+
     def run(self) -> Any:
         try:
             return self.download_artifacts() and self.installation() and self.start_cluster() and self.validation() and self.cleanup()
-        except Exception:
-            return False
+        except Exception as e:
+            raise Exception(f'An error occurred while running the validation tests: {str(e)}')
 
     @abstractmethod
     def download_artifacts(self) -> bool:

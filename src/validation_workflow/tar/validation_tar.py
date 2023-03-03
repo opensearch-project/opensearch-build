@@ -28,15 +28,9 @@ class ValidateTar(Validation, DownloadUtils):
         self.osd_process = Process()
 
     def download_artifacts(self) -> bool:
-        architectures = ["x64", "arm64"]
         for project in self.args.projects:
-            for architecture in architectures:
-                url = f"{self.base_url}{project}/{self.args.version}/{project}-{self.args.version}-linux-{architecture}.tar.gz"
-                if ValidateTar.is_url_valid(url) and ValidateTar.download(url, self.tmp_dir):
-                    logging.info(f"Valid URL - {url} and Download Successful !")
-                else:
-                    logging.info(f"Invalid URL - {url}")
-                    raise Exception(f"Invalid url - {url}")
+            url = f"{self.base_url}{project}/{self.args.version}/{project}-{self.args.version}-linux-{self.args.arch}.tar.gz"
+            self.check_url(url)
         return True
 
     def installation(self) -> bool:
@@ -72,5 +66,5 @@ class ValidateTar(Validation, DownloadUtils):
             self.os_process.terminate()
             self.osd_process.terminate()
         except:
-            raise Exception('Failed to Stop Cluster')
+            raise Exception('Failed to terminate the processes that started OS and OSD')
         return True

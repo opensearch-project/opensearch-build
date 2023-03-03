@@ -15,8 +15,9 @@ class TestValidationYum(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=True)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=True)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=True)
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
-    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.3.0'
         mock_validation_args.return_value.projects.return_value = ["opensearch", "opensearch-dashboards"]
 
@@ -28,13 +29,15 @@ class TestValidationYum(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=False)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=False)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=False)
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
-    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.11.0'
+        url = "https://opensearch.org/release/2.11.0/opensearch-2.11.0-linux-x64.yum"
 
         validate_yum = ValidateYum(mock_validation_args)
 
-        self.assertRaises(Exception, validate_yum.download_artifacts())
+        self.assertRaises(Exception, validate_yum.check_url(url))
 
     @patch("validation_workflow.yum.validation_yum.execute", return_value=True)
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')

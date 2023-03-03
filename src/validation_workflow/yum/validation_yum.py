@@ -26,11 +26,7 @@ class ValidateYum(Validation, DownloadUtils):
     def download_artifacts(self) -> bool:
         for project in self.args.projects:
             url = f"{self.base_url}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo"
-            if ValidateYum.is_url_valid(url) and ValidateYum.download(url, self.tmp_dir):
-                logging.info(f"Valid URL - {url} and Download Successful !")
-            else:
-                logging.info(f"Invalid URL - {url}")
-                raise Exception(f"Invalid url - {url}")
+            self.check_url(url)
         return True
 
     def installation(self) -> bool:
@@ -49,7 +45,6 @@ class ValidateYum(Validation, DownloadUtils):
     def start_cluster(self) -> bool:
         try:
             for project in self.args.projects:
-                execute(f'sudo systemctl enable {project}', ".")
                 execute(f'sudo systemctl start {project}', ".")
                 time.sleep(20)
                 execute(f'sudo systemctl status {project}', ".")
@@ -69,6 +64,7 @@ class ValidateYum(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl stop {project}', ".")
-        except:
-            raise Exception('Failed to Stop Cluster')
+                execute(f'sudo yum remove {project} -y', ".")
+        except Exception as e:
+            raise Exception(f'Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards. {str(e)}')
         return True

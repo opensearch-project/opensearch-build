@@ -15,8 +15,9 @@ class TestValidationRpm(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=True)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=True)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=True)
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
-    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.3.0'
         mock_validation_args.return_value.projects.return_value = ["opensearch", "opensearch-dashboards"]
 
@@ -28,13 +29,15 @@ class TestValidationRpm(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=False)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=False)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=False)
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
-    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.11.0'
+        url = "https://opensearch.org/release/2.11.0/opensearch-2.11.0-linux-arm64.rpm"
 
         validate_rpm = ValidateRpm(mock_validation_args)
 
-        self.assertRaises(Exception, validate_rpm.download_artifacts())
+        self.assertRaises(Exception, validate_rpm.check_url(url))
 
     @patch("validation_workflow.rpm.validation_rpm.execute", return_value=True)
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')

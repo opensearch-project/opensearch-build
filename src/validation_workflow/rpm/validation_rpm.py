@@ -25,15 +25,9 @@ class ValidateRpm(Validation, DownloadUtils):
         self.tmp_dir = TemporaryDirectory()
 
     def download_artifacts(self) -> bool:
-        architectures = ["x64", "arm64"]
         for project in self.args.projects:
-            for architecture in architectures:
-                url = f"{self.base_url}{project}/{self.args.version}/{project}-{self.args.version}-linux-{architecture}.rpm"
-                if ValidateRpm.is_url_valid(url) and ValidateRpm.download(url, self.tmp_dir):
-                    logging.info(f"Valid URL - {url} and Download Successful !")
-                else:
-                    logging.info(f"Invalid URL - {url}")
-                    raise Exception(f"Invalid url - {url}")
+            url = f"{self.base_url}{project}/{self.args.version}/{project}-{self.args.version}-linux-{self.args.arch}.rpm"
+            self.check_url(url)
         return True
 
     def installation(self) -> bool:
@@ -50,7 +44,6 @@ class ValidateRpm(Validation, DownloadUtils):
     def start_cluster(self) -> bool:
         try:
             for project in self.args.projects:
-                execute(f'sudo systemctl enable {project}', ".")
                 execute(f'sudo systemctl start {project}', ".")
                 time.sleep(20)
                 (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
@@ -75,6 +68,7 @@ class ValidateRpm(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl stop {project}', ".")
-        except:
-            raise Exception('Failed to Stop Cluster')
+                execute(f'sudo yum remove {project} -y', ".")
+        except Exception as e:
+            raise Exception(f'Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards. {str(e)}')
         return True
