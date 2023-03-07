@@ -26,17 +26,33 @@ RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packag
     yum update -y && \
     yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh epel-release
 
-# Install dotnet
-ARG DOT_NET_LIST="5.0 6.0"
-RUN rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm && \
-    for dotnet_version in $DOT_NET_LIST; do yum install -y dotnet-sdk-$dotnet_version; done
-
-
 # Add Python37 dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Yarn dependencies
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
+
+# Install dotnet
+ARG DOT_NET_LIST="5.0 6.0"
+RUN rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm && \
+    for dotnet_version in $DOT_NET_LIST; do yum install -y dotnet-sdk-$dotnet_version; done
+
+RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-builds && \
+    echo "Install higher version of libstdc++ from Anaconda" && \
+    curl -SL https://repo.anaconda.com/pkgs/main/linux-aarch64/libstdcxx-devel_linux-aarch64-11.2.0-h1234567_1.tar.bz2 -o libstdxxx-devel.tar.br2 && \
+    tar --strip-components 2 -xjvf libstdxxx-devel.tar.br2 aarch64-conda-linux-gnu/lib64/libstdc++.so.6.0.29 && mv -v libstdc++.so.6.0.29 /lib64 && \
+    ln -sfn /lib64/libstdc++.so.6.0.29 /lib64/libstdc++.so.6 && \
+    echo "Install glibc 2.18" && \
+    curl -SLO https://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz && tar -xzvf glibc-2.18.tar.gz && cd glibc-2.18 && mkdir -p build && cd build && \
+    ../configure --prefix=/usr && make && make install && cd ../../ && \
+    echo "Install libicu 53+" && \
+    rpm -e --nodeps libicu && \
+    curl -SLO https://github.com/unicode-org/icu/releases/download/release-53-2/icu4c-53_2-src.tgz && tar -xzvf icu4c-53_2-src.tgz && cd icu && \
+    cd source && ./configure --prefix=/usr && make && make install && \
+    cd ../../../ && rm -rf aarch64-builds; fi
+
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
+RUN dotnet --version
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
