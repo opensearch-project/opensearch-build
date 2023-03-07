@@ -33,7 +33,7 @@ RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqli
 RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
 
 # Install dotnet
-ARG DOT_NET_LIST="5.0 6.0"
+ARG DOT_NET_LIST="6.0"
 RUN rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm && \
     for dotnet_version in $DOT_NET_LIST; do yum install -y dotnet-sdk-$dotnet_version; done
 
