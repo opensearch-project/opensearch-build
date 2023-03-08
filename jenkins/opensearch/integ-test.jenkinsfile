@@ -108,7 +108,7 @@ pipeline {
 
                     for (component_check in componentList) {
                         if (! componentDefaultList.contains(component_check)) {
-                           error("${component_check} is not in ${componentDefaultList}, exit 1") 
+                           error("${component_check} is not in build manifest: ${componentDefaultList}, exit 1") 
                         }
                     }
 
