@@ -200,7 +200,7 @@ pipeline {
                                         def integTestResults =
                                             build job: INTEG_TEST_JOB_NAME,
                                             propagate: false,
-                                            wait: true,
+                                            wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
@@ -227,7 +227,7 @@ pipeline {
                                         def bwcTestResults =
                                             build job: BWC_TEST_JOB_NAME,
                                             propagate: false,
-                                            wait: true,
+                                            wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
@@ -336,7 +336,7 @@ pipeline {
                                     def rpmValidationResults =
                                         build job: 'rpm-validation',
                                         propagate: false,
-                                        wait: true,
+                                        wait: false,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_X64)
@@ -530,7 +530,7 @@ pipeline {
                                                 def integTestResults =
                                                     build job: INTEG_TEST_JOB_NAME,
                                                     propagate: false,
-                                                    wait: true,
+                                                    wait: false,
                                                     parameters: [
                                                         string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
@@ -557,7 +557,7 @@ pipeline {
                                                 def bwcTestResults =
                                                     build job: BWC_TEST_JOB_NAME,
                                                     propagate: false,
-                                                    wait: true,
+                                                    wait: false,
                                                     parameters: [
                                                         string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
@@ -673,7 +673,7 @@ pipeline {
                                     def rpmValidationResults =
                                         build job: 'rpm-validation',
                                         propagate: false,
-                                        wait: true,
+                                        wait: false,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_ARM64)
