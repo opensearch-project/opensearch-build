@@ -32,19 +32,16 @@ pipeline {
         string(
             name: 'COMPONENT_NAME',
             description: 'If this field contains one or more component names (e.g. index-management geospatial ...) separated by space, will test with "--component ...", else test everything in the TEST_MANIFEST..',
-            defaultValue: "geospatial security",
             trim: true
         )
         string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
-            defaultValue: "2.5.0/opensearch-2.5.0-test.yml",
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL',
             description: 'The build manifest URL, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
-            defaultValue: "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml",
             trim: true
         )
     }
