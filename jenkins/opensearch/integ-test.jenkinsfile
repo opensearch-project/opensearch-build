@@ -90,7 +90,7 @@ pipeline {
             agent { label AGENT_LABEL }
             steps {
                 script {
-                    
+
                     downloadBuildManifest(
                         url: BUILD_MANIFEST_URL,
                         path: BUILD_MANIFEST
