@@ -713,12 +713,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_ARM64 }
+                    agent { label AGENT_X64 }
                     stages {
                         stage('build-archive-linux-arm64-deb') {
                             agent {
                                 docker {
-                                    label AGENT_ARM64
+                                    label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     alwaysPull true
