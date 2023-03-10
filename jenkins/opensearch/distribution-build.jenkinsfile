@@ -377,12 +377,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: integTestResults.getId(),
-                                            stage: "integ_test_x64" // TODO: change to integ_test_linux_x64_tar
-                                        )
                                     }
                                 },
                                 'bwc-test': {
@@ -398,12 +392,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: bwcTestResults.getId(),
-                                            stage: "bwc_test_x64" // TODO: change to bwc_test_linux_x64_tar
-                                        )
                                     }
                                 }
                             ])
@@ -636,12 +624,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: integTestResults.getId(),
-                                            stage: "integ_test_arm64" // TODO: integ_test_linux_arm64_tar
-                                        )
                                     }
                                 },
                                 'bwc-test': {
@@ -657,12 +639,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: bwcTestResults.getId(),
-                                            stage: "bwc_test_arm64" // TODO: bwc_test_linux_arm64_tar
-                                        )
                                     }
                                 }
                             ])
