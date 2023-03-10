@@ -25,6 +25,16 @@ class TestCCRPerfTest extends BuildPipelineTest {
     @Before
     void setUp() {
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.4')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
+
         super.setUp()
 
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')

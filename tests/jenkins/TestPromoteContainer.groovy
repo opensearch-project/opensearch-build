@@ -20,6 +20,16 @@ class TestPromoteContainer extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.4')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
         binding.setVariable('SOURCE_IMAGES', PROMOTE_PRODUCT)
         binding.setVariable('RELEASE_VERSION', RELEASE_VERSION)
         binding.setVariable('DOCKER_USERNAME', 'dummy_docker_username')
