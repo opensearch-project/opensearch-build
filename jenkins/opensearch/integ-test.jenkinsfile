@@ -13,7 +13,7 @@ def docker_args = [
     "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro"
 ]
 
-def docker_hosts = [
+def agent_nodes = [
     "x64": "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host",
     "arm64": "Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host",
 ]
@@ -47,7 +47,7 @@ pipeline {
     }
     stages {
         stage('verify-parameters') {
-            agent { label docker_hosts["x64"]}
+            agent { label agent_nodes["x64"]}
             steps {
                 script {
                     if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
@@ -72,7 +72,7 @@ pipeline {
                     env.distribution = buildManifestObj.getDistribution()
                     env.version = buildManifestObj.build.version
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
-                    env.AGENT_LABEL = docker_hosts["$architecture"]
+                    env.AGENT_LABEL = agent_nodes["$architecture"]
 
                     echo "Version: ${version}, Agent: ${AGENT_LABEL}, BuildId: ${buildId}, Distribution: ${distribution}, Components: ${componentList}"
                     currentBuild.description = "$version, $architecture, $buildId, $distribution, $componentList"
