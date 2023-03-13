@@ -85,9 +85,11 @@ PLUGIN_NAME=$(basename "$PWD")
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
-(cd ../OpenSearch-Dashboards && eval $NVM_CMD && yarn osd bootstrap)
+CURR_DIR=`pwd`
+cd ../OpenSearch-Dashboards; eval $NVM_CMD; yarn osd bootstrap
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-(cd ../OpenSearch-Dashboards && eval $NVM_CMD && cd plugins/$PLUGIN_NAME && yarn $HELPER_STRING build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+cd plugins/$PLUGIN_NAME; yarn $HELPER_STRING build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER
+cd $CURR_DIR
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
 rm -rf ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME
