@@ -83,7 +83,7 @@ echo "BUILD MODULES FOR $PLUGIN_NAME"
 CURR_DIR=`pwd`
 cd ../../OpenSearch-Dashboards; eval $NVM_CMD; yarn osd bootstrap
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
-cd ../../OpenSearch-Dashboards; eval $NVM_CMD; cd plugins/$PLUGIN_FOLDER; yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
+cd plugins/$PLUGIN_FOLDER; yarn plugin-helpers build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER)
 cd $CURR_DIR
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
