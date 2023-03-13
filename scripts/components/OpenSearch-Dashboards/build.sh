@@ -137,15 +137,15 @@ fi
 
 eval $NVM_CMD
 
-echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
-yarn osd bootstrap
-
-echo "Building artifact"
-
-yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE --version-qualifier=$QUALIFIER
-
-mkdir -p "${OUTPUT}/dist"
-# Copy artifact to dist folder in bundle build output
-ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
-ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
-cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME
+#echo "Building node modules for core with $PLATFORM-$DISTRIBUTION-$ARCHITECTURE"
+#yarn osd bootstrap
+#
+#echo "Building artifact"
+#
+#yarn $BUILD_PARAMS $TARGET $EXTRA_PARAMS $RELEASE --version-qualifier=$QUALIFIER
+#
+#mkdir -p "${OUTPUT}/dist"
+## Copy artifact to dist folder in bundle build output
+#ARTIFACT_BUILD_NAME=opensearch-dashboards-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
+#ARTIFACT_TARGET_NAME=opensearch-dashboards-min-$VERSION$QUALIFIER_IDENTIFIER$IDENTIFIER-$SUFFIX.$EXT
+#cp target/$ARTIFACT_BUILD_NAME $OUTPUT/dist/$ARTIFACT_TARGET_NAME
