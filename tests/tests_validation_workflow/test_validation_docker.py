@@ -18,13 +18,15 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.is_container_daemon_running')
     def test_download_artifacts(self, mock_is_container_daemon_running: Mock, mock_validation_args: Mock, mock_get_image_id: Mock) -> None:
-        # set up mock objects
-        mock_validation_args.return_value.stg_tag.return_value = '1.0.0.1000'
-        mock_is_container_daemon_running.return_value = 1
-        mock_get_image_id.return_value = "12345"
+        mock_validation_args = Mock()
+        mock_validation_args.return_value.docker_source = 'dockerhub'
+        mock_validation_args.return_value.using_staging_artifact_only = True
 
         # create instance of ValidateDocker
-        validate_docker = ValidateDocker(mock_validation_args)
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+
+        # set the desired value for args.docker_source
+        validate_docker.args.docker_source = 'dockerhub'
 
         # call download_artifacts method
         result = validate_docker.download_artifacts()

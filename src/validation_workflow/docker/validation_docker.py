@@ -26,27 +26,56 @@ class ValidateDocker(Validation):
         super().__init__(args)
 
     def download_artifacts(self) -> bool:
+        try:
+            assert self.is_container_daemon_running(), 'Docker Daemon is not running. Exiting the docker validation.'
 
-        if (self.is_container_daemon_running()):
+            image_names = {
+                'dockerhub': {
+                    'os': {
+                        True: 'opensearchstaging/opensearch',
+                        False: 'opensearchproject/opensearch'
+                    },
+                    'osd': {
+                        True: 'opensearchstaging/opensearch-dashboards',
+                        False: 'opensearchproject/opensearch-dashboards'
+                    }
+                },
+                'ecr': {
+                    'os': {
+                        True: 'public.ecr.aws/opensearchstaging/opensearch',
+                        False: 'public.ecr.aws/opensearchproject/opensearch'
+                    },
+                    'osd': {
+                        True: 'public.ecr.aws/opensearchstaging/opensearch-dashboards',
+                        False: 'public.ecr.aws/opensearchproject/opensearch-dashboards'
+                    }
+                }
+            }
 
-            # STEP 1 . pull the images for OS and OSD
-            if (self.args.using_staging_artifact_only):
-                self._OS_image_name = 'opensearchstaging/opensearch' if self.args.docker_source == 'dockerhub' else 'public.ecr.aws/opensearchstaging/opensearch'
-                self._OSD_image_name = 'opensearchstaging/opensearch-dashboards' if self.args.docker_source == 'dockerhub' else 'public.ecr.aws/opensearchstaging/opensearch-dashboards'
-                self.local_image_OS_id = self.get_image_id(self._OS_image_name, ValidationArgs().stg_tag('opensearch').replace(" ", ""))
-                self.local_image_OSD_id = self.get_image_id(self._OSD_image_name, ValidationArgs().stg_tag('opensearch_dashboards').replace(" ", ""))
-            else:
-                self._OS_image_name = 'opensearchproject/opensearch' if self.args.docker_source == 'dockerhub' else 'public.ecr.aws/opensearchproject/opensearch'
-                self._OSD_image_name = 'opensearchproject/opensearch-dashboards' if self.args.docker_source == 'dockerhub' else 'public.ecr.aws/opensearchproject/opensearch-dashboards'
-                self.local_image_OS_id = self.get_image_id(self._OS_image_name, self.args.version)
-                self.local_image_OSD_id = self.get_image_id(self._OSD_image_name, self.args.version)
+            # Choose image names based on input arguments
+            self._OS_image_name = image_names[self.args.docker_source]['os'][self.args.using_staging_artifact_only]
+            self._OSD_image_name = image_names[self.args.docker_source]['osd'][self.args.using_staging_artifact_only]
+
+            self.local_image_OS_id = (
+                self.get_image_id(self._OS_image_name, ValidationArgs().stg_tag('opensearch').replace(" ", ""))
+                if self.args.using_staging_artifact_only
+                else self.get_image_id(self._OS_image_name, self.args.version)
+            )
+            self.local_image_OSD_id = (
+                self.get_image_id(self._OSD_image_name, ValidationArgs().stg_tag('opensearch_dashboards').replace(" ", ""))
+                if self.args.using_staging_artifact_only
+                else self.get_image_id(self._OSD_image_name, self.args.version)
+            )
             logging.info(f'the OS image ID is : {self.local_image_OS_id}')
             logging.info(f'the OSD image ID is : {self.local_image_OSD_id} \n\n')
-
             return True
 
-        else:
-            raise Exception('Docker Daemon is not running. Exiting the docker validation.')
+        except AssertionError as e:
+            logging.error(str(e))
+            return False
+
+        finally:
+            pass
 
     # Pass this method for docker as no installation required in docker
     def installation(self) -> bool:
@@ -119,15 +148,21 @@ class ValidateDocker(Validation):
             return False
 
     def cleanup(self) -> bool:
-        # clean up
-        if self.args.validate_digest_only:
-            return True
-        if self.cleanup_process():
-            logging.info('cleanup is completed')
-            return True
-        else:
-            logging.info('cleanup is Not completed')
+        try:
+            # clean up
+            if self.args.validate_digest_only:
+                return True
+            if self.cleanup_process():
+                logging.info('cleanup is completed')
+                return True
+            else:
+                logging.info('cleanup is Not completed')
+                return False
+        except Exception as e:
+            logging.error(f'An error occurred during cleanup: {e}')
             return False
+        finally:
+            pass
 
     def cleanup_process(self) -> bool:
         # stop the containers
@@ -161,34 +196,41 @@ class ValidateDocker(Validation):
         self.target_yml_file = os.path.join(self.tmp_dir.name, 'docker-compose.yml')
 
         self.version_number = version[0]
-        if self.version_number in self.docker_compose_files:
-            self.source_file = os.path.join('docker', 'release', 'dockercomposefiles', self.docker_compose_files[self.version_number])
-            shutil.copy2(self.source_file, self.target_yml_file)
+        try:
+            source_file = None
+            if self.version_number in self.docker_compose_files:
+                source_file = os.path.join('docker', 'release', 'dockercomposefiles', self.docker_compose_files[self.version_number])
+                shutil.copy2(source_file, self.target_yml_file)
 
-        if (self.args.using_staging_artifact_only):
-            self.images_used = f'{OpenSearch_image}:{version}'
-        else:
-            self.images_used = f'{OpenSearch_image}:{version}'
+            if (self.args.using_staging_artifact_only):
+                self.images_used = f'{OpenSearch_image}:{version}'
+            else:
+                self.images_used = f'{OpenSearch_image}:{version}'
 
-        self.inplace_change(
-            self.target_yml_file,
-            f'opensearchproject/opensearch:{version[0]}',
-            f'{OpenSearch_image}:{version}.{self.args.os_build_number}'
-            if self.args.using_staging_artifact_only
-            else f'{OpenSearch_image}:{version}'
-        )
+            self.inplace_change(
+                self.target_yml_file,
+                f'opensearchproject/opensearch:{version[0]}',
+                f'{OpenSearch_image}:{version}.{self.args.os_build_number}'
+                if self.args.using_staging_artifact_only
+                else f'{OpenSearch_image}:{version}'
+            )
 
-        self.inplace_change(
-            self.target_yml_file,
-            f'opensearchproject/opensearch-dashboards:{version[0]}',
-            f'{OpenSearchDashboard_image}:{version}.{self.args.osd_build_number}'
-            if self.args.using_staging_artifact_only
-            else f'{OpenSearchDashboard_image}:{version}'
-        )
-        # spin up containers
-        self.docker_compose_up = f'docker-compose -f {self.target_yml_file} up -d'
-        result = subprocess.run(self.docker_compose_up, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        return ('returncode=0' in (str(result)), self.target_yml_file)
+            self.inplace_change(
+                self.target_yml_file,
+                f'opensearchproject/opensearch-dashboards:{version[0]}',
+                f'{OpenSearchDashboard_image}:{version}.{self.args.osd_build_number}'
+                if self.args.using_staging_artifact_only
+                else f'{OpenSearchDashboard_image}:{version}'
+            )
+            # spin up containers
+            self.docker_compose_up = f'docker-compose -f {self.target_yml_file} up -d'
+            result = subprocess.run(self.docker_compose_up, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+            return ('returncode=0' in (str(result)), self.target_yml_file)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            pass
 
     def inplace_change(self, filename: str, old_string: str, new_string: str) -> None:
 
