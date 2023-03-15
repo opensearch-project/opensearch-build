@@ -56,6 +56,14 @@ class TestSignArgs(unittest.TestCase):
     def test_platform_default(self) -> None:
         self.assertEqual(SignArgs().platform, "linux")
 
+    @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST])
+    def test_overwrite_default(self) -> None:
+        self.assertEqual(SignArgs().overwrite, False)
+
     @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--platform", "windows"])
     def test_platform_windows(self) -> None:
         self.assertEqual(SignArgs().platform, "windows")
+
+    @patch("argparse._sys.argv", [SIGN_PY, OPENSEARCH_MANIFEST, "--platform", "windows", "--overwrite"])
+    def test_platform_windows_overwrite(self) -> None:
+        self.assertEqual(SignArgs().overwrite, True)

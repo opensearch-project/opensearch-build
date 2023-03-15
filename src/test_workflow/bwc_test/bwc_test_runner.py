@@ -46,7 +46,7 @@ class BwcTestRunner(abc.ABC):
                         test_results = test_suite.execute_tests()
                         all_results.append(component.name, test_results)
                     else:
-                        logging.info(f"Skipping bwc-tests for {component.name}, as it is currently not supported")
+                        logging.info(f"Skipping bwc-tests for {component.name}, as the bwc-test section is not declared under the component section in the test manifest")
                 else:
                     logging.info(f"Skipping bwc-tests for {component.name}, as it is currently not declared in the test manifest")
 

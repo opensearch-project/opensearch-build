@@ -14,12 +14,14 @@ pipeline {
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'ccr-perf-test'
     }
+    triggers {
+        parameterizedCron '''
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;
+            H 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;
+
+        '''
+    }
     parameters {
-        string(
-            name: 'GITHUB_TOKEN',
-            description: 'Github token for account access.',
-            trim: true
-        )
         string(
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
@@ -41,10 +43,6 @@ pipeline {
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
-                    }
-                    if (GITHUB_TOKEN == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
                     }
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,

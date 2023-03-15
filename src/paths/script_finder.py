@@ -90,4 +90,13 @@ class ScriptFinder:
 
     @classmethod
     def find_bwc_test_script(cls, component_name: str, git_dir: str) -> str:
-        return cls.__find_named_script("bwctest.sh", component_name, git_dir)
+        script_name = "bwctest.sh"
+        paths = [
+            os.path.realpath(os.path.join(cls.default_scripts_path, script_name)),
+            os.path.realpath(os.path.join(cls.component_scripts_path, component_name, script_name)),
+            os.path.realpath(os.path.join(git_dir, component_name, script_name)),
+            os.path.realpath(os.path.join(git_dir, script_name)),
+            os.path.realpath(os.path.join(git_dir, "scripts", script_name)),
+        ]
+
+        return cls.__find_script(script_name, paths)

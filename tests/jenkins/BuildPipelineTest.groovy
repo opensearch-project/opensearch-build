@@ -10,8 +10,6 @@
 package jenkins.tests
 
 import org.junit.*
-import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
-import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import com.lesfurets.jenkins.unit.*
 import org.yaml.snakeyaml.Yaml
 
@@ -34,16 +32,6 @@ abstract class BuildPipelineTest extends CommonPipelineTest {
     @Before
     void setUp() {
         super.setUp()
-
-        helper.registerSharedLibrary(
-            library().name('jenkins')
-                .defaultVersion('1.0.4')
-                .allowOverride(true)
-                .implicit(true)
-                .targetPath('vars')
-                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
-                .build()
-            )
 
         helper.registerAllowedMethod("readYaml", [Map.class], { args ->
             return new Yaml().load((args.file as File).text)

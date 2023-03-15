@@ -25,13 +25,13 @@ class SignArtifacts:
     platform: str
     signer: Signer
 
-    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> None:
+    def __init__(self, target: Path, components: List[str], artifact_type: str, signature_type: str, platform: str, overwrite: bool) -> None:
         self.target = target
         self.components = components
         self.artifact_type = artifact_type
         self.signature_type = signature_type
         self.platform = platform
-        self.signer = Signers.create(platform)
+        self.signer = Signers.create(platform, overwrite)
 
     @abstractmethod
     def __sign__(self) -> None:
@@ -57,9 +57,9 @@ class SignArtifacts:
             return SignArtifactsExistingArtifactFile
 
     @classmethod
-    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, platform: str) -> Any:
+    def from_path(self, path: Path, components: List[str], artifact_type: str, signature_type: str, platform: str, overwrite: bool) -> Any:
         klass = self.__signer_class__(path)
-        return klass(path, components, artifact_type, signature_type, platform)
+        return klass(path, components, artifact_type, signature_type, platform, overwrite)
 
 
 class SignWithBuildManifest(SignArtifacts):

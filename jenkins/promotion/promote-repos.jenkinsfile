@@ -1,0 +1,68 @@
+lib = library(identifier: 'jenkins@2.0.2', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+def docker_images = [
+    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2",
+    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1",
+]
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        choice(
+            choices: ['distribution-build-opensearch', 'distribution-build-opensearch-dashboards'],
+            name: 'DISTRIBUTION_JOB_NAME',
+            description: 'What distribution job name is this distribution build with?'
+        )
+        choice(
+            choices: ['yum', 'apt'],
+            name: 'DISTRIBUTION_REPO_TYPE',
+            description: 'What distribution repo type is this distribution promote to?'
+        )
+        string(
+            defaultValue: '',
+            name: 'DISTRIBUTION_BUILD_NUMBER',
+            description: 'What is the build id of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 123, 136)',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'INPUT_MANIFEST',
+            description: 'What is the input manifest of the above DISTRIBUTION_JOB_NAME that you want to promote? (e.g. 1.2.2/opensearch-1.2.2.yml)',
+            trim: true
+        )
+    }
+    stages {
+        stage('promote repo') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                    image docker_images["${DISTRIBUTION_REPO_TYPE}"]
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    currentBuild.description = "${DISTRIBUTION_REPO_TYPE} ${DISTRIBUTION_JOB_NAME} ${DISTRIBUTION_BUILD_NUMBER} ${INPUT_MANIFEST}"
+                    promoteRepos(
+                        distributionRepoType: "${DISTRIBUTION_REPO_TYPE}",
+                        buildNumber: "${DISTRIBUTION_BUILD_NUMBER}",
+                        jobName: "${DISTRIBUTION_JOB_NAME}"
+                    )
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+}

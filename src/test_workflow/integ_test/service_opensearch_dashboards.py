@@ -23,7 +23,7 @@ from test_workflow.integ_test.service import Service
 class ServiceOpenSearchDashboards(Service):
     dist: Distribution
     install_dir: str
-    opensearch_dashboards_yml_dir: str
+    opensearch_dashboards_yml_path: str
     executable_dir: str
 
     def __init__(
@@ -42,7 +42,7 @@ class ServiceOpenSearchDashboards(Service):
     def start(self) -> None:
         self.dist.install(self.download())
 
-        self.opensearch_dashboards_yml_dir = os.path.join(self.dist.config_dir, "opensearch_dashboards.yml")
+        self.opensearch_dashboards_yml_path = self.dist.config_path
         self.executable_dir = os.path.join(self.install_dir, "bin")
 
         if not self.security_enabled:
@@ -53,7 +53,7 @@ class ServiceOpenSearchDashboards(Service):
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 
-        self.process_handler.start(self.dist.start_cmd, self.executable_dir)
+        self.process_handler.start(self.dist.start_cmd, self.executable_dir, self.dist.require_sudo)
         logging.info(f"Started OpenSearch Dashboards with parent PID {self.process_handler.pid}")
 
     def uninstall(self) -> None:
@@ -70,7 +70,7 @@ class ServiceOpenSearchDashboards(Service):
             plugin_script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "bash opensearch-dashboards-plugin"
             subprocess.check_call(f"{plugin_script} remove --allow-root securityDashboards", cwd=self.executable_dir, shell=True)
 
-        with open(self.opensearch_dashboards_yml_dir, "w") as yamlfile:
+        with open(self.opensearch_dashboards_yml_path, "w") as yamlfile:
             yamlfile.close()
 
     def url(self, path: str = "") -> str:
@@ -82,7 +82,7 @@ class ServiceOpenSearchDashboards(Service):
         return requests.get(url, verify=False, auth=("admin", "admin") if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
-        with open(self.opensearch_dashboards_yml_dir, "a") as yamlfile:
+        with open(self.opensearch_dashboards_yml_path, "a") as yamlfile:
             yamlfile.write(yaml.dump(additional_config))
 
     def port(self) -> int:

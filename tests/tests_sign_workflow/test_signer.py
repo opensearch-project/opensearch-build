@@ -27,34 +27,34 @@ class TestSigner(unittest.TestCase):
 
     @patch("sign_workflow.signer.GitRepository")
     def test_signer_checks_out_tool(self, mock_repo: Mock) -> None:
-        self.DummySigner()
+        self.DummySigner(True)
         self.assertEqual(mock_repo.return_value.execute.call_count, 2)
         mock_repo.return_value.execute.assert_has_calls([call("./bootstrap"), call("rm config.cfg")])
 
     @patch("sign_workflow.signer.GitRepository")
     def test_sign_artifact_not_called(self, mock_repo: Mock) -> None:
-        signer = self.DummySigner()
+        signer = self.DummySigner(True)
         signer.generate_signature_and_verify = MagicMock()  # type: ignore
         signer.sign_artifact("the-jar.notvalid", Path("/path"), ".sig")
         signer.generate_signature_and_verify.assert_not_called()
 
     @patch("sign_workflow.signer.GitRepository")
     def test_sign_artifact_called(self, mock_repo: Mock) -> None:
-        signer = self.DummySigner()
+        signer = self.DummySigner(True)
         signer.generate_signature_and_verify = MagicMock()  # type: ignore
         signer.sign_artifact("the-jar.zip", Path("/path"), ".sig")
         signer.generate_signature_and_verify.assert_called_with("the-jar.zip", Path("/path"), ".sig")
 
     @patch("sign_workflow.signer.GitRepository")
     def test_remove_existing_signature_found(self, mock_repo: Mock) -> None:
-        signer = self.DummySigner()
+        signer = self.DummySigner(False)
         os.remove = MagicMock()
         signer.__remove_existing_signature__("tests/tests_sign_workflow/data/signature/tar_dummy_artifact_1.0.0.tar.gz.sig")
         os.remove.assert_called_with("tests/tests_sign_workflow/data/signature/tar_dummy_artifact_1.0.0.tar.gz.sig")
 
     @patch("sign_workflow.signer.GitRepository")
     def test_remove_existing_signature_not_found(self, mock_repo: Mock) -> None:
-        signer = self.DummySigner()
+        signer = self.DummySigner(False)
         os.remove = MagicMock()
         signer.__remove_existing_signature__("tests/tests_sign_workflow/data/signature/not_found.tar.gz.sig")
         os.remove.assert_not_called()

@@ -72,7 +72,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         )
         mock_file.return_value.write.assert_called_once_with(mock_dump_result)
 
-        mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"))
+        mock_process.assert_called_once_with("./opensearch-dashboards", os.path.join(self.work_dir, "opensearch-dashboards-1.1.0", "bin"), False)
         self.assertEqual(mock_pid.call_count, 1)
 
     @patch("os.path.isdir")

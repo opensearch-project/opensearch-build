@@ -192,6 +192,10 @@
 # data_source.encryption.wrappingKeyNamespace: 'changeme'
 # data_source.encryption.wrappingKey: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
+# 2.6 New ML Commons Dashboards Experimental Feature
+# Set the value of this setting to true to enable the experimental ml commons dashboards
+# ml_commons_dashboards.enabled: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver

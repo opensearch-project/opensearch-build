@@ -47,7 +47,7 @@ while getopts ":h:v:q:s:o:p:a:f:" arg; do
             ARCHITECTURE=$OPTARG
             ;;
         f)
-            ARTIFACTS=$ARTIFACTS
+            ARTIFACTS=$OPTARG
             ;;
         :)
             echo "Error: -${OPTARG} requires an argument"

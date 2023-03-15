@@ -126,7 +126,7 @@ class TestInputManifests(unittest.TestCase):
         mock_open.assert_has_calls([call(InputManifests.cron_jenkinsfile(), 'r')])
         mock_open().write.assert_called_once_with(
             f"parameterizedCron '''\n{' ' * 12}H 1 * * * %INPUT_MANIFEST=0.1.2/test-0.1.2.yml;"
-            f"TARGET_JOB_NAME=distribution-build-test;BUILD_PLATFORM=linux\n"
+            f"TARGET_JOB_NAME=distribution-build-test;BUILD_PLATFORM=linux;BUILD_DISTRIBUTION=tar\n"
         )
 
     def test_versionincrement_workflow(self) -> None:

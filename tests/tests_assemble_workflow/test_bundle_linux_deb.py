@@ -56,7 +56,8 @@ class TestBundleLinuxDeb(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual('debmake -f "OpenSearch Team" -e "opensearch@amazon.com" -i debuild -p opensearch -n -r 1 -u 1.3.0', args_list_deb[0][0][0])
+        self.assertEqual('debmake --fullname "OpenSearch Team" --email "opensearch@amazon.com" --invoke debuild --package opensearch --native --revision 1 --upstreamversion 1.3.0',
+                         args_list_deb[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 2)
         self.assertEqual(generate_changelog_file_call_mock.call_count, 1)
 
@@ -73,7 +74,7 @@ class TestBundleLinuxDeb(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: os.environ['OPENSEARCH_PATH_CONF'])
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual('debmake -f "OpenSearch Team" -e "opensearch@amazon.com" -i debuild -p opensearch -n -r 1 -u 2.0.0.alpha1',
+        self.assertEqual('debmake --fullname "OpenSearch Team" --email "opensearch@amazon.com" --invoke debuild --package opensearch --native --revision 1 --upstreamversion 2.0.0.alpha1',
                          args_list_deb_qualifier[0][0][0])
         self.assertEqual(shutil_move_mock.call_count, 2)
         self.assertEqual(generate_changelog_file_call_mock.call_count, 1)

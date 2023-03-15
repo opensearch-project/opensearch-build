@@ -5,10 +5,9 @@
 
 ## Jenkinsfiles
 
-* [OpenSearch](./opensearch)
-* [OpenSearch Dashboards](./opensearch)
-* [Docker](./docker)
-* [Test](./test)
+* [OpenSearch](./opensearch/)
+* [OpenSearch Dashboards](./opensearch-dashboards/)
+* [Docker](./docker/)
 
 
 ### Check for Build
@@ -24,7 +23,7 @@ For concurrent builds the Check-for-build job has an internal locks to prevent i
 
 ### Jenkins Shared Library
 
-This project contains a Jenkins global shared library used extensively in the Jenkinsfile's in this folder.
+This project contains a Jenkins global shared library used extensively in the Jenkinsfiles. See [opensearch-build-libraries](https://github.com/opensearch-project/opensearch-build-libraries) for more details on shared libraries
 
-* [Global Shared Functions](../vars)
-* [Common Classes](../src/jenkins)
+* [Global Shared Functions](https://github.com/opensearch-project/opensearch-build-libraries/tree/main/vars)
+* [Common Classes](https://github.com/opensearch-project/opensearch-build-libraries/tree/main/src/jenkins)
