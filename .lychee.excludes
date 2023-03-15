@@ -1,3 +1,6 @@
 http://staging-artifacts.cloudfront.net/*
 https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/*
 http://public.ecr.aws/data-prepper-container-repository
+https://www.dummy.com/*
+# Too many redirects in playground.opensearch.org, see https://github.com/lycheeverse/lychee/issues/715
+https://playground.opensearch.org/*
