@@ -5,17 +5,23 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 from pathlib import Path
 
+from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from manifests.test_manifest import TestComponent
+from paths.script_finder import ScriptFinder
+from system.execute import execute
 from test_workflow.dependency_installer_opensearch import DependencyInstallerOpenSearch
 from test_workflow.dependency_installer_opensearch_dashboards import DependencyInstallerOpenSearchDashboards
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards
+from test_workflow.integ_test.topology import ClusterEndpoint, NodeEndpoint
 from test_workflow.test_recorder.test_recorder import TestRecorder
+from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
 
@@ -24,6 +30,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
     dependency_installer_opensearch_dashboards: DependencyInstallerOpenSearchDashboards
     bundle_manifest_opensearch_dashboards: BundleManifest
     build_manifest_opensearch_dashboards: BuildManifest
+    repo: GitRepository
 
     def __init__(
         self,
@@ -47,6 +54,15 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             dependency_installer_opensearch,
             bundle_manifest_opensearch,
             build_manifest_opensearch
+        )
+
+        # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
+
+        self.repo = GitRepository(
+            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
+            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id,
+            os.path.join(self.work_dir, self.component.name),
+            test_config.working_directory
         )
 
         self.dependency_installer_opensearch_dashboards = dependency_installer_opensearch_dashboards
@@ -80,6 +96,38 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             self.pretty_print_message("Running integration tests for " + self.component.name)
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(endpoint, port, security, config)
+
+    def multi_execute_integtest_sh(self, cluster_endpoints: list, security: bool, test_config: str) -> int:
+        script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
+
+        def custom_node_endpoint_encoder(node_endpoint: NodeEndpoint) -> dict:
+            return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port, "transport": node_endpoint.transport}
+        if os.path.exists(script):
+            single_node = cluster_endpoints[0].data_nodes[0]
+            cmd = f"bash {script} -b {single_node.endpoint} -p {single_node.port} -s {str(security).lower()} -t {self.component.name} -v {self.bundle_manifest.build.version} -o default"
+            self.repo_work_dir = os.path.join(
+                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
+            (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
+            test_result_data = TestResultData(
+                self.component.name,
+                test_config,
+                status,
+                stdout,
+                stderr,
+                self.test_artifact_files
+            )
+            self.save_logs.save_test_result_data(test_result_data)
+            if stderr:
+                logging.info("Stderr reported for component: " + self.component.name)
+                logging.info(stderr)
+            return status
+        else:
+            logging.info(f"{script} does not exist. Skipping integ tests for {self.component.name}")
+            return 0
+
+    def execute_integtest_sh(self, endpoint: str, port: int, security: bool, test_config: str) -> int:
+        cluster_endpoint_port = [ClusterEndpoint("cluster1", [NodeEndpoint(endpoint, port, 9300)], [])]
+        return self.multi_execute_integtest_sh(cluster_endpoint_port, security, test_config)
 
     @property
     def test_artifact_files(self) -> dict:
