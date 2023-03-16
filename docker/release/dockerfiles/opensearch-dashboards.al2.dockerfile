@@ -52,11 +52,16 @@ FROM amazonlinux:2
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
+ENV TINI_VERSION=v0.19.0
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
 RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+
+# Add tini to use as init (PID1) process.
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/tini
+RUN chmod +x /bin/tini
 
 # Install Reporting dependencies
 RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
@@ -93,5 +98,5 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE"
 
 # CMD to run
-ENTRYPOINT ["./opensearch-dashboards-docker-entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "./opensearch-dashboards-docker-entrypoint.sh"]
 CMD ["opensearch-dashboards"]
