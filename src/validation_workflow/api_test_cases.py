@@ -39,9 +39,10 @@ class ApiTestCases:
             success_status_code = test_case.__getitem__(1)
             validate_string = test_case.__getitem__(2)
 
-            status_code, response_text = ApiTest(str(request_url)).api_get()
-            logging.info(f"\nStatus_code ->{status_code} \nresponse_text ->{response_text}")
             time.sleep(3)
+            status_code, response_text = ApiTest(str(request_url)).api_get()
+            logging.info(f"Test Request -> {str(request_url)}")
+            logging.info(f"\nStatus_code ->{status_code} \nresponse_text ->{response_text}")
 
             if status_code == success_status_code and (not validate_string or validate_string in response_text):
                 pass_counter += 1
