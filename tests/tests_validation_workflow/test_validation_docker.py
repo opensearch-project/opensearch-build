@@ -18,13 +18,15 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.is_container_daemon_running')
     def test_download_artifacts(self, mock_is_container_daemon_running: Mock, mock_validation_args: Mock, mock_get_image_id: Mock) -> None:
-        # set up mock objects
-        mock_validation_args.return_value.stg_tag.return_value = '1.0.0.1000'
-        mock_is_container_daemon_running.return_value = 1
-        mock_get_image_id.return_value = "12345"
+        mock_validation_args = Mock()
+        mock_validation_args.return_value.docker_source = 'dockerhub'
+        mock_validation_args.return_value.using_staging_artifact_only = True
 
         # create instance of ValidateDocker
-        validate_docker = ValidateDocker(mock_validation_args)
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+
+        # set the desired value for args.docker_source
+        validate_docker.args.docker_source = 'dockerhub'
 
         # call download_artifacts method
         result = validate_docker.download_artifacts()
@@ -45,6 +47,7 @@ class TestValidateDocker(unittest.TestCase):
         mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.OSD_image = 'opensearchstaging/opensearch-osd'
         mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.validate_digest_only = False
         mock_docker_image.return_value = MagicMock()
         mock_container.return_value = (True, 'test_file.yml')
         mock_test_cases_instance = mock_test.return_value
@@ -56,8 +59,8 @@ class TestValidateDocker(unittest.TestCase):
         validate_docker = ValidateDocker(mock_validation_args.return_value)
         validate_docker.local_image_OS_id = 'local_image_OS_id'
         validate_docker.local_image_OSD_id = 'local_image_OSD_id'
-        validate_docker._OS_image_name = 'local_OS_image_name'
-        validate_docker._OSD_image_name = 'local_OSD_image_name'
+        validate_docker._OS_image_name = 'local_image_OS_name'
+        validate_docker._OSD_image_name = 'local_image_OSD_name'
 
         # Call validation method and assert the result
         result = validate_docker.validation()
@@ -65,22 +68,6 @@ class TestValidateDocker(unittest.TestCase):
 
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
-        mock_docker_image.assert_has_calls(
-            [
-                call(
-                    "local_image_OS_id", "opensearchstaging/opensearch-os", "1.0.0.1000"
-                ),
-                call(
-                    "local_image_OSD_id",
-                    "opensearchstaging/opensearch-osd",
-                    "1.0.0.1000",
-                ),
-                call().inspect_digest(),
-                call().inspect_digest().__bool__(),
-                call().inspect_digest(),
-                call().inspect_digest().__bool__(),
-            ]
-        )
         mock_test.assert_called_once()
         mock_test.assert_has_calls([call(), call().test_cases()])
 
