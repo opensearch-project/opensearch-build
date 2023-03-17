@@ -84,6 +84,17 @@ class ValidationArgs:
             choices=["x64", "arm64"],
             default="x64"
         )
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
+            "--validate_digest_only",
+            action="store_true",
+            default=False,
+            help="(optional) Validate digest only; will not run docker to test API")
+        group.add_argument(
+            "--using_staging_artifact_only",
+            action="store_true",
+            default=False,
+            help="(optional) Use only staging artifact to run docker and API test, will not validate digest")
 
         args = parser.parse_args()
         self.version = args.version
@@ -97,6 +108,8 @@ class ValidationArgs:
         self.os_build_number = args.os_build_number
         self.osd_build_number = args.osd_build_number
         self.docker_source = args.docker_source
+        self.validate_digest_only = args.validate_digest_only
+        self.using_staging_artifact_only = args.using_staging_artifact_only
 
     def stg_tag(self, image_type: str) -> str:
         return " ".join(
