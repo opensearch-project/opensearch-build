@@ -68,6 +68,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
         })
