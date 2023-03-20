@@ -85,7 +85,7 @@ pipeline {
                     env.distribution = buildManifestObj.getDistribution()
                     env.version = buildManifestObj.build.version
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
-                    env.artifactPathOpenSearch = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
+                    env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
                     env.AGENT_LABEL = agent_nodes["$architecture"]
 
                     echo "Version: ${version}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
