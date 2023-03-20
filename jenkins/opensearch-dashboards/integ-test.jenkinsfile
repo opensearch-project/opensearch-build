@@ -84,12 +84,18 @@ pipeline {
                     env.buildIdOpenSearch = buildManifestObjOpenSearch.getArtifactBuildId()
                     env.distribution = buildManifestObj.getDistribution()
                     env.version = buildManifestObj.build.version
+                    env.versionOpenSearch = buildManifestObjOpenSearch.build.version
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
                     env.AGENT_LABEL = agent_nodes["$architecture"]
 
-                    echo "Version: ${version}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
-                    currentBuild.description = "$version, $architecture, osd-$buildId, os-$buildIdOpenSearch, $distribution"
+                    echo "Version: ${version}, VersionOpenSearch: ${env.versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
+                    currentBuild.description = "$architecture, osd-$verison-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
+
+                    if (! env.version.equals(env.versionOpenSearch)) {
+                        currentBuild.result = 'ABORTED'
+                        error("OSD Version $version does not match OS Version $versionOpenSearch")
+                    }
 
                 }
             }
