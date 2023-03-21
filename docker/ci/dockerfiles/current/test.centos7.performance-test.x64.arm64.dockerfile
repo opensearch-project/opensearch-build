@@ -6,7 +6,6 @@
 
 # This is a docker image specifically for standardize the ci/cd environment
 # for triggering and monitoring performance tests on Jenkins
-#
 
 FROM centos:7
 
