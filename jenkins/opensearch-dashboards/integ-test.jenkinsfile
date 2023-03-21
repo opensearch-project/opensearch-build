@@ -1,7 +1,22 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@2.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
+
+def docker_images = [
+    "tar": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2",
+    "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1",
+]
+
+def docker_args = [
+    "tar": "-u 1000",
+    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro"
+]
+
+def agent_nodes = [
+    "x64": "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host",
+    "arm64": "Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host",
+]
 
 pipeline {
     options {
@@ -10,7 +25,10 @@ pipeline {
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
-        DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
+        BUILD_MANIFEST_OPENSEARCH = "build-manifest-opensearch.yml"
+        BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
+        BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch"
+        ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     parameters {
         string(
@@ -20,50 +38,65 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0/98/linux/x64/tar/builds/opensearch-dashboards/manifest.yml',
+            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml',
             trim: true
         )
         string(
-            name: 'AGENT_LABEL',
-            description: 'The agent label where the tests should be executed. For x64 use Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host,for arm64 use Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host',
+            name: 'BUILD_MANIFEST_URL_OPENSEARCH',
+            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
     stages {
         stage('verify-parameters') {
-            agent { label AGENT_LABEL }
+            agent { label agent_nodes["x64"] }
             steps {
                 script {
-                    currentBuild.description = BUILD_MANIFEST_URL
-                    if (AGENT_LABEL == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
-                    }
                     if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Test manifest was not provided or not found in manifests/${TEST_MANIFEST}.")
                     }
-                    /*
-                    Rebuilding of this job will result in considering upstream build as self($JOB_NAME) See https://issues.jenkins.io/browse/JENKINS-61590 for bug
-                    Either trigger from expected upstream job or run a new build
-                    */                    
-                    env.BUILD_JOB_NAME = currentBuild.upstreamBuilds ? 
-                        currentBuild.upstreamBuilds[0].fullProjectName : 
-                        env.DEFAULT_BUILD_JOB_NAME
-                }
-            }
-        }
-        stage('detect docker image + args') {
-            agent {
-                docker {
-                    label AGENT_LABEL
-                    image 'alpine:3'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script { 
-                    DOCKER_AGENT = detectTestDockerAgent()
+
+                    if (BUILD_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Build manifest url was not provided.")
+                    }
+
+                    if (BUILD_MANIFEST_URL_OPENSEARCH == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Build manifest url OpenSearch was not provided.")
+                    }
+
+                    downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL,
+                        path: BUILD_MANIFEST
+                    )
+
+                    downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL_OPENSEARCH,
+                        path: BUILD_MANIFEST_OPENSEARCH
+                    )
+
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    def buildManifestObjOpenSearch = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST_OPENSEARCH))
+                    env.architecture = buildManifestObj.getArtifactArchitecture()
+                    env.buildId = buildManifestObj.getArtifactBuildId()
+                    env.buildIdOpenSearch = buildManifestObjOpenSearch.getArtifactBuildId()
+                    env.distribution = buildManifestObj.getDistribution()
+                    env.version = buildManifestObj.build.version
+                    env.versionOpenSearch = buildManifestObjOpenSearch.build.version
+                    env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
+                    env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
+                    env.AGENT_LABEL = agent_nodes["$architecture"]
+
+                    echo "Version: ${version}, VersionOpenSearch: ${env.versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
+                    currentBuild.description = "$architecture, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
+
+                    if (! env.version.equals(env.versionOpenSearch)) {
+                        currentBuild.result = 'ABORTED'
+                        error("OSD Version $version does not match OS Version $versionOpenSearch")
+                    }
+
                 }
             }
         }
@@ -71,8 +104,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image DOCKER_AGENT.image
-                    args DOCKER_AGENT.args
+                    image docker_images["$distribution"]
+                    args docker_args["$distribution"]
                     alwaysPull true
                 }
             }
@@ -82,16 +115,39 @@ pipeline {
                         url: BUILD_MANIFEST_URL,
                         path: BUILD_MANIFEST
                     )
-                    String buildId = buildManifestObj.getArtifactBuildId()
-                    env.BUILD_ID = buildId
-                    echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
-                    echo "BUILD_ID: ${BUILD_ID}"
+
+                    String switch_user_non_root = (distribution.equals('rpm') || distribution.equals('deb')) ? 'true' : 'false'
+                    echo "switch_user_non_root: ${switch_user_non_root}"
+
+                    echo "Downloading from S3: ${artifactPathOpenSearch}"
+                    downloadFromS3(
+                        assumedRoleName: 'opensearch-bundle',
+                        roleAccountNumberCred: 'jenkins-aws-account-public',
+                        downloadPath: "${artifactPathOpenSearch}/",
+                        bucketName: "${ARTIFACT_BUCKET_NAME}",
+                        localPath: "${WORKSPACE}/artifacts",
+                        force: true
+                      )
+                    sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
+
+                    echo "Downloading from S3: ${artifactPath}"
+                    downloadFromS3(
+                        assumedRoleName: 'opensearch-bundle',
+                        roleAccountNumberCred: 'jenkins-aws-account-public',
+                        downloadPath: "${artifactPath}/",
+                        bucketName: "${ARTIFACT_BUCKET_NAME}",
+                        localPath: "${WORKSPACE}/artifacts",
+                        force: true
+                      )
+                    sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
 
                     runIntegTestScript(
-                        jobName: BUILD_JOB_NAME,
+                        jobName: "$BUILD_JOB_NAME",
                         componentName: 'functionalTestDashboards',
-                        buildManifest: BUILD_MANIFEST,
+                        buildManifest: "$BUILD_MANIFEST",
                         testManifest: "manifests/${TEST_MANIFEST}",
+                        localPath: "${WORKSPACE}/${distribution}",
+                        switchUserNonRoot: "${switch_user_non_root}"
                     )
                 }
             }
