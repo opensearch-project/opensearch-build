@@ -1,0 +1,27 @@
+---
+name: dockerfile-lint
+
+on:
+  pull_request:
+    paths:
+      - 'docker/ci/dockerfiles/current/**'
+      - 'docker/release/dockerfiles/**'
+
+jobs:
+  test_ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jbergstroem/hadolint-gh-action@v1
+        with:
+          dockerfile: 'docker/ci/dockerfiles/current/*.dockerfile'
+          annotate: false
+
+  test_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jbergstroem/hadolint-gh-action@v1
+        with:
+          dockerfile: 'docker/release/dockerfiles/*.dockerfile'
+          annotate: false
