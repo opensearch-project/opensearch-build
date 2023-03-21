@@ -41,8 +41,8 @@ RUN groupadd -g 1000 opensearch && \
     chown -R 1000:1000 /usr/share/opensearch 
 
 # ENV JDK
-ENV JAVA_HOME=/opt/java/openjdk-11 \
-    PATH=$PATH:$JAVA_HOME/bin
+ENV JAVA_HOME=/opt/java/openjdk-11
+ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
 RUN mkdir -p ~/.docker/cli-plugins && \
