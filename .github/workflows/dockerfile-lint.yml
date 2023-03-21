@@ -15,6 +15,7 @@ jobs:
       - uses: jbergstroem/hadolint-gh-action@v1
         with:
           dockerfile: 'docker/ci/dockerfiles/current/*.dockerfile'
+          annotate: false
 
   test_release:
     runs-on: ubuntu-latest
@@ -23,3 +24,4 @@ jobs:
       - uses: jbergstroem/hadolint-gh-action@v1
         with:
           dockerfile: 'docker/release/dockerfiles/*.dockerfile'
+          annotate: false
