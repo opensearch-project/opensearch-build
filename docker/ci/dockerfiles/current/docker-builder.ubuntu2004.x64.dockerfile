@@ -57,7 +57,7 @@ RUN curl -L https://github.com/google/go-containerregistry/releases/latest/downl
     mv gcrane /usr/local/bin/ && \
     rm -rf go-containerregistry.tar.gz 
 
-# Install packer \
+# Install packer
 RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list && \
     apt update && \
