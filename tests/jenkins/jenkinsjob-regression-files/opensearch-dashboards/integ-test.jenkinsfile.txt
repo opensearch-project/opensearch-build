@@ -31,7 +31,7 @@
                BuildManifest.getDistribution()
                BuildManifest.getArtifactRoot(distribution-build-opensearch-dashboards, 215)
                BuildManifest.getArtifactRoot(distribution-build-opensearch, 215)
-               integ-test.echo(Version: 1.2.0, Agent: Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, OSD_BuildId: 215, OS_BuildId: 215, Distribution: tar)
+               integ-test.echo(Version: 1.2.0, VersionOpenSearch: 1.2.0, Agent: Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, OSD_BuildId: 215, OS_BuildId: 215, Distribution: tar)
          integ-test.stage(integ-test, groovy.lang.Closure)
             integ-test.echo(Executing on agent [docker:[alwaysPull:true, args:-u 1000, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2, reuseNode:false, stages:[:]]])
             integ-test.script(groovy.lang.Closure)

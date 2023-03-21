@@ -90,7 +90,7 @@ pipeline {
                     env.AGENT_LABEL = agent_nodes["$architecture"]
 
                     echo "Version: ${version}, VersionOpenSearch: ${env.versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
-                    currentBuild.description = "$architecture, osd-$verison-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
+                    currentBuild.description = "$architecture, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
 
                     if (! env.version.equals(env.versionOpenSearch)) {
                         currentBuild.result = 'ABORTED'
