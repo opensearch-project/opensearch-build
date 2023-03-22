@@ -23,7 +23,7 @@ USER 0
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install necessary packages
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential zip unzip jq && \
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential cmake zip unzip jq && \
     apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb && \
     apt-get clean -y
 
@@ -99,7 +99,7 @@ RUN apt-get update -y && apt-get install python3 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
 
 # Install necessary packages
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential zip unzip jq && \
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential cmake zip unzip jq && \
     apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb && \
     apt-get install -y chromium-browser && \
     apt-get clean -y
