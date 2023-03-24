@@ -328,8 +328,7 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                                             ]
                                     }
                                 },
@@ -575,8 +574,7 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                                             ]
                                     }
                                 },
