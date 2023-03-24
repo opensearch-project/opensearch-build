@@ -34,6 +34,8 @@ pipeline {
         parameterizedCron '''
             H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
             H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 30 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 30 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
             '''
     }
     parameters {
@@ -83,7 +85,7 @@ pipeline {
                     env.AGENT_LABEL = agent_nodes["$architecture"]
 
                     echo "Version: ${version}, Agent: ${AGENT_LABEL}, BuildId: ${buildId}, Distribution: ${distribution}, Components: ${componentList}"
-                    currentBuild.description = "$version, $architecture, $buildId, $distribution, $componentList"
+                    currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $buildId, $distribution, $componentList"
                 }
             }
             post {
