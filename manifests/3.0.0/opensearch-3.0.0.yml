@@ -155,3 +155,11 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: feature/index_operation_notification
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
