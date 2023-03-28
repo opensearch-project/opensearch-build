@@ -12,32 +12,30 @@
 # If you use this image in jenkins pipeline you need to add these arguments: `args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'`
 
 ########################### Stage 0 ########################
-FROM rockylinux:8 AS linux_stage_0
+
+FROM ubuntu:20.04 AS linux_stage_0
 
 ENV container docker
+SHELL ["/bin/bash", "-c"]
 
 USER 0
 
-# Add normal dependencies
-RUN dnf clean all && \
-    dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Add Dashboards dependencies (mainly for cypress)
-RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+# Install necessary packages
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential cmake zip unzip jq && \
+    apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb && \
+    apt-get clean -y
 
-# Add Yarn dependencies
-RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake && dnf clean all
+# Install yq
+COPY --chown=0:0 config/yq-setup.sh /tmp/
+RUN /tmp/yq-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
-
-# install yq
-COPY --chown=0:0 config/yq-setup.sh /tmp/
-RUN /tmp/yq-setup.sh
+    chown -R 1000:1000 /usr/share/opensearch 
 
 # Change User
 USER 1000
@@ -83,22 +81,43 @@ RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypr
     chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/5.6.0 && rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 
 ########################### Stage 1 ########################
-FROM rockylinux:8
+FROM ubuntu:20.04
+
+SHELL ["/bin/bash", "-c"]
 
 USER 0
 
-# Add normal dependencies
-RUN dnf clean all && \
-    dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install python37 dependencies
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y
+
+# Install python37 binaries
+RUN apt-get update -y && apt-get install python3 && \
+    apt-get install -y python3.7-full python3.7-dev && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
+
+# Install necessary packages
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential cmake zip unzip jq && \
+    apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb && \
+    apt-get install -y chromium-browser && \
+    apt-get clean -y
+
+# Install pip packages
+RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
+    pip3 install pip==21.3.1 && \
+    pip3 install cmake==3.21.3 && \
+    pip3 install awscli==1.22.12 && \
+    pip3 install pipenv
 
 # Create user group
-RUN dnf install -y sudo && \
+RUN apt-get install -y sudo && \
     groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`" >> /etc/sudoers.d/opensearch
+    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`" >> /etc/sudoers.d/opensearch
 
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
@@ -112,43 +131,18 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # Check dirs
 RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/opensearch && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
-# Add Python37 dependencies
-RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
-
-# Add Dashboards dependencies (mainly for cypress)
-RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
-
-# Add Reports dependencies
-RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
-
-# Add Yarn dependencies
-RUN dnf groupinstall -y "Development Tools" && dnf clean all
-
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
+# Install gh cli
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
+    apt-get update && apt-get install -y gh && apt-get clean
+
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
-
-# Install Python37 binary
-RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
-    cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
-    make altinstall
-
-# Setup Python37 links
-RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3
-
-# Add other dependencies
-RUN dnf install -y epel-release && dnf clean all && dnf install -y chromium jq && dnf clean all && \
-    pip3 install pip==21.3.1 && \
-    pip3 install cmake==3.21.3 && \
-    pip3 install awscli==1.22.12 && \
-    pip3 install pipenv
 
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
@@ -160,7 +154,7 @@ RUN cypress -v
 
 # Possible retain of multi-user.target.wants later due to PA
 # As of now we do not need this
-RUN dnf -y install systemd procps util-linux-ng openssl openssl-devel which curl git gnupg2 tar net-tools jq && dnf clean all && \
+RUN apt-get -y install systemd procps util-linux openssl libssl-dev && apt-get clean -y && \
     systemctl set-default multi-user && \
 (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\

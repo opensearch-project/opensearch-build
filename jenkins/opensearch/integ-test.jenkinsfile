@@ -6,11 +6,13 @@ lib = library(identifier: 'jenkins@2.1.0', retriever: modernSCM([
 def docker_images = [
     "tar": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
     "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1",
+    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v1",
 ]
 
 def docker_args = [
     "tar": "-u 1000",
-    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro"
+    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
+    "deb": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
 ]
 
 def agent_nodes = [
@@ -27,6 +29,18 @@ pipeline {
         BUILD_MANIFEST = "build-manifest.yml"
         BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+    }
+    triggers {
+        parameterizedCron '''
+            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
+            '''
     }
     parameters {
         string(
@@ -75,7 +89,7 @@ pipeline {
                     env.AGENT_LABEL = agent_nodes["$architecture"]
 
                     echo "Version: ${version}, Agent: ${AGENT_LABEL}, BuildId: ${buildId}, Distribution: ${distribution}, Components: ${componentList}"
-                    currentBuild.description = "$version, $architecture, $buildId, $distribution, $componentList"
+                    currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $buildId, $distribution, $componentList"
                 }
             }
             post {
@@ -122,7 +136,7 @@ pipeline {
 
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
-                    stash includes: "**", name: "opensearch-build-repo-$BUILD_NUMBER"
+                    stash includes: "**", name: "integtest-opensearch-$BUILD_NUMBER"
 
                     componentTests = [:]
 
@@ -148,7 +162,7 @@ pipeline {
                                                 // This sometimes causes the workspace to retain last run test-results and ends with build failures
                                                 // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
                                                 sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
-                                                unstash "opensearch-build-repo-$BUILD_NUMBER"
+                                                unstash "integtest-opensearch-$BUILD_NUMBER"
                                                 sh("rm -rf test-results")
                                                 runIntegTestScript(
                                                     jobName: "$BUILD_JOB_NAME",

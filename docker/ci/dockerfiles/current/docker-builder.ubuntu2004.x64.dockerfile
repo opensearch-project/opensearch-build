@@ -41,8 +41,8 @@ RUN groupadd -g 1000 opensearch && \
     chown -R 1000:1000 /usr/share/opensearch 
 
 # ENV JDK
-ENV JAVA_HOME=/opt/java/openjdk-11 \
-    PATH=$PATH:$JAVA_HOME/bin
+ENV JAVA_HOME=/opt/java/openjdk-11
+ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
 RUN mkdir -p ~/.docker/cli-plugins && \
@@ -56,3 +56,9 @@ RUN curl -L https://github.com/google/go-containerregistry/releases/latest/downl
     chmod +x gcrane && \
     mv gcrane /usr/local/bin/ && \
     rm -rf go-containerregistry.tar.gz 
+
+# Install packer
+RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && \
+    apt-get install packer
