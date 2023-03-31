@@ -88,7 +88,7 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.url="https://opensearch.org" \
   org.label-schema.vcs-url="https://github.com/opensearch-project/OpenSearch-Dashboards" \
   org.label-schema.license="Apache-2.0" \
-  org.label-schema.vendor="Amazon" \
+  org.label-schema.vendor="OpenSearch" \
   org.label-schema.description="$NOTES" \
   org.label-schema.build-date="$BUILD_DATE"
 
