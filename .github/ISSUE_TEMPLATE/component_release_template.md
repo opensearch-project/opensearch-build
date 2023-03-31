@@ -65,5 +65,5 @@ If including changes in this release, increment the version on `__{REPLACE_MAJOR
 
 - [ ] Prepare for an eventual security fix development iteration by incrementing the version on the release branch to the next eventual patch version.
 - [ ] Add this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/) of the next eventual security patch version.
-- [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/meta/templates/releases/release_template.md).
+- [ ] [Suggest improvements](https://github.com/opensearch-project/opensearch-build/issues/new) to [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md).
 - [ ] Conduct a retrospective, and publish its results.
