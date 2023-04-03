@@ -91,6 +91,7 @@ pipeline {
                 docker {
                     label AGENT_LABEL
                     image AGENT_IMAGE
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -129,6 +130,7 @@ pipeline {
                         docker {
                             label AGENT_LABEL
                             image AGENT_IMAGE
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -183,6 +185,7 @@ pipeline {
                         docker {
                             label AGENT_LABEL
                             image AGENT_IMAGE
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }

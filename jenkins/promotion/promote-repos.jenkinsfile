@@ -43,6 +43,7 @@ pipeline {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image docker_images["${DISTRIBUTION_REPO_TYPE}"]
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

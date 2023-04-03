@@ -153,36 +153,38 @@ pipeline {
                             // Using scripted pipelines to trigger dynamic parallel stages
                             timeout(time: 2, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
-                                    docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
-                                        try {
-                                            stage("Run Integtest ${local_component}") {
-                                                echo "Component Name: ${local_component}"
-                                                // Jenkins tend to not clean up workspace at times even though ws clean is called
-                                                // Due to docker is mounting the agent directory so it can communicated with the agent
-                                                // This sometimes causes the workspace to retain last run test-results and ends with build failures
-                                                // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
-                                                sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
-                                                unstash "integtest-opensearch-$BUILD_NUMBER"
-                                                sh("rm -rf test-results")
-                                                runIntegTestScript(
-                                                    jobName: "$BUILD_JOB_NAME",
-                                                    componentName: "${local_component}",
-                                                    buildManifest: "$BUILD_MANIFEST",
-                                                    testManifest: "manifests/${TEST_MANIFEST}",
-                                                    localPath: "${WORKSPACE}/${distribution}",
-                                                    switchUserNonRoot: "${switch_user_non_root}"
+                                    docker.withRegistry('https://public.ecr.aws/') {
+                                        docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                            try {
+                                                stage("Run Integtest ${local_component}") {
+                                                    echo "Component Name: ${local_component}"
+                                                    // Jenkins tend to not clean up workspace at times even though ws clean is called
+                                                    // Due to docker is mounting the agent directory so it can communicated with the agent
+                                                    // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                                    // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
+                                                    sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                    unstash "integtest-opensearch-$BUILD_NUMBER"
+                                                    sh("rm -rf test-results")
+                                                    runIntegTestScript(
+                                                        jobName: "$BUILD_JOB_NAME",
+                                                        componentName: "${local_component}",
+                                                        buildManifest: "$BUILD_MANIFEST",
+                                                        testManifest: "manifests/${TEST_MANIFEST}",
+                                                        localPath: "${WORKSPACE}/${distribution}",
+                                                        switchUserNonRoot: "${switch_user_non_root}"
+                                                    )
+                                                }
+                                            } catch (e) {
+                                                echo "Error running integtest for component ${local_component}"
+                                                throw e
+                                            } finally {
+                                                echo "Completed running integtest for component ${local_component}"
+                                                uploadTestResults(
+                                                    buildManifestFileName: BUILD_MANIFEST,
+                                                    jobName: JOB_NAME
                                                 )
+                                                postCleanup()
                                             }
-                                        } catch (e) {
-                                            echo "Error running integtest for component ${local_component}"
-                                            throw e
-                                        } finally {
-                                            echo "Completed running integtest for component ${local_component}"
-                                            uploadTestResults(
-                                                buildManifestFileName: BUILD_MANIFEST,
-                                                jobName: JOB_NAME
-                                            )
-                                            postCleanup()
                                         }
                                     }
                                 }
