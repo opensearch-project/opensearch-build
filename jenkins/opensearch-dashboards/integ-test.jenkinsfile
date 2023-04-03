@@ -108,6 +108,7 @@ pipeline {
                     label AGENT_LABEL
                     image docker_images["$distribution"]
                     args docker_args["$distribution"]
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

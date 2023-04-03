@@ -33,7 +33,7 @@
                BuildManifest.getArtifactRoot(distribution-build-opensearch, 215)
                integ-test.echo(Version: 1.2.0, VersionOpenSearch: 1.2.0, Agent: Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, OSD_BuildId: 215, OS_BuildId: 215, Distribution: tar)
          integ-test.stage(integ-test, groovy.lang.Closure)
-            integ-test.echo(Executing on agent [docker:[alwaysPull:true, args:-u 1000, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2, reuseNode:false, stages:[:]]])
+            integ-test.echo(Executing on agent [docker:[alwaysPull:true, args:-u 1000, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             integ-test.script(groovy.lang.Closure)
                integ-test.downloadBuildManifest({url=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/215/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz, path=tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml})
                   downloadBuildManifest.legacySCM(groovy.lang.Closure)
