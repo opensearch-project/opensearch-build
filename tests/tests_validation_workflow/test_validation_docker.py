@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
 import subprocess
 import unittest
 from unittest.mock import MagicMock, Mock, call, patch
@@ -125,6 +126,16 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the method returned the expected result
         self.assertEqual(image_id, 'opensearch/opensearch')
         mock_pull_image.assert_called_once_with('opensearch/opensearch', '1.0.0')
+
+    def test_docker_compose_files_exist(self) -> None:
+        # set up docker-compose files
+        self.docker_compose_files = {
+            '1': 'docker-compose-1.x.yml',
+            '2': 'docker-compose-2.x.yml'
+        }
+
+        for _, docker_file_name in self.docker_compose_files.items():
+            self.assertTrue(os.path.exists(os.path.join('docker', 'release', 'dockercomposefiles', docker_file_name)), f"File '{docker_file_name}' does not exist.")
 
 
 if __name__ == '__main__':

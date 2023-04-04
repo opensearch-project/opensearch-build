@@ -31,30 +31,31 @@ class ValidateDocker(Validation):
 
             image_names = {
                 'dockerhub': {
-                    'os': {
-                        True: 'opensearchstaging/opensearch',
-                        False: 'opensearchproject/opensearch'
+                    'opensearch': {
+                        'staging': 'opensearchstaging/opensearch',
+                        'production': 'opensearchproject/opensearch'
                     },
-                    'osd': {
-                        True: 'opensearchstaging/opensearch-dashboards',
-                        False: 'opensearchproject/opensearch-dashboards'
+                    'opensearchdashboards': {
+                        'staging': 'opensearchstaging/opensearch-dashboards',
+                        'production': 'opensearchproject/opensearch-dashboards'
                     }
                 },
                 'ecr': {
-                    'os': {
-                        True: 'public.ecr.aws/opensearchstaging/opensearch',
-                        False: 'public.ecr.aws/opensearchproject/opensearch'
+                    'opensearch': {
+                        'staging': 'public.ecr.aws/opensearchstaging/opensearch',
+                        'production': 'public.ecr.aws/opensearchproject/opensearch'
                     },
-                    'osd': {
-                        True: 'public.ecr.aws/opensearchstaging/opensearch-dashboards',
-                        False: 'public.ecr.aws/opensearchproject/opensearch-dashboards'
+                    'opensearchdashboards': {
+                        'staging': 'public.ecr.aws/opensearchstaging/opensearch-dashboards',
+                        'production': 'public.ecr.aws/opensearchproject/opensearch-dashboards'
                     }
                 }
             }
 
             # Choose image names based on input arguments
-            self._OS_image_name = image_names[self.args.docker_source]['os'][self.args.using_staging_artifact_only]
-            self._OSD_image_name = image_names[self.args.docker_source]['osd'][self.args.using_staging_artifact_only]
+            self.using_staging_artifact_only = 'staging' if self.args.using_staging_artifact_only else 'production'
+            self._OS_image_name = image_names[self.args.docker_source]['opensearch'][self.using_staging_artifact_only]
+            self._OSD_image_name = image_names[self.args.docker_source]['opensearchdashboards'][self.using_staging_artifact_only]
 
             self.local_image_OS_id = (
                 self.get_image_id(self._OS_image_name, ValidationArgs().stg_tag('opensearch').replace(" ", ""))
@@ -66,8 +67,8 @@ class ValidateDocker(Validation):
                 if self.args.using_staging_artifact_only
                 else self.get_image_id(self._OSD_image_name, self.args.version)
             )
-            logging.info(f'the OS image ID is : {self.local_image_OS_id}')
-            logging.info(f'the OSD image ID is : {self.local_image_OSD_id} \n\n')
+            logging.info(f'the OpenSearch image ID is : {self.local_image_OS_id}')
+            logging.info(f'the OpenSearch Dasboards image ID is : {self.local_image_OSD_id} \n\n')
             return True
 
         except AssertionError as e:
@@ -75,7 +76,7 @@ class ValidateDocker(Validation):
             return False
 
         finally:
-            pass
+            logging.info('Docker images are downloaded')
 
     # Pass this method for docker as no installation required in docker
     def installation(self) -> bool:
@@ -86,7 +87,7 @@ class ValidateDocker(Validation):
         return True
 
     def validation(self) -> bool:
-        # STEP 2 . inspect image digest between opensearchproject(downloaed/local) and opensearchstaging(dockerHub)
+        # STEP 2 . inspect image digest between opensearchproject(downloaded/local) and opensearchstaging(dockerHub)
         if not self.args.using_staging_artifact_only:
             self._OS_inspect_digest = InspectDockerImage(self.local_image_OS_id, self.args.OS_image, self.args.version).inspect_digest()
             self._OSD_inspect_digest = InspectDockerImage(self.local_image_OSD_id, self.args.OSD_image, self.args.version).inspect_digest()
@@ -107,7 +108,6 @@ class ValidateDocker(Validation):
                 self.args.version
             )
             if (return_code):
-                logging.info('Cluster is running now')
                 logging.info('Checking if cluster is ready for API test every 10 seconds\n\n')
 
                 self.max_retry = 20
@@ -120,7 +120,6 @@ class ValidateDocker(Validation):
                         break
                     self.retry_count += 1
                 else:
-                    logging.warning(f"Maximum number of retries ({self.max_retry}) reached. Cluster is not ready for API test.")
                     raise Exception(f"Maximum number of retries ({self.max_retry}) reached. Cluster is not ready for API test.")
 
                 # STEP 4 . OS, OSD API validation
@@ -140,7 +139,7 @@ class ValidateDocker(Validation):
 
     def check_http_request(self) -> bool:
         try:
-            subprocess.check_output(['curl', 'https://localhost:9200', '-u', 'admin:admin', '--insecure', '-s'])
+            subprocess.check_output(['curl', 'https://localhost:9200', '-u', 'admin:admin', '--insecure'])
             logging.info('status code : 200')
             return True
         except subprocess.CalledProcessError as e:
@@ -153,16 +152,16 @@ class ValidateDocker(Validation):
             if self.args.validate_digest_only:
                 return True
             if self.cleanup_process():
-                logging.info('cleanup is completed')
+                logging.info('cleanup is complete')
                 return True
             else:
-                logging.info('cleanup is Not completed')
+                logging.info('cleanup is not complete')
                 return False
         except Exception as e:
             logging.error(f'An error occurred during cleanup: {e}')
             return False
         finally:
-            pass
+            logging.info('Docker validation cleanup is complete')
 
     def cleanup_process(self) -> bool:
         # stop the containers
@@ -173,17 +172,17 @@ class ValidateDocker(Validation):
         try:
             os.remove(self._target_yml_file)
         except OSError as e:
-            logging.info("Error: %s - %s." % (e.filename, e.strerror))
+            logging.error("Error: %s - %s." % (e.filename, e.strerror))
 
         return('returncode=0' in (str(result)))
 
     def is_container_daemon_running(self) -> Any:
         try:
             subprocess.check_output(["docker", "info"])
-            logging.info("Docker daemon is running.")
+            logging.info("Docker daemon is running")
             return True
         except subprocess.CalledProcessError:
-            logging.info("Docker daemon is not running.")
+            logging.info("Docker daemon is not running")
             return False
 
     def run_container(self, OpenSearch_image: str, OpenSearchDashboard_image: str, version: str) -> Any:
@@ -228,9 +227,9 @@ class ValidateDocker(Validation):
             return ('returncode=0' in (str(result)), self.target_yml_file)
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            raise Exception(f"An error occurred: {e}")
         finally:
-            pass
+            logging.info("cluster is running now")
 
     def inplace_change(self, filename: str, old_string: str, new_string: str) -> None:
 
