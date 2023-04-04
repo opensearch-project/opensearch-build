@@ -1,0 +1,149 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+
+import abc
+import json
+import logging
+import os
+import subprocess
+from contextlib import contextmanager
+from typing import Any, Generator, List
+
+import requests
+from requests.auth import HTTPBasicAuth
+from retry.api import retry_call  # type: ignore
+
+from manifests.bundle_manifest import BundleManifest
+from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+
+
+class BenchmarkTestCluster:
+    manifest: BundleManifest
+    work_dir: str
+    current_workspace: str
+    args: BenchmarkArgs
+    output_file: str
+    params: str
+    is_endpoint_public: bool
+    cluster_endpoint: str
+    cluster_endpoint_with_port: str
+
+    """
+    Represents a performance test cluster. This class deploys the opensearch bundle with CDK. Supports both single
+    and multi-node clusters
+    """
+
+    def __init__(
+            self,
+            bundle_manifest: BundleManifest,
+            config: dict,
+            args: BenchmarkArgs,
+            current_workspace: str
+    ) -> None:
+        self.manifest = bundle_manifest
+        self.current_workspace = current_workspace
+        self.args = args
+        self.output_file = "output.json"
+        role = config["Constants"]["Role"]
+        params_dict = self.setup_cdk_params(config)
+        params_list = []
+        for key, value in params_dict.items():
+            print(key, value)
+            if value:
+                if key == 'additionalConfig':
+                    params_list.append(f" -c {key}=\'{value}\'")
+                else:
+                    params_list.append(f" -c {key}={value}")
+        role_params = (
+            f" --require-approval=never --plugin cdk-assume-role-credential-plugin"
+            f" -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} "
+        )
+        self.params = "".join(params_list) # + role_params
+        self.is_endpoint_public = False
+        self.cluster_endpoint = None
+        self.cluster_endpoint_with_port = None
+        self.stack_name = 'opensearch-infra-stack-' + self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
+
+    def start(self) -> None:
+        # os.chdir(self.work_dir)
+        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
+
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
+        print(f'Executing "{command}" in {os.getcwd()}')
+        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+        with open(self.output_file, "r") as read_file:
+            load_output = json.load(read_file)
+            print(load_output[self.stack_name])
+            self.create_endpoint(load_output)
+
+    def create_endpoint(self, cdk_output: dict) -> None:
+        loadbalancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
+        if loadbalancer_url is None:
+            raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
+        self.cluster_endpoint = loadbalancer_url
+        self.cluster_endpoint_with_port = "".join([loadbalancer_url, ":", str(self.port)])
+        print(self.cluster_endpoint_with_port)
+
+    @property
+    def endpoint(self) -> str:
+        return self.cluster_endpoint
+
+    @property
+    def endpoint_with_port(self) -> str:
+        return self.cluster_endpoint_with_port
+
+    @property
+    def port(self) -> int:
+        return 80 if self.args.insecure else 443
+
+    def terminate(self) -> None:
+        command = f"cdk destroy {self.stack_name} {self.params} --force"
+        logging.info(f'Executing "{command}" in {os.getcwd()}')
+        print(f'Executing "{command}" in {os.getcwd()}')
+        # subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+
+    def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
+        # Should be invoked only if the endpoint is public.
+        assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
+        logging.info("Waiting for domain to be up")
+        url = "".join([self.endpoint_with_port, "/_cluster/health"])
+        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False},
+                   tries=tries, delay=delay, backoff=backoff)
+
+    def setup_cdk_params(self, config: dict) -> dict:
+        return {
+            "distributionUrl": self.manifest.build.location,
+            "vpcId": config["Constants"]["VpcId"],
+            "account": config["Constants"]["AccountId"],
+            "region": config["Constants"]["Region"],
+            "suffix": self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture,
+            "securityDisabled": "true" if self.args.insecure else "false",
+            "cpuArch": self.manifest.build.architecture,
+            "singleNodeCluster": "true" if self.args.singleNode else "false",
+            "distVersion": self.manifest.build.version,
+            "minDistribution": "true" if self.args.minDistribution else "false",
+            "serverAccessType": config["Constants"]["serverAccessType"],
+            "restrictServerAccessTo": config["Constants"]["restrictServerAccessTo"],
+            "additionalConfig": self.args.additionalConfig
+        }
+
+    @classmethod
+    @contextmanager
+    def create(cls, *args: Any) -> Generator[Any, None, None]:
+        """
+        Set up the cluster. When this method returns, the cluster must be available to take requests.
+        Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
+        """
+        print("I am in create")
+        cluster = cls(*args)
+
+        try:
+            cluster.start()
+            yield cluster
+        finally:
+            cluster.terminate()
