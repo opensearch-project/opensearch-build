@@ -1,7 +1,24 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@2.1.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
+
+def docker_images = [
+    "tar": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+    "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1",
+    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v1",
+]
+
+def docker_args = [
+    "tar": "-u 1000",
+    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
+    "deb": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
+]
+
+def agent_nodes = [
+    "x64": "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host",
+    "arm64": "Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host",
+]
 
 pipeline {
     options {
@@ -10,10 +27,27 @@ pipeline {
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
-        DEFAULT_BUILD_JOB_NAME = "distribution-build-opensearch"
+        BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
+    triggers {
+        parameterizedCron '''
+            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
+            '''
+    }
     parameters {
+        string(
+            name: 'COMPONENT_NAME',
+            description: 'If this field contains one or more component names (e.g. index-management geospatial ...) separated by space, will test with "--component ...", else test everything in the TEST_MANIFEST..',
+            trim: true
+        )
         string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0-test.yml.',
@@ -21,50 +55,46 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/tar/builds/opensearch/manifest.yml.',
-            trim: true
-        )
-        string(
-            name: 'AGENT_LABEL',
-            description: 'The agent label where the tests should be executed. For x64 use Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host,for arm64 use Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host',
+            description: 'The build manifest URL, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
     stages {
         stage('verify-parameters') {
-            agent { label AGENT_LABEL }
+            agent { label agent_nodes["x64"]}
             steps {
                 script {
-                    currentBuild.description = BUILD_MANIFEST_URL
-                    if (AGENT_LABEL == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Integration Tests failed to start. Missing parameter: AGENT_LABEL.")
-                    }
                     if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Test manifest was not provided or not found in manifests/${TEST_MANIFEST}.")
                     }
-                    /*
-                    Rebuilding of this job will result in considering upstream build as self($JOB_NAME) See https://issues.jenkins.io/browse/JENKINS-61590 for bug
-                    Either trigger from expected upstream job or run a new build
-                    */
-                    env.BUILD_JOB_NAME = currentBuild.upstreamBuilds ? 
-                        currentBuild.upstreamBuilds[0].fullProjectName : 
-                        env.DEFAULT_BUILD_JOB_NAME
+
+                    if (BUILD_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Build manifest url was not provided.")
+                    }
+
+                    downloadBuildManifest(
+                        url: BUILD_MANIFEST_URL,
+                        path: BUILD_MANIFEST
+                    )
+
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    def componentList = COMPONENT_NAME ? COMPONENT_NAME.trim().split(" ") as List : buildManifestObj.getNames()
+                    env.architecture = buildManifestObj.getArtifactArchitecture()
+                    env.buildId = buildManifestObj.getArtifactBuildId()
+                    env.distribution = buildManifestObj.getDistribution()
+                    env.version = buildManifestObj.build.version
+                    env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
+                    env.AGENT_LABEL = agent_nodes["$architecture"]
+
+                    echo "Version: ${version}, Agent: ${AGENT_LABEL}, BuildId: ${buildId}, Distribution: ${distribution}, Components: ${componentList}"
+                    currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $buildId, $distribution, $componentList"
                 }
             }
-        }
-        stage('detect docker image + args') {
-            agent {
-                docker {
-                    label AGENT_LABEL
-                    image 'alpine:3'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script { 
-                    DOCKER_AGENT = detectTestDockerAgent()
+            post {
+                always {
+                    postCleanup()
                 }
             }
         }
@@ -80,16 +110,33 @@ pipeline {
                         path: BUILD_MANIFEST
                     )
 
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    def componentDefaultList = buildManifestObj.getNames()
+                    def componentList = COMPONENT_NAME ? COMPONENT_NAME.trim().split(" ") as List : componentDefaultList
+                    String switch_user_non_root = (distribution.equals('rpm') || distribution.equals('deb')) ? 'true' : 'false'
+                    echo "switch_user_non_root: ${switch_user_non_root}"
+                    echo "componentList: ${componentList}"
+
+                    for (component_check in componentList) {
+                        if (! componentDefaultList.contains(component_check)) {
+                           error("${component_check} is not in build manifest: ${componentDefaultList}, exit 1") 
+                        }
+                    }
+
+                    echo "Downloading from S3: ${artifactPath}"
+                    downloadFromS3(
+                        assumedRoleName: 'opensearch-bundle',
+                        roleAccountNumberCred: 'jenkins-aws-account-public',
+                        downloadPath: "${artifactPath}/",
+                        bucketName: "${ARTIFACT_BUCKET_NAME}",
+                        localPath: "${WORKSPACE}/artifacts",
+                        force: true
+                      )
+                    sh("mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
+
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
-                    stash includes: '**', name: 'opensearch-build-repo'
-
-                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
-                    def componentList = buildManifestObj.getNames()
-                    String distribution = buildManifestObj.getDistribution()
-                    String buildId = buildManifestObj.getArtifactBuildId()
-                    String artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
-                    echo "componentList: ${componentList}"
+                    stash includes: "**", name: "integtest-opensearch-$BUILD_NUMBER"
 
                     componentTests = [:]
 
@@ -97,50 +144,47 @@ pipeline {
                         // Must use local variable due to groovy for loop and closure scope
                         // Or the stage will be fixed to the last item in return when new stages are triggered here
                         // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
-                        def local_component = component
-                        def wait_seconds = componentList.indexOf(local_component) * 20
+                        def local_component = component.trim()
+                        def local_component_index = componentList.indexOf(local_component)
+                        def wait_seconds = local_component_index * 10
 
                         echo "Add Component: ${local_component}"
                         componentTests["Run Integtest ${local_component}"] = {
                             // Using scripted pipelines to trigger dynamic parallel stages
                             timeout(time: 2, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
-                                    docker.image(DOCKER_AGENT.image).inside(DOCKER_AGENT.args) {
-                                        try {
-                                            stage("Run Integtest ${local_component}") {
-                                                echo "Component Name: ${local_component}"
-                                                unstash 'opensearch-build-repo'
-                                                // Jenkins tend to not clean up workspace at times even though ws clean is called
-                                                // Due to docker is mounting the agent directory so it can communicated with the agent
-                                                // This sometimes causes the workspace to retain last run test-results and ends with build failures
-                                                // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
-                                                sh("rm -rf test-results ${WORKSPACE}/${distribution} && echo sleep ${wait_seconds} seconds && sleep ${wait_seconds}")
-                                                echo "Downloading from S3: ${artifactPath}"
-                                                downloadFromS3(
-                                                    destPath: "$WORKSPACE/artifacts",
-                                                    bucket: "${ARTIFACT_BUCKET_NAME}",
-                                                    path: "${artifactPath}/",
-                                                    force: true
+                                    docker.withRegistry('https://public.ecr.aws/') {
+                                        docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                            try {
+                                                stage("Run Integtest ${local_component}") {
+                                                    echo "Component Name: ${local_component}"
+                                                    // Jenkins tend to not clean up workspace at times even though ws clean is called
+                                                    // Due to docker is mounting the agent directory so it can communicated with the agent
+                                                    // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                                    // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
+                                                    sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                    unstash "integtest-opensearch-$BUILD_NUMBER"
+                                                    sh("rm -rf test-results")
+                                                    runIntegTestScript(
+                                                        jobName: "$BUILD_JOB_NAME",
+                                                        componentName: "${local_component}",
+                                                        buildManifest: "$BUILD_MANIFEST",
+                                                        testManifest: "manifests/${TEST_MANIFEST}",
+                                                        localPath: "${WORKSPACE}/${distribution}",
+                                                        switchUserNonRoot: "${switch_user_non_root}"
+                                                    )
+                                                }
+                                            } catch (e) {
+                                                echo "Error running integtest for component ${local_component}"
+                                                throw e
+                                            } finally {
+                                                echo "Completed running integtest for component ${local_component}"
+                                                uploadTestResults(
+                                                    buildManifestFileName: BUILD_MANIFEST,
+                                                    jobName: JOB_NAME
                                                 )
-                                                sh("mv -v $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
-                                                runIntegTestScript(
-                                                    jobName: BUILD_JOB_NAME,
-                                                    componentName: "${local_component}",
-                                                    buildManifest: BUILD_MANIFEST,
-                                                    testManifest: "manifests/${TEST_MANIFEST}",
-                                                    localPath: "${WORKSPACE}/${distribution}"
-                                                )
+                                                postCleanup()
                                             }
-                                        } catch (e) {
-                                            echo "Error running integtest for component ${local_component}"
-                                            throw e
-                                        } finally {
-                                            echo "Completed running integtest for component ${local_component}"
-                                            uploadTestResults(
-                                                buildManifestFileName: BUILD_MANIFEST,
-                                                jobName: JOB_NAME
-                                            )
-                                            postCleanup()
                                         }
                                     }
                                 }

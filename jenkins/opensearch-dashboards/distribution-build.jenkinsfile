@@ -13,6 +13,7 @@ pipeline {
         AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
         IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
+        JOB_NAME_OPENSEARCH = 'distribution-build-opensearch'
     }
     parameters {
         string(
@@ -80,7 +81,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_X64
-                    image 'alpine:3'
+                    image 'docker/library/alpine:3'
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -134,6 +136,7 @@ pipeline {
                 docker {
                     label AGENT_X64
                     image dockerAgent.image
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -172,6 +175,7 @@ pipeline {
                             label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -185,6 +189,7 @@ pipeline {
                                 distribution: 'tar'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -204,20 +209,8 @@ pipeline {
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                                string(name: 'BUILD_MANIFEST_URL_OPENSEARCH', value: buildManifestUrlOpenSearch)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: integTestResults.getId(),
-                                            stage: "integ_test_x64" // TODO: change to integ_test_linux_x64_tar
-                                        )
-
-                                        env.ARTIFACT_URL_LINUX_X64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
-                                            testType: "Integ Tests (linux, x64, tar)",
-                                            status: integTestResults.getResult(),
-                                            absoluteUrl: integTestResults.getAbsoluteUrl()
-                                        )
                                     }
                                 },
                                 'bwc-test': {
@@ -233,18 +226,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                 string(name: 'AGENT_LABEL', value: AGENT_X64)
                                             ]
-
-                                        buildInfoYaml(
-                                            componentName: COMPONENT_NAME,
-                                            status: bwcTestResults.getId(),
-                                            stage: "bwc_test_x64" // TODO: change to bwc_test_linux_x64_tar
-                                        )
-
-                                        env.ARTIFACT_URL_LINUX_X64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
-                                            testType: "BWC Tests (linux, x64, tar)",
-                                            status: bwcTestResults.getResult(),
-                                            absoluteUrl: bwcTestResults.getAbsoluteUrl()
-                                        )
                                     }
                                 }
                             ])
@@ -255,9 +236,7 @@ pipeline {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                    "\n${env.ARTIFACT_URL_LINUX_X64_TAR_INTEG_TEST_RESULT}" +
-                                    "\n${env.ARTIFACT_URL_LINUX_X64_TAR_BWC_TEST_RESULT}"
+                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
                                 postCleanup()
                             }
@@ -284,6 +263,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -310,6 +290,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -341,12 +322,6 @@ pipeline {
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_X64)
                                         ]
-
-                                    env.RPM_VALIDATION_LINUX_X64_RPM_TEST_RESULT = createTestResultsMessage(
-                                        testType: "RPM Validation (linux, x64, rpm)",
-                                        status: rpmValidationResults.getResult(),
-                                        absoluteUrl: rpmValidationResults.getAbsoluteUrl()
-                                    )
                                 }
                             }
                             post {
@@ -354,8 +329,7 @@ pipeline {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                            "\n${env.RPM_VALIDATION_LINUX_X64_RPM_TEST_RESULT}"
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                         )
                                         postCleanup()
                                     }
@@ -384,6 +358,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -410,6 +385,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -469,6 +445,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -502,6 +479,7 @@ pipeline {
                                     label AGENT_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -517,6 +495,7 @@ pipeline {
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH_, "latest")
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
                                     echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
@@ -534,20 +513,8 @@ pipeline {
                                                     parameters: [
                                                         string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                        string(name: 'BUILD_MANIFEST_URL_OPENSEARCH', value: buildManifestUrlOpenSearch)
                                                     ]
-
-                                                buildInfoYaml(
-                                                    componentName: COMPONENT_NAME,
-                                                    status: integTestResults.getId(),
-                                                    stage: "integ_test_arm64" // TODO: change to integ_test_linux_arm64_tar
-                                                )
-
-                                                env.ARTIFACT_URL_LINUX_ARM64_TAR_INTEG_TEST_RESULT = createTestResultsMessage(
-                                                    testType: "Integ Tests (linux, arm64, tar)",
-                                                    status: integTestResults.getResult(),
-                                                    absoluteUrl: integTestResults.getAbsoluteUrl()
-                                                )
                                             }
                                         },
                                         'bwc-test': {
@@ -563,18 +530,6 @@ pipeline {
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
                                                         string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                                     ]
-
-                                                buildInfoYaml(
-                                                    componentName: COMPONENT_NAME,
-                                                    status: bwcTestResults.getId(),
-                                                    stage: "bwc_test_arm64" // TODO: change to bwc_test_linux_arm64_tar
-                                                )
-
-                                                env.ARTIFACT_URL_LINUX_ARM64_TAR_BWC_TEST_RESULT = createTestResultsMessage(
-                                                    testType: "BWC Tests (linux, arm64, tar)",
-                                                    status: bwcTestResults.getResult(),
-                                                    absoluteUrl: bwcTestResults.getAbsoluteUrl()
-                                                )
                                             }
                                         }
                                     ])
@@ -585,9 +540,7 @@ pipeline {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                            "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_INTEG_TEST_RESULT}" +
-                                            "\n${env.ARTIFACT_URL_LINUX_ARM64_TAR_BWC_TEST_RESULT}"
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                         )
                                         postCleanup()
                                     }
@@ -616,6 +569,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -648,6 +602,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -678,12 +633,6 @@ pipeline {
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                                             string(name: 'AGENT_LABEL', value: AGENT_ARM64)
                                         ]
-
-                                    env.RPM_VALIDATION_LINUX_ARM64_RPM_TEST_RESULT = createTestResultsMessage(
-                                        testType: "RPM Validation (linux, arm64, rpm)",
-                                        status: rpmValidationResults.getResult(),
-                                        absoluteUrl: rpmValidationResults.getAbsoluteUrl()
-                                    )
                                 }
                             }
                             post {
@@ -691,8 +640,7 @@ pipeline {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
                                             "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]) +
-                                            "\n${env.RPM_VALIDATION_LINUX_ARM64_RPM_TEST_RESULT}"
+                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                         )
                                         postCleanup()
                                     }
@@ -721,6 +669,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -747,6 +696,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -842,6 +792,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -875,6 +826,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

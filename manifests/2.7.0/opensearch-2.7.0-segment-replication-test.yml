@@ -15,6 +15,8 @@ components:
         - without-security
       additional-cluster-configs:
         path.repo: [/tmp]
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -26,6 +28,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -35,6 +40,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: alerting
     integ-test:
@@ -43,6 +51,8 @@ components:
         - without-security
       additional-cluster-configs:
         plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -53,6 +63,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -64,6 +77,8 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -73,24 +88,36 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: neural-search
     integ-test:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: opensearch-reports
     integ-test:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: opensearch-observability
     integ-test:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
     bwc-test:
       test-configs:
         - with-security
@@ -100,6 +127,9 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: cross-cluster-replication
     integ-test:
@@ -113,20 +143,32 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: security
     integ-test:
       test-configs:
         - with-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: geospatial
     integ-test:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
 
   - name: security-analytics
     integ-test:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.replication_type.enabled: true
+        cluster.indices.replication.strategy: 'SEGMENT'
