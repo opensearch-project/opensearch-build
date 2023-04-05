@@ -27,6 +27,7 @@ function usage() {
     echo "Usage: $0 [args]"
     echo ""
     echo "Required arguments:"
+    echo -e "-r REPO_NAME\tSpecify the image repo name such as 'ci-runner'"
     echo -e "-v TAG_NAME\tSpecify the image tag name such as 'centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019'"
     echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. dockerfile/opensearch.al2.dockerfile."
     echo ""
@@ -46,11 +47,14 @@ function cleanup_all() {
     cleanup_docker_buildx
     File_Delete $DIR
 }
-while getopts ":hv:f:" arg; do
+while getopts ":hr:v:f:" arg; do
     case $arg in
         h)
             usage
             exit 1
+            ;;
+        r)
+            REPO_NAME=$OPTARG
             ;;
         v)
             TAG_NAME=$OPTARG
@@ -71,12 +75,12 @@ while getopts ":hv:f:" arg; do
 done
 
 # Validate the required parameters to present
-if [ -z "$TAG_NAME" ] || [ -z "$DOCKERFILE" ]; then
-  echo "You must specify '-v TAG_NAME', '-f DOCKERFILE'"
+if [ -z "$REPO_NAME" ] || [ -z "$TAG_NAME" ] || [ -z "$DOCKERFILE" ]; then
+  echo "You must specify '-r REPO_NAME', '-v TAG_NAME', '-f DOCKERFILE'"
   usage
   exit 1
 else
-  echo $TAG_NAME $DOCKERFILE
+  echo "$TAG_NAME $DOCKERFILE"
 fi
 
 # Warning docker desktop
@@ -89,10 +93,10 @@ fi
 # Prepare docker buildx
 trap cleanup_all TERM INT EXIT
 DIR=`Temp_Folder_Create`
-echo New workspace $DIR
+echo "New workspace $DIR"
 echo -e "\n* Prepare docker buildx"
 docker buildx use default
-docker buildx create --name $BUILDER_NAME --use
+docker buildx create --name ${BUILDER_NAME} --use
 docker buildx inspect --bootstrap
 
 # Check buildx status
@@ -101,5 +105,5 @@ docker buildx ls | grep $BUILDER_NAME
 docker ps | grep $BUILDER_NAME
 
 # Build multi-arch images
-docker buildx build --platform linux/amd64,linux/arm64 -t "opensearchstaging/ci-runner:${TAG_NAME}" -f "${DOCKERFILE}" --push .
+docker buildx build --platform linux/amd64,linux/arm64 -t "opensearchstaging/${REPO_NAME}:${TAG_NAME}" -f "${DOCKERFILE}" --push .
 
