@@ -17,6 +17,15 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
     @Before
     void setUp() {
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('2.1.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
         super.setUp()
 
         def jobName = "dummy_job"
@@ -34,6 +43,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('env', ['BUILD_NUMBER': '215'])
         binding.setVariable('STAGE_NAME', 'DUMMY_STAGE_NAME')
         binding.setVariable('JOB_NAME', 'dummy_job')
+        binding.setVariable('distribution', 'tar')
         binding.setVariable('BUILD_NUMBER', '215')
         binding.setVariable('BUILD_URL', 'htth://BUILD_URL_dummy.com')
         binding.setVariable('WEBHOOK_URL', 'htth://WEBHOOK_URL_dummy.com')
@@ -46,6 +56,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         env['DOCKER_AGENT'] = [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
 
+        helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withCredentials", [Map])
 
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->

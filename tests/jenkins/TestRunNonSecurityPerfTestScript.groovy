@@ -24,6 +24,16 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.4')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
         // this.registerLibTester(new RunPerfTestScriptLibTester(
         //     'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml',
         //     '1236',

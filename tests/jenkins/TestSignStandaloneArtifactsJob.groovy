@@ -18,6 +18,15 @@ class TestSignStandaloneArtifactsJob extends BuildPipelineTest {
     @Before
     void setUp() {
 
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('1.0.4')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
         def filenamesForUrls = ['dummy_1_artifact.tar.gz', 'dummy_1_artifact.tar.gz.sig',
                                 'dummy_2_artifact.tar.gz', 'dummy_2_artifact.tar.gz.sig']
 

@@ -10,19 +10,18 @@ import sys
 
 from system import console
 from validation_workflow.validation_args import ValidationArgs
+from validation_workflow.validation_test_runner import ValidationTestRunner  # type: ignore
 
 
 def main() -> int:
-
     args = ValidationArgs()
 
     console.configure(level=args.logging_level)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-    dist = args.DISTRIBUTION_MAP.get(args.distribution, None)
-    dist.download_artifacts(projects=args.projects, version=args.version)
-
-    return 0
+    test_result = ValidationTestRunner.dispatch(args, args.distribution).run()
+    logging.info(f'final test_result = {test_result}')
+    return test_result  # type: ignore
 
 
 if __name__ == "__main__":

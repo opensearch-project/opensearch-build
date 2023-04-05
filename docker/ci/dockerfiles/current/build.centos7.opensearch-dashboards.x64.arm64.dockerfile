@@ -95,14 +95,15 @@ ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 10.24.1
-ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1"
+ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3"
 COPY --chown=1000:1000 config/build-opensearch-dashboards-entrypoint.sh /usr/share/opensearch
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 # install node and npm
+COPY --chown=1000:1000 config/yarn-version.sh /tmp
 RUN source $NVM_DIR/nvm.sh && \
-    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@^1.21.1; done
+    for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@`/tmp/yarn-version.sh main`; done
 # add node and npm to path so the commands are available
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH

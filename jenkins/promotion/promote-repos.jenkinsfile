@@ -1,7 +1,12 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@2.0.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
+
+def docker_images = [
+    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2",
+    "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1",
+]
 
 pipeline {
     options {
@@ -12,7 +17,12 @@ pipeline {
         choice(
             choices: ['distribution-build-opensearch', 'distribution-build-opensearch-dashboards'],
             name: 'DISTRIBUTION_JOB_NAME',
-            description: 'What platform is this distribution build for?.'
+            description: 'What distribution job name is this distribution build with?'
+        )
+        choice(
+            choices: ['yum', 'apt'],
+            name: 'DISTRIBUTION_REPO_TYPE',
+            description: 'What distribution repo type is this distribution promote to?'
         )
         string(
             defaultValue: '',
@@ -28,18 +38,20 @@ pipeline {
         )
     }
     stages {
-        stage('promote yum repo') {
+        stage('promote repo') {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2'
+                    image docker_images["${DISTRIBUTION_REPO_TYPE}"]
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
             steps {
                 script {
-                    currentBuild.description = "${DISTRIBUTION_JOB_NAME} ${DISTRIBUTION_BUILD_NUMBER} ${INPUT_MANIFEST}"
-                    promoteYumRepos(
+                    currentBuild.description = "${DISTRIBUTION_REPO_TYPE} ${DISTRIBUTION_JOB_NAME} ${DISTRIBUTION_BUILD_NUMBER} ${INPUT_MANIFEST}"
+                    promoteRepos(
+                        distributionRepoType: "${DISTRIBUTION_REPO_TYPE}",
                         buildNumber: "${DISTRIBUTION_BUILD_NUMBER}",
                         jobName: "${DISTRIBUTION_JOB_NAME}"
                     )
@@ -48,7 +60,7 @@ pipeline {
             post() {
                 always {
                     script {
-                        cleanWs disableDeferredWipeout: true, deleteDirs: true
+                        postCleanup()
                     }
                 }
             }

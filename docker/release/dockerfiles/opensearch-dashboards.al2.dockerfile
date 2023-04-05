@@ -18,8 +18,6 @@ ARG UID=1000
 ARG GID=1000
 ARG TEMP_DIR=/tmp/opensearch-dashboards
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
-ARG VERSION
-ARG NOTES
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
@@ -79,7 +77,9 @@ USER $UID
 # Expose port
 EXPOSE 5601
 
+ARG VERSION
 ARG BUILD_DATE
+ARG NOTES
 
 # Label
 LABEL org.label-schema.schema-version="1.0" \
@@ -88,7 +88,7 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.url="https://opensearch.org" \
   org.label-schema.vcs-url="https://github.com/opensearch-project/OpenSearch-Dashboards" \
   org.label-schema.license="Apache-2.0" \
-  org.label-schema.vendor="Amazon" \
+  org.label-schema.vendor="OpenSearch" \
   org.label-schema.description="$NOTES" \
   org.label-schema.build-date="$BUILD_DATE"
 

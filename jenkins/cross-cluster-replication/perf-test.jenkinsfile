@@ -16,38 +16,15 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            0 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            0 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.4.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;
+            H 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;
 
         '''
     }
     parameters {
         string(
-            name: 'GITHUB_TOKEN',
-            description: 'Github token for account access.',
-            trim: true
-        )
-        string(
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
-            trim: true
-        )
-        string(
-            defaultValue: 'eventdata',
-            name: 'TEST_WORKLOAD',
-            description: 'The workload name from OpenSearch Benchmark Workloads for Mensor (internal client).',
-            trim: true
-        )
-        string(
-            defaultValue: '1',
-            name: 'TEST_ITERATIONS',
-            description: 'Number of times to run a workload for Mensor (internal client).',
-            trim: true
-        )
-        string(
-            defaultValue: '0',
-            name: 'WARMUP_ITERATIONS',
-            description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
             trim: true
         )
     }
@@ -58,6 +35,7 @@ pipeline {
                 docker {
                     label AGENT_LABEL
                     image AGENT_IMAGE
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -66,10 +44,6 @@ pipeline {
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
-                    }
-                    if (GITHUB_TOKEN == '') {
-                        currentBuild.result = 'ABORTED'
-                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
                     }
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
@@ -89,6 +63,7 @@ pipeline {
                 docker {
                     label AGENT_LABEL
                     image AGENT_IMAGE
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

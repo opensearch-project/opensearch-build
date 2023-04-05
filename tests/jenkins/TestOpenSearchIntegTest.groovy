@@ -16,7 +16,17 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
-        
+
+        helper.registerSharedLibrary(
+            library().name('jenkins')
+                .defaultVersion('2.1.0')
+                .allowOverride(true)
+                .implicit(true)
+                .targetPath('vars')
+                .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
+                .build()
+            )
+
         super.setUp()
 
         def jobName = "dummy_job"
@@ -58,6 +68,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod("withCredentials", [Map])
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
             return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
         })

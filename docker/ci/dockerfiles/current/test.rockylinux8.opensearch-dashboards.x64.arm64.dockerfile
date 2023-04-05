@@ -30,6 +30,10 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
+# install yq
+COPY --chown=0:0 config/yq-setup.sh /tmp/
+RUN /tmp/yq-setup.sh
+
 # Change User
 USER 1000
 WORKDIR /usr/share/opensearch
@@ -52,9 +56,12 @@ RUN source $NVM_DIR/nvm.sh \
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
-RUN npm install -g yarn@1.22.18
+COPY --chown=1000:1000 config/yarn-version.sh /tmp
+RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
 RUN npm install -g cypress@$CYPRESS_VERSION && npm cache verify
+# Add legacy cypress@5.6.0 for 1.x line
+RUN npm install -g cypress@5.6.0 && npm cache verify
 
 # Need root to get pass the build due to chrome sandbox needs to own by the root
 USER 0
@@ -65,6 +72,10 @@ RUN if [ `uname -m` = "aarch64" ]; then echo compile arm64 cypress && /tmp/cypre
 RUN if [ `uname -m` = "aarch64" ]; then rm -rf $CYPRESS_LOCATION/* && \
     unzip -q /tmp/cypress-$CYPRESS_VERSION.zip -d $CYPRESS_LOCATION/ && chown 1000:1000 -R $CYPRESS_LOCATION; fi && rm -rf /tmp/cypress*
 
+# Add legacy cypress@5.6.0 for ARM64 Architecture
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/5.6.0 && rm -vf Cypress-5.6.0-arm64.tar.gz; fi
 
 ########################### Stage 1 ########################
 FROM rockylinux:8
