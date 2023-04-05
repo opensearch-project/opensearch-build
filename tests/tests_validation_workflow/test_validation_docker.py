@@ -8,6 +8,7 @@
 import os
 import subprocess
 import unittest
+import urllib.request
 from unittest.mock import MagicMock, Mock, call, patch
 
 from validation_workflow.docker.validation_docker import ValidateDocker
@@ -129,13 +130,11 @@ class TestValidateDocker(unittest.TestCase):
 
     def test_docker_compose_files_exist(self) -> None:
         # set up docker-compose files
-        self.docker_compose_files = {
-            '1': 'docker-compose-1.x.yml',
-            '2': 'docker-compose-2.x.yml'
-        }
+        docker_compose_file_v1_url = 'https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockercomposefiles/docker-compose-1.x.yml'
+        docker_compose_file_v2_url = 'https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockercomposefiles/docker-compose-2.x.yml'
 
-        for _, docker_file_name in self.docker_compose_files.items():
-            self.assertTrue(os.path.exists(os.path.join('docker', 'release', 'dockercomposefiles', docker_file_name)), f"File '{docker_file_name}' does not exist.")
+        self.assertTrue(urllib.request.urlopen(docker_compose_file_v1_url).getcode() == 200)
+        self.assertTrue(urllib.request.urlopen(docker_compose_file_v2_url).getcode() == 200)
 
 
 if __name__ == '__main__':
