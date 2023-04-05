@@ -115,11 +115,10 @@ pipeline {
                             def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
                             currentBuild.description = """runner: ${agent_name}<br>git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
 
-
-                                runGradleCheck(
-                                    gitRepoUrl: "${GIT_REPO_URL}",
-                                    gitReference: "${GIT_REFERENCE}"
-                                )
+                            runGradleCheck(
+                                gitRepoUrl: "${GIT_REPO_URL}",
+                                gitReference: "${GIT_REFERENCE}"
+                            )
                         }
 
                         sh("docker logout")
