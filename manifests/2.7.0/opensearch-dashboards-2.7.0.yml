@@ -29,3 +29,6 @@ components:
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     ref: '2.7'
+  - name: mlCommonsDashboards
+    repository: https://github.com/opensearch-project/ml-commons-dashboards.git
+    ref: '2.7'
