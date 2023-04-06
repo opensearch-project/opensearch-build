@@ -28,4 +28,4 @@ components:
     ref: '2.7'
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: 2.x
+    ref: '2.7'
