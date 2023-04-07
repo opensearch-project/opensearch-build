@@ -29,7 +29,7 @@ class TestDockerCopy extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('2.2.1')
+                .defaultVersion('4.2.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -40,6 +40,7 @@ class TestDockerCopy extends BuildPipelineTest {
         super.setUp()
 
         // Variables
+        binding.setVariable('ALL_TAGS', false)
         binding.setVariable('SOURCE_IMAGE_REGISTRY', sourceImageRegistry)
         binding.setVariable('SOURCE_IMAGE', sourceImage)
         binding.setVariable('DESTINATION_IMAGE_REGISTRY', destinationImageRegistry)
@@ -60,8 +61,8 @@ class TestDockerCopy extends BuildPipelineTest {
         assertJobStatusSuccess()
 
         // Ensure the gcrane is executed in an external shell script exactely once
-        def copyContainerCommand = getCommands('docker').findAll {
-            shCommand -> shCommand.contains('gcrane cp opensearchstaging/opensearch:1.3.2 opensearchproject/opensearch:1.3.2; docker logout')
+        def copyContainerCommand = getCommands('crane').findAll {
+            shCommand -> shCommand.contains('set -x && crane cp opensearchstaging/opensearch:1.3.2 opensearchproject/opensearch:1.3.2')
         }
         assertThat(copyContainerCommand.size(), equalTo(1))
 
