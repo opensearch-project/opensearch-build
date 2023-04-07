@@ -32,3 +32,9 @@ components:
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: '2.7'
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: 2.x
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/dashboards-notifications.git
+    ref: 2.x
