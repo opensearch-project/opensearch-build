@@ -22,7 +22,7 @@ components:
     ref: 2.x
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 2.x
+    ref: '2.7'
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: '2.7'

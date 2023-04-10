@@ -123,7 +123,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 2.x
+    ref: '2.7'
     platforms:
       - linux
       - windows
