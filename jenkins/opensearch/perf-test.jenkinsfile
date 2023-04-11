@@ -269,7 +269,9 @@ pipeline {
         aborted {
             node(AGENT_LABEL) {
                 script {
-                    def stackName = "test-single-security-${BUILD_ID}-${ARCHITECTURE}-perf-test"
+                    def stackPrefix = env.HAS_SECURITY.toBoolean() ? "test-single-security" : "test-single"
+                    def stackName = "${stackPrefix}-${BUILD_ID}-${ARCHITECTURE}-perf-test"
+                    echo "[Jeff_test] : ${stackName}"
                     withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
                         withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
                             try {
