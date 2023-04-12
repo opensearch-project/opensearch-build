@@ -58,7 +58,7 @@ pipeline {
 
                     // Start to build packer
                     withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
-                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session', useNode: true) {
+                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
                             sh ("cd packer && packer build -color=false $PACKER_AGENT_JSON_NAME_SUBSTITUTE")
                         }
                     }

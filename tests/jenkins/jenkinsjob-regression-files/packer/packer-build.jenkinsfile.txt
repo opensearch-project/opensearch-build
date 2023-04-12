@@ -17,7 +17,7 @@
                packer-build.writeJSON({file=./packer/substitute_jenkins-agent-al2-arm64.json, json={variables={name-base=Jenkins-Agent-AL2-X64, os-version=AL2, build-region=us-east-1, build-vpc=vpc_id, build-subnet=subnet_id, build-secgrp=sg_id, build-time={{isotime "2006-01-02T03-04-05Z"}}, aws_ami_region=us-east-1}}, pretty=2})
                packer-build.string({credentialsId=jenkins-aws-account-public, variable=AWS_ACCOUNT_PUBLIC})
                packer-build.withCredentials([AWS_ACCOUNT_PUBLIC], groovy.lang.Closure)
-                  packer-build.withAWS({role=opensearch-packer, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure)
+                  packer-build.withAWS({role=opensearch-packer, roleAccount=AWS_ACCOUNT_PUBLIC, duration=3600, roleSessionName=jenkins-session, useNode=true}, groovy.lang.Closure)
                      packer-build.sh(cd packer && packer build -color=false substitute_jenkins-agent-al2-arm64.json)
          packer-build.script(groovy.lang.Closure)
             packer-build.postCleanup()
