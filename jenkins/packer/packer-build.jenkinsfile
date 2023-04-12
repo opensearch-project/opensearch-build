@@ -16,8 +16,8 @@ pipeline {
     }
     parameters {
         string(
-            name: 'PACKER_AGENT_JSON_NAME',
-            description: 'The JSON file name of type of Jenkins agent this job is building. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
+            name: 'PACKER_TEMPLATE_NAME',
+            description: 'The packer template file name of Jenkins agent. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
             trim: true
         )
     }
@@ -25,10 +25,10 @@ pipeline {
         stage('Parameters Check') {
             steps {
                 script {
-                    currentBuild.description = "$PACKER_AGENT_JSON_NAME"
-                    if (PACKER_AGENT_JSON_NAME.isEmpty()) {
+                    currentBuild.description = "$PACKER_TEMPLATE_NAME"
+                    if (PACKER_TEMPLATE_NAME.isEmpty()) {
                         currentBuild.result = 'ABORTED'
-                        error("PACKER_AGENT_JSON_NAME parameter cannot be empty.")
+                        error("PACKER_TEMPLATE_NAME parameter cannot be empty.")
                     }
                     print("Passing parameter checks.")
                 }
@@ -41,9 +41,9 @@ pipeline {
             }
             steps {
                 script {
-                    print("Getting $PACKER_AGENT_JSON_NAME from $PACKER_BUILD_GIT_REPOSITORY repository with reference $PACKER_BUILD_GIT_REPOSITORY_REFERENCE")
+                    print("Getting $PACKER_TEMPLATE_NAME from $PACKER_BUILD_GIT_REPOSITORY repository with reference $PACKER_BUILD_GIT_REPOSITORY_REFERENCE")
                     checkout([$class: 'GitSCM', branches: [[name: PACKER_BUILD_GIT_REPOSITORY_REFERENCE ]], userRemoteConfigs: [[url: PACKER_BUILD_GIT_REPOSITORY ]]])
-                    def packer_jenkins_agent_json = readJSON file: "./packer/$PACKER_AGENT_JSON_NAME"
+                    def packer_jenkins_agent_json = readJSON file: "./packer/$PACKER_TEMPLATE_NAME"
                     withCredentials([
                         string(credentialsId: 'jenkins-agent-vpc-id', variable: 'vpc_id'),
                         string(credentialsId: 'jenkins-agent-subnet-id', variable: 'subnet_id'),
@@ -53,14 +53,14 @@ pipeline {
                         packer_jenkins_agent_json["variables"]["build-subnet"] = subnet_id
                         packer_jenkins_agent_json["variables"]["build-secgrp"] = sg_id
                     }
-                    def PACKER_AGENT_JSON_NAME_SUBSTITUTE = "substitute_" + "$PACKER_AGENT_JSON_NAME"
-                    print("$PACKER_AGENT_JSON_NAME_SUBSTITUTE")
-                    writeJSON file: "./packer/$PACKER_AGENT_JSON_NAME_SUBSTITUTE", json: packer_jenkins_agent_json, pretty: 2
+                    def PACKER_TEMPLATE_NAME_SUBSTITUTE = "substitute_" + "$PACKER_TEMPLATE_NAME"
+                    print("$PACKER_TEMPLATE_NAME_SUBSTITUTE")
+                    writeJSON file: "./packer/$PACKER_TEMPLATE_NAME_SUBSTITUTE", json: packer_jenkins_agent_json, pretty: 2
 
                     // Start to build packer
                     withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
                         withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
-                            sh ("cd packer && packer build -color=false $PACKER_AGENT_JSON_NAME_SUBSTITUTE")
+                            sh ("cd packer && packer build -color=false $PACKER_TEMPLATE_NAME_SUBSTITUTE")
                         }
                     }
 

@@ -19,7 +19,7 @@ class TestPackerBuild extends BuildPipelineTest {
     // Variables
     String packerBuildGitRespository = 'https://github.com/opensearch-project/opensearch-ci'
     String packerBuildGitRespositoryReference = 'main'
-    String packerAgentJsonName = 'jenkins-agent-al2-arm64.json'
+    String packerTemplateName = 'jenkins-agent-al2-arm64.json'
 
     @Override
     @Before
@@ -37,7 +37,7 @@ class TestPackerBuild extends BuildPipelineTest {
 
         super.setUp()
 
-        binding.setVariable('PACKER_AGENT_JSON_NAME', packerAgentJsonName)
+        binding.setVariable('PACKER_TEMPLATE_NAME', packerTemplateName)
         def sample_json = [
             "variables" : [
                 "name-base" : "Jenkins-Agent-AL2-X64" ,
