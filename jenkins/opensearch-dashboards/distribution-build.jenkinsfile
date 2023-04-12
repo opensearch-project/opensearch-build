@@ -495,7 +495,7 @@ pipeline {
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                                    String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH_, "latest")
+                                    String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
                                     echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
