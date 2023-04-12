@@ -25,6 +25,7 @@ pipeline {
         stage('Parameters Check') {
             steps {
                 script {
+                    currentBuild.description = "$PACKER_AGENT_JSON_NAME"
                     if (PACKER_AGENT_JSON_NAME.isEmpty()) {
                         currentBuild.result = 'ABORTED'
                         error("PACKER_AGENT_JSON_NAME parameter cannot be empty.")
