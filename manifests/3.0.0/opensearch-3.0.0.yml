@@ -78,6 +78,16 @@ components:
     ref: main
     platforms:
       - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: main
+    platforms:
+      - linux
+      - windows
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
