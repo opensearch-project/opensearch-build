@@ -64,5 +64,4 @@ else
 fi
 
 # Docker build
-docker build -f ${DOCKERFILE} ${DIR} -t opensearchstaging/${REPO_NAME}:${TAG_NAME} .
-
+docker build --build-arg VERSION=$TAG_NAME --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=$NOTES -f ${DOCKERFILE} -t opensearchstaging/${REPO_NAME}:${TAG_NAME} .

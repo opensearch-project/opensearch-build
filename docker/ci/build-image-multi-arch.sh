@@ -105,5 +105,5 @@ docker buildx ls | grep $BUILDER_NAME
 docker ps | grep $BUILDER_NAME
 
 # Build multi-arch images
-docker buildx build --platform linux/amd64,linux/arm64 -t "opensearchstaging/${REPO_NAME}:${TAG_NAME}" -f "${DOCKERFILE}" --push .
+docker buildx build --platform linux/amd64,linux/arm64 --build-arg VERSION=${TAG_NAME} --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=${NOTES} -t "opensearchstaging/${REPO_NAME}:${TAG_NAME}" -f "${DOCKERFILE}" --push .
 
