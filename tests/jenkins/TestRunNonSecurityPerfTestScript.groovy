@@ -170,6 +170,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     void testRunNonSecurityPerfTestScript_verifyJob_aborted() {
         binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
         binding.setVariable('HAS_SECURITY', false)
+        helper.registerAllowedMethod("cfnDescribe", [Map]) { args -> return 'anything'}
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
             updateBuildStatus('ABORTED')
         })
@@ -178,7 +179,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
         assertJobStatusAborted() 
         assertCallStack()
         assertCallStack().contains("perf-test.cfnDescribe({stack=test-single-1236-x64-perf-test})")
-        assertCallStack().contains("'test-single-1236-x64-perf-test' does not exist, nothing to remove")
+        assertCallStack().contains("perf-test.cfnDelete({stack=test-single-1236-x64-perf-test, pollInterval=1000})")
     }  
 
     def getCommandExecutions(methodName, command) {
