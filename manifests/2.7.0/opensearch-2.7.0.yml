@@ -132,7 +132,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 2.x
+    ref: '2.7'
     platforms:
       - linux
       - windows
