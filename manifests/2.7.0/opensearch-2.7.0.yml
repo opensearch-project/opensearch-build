@@ -58,7 +58,7 @@ components:
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: '2.x'
+    ref: '2.7'
     platforms:
       - linux
       - windows
