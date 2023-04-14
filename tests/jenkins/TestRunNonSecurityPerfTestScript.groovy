@@ -58,6 +58,8 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
             c -> lib.jenkins.BuildManifest.new(readYaml(file: 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml'))
         })
         helper.registerAllowedMethod('parameterizedCron', [String], null)
+        helper.registerAllowedMethod("cfnDescribe", [Map])
+        helper.registerAllowedMethod("cfnDelete", [Map])
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
@@ -148,6 +150,37 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
             "{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=307/1.3.0/1236/linux/x64/tar/test-results}".toString()
         ))
     }
+
+    @Test
+    void testRunSecurityPerfTestScript_verifyJob_aborted() {
+        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-bundle.yml')
+        binding.setVariable('HAS_SECURITY', true)
+        helper.registerAllowedMethod('sh', [String.class], { String cmd ->
+            updateBuildStatus('ABORTED')
+        })
+        runScript("jenkins/opensearch/perf-test.jenkinsfile")
+        
+        assertJobStatusAborted() 
+        assertCallStack()
+        assertCallStack().contains("perf-test.cfnDescribe({stack=test-single-security-1236-x64-perf-test})")
+        assertCallStack().contains("'test-single-security-1236-x64-perf-test' does not exist, nothing to remove")
+    }    
+
+    @Test
+    void testRunNonSecurityPerfTestScript_verifyJob_aborted() {
+        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
+        binding.setVariable('HAS_SECURITY', false)
+        helper.registerAllowedMethod("cfnDescribe", [Map]) { args -> return 'anything'}
+        helper.registerAllowedMethod('sh', [String.class], { String cmd ->
+            updateBuildStatus('ABORTED')
+        })
+        runScript("jenkins/opensearch/perf-test.jenkinsfile")
+        
+        assertJobStatusAborted() 
+        assertCallStack()
+        assertCallStack().contains("perf-test.cfnDescribe({stack=test-single-1236-x64-perf-test})")
+        assertCallStack().contains("perf-test.cfnDelete({stack=test-single-1236-x64-perf-test, pollInterval=1000})")
+    }  
 
     def getCommandExecutions(methodName, command) {
         def shCommands = helper.callStack.findAll {
