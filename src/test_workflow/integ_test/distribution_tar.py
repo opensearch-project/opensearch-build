@@ -39,5 +39,9 @@ class DistributionTar(Distribution):
         return start_cmd_map[self.filename]
 
     def uninstall(self) -> None:
-        logging.info(f"Cleanup {self.work_dir}/* content after the test")
-        subprocess.check_call(f"rm -rf {self.work_dir}/*", shell=True)
+        logging.info(f"Cleanup {self.work_dir}/* content after the test and keep {self.install_dir}/logs for recording.")
+        subprocess.check_call(f"mv {self.install_dir}/logs {self.work_dir}", shell=True)
+        subprocess.check_call(f"rm -rf {self.install_dir}", shell=True)
+        subprocess.check_call(f"mkdir {self.install_dir}", shell=True)
+        subprocess.check_call(f"mv {self.work_dir}/logs {self.install_dir}", shell=True)
+        logging.info(f"{self.work_dir}/* would be deleted or kept subject to TemporaryDirectory rules.")

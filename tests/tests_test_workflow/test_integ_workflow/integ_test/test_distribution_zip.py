@@ -22,6 +22,7 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
         self.version = "2.4.0"
         self.distribution_zip = DistributionZip(self.product, self.version, self.work_dir)
         self.distribution_zip_dashboards = DistributionZip(self.product_dashboards, self.version, self.work_dir)
+        self.install_dir = os.path.join(self.work_dir, f"{self.product}-{self.version}")
 
     def test_distribution_zip_vars(self) -> None:
         self.assertEqual(self.distribution_zip.filename, self.product)
@@ -54,8 +55,11 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
         self.distribution_zip.uninstall()
         args_list = check_call_mock.call_args_list
 
-        self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])
+        self.assertEqual(check_call_mock.call_count, 4)
+        self.assertEqual(f"mv {self.install_dir}/logs {self.work_dir}", args_list[0][0][0])
+        self.assertEqual(f"rm -rf {self.install_dir}", args_list[1][0][0])
+        self.assertEqual(f"mkdir {self.install_dir}", args_list[2][0][0])
+        self.assertEqual(f"mv {self.work_dir}/logs {self.install_dir}", args_list[3][0][0])
 
 
 class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
@@ -66,6 +70,7 @@ class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
         self.product = "opensearch-dashboards"
         self.version = "2.4.0"
         self.distribution_zip = DistributionZip(self.product, self.version, self.work_dir)
+        self.install_dir = os.path.join(self.work_dir, f"{self.product}-{self.version}")
 
     def test_distribution_zip_vars(self) -> None:
         self.assertEqual(self.distribution_zip.filename, self.product)
@@ -96,5 +101,8 @@ class TestDistributionZipOpenSearchDashboards(unittest.TestCase):
         self.distribution_zip.uninstall()
         args_list = check_call_mock.call_args_list
 
-        self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])
+        self.assertEqual(check_call_mock.call_count, 4)
+        self.assertEqual(f"mv {self.install_dir}/logs {self.work_dir}", args_list[0][0][0])
+        self.assertEqual(f"rm -rf {self.install_dir}", args_list[1][0][0])
+        self.assertEqual(f"mkdir {self.install_dir}", args_list[2][0][0])
+        self.assertEqual(f"mv {self.work_dir}/logs {self.install_dir}", args_list[3][0][0])

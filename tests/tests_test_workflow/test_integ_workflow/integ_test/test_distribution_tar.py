@@ -19,6 +19,7 @@ class TestDistributionTar(unittest.TestCase):
         self.work_dir = os.path.join(os.path.dirname(__file__), "data")
         self.distribution_tar = DistributionTar("opensearch", "1.3.0", self.work_dir)
         self.distribution_tar_dashboards = DistributionTar("opensearch-dashboards", "1.3.0", self.work_dir)
+        self.install_dir = os.path.join(self.work_dir, "opensearch-1.3.0")
 
     def test_distribution_tar_vars(self) -> None:
         self.assertEqual(self.distribution_tar.filename, 'opensearch')
@@ -53,5 +54,8 @@ class TestDistributionTar(unittest.TestCase):
         self.distribution_tar.uninstall()
         args_list = check_call_mock.call_args_list
 
-        self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])
+        self.assertEqual(check_call_mock.call_count, 4)
+        self.assertEqual(f"mv {self.install_dir}/logs {self.work_dir}", args_list[0][0][0])
+        self.assertEqual(f"rm -rf {self.install_dir}", args_list[1][0][0])
+        self.assertEqual(f"mkdir {self.install_dir}", args_list[2][0][0])
+        self.assertEqual(f"mv {self.work_dir}/logs {self.install_dir}", args_list[3][0][0])

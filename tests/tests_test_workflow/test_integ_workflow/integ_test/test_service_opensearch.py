@@ -175,6 +175,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_file_handler_for_security.write.assert_not_called()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
+    @patch("subprocess.check_call")
     @patch("test_workflow.integ_test.service.Process.terminate", return_value=123)
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=True)
     @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
@@ -184,7 +185,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stderr_data: Mock,
         mock_process_stdout_data: Mock,
         mock_process_started: Mock,
-        mock_process_terminate: Mock
+        mock_process_terminate: Mock,
+        check_call_mock: Mock
     ) -> None:
         service = ServiceOpenSearch(
             self.version,
