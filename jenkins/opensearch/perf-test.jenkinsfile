@@ -251,6 +251,7 @@ pipeline {
                                         try {
                                             def stack = cfnDescribe(stack: stackName)
                                             if (stack != null) {
+                                                echo "Deleting stack '${stackName}'"
                                                 cfnDelete(stack: stackName, pollInterval:1000)
                                             } else {
                                                 echo "Stack '${stackName}' does not exist, nothing to remove"
