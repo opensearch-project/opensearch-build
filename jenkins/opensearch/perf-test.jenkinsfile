@@ -172,10 +172,28 @@ pipeline {
                             }
                             postCleanup()
                         }
-                        failure {
+                        aborted {
+                            script {
+                                def stackName = "test-single-security-${BUILD_ID}-${ARCHITECTURE}-perf-test"
+                                withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+                                    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                                        try {
+                                            def stack = cfnDescribe(stack: stackName)
+                                            if (stack != null) {
+                                                cfnDelete(stack: stackName, pollInterval:1000)
+                                            } else {
+                                                echo "Stack '${stackName}' does not exist, nothing to remove"
+                                            }
+                                        } catch (e) {
+                                            echo "Exception occurred while deleting the cloudformation stacks" + e.toString()
+                                            throw e
+                                        }
+                                    }
+                                }
+                            }
                             postCleanup()
                         }
-                        aborted {
+                        failure {
                             postCleanup()
                         }
                     }
@@ -225,10 +243,29 @@ pipeline {
                             }
                             postCleanup()
                         }
-                        failure {
+                        aborted {
+                            script {
+                                def stackName = "test-single-${BUILD_ID}-${ARCHITECTURE}-perf-test"
+                                withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+                                    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                                        try {
+                                            def stack = cfnDescribe(stack: stackName)
+                                            if (stack != null) {
+                                                echo "Deleting stack '${stackName}'"
+                                                cfnDelete(stack: stackName, pollInterval:1000)
+                                            } else {
+                                                echo "Stack '${stackName}' does not exist, nothing to remove"
+                                            }
+                                        } catch (e) {
+                                            echo "Exception occurred while deleting the cloudformation stacks" + e.toString()
+                                            throw e
+                                        }
+                                    }
+                                }
+                            }
                             postCleanup()
                         }
-                        aborted {
+                        failure {
                             postCleanup()
                         }
                     }
