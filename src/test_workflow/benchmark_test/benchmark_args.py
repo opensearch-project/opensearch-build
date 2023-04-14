@@ -28,9 +28,13 @@ class BenchmarkArgs:
     clientNodeCount: int
     ingestNodeCount: int
     mlNodeCount: int
+    dataNodeStorage: int
+    mlNodeStorage: int
     jvmSysProps: str
     additionalConfig: json
     workload: str
+    benchmarkConfig: IO
+    userTag: str
     targetHosts: str
 
     def __init__(self) -> None:
@@ -68,24 +72,37 @@ class BenchmarkArgs:
         parser.add_argument("--additionalConfig", nargs='*', action=JsonArgs, dest="additionalConfig",
                             help="Additional opensearch.yml config "
                                  "parameters passed as JSON")
+        parser.add_argument("--mlNodeStorage", dest="mlNodeStorage", help="User provided ml-node ebs block storage size"
+                                                                          " defaults to 100Gb")
+        parser.add_argument("--dataNodeStorage", dest="dataNodeStorage", help="User provided data-node ebs block "
+                                                                              "storage size, defaults to 100Gb")
 
         parser.add_argument("--workload", dest="workload", help="workload type for the OpenSearch benchmarking", required=True)
+        parser.add_argument("--benchmark-config", dest="benchmarkConfig", help="absolute filepath to custom "
+                                                                               "opensearch-benchmark.ini config")
+        parser.add_argument("--user-tag", dest="userTag", help="Attach arbitrary text to the meta-data of each metric record")
 
         args = parser.parse_args()
         self.bundle_manifest = args.bundle_manifest
-        self.stack_suffix = args.suffix
+        self.stack_suffix = args.suffix if args.suffix else None
         self.config = args.config
         self.keep = args.keep
         self.singleNode = args.singleNode
         self.minDistribution = args.minDistribution
         self.component = args.component
         self.insecure = args.insecure
-        self.managerNodeCount = args.managerNodeCount
-        self.dataNodeCount = args.dataNodeCount
-        self.clientNodeCount = args.clientNodeCount
-        self.ingestNodeCount = args.ingestNodeCount
-        self.mlNodeCount = args.mlNodeCount
-        self.jvmSysProps = args.jvmSysProps
+        self.managerNodeCount = args.managerNodeCount if args.managerNodeCount else None
+        self.dataNodeCount = args.dataNodeCount if args.dataNodeCount else None
+        self.clientNodeCount = args.clientNodeCount if args.clientNodeCount else None
+        self.ingestNodeCount = args.ingestNodeCount if args.ingestNodeCount else None
+        self.mlNodeCount = args.mlNodeCount if args.mlNodeCount else None
+        self.jvmSysProps = args.jvmSysProps if args.jvmSysProps else None
+        self.dataNodeStorage = args.dataNodeStorage if args.dataNodeStorage else None
+        self.mlNodeStorage = args.mlNodeStorage if args.mlNodeStorage else None
         self.workload = args.workload
+        self.benchmarkConfig = args.benchmarkConfig if args.benchmarkConfig else None
+        self.userTag = args.userTag if args.userTag else None
+        self.additionalConfig = json.dumps(args.additionalConfig) if args.additionalConfig is not None else None
+        #sys.exit(0)
 
-        self.additionalConfig = args.additionalConfig if args.additionalConfig is not None else None
+

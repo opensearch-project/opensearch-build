@@ -36,16 +36,24 @@ class BenchmarkTestSuite:
         self.security = security
         self.args = args
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
+        if args.benchmarkConfig:
+            base_command = f"docker run -v {args.benchmarkConfig}:/opensearch-benchmark/.benchmark/benchmark.ini"
+        else:
+            base_command = "docker run"
+
         self.command = (
-            f"docker run opensearch-benchmark:latest execute_test "
+            f"{base_command} opensearch-benchmark:latest execute_test "
             f"--workload={self.args.workload} --test-mode --pipeline=benchmark-only --target-hosts={endpoint}"
         )
+
+        if args.userTag:
+            user_tag = f"--user-tag=\"{args.userTag}\""
+            self.command = f"{self.command} {user_tag}"
         print(self.command)
 
     def execute(self) -> None:
         if self.security:
             self.command += ' --client-options="use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"'
-
         print(self.command)
         subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
 

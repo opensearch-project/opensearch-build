@@ -25,21 +25,9 @@ class BenchmarkTestRunnerOpenSearchPlugins(BenchmarkTestRunner):
     """
     def __init__(self, args: BenchmarkArgs, test_manifest: BundleManifest) -> None:
         super().__init__(args, test_manifest)
-        self.tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", self.args.component)
-        os.makedirs(self.tests_dir, exist_ok=True)
-        security_flag = "--without-security" if not self.security else ""
-        self.command = (
-            f"bin/run_perf_test.sh --config {str(os.path.abspath(self.args.config.name))} "
-            f"--bundle-manifest {str(os.path.abspath(self.args.bundle_manifest.name))} "
-            f"--test-result-dir {str(self.tests_dir)} {security_flag}"
-        )
 
     def get_plugin_repo_url(self) -> str:
         return f"https://github.com/opensearch-project/{self.args.component}.git"
 
     def run_tests(self) -> None:
-        with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
-            current_workspace = os.path.join(work_dir.name, self.args.component)
-            with GitRepository(self.get_plugin_repo_url(), "main", current_workspace):
-                with WorkingDirectory(current_workspace):
-                    subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
+        pass

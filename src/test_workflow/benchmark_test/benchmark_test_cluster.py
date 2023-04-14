@@ -80,6 +80,7 @@ class BenchmarkTestCluster:
             load_output = json.load(read_file)
             print(load_output[self.stack_name])
             self.create_endpoint(load_output)
+        self.wait_for_processing()
 
     def create_endpoint(self, cdk_output: dict) -> None:
         loadbalancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
@@ -105,23 +106,29 @@ class BenchmarkTestCluster:
         command = f"cdk destroy {self.stack_name} {self.params} --force"
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         print(f'Executing "{command}" in {os.getcwd()}')
-        # subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+
+        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
-        # Should be invoked only if the endpoint is public.
-        assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
-        logging.info("Waiting for domain to be up")
-        url = "".join([self.endpoint_with_port, "/_cluster/health"])
-        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False},
+        logging.info(f"Waiting for domain at {self.endpoint} to be up")
+        protocol = "http://" if self.args.insecure else "https://"
+        url = "".join([protocol, self.endpoint, "/_cluster/health"])
+        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False}
+        print(f"Waiting for domain at {url} to be up")
+        retry_call(requests.get, fkwargs=request_args,
                    tries=tries, delay=delay, backoff=backoff)
 
     def setup_cdk_params(self, config: dict) -> dict:
+        if self.args.stack_suffix:
+            suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
+        else:
+            suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
         return {
             "distributionUrl": self.manifest.build.location,
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
-            "suffix": self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture,
+            "suffix": suffix,
             "securityDisabled": "true" if self.args.insecure else "false",
             "cpuArch": self.manifest.build.architecture,
             "singleNodeCluster": "true" if self.args.singleNode else "false",
@@ -129,7 +136,15 @@ class BenchmarkTestCluster:
             "minDistribution": "true" if self.args.minDistribution else "false",
             "serverAccessType": config["Constants"]["serverAccessType"],
             "restrictServerAccessTo": config["Constants"]["restrictServerAccessTo"],
-            "additionalConfig": self.args.additionalConfig
+            "additionalConfig": self.args.additionalConfig,
+            "managerNodeCount": self.args.managerNodeCount,
+            "dataNodeCount": self.args.dataNodeCount,
+            "clientNodeCount": self.args.clientNodeCount,
+            "ingestNodeCount": self.args.ingestNodeCount,
+            "mlNodeCount": self.args.mlNodeCount,
+            "dataNodeStorage": self.args.dataNodeStorage,
+            "mlNodeStorage": self.args.mlNodeStorage,
+            "jvmSysProps": self.args.jvmSysProps
         }
 
     @classmethod
@@ -139,7 +154,6 @@ class BenchmarkTestCluster:
         Set up the cluster. When this method returns, the cluster must be available to take requests.
         Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
         """
-        print("I am in create")
         cluster = cls(*args)
 
         try:
