@@ -180,7 +180,7 @@ pipeline {
                                                 String issueBodyMessage =  "The integration test failed at distribution level for component ${local_component} for version: ${version}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Steps to reproduce: See https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#integration-tests<br>* Access cluster logs:<br> - [With security](https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/${local_component}/with-security/local-cluster-logs/stdout.txt) (if applicable)<br> - [Without security](https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/${local_component}/without-security/local-cluster-logs/stdout.txt) (if applicable)<br><br> _Note: All in one test report manifest with all the details coming soon. See https://github.com/opensearch-project/opensearch-build/issues/1274_"
                                                 createGithubIssue(
                                                     repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                    issueTitle: "Integration Test failed for component ${local_component}: ${version}",
+                                                    issueTitle: "[AUTOCUT] Integration Test failed for component ${local_component}: ${version}",
                                                     issueBody: issueBodyMessage,
                                                     label: "autocut,v${version},integ-test-failure"
                                                 )
