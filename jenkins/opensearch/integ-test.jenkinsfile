@@ -182,7 +182,7 @@ pipeline {
                                                     repoUrl: buildManifestObj.getRepo("${local_component}"),
                                                     issueTitle: "Integration Test failed for component ${local_component}: ${version}",
                                                     issueBody: issueBodyMessage,
-                                                    label: "autocut,v${version},test-failure"
+                                                    label: "autocut,v${version},integ-test-failure"
                                                 )
                                                 throw new Exception("Error running integtest for component ${local_component}", e)
                                             } finally {
