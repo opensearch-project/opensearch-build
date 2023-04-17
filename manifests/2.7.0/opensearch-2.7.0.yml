@@ -173,3 +173,11 @@ components:
       - windows
     checks:
       - gradle:properties:version
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: 2.x
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
