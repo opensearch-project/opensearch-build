@@ -42,7 +42,7 @@ class BenchmarkTestSuite:
             base_command = "docker run"
 
         self.command = (
-            f"{base_command} opensearch-benchmark:latest execute_test "
+            f"{base_command} opensearchproject/opensearch-benchmark:latest execute_test "
             f"--workload={self.args.workload} --test-mode --pipeline=benchmark-only --target-hosts={endpoint}"
         )
 
