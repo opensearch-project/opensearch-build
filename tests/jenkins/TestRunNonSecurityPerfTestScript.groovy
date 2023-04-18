@@ -143,10 +143,10 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     }
 
     @Test
-    void testRunSecurityPerfTestScript_verifyJob_aborted() throws Exception{
+    void testRunSecurityPerfTestScript_verifyJob_aborted() {
         binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-bundle.yml')
         binding.setVariable('HAS_SECURITY', true)
-        helper.registerAllowedMethod("cfnDescribe", [Map.class]) { args -> return null}
+        helper.registerAllowedMethod("cfnDescribe", [Map.class]) { throw exception } 
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
             updateBuildStatus('ABORTED')
         })
@@ -154,7 +154,9 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
 
         assertJobStatusAborted() 
         assertCallStack()
+        printCallStack()
         assertCallStack().contains("cfnDescribe({stack=test-single-security-1236-x64-307})")
+        assertCallStack().contains("Stack 'test-single-security-1236-x64-307' does not exist, nothing to remove")
     }    
 
     @Test
