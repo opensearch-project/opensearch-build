@@ -8,6 +8,8 @@
 # for both developers and ci/cd pipeline for releasing Opensearch clients and other products
 # Please read the README.md file for all the information before using this dockerfile
 
+# Related dockerhub image: opensearchstaging/ci-runner:release-centos7-clients-v*
+
 
 FROM centos:7
 
@@ -52,7 +54,6 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
     cd ../../../ && rm -rf aarch64-builds; fi
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
-RUN dotnet --version
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
@@ -120,6 +121,9 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 SHELL ["/bin/bash", "-lc"]
 CMD ["/bin/bash", "-l"]
 
+# Installing rust cargo
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+
 # Installing ruby related dependencies
 # Need to run either `. /usr/share/opensearch/.rvm/scripts/rvm` or `source /usr/share/opensearch/.rvm/scripts/rvm` 
 # and force bash if needed before using the rvm command for any activities, or rvm will not correctly use version
@@ -130,7 +134,8 @@ ENV RUBY_HOME=/usr/share/opensearch/.rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/share/opensearch/.rvm/bin
 ENV GEM_HOME=/usr/share/opensearch/.gem
 ENV GEM_PATH=$GEM_HOME
-ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
+ENV CARGO_PATH=/usr/share/opensearch/.cargo/bin
+ENV PATH=$RUBY_HOME:$RVM_HOME:$CARGO_PATH:$PATH
 
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
@@ -156,3 +161,4 @@ RUN yarn -v
 RUN openssl version
 RUN osslsigncode --version
 RUN dotnet --version
+RUN cargo --version
