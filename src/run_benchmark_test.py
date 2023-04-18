@@ -8,17 +8,18 @@
 import sys
 
 from manifests.bundle_manifest import BundleManifest
+from system import console
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 from test_workflow.benchmark_test.benchmark_test_runners import BenchmarkTestRunners
 
 
 def main() -> int:
     """
-        Entry point for Performance Test with bundle manifest, config file containing the required arguments for running
-        rally test and the stack name for the cluster. Will call out in test.sh with perf as argument
+        Entry point for Benchmark Test with bundle manifest, config file containing the required arguments for running
+        benchmarking test. Will call out in test.sh with benchmark as argument
     """
     benchmark_args = BenchmarkArgs()
-    print(benchmark_args.bundle_manifest, benchmark_args.singleNode, benchmark_args.insecure, benchmark_args.managerNodeCount)
+    console.configure(level=benchmark_args.logging_level)
     manifest = BundleManifest.from_file(benchmark_args.bundle_manifest)
     BenchmarkTestRunners.from_args(benchmark_args, manifest).run()
     return 0

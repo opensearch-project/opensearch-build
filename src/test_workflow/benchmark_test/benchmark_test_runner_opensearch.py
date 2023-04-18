@@ -39,10 +39,8 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
 
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             current_workspace = os.path.join(work_dir.name, "opensearch-cluster-cdk")
-            print("current_workspace is " + str(current_workspace))
             with GitRepository(self.get_cluster_repo_url(), "main", current_workspace):
                 with WorkingDirectory(current_workspace):
                     with BenchmarkTestCluster.create(self.test_manifest, config, self.args, current_workspace) as test_cluster:
                         benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.args)
                         retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
-

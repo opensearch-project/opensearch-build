@@ -17,19 +17,19 @@ from test_workflow.benchmark_test.benchmark_test_runners import BenchmarkTestRun
 
 class TestPerfTestRunnerOpenSearch(unittest.TestCase):
 
-    @patch(
-        "argparse._sys.argv",["run_benchmark_test.py",
-                              "--bundle-manifest", os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
-                              "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
-                              "--workload", "test",
-                              "--suffix", "test"]
-    )
+    @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "--bundle-manifest",
+                                  os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
+                                  "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
+                                  "--workload", "test",
+                                  "--suffix", "test"])
     @patch("os.chdir")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.TemporaryDirectory")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestCluster.create")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
-    def test_run(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock, *mocks: Any) -> None:
+    def test_run(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock,
+                 *mocks: Any) -> None:
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_cluster.return_value.__enter__.return_value = mock_cluster
 

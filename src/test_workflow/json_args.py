@@ -15,10 +15,6 @@ from typing import Any, Sequence, Union
 class JsonArgs(argparse.Action):
     def __call__(self, parser: Any, namespace: argparse.Namespace, values: Union[str, Sequence[Any], None], option_string: str = None) -> None:
         setattr(namespace, self.dest, dict())
-        print(f"values are {values}")
         for value in values:
             key, value = value.split(':')
             getattr(namespace, self.dest)[key] = value
-
-
-JsonArgs.__test__ = False  # type:ignore

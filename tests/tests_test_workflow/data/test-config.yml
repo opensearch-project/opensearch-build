@@ -1,3 +1,4 @@
+---
 Description: Configuration file to store contants required to run rally for performance test
 Constants:
   Repository: https://github.com/opensearch-project/opensearch-cluster-cdk

@@ -42,13 +42,15 @@ class TestRunPerfTest(unittest.TestCase):
     OPENSEARCH_BUNDLE_MANIFEST = os.path.realpath(os.path.join(BUNDLE_MANIFEST_PATH, "opensearch-1.3.0-bundle.yml"))
     BENCHMARK_TEST_CONFIG = os.path.realpath(os.path.join(CONFIG_ROOT_PATH, "test-config.yml"))
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+                                  BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
     def test_default_execute_benchmark_test(self, mock_runner: Mock, *mocks: Any) -> None:
         main()
         self.assertEqual(1, mock_runner.call_count)
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+                                  BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
     def test_run_benchmark_test(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
@@ -56,12 +58,11 @@ class TestRunPerfTest(unittest.TestCase):
         self.assertEqual(1, os_mock_runner.call_count)
         self.assertEqual(0, plugin_mock_runner.call_count)
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test", "--component", "abc"])
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+                                  BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test", "--component", "abc"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
     def test_run_benchmark_test_plugins(self, os_mock_runner: Mock, plugin_mock_runner: Mock, *mock: Any) -> None:
         main()
         self.assertEqual(0, os_mock_runner.call_count)
         self.assertEqual(1, plugin_mock_runner.call_count)
-
-

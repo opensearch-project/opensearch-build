@@ -7,7 +7,8 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch, Mock
+from typing import Optional
+from unittest.mock import MagicMock, Mock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_test_cluster import BenchmarkTestCluster
@@ -17,8 +18,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
 
-    def setUp(self, args=None) -> None:
-        print("Calling Setup")
+    def setUp(self, args: Optional[Mock] = None) -> None:
         self.args = Mock()
         if args:
             self.args = args
@@ -26,16 +26,17 @@ class TestBenchmarkTestCluster(unittest.TestCase):
             self.args.workload = "nyc_taxis"
             self.args.stack_suffix = "test-suffix"
             self.args.insecure = False
-            self.args.singleNode = True
-            self.args.minDistribution = False
+            self.args.single_node = True
+            self.args.min_distribution = False
         self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
         self.stack_name = "stack"
         self.security = True
-        self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678", "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234"}}
-        self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config,args=self.args, current_workspace="current_workspace")
+        self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
+                                     "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234"}}
+        self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
-    def test_create_single_node_secure(self, mock_wait_for_processing) -> None:
+    def test_create_single_node_secure(self, mock_wait_for_processing: Optional[Mock]) -> None:
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
             with patch("builtins.open", MagicMock()):
@@ -57,7 +58,8 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     def test_port(self) -> None:
         self.assertEqual(self.benchmark_test_cluster.port, 443)
 
-    def test_create_single_node_insecure(self) -> None:
+    @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
+    def test_create_single_node_insecure(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.insecure = True
         TestBenchmarkTestCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
@@ -65,17 +67,21 @@ class TestBenchmarkTestCluster(unittest.TestCase):
             with patch("builtins.open", MagicMock()):
                 with patch("json.load", mock_file):
                     self.benchmark_test_cluster.start()
+                    self.assertEqual(mock_check_call.call_count, 1)
+
         self.assertEqual(self.benchmark_test_cluster.endpoint_with_port, 'www.example.com:80')
         self.assertEqual(self.benchmark_test_cluster.port, 80)
         self.assertTrue("securityDisabled=true" in self.benchmark_test_cluster.params)
 
-    def test_create_multi_node(self) -> None:
-        self.args.singleNode = False
+    @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
+    def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:
+        self.args.single_node = False
         TestBenchmarkTestCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
             with patch("builtins.open", MagicMock()):
                 with patch("json.load", mock_file):
                     self.benchmark_test_cluster.start()
-        self.assertTrue("singleNodeCluster=false" in self.benchmark_test_cluster.params)
+                    self.assertEqual(mock_check_call.call_count, 1)
 
+        self.assertTrue("singleNodeCluster=false" in self.benchmark_test_cluster.params)
