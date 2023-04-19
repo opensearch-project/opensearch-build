@@ -28,9 +28,7 @@ pipeline {
             }
             post() {
                 always {
-                    script {
-                        postCleanup()
-                    }
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
             }
         }
