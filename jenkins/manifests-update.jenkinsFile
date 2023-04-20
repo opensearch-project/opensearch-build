@@ -22,13 +22,16 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh """
-                        git remote set-url origin https://gaiksaya:${GITHUB_TOKEN}@github.com/gaiksaya/opensearch-build
-                        git config --global user.email "gaiksaya@amazon.com"
-                        git config --global user.name "gaiksaya"
+                        git remote set-url origin https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build
+                        git config --global user.email "opensearch-infra@amazon.com"
+                        git config --global user.name "opensearch-ci"
                         git checkout -b update-manifest-${BUILD_NUMBER}
                         ./manifests.sh update
-                        git add . && git commit -m "Update manifests" && git push origin update-manifest-${BUILD_NUMBER}
-                        gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.' -H update-manifest-${BUILD_NUMBER} -B manifest
+                        git add . && git commit -sm "Update manifests
+
+                        Signed-off-by: opensearch-ci <opensearch-infra@amazon.com>"
+                        git push origin update-manifest-${BUILD_NUMBER}
+                        gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.' -H update-manifest-${BUILD_NUMBER}
                         """
                     }
                 }
