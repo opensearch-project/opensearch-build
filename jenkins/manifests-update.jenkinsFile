@@ -22,6 +22,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh """
+                        git remote set-url origin https://opensearch-ci@${GITHUB_TOKEN}/opensearch-project/opensearch-build
                         git checkout -b update-manifest-${BUILD_NUMBER}
                         git remote -v
                         touch jenkinsfile
