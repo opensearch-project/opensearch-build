@@ -22,15 +22,11 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh """
-                        git remote set-url origin https://gaiksaya:blah@github.com/gaiksaya/opensearch-build
                         git config --global user.email "gaiksaya@amazon.com"
                         git config --global user.name "gaiksaya"
                         git checkout -b update-manifest-${BUILD_NUMBER}
-                        git branch
-                        pwd && ls -l
-                        git remote -v
                         touch jenkinsfile
-                        git add . && git commit -m "Update manifests"
+                        git add . && git commit -m "Update manifests" && git push origin update-manifest-${BUILD_NUMBER}
                         gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.'
                         """
                     }
