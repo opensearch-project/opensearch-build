@@ -12,7 +12,7 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
                     args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
@@ -25,18 +25,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
 
                         sh """
-                            git add .
-                            git config --global user.email "opensearch-infra@amazon.com"
-                            git config --global user.name "opensearch-ci-bot"
-                            git commit -m 'Updated manifests.
-
-                            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>' && git push origin update-manifest-${BUILD_NUMBER} &&
-                            curl -L \
-                                -X POST \
-                                -H 'Accept: application/vnd.github+json' \
-                                -H 'Authorization: Bearer ${GITHUB_TOKEN}'\
-                                https://api.github.com/repos/gaiksaya/opensearch-build/pulls \
-                                -d \"{'title':'[AUTO] Updated input manifests','body':'I have noticed that a repo has incremented a version and have made some updates to input manifests.','head':'octocat:new-feature','base':'main'}\"
+                        gh --version
+                        ./manifests.sh update
                         """
                     }
                 }
