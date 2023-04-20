@@ -20,13 +20,11 @@ pipeline {
             }
             steps {
                 script {
-
-                    sh "git checkout -b update-manifest-${BUILD_NUMBER} && touch hello-world"
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-
                         sh """
-                        gh --version
+                        git checkout -b update-manifest-${BUILD_NUMBER}
                         ./manifests.sh update
+                        gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.'
                         """
                     }
                 }
