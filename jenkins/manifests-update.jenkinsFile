@@ -23,12 +23,7 @@ pipeline {
                     // sh 'yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && yum install -y gh'
                     sh './manifests.sh update'
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
-                        sh "curl -L \
-                                -X POST \
-                                -H 'Accept: application/vnd.github+json' \
-                                -H 'Authorization: Bearer ${GITHUB_TOKEN}'\
-                                https://api.github.com/repos/opensearch-project/opensearch-build/pulls \
-                                -d \"{'title':'[AUTO] Updated input manifests','body':'I have noticed that a repo has incremented a version and have made some updates to input manifests.'}\""
+                        sh "gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.'"
                     }
                 }
             }
