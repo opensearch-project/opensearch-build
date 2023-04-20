@@ -25,7 +25,7 @@ pipeline {
                         git remote set-url origin https://gaiksaya:blah@github.com/gaiksaya/opensearch-build
                         git checkout -b update-manifest-${BUILD_NUMBER}
                         git branch
-                        pwd && ll
+                        pwd && ls -l
                         git remote -v
                         touch jenkinsfile
                         git add . && git commit -m "Update manifests"
