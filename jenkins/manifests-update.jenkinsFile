@@ -13,19 +13,12 @@ pipeline {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
                     image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
-                    args '-e JAVA_HOME=/jdk-14'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
             steps {
                 script {
-                    sh """
-                        curl -O https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_linux-x64_bin.tar.gz
-                        tar xvf openjdk-14_linux-x64_bin.tar.gz
-                        export JAVA_HOME=/jdk-14
-                        java --version
-                    """
                     sh './manifests.sh update'
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh 'gh pr create --title "[AUTO] Updated input manifests" --body "I have noticed that a repo has incremented a version and have made some updates to input manifests."'
