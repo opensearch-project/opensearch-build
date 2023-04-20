@@ -22,7 +22,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh """
-                        git remote set-url origin https://gaiksaya:blah@github.com/gaiksaya/opensearch-build
+                        git remote set-url origin https://gaiksaya:${GITHUB_TOKEN}@github.com/gaiksaya/opensearch-build
                         git config --global user.email "gaiksaya@amazon.com"
                         git config --global user.name "gaiksaya"
                         git checkout -b update-manifest-${BUILD_NUMBER}
