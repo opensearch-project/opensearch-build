@@ -4,9 +4,9 @@ pipeline {
         buildDiscarder(logRotator(daysToKeepStr: '7'))
     }
     agent none
-    triggers {
-        cron('H 0 * * *')
-        }
+    // triggers {
+    //     cron('H 0 * * *')
+    //     }
     stages {
         stage('Update Manifests') {
             agent {
@@ -23,8 +23,7 @@ pipeline {
                     sh """
                         curl -O https://download.java.net/java/GA/jdk14/076bab302c7b4508975440c56f6cc26a/36/GPL/openjdk-14_linux-x64_bin.tar.gz
                         tar xvf openjdk-14_linux-x64_bin.tar.gz
-                        mv jdk-14 /opt/
-                        export JAVA_HOME=/opt/jdk-14
+                        export JAVA_HOME=/jdk-14
                     """
                     sh './manifests.sh update'
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
