@@ -25,7 +25,10 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
 
                         sh """
-                            git add . && git commit -m 'Updated manifests.
+                            git add .
+                            git config --global user.email "opensearch-infra@amazon.com"
+                            git config --global user.name "opensearch-ci-bot"
+                            git commit -m 'Updated manifests.
 
                             Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>' && git push origin update-manifest-${BUILD_NUMBER} &&
                             curl -L \
