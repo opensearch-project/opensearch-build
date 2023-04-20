@@ -24,6 +24,7 @@ pipeline {
                         sh """
                         git checkout -b update-manifest-${BUILD_NUMBER}
                         touch jenkinsfile
+                        git commit -m "Update manifests"
                         gh pr create --title '[AUTO] Updated input manifests' --body 'I have noticed that a repo has incremented a version and have made some updates to input manifests.'
                         """
                     }
