@@ -12,15 +12,17 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
-                    args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                    // image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    // args '-e JAVA_HOME=/usr/lib/jvm/adoptopenjdk-14-hotspot'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
+                    args '-e JAVA_HOME=/opt/java/openjdk-17'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
             steps {
                 script {
-                    sh 'yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && yum install -y gh'
+                    // sh 'yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && yum install -y gh'
                     sh './manifests.sh update'
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         sh "curl -L \
