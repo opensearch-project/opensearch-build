@@ -27,8 +27,9 @@ class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
         super().__init__(args, test_manifest, self.properties.build_manifest.components)
         logging.info("Entering integ test for OpenSearch Dashboards")
 
-    def __create_test_suite__(self, component: TestComponent, test_config: TestComponent, work_dir: Path) -> IntegTestSuiteOpenSearchDashboards:
+    def __create_test_suite__(self, args: TestArgs, component: TestComponent, test_config: TestComponent, work_dir: Path) -> IntegTestSuiteOpenSearchDashboards:
         return IntegTestSuiteOpenSearchDashboards(
+            args,
             self.properties_dependency.dependency_installer,
             self.properties.dependency_installer,
             component,

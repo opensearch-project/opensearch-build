@@ -15,6 +15,7 @@ from test_workflow.dependency_installer_opensearch import DependencyInstallerOpe
 from test_workflow.dependency_installer_opensearch_dashboards import DependencyInstallerOpenSearchDashboards
 from test_workflow.integ_test.integ_test_suite import IntegTestSuite
 from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards
+from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
@@ -27,6 +28,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
     def __init__(
         self,
+        args: TestArgs,
         dependency_installer_opensearch: DependencyInstallerOpenSearch,
         dependency_installer_opensearch_dashboards: DependencyInstallerOpenSearchDashboards,
         component: TestComponent,
@@ -40,6 +42,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
     ) -> None:
 
         super().__init__(
+            args,
             work_dir,
             component,
             test_config,
@@ -52,6 +55,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         self.dependency_installer_opensearch_dashboards = dependency_installer_opensearch_dashboards
         self.bundle_manifest_opensearch_dashboards = bundle_manifest_opensearch_dashboards
         self.build_manifest_opensearch_dashboards = build_manifest_opensearch_dashboards
+        self.args = args
 
     def execute_tests(self) -> TestComponentResults:
         test_results = TestComponentResults()

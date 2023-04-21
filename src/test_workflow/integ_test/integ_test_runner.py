@@ -8,6 +8,7 @@
 import abc
 import logging
 import os
+import sys
 from pathlib import Path
 
 from manifests.component_manifest import Components
@@ -40,19 +41,21 @@ class IntegTestRunner(abc.ABC):
 
             all_results = TestSuiteResults()
             for component in self.components.select(focus=self.args.components):
+                print(component.repository)
                 if component.name in self.test_manifest.components:
+                    print(f"{component.name} is present")
                     test_config = self.test_manifest.components[component.name]
                     if test_config.integ_test:
-                        test_suite = self.__create_test_suite__(component, test_config, work_dir.path)
+                        test_suite = self.__create_test_suite__(self.args, component, test_config, work_dir.path)
                         test_results = test_suite.execute_tests()
                         all_results.append(component.name, test_results)
                     else:
                         logging.info(f"Skipping integ-tests for {component.name}, as it is currently not supported")
                 else:
+                    print(f"{component.name} is Not present")
                     logging.info(f"Skipping integ-tests for {component.name}, as it is currently not declared in the test manifest")
-
         return all_results
 
     @abc.abstractmethod
-    def __create_test_suite__(self, component: TestComponent, test_config: TestComponent, work_dir: Path) -> IntegTestSuite:
+    def __create_test_suite__(self, args: TestArgs, component: TestComponent, test_config: TestComponent, work_dir: Path) -> IntegTestSuite:
         pass

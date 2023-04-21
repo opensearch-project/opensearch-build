@@ -9,6 +9,9 @@ import abc
 import json
 import logging
 import os
+import subprocess
+
+import sys
 from pathlib import Path
 from typing import Any, Dict
 
@@ -19,6 +22,7 @@ from paths.script_finder import ScriptFinder
 from system.execute import execute
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.topology import ClusterEndpoint, NodeEndpoint
+from test_workflow.test_args import TestArgs
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
@@ -26,6 +30,7 @@ from test_workflow.test_result.test_component_results import TestComponentResult
 
 
 class IntegTestSuite(abc.ABC):
+    args: TestArgs
     work_dir: Path
     component: Any
     test_config: Any
@@ -43,15 +48,17 @@ class IntegTestSuite(abc.ABC):
     """
 
     def __init__(
-        self,
-        work_dir: Path,
-        component: Any,
-        test_config: Any,
-        test_recorder: TestRecorder,
-        dependency_installer: DependencyInstaller,
-        bundle_manifest: BundleManifest,
-        build_manifest: BuildManifest
+            self,
+            args: TestArgs,
+            work_dir: Path,
+            component: Any,
+            test_config: Any,
+            test_recorder: TestRecorder,
+            dependency_installer: DependencyInstaller,
+            bundle_manifest: BundleManifest,
+            build_manifest: BuildManifest
     ) -> None:
+        self.args = args
         self.work_dir = work_dir
         self.component = component
         self.test_config = test_config
@@ -76,10 +83,13 @@ class IntegTestSuite(abc.ABC):
         pass
 
     def multi_execute_integtest_sh(self, cluster_endpoints: list, security: bool, test_config: str) -> int:
+
         script = ScriptFinder.find_integ_test_script(self.component.name, self.repo.working_directory)
 
         def custom_node_endpoint_encoder(node_endpoint: NodeEndpoint) -> dict:
-            return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port, "transport": node_endpoint.transport}
+            return {"endpoint": node_endpoint.endpoint, "port": node_endpoint.port,
+                    "transport": node_endpoint.transport}
+
         if os.path.exists(script):
             if len(cluster_endpoints) == 1:
                 single_data_node = cluster_endpoints[0].data_nodes[0]
@@ -92,8 +102,14 @@ class IntegTestSuite(abc.ABC):
                 cmd = f"bash {script} -e '"
                 cmd = cmd + endpoints_string + "'"
                 cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+
+            if self.args.sub_component and self.__class__.__name__ == 'IntegTestSuiteOpenSearchDashboards':
+                cmd = f"{cmd} -t {self.args.sub_component}"
+
             self.repo_work_dir = os.path.join(
-                self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
+                self.repo.dir,
+                self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
+
             (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
             test_result_data = TestResultData(
                 self.component.name,
