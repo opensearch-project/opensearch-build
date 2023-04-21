@@ -287,8 +287,7 @@ pipeline {
                                     }
                                 }
                             } catch (Exception e) {
-                                echo "Exception occurred while deleting the CloudFormation stack: ${e.toString()}"
-                                throw e
+                                error "Exception occurred while deleting the CloudFormation stack: ${e.toString()}"
                             }
                         }
                     }
