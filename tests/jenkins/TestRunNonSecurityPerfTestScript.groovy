@@ -34,15 +34,6 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
-        // this.registerLibTester(new RunPerfTestScriptLibTester(
-        //     'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml',
-        //     '1236',
-        //     'true',
-        //     'nyc_taxis',
-        //     '1',
-        //     '1',
-        //     false
-        // ))
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -155,31 +146,33 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
     void testRunSecurityPerfTestScript_verifyJob_aborted() {
         binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-bundle.yml')
         binding.setVariable('HAS_SECURITY', true)
+        helper.registerAllowedMethod("cfnDescribe", [Map.class]) { throw exception } 
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
             updateBuildStatus('ABORTED')
         })
         runScript("jenkins/opensearch/perf-test.jenkinsfile")
-        
+
         assertJobStatusAborted() 
         assertCallStack()
-        assertCallStack().contains("perf-test.cfnDescribe({stack=test-single-security-1236-x64-perf-test})")
-        assertCallStack().contains("'test-single-security-1236-x64-perf-test' does not exist, nothing to remove")
+        printCallStack()
+        assertCallStack().contains("cfnDescribe({stack=test-single-security-1236-x64-307})")
+        assertCallStack().contains("Stack 'test-single-security-1236-x64-307' does not exist, nothing to remove")
     }    
 
     @Test
-    void testRunNonSecurityPerfTestScript_verifyJob_aborted() {
+    void testRunNonSecurityPerfTestScript_verifyJob_aborted() throws Exception{
         binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
         binding.setVariable('HAS_SECURITY', false)
-        helper.registerAllowedMethod("cfnDescribe", [Map]) { args -> return 'anything'}
+        helper.registerAllowedMethod("cfnDescribe", [Map.class]) { args -> return true}
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
             updateBuildStatus('ABORTED')
         })
         runScript("jenkins/opensearch/perf-test.jenkinsfile")
-        
+
         assertJobStatusAborted() 
         assertCallStack()
-        assertCallStack().contains("perf-test.cfnDescribe({stack=test-single-1236-x64-perf-test})")
-        assertCallStack().contains("perf-test.cfnDelete({stack=test-single-1236-x64-perf-test, pollInterval=1000})")
+        assertCallStack().contains("cfnDescribe({stack=test-single-1236-x64-307})")
+        assertCallStack().contains("cfnDelete({stack=test-single-1236-x64-307, pollInterval=1000})")
     }  
 
     def getCommandExecutions(methodName, command) {
