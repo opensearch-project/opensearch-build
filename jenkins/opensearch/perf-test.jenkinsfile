@@ -272,7 +272,7 @@ pipeline {
                     "test-single-security-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}"
                     ]
                     withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
-                        withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
+                        withAWS(role: 'cfn-set-up', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
                             try {
                                 for (String stackName : stackNames) {
                                     def stack = null
