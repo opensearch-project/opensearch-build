@@ -15,3 +15,5 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
