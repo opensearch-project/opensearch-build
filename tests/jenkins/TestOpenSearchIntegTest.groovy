@@ -23,7 +23,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('4.0.0')
+                .defaultVersion('4.1.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -83,7 +83,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     void integTests_runs_consistently() {
         super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem(' env JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar '))
+        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar '))
     }
 
     @Test
@@ -102,7 +102,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
     @Test
     void checkGHissueCreation() {
-        helper.addShMock(' env JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar ', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar ', '', 1)
         helper.addShMock('gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S "[AUTOCUT] Integration Test failed for OpenSearch: 1.3.0 tar distribution in:title" --label autocut,v1.3.0,integ-test-failure', '', 0)
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
@@ -113,7 +113,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
     @Test
     void checkGHexistingIssue() {
-        helper.addShMock(' env JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar ', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-1.3.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar ', '', 1)
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
             }
