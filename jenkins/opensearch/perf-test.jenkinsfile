@@ -271,8 +271,8 @@ pipeline {
                     "test-single-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}", 
                     "test-single-security-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}"
                     ]
-                    withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
-                        withAWS(role: 'cfn-set-up', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
+                    withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                        withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
                             try {
                                 for (String stackName : stackNames) {
                                     def stack = null
