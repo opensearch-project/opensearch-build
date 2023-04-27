@@ -105,7 +105,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 903a5a858b2b8aa3e5908b542cc2dfc024960d49
+    ref: 76a2572c6aa134bc4f24d84ba2f61a16e90cbd40
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting
-    ref: e5a0fc968458b33111a0861cae62194c3d6488f4
+    ref: 89012f28fa75eb57198dac42a519b77f8ad44beb
     platforms:
       - linux
       - windows
@@ -123,7 +123,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 0db150b7755e2bcde947e9b8d3db89624215102c
+    ref: 0bc8628395b8443f6e1a611345901a7f2c2561fd
     platforms:
       - linux
       - windows
