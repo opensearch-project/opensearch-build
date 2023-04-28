@@ -55,13 +55,13 @@ class InspectDockerImage:
         x = requests.get(api_url, headers=headersToken)
         response_dict = json.loads(x.text)
         dockerHub_image_digest = response_dict['config']['digest']
-        logging.info(f'{dockerHub_image_digest} --> DockerHub image digest {self.image_name.replace("opensearchproject", "opensearchstaging")}:{self.image_tag}')
+        logging.info(f'{dockerHub_image_digest} <-- DockerHub image digest {self.image_name.replace("opensearchproject", "opensearchstaging")}:{self.image_tag}')
 
         logging.info('Fetching mainfest from local')
         local_inspect = f"docker image inspect --format '{{{{json .}}}}' {self.image_id} | jq -r '. | {{Id: .Id}}'"
         result = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         response_dict = json.loads(result.stdout)
         local_image_digest = response_dict['Id']
-        logging.info(f'{local_image_digest} --> local image digest {self.image_name}:{self.prod_image_tag}')
+        logging.info(f'{local_image_digest} <-- local image digest {self.image_name}:{self.prod_image_tag}')
 
         return True if (local_image_digest == dockerHub_image_digest) else False

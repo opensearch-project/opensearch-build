@@ -6,7 +6,6 @@
 # compatible open source license.
 
 import logging
-import time
 from typing import Any
 
 from validation_workflow.api_request import ApiTest
@@ -39,9 +38,8 @@ class ApiTestCases:
             success_status_code = test_case.__getitem__(1)
             validate_string = test_case.__getitem__(2)
 
-            time.sleep(3)
             status_code, response_text = ApiTest(str(request_url)).api_get()
-            logging.info(f"Test Request -> {str(request_url)}")
+            logging.info(f"\nRequest_url ->{str(request_url)} \n")
             logging.info(f"\nStatus_code ->{status_code} \nresponse_text ->{response_text}")
 
             if status_code == success_status_code and (not validate_string or validate_string in response_text):
