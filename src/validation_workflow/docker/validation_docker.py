@@ -210,7 +210,7 @@ class ValidateDocker(Validation):
             s = s.replace(old_string, new_string)
             f.write(s)
 
-    def inspect_docker_image(self, image_id: str, image_name: str) -> Any:
+    def inspect_docker_image(self, image_id: str, image_name: str) -> str:
         return InspectDockerImage(image_id, image_name, self.args.version).inspect_digest()
 
     def is_container_daemon_running(self) -> Any:
