@@ -58,9 +58,6 @@ class TestValidateDocker(unittest.TestCase):
 
         # Create instance of ValidateDocker class
         validate_docker = ValidateDocker(mock_validation_args.return_value)
-        validate_docker.local_image_OS_id = 'local_image_OS_id'
-        validate_docker.local_image_OSD_id = 'local_image_OSD_id'
-        validate_docker._OS_image_name = 'local_image_OS_name'
         validate_docker.image_ids = ['images_id_0', 'images_id_0']
 
         # Call validation method and assert the result
