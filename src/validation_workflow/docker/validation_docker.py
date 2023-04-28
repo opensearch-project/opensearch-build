@@ -62,7 +62,7 @@ class ValidateDocker(Validation):
         # STEP 2 . inspect image digest between opensearchproject(downloaded/local) and opensearchstaging(dockerHub)
         if not self.args.using_staging_artifact_only:
             self.image_names_list = [self.args.OS_image, self.args.OSD_image]
-            self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids, self.image_names_list)))
+            self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids, self.image_names_list)))  # type: ignore
 
             if all(self.image_digests):
                 logging.info('Image digest is validated.\n\n')
@@ -210,7 +210,7 @@ class ValidateDocker(Validation):
             s = s.replace(old_string, new_string)
             f.write(s)
 
-    def inspect_docker_image(self, image_id: str, image_name: str) -> str:
+    def inspect_docker_image(self, image_id: str, image_name: str) -> Any:
         return InspectDockerImage(image_id, image_name, self.args.version).inspect_digest()
 
     def is_container_daemon_running(self) -> Any:
