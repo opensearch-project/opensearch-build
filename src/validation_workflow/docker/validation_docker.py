@@ -97,7 +97,7 @@ class ValidateDocker(Validation):
                     raise Exception("Cluster is not ready for API test.")
         else:
             raise Exception('The container failed to start. Exiting the validation.')
-        
+
         return True
 
     def cleanup(self) -> bool:
