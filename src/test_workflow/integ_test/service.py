@@ -64,8 +64,6 @@ class Service(abc.ABC):
 
         self.return_code = self.process_handler.terminate()
 
-        self.uninstall()
-
         return ServiceTerminationResult(
             self.return_code,
             self.process_handler.stdout_data,
