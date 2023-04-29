@@ -93,6 +93,8 @@ class TestCluster(abc.ABC):
 
         self.__save_test_result_data(self.termination_result)
 
+        self.service.uninstall()
+
     def __save_test_result_data(self, termination_result: ServiceTerminationResult) -> None:
         test_result_data = TestResultData(
             self.component_name,

@@ -59,7 +59,7 @@ function setupPerformanceAnalyzerPlugin {
         else
             echo "Enabling execution of OPENSEARCH_HOME/bin/$PERFORMANCE_ANALYZER_PLUGIN/performance-analyzer-agent-cli for OpenSearch Performance Analyzer Plugin"
             # Launch performance plugin and disown to PID1 (tini).
-            $OPENSEARCH_HOME/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/performance-analyzer.log 2>&1 & disown
+            $OPENSEARCH_HOME/bin/opensearch-performance-analyzer/performance-analyzer-agent-cli > $OPENSEARCH_HOME/logs/PerformanceAnalyzer.log 2>&1 & disown
         fi
     else
         echo "OpenSearch Performance Analyzer Plugin does not exist, disable by default"

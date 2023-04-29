@@ -1,0 +1,55 @@
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '7'))
+    }
+    agent none
+    triggers {
+        cron('H 0 * * *')
+    }
+    stages {
+        stage('Update Manifests') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
+                    args '-e JAVA_HOME=/opt/java/openjdk-11'
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                        try {
+                            sh """
+                                git remote set-url origin https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build
+                                git config user.email "opensearch-infra@amazon.com"
+                                git config user.name "opensearch-ci"
+                                git checkout -b update-manifest
+                                ./manifests.sh update
+                        """
+                            def status = sh(returnStdout: true, script: 'git status --porcelain')
+                            if (status) {
+                                sh """
+                                    git add . && git commit -sm "Update manifests"
+                                    git push origin update-manifest --force
+                                    gh pr create --title '[AUTO] Update input manifests' --body 'I have noticed that a repo has incremented a version. This change updates the corresponding input manifests.' -H update-manifest -B main
+                                """
+                            } else {
+                                println 'Nothing to commit!'
+                            }
+                        } catch (e) {
+                            error 'An error occured while adding a new manifest!' + e.toString()
+                        }
+                    }
+                }
+            }
+            post() {
+                always {
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+            }
+        }
+    }
+}

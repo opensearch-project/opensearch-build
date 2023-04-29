@@ -74,7 +74,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_X64
-                    image 'alpine:3'
+                    image 'docker/library/alpine:3'
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -109,6 +110,7 @@ pipeline {
                 docker {
                     label AGENT_X64
                     image dockerAgent.image
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -130,52 +132,6 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-distribution-snapshot-linux-x64-tar') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
-                        }
-                    }
-                    environment {
-                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
-                    }
-                    agent {
-                        docker {
-                            label AGENT_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            buildManifest(
-                                componentName: "${COMPONENT_NAME}",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'linux',
-                                architecture: 'x64',
-                                distribution: 'tar',
-                                snapshot: true
-                            )
-
-                            String mavenPath = "$WORKSPACE/tar/builds/opensearch/maven"
-
-                            if (fileExists(mavenPath)) {
-                                withCredentials([usernamePassword(credentialsId: 'jenkins-sonatype-creds', usernameVariable: 'SONATYPE_USERNAME', passwordVariable: 'SONATYPE_PASSWORD')]) {
-                                    sh("$WORKSPACE/publish/publish-snapshot.sh ${mavenPath}")
-                                }
-                            } else {
-                                echo "Skipping publishing snapshots, ${mavenPath} does not exist."
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
-                        }
-                    }
-                }
                 stage('build-opensearch-snapshot-linux-x64-tar') {
                     when {
                         beforeAgent true
@@ -191,6 +147,7 @@ pipeline {
                             label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -229,6 +186,7 @@ pipeline {
                             label AGENT_ARM64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -343,6 +301,7 @@ pipeline {
                             label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -374,8 +333,7 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                                             ]
                                     }
                                 },
@@ -425,6 +383,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -451,6 +410,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -514,6 +474,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -540,6 +501,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -591,6 +553,7 @@ pipeline {
                             label AGENT_ARM64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -621,8 +584,7 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                                             ]
                                     }
                                 },
@@ -672,6 +634,7 @@ pipeline {
                                     label AGENT_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -698,6 +661,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -761,6 +725,7 @@ pipeline {
                                     label AGENT_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -787,6 +752,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -881,6 +847,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -911,6 +878,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

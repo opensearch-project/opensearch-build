@@ -13,6 +13,7 @@ pipeline {
         AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
         IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v2' // required for rpm to create digest sha256 correctly with rpm 4.12+
         IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v1' // required for deb to create pkg using debmake/debuild/debhelper
+        JOB_NAME_OPENSEARCH = 'distribution-build-opensearch'
     }
     parameters {
         string(
@@ -80,7 +81,8 @@ pipeline {
             agent {
                 docker {
                     label AGENT_X64
-                    image 'alpine:3'
+                    image 'docker/library/alpine:3'
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -134,6 +136,7 @@ pipeline {
                 docker {
                     label AGENT_X64
                     image dockerAgent.image
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -172,6 +175,7 @@ pipeline {
                             label AGENT_X64
                             image dockerAgent.image
                             args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
@@ -185,6 +189,7 @@ pipeline {
                                 distribution: 'tar'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -204,7 +209,7 @@ pipeline {
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                                string(name: 'BUILD_MANIFEST_URL_OPENSEARCH', value: buildManifestUrlOpenSearch)
                                             ]
                                     }
                                 },
@@ -258,6 +263,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -284,6 +290,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -351,6 +358,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -377,6 +385,7 @@ pipeline {
                                 docker {
                                     label AGENT_X64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -436,6 +445,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -469,6 +479,7 @@ pipeline {
                                     label AGENT_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -484,6 +495,7 @@ pipeline {
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
                                     echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
@@ -501,7 +513,7 @@ pipeline {
                                                     parameters: [
                                                         string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                        string(name: 'BUILD_MANIFEST_URL_OPENSEARCH', value: buildManifestUrlOpenSearch)
                                                     ]
                                             }
                                         },
@@ -557,6 +569,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -589,6 +602,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_RPM
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -655,6 +669,7 @@ pipeline {
                                     label AGENT_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -681,6 +696,7 @@ pipeline {
                                 docker {
                                     label AGENT_ARM64
                                     image IMAGE_DEB
+                                    registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
                             }
@@ -776,6 +792,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }
@@ -809,6 +826,7 @@ pipeline {
                     label AGENT_X64
                     image dockerAgent.image
                     args dockerAgent.args
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

@@ -56,12 +56,12 @@ class TestDockerBuild extends BuildPipelineTest {
 
         assertJobStatusSuccess()
 
-        // Ensure the entire docker commanbd is executed in an external shell script exactelly once
+        // Ensure the entire docker command is executed in an external shell script exactly once
         def dockerLoginCommand = getCommands('docker').findAll {
             shCommand -> shCommand.contains('docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS')
         }
         assertThat(dockerLoginCommand.size(), equalTo(1))
-        
+
         // Validate the docker-build.sh is called with correct predefined credential
         assertCallStack().contains("docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)")
 
@@ -79,5 +79,5 @@ class TestDockerBuild extends BuildPipelineTest {
 
         return shCurlCommands
     }
-    
+
 }

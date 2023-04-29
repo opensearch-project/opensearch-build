@@ -1,11 +1,11 @@
    docker-build.run()
       docker-build.pipeline(groovy.lang.Closure)
-         docker-build.timeout({time=4, unit=HOURS})
+         docker-build.timeout({time=5, unit=HOURS})
          docker-build.echo(Executing on agent [label:none])
          docker-build.stage(Parameters Check, groovy.lang.Closure)
             docker-build.script(groovy.lang.Closure)
          docker-build.stage(docker-build, groovy.lang.Closure)
-            docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, stages:[:]]])
+            docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk14, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             docker-build.script(groovy.lang.Closure)
                docker-build.echo(The docker-build workflow will only push docker images to staging, please use docker-copy to move the image to other repositories)
                docker-build.checkout({$class=GitSCM, branches=[{name=main}], userRemoteConfigs=[{url=https://github.com/opensearch-project/opensearch-build}]})
@@ -14,7 +14,7 @@
                docker-build.withCredentials([[DOCKER_USERNAME, DOCKER_PASSWORD]], groovy.lang.Closure)
                   docker-build.sh(
                             set -e
-                            echo Login to $CREDENTIAL_ID
+                            set +x
                             docker logout && echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin && eval $DOCKER_BUILD_SCRIPT_WITH_COMMANDS
                         )
          docker-build.script(groovy.lang.Closure)

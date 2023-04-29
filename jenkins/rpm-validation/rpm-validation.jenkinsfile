@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.0.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@4.0.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -29,6 +29,7 @@ pipeline {
                     label AGENT_LABEL
                     image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v1'
                     args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
+                    registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
             }

@@ -1,0 +1,78 @@
+lib = library(identifier: 'jenkins@2.2.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 4, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder'
+            image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'PACKER_TEMPLATE_NAME',
+            description: 'The packer template file name of Jenkins agent. e.g. jenkins-agent-al2-arm64.json. Files exist in https://github.com/opensearch-project/opensearch-ci/tree/main/packer',
+            trim: true
+        )
+    }
+    stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    currentBuild.description = "$PACKER_TEMPLATE_NAME"
+                    if (PACKER_TEMPLATE_NAME.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error("PACKER_TEMPLATE_NAME parameter cannot be empty.")
+                    }
+                    print("Passing parameter checks.")
+                }
+            }
+        }
+        stage('packer-build') {
+            environment {
+                PACKER_BUILD_GIT_REPOSITORY_REFERENCE = "main"
+                PACKER_BUILD_GIT_REPOSITORY = "https://github.com/opensearch-project/opensearch-ci"
+            }
+            steps {
+                script {
+                    print("Getting $PACKER_TEMPLATE_NAME from $PACKER_BUILD_GIT_REPOSITORY repository with reference $PACKER_BUILD_GIT_REPOSITORY_REFERENCE")
+                    checkout([$class: 'GitSCM', branches: [[name: PACKER_BUILD_GIT_REPOSITORY_REFERENCE ]], userRemoteConfigs: [[url: PACKER_BUILD_GIT_REPOSITORY ]]])
+                    def packer_jenkins_agent_json = readJSON file: "./packer/$PACKER_TEMPLATE_NAME"
+                    withCredentials([
+                        string(credentialsId: 'jenkins-agent-vpc-id', variable: 'vpc_id'),
+                        string(credentialsId: 'jenkins-agent-subnet-id', variable: 'subnet_id'),
+                        string(credentialsId: 'jenkins-agent-sg-id', variable: 'sg_id')
+                    ]){
+                        packer_jenkins_agent_json["variables"]["build-vpc"] = vpc_id
+                        packer_jenkins_agent_json["variables"]["build-subnet"] = subnet_id
+                        packer_jenkins_agent_json["variables"]["build-secgrp"] = sg_id
+                    }
+                    def PACKER_TEMPLATE_NAME_SUBSTITUTE = "substitute_" + "$PACKER_TEMPLATE_NAME"
+                    print("$PACKER_TEMPLATE_NAME_SUBSTITUTE")
+                    writeJSON file: "./packer/$PACKER_TEMPLATE_NAME_SUBSTITUTE", json: packer_jenkins_agent_json, pretty: 2
+
+                    // Start to build packer
+                    withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+                        withAWS(role: 'opensearch-packer', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 3600, roleSessionName: 'jenkins-session', useNode: true) {
+                            sh ("cd packer && packer build -color=false $PACKER_TEMPLATE_NAME_SUBSTITUTE")
+                        }
+                    }
+
+                }
+            }
+            post() {
+                always {
+                    script {
+                        postCleanup()
+                    }
+                }
+            }
+        }
+    }
+}
