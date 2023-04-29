@@ -51,6 +51,7 @@ RUN ls -l $TEMP_DIR && \
 # Copy working directory to the actual release docker images
 FROM amazonlinux:2
 
+ARG TARGETARCH
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
@@ -62,8 +63,8 @@ ENV TINI_VERSION=v0.19.0
 RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 
 # Add tini to use as init (PID1) process.
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/tini
-RUN chmod +x /bin/tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /bin/tini
+RUN chmod 755 /bin/tini
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -112,5 +113,5 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.build-date="$BUILD_DATE"
 
 # CMD to run
-ENTRYPOINT ["tini", "--", "./opensearch-docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/tini", "--", "./opensearch-docker-entrypoint.sh"]
 CMD ["opensearch"]
