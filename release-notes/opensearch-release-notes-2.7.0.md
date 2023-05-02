@@ -21,7 +21,12 @@ OpenSearch 2.7.0 includes the following experimental features. Experimental feat
 * The experimental ML Framework gains a new automatic reloading mechanism for ML models, allowing you to auto-reload deployed models when a cluster restarts or when a node rejoins the cluster.
 
 ### OpenSearch Ml Commons Dashboards
-* Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7 ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
+* Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7. ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
+
+
+### Known Issues
+
+* Version 2.7.0 of OpenSearch Dashboards offers administrators the ability to manually override the version of Node.js used to run the software. If an administrator chooses this option, the change has the potential to affect the launch logic for OpenSearch Dashboards, in which case the administrator may need to modify their infrastructure code or apply a workaround to enable Dashboards to launch properly. The workaround involves making a change to the CLI shell scripts as described in this issue https://github.com/opensearch-project/OpenSearch-Dashboards/pull/3955 and rebuilding the artifacts for Dashboards as described here https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md#building-artifacts. If the administrator does not choose to override the version of Node.js used to run the software, this will not be an issue.
 
 
 ## Release Details
@@ -57,7 +62,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 
 
 ### OpenSearch Dashboards Search Relevance
-* [Feature] Exposing Metrics for Search Comparison Tool ([#162](https://github.com/opensearch-project/dashboards-search-relevance/pull/162))
+* [Feature] Exposing Metrics for Search Comparison Tool. ([#162](https://github.com/opensearch-project/dashboards-search-relevance/pull/162))
 
 
 ### OpenSearch Index Management
@@ -193,7 +198,6 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Add `TIMESTAMPADD` Function To OpenSearch SQL Plugin ([#1453](https://github.com/opensearch-project/sql/pull/1453))
 * Add `Timestampdiff` Function To OpenSearch SQL ([#1472](https://github.com/opensearch-project/sql/pull/1472))
 * Add Nested Support in Select Clause (#1490) ([#1518](https://github.com/opensearch-project/sql/pull/1518))
-* Fix null response from pow/power and added missing integration testing ([#1459](https://github.com/opensearch-project/sql/pull/1459))
 
 
 ## BUG FIXES
@@ -321,7 +325,8 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Integ Test Refactoring ([#1383](https://github.com/opensearch-project/sql/pull/1383))
 * Exclude OpenSearch system index when IT cleanup ([#1381](https://github.com/opensearch-project/sql/pull/1381))
 * Ensure Nested Function Falls Back to Legacy Engine Where Not Supported ([#1549](https://github.com/opensearch-project/sql/pull/1549))
-* adding reflections as a dependency ([#1559](https://github.com/opensearch-project/sql/pull/1559))
+* Adding reflections as a dependency ([#1559](https://github.com/opensearch-project/sql/pull/1559))
+* Fix null response from pow/power and added missing integration testing ([#1459](https://github.com/opensearch-project/sql/pull/1459))
 
 
 ## INFRASTRUCTURE
