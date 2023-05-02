@@ -91,7 +91,7 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.license="Apache-2.0" \
   org.label-schema.vendor="OpenSearch" \
   org.label-schema.description="$NOTES" \
-  org.label-schema.build-date="$BUILD_DATE"\
+  org.label-schema.build-date="$BUILD_DATE" \
   "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch-dashboards.al2.dockerfile"
 
 # CMD to run
