@@ -1,7 +1,7 @@
 # OpenSearch and OpenSearch Dashboards 2.7.0 Release Notes
 
 ## Release Highlights
-OpenSearch 2.7.0 includes a number of new and enhanced features for your search, observability, and analytics workloads. This release delivers production-ready functionality for segment replication, searchable snapshots, and the ability to add multiple data sources to a single dashboard—features that were previously released as experimental. Also included are new flat object fields for more efficient indexing, integrated observability features within OpenSearch Dashboards, new geospatial functionality, and updates designed to simplify administration of indexes and clusters.
+OpenSearch 2.7.0 includes a number of new and enhanced features for your search, observability, and analytics workloads. This release delivers production-ready functionality for segment replication, searchable snapshots, and the ability to add multiple data sources to a single dashboard — features that were previously released as experimental. Also included are new flat object fields for more efficient indexing, integrated observability features within OpenSearch Dashboards, new geospatial functionality, and updates designed to simplify administration of indexes and clusters.
 
 ### New Features
 * You can now choose segment replication as a data replication strategy for production workloads. Segment replication can yield improved indexing throughput and lower resource utilization at the expense of increased network utilization and refresh times.
@@ -11,7 +11,7 @@ OpenSearch 2.7.0 includes a number of new and enhanced features for your search,
 * You can now access observability features from OpenSearch Dashboards, create your own observability dashboards, add event analytics visualizations, and more without leaving the Dashboards environment.
 * Geospatial functionality receives upgrades as new shape-based filters let you filter your geospatial data by drawing a rectangle or polygon over a selected area of the map. This release also enables OpenSearch to display maps in local languages.
 * OpenSearch makes managing multiple indexes simpler with the addition of component templates. These templates can help you abstract common index settings, mappings, and aliases into reusable building blocks.
-* Another time-saving upgrade for OpenSearch administrators comes with the availability of dynamic tenants management in OpenSearch Dashboards. Admins can view, configure, and enable or disable tenancy within Dashboards and effect those changes without a restart.
+* Another time-saving upgrade for OpenSearch administrators comes with the availability of dynamic tenant management in OpenSearch Dashboards. Admins can view, configure, and enable or disable tenancy within Dashboards and effect those changes without a restart.
 * You can now use the Performance Analyzer plugin to identify hot shards within an index, so you can take action and mitigate potential impacts on performance and availability.
 
 ### Experimental Features
@@ -29,18 +29,19 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.7.0.md).
 
+Documentations [Release Notes](https://github.com/opensearch-project/documentation-website/blob/main/release-notes/opensearch-documentation-release-notes-2.7.0.md)
 
 ## BREAKING CHANGES
 
 ### OpenSearch Ml Commons Dashboards
-* Ml-commons introduced a API breaking change in 2.7 which changed the API response data, FE is updated accordingly. With this change, FE will no longer compatible with OpenSearch version < 2.7 ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
+* Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7 ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
 
 
 ## FEATURES
 
 ### OpenSearch Alerting Dashboards
-* Implemented support for configuring up to 10 data filters for query and bucket level monitors using the visual editor. ([#504](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/504))
-* Implemented support for >, >=, <, and <= query operators for the doc level monitor visual editor. ([#508](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/508))
+* Implemented support for configuring up to 10 data filters for query and bucket-level monitors using the visual editor. ([#504](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/504))
+* Implemented support for >, >=, <, and <= query operators for the doc-level monitor visual editor. ([#508](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/508))
 
 
 ### OpenSearch Common Utils
@@ -64,7 +65,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Index Management
 * Error Prevention: Add close action. ([#728](https://github.com/opensearch-project/index-management/pull/728))
 * Error Prevention: Add index priority action. ([#729](https://github.com/opensearch-project/index-management/pull/729))
-* Error Prevention: Add notification, shrink, allocation and rollup. ([#732](https://github.com/opensearch-project/index-management/pull/732))
+* Error Prevention: Add notification, shrink, allocation, and rollup. ([#732](https://github.com/opensearch-project/index-management/pull/732))
 * Error Prevention: Add transition action. ([#744](https://github.com/opensearch-project/index-management/pull/744))
 * Error Prevention: Add snapshot action. ([#745](https://github.com/opensearch-project/index-management/pull/745))
 
@@ -112,7 +113,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch SQL
 * Create datasource API (#1458) ([#1479](https://github.com/opensearch-project/sql/pull/1479))
-* REST API for GET,PUT and DELETE ([#1502](https://github.com/opensearch-project/sql/pull/1502))
+* REST API for GET, PUT and DELETE ([#1502](https://github.com/opensearch-project/sql/pull/1502))
 
 
 ## ENHANCEMENTS
@@ -154,8 +155,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add memory consumption estimation for models in profile API ([#853](https://github.com/opensearch-project/ml-commons/pull/853))
 * Add text docs ML input ([#830](https://github.com/opensearch-project/ml-commons/pull/830))
 * Add allow custom deployment plan setting; add deploy to all nodes field in model index ([#818](https://github.com/opensearch-project/ml-commons/pull/818))
-* Add exclude nodes setting. ([#813](https://github.com/opensearch-project/ml-commons/pull/813))
-* set model state as partially loaded if unload model from partial nodes ([#806](https://github.com/opensearch-project/ml-commons/pull/806))
+* Add exclude nodes setting ([#813](https://github.com/opensearch-project/ml-commons/pull/813))
+* Set model state as partially loaded if unload model from partial nodes ([#806](https://github.com/opensearch-project/ml-commons/pull/806))
 
 
 ### OpenSearch Performance Analyzer
@@ -207,7 +208,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Alerting Dashboards
 * Anomaly detection UI bug fixes. ([#502](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/502))
-* Fixed a bug with doc level trigger creation. ([#513](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/513))
+* Fixed a bug with doc-level trigger creation. ([#513](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/513))
 
 
 ### OpenSearch Common Utils
