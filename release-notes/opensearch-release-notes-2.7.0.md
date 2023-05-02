@@ -20,6 +20,9 @@ OpenSearch 2.7.0 includes the following experimental features. Experimental feat
 * A new correlation engine is added to the Security Analytics toolkit, enabling a knowledge graph that can be used to identify, store, and recall connected events data to help you identify patterns and investigate relationships.
 * The experimental ML Framework gains a new automatic reloading mechanism for ML models, allowing you to auto-reload deployed models when a cluster restarts or when a node rejoins the cluster.
 
+### OpenSearch Ml Commons Dashboards
+* Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7 ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
+
 
 ## Release Details
 
@@ -30,11 +33,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.7.0.md).
 
 Documentations [Release Notes](https://github.com/opensearch-project/documentation-website/blob/main/release-notes/opensearch-documentation-release-notes-2.7.0.md)
-
-## BREAKING CHANGES
-
-### OpenSearch Ml Commons Dashboards
-* Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7 ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
 
 
 ## FEATURES
