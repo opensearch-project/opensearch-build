@@ -20,13 +20,13 @@ OpenSearch 2.7.0 includes the following experimental features. Experimental feat
 * A new correlation engine is added to the Security Analytics toolkit, enabling a knowledge graph that can be used to identify, store, and recall connected events data to help you identify patterns and investigate relationships.
 * The experimental ML Framework gains a new automatic reloading mechanism for ML models, allowing you to auto-reload deployed models when a cluster restarts or when a node rejoins the cluster.
 
-### OpenSearch Ml Commons Dashboards
+### OpenSearch ML Commons Dashboards
 * Ml-commons introduced an API breaking change in 2.7 which changes the API response data. FE is updated accordingly. With this change, FE will no longer be compatible with OpenSearch version < 2.7. ([#154](https://github.com/opensearch-project/ml-commons-dashboards/pull/154))
 
 
 ### Known Issues
 
-* Version 2.7.0 of OpenSearch Dashboards offers administrators the ability to manually override the version of Node.js used to run the software. If an administrator chooses this option, the change has the potential to affect the launch logic for OpenSearch Dashboards, in which case the administrator may need to modify their infrastructure code or apply a workaround to enable Dashboards to launch properly. The workaround involves making a change to the CLI shell scripts as described in this issue https://github.com/opensearch-project/OpenSearch-Dashboards/pull/3955 and rebuilding the artifacts for Dashboards as described here https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md#building-artifacts. If the administrator does not choose to override the version of Node.js used to run the software, this will not be an issue.
+* Version 2.7.0 of OpenSearch Dashboards offers administrators the ability to manually override the version of Node.js used to run the software. If an administrator chooses this option, the change has the potential to affect the launch logic for OpenSearch Dashboards, in which case the administrator may need to modify their infrastructure code or apply a workaround to enable Dashboards to launch properly. The workaround involves making a change to the CLI shell scripts as described in this issue https://github.com/opensearch-project/OpenSearch-Dashboards/pull/3955 and rebuilding the artifacts for Dashboards as described here https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/DEVELOPER_GUIDE.md#building-artifacts.
 
 
 ## Release Details
@@ -153,7 +153,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Support .opensearch-knn-model index as system index with security enabled ([#827](https://github.com/opensearch-project/k-NN/pull/827))
 
 
-### OpenSearch Ml Commons
+### OpenSearch ML Commons
 * Add model auto deploy feature ([#852](https://github.com/opensearch-project/ml-commons/pull/852))
 * Add memory consumption estimation for models in profile API ([#853](https://github.com/opensearch-project/ml-commons/pull/853))
 * Add text docs ML input ([#830](https://github.com/opensearch-project/ml-commons/pull/830))
@@ -268,7 +268,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Throw errors on model deletion failures ([#834](https://github.com/opensearch-project/k-NN/pull/834))
 
 
-### OpenSearch Ml Commons
+### OpenSearch ML Commons
 * Change to old method to fix missing method createParentDirectories ([#759](https://github.com/opensearch-project/ml-commons/pull/759))
 * Fix delete model API ([#861](https://github.com/opensearch-project/ml-commons/pull/861))
 * Fix breaking changes of Xcontent namespace change ([#838](https://github.com/opensearch-project/ml-commons/pull/838))
@@ -277,7 +277,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Typo fix and minor improvement in maven-publish GHA workflow ([#757](https://github.com/opensearch-project/ml-commons/pull/757))
 
 
-### OpenSearch Ml Commons Dashboards
+### OpenSearch ML Commons Dashboards
 * Fixed an issue that model status is displayed as `Not responding` while the model status is loading ([#146](https://github.com/opensearch-project/ml-commons-dashboards/pull/146))
 
 
@@ -454,7 +454,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * 2.7 release note ([#694](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/694))
 
 
-### OpenSearch Ml Commons
+### OpenSearch ML Commons
 * Add docker-compose file for starting cluster with dedicated ML node ([#799](https://github.com/opensearch-project/ml-commons/pull/799))
 
 
@@ -530,7 +530,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Update to Gradle 8.0.2 ([#348](https://github.com/opensearch-project/job-scheduler/pull/348))
 
 
-### OpenSearch Ml Commons
+### OpenSearch ML Commons
 * Increment version to 2.7.0-SNAPSHOT ([#742](https://github.com/opensearch-project/ml-commons/pull/742))
 * Publish snapshots to maven via GHA ([#754](https://github.com/opensearch-project/ml-commons/pull/754))
 
@@ -619,7 +619,7 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 * Replace Map, List, and Set in org.opensearch.common.collect with java.util references ([#816](https://github.com/opensearch-project/k-NN/pull/816))
 
 
-### OpenSearch Ml Commons
+### OpenSearch ML Commons
 * Rename API/function/variable names ([#822](https://github.com/opensearch-project/ml-commons/pull/822))
 * Rename model meta/chunk API ([#827](https://github.com/opensearch-project/ml-commons/pull/827))
 
