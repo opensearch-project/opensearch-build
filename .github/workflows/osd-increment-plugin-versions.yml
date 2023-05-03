@@ -1,0 +1,101 @@
+---
+name: Increment OpenSearch Dashboards Plugins Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Log level
+        required: true
+        default: warning
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+jobs:
+  osd-plugin-version-increment:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        entry:
+          - {repo: dashboards-observability}
+          - {repo: dashboards-reporting}
+          - {repo: dashboards-visualizations}
+          - {repo: dashboards-query-workbench}
+          - {repo: dashboards-maps}
+          - {repo: anomaly-detection-dashboards-plugin}
+          - {repo: ml-commons-dashboards}
+          - {repo: index-management-dashboards-plugin}
+          - {repo: dashboards-notifications}
+          - {repo: alerting-dashboards-plugin}
+          - {repo: security-analytics-dashboards-plugin}
+          - {repo: security-dashboards-plugin}
+          - {repo: dashboards-search-relevance}
+        branch:
+          - '1.3'
+          - 2.x
+          - '2.7'
+          - main
+    steps:
+      - name: Check out OpenSearch Dashboards repo
+        uses: actions/checkout@v3
+        with:
+          repository: opensearch-project/OpenSearch-Dashboards
+          ref: ${{ matrix.branch }}
+          path: OpenSearch-Dashboards
+      - name: Check out plugin repo
+        uses: actions/checkout@v3
+        with:
+          repository: opensearch-project/${{ matrix.entry.repo }}
+          ref: ${{ matrix.branch }}
+          path: OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: './OpenSearch-Dashboards/.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install Yarn
+        shell: bash
+        run: |
+          YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
+          echo "Installing yarn@$YARN_VERSION"
+          npm i -g yarn@$YARN_VERSION
+      - run: node -v
+      - run: yarn -v
+      - name: Bootstrap and Version Increment
+        run: |
+          cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
+          yarn osd bootstrap
+          yarn plugin-helpers version --sync legacy
+          OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+          echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
+          author: opensearch-ci-bot <opensearch-infra@amazon.com>
+          commit-message: |
+            Increment version to ${{ env.OSD_PLUGIN_VERSION }}
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
+          delete-branch: true
+          branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
+          title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
+          body: |
+            - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
+          path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
+      - name: Check outputs
+        run: |-
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
