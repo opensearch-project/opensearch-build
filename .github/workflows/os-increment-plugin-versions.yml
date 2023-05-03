@@ -1,5 +1,5 @@
 ---
-name: Increment Plugin Versions
+name: Increment OpenSearch Plugins Version
 
 on:
   schedule:
@@ -45,15 +45,8 @@ jobs:
         branch:
           - '1.3'
           - 2.x
-          - '2.2'
-          - '2.3'
-          - '2.4'
-          - '2.5'
-          - 3.x
-          - '3.0'
-          - '2.6'
           - '2.7'
-          - '2.8'
+          - main
         exclude:
           - {entry: {repo: geospatial}, branch: '1.3'}
           - {entry: {repo: neural-search}, branch: '1.3'}
