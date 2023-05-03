@@ -68,7 +68,7 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           yarn osd bootstrap
-          yarn plugin-helpers version --sync legacy
+          node ../../scripts/plugin_helpers version --sync legacy
           OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
           echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
       - name: GitHub App token
