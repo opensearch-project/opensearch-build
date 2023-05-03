@@ -22,7 +22,7 @@ jobs:
         entry:
           - {repo: dashboards-observability}
           - {repo: dashboards-reporting}
-          - {repo: dashboards-visualizations}
+          - {repo: dashboards-visualizations, path: gantt-chart}
           - {repo: dashboards-query-workbench}
           - {repo: dashboards-maps}
           - {repo: anomaly-detection-dashboards-plugin}
@@ -68,9 +68,20 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           yarn osd bootstrap
-          node ../../scripts/plugin_helpers version --sync legacy
-          OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
-          echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
+          if [ ${{ matrix.entry.path }} ]; then
+              cp -R ${{ matrix.entry.path }} ../
+              cd ../${{ matrix.entry.path }}
+              node ../../scripts/plugin_helpers version --sync legacy
+              OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+              echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
+              cd ../
+              cp -R ${{ matrix.entry.path }} ${{ matrix.entry.repo }}/
+              cd ${{ matrix.entry.repo }}/
+          else
+              node ../../scripts/plugin_helpers version --sync legacy
+              OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+              echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
+          fi
       - name: GitHub App token
         id: github_app_token
         uses: tibdex/github-app-token@v1.6.0
