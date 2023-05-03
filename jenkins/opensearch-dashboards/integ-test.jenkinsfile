@@ -45,7 +45,7 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL OpenSearch Dashboards, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml".',
+            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
@@ -56,7 +56,7 @@ pipeline {
     }
     stages {
         stage('verify-parameters') {
-            agent { label agent_nodes["x64"]}
+            agent { label agent_nodes["x64"] }
             steps {
                 script {
                     if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
@@ -67,6 +67,11 @@ pipeline {
                     if (BUILD_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Integration Tests failed to start. Build manifest url was not provided.")
+                    }
+
+                    if (BUILD_MANIFEST_URL_OPENSEARCH == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Integration Tests failed to start. Build manifest url OpenSearch was not provided.")
                     }
 
                     downloadBuildManifest(
@@ -126,7 +131,7 @@ pipeline {
                     echo "componentList: ${componentList}"
 
                     for (component_check in componentList) {
-                        if (! componentDefaultList.contains(component_check)) {
+                        if (!componentDefaultList.contains(component_check)) {
                            error("${component_check} is not in build manifest: ${componentDefaultList}, exit 1")
                         }
                     }
@@ -167,7 +172,7 @@ pipeline {
                         def local_component_index = componentList.indexOf(local_component)
                         def wait_seconds = local_component_index * 10
 
-                        echo "Add Component: ${local_component}"
+                        echo "Adding Component: ${local_component}"
                         componentTests["Run Integtest ${local_component}"] = {
                             // Using scripted pipelines to trigger dynamic parallel stages
                             timeout(time: 2, unit: 'HOURS') {
@@ -175,8 +180,7 @@ pipeline {
                                     docker.withRegistry('https://public.ecr.aws/') {
                                         docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                             try {
-                                                stage("Run Integtest ${local_component}") {
-                                                    echo "Component Name: ${local_component}"
+                                                stage("${local_component}") {
                                                     // Jenkins tend to not clean up workspace at times even though ws clean is called
                                                     // Due to docker is mounting the agent directory so it can communicated with the agent
                                                     // This sometimes causes the workspace to retain last run test-results and ends with build failures

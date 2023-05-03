@@ -90,7 +90,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
     }
 
     @Test
-    void integTests_runs_consistently() {
+    void integTests_runs_for_all_components() {
         super.testPipeline('jenkins/opensearch-dashboards/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch-dashboards/integ-test.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItems(
