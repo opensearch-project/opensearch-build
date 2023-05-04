@@ -15,8 +15,7 @@ from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleComponent, BundleManifest
 from manifests.test_manifest import TestComponent, TestManifest
-from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError, ScriptFinder
-from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch, Topology
+from test_workflow.integ_test.integ_test_suite_opensearch import IntegTestSuiteOpenSearch, InvalidTestConfigError, ScriptFinder, Topology
 
 
 @patch("os.makedirs")
@@ -51,15 +50,15 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
             mock_test_recorder
         )
         mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
-        mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
-        mock_execute_integtest_sh.return_value = "success"
+        mock_multi_execute_integtest_sh = MagicMock()
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_multi_execute_integtest_sh  # type: ignore
+        mock_multi_execute_integtest_sh.return_value = "success"
 
         test_results = integ_test_suite.execute_tests()
         self.assertEqual(len(test_results), 2)
         self.assertTrue(test_results.failed)
 
-        mock_execute_integtest_sh.assert_has_calls([
+        mock_multi_execute_integtest_sh.assert_has_calls([
             call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], True, "with-security"),
             call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], False, "without-security")
         ])
@@ -81,22 +80,21 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
 
         mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
 
-        mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
-        mock_execute_integtest_sh.return_value = "success"
+        mock_multi_execute_integtest_sh = MagicMock()
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_multi_execute_integtest_sh  # type: ignore
+        mock_multi_execute_integtest_sh.return_value = "success"
 
         integ_test_suite.execute_tests()
         dependency_installer.install_build_dependencies.assert_called_with(
             {"opensearch-job-scheduler": "1.1.0.0"}, os.path.join(self.work_dir, "index-management", "src", "test", "resources", "job-scheduler")
         )
 
-        mock_execute_integtest_sh.assert_has_calls([
-            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], True, "with-security"),
-            call([{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], False, "without-security")
-        ])
+        mock_multi_execute_integtest_sh.assert_has_calls([call(
+            [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}], False, "without-security")]
+        )
 
     @patch("test_workflow.test_recorder.test_recorder.TestRecorder")
-    @patch("test_workflow.integ_test.integ_test_suite.execute")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch.execute")
     def test_execute_without_build_dependencies(self, mock_execute: Mock, *mock: Any) -> None:
         dependency_installer = MagicMock()
         test_config, component = self.__get_test_config_and_bundle_component("job-scheduler")
@@ -180,13 +178,13 @@ class TestIntegSuiteOpenSearch(unittest.TestCase):
         mock_topology.create().__enter__.return_value = [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}]
         mock_script_finder.return_value = "integtest.sh"
 
-        mock_execute_integtest_sh = MagicMock()
-        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
-        mock_execute_integtest_sh.return_value = "success"
+        mock_multi_execute_integtest_sh = MagicMock()
+        IntegTestSuiteOpenSearch.multi_execute_integtest_sh = mock_multi_execute_integtest_sh  # type: ignore
+        mock_multi_execute_integtest_sh.return_value = "success"
 
         integ_test_suite.execute_tests()  # type: ignore
 
-        mock_execute_integtest_sh.assert_called_with(
+        mock_multi_execute_integtest_sh.assert_called_with(
             [{"cluster_name": "cluster1", "data_nodes": [{"endpoint": "localhost", "port": 9200, "transport": 9300}], "cluster_manager_nodes": []}],
             True,
             "with-security"
