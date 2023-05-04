@@ -19,11 +19,6 @@ ENV container docker
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && \
-    dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
-
-# Install gh cli
 RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     dnf update -y && \
     dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh
