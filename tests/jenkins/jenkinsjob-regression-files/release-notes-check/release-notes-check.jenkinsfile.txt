@@ -10,7 +10,7 @@
                release-notes-check.detectDockerAgent()
                   detectDockerAgent.legacySCM(groovy.lang.Closure)
                   detectDockerAgent.library({identifier=jenkins@1.0.4, retriever=null})
-                  detectDockerAgent.readYaml({file=manifests/2.2.0/opensearch-2.2.0.yml})
+                  detectDockerAgent.readYaml({file=manifests/2.7.0/opensearch-2.7.0.yml})
                   InputManifest.asBoolean()
                   detectDockerAgent.echo(Using Docker image opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2 (-e JAVA_HOME=/opt/java/openjdk-17))
                   detectDockerAgent.echo(Using java version openjdk-17)
