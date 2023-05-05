@@ -80,7 +80,9 @@ if command -v systemctl > /dev/null; then
     systemctl daemon-reload
 fi
 # Reload other configs
-systemd-tmpfiles --create %{name}.conf
+if command -v systemd-tmpfiles > /dev/null; then
+    systemd-tmpfiles --create %{name}.conf
+fi
 # Messages
 echo "### NOT starting on installation, please execute the following statements to configure opensearch-dashboards service to start automatically using systemd"
 echo " sudo systemctl daemon-reload"
