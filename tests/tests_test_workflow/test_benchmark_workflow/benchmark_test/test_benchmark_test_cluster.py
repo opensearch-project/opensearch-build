@@ -32,7 +32,8 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.stack_name = "stack"
         self.security = True
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
-                                     "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234"}}
+                                     "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234",
+                                     "isInternal": "true"}}
         self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
@@ -48,6 +49,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertTrue("opensearch-infra-stack-test-suffix-007-x64" in self.benchmark_test_cluster.stack_name)
         self.assertTrue("securityDisabled=false" in self.benchmark_test_cluster.params)
         self.assertTrue("singleNodeCluster=true" in self.benchmark_test_cluster.params)
+        self.assertTrue("isInternal=true" in self.benchmark_test_cluster.params)
         with patch("subprocess.check_call") as mock_check_call:
             self.benchmark_test_cluster.terminate()
             self.assertEqual(mock_check_call.call_count, 1)
@@ -76,6 +78,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.single_node = False
+        self.args.use_50_percent_heap = True
         TestBenchmarkTestCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -85,3 +88,4 @@ class TestBenchmarkTestCluster(unittest.TestCase):
                     self.assertEqual(mock_check_call.call_count, 1)
 
         self.assertTrue("singleNodeCluster=false" in self.benchmark_test_cluster.params)
+        self.assertTrue("use50PercentHeap=true" in self.benchmark_test_cluster.params)
