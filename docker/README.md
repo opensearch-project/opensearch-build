@@ -14,7 +14,7 @@ You need to run both script within the `opensearch-build/docker/ci` folder. Runn
   within other path would cause the scripts to fail.
 
 ```bash
-docker build -f ./ci/dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
+docker build -f ./dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
 ```
 
 If you want to build multi-arch docker image for both x64 and arm64, make sure you are using Docker Desktop.
