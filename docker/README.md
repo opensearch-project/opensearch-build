@@ -10,8 +10,8 @@ We build, assemble, and test our artifacts on docker containers. All of our pipe
 
 If you only want to build the docker image for either x64 or arm64, run this on a x64 or arm64 host respectively:
 
-You need to run both script within the `opensearch-build/docker/ci` folder. Running them
-  within other path would cause the scripts to fail.
+You need to run the script within the `opensearch-build/docker/ci` folder. Running it
+  within other path would cause the script to fail.
 
 ```bash
 docker build -f ./dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
