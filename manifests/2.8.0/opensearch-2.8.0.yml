@@ -43,13 +43,13 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: '2.x'
+    ref: 2.x
     platforms:
       - linux
       - windows
