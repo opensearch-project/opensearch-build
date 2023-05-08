@@ -141,7 +141,9 @@ class BenchmarkTestCluster:
             "mlNodeCount": self.args.ml_node_count,
             "dataNodeStorage": self.args.data_node_storage,
             "mlNodeStorage": self.args.ml_node_storage,
-            "jvmSysProps": self.args.jvm_sys_props
+            "jvmSysProps": self.args.jvm_sys_props,
+            "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
+            "isInternal": config["Constants"]["isInternal"]
         }
 
     @classmethod

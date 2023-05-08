@@ -9,4 +9,5 @@ Constants:
   serverAccessType: prefixList
   restrictServerAccessTo: pl-01a74268
   Region: eu-west-1
+  isInternal: true
   Role: test-set-up

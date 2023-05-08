@@ -33,7 +33,9 @@ class BenchmarkArgs:
     ml_node_storage: int
     jvm_sys_props: str
     additional_config: str
+    use_50_percent_heap: bool
     workload: str
+    workload_params: str
     benchmark_config: IO
     user_tag: str
     target_hosts: str
@@ -47,9 +49,8 @@ class BenchmarkArgs:
         parser.add_argument("--component", dest="component", default="OpenSearch",
                             help="Component name that needs to be performance tested")
         parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
-        parser.add_argument(
-            "--without-security", dest="insecure", action="store_true",
-            help="Force the security of the cluster to be disabled.", default=False)
+        parser.add_argument("--without-security", dest="insecure", action="store_true",
+                            help="Force the security of the cluster to be disabled.", default=False)
         parser.add_argument("--keep", dest="keep", action="store_true",
                             help="Do not delete the working temporary directory.")
         parser.add_argument("--single-node", dest="single_node", action="store_true",
@@ -69,20 +70,23 @@ class BenchmarkArgs:
                             help="A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.")
         parser.add_argument("--additional-config", nargs='*', action=JsonArgs, dest="additional_config",
                             help="Additional opensearch.yml config parameters passed as JSON")
+        parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
+                            help="Use 50 percent of physical memory as heap.")
         parser.add_argument("--ml-node-storage", dest="ml_node_storage",
                             help="User provided ml-node ebs block storage size defaults to 100Gb")
         parser.add_argument("--data-node-storage", dest="data_node_storage",
                             help="User provided data-node ebs block storage size, defaults to 100Gb")
-        parser.add_argument("--workload", dest="workload", help="workload type for the OpenSearch benchmarking",
-                            required=True)
+        parser.add_argument("--workload", dest="workload", required=True,
+                            help="Name of the workload that OpenSearch Benchmark should run")
         parser.add_argument("--benchmark-config", dest="benchmark_config",
-                            help="absolute filepath to custom opensearch-benchmark.ini config")
+                            help="absolute filepath to custom benchmark.ini config")
         parser.add_argument("--user-tag", dest="user_tag",
                             help="Attach arbitrary text to the meta-data of each metric record")
-        parser.add_argument(
-            "-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
-            const=logging.DEBUG, dest="logging_level"
-        )
+        parser.add_argument("--workload-params", dest="workload_params",
+                            help="With this parameter you can inject variables into workloads. Parameters differs "
+                                 "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
+        parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
+                            const=logging.DEBUG, dest="logging_level")
 
         args = parser.parse_args()
         self.bundle_manifest = args.bundle_manifest
@@ -102,7 +106,9 @@ class BenchmarkArgs:
         self.data_node_storage = args.data_node_storage if args.data_node_storage else None
         self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
         self.workload = args.workload
+        self.workload_params = args.workload_params if args.workload_params else None
         self.benchmark_config = args.benchmark_config if args.benchmark_config else None
         self.user_tag = args.user_tag if args.user_tag else None
         self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
+        self.use_50_percent_heap = args.use_50_percent_heap
         self.logging_level = args.logging_level
