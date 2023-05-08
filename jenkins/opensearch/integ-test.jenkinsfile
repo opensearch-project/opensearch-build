@@ -55,7 +55,7 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
+            description: 'The build manifest URL for OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
@@ -100,7 +100,7 @@ pipeline {
             }
         }
         stage('integ-test') {
-            // Required running on agent directly here to trigger docker stages in agent node, not trigger docker within docker container
+            // Need to run this directly on agent node here in order to trigger stages with docker container and avoid docker within docker situation
             // Can only be run in runner that is at least 50GB per container
             agent { label AGENT_LABEL }
             steps {
@@ -157,8 +157,7 @@ pipeline {
                                     docker.withRegistry('https://public.ecr.aws/') {
                                         docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                             try {
-                                                stage("Run Integtest ${local_component}") {
-                                                    echo "Component Name: ${local_component}"
+                                                stage("${local_component}") {
                                                     // Jenkins tend to not clean up workspace at times even though ws clean is called
                                                     // Docker is mounting the agent directory so it can communicate with the agent
                                                     // this sometimes causes the workspace to retain last run test-results and ends with build failures
