@@ -58,11 +58,12 @@ RUN mkdir -p ~/.docker/cli-plugins && \
     docker buildx version
 
 # Install gcrane
-RUN curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
+RUN curl -SL https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
     tar -zxvf go-containerregistry.tar.gz && \
-    chmod +x gcrane && \
-    mv gcrane /usr/local/bin/ && \
-    rm -rf go-containerregistry.tar.gz 
+    chmod +x gcrane crane krane && \
+    mv -v gcrane crane krane /usr/local/bin/ && \
+    rm -v go-containerregistry.tar.gz && \
+    gcrane version && crane version && krane version
 
 # Install packer
 RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
