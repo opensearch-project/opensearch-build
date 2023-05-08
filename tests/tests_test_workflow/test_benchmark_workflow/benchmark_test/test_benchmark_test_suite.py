@@ -28,7 +28,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)
             self.assertEqual(self.benchmark_test_suite.command,
-                             'docker run opensearchproject/opensearch-benchmark:latest execute_test --workload=nyc_taxis --test-mode '
+                             'docker run opensearchproject/opensearch-benchmark:latest execute_test --workload=nyc_taxis '
                              '--pipeline=benchmark-only --target-hosts=abc.com')
 
     def test_execute_security_enabled(self) -> None:
@@ -38,7 +38,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.assertEqual(mock_check_call.call_count, 1)
             self.assertEqual(benchmark_test_suite.command,
                              'docker run opensearchproject/opensearch-benchmark:latest execute_test '
-                             '--workload=nyc_taxis --test-mode --pipeline=benchmark-only '
+                             '--workload=nyc_taxis --pipeline=benchmark-only '
                              '--target-hosts=abc.com --client-options="use_ssl:true,'
                              'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
 
@@ -50,7 +50,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.assertEqual(self.benchmark_test_suite.command, 'docker run -v /home/test/benchmark.ini:'
                                                                 '/opensearch-benchmark/.benchmark/benchmark.ini '
                                                                 'opensearchproject/opensearch-benchmark:latest execute_test '
-                                                                '--workload=nyc_taxis --test-mode '
+                                                                '--workload=nyc_taxis '
                                                                 '--pipeline=benchmark-only --target-hosts=abc.com '
                                                                 '--workload-params "number_of_replicas:1" '
                                                                 '--user-tag="key1:value1,key2:value2"')
