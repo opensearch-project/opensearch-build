@@ -61,7 +61,6 @@
                integ-test.parallel({Run Integtest OpenSearch=groovy.lang.Closure})
                   integ-test.timeout({time=2, unit=HOURS}, groovy.lang.Closure)
                      integ-test.node(Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
-                        integ-test.echo(Component Name: OpenSearch)
                         integ-test.sh(echo OpenSearch with index 0 will sleep 0 seconds to reduce load && sleep 0)
                         integ-test.unstash(integtest-opensearch-234)
                         integ-test.sh(rm -rf test-results)
