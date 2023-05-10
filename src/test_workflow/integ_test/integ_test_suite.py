@@ -29,7 +29,7 @@ class IntegTestSuite(abc.ABC):
     build_manifest: BuildManifest
     save_logs: LogRecorder
     additional_cluster_config: dict
-    test_result_data: TestResultData
+    test_result_data: list
 
     """
     Kicks off integration tests for a component based on test configurations provided in
@@ -57,7 +57,7 @@ class IntegTestSuite(abc.ABC):
 
         self.save_logs = test_recorder.test_results_logs
         self.additional_cluster_config = None
-        self.test_result_data = None
+        self.test_result_data = []
 
     @abc.abstractmethod
     def execute_tests(self) -> TestComponentResults:
@@ -84,7 +84,7 @@ class IntegTestSuite(abc.ABC):
         pass
 
     @property
-    def result_data(self) -> TestResultData:
+    def result_data(self) -> list:
         return self.test_result_data
 
 class InvalidTestConfigError(Exception):
