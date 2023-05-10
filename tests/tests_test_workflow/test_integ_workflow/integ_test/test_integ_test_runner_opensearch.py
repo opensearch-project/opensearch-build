@@ -66,6 +66,8 @@ class TestIntegTestRunnerOpenSearch(unittest.TestCase):
 
         self.assertEqual(results["sql"], mock_test_results)
 
+        mock_test_recorder_object.test_results_logs.save_test_result_data.assert_called_once_with(mock_suite_object.result_data)
+
         mock_suite.assert_called_once_with(
             mock_properties_object.dependency_installer,
             mock_component,

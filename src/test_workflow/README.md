@@ -6,6 +6,7 @@
     - [Identifying Regressions in Performance Tests](#identifying-regressions-in-performance-tests)
       - [Identifying Regressions in Nightly Performance Tests](#identifying-regressions-in-nightly-performance-tests)
     - [Identifying Issues in Longevity Tests](#identifying-issues-in-longevity-tests)
+  - [Benchmark Tests](#benchmarking-tests)
 - [Testing in CI/CD](#testing-in-cicd)
   - [Test Workflow (in development)](#test-workflow-in-development)
   - [Component-Level Details](#component-level-details)
@@ -173,6 +174,13 @@ Internal tools provide dashboards for monitoring cluster behavior during these t
 |Query Throughput|Varies based on the query being issued|downward trends between iterations|
 |Indexing Latency|Consistent during each test iteration|upward trends|
 |Query Latency|Varies based on the query being issued|upward trends|
+
+### Benchmarking Tests
+
+Runs benchmarking tests on a remote opensource OpenSearch cluster, uses [OpenSearch Benchmark](https://github.com/opensearch-project/OpenSearch-Benchmark).
+At a high-level the benchmarking test workflow uses [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk.git) to first set-up an OpenSearch cluster (single/multi-node) and then executes `opensearch-benchmark` to run benchmark test against that cluster. The performance metric that opensearch-benchmark generates during the run are ingested into another OS cluster for further analysis and dashboarding purpose.
+
+The benchmarking tests will be run nightly and if you have a feature in any released/un-released OpenSearch version that you want to benchmark periodically please create an issue and the team will reach out to you. In case you want to run the benchmarking test locally you can use `opensearch-cluster-cdk` repo to spin up an OS cluster in your personal AWS account and then use `opensearch-benchmark` to run performance test against it. The detailed instructions are available on respective GitHub repositories.
 
 ## Testing in CI/CD
 

@@ -25,32 +25,14 @@ pipeline {
             H 15 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.9/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
             H 15 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.9/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
 
-            H 21 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 21 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 21 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 21 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 21 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 21 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 21 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 21 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-
-            H 19 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 19 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 19 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 19 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 19 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 19 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 19 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 19 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.6.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-
-            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 8 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 8 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
-            H 8 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
-            H 8 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 8 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 8 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/x64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 8 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
+            H 8 * * 3 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
+            H 8 * * 5 %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;TEST_ITERATIONS=250;WARMUP_ITERATIONS=0
 
 
             H 4 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_ITERATIONS=3;WARMUP_ITERATIONS=2
@@ -268,11 +250,11 @@ pipeline {
             node(AGENT_LABEL) {
                 script {
                     def stackNames = [
-                    "test-single-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}", 
+                    "test-single-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}",
                     "test-single-security-${BUILD_ID}-${ARCHITECTURE}-${BUILD_NUMBER}"
                     ]
-                    withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
-                        withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
+                    withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                        withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'eu-west-1') {
                             try {
                                 for (String stackName : stackNames) {
                                     def stack = null

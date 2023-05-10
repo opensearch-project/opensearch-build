@@ -148,3 +148,9 @@ class TestTestArgs(unittest.TestCase):
         test_args = TestArgs()
         self.assertEqual(test_args.logging_level, logging.DEBUG)
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
+
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_PATH, "--paths", "opensearch=" + TEST_MANIFEST_PATH, "--base-path", "https://ci.opensearch.org/ci/dbc/integ-test/"])
+    def test_base_path(self) -> None:
+        test_args = TestArgs()
+        self.assertEqual(test_args.base_path, "https://ci.opensearch.org/ci/dbc/integ-test/")
+        self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
