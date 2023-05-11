@@ -3,7 +3,7 @@
 
 
 # This dockerfile generates an AmazonLinux-based image containing an OpenSearch installation.
-# Dockerfile for building an OpenSearch image with name and latest tag
+# Dockerfile for building an OpenSearch image.
 # It assumes that the working directory contains these files: an OpenSearch tarball (opensearch.tgz), log4j2.properties, opensearch.yml, opensearch-docker-entrypoint.sh, opensearch-onetime-setup.sh.
 # Build arguments:
 #   VERSION: Required. Used to label the image.
