@@ -1,9 +1,12 @@
 ---
+codecov:
+  require_ci_to_pass: yes
+
 coverage:
-  status:
-    project:
-      default:
-        target: 98%
+  precision: 2
+  round: down
+  range: '80...100'
+
 ignore:
   - '**/tests/*.py'
   - '**/test/*.js'
