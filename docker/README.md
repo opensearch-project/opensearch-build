@@ -8,7 +8,7 @@ We build, assemble, and test our artifacts on docker containers. All of our pipe
 
 ### Build CI Runner Docker Image from Dockerfile
 
-To build the docker image for either x64 or arm64, run docker on a x64 or arm64 host respectively within the `opensearch-build/docker/ci` folder:
+To build the docker image for either x64 or arm64, run the below command on a x64 or arm64 host respectively within the `opensearch-build/docker/ci` folder:
 
 ```bash
 docker build -f ./dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
