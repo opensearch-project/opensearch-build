@@ -16,7 +16,6 @@ from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_result.test_component_results import TestComponentResults
-from test_workflow.test_recorder.test_result_data import TestResultData
 
 
 class IntegTestSuite(abc.ABC):
@@ -86,6 +85,7 @@ class IntegTestSuite(abc.ABC):
     @property
     def result_data(self) -> list:
         return self.test_result_data
+
 
 class InvalidTestConfigError(Exception):
     pass

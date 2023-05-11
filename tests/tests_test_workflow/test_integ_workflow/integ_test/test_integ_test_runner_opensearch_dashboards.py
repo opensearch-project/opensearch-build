@@ -66,6 +66,8 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         mock_test_recorder_object = MagicMock()
         mock_test_recorder.return_value = mock_test_recorder_object
 
+        mock_suite_object.result_data.__iter__.return_value = [MagicMock(), MagicMock()]
+
         runner = IntegTestRunnerOpenSearchDashboards(self.args, self.test_manifest)
 
         # call the test target
@@ -73,6 +75,7 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
 
         self.assertEqual(results["sql"], mock_test_results)
 
+        mock_suite_object.result_data.__iter__.assert_called()
         mock_test_recorder_object.test_results_logs.save_test_result_data.assert_called()
 
         mock_suite.assert_called_once_with(

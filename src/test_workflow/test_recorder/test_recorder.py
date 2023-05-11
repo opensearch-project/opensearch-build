@@ -9,12 +9,12 @@ import logging
 import os
 import shutil
 from typing import Any
+from urllib.parse import urljoin
 
 import yaml
 
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
-from urllib.parse import urljoin
 
 
 class TestRecorder:
@@ -25,7 +25,7 @@ class TestRecorder:
     remote_cluster_logs: Any
     test_results_logs: Any
 
-    def __init__(self, test_run_id: str, test_type: str, tests_dir: str, base_path: str = "") -> None:
+    def __init__(self, test_run_id: str, test_type: str, tests_dir: str, base_path: str = None) -> None:
         self.test_run_id = test_run_id
         self.test_type = test_type
         self.location = os.path.join(tests_dir, str(self.test_run_id), self.test_type)
@@ -37,7 +37,7 @@ class TestRecorder:
         self.base_path = base_path
 
     def _get_file_path(self, base_path: str, component_name: str, component_test_config: str) -> str:
-        if base_path.startswith("https"):
+        if base_path.startswith("https://"):
             file_path = urljoin(base_path, "/".join(["test-results", str(self.test_run_id), self.test_type, component_name, component_test_config]))
         else:
             file_path = self._create_base_folder_structure(component_name, component_test_config)
@@ -66,7 +66,7 @@ class TestRecorder:
 
         opensearch_service_logs_path = os.path.join(local_cluster_logs_path, "opensearch-service-logs")
         opensearch_service_logs = self._get_list_files(opensearch_service_logs_path)
-        opensearch_service_logs = self._update_absolute_file_paths(opensearch_service_logs, base_file_path , os.path.join("local-cluster-logs", "opensearch-service-logs"))
+        opensearch_service_logs = self._update_absolute_file_paths(opensearch_service_logs, base_file_path, os.path.join("local-cluster-logs", "opensearch-service-logs"))
 
         test_result_file = components_files + [
             {
@@ -92,7 +92,7 @@ class TestRecorder:
 
     # get a list of files within directory without folders.
     def _get_list_files(self, dir: str) -> list:
-        return [f for f in os.listdir(dir) if os.path.isfile(dir+'/'+f)]
+        return [f for f in os.listdir(dir) if os.path.isfile(dir + '/' + f)]
 
     def _copy_log_files(self, log_files: dict, dest_directory: str) -> None:
         if log_files:

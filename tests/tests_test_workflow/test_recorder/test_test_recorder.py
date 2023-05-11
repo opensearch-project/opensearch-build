@@ -8,9 +8,11 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, Mock, patch, call, mock_open
-from test_workflow.test_recorder.test_recorder import TestRecorder, LocalClusterLogs
 from typing import Any
+from unittest.mock import MagicMock, Mock, call, mock_open, patch
+
+from test_workflow.test_recorder.test_recorder import LocalClusterLogs, TestRecorder
+
 
 @patch("os.makedirs")
 @patch("os.chdir")
@@ -66,24 +68,23 @@ class TestTestRecorder(unittest.TestCase):
 
         mock_file_path = MagicMock()
         mock_file_path.return_value = "working-directory"
-        test_recorder._get_file_path = mock_file_path
+        test_recorder._get_file_path = mock_file_path   # type: ignore
 
         mock_list_files = MagicMock()
         mock_list_files.return_value = ["file1", "file2"]
-        test_recorder._get_list_files = mock_list_files
+        test_recorder._get_list_files = mock_list_files  # type: ignore
 
         mock_update_path = MagicMock()
         mock_update_path.return_value = ["working-directory/file1", "working-directory/file2"]
-        test_recorder._update_absolute_file_paths = mock_update_path
+        test_recorder._update_absolute_file_paths = mock_update_path    # type: ignore
 
         component_yml = test_recorder._generate_yml(mock_test_result_data, "working-directory")
 
-        mock_open.assert_has_calls([call("working-directory/sql.yml", 'w')])
-        mock_file_path.assert_called_once_with("", "sql", "with-security")
+        mock_open.assert_has_calls([call(os.path.join("working-directory", "sql.yml"), 'w')])
+        mock_file_path.assert_called_once_with(None, "sql", "with-security")
         mock_list_files.assert_called()
         mock_update_path.assert_called()
         self.assertEqual(component_yml, os.path.realpath("sql.yml"))
-
 
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
@@ -95,8 +96,9 @@ class TestTestRecorder(unittest.TestCase):
             "working-directory",
             "https://ci.opensearch.org/ci/dbc/integ-test/"
         )
-        file_path = test_recorder._update_absolute_file_paths(["file1","file2"], "working-directory", "sub-directory")
+        file_path = test_recorder._update_absolute_file_paths(["file1", "file2"], "working-directory", "sub-directory")
         self.assertEqual(file_path, [os.path.join("working-directory", "sub-directory", "file1"), os.path.join("working-directory", "sub-directory", "file2")])
+
 
 class TestLocalClusterLogs(unittest.TestCase):
 
