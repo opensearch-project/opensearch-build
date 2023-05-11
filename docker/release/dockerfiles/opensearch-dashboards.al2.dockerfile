@@ -3,7 +3,7 @@
 
 
 # This dockerfile generates an AmazonLinux-based image containing an OpenSearch-Dashboards installation.
-# Dockerfile for building an OpenSearch-Dashboards image.git
+# Dockerfile for building an OpenSearch-Dashboards image.
 # It assumes that the working directory contains four files: an OpenSearch-Dashboards tarball (opensearch-dashboards.tgz), opensearch_dashboards.yml, opensearch-dashboards-docker-entrypoint.sh, and example certs.
 # Build arguments:
 #   VERSION: Required. Used to label the image.
