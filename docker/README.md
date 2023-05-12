@@ -11,7 +11,7 @@ We build, assemble, and test our artifacts on docker containers. All of our pipe
 To build the docker image for either x64 or arm64, run the below command on a x64 or arm64 host respectively within the `opensearch-build/docker/ci` folder:
 
 ```bash
-docker build -f ./dockerfiles/integtest-runner.al2.dockerfile . -t <Docker Hub RepoName>/<Docker Image Name>:<Tag Name>
+bash build-image-single-arch.sh -r <Repo name> -v <Tag name> -f <Docker File Path>
 ```
 
 If you want to build multi-arch docker image for both x64 and arm64, make sure you are using Docker Desktop.
