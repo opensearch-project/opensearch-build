@@ -32,14 +32,12 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H 14 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H 15 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-segment-replication-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.7.0/opensearch-2.7.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
+            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
+            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
+            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
             '''
     }
     parameters {
