@@ -71,8 +71,8 @@ jobs:
         run: |
           DASHBOARD_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').version")
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
-          yarn osd bootstrap
           if [ ${{ matrix.entry.path }} ]; then
+              yarn osd bootstrap
               cp -R ${{ matrix.entry.path }} ../
               cd ../${{ matrix.entry.path }}
               node ../../scripts/plugin_helpers version --sync legacy
@@ -86,6 +86,7 @@ jobs:
                 jq --arg DASHBOARD_VERSION "$DASHBOARD_VERSION" '.version = $DASHBOARD_VERSION' package.json > package-tmp.json
                 mv package-tmp.json package.json
           else
+              yarn osd bootstrap
               node ../../scripts/plugin_helpers version --sync legacy
               OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
               echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
