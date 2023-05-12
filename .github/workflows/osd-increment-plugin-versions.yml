@@ -85,6 +85,8 @@ jobs:
           elif [ ${{ matrix.entry.repo }} == "opensearch-dashboards-functional-test" ]; then
                 jq --arg DASHBOARD_VERSION "$DASHBOARD_VERSION" '.version = $DASHBOARD_VERSION' package.json > package-tmp.json
                 mv package-tmp.json package.json
+                OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
+                echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
           else
               yarn osd bootstrap
               node ../../scripts/plugin_helpers version --sync legacy
