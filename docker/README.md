@@ -14,8 +14,7 @@ To build the docker image for either x64 or arm64, run the below command on a x6
 ./build-image-single-arch.sh -r <Repo name> -v <Tag name> -f <Docker File Path>
 ```
 
-If you want to build multi-arch docker image for both x64 and arm64, you can use the below command.
-
+If you want to build multi-arch docker image for both x64 and arm64, you can use the below command.\
 Make sure you are running it within the `opensearch-build/docker/ci` folder.
 
 ```bash
