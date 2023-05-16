@@ -98,7 +98,7 @@ RUN dnf install -y sudo && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`" >> /etc/sudoers.d/opensearch
+    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/opensearch
 
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
