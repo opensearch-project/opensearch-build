@@ -39,6 +39,7 @@ class BenchmarkArgs:
     benchmark_config: IO
     user_tag: str
     target_hosts: str
+    capture_node_stat: bool
     logging_level: int
 
     def __init__(self) -> None:
@@ -85,6 +86,8 @@ class BenchmarkArgs:
         parser.add_argument("--workload-params", dest="workload_params",
                             help="With this parameter you can inject variables into workloads. Parameters differs "
                                  "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
+        parser.add_argument("--capture-node-stat", dest="capture_node_stat", action="store_true",
+                            help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
         parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
 
@@ -111,4 +114,5 @@ class BenchmarkArgs:
         self.user_tag = args.user_tag if args.user_tag else None
         self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
         self.use_50_percent_heap = args.use_50_percent_heap
+        self.capture_node_stat = args.capture_node_stat
         self.logging_level = args.logging_level
