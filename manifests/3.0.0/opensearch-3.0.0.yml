@@ -23,6 +23,15 @@ components:
     checks:
       - gradle:publish
       - gradle:properties:version
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
@@ -66,6 +75,15 @@ components:
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
     ref: main
     platforms:
       - linux
