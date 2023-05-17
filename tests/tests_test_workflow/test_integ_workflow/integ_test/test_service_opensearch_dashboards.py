@@ -123,6 +123,7 @@ class ServiceOpenSearchDashboardsTests(unittest.TestCase):
         cwd_path = os.path.join("test_work_dir", "opensearch-dashboards-1.1.0", "bin")
         plugin_script = "opensearch-dashboards-plugin.bat" if current_platform() == "windows" else "opensearch-dashboards-plugin"
         plugin_script = os.path.join(cwd_path, plugin_script)
+        plugin_script = "sudo " + plugin_script if service.dist.require_sudo is True else plugin_script
         mock_check_call.assert_called_once_with(
             f"{plugin_script} remove --allow-root securityDashboards",
             cwd=cwd_path,
