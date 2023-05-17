@@ -13,3 +13,6 @@ components:
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: 2.x
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    ref: 2.x
