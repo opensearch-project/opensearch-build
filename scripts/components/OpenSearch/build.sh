@@ -70,7 +70,7 @@ fi
 
 [ -z "$OUTPUT" ] && OUTPUT=artifacts
 
-echo "Creating output directory $OUTPUT if it doesn't already exist"
+echo "Creating output directory $OUTPUT/maven/org/opensearch if it doesn't already exist"
 mkdir -p $OUTPUT/maven/org/opensearch
 
 # Build project and publish to maven local.
