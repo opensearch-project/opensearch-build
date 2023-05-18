@@ -99,6 +99,24 @@ class TestTestRecorder(unittest.TestCase):
         file_path = test_recorder._update_absolute_file_paths(["file1", "file2"], "working-directory", "sub-directory")
         self.assertEqual(file_path, [os.path.join("working-directory", "sub-directory", "file1"), os.path.join("working-directory", "sub-directory", "file2")])
 
+    @patch("os.path.isfile")
+    @patch("os.listdir")
+    @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
+    @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
+    @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
+    def test_get_list_files(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, mock_list_dir: Mock, mock_is_file: Mock, *mock: Any) -> None:
+        test_recorder = TestRecorder(
+            "1234",
+            "integ-test",
+            "working-directory",
+            "https://ci.opensearch.org/ci/dbc/integ-test/"
+        )
+        mock_list_dir.return_value = ["file1", "file2"]
+        mock_is_file.return_value = True
+        mock_dir = MagicMock()
+        list_files = test_recorder._get_list_files(mock_dir)
+        self.assertEqual(list_files, ["file1", "file2"])
+
 
 class TestLocalClusterLogs(unittest.TestCase):
 

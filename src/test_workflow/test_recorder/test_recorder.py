@@ -9,7 +9,6 @@ import logging
 import os
 import shutil
 from typing import Any
-from urllib.parse import urljoin
 
 import yaml
 
@@ -38,7 +37,7 @@ class TestRecorder:
 
     def _get_file_path(self, base_path: str, component_name: str, component_test_config: str) -> str:
         if base_path.startswith("https://"):
-            file_path = urljoin(base_path, "/".join(["test-results", str(self.test_run_id), self.test_type, component_name, component_test_config]))
+            file_path = "/".join([base_path.strip("/"), "test-results", str(self.test_run_id), self.test_type, component_name, component_test_config])
         else:
             file_path = self._create_base_folder_structure(component_name, component_test_config)
         return file_path
@@ -149,8 +148,7 @@ class TestResultsLogs(LogRecorder):
         self.parent_class = parent_class
 
     def save_test_result_data(self, test_result_data: TestResultData) -> None:
-        base = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
-        dest_directory = os.path.join(base)
+        dest_directory = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
         logging.info(f"Recording component test results for {test_result_data.component_name} at " f"{os.path.realpath(dest_directory)}")
         self.parent_class._generate_std_files(test_result_data.stdout, test_result_data.stderr, dest_directory)
         self.parent_class._copy_log_files(test_result_data.log_files, dest_directory)
