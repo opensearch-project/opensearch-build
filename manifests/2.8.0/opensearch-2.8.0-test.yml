@@ -1,0 +1,25 @@
+---
+schema-version: '1.0'
+name: OpenSearch
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: cross-cluster-replication
+    integ-test:
+      topology:
+        - cluster_name: leader
+          data_nodes: 1
+          cluster_manager_nodes: 0
+        - cluster_name: follower
+          data_nodes: 1
+          cluster_manager_nodes: 0
+      test-configs:
+        - with-security
+        - without-security
+
+  - name: security
+    integ-test:
+      test-configs:
+        - with-security

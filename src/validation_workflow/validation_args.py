@@ -20,7 +20,8 @@ class ValidationArgs:
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=textwrap.dedent('''\
                 Example :   ./validation.sh --version 2.3.0 --distribution rpm --platform linux
-                            ./validation.sh --version 2.3.0 --distribution docker --os_build_number 6039 --osd_build_number 4104
+                            ./validation.sh --version 2.3.0 --distribution docker --os-build-number 6039 --osd-build-number 4104
+                            ./validation.sh --version 2.3.0 --distribution docker --os-build-number 6039 --osd-build-number 4104 --using-staging-artifact-only
         '''))
         parser.add_argument(
             "--version",
@@ -45,7 +46,7 @@ class ValidationArgs:
             default="linux"
         )
         parser.add_argument(
-            "--os_build_number",
+            "--os-build-number",
             type=str,
             required=False,
             help="(optional) The opensearchstaging OpenSearch image build number if required, for example : 6039\n",
@@ -53,7 +54,7 @@ class ValidationArgs:
             dest="os_build_number",
         )
         parser.add_argument(
-            "--osd_build_number",
+            "--osd-build-number",
             type=str,
             required=False,
             help="(optional) The opensearchstaging OpenSearchDashboard image build number if required, for example : 4104\n",
@@ -61,7 +62,7 @@ class ValidationArgs:
             dest="osd_build_number",
         )
         parser.add_argument(
-            "--docker_source",
+            "--docker-source",
             type=str,
             required=False,
             choices=self.DOCKER_SOURCE,
@@ -84,6 +85,17 @@ class ValidationArgs:
             choices=["x64", "arm64"],
             default="x64"
         )
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
+            "--validate-digest-only",
+            action="store_true",
+            default=False,
+            help="(optional) Validate digest only; will not run docker to test API")
+        group.add_argument(
+            "--using-staging-artifact-only",
+            action="store_true",
+            default=False,
+            help="(optional) Use only staging artifact to run docker and API test, will not validate digest")
 
         args = parser.parse_args()
         self.version = args.version
@@ -97,6 +109,8 @@ class ValidationArgs:
         self.os_build_number = args.os_build_number
         self.osd_build_number = args.osd_build_number
         self.docker_source = args.docker_source
+        self.validate_digest_only = args.validate_digest_only
+        self.using_staging_artifact_only = args.using_staging_artifact_only
 
     def stg_tag(self, image_type: str) -> str:
         return " ".join(

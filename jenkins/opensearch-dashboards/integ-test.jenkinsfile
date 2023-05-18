@@ -34,13 +34,18 @@ pipeline {
     }
     parameters {
         string(
+            name: 'COMPONENT_NAME',
+            description: 'If this field contains one or more component names (e.g. notificationsDashboards indexManagementDashboards ...) separated by space, will test with "--component ...", else test everything in the TEST_MANIFEST..',
+            trim: true
+        )
+        string(
             name: 'TEST_MANIFEST',
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml',
+            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
@@ -98,29 +103,38 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("OSD Version $version does not match OS Version $versionOpenSearch")
                     }
-
+                }
+            }
+            post {
+                always {
+                    postCleanup()
                 }
             }
         }
         stage('integ-test') {
-            agent {
-                docker {
-                    label AGENT_LABEL
-                    image docker_images["$distribution"]
-                    args docker_args["$distribution"]
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
+            // Need to run this directly on agent node here in order to trigger stages with docker container and avoid docker within docker situation
+            // Can only be run in runner that is at least 50GB per container
+            agent { label AGENT_LABEL }
             steps {
                 script {
-                    def buildManifestObj = downloadBuildManifest(
+
+                    downloadBuildManifest(
                         url: BUILD_MANIFEST_URL,
                         path: BUILD_MANIFEST
                     )
 
+                    def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                    def componentDefaultList = buildManifestObj.getNames()
+                    def componentList = COMPONENT_NAME ? COMPONENT_NAME.trim().split(" ") as List : componentDefaultList
                     String switch_user_non_root = (distribution.equals('rpm') || distribution.equals('deb')) ? 'true' : 'false'
                     echo "switch_user_non_root: ${switch_user_non_root}"
+                    echo "componentList: ${componentList}"
+
+                    for (component_check in componentList) {
+                        if (!componentDefaultList.contains(component_check)) {
+                           error("${component_check} is not in build manifest: ${componentDefaultList}, exit 1")
+                        }
+                    }
 
                     echo "Downloading from S3: ${artifactPathOpenSearch}"
                     downloadFromS3(
@@ -144,24 +158,67 @@ pipeline {
                       )
                     sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
 
-                    runIntegTestScript(
-                        jobName: "$BUILD_JOB_NAME",
-                        componentName: 'functionalTestDashboards',
-                        buildManifest: "$BUILD_MANIFEST",
-                        testManifest: "manifests/${TEST_MANIFEST}",
-                        localPath: "${WORKSPACE}/${distribution}",
-                        switchUserNonRoot: "${switch_user_non_root}"
-                    )
+                    // Stash the current working directory files, aka opensearch-build repo
+                    // Unstash later in each triggered stage to run integTest
+                    stash includes: "**", name: "integtest-opensearch-dashboards-$BUILD_NUMBER"
+
+                    componentTests = [:]
+
+                    for (component in componentList) {
+                        // Must use local variable due to groovy for loop and closure scope
+                        // Or the stage will be fixed to the last item in return when new stages are triggered here
+                        // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
+                        def local_component = component.trim()
+                        def local_component_index = componentList.indexOf(local_component)
+                        def wait_seconds = local_component_index * 10
+
+                        echo "Adding Component: ${local_component}"
+                        componentTests["Run Integtest ${local_component}"] = {
+                            // Using scripted pipelines to trigger dynamic parallel stages
+                            timeout(time: 2, unit: 'HOURS') {
+                                node(AGENT_LABEL) {
+                                    docker.withRegistry('https://public.ecr.aws/') {
+                                        docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                            try {
+                                                stage("${local_component}") {
+                                                    // Jenkins tend to not clean up workspace at times even though ws clean is called
+                                                    // Since docker is mounted on the agent node directly so it can communicated with the agent
+                                                    // This sometimes causes the workspace to retain last run test-results and ends with build failures
+                                                    // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
+                                                    sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
+                                                    unstash "integtest-opensearch-dashboards-$BUILD_NUMBER"
+                                                    sh("rm -rf test-results")
+                                                    runIntegTestScript(
+                                                        jobName: "$BUILD_JOB_NAME",
+                                                        componentName: "${local_component}",
+                                                        buildManifest: "$BUILD_MANIFEST",
+                                                        testManifest: "manifests/${TEST_MANIFEST}",
+                                                        localPath: "${WORKSPACE}/${distribution}",
+                                                        switchUserNonRoot: "${switch_user_non_root}"
+                                                        )
+                                                }
+                                            } catch (e) {
+                                                echo "Error running integtest for component ${local_component}"
+                                                throw e
+                                            } finally {
+                                                echo "Completed running integtest for component ${local_component}"
+                                                uploadTestResults(
+                                                    buildManifestFileName: BUILD_MANIFEST,
+                                                    jobName: JOB_NAME
+                                                )
+                                                postCleanup()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    parallel componentTests
                 }
             }
             post {
                 always {
-                    script {
-                        uploadTestResults(
-                            buildManifestFileName: BUILD_MANIFEST,
-                            jobName: JOB_NAME
-                        )
-                    }
                     postCleanup()
                 }
             }

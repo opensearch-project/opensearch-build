@@ -13,6 +13,9 @@ from validation_workflow.validation_args import ValidationArgs
 
 
 class Validation(ABC):
+    """
+    Abstract class for all types of artifact validation
+    """
 
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__()

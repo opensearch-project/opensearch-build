@@ -88,9 +88,9 @@ FROM rockylinux:8
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && \
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh
 
 # Create user group
 RUN dnf install -y sudo && \
@@ -98,7 +98,7 @@ RUN dnf install -y sudo && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`" >> /etc/sudoers.d/opensearch
+    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/opensearch
 
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch

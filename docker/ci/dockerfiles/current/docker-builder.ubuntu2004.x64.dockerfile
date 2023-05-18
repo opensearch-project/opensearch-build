@@ -23,10 +23,17 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support
     apt-get install -y debmake debhelper-compat && \
     apt-get clean -y && pip3 install awscli==1.22.12
 
+# Install gh cli
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
+    apt-get update && apt-get install -y gh && apt-get clean
+
 # Install trivy to scan the docker images
-RUN curl -SL https://github.com/aquasecurity/trivy/releases/download/v0.30.4/trivy_0.30.4_Linux-64bit.deb -o /tmp/trivy_0.30.4_Linux-64bit.deb && \
-    dpkg -i /tmp/trivy_0.30.4_Linux-64bit.deb && rm /tmp/trivy_0.30.4_Linux-64bit.deb && \
-    trivy --version
+RUN apt-get install -y apt-transport-https gnupg lsb-release && \
+    curl -o- https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | tee -a /etc/apt/sources.list.d/trivy.list && \
+    apt-get update -y && apt-get install -y trivy && apt-get clean && trivy --version
 
 # Install JDK
 RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \
@@ -51,14 +58,16 @@ RUN mkdir -p ~/.docker/cli-plugins && \
     docker buildx version
 
 # Install gcrane
-RUN curl -L https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
+RUN curl -SL https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz -o go-containerregistry.tar.gz && \
     tar -zxvf go-containerregistry.tar.gz && \
-    chmod +x gcrane && \
-    mv gcrane /usr/local/bin/ && \
-    rm -rf go-containerregistry.tar.gz 
+    chmod +x gcrane crane krane && \
+    mv -v gcrane crane krane /usr/local/bin/ && \
+    rm -v go-containerregistry.tar.gz && \
+    gcrane version && crane version && krane version
 
 # Install packer
 RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
-    apt-get install packer
+    apt-get install packer && \
+    apt-get clean

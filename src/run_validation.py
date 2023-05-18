@@ -21,7 +21,7 @@ def main() -> int:
 
     test_result = ValidationTestRunner.dispatch(args, args.distribution).run()
     logging.info(f'final test_result = {test_result}')
-    return test_result  # type: ignore
+    return 0 if test_result else 1  # type: ignore
 
 
 if __name__ == "__main__":

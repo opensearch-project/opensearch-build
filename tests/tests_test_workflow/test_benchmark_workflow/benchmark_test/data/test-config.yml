@@ -1,0 +1,13 @@
+---
+Description: Configuration file to store contants required to run rally for performance test
+Constants:
+  Repository: https://github.com/opensearch-project/opensearch-cluster-cdk
+  cidr: '172.31.0.0/16'
+  VpcId: 'vpc-12345678'
+  AccountId: 123456789098
+  dataNodeStorage: 200
+  serverAccessType: prefixList
+  restrictServerAccessTo: pl-01a74268
+  Region: eu-west-1
+  isInternal: true
+  Role: test-set-up

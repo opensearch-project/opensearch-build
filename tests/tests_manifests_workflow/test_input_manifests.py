@@ -32,12 +32,12 @@ class TestInputManifests(unittest.TestCase):
 
     def test_files_opensearch(self) -> None:
         files = InputManifests.files("opensearch")
-        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.0", "opensearch-1.3.0.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.8", "opensearch-1.3.8.yml")) in files)
         self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-1.2.1.yml")) in files)
 
     def test_files_opensearch_dashboards(self) -> None:
         files = InputManifests.files("opensearch-dashboards")
-        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.3", "opensearch-dashboards-1.3.3.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.8", "opensearch-dashboards-1.3.8.yml")) in files)
         self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-dashboards-1.2.1.yml")) in files)
 
     def test_create_manifest_opensearch(self) -> None:
