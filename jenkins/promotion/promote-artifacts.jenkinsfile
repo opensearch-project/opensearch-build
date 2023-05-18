@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 script {
-                    currentBuild.description = "${DISTRIBUTION_BUILD_NUMBER} ${DISTRIBUTION_PLATFORM} ${DISTRIBUTION_ARCHITECTURE} ${INPUT_MANIFEST}"
+                    currentBuild.description = "${DISTRIBUTION_BUILD_NUMBER} ${DISTRIBUTION_PLATFORM} ${DISTRIBUTION_ARCHITECTURE} ${DISTRIBUTION_NAME} ${INPUT_MANIFEST}"
                     promoteArtifacts(
                         fileActions: [createSha512Checksums(), createSignatureFiles()]
                     )
