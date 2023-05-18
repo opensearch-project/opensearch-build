@@ -14,9 +14,9 @@ FROM rockylinux:8 AS linux_stage_0
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
-    dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip gh
+RUN yum clean all && \
+    yum update -y && \
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
 
 # Add Dashboards dependencies (mainly for cypress)
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -83,9 +83,9 @@ FROM rockylinux:8
 USER 0
 
 # Add normal dependencies
-RUN yum clean all && \
-    yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+    dnf update -y && \
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip gh
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
