@@ -142,6 +142,7 @@ class RemoteClusterLogs(LogRecorder):
 
 
 class TestResultsLogs(LogRecorder):
+    __test__ = False    # type:ignore
     parent_class: TestRecorder
 
     def __init__(self, parent_class: TestRecorder) -> None:

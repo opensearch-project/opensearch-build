@@ -11,7 +11,7 @@ import unittest
 from typing import Any
 from unittest.mock import MagicMock, Mock, call, mock_open, patch
 
-from test_workflow.test_recorder.test_recorder import LocalClusterLogs, TestRecorder
+from test_workflow.test_recorder.test_recorder import LocalClusterLogs, TestRecorder, TestResultsLogs
 
 
 @patch("os.makedirs")
@@ -146,3 +146,34 @@ class TestLocalClusterLogs(unittest.TestCase):
         logs.save_test_result_data(mock_test_result_data)
 
         mock_parent_class._copy_log_files.assert_called_once_with(mock_test_result_data.log_files, dest_directory)
+
+
+class TestTestResultsLogs(unittest.TestCase):
+
+    def test(self) -> None:
+        mock_parent_class = MagicMock()
+
+        mock_parent_class._create_base_folder_structure.return_value = "test_base"
+
+        mock_parent_class._copy_log_files = MagicMock()
+
+        logs = TestResultsLogs(mock_parent_class)
+
+        mock_test_result_data = MagicMock()
+
+        dest_directory = "test_base"
+
+        source_file_1 = "stdout.txt"
+        source_file_2 = "stderr.txt"
+
+        mock_test_result_data.log_files = {
+            source_file_1,
+            source_file_2
+        }
+        mock_test_result_data.component_name = "sql"
+        mock_test_result_data.component_test_config = "with-security"
+
+        logs.save_test_result_data(mock_test_result_data)
+
+        mock_parent_class._copy_log_files.assert_called_once_with(mock_test_result_data.log_files, dest_directory)
+        mock_parent_class._generate_yml.assert_called_once_with(mock_test_result_data, dest_directory)
