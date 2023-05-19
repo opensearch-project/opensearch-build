@@ -117,7 +117,11 @@ fi
 if command -v systemctl > /dev/null; then
     systemctl restart systemd-sysctl.service || true
 fi
-systemd-tmpfiles --create %{name}.conf
+
+if command -v systemd-tmpfiles > /dev/null; then
+    systemd-tmpfiles --create %{name}.conf
+fi
+
 # Messages
 echo "### NOT starting on installation, please execute the following statements to configure opensearch service to start automatically using systemd"
 echo " sudo systemctl daemon-reload"

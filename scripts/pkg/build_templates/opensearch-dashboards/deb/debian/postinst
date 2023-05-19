@@ -25,7 +25,9 @@ if command -v systemctl > /dev/null; then
 fi
 
 # Reload other configs
-systemd-tmpfiles --create opensearch-dashboards.conf
+if command -v systemd-tmpfiles > /dev/null; then
+    systemd-tmpfiles --create opensearch-dashboards.conf
+fi
 
 # Messages
 echo "### NOT starting on installation, please execute the following statements to configure opensearch-dashboards service to start automatically using systemd"
