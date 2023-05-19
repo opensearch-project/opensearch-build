@@ -67,10 +67,15 @@ class TestRecorder:
         opensearch_service_logs = self._get_list_files(opensearch_service_logs_path)
         opensearch_service_logs = self._update_absolute_file_paths(opensearch_service_logs, base_file_path, os.path.join("local-cluster-logs", "opensearch-service-logs"))
 
+        opensearch_dashboards_service_logs_path = os.path.join(local_cluster_logs_path, "opensearch-dashboards-service-logs")
+        opensearch_dashboards_service_logs = self._get_list_files(opensearch_dashboards_service_logs_path)
+        opensearch_dashboards_service_logs = self._update_absolute_file_paths(opensearch_dashboards_service_logs,
+                                                                              base_file_path, os.path.join("local-cluster-logs", "opensearch-dashboards-service-logs"))
+
         test_result_file = components_files + [
             {
                 "local-cluster-logs":
-                    local_cluster_logs + opensearch_service_logs
+                    local_cluster_logs + opensearch_service_logs + opensearch_dashboards_service_logs
             }
         ]
 
@@ -91,7 +96,10 @@ class TestRecorder:
 
     # get a list of files within directory without folders.
     def _get_list_files(self, dir: str) -> list:
-        return [f for f in os.listdir(dir) if os.path.isfile(dir + '/' + f)]
+        if os.path.exists(dir):
+            return [f for f in os.listdir(dir) if os.path.isfile(dir + '/' + f)]
+        else:
+            return []
 
     def _copy_log_files(self, log_files: dict, dest_directory: str) -> None:
         if log_files:
