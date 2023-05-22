@@ -26,7 +26,6 @@ class ScriptFinder:
     For build.sh and integtest.sh scripts, given a component name and a checked-out Git repository,
     it will look in the following locations, in order:
       * <component_scripts_path>/<component_name>/<script-name>
-      * /<component_name>/<script-name> in the component's Git repository
       * root of the component's Git repository
       * /scripts/<script-name> in the component's Git repository
       * <default_scripts_path>/<script-name>
@@ -49,7 +48,6 @@ class ScriptFinder:
     def __find_named_script(cls, script_name: str, component_name: str, git_dir: str) -> str:
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, script_name)),
-            os.path.realpath(os.path.join(git_dir, component_name, script_name)),
             os.path.realpath(os.path.join(git_dir, script_name)),
             os.path.realpath(os.path.join(git_dir, "scripts", script_name)),
             os.path.realpath(os.path.join(cls.default_scripts_path, script_name)),
@@ -61,7 +59,6 @@ class ScriptFinder:
     def find_build_script(cls, project: str, component_name: str, git_dir: str) -> str:
         paths = [
             os.path.realpath(os.path.join(cls.component_scripts_path, component_name, "build.sh")),
-            os.path.realpath(os.path.join(git_dir, component_name, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "build.sh")),
             os.path.realpath(os.path.join(git_dir, "scripts", "build.sh")),
             os.path.realpath(

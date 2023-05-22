@@ -20,7 +20,6 @@ class TestScriptFinder(unittest.TestCase):
         self.component_with_scripts = os.path.join(self.data_path, "git", "component-with-scripts")
         self.component_with_scripts_folder = os.path.join(self.data_path, "git", "component-with-scripts-folder")
         self.component_without_scripts = os.path.join(self.data_path, "git", "component-without-scripts")
-        self.component_with_scripts_in_component_folder = os.path.join(self.data_path, "git", "component_with_scripts_in_component_folder")
 
     # find_build_script
 
@@ -66,13 +65,6 @@ class TestScriptFinder(unittest.TestCase):
             msg="A component with a scripts folder resolves to the override.",
         )
 
-    def test_find_build_script_component_script_in_component_folder(self) -> None:
-        self.assertEqual(
-            os.path.join(self.component_with_scripts_in_component_folder, "Component", "build.sh"),
-            ScriptFinder.find_build_script("Component", "Component", self.component_with_scripts_in_component_folder),
-            msg="A component with a script in component folder resolves to the override.",
-        )
-
     @patch("os.path.exists", return_value=False)
     def test_find_build_script_does_not_exist(self, *mocks: MagicMock) -> None:
         with self.assertRaisesRegex(
@@ -116,13 +108,6 @@ class TestScriptFinder(unittest.TestCase):
             os.path.join(ScriptFinder.component_scripts_path, "OpenSearch", "integtest.sh"),
             ScriptFinder.find_integ_test_script("OpenSearch", self.component_with_scripts_folder),
             msg="A component with a scripts folder resolves to a script in that folder.",
-        )
-
-    def test_find_integ_test_script_component_script_in_component_folder(self) -> None:
-        self.assertEqual(
-            os.path.join(self.component_with_scripts_in_component_folder, "Component", "integtest.sh"),
-            ScriptFinder.find_integ_test_script("Component", self.component_with_scripts_in_component_folder),
-            msg="A component with a script in component folder resolves to the override.",
         )
 
     @patch("os.path.exists", return_value=False)
@@ -192,13 +177,6 @@ class TestScriptFinder(unittest.TestCase):
             os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
             ScriptFinder.find_bwc_test_script("OpenSearch", self.component_with_scripts_folder),
             msg="A component with a scripts folder resolves to a script in that folder.",
-        )
-
-    def test_find_bwc_test_script_component_script_in_component_folder(self) -> None:
-        self.assertEqual(
-            os.path.join(ScriptFinder.default_scripts_path, "bwctest.sh"),
-            ScriptFinder.find_bwc_test_script("Component", self.component_with_scripts_in_component_folder),
-            msg="A component with a script in component folder resolves to the override.",
         )
 
     @patch("os.path.exists", return_value=False)
