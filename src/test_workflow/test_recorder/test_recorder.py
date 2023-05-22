@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from paths.tree_walker import walk
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 
@@ -57,27 +58,7 @@ class TestRecorder:
         base_file_path = self._get_file_path(self.base_path, test_result_data.component_name, test_result_data.component_test_config)
 
         components_files = self._get_list_files(output_path)
-        components_files = self._update_absolute_file_paths(components_files, base_file_path, "")
-
-        local_cluster_logs_path = os.path.join(output_path, "local-cluster-logs")
-        local_cluster_logs = self._get_list_files(local_cluster_logs_path)
-        local_cluster_logs = self._update_absolute_file_paths(local_cluster_logs, base_file_path, "local-cluster-logs")
-
-        opensearch_service_logs_path = os.path.join(local_cluster_logs_path, "opensearch-service-logs")
-        opensearch_service_logs = self._get_list_files(opensearch_service_logs_path)
-        opensearch_service_logs = self._update_absolute_file_paths(opensearch_service_logs, base_file_path, os.path.join("local-cluster-logs", "opensearch-service-logs"))
-
-        opensearch_dashboards_service_logs_path = os.path.join(local_cluster_logs_path, "opensearch-dashboards-service-logs")
-        opensearch_dashboards_service_logs = self._get_list_files(opensearch_dashboards_service_logs_path)
-        opensearch_dashboards_service_logs = self._update_absolute_file_paths(opensearch_dashboards_service_logs,
-                                                                              base_file_path, os.path.join("local-cluster-logs", "opensearch-dashboards-service-logs"))
-
-        test_result_file = components_files + [
-            {
-                "local-cluster-logs":
-                    local_cluster_logs + opensearch_service_logs + opensearch_dashboards_service_logs
-            }
-        ]
+        test_result_file = self._update_absolute_file_paths(components_files, base_file_path, "")
 
         outcome = {
             "test_type": self.test_type,
@@ -94,12 +75,12 @@ class TestRecorder:
     def _update_absolute_file_paths(self, files: list, base_path: str, relative_path: str) -> list:
         return [os.path.join(base_path, relative_path, file) for file in files]
 
-    # get a list of files within directory without folders.
+    # get a list of files within directory with relative paths.
     def _get_list_files(self, dir: str) -> list:
-        if os.path.exists(dir):
-            return [f for f in os.listdir(dir) if os.path.isfile(dir + '/' + f)]
-        else:
-            return []
+        files = []
+        for file_paths in walk(dir):
+            files.append(file_paths[1])
+        return files
 
     def _copy_log_files(self, log_files: dict, dest_directory: str) -> None:
         if log_files:
