@@ -108,15 +108,16 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             self.repo_work_dir = os.path.join(
                 self.repo.dir, self.test_config.working_directory) if self.test_config.working_directory is not None else self.repo.dir
             (status, stdout, stderr) = execute(cmd, self.repo_work_dir, True, False)
-            test_result_data = TestResultData(
-                self.component.name,
-                test_config,
-                status,
-                stdout,
-                stderr,
-                self.test_artifact_files
+            self.test_result_data.append(
+                TestResultData(
+                    self.component.name,
+                    test_config,
+                    status,
+                    stdout,
+                    stderr,
+                    self.test_artifact_files
+                )
             )
-            self.save_logs.save_test_result_data(test_result_data)
             if stderr:
                 logging.info("Stderr reported for component: " + self.component.name)
                 logging.info(stderr)

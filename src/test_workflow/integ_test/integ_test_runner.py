@@ -33,7 +33,7 @@ class IntegTestRunner(abc.ABC):
 
         self.tests_dir = os.path.join(os.getcwd(), "test-results")
         os.makedirs(self.tests_dir, exist_ok=True)
-        self.test_recorder = TestRecorder(self.args.test_run_id, "integ-test", self.tests_dir)
+        self.test_recorder = TestRecorder(self.args.test_run_id, "integ-test", self.tests_dir, args.base_path)
 
     def run(self) -> TestSuiteResults:
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
@@ -45,6 +45,7 @@ class IntegTestRunner(abc.ABC):
                     if test_config.integ_test:
                         test_suite = self.__create_test_suite__(component, test_config, work_dir.path)
                         test_results = test_suite.execute_tests()
+                        [self.test_recorder.test_results_logs.save_test_result_data(result_data) for result_data in test_suite.result_data]
                         all_results.append(component.name, test_results)
                     else:
                         logging.info(f"Skipping integ-tests for {component.name}, as it is currently not supported")
