@@ -19,9 +19,9 @@ import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 class TestDockerCopy extends BuildPipelineTest {
 
     String sourceImageRegistry = 'opensearchstaging'
-    String sourceImage = 'opensearch:1.3.2'
-    String destinationImageRegistry = 'opensearchproject'
-    String destinationImage = 'opensearch:1.3.2'
+    String sourceImage = 'ci-runner:testtag'
+    String destinationImageRegistry = 'public.ecr.aws/opensearchstaging'
+    String destinationImage = 'ci-runner:testtag2'
 
     @Override
     @Before
@@ -40,7 +40,6 @@ class TestDockerCopy extends BuildPipelineTest {
         super.setUp()
 
         // Variables
-        binding.setVariable('ALL_TAGS', false)
         binding.setVariable('SOURCE_IMAGE_REGISTRY', sourceImageRegistry)
         binding.setVariable('SOURCE_IMAGE', sourceImage)
         binding.setVariable('DESTINATION_IMAGE_REGISTRY', destinationImageRegistry)
@@ -62,7 +61,26 @@ class TestDockerCopy extends BuildPipelineTest {
 
         // Ensure the gcrane is executed in an external shell script exactely once
         def copyContainerCommand = getCommands('crane').findAll {
-            shCommand -> shCommand.contains('set -x && crane cp opensearchstaging/opensearch:1.3.2 opensearchproject/opensearch:1.3.2')
+            shCommand -> shCommand.contains('set -x && crane cp opensearchstaging/ci-runner:testtag public.ecr.aws/opensearchstaging/ci-runner:testtag2')
+        }
+        assertThat(copyContainerCommand.size(), equalTo(1))
+
+        // Validating docker-copy.jenkinsfile does run copyContainer.groovy 
+        assertCallStack().contains("docker-copy.copyContainer")
+
+        printCallStack()
+    }
+
+    @Test
+    public void DockerCopyExecuteAllTagsWithoutErrors() {
+        addParam('ALL_TAGS', true)
+        runScript("jenkins/docker/docker-copy.jenkinsfile")
+
+        assertJobStatusSuccess()
+
+        // Ensure the gcrane is executed in an external shell script exactely once
+        def copyContainerCommand = getCommands('crane').findAll {
+            shCommand -> shCommand.contains('set -x && crane cp opensearchstaging/ci-runner public.ecr.aws/opensearchstaging/ci-runner --all-tags')
         }
         assertThat(copyContainerCommand.size(), equalTo(1))
 
