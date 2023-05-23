@@ -155,3 +155,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: performance-analyzer-commons
+    repository: https://github.com/opensearch-project/performance-analyzer-commons.git
+    ref: main
+    platforms:
+      - linux
