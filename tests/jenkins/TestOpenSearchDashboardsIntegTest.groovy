@@ -31,13 +31,14 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
+
         super.setUp()
 
         def jobName = "dummy_job"
-        def testManifest = "tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml"
+        def testManifest = "tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml"
         def buildId = 215
-        def buildManifest = "tests/jenkins/data/opensearch-dashboards-1.2.0-build.yml"
-        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.2.0/${buildId}/linux/x64/tar/builds/opensearch-dashboards/opensearch-dashboards-1.2.0-linux-x64.tar.gz"
+        def buildManifest = "tests/jenkins/data/opensearch-dashboards-3.0.0-build.yml"
+        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/${buildId}/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-3.0.0-linux-x64.tar.gz"
         def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
         def bucketName = 'job-s3-bucket-name'
 
@@ -61,8 +62,12 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
-
         helper.registerAllowedMethod("s3Download", [Map])
+        helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
+            closure.delegate = delegate
+            return helper.callClosure(closure)
+        })
+
         helper.registerAllowedMethod("withCredentials", [Map])
 
         helper.registerAllowedMethod('readYaml', [Map.class], { args ->
@@ -81,9 +86,6 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         })
         helper.addFileExistsMock("manifests/${testManifest}", true)
         helper.registerAllowedMethod("s3Upload", [Map])
-        helper.registerAllowedMethod('fileExists', [String.class], { args ->
-            return true;
-        })
 
         helper.registerAllowedMethod('findFiles', [Map.class], null)
         helper.registerAllowedMethod('unstash', [String.class], null)
@@ -94,29 +96,50 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         super.testPipeline('jenkins/opensearch-dashboards/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch-dashboards/integ-test.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItems(
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component ganttChartDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component indexManagementDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component anomalyDetectionDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component securityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component functionalTestDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component OpenSearch-Dashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component alertingDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component queryWorkbenchDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component reportsDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
-                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString()
+                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component ganttChartDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
+                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component OpenSearch-Dashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString(),
+                'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar '.toString()
         ))
     }
 
     @Test
     void checkUploadResults() {
         runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/1.2.0/215/linux/x64/tar/test-results}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/215/linux/x64/tar/test-results}'))
     }
 
     @Test
     void checkIfRunningInParallel(){
         runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('parallel', ''), hasItem('{Run Integtest ganttChartDashboards=groovy.lang.Closure, Run Integtest indexManagementDashboards=groovy.lang.Closure, Run Integtest anomalyDetectionDashboards=groovy.lang.Closure, Run Integtest OpenSearch-Dashboards=groovy.lang.Closure, Run Integtest securityDashboards=groovy.lang.Closure, Run Integtest functionalTestDashboards=groovy.lang.Closure, Run Integtest alertingDashboards=groovy.lang.Closure, Run Integtest queryWorkbenchDashboards=groovy.lang.Closure, Run Integtest reportsDashboards=groovy.lang.Closure, Run Integtest observabilityDashboards=groovy.lang.Closure}'))
+        assertThat(getCommandExecutions('parallel', ''), hasItem('{Run Integtest ganttChartDashboards=groovy.lang.Closure, Run Integtest indexManagementDashboards=groovy.lang.Closure, Run Integtest anomalyDetectionDashboards=groovy.lang.Closure, Run Integtest OpenSearch-Dashboards=groovy.lang.Closure, Run Integtest reportsDashboards=groovy.lang.Closure, Run Integtest queryWorkbenchDashboards=groovy.lang.Closure, Run Integtest observabilityDashboards=groovy.lang.Closure}'))
+    }
+
+    @Test
+    void checkError() {
+        helper.addFileExistsMock('manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml', false)
+        runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+        assertThat(getCommandExecutions('error', ''), hasItem('Integration Tests failed to start. Test manifest was not provided or not found in manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml.'))
+        assertJobStatusFailure()
+    }
+
+    @Test
+    void checkGHissueCreation() {
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar ', '', 1)
+        helper.addShMock('gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure', '', 0)
+        assertThrows(Exception) {
+            runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+            }
+        assertJobStatusFailure()
+
+    }
+
+    @Test
+    void checkGHexistingIssue() {
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar ', '', 1)
+        assertThrows(Exception) {
+            runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+            }
+        assertJobStatusFailure()
     }
 
     def getCommandExecutions(methodName, command) {
