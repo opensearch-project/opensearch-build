@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 pyyaml = "~=5.4"
 types-PyYAML = "~=5.4"
-requests = "~=2.26"
+requests = "~=2.31"
 types-requests = "~=2.25"
 pre-commit = "~=2.15.0"
 isort = "~=5.9"
