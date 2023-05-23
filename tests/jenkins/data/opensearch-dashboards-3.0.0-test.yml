@@ -19,9 +19,9 @@ components:
         - without-security
   - name: reportsDashboards
     integ-test:
-     test-configs:
-       - with-security
-       - without-security
+      test-configs:
+        - with-security
+        - without-security
   - name: anomalyDetectionDashboards
     integ-test:
       test-configs:
