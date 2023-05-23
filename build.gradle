@@ -59,8 +59,8 @@ sourceSets {
 }
 
 sharedLibrary {
-    coreVersion = '2.387.1' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
-    testHarnessVersion = '1934.v90a_c07cf5b_21' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
+    coreVersion = '2.401' // https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-core/
+    testHarnessVersion = '1954.v2e3fd5465b_a_6' // https://mvnrepository.com/artifact/org.jenkins-ci.main/jenkins-test-harness?repo=jenkins-releases
     pluginDependencies {
         // see https://mvnrepository.com/artifact/org.jenkins-ci.plugins/<name>?repo=jenkins-releases for latest
         workflowCpsGlobalLibraryPluginVersion = '609.vd95673f149b_b'
