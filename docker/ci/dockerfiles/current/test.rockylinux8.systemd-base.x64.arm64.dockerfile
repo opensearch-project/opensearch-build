@@ -46,9 +46,10 @@ WORKDIR /usr/share/opensearch
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 16.14.2
-ENV CYPRESS_VERSION 9.5.4
+ENV NODE_VERSION 18.16.0
+ENV CYPRESS_VERSION 12.13.0
 ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION_954 /usr/share/opensearch/.cache/Cypress/9.5.4
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -65,17 +66,19 @@ COPY --chown=1000:1000 config/yarn-version.sh /tmp
 RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # install cypress last known version that works for all existing opensearch-dashboards plugin integtests
 RUN npm install -g cypress@$CYPRESS_VERSION && npm cache verify
+# Add legacy cypress@9.5.4 for pre-2.8.0 releases
+RUN npm install -g cypress@9.5.4 && npm cache verify
 # Add legacy cypress@5.6.0 for 1.x line
 RUN npm install -g cypress@5.6.0 && npm cache verify
 
 # Need root to get pass the build due to chrome sandbox needs to own by the root
 USER 0
-# Build ARM64 Cypress
+# Build ARM64 Cypress for legacy cypress@9.5.4 versions (cypress 12 has native arm64 binaries)
 COPY --chown=0:0 config/cypress-setup.sh /tmp
-RUN if [ `uname -m` = "aarch64" ]; then echo compile arm64 cypress && /tmp/cypress-setup.sh $CYPRESS_VERSION; fi
-# replace default binary with arm64 specific binary from ci.opensearch.org
-RUN if [ `uname -m` = "aarch64" ]; then rm -rf $CYPRESS_LOCATION/* && \
-    unzip -q /tmp/cypress-$CYPRESS_VERSION.zip -d $CYPRESS_LOCATION/ && chown 1000:1000 -R $CYPRESS_LOCATION; fi && rm -rf /tmp/cypress*
+RUN if [ `uname -m` = "aarch64" ]; then echo compile arm64 cypress@9.5.4 && /tmp/cypress-setup.sh 9.5.4; fi
+# Replace default binary with arm64 specific binary
+RUN if [ `uname -m` = "aarch64" ]; then rm -rf $CYPRESS_LOCATION_954/* && \
+    unzip -q /tmp/cypress-9.5.4.zip -d $CYPRESS_LOCATION_954/ && chown 1000:1000 -R $CYPRESS_LOCATION_954; fi && rm -rf /tmp/cypress*
 
 # Add legacy cypress@5.6.0 for ARM64 Architecture
 RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
@@ -103,8 +106,8 @@ RUN dnf install -y sudo && \
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 16.14.2
-ENV CYPRESS_VERSION 9.5.4
+ENV NODE_VERSION 18.16.0
+ENV CYPRESS_VERSION 12.13.0
 ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
