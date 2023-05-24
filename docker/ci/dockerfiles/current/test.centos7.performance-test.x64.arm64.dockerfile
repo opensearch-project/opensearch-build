@@ -62,8 +62,8 @@ WORKDIR /usr/share/opensearch
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 16.14.2
-ARG NODE_VERSION_LIST="16.14.2"
+ENV NODE_VERSION 16.20.0
+ARG NODE_VERSION_LIST="16.14.2 16.20.0"
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash

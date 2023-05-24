@@ -139,8 +139,8 @@ ENV PATH=$RUBY_HOME:$RVM_HOME:$CARGO_PATH:$PATH
 
 # nvm environment variables
 ENV NVM_DIR /usr/share/opensearch/.nvm
-ENV NODE_VERSION 14.19.1
-ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3"
+ENV NODE_VERSION 16.20.0
+ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0"
 
 # Installing nvm
 # https://github.com/creationix/nvm#install-script
