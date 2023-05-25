@@ -142,8 +142,6 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         assertJobStatusFailure()
     }
 
-
-
     def getCommandExecutions(methodName, command) {
         def shCommands = helper.callStack.findAll {
             call ->
