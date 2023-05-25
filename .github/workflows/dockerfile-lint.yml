@@ -8,7 +8,7 @@ on:
       - 'docker/release/dockerfiles/**'
 
 jobs:
-  test_ci:
+  dockerfile-lint-test_ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,7 +17,7 @@ jobs:
           dockerfile: 'docker/ci/dockerfiles/current/*.dockerfile'
           annotate: false
 
-  test_release:
+  dockerfile-lint-test_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

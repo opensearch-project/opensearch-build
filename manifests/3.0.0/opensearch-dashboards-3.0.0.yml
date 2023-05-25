@@ -5,7 +5,7 @@ build:
   version: 3.0.0
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v3
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
