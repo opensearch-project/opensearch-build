@@ -45,7 +45,7 @@ RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
+    useradd -u 1000 -g 1000 -d /usr/share/opensearch -m opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch 
 

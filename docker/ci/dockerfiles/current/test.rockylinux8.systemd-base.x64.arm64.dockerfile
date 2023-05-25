@@ -48,6 +48,7 @@ WORKDIR /usr/share/opensearch
 ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
+ARG CYPRESS_VERSION_LIST="5.6.0 9.5.4 12.13.0"
 ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
 ENV CYPRESS_LOCATION_954 /usr/share/opensearch/.cache/Cypress/9.5.4
 # install nvm
@@ -64,26 +65,18 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
 COPY --chown=1000:1000 config/yarn-version.sh /tmp
 RUN npm install -g yarn@`/tmp/yarn-version.sh main`
-# install cypress last known version that works for all existing opensearch-dashboards plugin integtests
-RUN npm install -g cypress@$CYPRESS_VERSION && npm cache verify
-# Add legacy cypress@9.5.4 for pre-2.8.0 releases
-RUN npm install -g cypress@9.5.4 && npm cache verify
 # Add legacy cypress@5.6.0 for 1.x line
-RUN npm install -g cypress@5.6.0 && npm cache verify
+# Add legacy cypress@9.5.4 for pre-2.8.0 releases
+# Add latest cypress@12.13.0 for post-2.8.0 releases
+RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cypress_version && npm cache verify; done
 
 # Need root to get pass the build due to chrome sandbox needs to own by the root
 USER 0
-# Build ARM64 Cypress for legacy cypress@9.5.4 versions (cypress 12 has native arm64 binaries)
-COPY --chown=0:0 config/cypress-setup.sh /tmp
-RUN if [ `uname -m` = "aarch64" ]; then echo compile arm64 cypress@9.5.4 && /tmp/cypress-setup.sh 9.5.4; fi
-# Replace default binary with arm64 specific binary
-RUN if [ `uname -m` = "aarch64" ]; then rm -rf $CYPRESS_LOCATION_954/* && \
-    unzip -q /tmp/cypress-9.5.4.zip -d $CYPRESS_LOCATION_954/ && chown 1000:1000 -R $CYPRESS_LOCATION_954; fi && rm -rf /tmp/cypress*
 
-# Add legacy cypress@5.6.0 for ARM64 Architecture
-RUN if [ `uname -m` = "aarch64" ]; then rm -rf /usr/share/opensearch/.cache/Cypress/5.6.0 && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-5.6.0-arm64.tar.gz && tar -xzf Cypress-5.6.0-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
-    chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/5.6.0 && rm -vf Cypress-5.6.0-arm64.tar.gz; fi
+# Add legacy cypress 5.6.0 / 9.5.4 for ARM64 Architecture
+RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/opensearch/.cache/Cypress/$cypress_version && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
+    chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
 
 ########################### Stage 1 ########################
 FROM rockylinux:8
