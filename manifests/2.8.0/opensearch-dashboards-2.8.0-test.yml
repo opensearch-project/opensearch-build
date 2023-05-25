@@ -6,21 +6,19 @@ ci:
     name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v3
 components:
   - name: OpenSearch-Dashboards
-    bwc-test:
-      test-configs:
-        - with-security
-        - without-security
-  - name: notificationsDashboards
     integ-test:
       test-configs:
         - with-security
         - without-security
-  - name: observabilityDashboards
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+  - name: alertingDashboards
     integ-test:
       test-configs:
         - with-security
         - without-security
-  - name: reportsDashboards
+  - name: anomalyDetectionDashboards
     integ-test:
       test-configs:
         - with-security
@@ -30,7 +28,22 @@ components:
       test-configs:
         - with-security
         - without-security
+  - name: indexManagementDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: observabilityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
   - name: queryWorkbenchDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: reportsDashboards
     integ-test:
       test-configs:
         - with-security
@@ -40,7 +53,7 @@ components:
       test-configs:
         - with-security
         - without-security
-  - name: searchRelevanceDashboards
+  - name: notificationsDashboards
     integ-test:
       test-configs:
         - with-security
@@ -50,3 +63,20 @@ components:
       test-configs:
         - with-security
         - without-security
+  - name: searchRelevanceDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: securityAnalyticsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: mlCommonsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        ml_commons_dashboards.enabled: true
