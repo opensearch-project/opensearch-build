@@ -139,7 +139,7 @@ components:
       - gradle:properties:version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: tags/2.8.0.0
+    ref: '2.8'
     platforms:
       - linux
       - windows
