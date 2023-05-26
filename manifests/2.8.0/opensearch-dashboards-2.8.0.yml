@@ -21,4 +21,4 @@ components:
     ref: 2.x
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
-    ref: 2.8
+    ref: "2.8"
