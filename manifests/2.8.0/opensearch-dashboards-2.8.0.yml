@@ -24,7 +24,7 @@ components:
     working_directory: gantt-chart
     ref: '2.8'
   - name: queryWorkbenchDashboards
-  3repository: https://github.com/opensearch-project/dashboards-query-workbench.git
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: '2.8'
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
