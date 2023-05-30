@@ -53,14 +53,14 @@ pipeline {
             printContributedVariables: false,
             printPostContent: false
         )
-        //parameterizedCron '''
-        //    H 1 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //    H 4 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //    H 9 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //    H 12 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //    H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //    H 20 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-        //'''
+        parameterizedCron '''
+            H 1 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 4 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 9 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 12 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 20 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+        '''
     }
     environment {
         BUILD_CAUSE = currentBuild.getBuildCauses()
