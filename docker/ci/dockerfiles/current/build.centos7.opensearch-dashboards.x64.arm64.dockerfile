@@ -59,7 +59,6 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 
 # Switch shell for rvm related commands
 SHELL ["/bin/bash", "-lc"]
-CMD ["/bin/bash", "-l"]
 
 # Install ruby / rpm / fpm related dependencies
 RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
@@ -74,7 +73,7 @@ ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
     cd Python-3.7.7 && \
     ./configure --enable-optimizations && \
-    make altinstall
+    make altinstall -j $(( `nproc` / 2 ))
 
 # Setup Python37 links
 RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
@@ -82,6 +81,16 @@ RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
     pip3 install pipenv && pipenv --version
+
+# Upgrade gcc8
+# The setup part is partially based on Austin Dewey's article:
+# https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/
+RUN yum install -y centos-release-scl && yum install -y devtoolset-8 && yum clean all && \
+    echo "source scl_source enable devtoolset-8" > /etc/profile.d/scl_devtoolset8.sh
+COPY --chown=0:0 config/scl_setup /usr/local/bin/scl_setup
+ENV BASH_ENV="/usr/local/bin/scl_setup"
+ENV ENV="/usr/local/bin/scl_setup"
+ENV PROMPT_COMMAND=". /usr/local/bin/scl_setup"
 
 # Change User
 USER 1000
@@ -96,7 +105,6 @@ ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 ENV NVM_DIR /usr/share/opensearch/.nvm
 ENV NODE_VERSION 10.24.1
 ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0"
-COPY --chown=1000:1000 config/build-opensearch-dashboards-entrypoint.sh /usr/share/opensearch
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -114,5 +122,3 @@ RUN node -v
 RUN npm -v
 RUN yarn -v
 RUN fpm -v
-ENTRYPOINT ["bash", "/usr/share/opensearch/build-opensearch-dashboards-entrypoint.sh"]
-CMD ["$NODE_VERSION"]
