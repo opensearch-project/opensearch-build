@@ -25,11 +25,6 @@ services:
       - 9600:9600  # required for Performance Analyzer
     networks:
       - opensearch-net
-    healthcheck:
-      test: curl --fail -s http://localhost:9200/ || exit 1
-      interval: 30s
-      timeout: 5s
-      retries: 3
   opensearch-node2:
     image: opensearchproject/opensearch:1
     container_name: opensearch-node2
@@ -62,11 +57,6 @@ services:
       OPENSEARCH_HOSTS: https://opensearch-node1:9200
     networks:
       - opensearch-net
-    healthcheck:
-      test: curl --fail -s http://localhost:5601/ || exit 1
-      interval: 30s
-      timeout: 5s
-      retries: 3
 
 volumes:
   opensearch-data1:
