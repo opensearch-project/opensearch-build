@@ -191,7 +191,6 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         mock_execute.assert_not_called()
         mock_test_result_data.assert_not_called()
         self.save_logs.assert_not_called()
-        
         self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")
