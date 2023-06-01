@@ -53,6 +53,8 @@ class BenchmarkTestSuite:
 
     def execute(self) -> None:
         if self.security:
-            self.command += ' --client-options="use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"'
+            self.command += ' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"'
+        else:
+            self.command += ' --client-options="timeout:300"'
         logging.info(f"Executing {self.command}")
         subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
