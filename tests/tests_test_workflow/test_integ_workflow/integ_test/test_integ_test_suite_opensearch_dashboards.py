@@ -29,7 +29,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
         self.test_config = MagicMock()
         self.test_config.working_directory = "test_working_directory"
-        self.test_config.integ_test = {"test-configs": ['with-security', 'without-security']}
+        self.test_config.integ_test = {"test-configs": ['with-security', 'without-security'], "additional-cluster-configs": {'server.host': '0.0.0.0'}}
 
         self.bundle_manifest_opensearch = MagicMock()
         self.bundle_manifest_opensearch.build.version = "1.2.0"
@@ -93,6 +93,8 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             call("test_endpoint", 1234, False, "without-security")
         ])
 
+        self.assertEqual(str(suite.additional_cluster_config), "{'server.host': '0.0.0.0'}")
+
     # test base class
 
     @patch("os.path.exists")
@@ -150,6 +152,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             }
         )
         assert(mock_test_result_data.return_value in suite.result_data)
+        self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
@@ -188,6 +191,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         mock_execute.assert_not_called()
         mock_test_result_data.assert_not_called()
         self.save_logs.assert_not_called()
+        self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
@@ -225,6 +229,8 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             suite.is_security_enabled("random-config")
 
         self.assertEqual(str(ctx.exception), "Unsupported test config: random-config")
+
+        self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("test_workflow.integ_test.integ_test_suite.logging")
     @patch("os.path.exists")
