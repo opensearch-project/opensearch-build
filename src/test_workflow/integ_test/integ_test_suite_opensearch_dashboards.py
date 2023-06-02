@@ -84,6 +84,9 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
             logging.info(f"Additional config found: {self.additional_cluster_config}")
 
+        if self.additional_cluster_config is None:
+            self.additional_cluster_config = {}
+
         with LocalTestClusterOpenSearchDashboards.create(
             self.dependency_installer,
             self.dependency_installer_opensearch_dashboards,
