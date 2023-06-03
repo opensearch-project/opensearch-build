@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: ca167d28c43c7f23bbd11e66cfe673cea90cdb5f
+    ref: db90a415ff2fd428b4f7b3f800a51dc229287cb4
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: ebec10e7a91fb3ad4da2d8cd4bde6537ba46cd36
+    ref: 244fb9f9cf72aebc65726332bb6ec9a41fb9329e
     platforms:
       - linux
       - windows
