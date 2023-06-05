@@ -22,23 +22,13 @@ def agent_nodes = [
 
 pipeline {
     options {
-        timeout(time: 3, unit: 'HOURS')
+        timeout(time: 4, unit: 'HOURS')
     }
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
-    }
-    triggers {
-        parameterizedCron '''
-            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
-            '''
     }
     parameters {
         string(
