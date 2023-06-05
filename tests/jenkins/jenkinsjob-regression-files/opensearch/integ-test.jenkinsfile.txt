@@ -3,16 +3,8 @@
       integ-test.library({identifier=jenkins@4.2.2, retriever=null})
       integ-test.pipeline(groovy.lang.Closure)
          integ-test.credentials(jenkins-artifact-bucket-name)
-         integ-test.timeout({time=3, unit=HOURS})
+         integ-test.timeout({time=4, unit=HOURS})
          integ-test.echo(Executing on agent [label:none])
-         integ-test.parameterizedCron(
-            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H 14 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
-            H 16 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
-            H 17 * * * %TEST_MANIFEST=2.8.0/opensearch-2.8.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
-            )
          integ-test.stage(verify-parameters, groovy.lang.Closure)
             integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])
             integ-test.script(groovy.lang.Closure)
