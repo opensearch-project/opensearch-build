@@ -1,10 +1,39 @@
-Release Notes 2.8.0
+# OpenSearch and OpenSearch Dashboards 2.8.0 Release Notes
+
+## Release Highlights
+OpenSearch 2.8.0 includes several new features and enhancements for your OpenSearch workloads. This release delivers new capabilities for observability, search, index management, and more, as well as updates to recently introduced features like segment replication and searchable snapshots. New experimental functionality brings search pipelines to OpenSearch for the first time.
 
 
-## BREAKING
+### New Features
+* Your can now query data across your OpenSearch clusters using PPL. Cross-cluster support for PPL queries lets you query data from any index or cluster across your domain boundaries from a single interface.
+* Common index management operations such as refresh, flush, and clear cache can now be applied from the index management user interface. 
+* Some index operations, like reindex, split, or shrink, can take a long time to complete. Now, you can set up automatic notifications to inform you when long-running index operations are finished.
+* Segment replication adds support for mixed cluster versions, simplifying upgrades to a new version of OpenSearch.
+* You now have the option to set segment replication as the default index replication strategy.
+* The searchable snapshots feature now defaults to the primary shard when querying indexes for better query latency. 
+* OpenSearch Dashboards now supports versions 14, 16, and 18 of Node.js, so you can choose which of these versions you wish to use with the application.
+* The k-nearest neighbors (k-NN) functionality is updated with optimizations for native memory allocations, offering stability improvements for large workloads.
+* Multiple data sources functionality gains support for Amazon OpenSearch Serverless with the SigV4 authorization type.
 
-## FEATURE
 
+### Experimental Features
+OpenSearch 2.8.0 introduces a new experimental feature. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+
+* New search pipelines functionality gives search application builders the tools to build a chain of search processors in an OpenSearch cluster to integrate components such as query rewriters and results rerankers. This release includes three built-in search processors: filter_query, rename_field, and script request. 
+
+
+## Release Details
+
+[OpenSearch and OpenSearch Dashboards 2.8.0](https://opensearch.org/versions/opensearch-2-8-0.html) includes the following feature, enhancement, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.8.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.8.0.md).
+
+Documentations [Release Notes](https://github.com/opensearch-project/documentation-website/blob/main/release-notes/opensearch-documentation-release-notes-2.8.0.md)
+
+
+## FEATURES
 
 ### Alerting
 * Integrate security-analytics & alerting for correlation engine. ([#878](https://github.com/opensearch-project/alerting/pull/878))
