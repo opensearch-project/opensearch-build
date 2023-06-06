@@ -5,7 +5,7 @@ OpenSearch 2.8.0 includes several new features and enhancements for your OpenSea
 
 
 ### New Features
-* Your can now query data across your OpenSearch clusters using PPL. Cross-cluster support for PPL queries lets you query data from any index or cluster across your domain boundaries from a single interface.
+* You can now query data across your OpenSearch clusters using PPL. Cross-cluster support for PPL queries lets you query data from any index or cluster across your domain boundaries from a single interface.
 * Common index management operations such as refresh, flush, and clear cache can now be applied from the index management user interface. 
 * Some index operations, like reindex, split, or shrink, can take a long time to complete. Now, you can set up automatic notifications to inform you when long-running index operations are finished.
 * Segment replication adds support for mixed cluster versions, simplifying upgrades to a new version of OpenSearch.
