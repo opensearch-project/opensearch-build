@@ -331,23 +331,23 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Added 2.8.0 release notes. ([#561](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/561))
 
 ### OpenSearch Alerting
-* Added 2.8 release notes. ([#939](https://github.com/opensearch-project/alerting/pull/939))
+* Added 2.8.0 release notes. ([#939](https://github.com/opensearch-project/alerting/pull/939))
 
 ### OpenSearch Anomaly Detection Dashboards
 * Updating maintainers and code owners ([#476](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/476))
 
 ### OpenSearch Common Utils
-* Added 2.8 release notes. ([#441](https://github.com/opensearch-project/common-utils/pull/441))
+* Added 2.8.0 release notes. ([#441](https://github.com/opensearch-project/common-utils/pull/441))
 
 ### OpenSearch Notifications Dashboards
-* Drafted 2.8 release notes. ([#52](https://github.com/opensearch-project/dashboards-notifications/pull/52))
+* Drafted 2.8.0 release notes. ([#52](https://github.com/opensearch-project/dashboards-notifications/pull/52))
 
 ### OpenSearch Index Management Dashboards
-* 2.8 release note ([#765](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/765))
+* 2.8.0 release note ([#765](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/765))
 
 
 ### OpenSearch Index Management
-* Added 2.8 release notes. ([#794](https://github.com/opensearch-project/index-management/pull/794))
+* Added 2.8.0 release notes. ([#794](https://github.com/opensearch-project/index-management/pull/794))
 
 
 
@@ -356,7 +356,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Security Analytics Dashboards
-* Added 2.8 release notes. ([#597](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/597))
+* Added 2.8.0 release notes. ([#597](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/597))
 
 ### OpenSearch Security Analytics
 * Added 2.8.0 release notes. ([#444](https://github.com/opensearch-project/security-analytics/pull/444))
@@ -403,34 +403,34 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Notifications Dashboards
-* Bumped version to 2.8. ([#40](https://github.com/opensearch-project/dashboards-notifications/pull/40))
+* Bumped version to 2.8.0. ([#40](https://github.com/opensearch-project/dashboards-notifications/pull/40))
 * Fix CI on Node.js v18. ([#56](https://github.com/opensearch-project/dashboards-notifications/pull/56))
 
 
 
 ### OpenSearch Query Workbench Dashboards
-* Increment version to 2.8.0.0 ([#67](https://github.com/opensearch-project/dashboards-query-workbench/pull/67))
+* Increment version to 2.8.0 ([#67](https://github.com/opensearch-project/dashboards-query-workbench/pull/67))
 
 ### OpenSearch Reporting Dashboards
-* Increment version to 2.8.0.0 ([#108](https://github.com/opensearch-project/dashboards-reporting/pull/108))
+* Increment version to 2.8.0 ([#108](https://github.com/opensearch-project/dashboards-reporting/pull/108))
 
 
 ### OpenSearch Gantt Charts
-* Increment version to 2.8.0.0 ([#182](https://github.com/opensearch-project/dashboards-visualizations/pull/182))
+* Increment version to 2.8.0 ([#182](https://github.com/opensearch-project/dashboards-visualizations/pull/182))
 
 
 ### OpenSearch Geospatial
 * Change package for Strings.hasText ([#314](https://github.com/opensearch-project/geospatial/pull/314))
 
 ### OpenSearch Index Management Dashboards
-* Bumped version to 2.8. ([#721](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/721))
+* Bumped version to 2.8.0. ([#721](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/721))
 * Fix CI on Node.js v18. ([#785](https://github.com/opensearch-project/index-management-dashboards-plugin/pull/785))
 
 
 
 ### OpenSearch Index Management
 * Upgrade to gradle 8.1.1. ([#777](https://github.com/opensearch-project/index-management/pull/777))
-* Bump version to 2.8. ([#759](https://github.com/opensearch-project/index-management/pull/759))
+* Bump version to 2.8.0. ([#759](https://github.com/opensearch-project/index-management/pull/759))
 
 
 
