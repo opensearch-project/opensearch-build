@@ -30,8 +30,6 @@ OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob
 
 OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/main/release-notes/opensearch-dashboards.release-notes-2.8.0.md).
 
-Documentations [Release Notes](https://github.com/opensearch-project/documentation-website/blob/main/release-notes/opensearch-documentation-release-notes-2.8.0.md)
-
 
 ## FEATURES
 
@@ -506,6 +504,11 @@ Documentations [Release Notes](https://github.com/opensearch-project/documentati
 
 
 ### OpenSearch ML Commons
-
 * Change mem_size_estimation to memory_size_estimation ([#868](https://github.com/opensearch-project/ml-commons/pull/868))
+
+## EXPERIMENTAL
+
+### OpenSearch ML Commons
+* Model access control. ([#928](https://github.com/opensearch-project/ml-commons/pull/928))
+
 
