@@ -16,7 +16,7 @@ on:
           - warning
           - debug
 jobs:
-  osd-plugin-version-increment:
+  plugin-version-increment-sync:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

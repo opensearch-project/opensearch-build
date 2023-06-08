@@ -7,7 +7,6 @@
 
 import os
 import unittest
-from typing import Any
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from manifests_workflow.input_manifests import InputManifests
@@ -129,17 +128,25 @@ class TestInputManifests(unittest.TestCase):
             f"TARGET_JOB_NAME=distribution-build-test;BUILD_PLATFORM=linux;BUILD_DISTRIBUTION=tar\n"
         )
 
-    def test_versionincrement_workflow(self) -> None:
+    def test_os_versionincrement_workflow(self) -> None:
         self.assertEqual(
-            InputManifests.versionincrement_workflow(),
-            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows", "increment-plugin-versions.yml"))
+            InputManifests.os_versionincrement_workflow(),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows", "os-increment-plugin-versions.yml"))
         )
+        self.assertTrue(os.path.exists(InputManifests.os_versionincrement_workflow()))
 
-    @patch("builtins.open", new_callable=mock_open)
+    def test_osd_versionincrement_workflow(self) -> None:
+        self.assertEqual(
+            InputManifests.osd_versionincrement_workflow(),
+            os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".github", "workflows", "osd-increment-plugin-versions.yml"))
+        )
+        self.assertTrue(os.path.exists(InputManifests.osd_versionincrement_workflow()))
+
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
-    def test_add_to_versionincrement_workflow(self, *mocks: Any) -> None:
+    def test_add_to_versionincrement_workflow(self, mock_add_to_versionincrement_workflow: MagicMock) -> None:
         input_manifests = InputManifests("test")
-        input_manifests.add_to_versionincrement_workflow('0.1.2')
+        input_manifests.add_to_versionincrement_workflow('1.0.0')
+        mock_add_to_versionincrement_workflow.assert_called_with("1.0.0")
 
     def test_create_manifest_with_components(self) -> None:
         pass
