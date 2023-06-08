@@ -23,7 +23,7 @@ class TestValidateArtifacts extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('4.1.1')
+                .defaultVersion('4.2.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -36,10 +36,10 @@ class TestValidateArtifacts extends BuildPipelineTest {
         binding.setVariable('BUILD_NUMBER', '123')
 
         binding.setVariable('VERSION', "2.3.0")
-        binding.setVariable('DISTRIBUTION', "docker tar rpm yum")
-        binding.setVariable('ARCHITECTURE', "x64 arm64")
         binding.setVariable('OS_BUILD_NUMBER', "6039")
         binding.setVariable('OSD_BUILD_NUMBER', "4104")
+        binding.setVariable('DISTRIBUTION', "docker tar rpm yum")
+        binding.setVariable('ARCHITECTURE', "x64 arm64")
         binding.setVariable('OPTIONAL_ARGS', "using-staging-artifact-only")
 
         helper.registerAllowedMethod('fileExists', [String.class], { args ->
@@ -58,6 +58,15 @@ class TestValidateArtifacts extends BuildPipelineTest {
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution rpm --arch x64'))
         assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution yum --arch arm64'))
 
+    }
+
+    @Test
+    public void testDockerArgs() {
+        binding.setVariable('OS_BUILD_NUMBER', "")
+        binding.setVariable('OSD_BUILD_NUMBER', "")
+        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        assertJobStatusFailure()
+        assertThat(getCommandExecutions('error', ''), hasItem('Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER args for Docker Validation'))
     }
 
     def getCommandExecutions(methodName, command) {

@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@4.1.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@4.2.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -33,35 +33,35 @@ pipeline {
     parameters {
         string(
             name: 'VERSION',
-            description: 'Enter the OpenSearch and OpenSearch Dashboards VERSION that needs to be validated',
+            description: 'Enter the OpenSearch and OpenSearch Dashboards version that needs to be validated',
             trim: true
         )
         string(
             name: 'DISTRIBUTION',
-            description: 'Enter the distribution type among [tar,rpm,yum,docker] default is set to All distributions',
+            description: 'Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum docker"',
             trim: true,
             defaultValue: "tar rpm yum docker"
 
         )
         string(
             name: 'ARCHITECTURE',
-            description: 'Enter the architecture type among x64 and arm64 default is set to [x64,arm64]',
+            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults "x64,arm64"',
             trim: true,
             defaultValue: "x64 arm64"
         )
         string(
             name: 'OS_BUILD_NUMBER',
-            description: 'Enter the build number for opensearch - This parameter is applicable only for Docker Validation',
+            description: 'Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation',
             trim: true,
         )
         string(
             name: 'OSD_BUILD_NUMBER',
-            description: 'Enter the build number for opensearch Dashboards - This parameter is applicable only for Docker Validation',
+            description: 'Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation',
             trim: true,
         )
         string(
             name: 'OPTIONAL_ARGS',
-            description: 'Choose among validate-digest-only or using-staging-artifact-only [Optional]',
+            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only',
             trim: true,
             defaultValue: "using-staging-artifact-only"
         )
@@ -75,11 +75,12 @@ pipeline {
                 script {
                     if (VERSION == '') {
                         currentBuild.result = 'ABORTED'
-                        error('Provide version number for the artifacts')
+                        error('VERSION cannot be empty. Please provide version of the artifacts to validate')
                     }
-                    if (params.DISTRIBUTION.contains('docker') && (params.OS_BUILD_NUMBER == '' || params.OSD_BUILD_NUMBER == '')) {
+
+                    if (params.DISTRIBUTION.contains('docker') && (OS_BUILD_NUMBER == '' || OSD_BUILD_NUMBER == '')) {
                         currentBuild.result = 'ABORTED'
-                        error("Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER for Docker Validation")
+                        error("Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER args for Docker Validation")
                     }
                 }
             }
