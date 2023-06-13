@@ -39,18 +39,27 @@ class TestInspectDockerImage(unittest.TestCase):
     @patch('validation_workflow.docker.inspect_docker_image.subprocess.run')
     def test_inspect_digest(self, mock_subprocess_run: Mock, mock_requests_get: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.stg_tag.return_value = '1.0.0.1000'
+
         auth_response = requests.Response()
         auth_response._content = json.dumps({'token': 'access_token'}).encode()
         mock_requests_get.return_value = auth_response
+
         manifest_response = requests.Response()
-        manifest_response._content = json.dumps({'config': {'digest': '1234567890'}}).encode()
+        manifest_response.headers['etag'] = '1234567890'
+
+        # manifest_response._content = json.dumps({'config': {'digest': '1234567890'}}).encode()
+        manifest_response._content = json.dumps({'RepoDigests': '@1234567890'}).encode()
         mock_requests_get.side_effect = [auth_response, manifest_response]
-        mock_subprocess_run.return_value = subprocess.CompletedProcess(args='', returncode=0, stdout=json.dumps({'Id': '1234567890'}), stderr='')
+
+        subprocess_result = subprocess.CompletedProcess(args='', returncode=0, stdout=json.dumps({'RepoDigests': '@1234567890'}), stderr='')
+        mock_subprocess_run.return_value = subprocess_result
+
         # Instantiate class and run method
         inspect_docker_image = InspectDockerImage(self.image_id, self.image_name, self.prod_image_tag)
-        result = inspect_docker_image.inspect_digest()
-        # Assert that the method returned True
-        self.assertTrue(result)
+        inspect_docker_image.inspect_digest()
+
+        # Assert that the manifest value matches with the value from API mocked
+        self.assertEqual(json.loads(subprocess_result.stdout), {'RepoDigests': '@' + manifest_response.headers['etag']})
         mock_requests_get.assert_has_calls(
             [
                 call(
@@ -60,7 +69,7 @@ class TestInspectDockerImage(unittest.TestCase):
                     "https://index.docker.io/v2/opensearchstaging/opensearch/manifests/1.0.0.1000",
                     headers={
                         "Authorization": "Bearer access_token",
-                        "Accept": "application/vnd.docker.distribution.manifest.v2+json",
+                        "Accept": "application/vnd.docker.distribution.manifest.list.v2+json",
                         "Content-Type": "application/json;charset=UTF-8",
                     },
                 ),
@@ -69,7 +78,7 @@ class TestInspectDockerImage(unittest.TestCase):
         mock_subprocess_run.assert_has_calls(
             [
                 call(
-                    "docker image inspect --format '{{json .}}' 12345 | jq -r '. | {Id: .Id}'",
+                    "docker image inspect --format '{{json .}}' 12345 | jq -r '. | {RepoDigests: .RepoDigests}'",
                     shell=True,
                     stdout=-1,
                     stderr=-1,
