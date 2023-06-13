@@ -58,7 +58,7 @@ class TestInspectDockerImage(unittest.TestCase):
         inspect_docker_image = InspectDockerImage(self.image_id, self.image_name, self.prod_image_tag)
         inspect_docker_image.inspect_digest()
 
-        # Assert that the manifest value matches with the value from API mocked 
+        # Assert that the manifest value matches with the value from API mocked
         self.assertEqual(json.loads(subprocess_result.stdout), {'RepoDigests': '@' + manifest_response.headers['etag']})
         mock_requests_get.assert_has_calls(
             [
