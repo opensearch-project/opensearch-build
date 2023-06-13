@@ -57,7 +57,7 @@ class InspectDockerImage:
         logging.info(f'{dockerHub_repo_digest} <-- DockerHub image repon digest {self.image_name.replace("opensearchproject", "opensearchstaging")}:{self.image_tag}')
 
         logging.info('Fetching mainfest from local')
-        local_inspect = f"docker image inspect --format '{{{{json .}}}}' {self.image_id} | jq -r '. | {{RepoDigests: .RepoDigests}}'"      
+        local_inspect = f"docker image inspect --format '{{{{json .}}}}' {self.image_id} | jq -r '. | {{RepoDigests: .RepoDigests}}'"
         result = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         response_dict = json.loads(result.stdout)
         local_image_digests = response_dict['RepoDigests']

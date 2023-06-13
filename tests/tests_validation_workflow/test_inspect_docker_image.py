@@ -46,6 +46,7 @@ class TestInspectDockerImage(unittest.TestCase):
 
         manifest_response = requests.Response()
         manifest_response.headers['etag'] = '1234567890'
+
         # manifest_response._content = json.dumps({'config': {'digest': '1234567890'}}).encode()
         manifest_response._content = json.dumps({'RepoDigests': '@1234567890'}).encode()
         mock_requests_get.side_effect = [auth_response, manifest_response]
