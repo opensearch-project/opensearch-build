@@ -16,11 +16,6 @@ FROM centos:7
 # Ensure localedef running correct with root permission
 USER 0
 
-# Setup ENV to prevent ASCII data issues with Python3
-RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
-    echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
-    localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || echo set locale
-
 # Add normal dependencies
 RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     yum install epel-release -y && \
@@ -37,7 +32,7 @@ RUN groupadd -g 1000 opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
 
-# Add Python37 dependencies
+# Add Python dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies
@@ -69,18 +64,22 @@ ENV GEM_HOME=/usr/share/opensearch/.gem
 ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
-# Install Python37 binary
-RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
-    cd Python-3.7.7 && \
+# Install Python binary
+RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
+    cd Python-3.9.17 && \
     ./configure --enable-optimizations && \
     make altinstall -j $(( `nproc` / 2 ))
 
-# Setup Python37 links
-RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
-    pip3 install pipenv && pipenv --version
+# Setup Python links
+RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/local/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
+
+# Preparation for awscliv2
+#RUN pip3 install git+https://github.com/aws/aws-cli.git@2.11.17
+#ENV AWS_CLI_FILE_ENCODING=UTF-8
 
 # Upgrade gcc8
 # The setup part is partially based on Austin Dewey's article:
