@@ -10,7 +10,7 @@ from typing import Optional
 from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class TestRunManifest(ComponentManifest['TestManifest', 'TestComponents']):
+class TestRunManifest(ComponentManifest['TestRunManifest', 'TestComponents']):
     """
     TestRunManifest contains the test support matrix for any component.
 
@@ -95,8 +95,7 @@ class TestRunManifest(ComponentManifest['TestManifest', 'TestComponents']):
                 self.test_id = data["TestID"]
 
         def __to_dict__(self) -> Optional[dict]:
-            if (self.command and self.test_type and self.test_manifest and self.distribution_manifest and
-                self.test_id) is None:
+            if (self.command and self.test_type and self.test_manifest and self.distribution_manifest and self.test_id) is None:
                 return None
             else:
                 return {
@@ -119,9 +118,6 @@ class TestComponent(Component):
         super().__init__(data)
         self.command = data["command"]
         self.configs = self.TestComponentConfigs(data.get("configs", None))
-        # self.integ_test = data.get("integ-test", None)
-        # self.bwc_test = data.get("bwc-test", None)
-        # self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
@@ -130,17 +126,14 @@ class TestComponent(Component):
             "configs": self.configs.__to_list__()
         }
 
-
     class TestComponentConfigs:
         def __init__(self, data: list) -> None:
             self.configs = []
             for config in data:
                 self.configs.append(self.TestComponentConfig(config).__to_dict__())
 
-
-        def __to_list__(self):
+        def __to_list__(self) -> list:
             return self.configs
-
 
         class TestComponentConfig:
             def __init__(self, data: dict) -> None:
@@ -148,7 +141,7 @@ class TestComponent(Component):
                 self.status = data["status"]
                 self.yml = data["yml"]
 
-            def __to_dict__(self):
+            def __to_dict__(self) -> dict:
                 return {
                     "name": self.name,
                     "status": self.status,

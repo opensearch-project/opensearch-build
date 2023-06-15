@@ -9,9 +9,7 @@
 
 import argparse
 import logging
-from typing import List
 
-from test_workflow.test_args_path_validator import TestArgsPathValidator
 from test_workflow.test_kwargs import TestKwargs
 
 
@@ -19,21 +17,20 @@ class ReportArgs:
     test_run_id: str
     keep: bool
     test_manifest_path: str
-    artifact_paths: str
+    artifact_paths: dict
     test_type: str
     logging_level: int
 
     def __init__(self) -> None:
-        parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-        parser.add_argument("test_manifest_path", type=TestArgsPathValidator.validate,
-                            help="Specify a test manifest path.")
+        parser = argparse.ArgumentParser(description="Report for test on OpenSearch Bundle")
+        parser.add_argument("test_manifest_path", type=str, help="Specify a test manifest path.")
         parser.add_argument("-p", "--artifact-paths", nargs='*', action=TestKwargs, default={},
                             help="Specify aritfacts paths for OpenSearch and OpenSearch Dashboards.")
         # e.g. --base-path https://ci.opensearch.org/ci/dbc/integ-test/2.7.0/7771/linux/x64/tar/test-results/1234<test-run-id>/integ-test use more to save arguments number
         parser.add_argument("--base-path", type=str, default="",
                             help="Specify base paths for the integration test logs.")
-        # integ-test
-        parser.add_argument("--test-type", type=str, default="", help="Specify test type of this.")
+        parser.add_argument("--test-type", type=str, default="integ-test", help="Specify test type of this.")
+        parser.add_argument("--output-path", type=str, help="Specify the path location for the test-run manifest.")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, dest="components", nargs='*', help="Test a specific component or components instead of the entire distribution.")
         parser.add_argument(
@@ -41,10 +38,11 @@ class ReportArgs:
         )
 
         args = parser.parse_args()
-        self.test_run_id = args.test_run_id  # or uuid.uuid4().hex
+        self.test_run_id = args.test_run_id
         self.logging_level = args.logging_level
         self.test_manifest_path = args.test_manifest_path
         self.artifact_paths = args.artifact_paths
         self.base_path = args.base_path
         self.test_type = args.test_type
         self.components = args.components
+        self.output_path = args.output_path
