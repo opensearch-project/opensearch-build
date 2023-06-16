@@ -6,7 +6,7 @@ build:
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2
-    args: -e JAVA_HOME=/opt/java/openjdk-17
+    args: -e JAVA_HOME=/opt/java/openjdk-20
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
@@ -41,7 +41,7 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: dashboards-reports
+  - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
     ref: main
     platforms:
@@ -147,11 +147,3 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
-  - name: performance-analyzer
-    repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: main
-    platforms:
-      - linux
-    checks:
-      - gradle:properties:version
-      - gradle:dependencies:opensearch.version

@@ -30,7 +30,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.assertEqual(mock_check_call.call_count, 1)
             self.assertEqual(self.benchmark_test_suite.command,
                              'docker run --rm opensearchproject/opensearch-benchmark:latest execute-test --workload=nyc_taxis '
-                             '--pipeline=benchmark-only --target-hosts=abc.com')
+                             '--pipeline=benchmark-only --target-hosts=abc.com --client-options="timeout:300"')
 
     def test_execute_security_enabled(self) -> None:
         benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, args=self.args)
@@ -40,7 +40,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             self.assertEqual(benchmark_test_suite.command,
                              'docker run --rm opensearchproject/opensearch-benchmark:latest execute-test '
                              '--workload=nyc_taxis --pipeline=benchmark-only '
-                             '--target-hosts=abc.com --client-options="use_ssl:true,'
+                             '--target-hosts=abc.com --client-options="timeout:300,use_ssl:true,'
                              'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
 
     def test_execute_default_with_optional_args(self) -> None:
@@ -54,4 +54,4 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                                 '--workload=nyc_taxis '
                                                                 '--pipeline=benchmark-only --target-hosts=abc.com '
                                                                 '--workload-params "number_of_replicas:1" '
-                                                                '--user-tag="key1:value1,key2:value2" --telemetry node-stats')
+                                                                '--user-tag="key1:value1,key2:value2" --telemetry node-stats --client-options="timeout:300"')

@@ -50,6 +50,11 @@ class ServiceOpenSearchDashboards(Service):
 
         self.__set_logging_dest()
 
+        # Newer version of NodeJS (16/18) might introduced bug when running test against localhost using cypress
+        # https://github.com/cypress-io/github-action/issues/811
+        # Temporarily set these additional configs to resolve the issue
+        self.additional_config["server.host"] = '0.0.0.0'
+
         if self.additional_config:
             self.__add_plugin_specific_config(self.additional_config)
 

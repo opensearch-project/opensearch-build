@@ -14,11 +14,11 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 1 * * * %INPUT_MANIFEST=2.8.0/opensearch-dashboards-2.8.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 1 * * * %INPUT_MANIFEST=2.7.1/opensearch-dashboards-2.7.1.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 1 * * * %INPUT_MANIFEST=2.7.1/opensearch-2.7.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
-            H 1 * * * %INPUT_MANIFEST=2.8.0/opensearch-2.8.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 1 * * * %INPUT_MANIFEST=2.9.0/opensearch-2.9.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H 1 * * * %INPUT_MANIFEST=2.8.1/opensearch-2.8.1.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=1.4.0/opensearch-1.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm zip
+            H/60 * * * * %INPUT_MANIFEST=1.3.11/opensearch-1.3.11.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
+            H/60 * * * * %INPUT_MANIFEST=1.3.11/opensearch-dashboards-1.3.11.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=1.4.0/opensearch-dashboards-1.4.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm zip
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-3.0.0.yml;TEST_MANIFEST=3.0.0/opensearch-3.0.0-test.yml;TARGET_JOB_NAME=distribution-build-opensearch;BUILD_PLATFORM=linux macos windows;BUILD_DISTRIBUTION=tar rpm deb zip
             H 1 * * * %INPUT_MANIFEST=3.0.0/opensearch-dashboards-3.0.0.yml;TARGET_JOB_NAME=distribution-build-opensearch-dashboards;BUILD_PLATFORM=linux windows;BUILD_DISTRIBUTION=tar rpm deb zip

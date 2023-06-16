@@ -16,7 +16,7 @@ on:
           - warning
           - debug
 jobs:
-  osd-plugin-version-increment:
+  plugin-version-increment-sync:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -39,8 +39,9 @@ jobs:
         branch:
           - '1.3'
           - 2.x
-          - '2.7'
+          - '2.8'
           - main
+          - '2.9'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3

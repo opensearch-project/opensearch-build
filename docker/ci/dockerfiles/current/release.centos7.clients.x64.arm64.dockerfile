@@ -18,17 +18,12 @@ ARG MAVEN_DIR=/usr/local/apache-maven
 # Ensure localedef running correct with root permission
 USER 0
 
-# Setup ENV to prevent ASCII data issues with Python3
-RUN echo "export LC_ALL=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
-    echo "export LANG=en_US.utf-8" >> /etc/profile.d/python3_ascii.sh && \
-    localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || echo set locale
-
 # Add normal dependencies
 RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     yum update -y && \
     yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh epel-release
 
-# Add Python37 dependencies
+# Add Python dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Yarn dependencies
@@ -46,11 +41,11 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
     ln -sfn /lib64/libstdc++.so.6.0.29 /lib64/libstdc++.so.6 && \
     echo "Installing glibc 2.18" && \
     curl -SLO https://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz && tar -xzvf glibc-2.18.tar.gz && cd glibc-2.18 && mkdir -p build && cd build && \
-    ../configure --prefix=/usr && make && make install && cd ../../ && \
+    ../configure --prefix=/usr && make -j $(( `nproc` / 2 )) && make install && cd ../../ && \
     echo "Installing libicu 53+" && \
     rpm -e --nodeps libicu && \
     curl -SLO https://github.com/unicode-org/icu/releases/download/release-53-2/icu4c-53_2-src.tgz && tar -xzvf icu4c-53_2-src.tgz && cd icu && \
-    cd source && ./configure --prefix=/usr && make && make install && \
+    cd source && ./configure --prefix=/usr && make -j $(( `nproc` / 2 )) && make install && \
     cd ../../../ && rm -rf aarch64-builds; fi
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
@@ -76,28 +71,28 @@ RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Installing Python37 binary
-RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
-    cd Python-3.7.7 && \
+# Installing Python binary
+RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
+    cd Python-3.9.17 && \
     ./configure --enable-optimizations && \
-    make altinstall
+    make altinstall -j $(( `nproc` / 2 ))
 
-# Setup Python37 links
-RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3 && \
-    pip3 install pipenv && pipenv --version && pip install --upgrade pip
+# Setup Python links
+RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/local/bin/pip && \
+    ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
 
-# Installing twine
-RUN pip3 install twine cmake==3.24.1.1
+# Installing pip packages
+RUN pip3 install twine==4.0.2 cmake==3.24.1.1
 
 # Installing openssl1.1.1
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
 RUN yum install -y curl libcurl-devel libfaketime perl-core pcre-devel && yum remove -y openssl-devel && yum clean all && \
     mkdir -p /tmp/openssl && cd /tmp/openssl && \
     curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
-    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
+    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make -j $(( `nproc` / 2 )) && make install && \
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
 
 # Installing osslsigncode

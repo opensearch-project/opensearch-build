@@ -85,8 +85,9 @@ USER 0
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install python37 dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y
+# Install python37 dependencies and chromium dependencies
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y && \
+    add-apt-repository ppa:saiarcot895/chromium-beta -y
 
 # Install python37 binaries
 RUN apt-get update -y && apt-get install python3 && \

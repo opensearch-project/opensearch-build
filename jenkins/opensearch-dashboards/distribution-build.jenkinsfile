@@ -189,7 +189,7 @@ pipeline {
                                 distribution: 'tar'
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
+                            String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -495,7 +495,7 @@ pipeline {
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                                    String buildManifestUrlOpenSearch = buildManifestObj.getUrl(JOB_NAME_OPENSEARCH, "latest")
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
                                     echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"

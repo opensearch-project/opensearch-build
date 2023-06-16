@@ -48,20 +48,21 @@ class InspectDockerImage:
         # set up all necessary token ( if you use VPN, it may slow down the response from dockerHub )
         headersToken = {
             "Authorization": f'{self.access_type} {access_token}',
-            "Accept": "application/vnd.docker.distribution.manifest.v2+json",
+            "Accept": "application/vnd.docker.distribution.manifest.list.v2+json",
             "Content-Type": "application/json;charset=UTF-8"
         }
 
         x = requests.get(api_url, headers=headersToken)
-        response_dict = json.loads(x.text)
-        dockerHub_image_digest = response_dict['config']['digest']
-        logging.info(f'{dockerHub_image_digest} <-- DockerHub image digest {self.image_name.replace("opensearchproject", "opensearchstaging")}:{self.image_tag}')
+        dockerHub_repo_digest = x.headers.get('etag')
+        logging.info(f'{dockerHub_repo_digest} <-- DockerHub image repon digest {self.image_name.replace("opensearchproject", "opensearchstaging")}:{self.image_tag}')
 
         logging.info('Fetching mainfest from local')
-        local_inspect = f"docker image inspect --format '{{{{json .}}}}' {self.image_id} | jq -r '. | {{Id: .Id}}'"
+        local_inspect = f"docker image inspect --format '{{{{json .}}}}' {self.image_id} | jq -r '. | {{RepoDigests: .RepoDigests}}'"
         result = subprocess.run(local_inspect, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         response_dict = json.loads(result.stdout)
-        local_image_digest = response_dict['Id']
-        logging.info(f'{local_image_digest} <-- local image digest {self.image_name}:{self.prod_image_tag}')
+        local_image_digests = response_dict['RepoDigests']
+        local_image_digest = local_image_digests[0].split("@")[1]
+        formatted_local_image_digest = f'"{local_image_digest}"'
+        logging.info(f'{formatted_local_image_digest} <-- local image repo digest {self.image_name}:{self.prod_image_tag}')
 
-        return True if (local_image_digest == dockerHub_image_digest) else False
+        return True if (formatted_local_image_digest == dockerHub_repo_digest) else False

@@ -80,13 +80,19 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
     def __setup_cluster_and_execute_test_config(self, config: str) -> int:
         security = self.is_security_enabled(config)
+        if "additional-cluster-configs" in self.test_config.integ_test.keys():
+            self.additional_cluster_config = self.test_config.integ_test.get("additional-cluster-configs")
+            logging.info(f"Additional config found: {self.additional_cluster_config}")
+
+        if self.additional_cluster_config is None:
+            self.additional_cluster_config = {}
 
         with LocalTestClusterOpenSearchDashboards.create(
             self.dependency_installer,
             self.dependency_installer_opensearch_dashboards,
             self.work_dir,
             self.component.name,
-            {},
+            self.additional_cluster_config,
             self.bundle_manifest,
             self.bundle_manifest_opensearch_dashboards,
             security,
