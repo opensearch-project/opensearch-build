@@ -54,7 +54,7 @@ ENV JAVA_HOME=/opt/java/openjdk-11
 ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
-# 2023-06-20 Upgrade from 0.6.3 to 0.9.1 due to binary translation issues to build arm64 from x64 multi-arch image on Python 3.9
+# 2023-06-20 Upgrade from 0.6.3 to 0.9.1 due to binary translation speedup in emulation mode during multi-arch image generation
 # https://github.com/docker/buildx/releases/tag/v0.9.1
 # Avoid upgrading to 0.10.0+ due to this change:
 #   Buildx v0.10 enables support for a minimal SLSA Provenance attestation, which requires support for OCI-compliant multi-platform images.
