@@ -3,7 +3,7 @@
       packer-build.library({identifier=jenkins@2.2.0, retriever=null})
       packer-build.pipeline(groovy.lang.Closure)
          packer-build.timeout({time=4, unit=HOURS})
-         packer-build.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.6.3-qemu5.0-awscli1.22-jdk11-v2, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         packer-build.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          packer-build.stage(Parameters Check, groovy.lang.Closure)
             packer-build.script(groovy.lang.Closure)
          packer-build.stage(packer-build, groovy.lang.Closure)
