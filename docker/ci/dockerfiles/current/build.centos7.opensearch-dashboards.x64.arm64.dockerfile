@@ -96,7 +96,7 @@ USER 1000
 WORKDIR /usr/share/opensearch
 
 # Install fpm for opensearch dashboards core
-#RUN gem install fpm -v 1.14.2
+RUN gem install fpm -v 1.14.2
 ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 
 # Hard code node version and yarn version for now
