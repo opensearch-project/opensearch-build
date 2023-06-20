@@ -77,7 +77,7 @@ ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
     cd Python-3.9.17 && \
     ./configure --enable-optimizations && \
-    make altinstall -j $(( `nproc` / 2 ))
+    make altinstall
 
 # Setup Python links
 RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \

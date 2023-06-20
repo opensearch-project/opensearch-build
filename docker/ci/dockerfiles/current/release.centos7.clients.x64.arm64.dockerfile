@@ -41,11 +41,11 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
     ln -sfn /lib64/libstdc++.so.6.0.29 /lib64/libstdc++.so.6 && \
     echo "Installing glibc 2.18" && \
     curl -SLO https://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz && tar -xzvf glibc-2.18.tar.gz && cd glibc-2.18 && mkdir -p build && cd build && \
-    ../configure --prefix=/usr && make -j $(( `nproc` / 2 )) && make install && cd ../../ && \
+    ../configure --prefix=/usr && make && make install && cd ../../ && \
     echo "Installing libicu 53+" && \
     rpm -e --nodeps libicu && \
     curl -SLO https://github.com/unicode-org/icu/releases/download/release-53-2/icu4c-53_2-src.tgz && tar -xzvf icu4c-53_2-src.tgz && cd icu && \
-    cd source && ./configure --prefix=/usr && make -j $(( `nproc` / 2 )) && make install && \
+    cd source && ./configure --prefix=/usr && make && make install && \
     cd ../../../ && rm -rf aarch64-builds; fi
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
@@ -75,7 +75,7 @@ RUN chmod -R 777 /dev/shm
 RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
     cd Python-3.9.17 && \
     ./configure --enable-optimizations && \
-    make altinstall -j $(( `nproc` / 2 ))
+    make altinstall
 
 # Setup Python links
 RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
@@ -92,7 +92,7 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib
 RUN yum install -y curl libcurl-devel libfaketime perl-core pcre-devel && yum remove -y openssl-devel && yum clean all && \
     mkdir -p /tmp/openssl && cd /tmp/openssl && \
     curl -sSL -o- https://www.openssl.org/source/openssl-1.1.1g.tar.gz | tar -xz --strip-components 1 && \
-    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make -j $(( `nproc` / 2 )) && make install && \
+    ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic && make && make install && \
     echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64:/usr/lib" > /etc/profile.d/openssl.sh && openssl version
 
 # Installing osslsigncode
