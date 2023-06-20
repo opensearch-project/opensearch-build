@@ -56,7 +56,7 @@ RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
 SHELL ["/bin/bash", "-lc"]
 
 # Install ruby / rpm / fpm related dependencies
-RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
+#RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && yum install -y rpm-build createrepo && yum clean all
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
@@ -65,8 +65,8 @@ ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
 # Install Python binary
-RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
-    cd Python-3.9.17 && \
+RUN curl https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz | tar xzvf - && \
+    cd Python-3.9.7 && \
     ./configure --enable-optimizations && \
     make altinstall
 
@@ -96,7 +96,7 @@ USER 1000
 WORKDIR /usr/share/opensearch
 
 # Install fpm for opensearch dashboards core
-RUN gem install fpm -v 1.14.2
+#RUN gem install fpm -v 1.14.2
 ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
 
 # Hard code node version and yarn version for now
@@ -120,4 +120,4 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN node -v
 RUN npm -v
 RUN yarn -v
-RUN fpm -v
+#RUN fpm -v
