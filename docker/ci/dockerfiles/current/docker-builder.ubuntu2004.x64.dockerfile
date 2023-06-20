@@ -54,9 +54,14 @@ ENV JAVA_HOME=/opt/java/openjdk-11
 ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Install docker buildx
-# Stays on 0.6.3 as that is the stable version we used since the introduction of OpenSearch Multi-Arch Docker Images
+# 2023-06-20 Upgrade from 0.6.3 to 0.9.1 due to binary translation speedup in emulation mode during multi-arch image generation
+# https://github.com/docker/buildx/releases/tag/v0.9.1
+# Avoid upgrading to 0.10.0+ due to this change:
+#   Buildx v0.10 enables support for a minimal SLSA Provenance attestation, which requires support for OCI-compliant multi-platform images.
+#   This may introduce issues with registry and runtime support (e.g. Google Cloud Run and Lambda).
+#   You can optionally disable the default provenance attestation functionality using --provenance=false.
 RUN mkdir -p ~/.docker/cli-plugins && \
-    curl -SL https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx  && \
+    curl -SL https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx  && \
     chmod 775 ~/.docker/cli-plugins/docker-buildx && \
     docker buildx version
 
