@@ -65,8 +65,8 @@ ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
 # Install Python binary
-RUN curl https://www.python.org/ftp/python/3.9.17/Python-3.9.17.tgz | tar xzvf - && \
-    cd Python-3.9.17 && \
+RUN curl https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz | tar xzvf - && \
+    cd Python-3.9.7 && \
     ./configure --enable-optimizations && \
     make altinstall
 
