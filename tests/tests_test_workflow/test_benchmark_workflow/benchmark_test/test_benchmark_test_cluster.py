@@ -79,6 +79,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.single_node = False
         self.args.use_50_percent_heap = True
+        self.args.enable_remote_store = True
         TestBenchmarkTestCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -89,3 +90,4 @@ class TestBenchmarkTestCluster(unittest.TestCase):
 
         self.assertTrue("singleNodeCluster=false" in self.benchmark_test_cluster.params)
         self.assertTrue("use50PercentHeap=true" in self.benchmark_test_cluster.params)
+        self.assertTrue("enableRemoteStore=true" in self.benchmark_test_cluster.params)
