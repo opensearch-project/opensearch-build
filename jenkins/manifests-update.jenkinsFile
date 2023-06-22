@@ -12,7 +12,7 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2'
+                    image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
                     args '-e JAVA_HOME=/opt/java/openjdk-11'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
