@@ -71,6 +71,7 @@ jobs:
       - name: Bootstrap and Version Increment
         run: |
           DASHBOARD_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').version")
+          echo "DASHBOARD_VERSION=$DASHBOARD_VERSION" >> $GITHUB_ENV
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           if [ ${{ matrix.entry.path }} ]; then
               yarn osd bootstrap
@@ -101,6 +102,36 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: 22958780
+      - name: Check if label exists
+        id: check_label
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.github_app_token.outputs.token }}
+          result-encoding: string
+          script: |
+            const { data: labels } = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: "${{ matrix.entry.repo }}",
+              per_page: 100
+            });
+            const labelFound = labels.some(label => label.name === 'v${{ env.DASHBOARD_VERSION }}');
+            console.log(labelFound);
+            return labelFound
+      - name: Create label
+        if: ${{ steps.check_label.outputs.result != 'true' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.github_app_token.outputs.token }}
+          script: |
+            const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+            const newLabel = {
+              owner: context.repo.owner,
+              repo: "${{ matrix.entry.repo }}",
+              name: "v${{ env.DASHBOARD_VERSION }}",
+              color: randomColor,
+              description: "v${{ env.DASHBOARD_VERSION }}"
+            };
+            await github.rest.issues.createLabel(newLabel);
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v5
@@ -115,6 +146,8 @@ jobs:
           delete-branch: true
           branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
           title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
+          labels: |
+            v${{ env.DASHBOARD_VERSION }}
           body: |
             - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
           path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
