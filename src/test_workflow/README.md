@@ -115,7 +115,7 @@ opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opense
 The BWC tests running on distribution level are using the same framework from OpenSearch. The test cluster is spin up with the `latest` distribution bundle of provided version exclusively when the project is initialized with property `-PcustomDistributionDownloadType=bundle`. In this repo, the test workflow will be enable this gradle property by default.[BWC test script](https://github.com/opensearch-project/opensearch-build/blob/edffab782abf96390b3993ccc92425c63ab77884/scripts/default/bwctest.sh#L38)
 
 Example distribution bundle URL: `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.2/latest/linux/x64/tar/dist/opensearch/opensearch-1.3.2-linux-x64.tar.gz`
-This URL pattern starts to be supported as far as `v1.3.2` so The distribution bundle set up in the test cluster can be all versions after version `v1.3.2`. 
+This feature for BWC testing is supported for distribution versions starting `v1.3.2`.
 
 On CI level for plugins, security certificates need to be manually imported when spinning up the test cluster as security plugin is included in the distribution bundle. When upgrading the version within the test cluster, `nextNodeToNextVersion` is used for a single node upgrade and `goToNextVersion` is for a full restart upgrade.
 
