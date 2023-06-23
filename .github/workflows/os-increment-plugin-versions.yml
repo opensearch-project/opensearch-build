@@ -94,24 +94,28 @@ jobs:
           script: |
             const labelName = "v${{ env.OPENSEARCH_VERSION_NUMBER }}";
             let labelFound = false;
-            const label = await github.rest.issues.getLabel({
-              owner: context.repo.owner,
-              repo: "${{ matrix.entry.repo }}",
-              name: labelName
-            });
-            if (label) {
-              labelFound = true;
-            } else {
-              const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-              const newLabel = {
+            try {
+              const label = await github.rest.issues.getLabel({
                 owner: context.repo.owner,
                 repo: "${{ matrix.entry.repo }}",
-                name: labelName,
-                color: randomColor,
-                description: labelName
-              };
-              await github.rest.issues.createLabel(newLabel);
+                name: labelName
+              });
               labelFound = true;
+            } catch (error) {
+              if (error.status === 404) {
+                const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+                const newLabel = {
+                  owner: context.repo.owner,
+                  repo: "${{ matrix.entry.repo }}",
+                  name: labelName,
+                  color: randomColor,
+                  description: 'Label description'
+                };
+                await github.rest.issues.createLabel(newLabel);
+                labelFound = true;
+              } else {
+                throw error;
+              }
             }
             console.log(labelFound);
             return labelFound
