@@ -122,7 +122,7 @@ jobs:
               const randomColor = Math.floor(Math.random() * 16777215).toString(16);
               const newLabel = {
                 owner: context.repo.owner,
-                repo: context.repo.repo,
+                repo: "${{ matrix.entry.repo }}",
                 name: labelName,
                 color: randomColor,
                 description: labelName
