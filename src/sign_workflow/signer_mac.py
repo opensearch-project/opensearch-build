@@ -41,8 +41,8 @@ class SignerMac(Signer):
             "-o",
             signed_filename,
             "-p",
-            "mac"
-            " -r",
+            "mac",
+            "-r",
             str(self.overwrite)
         ]
         self.git_repo.execute(" ".join(signing_cmd))

@@ -15,9 +15,9 @@ from sign_workflow.signer_mac import SignerMac
 
 
 class TestSignerMac(unittest.TestCase):
-
+    @patch("platform.system", return_value='Darwin')
     @patch("sign_workflow.signer.GitRepository")
-    def test_accepted_file_types(self, git_repo: Mock) -> None:
+    def test_accepted_file_types(self, git_repo: Mock, platform_moc: Mock) -> None:
         artifacts = [
             "bad-xml.xml",
             "the-dmg.dmg",
@@ -40,9 +40,10 @@ class TestSignerMac(unittest.TestCase):
         self.assertEqual(signer.sign.call_args_list, expected)
 
     @patch("sign_workflow.signer.GitRepository")
+    @patch("platform.system", return_value='Darwin')
     @patch('os.rename')
     @patch('os.mkdir')
-    def test_signer_sign(self, mock_os_mkdir: Mock, mock_os_rename: Mock, mock_repo: Mock) -> None:
+    def test_signer_sign(self, mock_os_mkdir: Mock, mock_os_rename: Mock, platform_moc: Mock, mock_repo: Mock) -> None:
         signer = SignerMac(False)
         signer.sign("the-pkg.pkg", Path("/path/"), "null")
         command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"),
@@ -51,8 +52,9 @@ class TestSignerMac(unittest.TestCase):
         mock_repo.assert_has_calls(
             [call().execute(command)])
 
+    @patch("platform.system", return_value='Darwin')
     @patch("sign_workflow.signer.GitRepository")
-    def test_sign_command_for_overwrite(self, mock_repo: Mock) -> None:
+    def test_sign_command_for_overwrite(self, mock_repo: Mock, platform_moc: Mock) -> None:
         signer = SignerMac(True)
         signer.sign("the-pkg.pkg", Path("/path/"), 'null')
         command = "./opensearch-signer-client -i " + os.path.join(Path("/path/"),
@@ -61,14 +63,16 @@ class TestSignerMac(unittest.TestCase):
         mock_repo.assert_has_calls(
             [call().execute(command)])
 
+    @patch("platform.system", return_value='Darwin')
     @patch("sign_workflow.signer.GitRepository")
-    def test_signer_verify(self, mock_repo: Mock) -> None:
+    def test_signer_verify(self, mock_repo: Mock, platform_moc: Mock) -> None:
         signer = SignerMac(True)
         signer.verify("/path/the-pkg.pkg")
         mock_repo.assert_has_calls([call().execute('pkgutil --check-signature /path/the-pkg.pkg')])
 
     @patch("platform.system", return_value='Linux')
-    def test_signer_invalid_os(self, mock_system: Mock) -> None:
+    @patch("sign_workflow.signer.GitRepository")
+    def test_signer_invalid_os(self, mock_repo: Mock, platform_moc: Mock) -> None:
         with self.assertRaises(OSError) as ctx:
             signer = SignerMac(True)
             signer.verify("/path/the-pkg.pkg")
