@@ -8,6 +8,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
+from sign_workflow.signer_mac import SignerMac
 from sign_workflow.signer_pgp import SignerPGP
 from sign_workflow.signer_windows import SignerWindows
 from sign_workflow.signers import Signers
@@ -25,7 +26,12 @@ class TestSigners(unittest.TestCase):
         signer = Signers.create("windows", True)
         self.assertIs(type(signer), SignerWindows)
 
+    @patch("sign_workflow.signer.GitRepository")
+    def test_signer_macos(self, mock_repo: Mock) -> None:
+        signer = Signers.create("mac", True)
+        self.assertIs(type(signer), SignerMac)
+
     def test_signer_invalid(self) -> None:
         with self.assertRaises(ValueError) as ctx:
-            Signers.create("mac", False)
-        self.assertEqual(str(ctx.exception), "Unsupported type of platform for signing: mac")
+            Signers.create("java", False)
+        self.assertEqual(str(ctx.exception), "Unsupported type of platform for signing: java")
