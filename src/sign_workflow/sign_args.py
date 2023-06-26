@@ -13,7 +13,7 @@ from typing import List
 
 class SignArgs:
     ACCEPTED_SIGNATURE_FILE_TYPES = [".sig", ".asc"]
-    ACCEPTED_PLATFORM = ["linux", "windows"]
+    ACCEPTED_PLATFORM = ["linux", "windows", "mac"]
 
     target: Path
     components: List[str]

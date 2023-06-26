@@ -35,6 +35,7 @@ class TestBenchmarkArgs(unittest.TestCase):
         self.assertFalse(test_args.insecure)
         self.assertFalse(test_args.single_node)
         self.assertFalse(test_args.min_distribution)
+        self.assertFalse(test_args.enable_remote_store)
 
     @patch("argparse._sys.argv",
            [ARGS_PY, "--bundle-manifest", TEST_DIST_MANIFEST_PATH, "--config", TEST_CONFIG_PATH, "--workload", "test",
