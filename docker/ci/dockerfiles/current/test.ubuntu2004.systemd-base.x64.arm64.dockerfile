@@ -85,15 +85,14 @@ USER 0
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install python37 dependencies and chromium dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y && \
-    add-apt-repository ppa:saiarcot895/chromium-beta -y
+# Install python dependencies and chromium dependencies
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:saiarcot895/chromium-beta -y
 
-# Install python37 binaries
+# Install python binaries
 RUN apt-get update -y && apt-get install python3 && \
-    apt-get install -y python3.7-full python3.7-dev && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
+    apt-get install -y python3.9-full python3.9-dev && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg2 tar procps build-essential cmake zip unzip jq && \
@@ -103,10 +102,8 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg
 
 # Install pip packages
 RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
-    pip3 install pip==21.3.1 && \
-    pip3 install cmake==3.21.3 && \
-    pip3 install awscli==1.22.12 && \
-    pip3 install pipenv
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12 && \
+    pip3 install cmake==3.21.3
 
 # Create user group
 RUN apt-get install -y sudo && \

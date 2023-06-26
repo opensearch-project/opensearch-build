@@ -16,7 +16,7 @@ USER 0
 # Add normal dependencies
 RUN yum clean all && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip
 
 # Add Dashboards dependencies (mainly for cypress)
 RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -81,7 +81,7 @@ USER 0
 # Add normal dependencies
 RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip gh
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip gh
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
@@ -101,7 +101,7 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # Check dirs
 RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/opensearch && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
-# Add Python37 dependencies
+# Add Python dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies (mainly for cypress)
@@ -116,24 +116,14 @@ RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cach
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
 
-# Install Python37 binary
-RUN curl https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz | tar xzvf - && \
-    cd Python-3.7.7 && \
-    ./configure --enable-optimizations && \
-    make altinstall
-
-# Setup Python37 links
-RUN ln -sfn /usr/local/bin/python3.7 /usr/bin/python3 && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/local/bin/pip && \
-    ln -sfn /usr/local/bin/pip3.7 /usr/bin/pip3
+# Install Python binary
+RUN update-alternatives --set python /usr/bin/python3.9 && \
+    update-alternatives --set python3 /usr/bin/python3.9 && \
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
 
 # Add other dependencies
 RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
-    pip3 install pip==21.3.1 && \
-    pip3 install cmake==3.21.3 && \
-    pip3 install awscli==1.22.12 && \
-    pip3 install pipenv
+    pip3 install cmake==3.21.3
 
 # Change User
 USER 1000
