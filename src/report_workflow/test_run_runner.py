@@ -41,7 +41,8 @@ class TestRunRunner:
         for k, v in self.args.artifact_paths.items():
             self.artifact_paths = " ".join([self.artifact_paths, k + "=" + v]).strip(" ")
 
-        self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"])
+        self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
+            else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
         self.test_components = self.test_manifest.components
 
     def update_data(self) -> dict:

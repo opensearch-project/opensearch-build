@@ -43,7 +43,7 @@ class TestTestRunRunner(unittest.TestCase):
 
     @patch("report_workflow.report_args.ReportArgs")
     @patch("manifests.test_manifest.TestManifest")
-    def test_runner_update_test_run_data(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock) -> None:
+    def test_runner_update_test_run_data_local(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
@@ -53,7 +53,22 @@ class TestTestRunRunner(unittest.TestCase):
         self.assertEqual(test_run_dict.get("Command"), " ".join(["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=foo/bar"]))
         self.assertEqual(test_run_dict.get("TestType"), "integ-test")
         self.assertEqual(test_run_dict.get("TestManifest"), self.TEST_MANIFEST_PATH)
-        self.assertEqual(test_run_dict.get("DistributionManifest"), "/".join(["foo/bar", "dist", "opensearch", "manifest.yml"]))
+        self.assertEqual(test_run_dict.get("DistributionManifest"), os.path.join("foo/bar", "dist", "opensearch", "manifest.yml"))
+        self.assertEqual(test_run_dict.get("TestID"), "123")
+
+    @patch("report_workflow.report_args.ReportArgs")
+    @patch("manifests.test_manifest.TestManifest")
+    def test_runner_update_test_run_data_url(self, report_args_mock: MagicMock, test_manifest_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
+        report_args_mock.artifact_paths = {"opensearch": "https://foo/bar"}
+        report_args_mock.test_run_id = 123
+        report_args_mock.test_type = "integ-test"
+
+        test_run_dict = TestRunRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
+        self.assertEqual(test_run_dict.get("Command"), " ".join(["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=https://foo/bar"]))
+        self.assertEqual(test_run_dict.get("TestType"), "integ-test")
+        self.assertEqual(test_run_dict.get("TestManifest"), self.TEST_MANIFEST_PATH)
+        self.assertEqual(test_run_dict.get("DistributionManifest"), "/".join(["https://foo/bar", "dist", "opensearch", "manifest.yml"]))
         self.assertEqual(test_run_dict.get("TestID"), "123")
 
     @patch("yaml.safe_load")
