@@ -7,18 +7,20 @@
 
 import abc
 import os
+from typing import Union
 
+from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 
 
 class BenchmarkTestRunner(abc.ABC):
     args: BenchmarkArgs
-    test_manifest: BundleManifest
+    test_manifest: Union[BundleManifest, BuildManifest]
     security: bool
     tests_dir: str
 
-    def __init__(self, args: BenchmarkArgs, test_manifest: BundleManifest) -> None:
+    def __init__(self, args: BenchmarkArgs, test_manifest: Union[BundleManifest, BuildManifest]) -> None:
         self.args = args
         self.test_manifest = test_manifest
 

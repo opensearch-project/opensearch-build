@@ -50,6 +50,8 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertTrue("securityDisabled=false" in self.benchmark_test_cluster.params)
         self.assertTrue("singleNodeCluster=true" in self.benchmark_test_cluster.params)
         self.assertTrue("isInternal=true" in self.benchmark_test_cluster.params)
+        self.assertTrue("distributionUrl=https://artifacts.opensearch.org/bundles/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/opensearch-1.0.0-linux-x64.tar.gz" in self.benchmark_test_cluster.params)
+        self.assertTrue(isinstance(self.manifest, BundleManifest))
         with patch("subprocess.check_call") as mock_check_call:
             self.benchmark_test_cluster.terminate()
             self.assertEqual(mock_check_call.call_count, 1)

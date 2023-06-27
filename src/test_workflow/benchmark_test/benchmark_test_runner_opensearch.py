@@ -7,11 +7,13 @@
 
 import logging
 import os
+from typing import Union
 
 import yaml
 from retry.api import retry_call  # type: ignore
 
 from git.git_repository import GitRepository
+from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory
 from system.working_directory import WorkingDirectory
@@ -25,7 +27,7 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
     """
       Runner to execute the performance tests for opensearch.
     """
-    def __init__(self, args: BenchmarkArgs, test_manifest: BundleManifest) -> None:
+    def __init__(self, args: BenchmarkArgs, test_manifest: Union[BundleManifest, BuildManifest]) -> None:
         super().__init__(args, test_manifest)
         logging.info("Running opensearch tests")
 
