@@ -6,7 +6,9 @@
 # compatible open source license.
 
 import sys
+from typing import Union
 
+from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from system import console
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
@@ -20,7 +22,8 @@ def main() -> int:
     """
     benchmark_args = BenchmarkArgs()
     console.configure(level=benchmark_args.logging_level)
-    manifest = BundleManifest.from_file(benchmark_args.bundle_manifest)
+    manifest: Union[BundleManifest, BuildManifest] = BundleManifest.from_file(benchmark_args.bundle_manifest) if not benchmark_args.min_distribution else \
+        BuildManifest.from_file(benchmark_args.bundle_manifest)
     BenchmarkTestRunners.from_args(benchmark_args, manifest).run()
     return 0
 
