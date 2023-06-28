@@ -95,6 +95,8 @@ trap cleanup_all TERM INT EXIT
 DIR=`Temp_Folder_Create`
 echo "New workspace $DIR"
 echo -e "\n* Prepare docker buildx"
+docker buildx rm --all-inactive --force
+docker buildx prune --all --force
 docker buildx use default
 docker buildx create --name ${BUILDER_NAME} --use
 docker buildx inspect --bootstrap

@@ -11,14 +11,15 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install python37 dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa -y
+# Install python dependencies
+RUN apt-get update -y && apt-get install -y software-properties-common
 
-# Install python37 binaries
+# Install python binaries
 RUN apt-get update -y && apt-get install python3 && \
-    apt-get install -y python3.7-full python3.7-dev && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
+    apt-get install -y python3.9-full python3.9-dev && \
+    apt-get install -y python-is-python3 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl build-essential git jq && \
@@ -29,8 +30,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl
 
 # Install pip packages
 RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
-    pip3 install pipenv && pipenv --version && \
-    pip3 install awscli==1.22.12 && aws --version
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
 
 # Install aptly and required changes to debmake
 # Remove lintian for now due to it takes nearly 20 minutes for OpenSearch as well as nearly an hour for OpenSearch-Dashboards during debmake

@@ -59,8 +59,12 @@ class InputManifests(Manifests):
         return os.path.join(self.jenkins_path(), "check-for-build.jenkinsfile")
 
     @classmethod
-    def versionincrement_workflow(self) -> str:
-        return os.path.join(self.workflows_path(), "increment-plugin-versions.yml")
+    def os_versionincrement_workflow(self) -> str:
+        return os.path.join(self.workflows_path(), "os-increment-plugin-versions.yml")
+
+    @classmethod
+    def osd_versionincrement_workflow(self) -> str:
+        return os.path.join(self.workflows_path(), "osd-increment-plugin-versions.yml")
 
     @classmethod
     def files(self, name: str) -> List:
@@ -192,29 +196,31 @@ class InputManifests(Manifests):
         logging.info(f"Wrote {jenkinsfile}")
 
     def add_to_versionincrement_workflow(self, version: str) -> None:
-        versionincrement_workflow_file = self.versionincrement_workflow()
+        versionincrement_workflow_files = [self.os_versionincrement_workflow(), self.osd_versionincrement_workflow()]
         yaml = ruamel.yaml.YAML()
         yaml.explicit_start = True  # type: ignore
         yaml.preserve_quotes = True  # type: ignore
 
-        with open(versionincrement_workflow_file) as f:
-            data = yaml.load(f)
+        for workflow_file in versionincrement_workflow_files:
 
-        version_entry = []
-        major_version_entry = version.split(".")[0] + ".x"
-        minor_version_entry = version.rsplit(".", 1)[0]
-        if minor_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
-            print(f"Adding {minor_version_entry} to {versionincrement_workflow_file}")
-            version_entry.append(minor_version_entry)
-        if major_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
-            print(f"Adding {major_version_entry} to {versionincrement_workflow_file}")
-            version_entry.append(major_version_entry)
+            with open(workflow_file) as f:
+                data = yaml.load(f)
 
-        if version_entry:
-            branch_list = list(data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"])
-            branch_list.extend(version_entry)
-            data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"] = branch_list
-            yaml.indent(mapping=2, sequence=4, offset=2)
-            with open(versionincrement_workflow_file, 'w') as f:
-                yaml.dump(data, f)
-            logging.info("Added new version to the version increment workflow")
+            version_entry = []
+            major_version_entry = version.split(".")[0] + ".x"
+            minor_version_entry = version.rsplit(".", 1)[0]
+            if minor_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
+                logging.info(f"Adding {minor_version_entry} to {workflow_file}")
+                version_entry.append(minor_version_entry)
+            if major_version_entry not in data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"]:
+                logging.info(f"Adding {major_version_entry} to {workflow_file}")
+                version_entry.append(major_version_entry)
+
+            if version_entry:
+                branch_list = list(data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"])
+                branch_list.extend(version_entry)
+                data["jobs"]["plugin-version-increment-sync"]["strategy"]["matrix"]["branch"] = branch_list
+                yaml.indent(mapping=2, sequence=4, offset=2)
+                with open(workflow_file, 'w') as f:
+                    yaml.dump(data, f)
+                logging.info("Added new version to the version increment workflow")

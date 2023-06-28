@@ -33,17 +33,13 @@ class TestRunManifests(unittest.TestCase):
         main()
 
         mock_logging.info.assert_has_calls([
-            call("OpenSearch 1.3.0"),
-            call("OpenSearch 1.3.1"),
             call("OpenSearch 1.3.10"),
-            call("OpenSearch 1.3.2"),
-            call("OpenSearch 1.3.3"),
-            call("OpenSearch 1.3.4")
+            call("OpenSearch 1.3.11")
         ])
 
         mock_logging.info.assert_has_calls([
-            call("OpenSearch 2.0.0"),
-            call("OpenSearch 2.0.1")
+            call("OpenSearch 2.7.1"),
+            call("OpenSearch 2.8.0")
         ])
 
         mock_logging.info.assert_has_calls([

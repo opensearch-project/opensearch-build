@@ -41,8 +41,8 @@ class SignerWindows(Signer):
             "-o",
             signed_filename,
             "-p",
-            "windows"
-            " -r",
+            "windows",
+            "-r",
             str(self.overwrite)
         ]
         self.git_repo.execute(" ".join(signing_cmd))
