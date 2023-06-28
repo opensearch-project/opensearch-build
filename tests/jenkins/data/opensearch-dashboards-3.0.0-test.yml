@@ -1,0 +1,29 @@
+---
+schema-version: '1.0'
+name: OpenSearch Dashboards
+components:
+  - name: observabilityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: ganttChartDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: queryWorkbenchDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: reportsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: anomalyDetectionDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security

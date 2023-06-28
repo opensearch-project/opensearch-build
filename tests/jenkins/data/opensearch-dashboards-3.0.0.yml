@@ -1,0 +1,30 @@
+---
+ci:
+  image:
+    name: opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028
+build:
+  name: OpenSearch Dashboards
+  version: 3.0.0
+components:
+  - name: OpenSearch-Dashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+  - name: observabilityDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+  - name: indexManagementDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+  - name: ganttChartDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+  - name: reportsDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+  - name: queryWorkbenchDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/sql.git
+  - name: anomalyDetectionDashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+schema-version: '1.0'
