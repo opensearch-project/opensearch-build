@@ -22,7 +22,7 @@ class ReportArgs:
     logging_level: int
 
     def __init__(self) -> None:
-        parser = argparse.ArgumentParser(description="Report for test on OpenSearch Bundle")
+        parser = argparse.ArgumentParser(description="Generate test report for given test data")
         parser.add_argument("test_manifest_path", type=str, help="Specify a test manifest path.")
         parser.add_argument("-p", "--artifact-paths", nargs='*', action=TestKwargs, default={},
                             help="Specify aritfacts paths for OpenSearch and OpenSearch Dashboards.")

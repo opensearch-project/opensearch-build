@@ -12,7 +12,7 @@ from manifests.component_manifest import Component, ComponentManifest, Component
 
 class TestRunManifest(ComponentManifest['TestRunManifest', 'TestComponents']):
     """
-    TestRunManifest contains the test support matrix for any component.
+    TestRunManifest contains the aggregated test results for the components.
 
     The format for schema version 1.0 is:
         schema-version: '1.0'
