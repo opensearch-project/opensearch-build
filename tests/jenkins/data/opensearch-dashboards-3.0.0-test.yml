@@ -3,17 +3,17 @@ schema-version: '1.0'
 name: OpenSearch Dashboards
 components:
   - name: observabilityDashboards
-    bwc-test:
+    integ-test:
       test-configs:
         - with-security
         - without-security
   - name: ganttChartDashboards
-    bwc-test:
+    integ-test:
       test-configs:
         - with-security
         - without-security
   - name: queryWorkbenchDashboards
-    bwc-test:
+    integ-test:
       test-configs:
         - with-security
         - without-security
