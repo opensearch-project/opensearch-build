@@ -960,7 +960,7 @@ pipeline {
                         )
                     }
                     if (params.CREATE_GITHUB_ISSUE) {
-                        createGithubIssue(
+                        createBuildFailureGithubIssue(
                             message: buildFailureMessage()
                         )
                     }
