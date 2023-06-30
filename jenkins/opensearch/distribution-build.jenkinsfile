@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@1.5.4', retriever: modernSCM([
+lib = library(identifier: 'jenkins@4.3.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -960,7 +960,7 @@ pipeline {
                         )
                     }
                     if (params.CREATE_GITHUB_ISSUE) {
-                        createGithubIssue(
+                        createBuildFailureGithubIssue(
                             message: buildFailureMessage()
                         )
                     }

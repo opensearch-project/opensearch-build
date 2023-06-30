@@ -11,18 +11,19 @@ import logging
 import os
 import subprocess
 from contextlib import contextmanager
-from typing import Any, Generator
+from typing import Any, Generator, Union
 
 import requests
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
 
+from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 
 
 class BenchmarkTestCluster:
-    manifest: BundleManifest
+    manifest: Union[BundleManifest, BuildManifest]
     work_dir: str
     current_workspace: str
     args: BenchmarkArgs
@@ -39,7 +40,7 @@ class BenchmarkTestCluster:
 
     def __init__(
             self,
-            bundle_manifest: BundleManifest,
+            bundle_manifest: Union[BundleManifest, BuildManifest],
             config: dict,
             args: BenchmarkArgs,
             current_workspace: str
@@ -121,7 +122,9 @@ class BenchmarkTestCluster:
         else:
             suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
         return {
-            "distributionUrl": self.manifest.build.location,
+            "distributionUrl": self.manifest.build.location if isinstance(self.manifest, BundleManifest) else
+            f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-"
+            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz",
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
@@ -143,7 +146,8 @@ class BenchmarkTestCluster:
             "mlNodeStorage": self.args.ml_node_storage,
             "jvmSysProps": self.args.jvm_sys_props,
             "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
-            "isInternal": config["Constants"]["isInternal"]
+            "isInternal": config["Constants"]["isInternal"],
+            "enableRemoteStore": str(self.args.enable_remote_store).lower()
         }
 
     @classmethod

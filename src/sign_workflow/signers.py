@@ -8,6 +8,7 @@
 
 
 from sign_workflow.signer import Signer
+from sign_workflow.signer_mac import SignerMac
 from sign_workflow.signer_pgp import SignerPGP
 from sign_workflow.signer_windows import SignerWindows
 
@@ -16,6 +17,7 @@ class Signers:
     TYPES = {
         "windows": SignerWindows,
         "linux": SignerPGP,
+        "mac": SignerMac,
     }
 
     @classmethod

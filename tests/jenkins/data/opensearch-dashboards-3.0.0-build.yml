@@ -1,0 +1,65 @@
+---
+build:
+  architecture: x64
+  id: '215'
+  name: OpenSearch Dashboards
+  platform: linux
+  version: 3.0.0
+  distribution: tar
+components:
+  - artifacts:
+      dist:
+        - dist/opensearch-dashboards-min-3.0.0-linux-x64.tar.gz
+    commit_id: caf668e73304bac890f41c37cd6c3a41257cd289
+    name: OpenSearch-Dashboards
+    ref: tags/3.0.0
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    version: 3.0.0.0
+  - artifacts:
+      plugins:
+        - plugins/observabilityDashboards-3.0.0.zip
+    commit_id: 4fde4040c0a43233b41a862a169e2bd1616f6b1b
+    name: observabilityDashboards
+    ref: 3.0.0.0
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    version: 3.0.0.0
+  - artifacts:
+      plugins:
+        - plugins/indexManagementDashboards-3.0.0.zip
+    commit_id: 6748b18ee172138b4811a459053f4a43c1486821
+    name: indexManagementDashboards
+    ref: '1.2'
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    version: 3.0.0.0
+  - artifacts:
+    plugins:
+      - plugins/ganttChartDashboards-3.0.0.zip
+    commit_id: 2123bc65873e026cb8b0fd26816a6b1980bd19ce
+    name: ganttChartDashboards
+    ref: 3.0.0.0
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    version: 3.0.0.0
+  - artifacts:
+      plugins:
+        - plugins/reportsDashboards-3.0.0.zip
+    commit_id: 290523a6d825c9c073818aebfcbe4813cb2554bc
+    name: reportsDashboards
+    ref: 3.0.0.0
+    repository: https://github.com/opensearch-project/dashboards-reports.git
+    version: 3.0.0.0
+  - artifacts:
+      plugins:
+        - plugins/queryWorkbenchDashboards-3.0.0.zip
+    commit_id: a675eac2ed32a228184c47c289cfd22fde479139
+    name: queryWorkbenchDashboards
+    ref: 3.0.0.0
+    repository: https://github.com/opensearch-project/sql.git
+    version: 3.0.0.0
+  - artifacts:
+      plugins:
+        - plugins/anomalyDetectionDashboards-3.0.0.zip
+    commit_id: c4921f4471aeab38db80eb47cd92b4f7a3e04126
+    name: anomalyDetectionDashboards
+    ref: tags/3.0.0.0
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    version: 3.0.0.0

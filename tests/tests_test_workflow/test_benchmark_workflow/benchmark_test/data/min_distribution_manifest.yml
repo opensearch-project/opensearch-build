@@ -1,0 +1,44 @@
+---
+schema-version: '1.2'
+build:
+  name: OpenSearch
+  version: 2.9.0-SNAPSHOT
+  platform: linux
+  architecture: arm64
+  distribution: tar
+  id: '8042'
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 2.x
+    commit_id: 2c013429a028291b6136e3df4b0eb3d5759eaa06
+    artifacts:
+      maven:
+        - maven/org/opensearch/rest-api-spec/maven-metadata.xml
+        - maven/org/opensearch/rest-api-spec/maven-metadata.xml.sha1
+        - maven/org/opensearch/rest-api-spec/maven-metadata.xml.md5
+      dist:
+        - dist/opensearch-min-2.9.0-SNAPSHOT-linux-arm64.tar.gz
+      core-plugins:
+        - core-plugins/analysis-icu-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-kuromoji-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-nori-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-phonetic-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-smartcn-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-stempel-2.9.0-SNAPSHOT.zip
+        - core-plugins/analysis-ukrainian-2.9.0-SNAPSHOT.zip
+        - core-plugins/discovery-azure-classic-2.9.0-SNAPSHOT.zip
+        - core-plugins/discovery-ec2-2.9.0-SNAPSHOT.zip
+        - core-plugins/discovery-gce-2.9.0-SNAPSHOT.zip
+        - core-plugins/identity-shiro-2.9.0-SNAPSHOT.zip
+        - core-plugins/ingest-attachment-2.9.0-SNAPSHOT.zip
+        - core-plugins/mapper-annotated-text-2.9.0-SNAPSHOT.zip
+        - core-plugins/mapper-murmur3-2.9.0-SNAPSHOT.zip
+        - core-plugins/mapper-size-2.9.0-SNAPSHOT.zip
+        - core-plugins/repository-azure-2.9.0-SNAPSHOT.zip
+        - core-plugins/repository-gcs-2.9.0-SNAPSHOT.zip
+        - core-plugins/repository-hdfs-2.9.0-SNAPSHOT.zip
+        - core-plugins/repository-s3-2.9.0-SNAPSHOT.zip
+        - core-plugins/store-smb-2.9.0-SNAPSHOT.zip
+        - core-plugins/transport-nio-2.9.0-SNAPSHOT.zip
+    version: 2.9.0.0-SNAPSHOT
