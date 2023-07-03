@@ -126,7 +126,7 @@ jobs:
                   repo: "${{ matrix.entry.repo }}",
                   name: labelName,
                   color: randomColor,
-                  description: 'Label description'
+                  description: "Issues targeting release ${{labelName}}"
                 };
                 await github.rest.issues.createLabel(newLabel);
                 labelFound = true;
