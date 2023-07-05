@@ -67,14 +67,14 @@ class BenchmarkTestCluster:
             f" --require-approval=never --plugin cdk-assume-role-credential-plugin"
             f" -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} "
         )
-        self.params = "".join(params_list) + role_params
+        self.params = "".join(params_list)  # + role_params
         self.is_endpoint_public = False
         self.cluster_endpoint = None
         self.cluster_endpoint_with_port = None
         self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}-{self.manifest.build.id}-{self.manifest.build.architecture}"
 
     def start(self) -> None:
-        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
+        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file} --require-approval never"
 
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
