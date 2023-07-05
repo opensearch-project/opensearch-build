@@ -23,6 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         entry:
+          # Adding the core repo OpenSearch for the label creation automation
+          - {repo: OpenSearch}
           - {repo: alerting}
           - {repo: anomaly-detection}
           - {repo: asynchronous-search}
@@ -66,11 +68,13 @@ jobs:
           OPENSEARCH_VERSION=$OPENSEARCH_VERSION-SNAPSHOT
           echo "OPENSEARCH_VERSION=$OPENSEARCH_VERSION" >> $GITHUB_ENV
       - name: Check out plugin repo
+        if: ${{ matrix.entry.repo != 'OpenSearch' }}
         uses: actions/checkout@v3
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
           ref: ${{ matrix.branch }}
       - name: Increment Version in ${{ matrix.entry.repo }}
+        if: ${{ matrix.entry.repo != 'OpenSearch' }}
         run: |
           echo "OpenSearch Core repo version on branch ${{ matrix.branch }} is ${{ env.OPENSEARCH_VERSION_NUMBER }}"
           if [ ${{ matrix.entry.path }} ]; then
@@ -109,7 +113,7 @@ jobs:
                   repo: "${{ matrix.entry.repo }}",
                   name: labelName,
                   color: randomColor,
-                  description: "Issues targeting release ${{labelName}}"
+                  description: "Issues targeting release " + labelName
                 };
                 await github.rest.issues.createLabel(newLabel);
                 labelFound = true;
@@ -120,6 +124,7 @@ jobs:
             console.log(labelFound);
             return labelFound
       - name: Create Pull Request
+        if: ${{ matrix.entry.repo != 'OpenSearch' }}
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
