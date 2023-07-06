@@ -10,8 +10,8 @@ jobs:
   update:
     runs-on: ubuntu-latest
     env:
-      PYTHON_VERSION: 3.7
-      JDK_VERSION: 14
+      PYTHON_VERSION: 3.9
+      JDK_VERSION: 11
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
