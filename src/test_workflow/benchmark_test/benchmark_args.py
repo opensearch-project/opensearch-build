@@ -42,6 +42,7 @@ class BenchmarkArgs:
     target_hosts: str
     capture_node_stat: bool
     logging_level: int
+    expanded_data_size: int
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
@@ -93,6 +94,8 @@ class BenchmarkArgs:
                             help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
         parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
+        parser.add_argument("--expanded-data-size", dest="expanded_data_size",
+                            help="increasing workload data size")
 
         args = parser.parse_args()
         self.bundle_manifest = args.bundle_manifest
@@ -120,3 +123,4 @@ class BenchmarkArgs:
         self.use_50_percent_heap = args.use_50_percent_heap
         self.capture_node_stat = args.capture_node_stat
         self.logging_level = args.logging_level
+        self.expanded_data_size = args.expanded_data_size if args.expanded_data_size else None
