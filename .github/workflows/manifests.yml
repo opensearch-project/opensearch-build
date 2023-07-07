@@ -34,7 +34,7 @@ jobs:
     needs: list-manifests11
     runs-on: ubuntu-latest
     env:
-      PYTHON_VERSION: 3.7
+      PYTHON_VERSION: 3.9
       JDK_VERSION: 11
     strategy:
       matrix:
@@ -60,7 +60,7 @@ jobs:
     needs: list-manifests17
     runs-on: ubuntu-latest
     env:
-      PYTHON_VERSION: 3.7
+      PYTHON_VERSION: 3.9
       JDK_VERSION: 17
     strategy:
       matrix:

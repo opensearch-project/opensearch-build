@@ -22,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         entry:
+          # Adding the core repo OpenSearch-Dashboards for the label creation automation
+          - {repo: OpenSearch-Dashboards}
           - {repo: dashboards-observability}
           - {repo: dashboards-reporting}
           - {repo: dashboards-visualizations, path: gantt-chart}
@@ -50,6 +52,7 @@ jobs:
           ref: ${{ matrix.branch }}
           path: OpenSearch-Dashboards
       - name: Check out plugin repo
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         uses: actions/checkout@v3
         with:
           repository: opensearch-project/${{ matrix.entry.repo }}
@@ -60,18 +63,19 @@ jobs:
         with:
           node-version-file: './OpenSearch-Dashboards/.nvmrc'
           registry-url: 'https://registry.npmjs.org'
-      - name: Install Yarn
+      - name: Install Yarn and Setup Dashboard Version
         shell: bash
         run: |
           YARN_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').engines.yarn")
           echo "Installing yarn@$YARN_VERSION"
           npm i -g yarn@$YARN_VERSION
+          DASHBOARD_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').version")
+          echo "DASHBOARD_VERSION=$DASHBOARD_VERSION" >> $GITHUB_ENV
       - run: node -v
       - run: yarn -v
       - name: Bootstrap and Version Increment
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         run: |
-          DASHBOARD_VERSION=$(node -p "require('./OpenSearch-Dashboards/package.json').version")
-          echo "DASHBOARD_VERSION=$DASHBOARD_VERSION" >> $GITHUB_ENV
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           if [ ${{ matrix.entry.path }} ]; then
               yarn osd bootstrap
@@ -85,7 +89,7 @@ jobs:
               cd ${{ matrix.entry.repo }}/
           # tmp `elif` solution for opensearch-dashboards-functional-test (ref: https://github.com/opensearch-project/OpenSearch-Dashboards/issues/1801#issuecomment-1545947935)
           elif [ ${{ matrix.entry.repo }} == "opensearch-dashboards-functional-test" ]; then
-                jq --arg DASHBOARD_VERSION "$DASHBOARD_VERSION" '.version = $DASHBOARD_VERSION' package.json > package-tmp.json
+                jq --arg DASHBOARD_VERSION "${{ env.DASHBOARD_VERSION }}" '.version = ${{ env.DASHBOARD_VERSION }}' package.json > package-tmp.json
                 mv package-tmp.json package.json
                 OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
                 echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
@@ -126,7 +130,7 @@ jobs:
                   repo: "${{ matrix.entry.repo }}",
                   name: labelName,
                   color: randomColor,
-                  description: 'Label description'
+                  description: "Issues targeting release " + labelName
                 };
                 await github.rest.issues.createLabel(newLabel);
                 labelFound = true;
@@ -137,6 +141,7 @@ jobs:
             console.log(labelFound);
             return labelFound
       - name: Create Pull Request
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:

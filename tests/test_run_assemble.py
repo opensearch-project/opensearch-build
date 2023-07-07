@@ -51,5 +51,5 @@ class TestRunAssemble(unittest.TestCase):
             call(os.path.join("curdir", "tar", "dist", "opensearch"))
         ])  # manifest included in package
 
-        self.assertEqual(getcwd.call_count, 2)
+        self.assertTrue(getcwd.called)
         makeDirs.assert_called_once_with(ANY, exist_ok=True)

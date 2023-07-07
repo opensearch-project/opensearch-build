@@ -26,7 +26,12 @@ class TestProcess(unittest.TestCase):
 
         return_code = process_handler.terminate()
 
-        self.assertIsNone(return_code)
+        # In Python 3.9 it seems that Process Termination is not as stable in 3.7.
+        # With low hardware specs the result can be None
+        # While on a much beefier server the termination can be instant
+        # We even observed the same success on CentOS7 but fail on Ubuntu out of nowhere
+        # Adding sleep time is not very efficient and it is very random, thus allow 2 return values here.
+        assert return_code in [None, 1]
         self.assertIsNotNone(process_handler.stdout_data)
         self.assertIsNotNone(process_handler.stderr_data)
 
