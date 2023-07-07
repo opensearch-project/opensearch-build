@@ -961,7 +961,8 @@ pipeline {
                     }
                     if (params.CREATE_GITHUB_ISSUE) {
                         createBuildFailureGithubIssue(
-                            message: buildFailureMessage()
+                            message: buildFailureMessage(),
+                            inputManifestPath: "manifests/$INPUT_MANIFEST"
                         )
                     }
 
