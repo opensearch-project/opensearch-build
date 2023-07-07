@@ -18,7 +18,7 @@ This class is responsible for signing macos artifacts using the OpenSearch-signe
 
 
 class SignerMac(Signer):
-    ACCEPTED_FILE_TYPES = [".pkg", ".dmg"]
+    ACCEPTED_FILE_TYPES = [".pkg", ".dmg", ".dylib"]
 
     def generate_signature_and_verify(self, artifact: str, basepath: Path, signature_type: str) -> None:
         filename = os.path.join(basepath, artifact)
@@ -51,5 +51,8 @@ class SignerMac(Signer):
         if platform.system() != 'Darwin':
             raise OSError(f"Cannot verify mac artifacts on non-Darwin system, {platform.system()}")
         else:
-            verify_cmd = ["pkgutil", "--check-signature", filename]
+            if (filename.endswith('.pkg')):
+                verify_cmd = ["pkgutil", "--check-signature", filename]
+            else:
+                verify_cmd = ["codesign", "--verify", "--deep", "--verbose=4", "--display", filename]
             self.git_repo.execute(" ".join(verify_cmd))
