@@ -3,7 +3,7 @@
   - [Build Tools](#build-tools)
     - [Install Prerequisites](#install-prerequisites)
       - [Pyenv](#pyenv)
-      - [Python 3.7](#python-37)
+      - [Python 3.9](#python-39)
       - [Pipenv](#pipenv)
       - [NVM and Node](#nvm-and-node)
       - [Yarn](#yarn)
@@ -42,20 +42,20 @@ Use pyenv to manage multiple versions of Python. This can be installed with [pye
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 ```
 
-#### Python 3.7
+#### Python 3.9
 
-Python projects in this repository use Python 3.7. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language.
+Python projects in this repository use Python 3.9. See the [Python Beginners Guide](https://wiki.python.org/moin/BeginnersGuide) if you have never worked with the language.
 
 ```
 $ python3 --version
-Python 3.7.11
+Python 3.9.17
 ```
 
 If you are using pyenv.
 
 ```
-pyenv install 3.7.12 # use 3.7.9 on Windows, the latest at the time of writing this
-pyenv global 3.7.12
+pyenv install 3.9.17 # use 3.9.17 on Windows, the latest at the time of writing this
+pyenv global 3.9.17
 ```
 
 #### Pipenv
@@ -66,25 +66,16 @@ This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typicall
 $ pip install pipenv
 
 $ pipenv --version
-pipenv, version 19.0
+pipenv, version 2023.6.12
 ```
 
 On Windows, run `pyenv rehash` if `pipenv` cannot be found. This rehashes pyenv shims, creating a `pipenv` file in `/.pyenv/pyenv-win/shims/`.
 
 #### NVM and Node
 
-Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node 14.18.2 version as it is required
+Install [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md) to use the Node version defined in [OpenSearch-Dashboards](https://github.com/opensearch-project/OpenSearch-Dashboards) repository `.nvmrc` file as it is required.
 
-```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-nvm install v14.18.2
-```
-
-Add the lines below to the correct profile file (`~/.zshrc`, `~/.bashrc`, etc.).
-```
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-```
+Use the official [nvm guide](https://github.com/nvm-sh/nvm#installing-and-updating) to install nvm and corresponding Node version.
 
 #### Yarn
 
