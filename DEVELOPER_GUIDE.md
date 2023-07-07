@@ -66,7 +66,7 @@ This project uses [pipenv](https://pipenv.pypa.io/en/latest/), which is typicall
 $ pip install pipenv
 
 $ pipenv --version
-pipenv, version 2023.3.20
+pipenv, version 2023.6.12
 ```
 
 On Windows, run `pyenv rehash` if `pipenv` cannot be found. This rehashes pyenv shims, creating a `pipenv` file in `/.pyenv/pyenv-win/shims/`.
