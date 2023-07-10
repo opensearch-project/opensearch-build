@@ -83,7 +83,7 @@ RUN dnf install epel-release -y && dnf repolist && \
     dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf install openblas-static lapack gcc-gfortran -y && dnf clean all
-RUN pip3 install cmake==3.21.3
+RUN pip3 install cmake==3.23.3
 
 # Change User
 USER 1000

@@ -123,7 +123,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
 
 # Add other dependencies
 RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
-    pip3 install cmake==3.21.3
+    pip3 install cmake==3.23.3
 
 # Change User
 USER 1000
