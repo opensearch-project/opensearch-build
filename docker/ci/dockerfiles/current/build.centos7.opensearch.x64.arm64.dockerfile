@@ -88,7 +88,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
 
 # Add k-NN Library dependencies
 RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack gcc-gfortran -y
-RUN pip3 install cmake==3.21.3
+RUN pip3 install cmake==3.23.3
 
 # Change User
 USER 1000
