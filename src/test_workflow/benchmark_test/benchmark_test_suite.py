@@ -42,7 +42,7 @@ class BenchmarkTestSuite:
 
         if args.workload_params:
             logging.info(f"Workload Params are {args.workload_params}")
-            self.command += f" --workload-params \"{args.workload_params}\""
+            self.command += f" --workload-params '{args.workload_params}'"
 
         if args.user_tag:
             user_tag = f"--user-tag=\"{args.user_tag}\""

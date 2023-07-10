@@ -44,7 +44,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                              'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
 
     def test_execute_default_with_optional_args(self) -> None:
-        TestBenchmarkTestSuite.setUp(self, "/home/test/benchmark.ini", "key1:value1,key2:value2", "number_of_replicas:1", True)
+        TestBenchmarkTestSuite.setUp(self, "/home/test/benchmark.ini", "key1:value1,key2:value2", "{\"number_of_replicas\":\"1\"}", True)
         with patch("subprocess.check_call") as mock_check_call:
             self.benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)
@@ -53,5 +53,5 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                                 'opensearchproject/opensearch-benchmark:latest execute-test '
                                                                 '--workload=nyc_taxis '
                                                                 '--pipeline=benchmark-only --target-hosts=abc.com '
-                                                                '--workload-params "number_of_replicas:1" '
+                                                                '--workload-params \'{"number_of_replicas":"1"}\' '
                                                                 '--user-tag="key1:value1,key2:value2" --telemetry node-stats --client-options="timeout:300"')
