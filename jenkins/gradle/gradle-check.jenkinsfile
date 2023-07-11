@@ -90,6 +90,7 @@ pipeline {
                             exit 1
                         fi
                     """
+
                     def agent_name_array = params.AGENT_LABEL.tokenize('-')
                     def agent_name = agent_name_array[2] + " " + agent_name_array[4]
                     def CREDENTIAL_ID = 'jenkins-production-dockerhub-credential-readonly'
