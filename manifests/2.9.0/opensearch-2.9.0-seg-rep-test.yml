@@ -15,9 +15,7 @@ components:
         - without-security
       additional-cluster-configs:
         path.repo: [/tmp]
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -30,9 +28,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -43,9 +39,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: alerting
     integ-test:
@@ -54,9 +48,7 @@ components:
         - without-security
       additional-cluster-configs:
         plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -68,9 +60,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -82,9 +72,7 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -95,9 +83,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: neural-search
     integ-test:
@@ -105,9 +91,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: opensearch-reports
     integ-test:
@@ -115,9 +99,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: opensearch-observability
     integ-test:
@@ -125,9 +107,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
     bwc-test:
       test-configs:
         - with-security
@@ -138,9 +118,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: cross-cluster-replication
     integ-test:
@@ -155,18 +133,14 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: security
     integ-test:
       test-configs:
         - with-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: geospatial
     integ-test:
@@ -174,9 +148,7 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
 
   - name: security-analytics
     integ-test:
@@ -184,6 +156,4 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.remote_store.enabled: true
         cluster.indices.replication.strategy: 'SEGMENT'
-        cluster.remote_store.enabled: true
