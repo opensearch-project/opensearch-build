@@ -9,9 +9,11 @@ cd $OPENSEARCH_HOME
 
 KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
 ##Security Plugin
-bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
+if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
+        bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
+        echo "done security"
+fi
 
-echo "done security"
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$OPENSEARCH_PATH_CONF/opensearch-performance-analyzer/log4j2.xml \
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
               -XX:MaxRAM=400m"
