@@ -92,9 +92,9 @@ RUN pip3 install cmake==3.23.3
 # Upgrade gcc8
 # The setup part is partially based on Austin Dewey's article:
 # https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/
-RUN yum install -y centos-release-scl && yum install -y devtoolset-8 && yum clean all && \
-    echo "source scl_source enable devtoolset-8" > /etc/profile.d/scl_devtoolset8.sh
-COPY --chown=0:0 config/scl_setup /usr/local/bin/scl_setup
+RUN yum install -y centos-release-scl && yum install -y devtoolset-7 && yum clean all && \
+    echo "source scl_source enable devtoolset-7" > /etc/profile.d/scl_devtoolset8.sh
+COPY --chown=0:0 config/scl_setup_devtoolset7 /usr/local/bin/scl_setup
 ENV BASH_ENV="/usr/local/bin/scl_setup"
 ENV ENV="/usr/local/bin/scl_setup"
 ENV PROMPT_COMMAND=". /usr/local/bin/scl_setup"
