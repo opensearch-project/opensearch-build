@@ -1,5 +1,5 @@
-This is a component issue for __{REPLACE_WITH_RELEASE_VERSION}__.
-Coming from [opensearch-build__REPLACE_ISSUE_NUMBER__](https://github.com/opensearch-project/opensearch-build/issues/__REPLACE_ISSUE_NUMBER__). Please follow the following checklist.
+This is a component issue for `{{RELEASE_VERSION}}`.
+Coming from {{RELEASE_ISSUE}}. Please follow the following checklist.
 __Please refer to the DATES in that post__.
 
 <details><summary>How to use this issue</summary>
@@ -22,7 +22,7 @@ Linked at the top of this issue, the overall release issue captures the state of
 
 ## What should I do if my plugin isn't making any changes?
 
-If including changes in this release, increment the version on `__{REPLACE_MAJOR_MINOR_PATCH}__` branch to `__{REPLACE_MAJOR_MINOR_PATCH}__` for Min/Core, and `__{REPLACE_MAJOR_MINOR_PATCH_0}__` for components. Otherwise, keep the version number unchanged for both.
+If including changes in this release, increment the version on `{{RELEASE_VERSION_X}}` branch to `{{RELEASE_VERSION}}` for Min/Core, and `{{RELEASE_VERSION}}.0` for components. Otherwise, keep the version number unchanged for both.
 
 </p>
 </details>
@@ -38,11 +38,11 @@ If including changes in this release, increment the version on `__{REPLACE_MAJOR
 
 - [ ] All code changes for `__{REPLACE_MAJOR_MINOR_PATCH}__` are complete.
 - [ ] Ensure working and passing CI.
-- [ ] Check that this repo is included in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
+- [ ] Check that this repo is included in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/{{RELEASE_VERSION}}).
 
 ### Pre-Release
 
-- [ ] Update to the `__REPLACE_MAJOR_MINOR__` release branch in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/__REPLACE_MAJOR_MINOR_PATCH__).
+- [ ] Update to the `{{RELEASE_VERSION}}` release branch in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/{{RELEASE_VERSION}}).
 - [ ] Increment the version on the parent branch to the next development iteration.
 - [ ] Gather, review and publish release notes following the [rules](https://github.com/opensearch-project/opensearch-plugins/blob/main/RELEASE_NOTES.md) and back port it to the release branch.[git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] Confirm that all changes for `__{REPLACE_MAJOR_MINOR_PATCH}__` have been merged.
