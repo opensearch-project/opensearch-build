@@ -107,7 +107,7 @@ jobs:
           file_path="../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
           RELEASE_VERSION="${{ matrix.release_version }}"
           RELEASE_ISSUE="${{ steps.build-repo-release-issue.outputs.url }}"
-          RELEASE_VERSION_X=$(echo "${{ steps.build-repo-release-issue.outputs.url" | awk -F'.' '{print $1}').x
+          RELEASE_VERSION_X=$(echo "${{ steps.build-repo-release-issue.outputs.url }}" | awk -F'.' '{print $1}').x
           sed -e "s|{{RELEASE_VERSION}}|${RELEASE_VERSION}|g" -e "s|{{RELEASE_ISSUE}}|${RELEASE_ISSUE}|g" -e "s|{{RELEASE_VERSION_X}}|${RELEASE_VERSION_X}|g" "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"
       - name: Check if issue exists
         if: ${{ endsWith(matrix.release_version, '.0') }}
