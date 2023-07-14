@@ -127,6 +127,7 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
+        plugins.query.datasources.encryption.masterkey: 4fc8fee6a3fd7d6ca01772e5
     bwc-test:
       test-configs:
         - with-security
