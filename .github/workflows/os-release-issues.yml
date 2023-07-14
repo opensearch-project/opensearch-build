@@ -1,0 +1,99 @@
+---
+name: release-issue-os
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Log level
+        required: true
+        default: warning
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+  schedule:
+    - cron: 0 1 * * *
+
+jobs:
+  list-manifest-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: opensearch-project/opensearch-build
+          ref: main
+      - id: set-matrix
+        # produces a list of major versions, e.g. ["1.4.0","2.10.0","2.6.0","2.7.0","2.8.0","2.9.0","3.0.0"]
+        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | cut -d'/' -f2 | grep '0$' | grep -v '[0-9]0$' | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
+  component-release-issue:
+    needs: list-manifest-versions
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        entry:
+          - {repo: OpenSearch}
+          - {repo: alerting}
+          - {repo: anomaly-detection}
+          - {repo: asynchronous-search}
+          - {repo: common-utils}
+          - {repo: cross-cluster-replication}
+          - {repo: geospatial}
+          - {repo: index-management}
+          - {repo: job-scheduler}
+          - {repo: k-NN}
+          - {repo: neural-search}
+          - {repo: ml-commons}
+          - {repo: notifications}
+          - {repo: observability}
+          - {repo: performance-analyzer}
+          - {repo: performance-analyzer-rca}
+          - {repo: reporting}
+          - {repo: security}
+          - {repo: security-analytics}
+          - {repo: sql}
+        release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
+    steps:
+      - name: GitHub App token
+        id: github_app_token
+        uses: tibdex/github-app-token@v1.6.0
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          installation_id: 22958780
+      - name: Check out build repo
+        uses: actions/checkout@v3
+      - name: Check out plugin repo
+        uses: actions/checkout@v3
+        with:
+          path: plugin-repo
+          repository: opensearch-project/${{ matrix.entry.repo }}
+      - name: Replace placeholders
+        run: |
+          # Read the file contents and replace the placeholders
+          file_path="../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
+          RELEASE_VERSION="${{ matrix.release_version }}"
+          RELEASE_ISSUE="${{ steps.build-repo-release-issue.outputs.url }}"
+          RELEASE_VERSION_X=$(echo "${{ steps.build-repo-release-issue.outputs.url }}" | awk -F'.' '{print $1}').x
+          sed -e "s|{{RELEASE_VERSION}}|${RELEASE_VERSION}|g" -e "s|{{RELEASE_ISSUE}}|${RELEASE_ISSUE}|g" -e "s|{{RELEASE_VERSION_X}}|${RELEASE_VERSION_X}|g" "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"
+      - name: Check if issue exists
+        id: check_if_issue_exists
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'find-issues'
+          repo: opensearch-project/${{ matrix.entry.repo }}
+          token: ${{ steps.github_app_token.outputs.token }}
+          title-includes: '[RELEASE] Release version ${{ matrix.release_version }}'
+      - name: Create Issue From File
+        if: steps.check_if_issue_exists.outputs.check-result =='false'
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: '[RELEASE] Release version ${{ matrix.release_version }}'
+          content-filepath: ../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md
+          labels: 'v${{ matrix.release_version }}'
+          token: ${{ steps.github_app_token.outputs.token }}
+          repository: opensearch-project/${{ matrix.entry.repo }}
