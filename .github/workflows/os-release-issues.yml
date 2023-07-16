@@ -58,17 +58,6 @@ jobs:
           - {repo: sql}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - uses: dblock/create-a-github-issue@v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ matrix.release_version }}
-        id: build-repo-release-issue
-        with:
-          search_existing: all
-          update_existing: false
-          filename: .github/ISSUE_TEMPLATE/release_template.md
       - name: GitHub App token
         id: github_app_token
         uses: tibdex/github-app-token@v1.6.0
@@ -76,6 +65,17 @@ jobs:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: 22958780
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: dblock/create-a-github-issue@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ steps.github_app_token.outputs.token }}
+          VERSION: ${{ matrix.release_version }}
+        id: build-repo-release-issue
+        with:
+          search_existing: all
+          update_existing: false
+          filename: .github/ISSUE_TEMPLATE/release_template.md
       - name: Check out build repo
         uses: actions/checkout@v3
       - name: Check out plugin repo
@@ -100,7 +100,7 @@ jobs:
           token: ${{ steps.github_app_token.outputs.token }}
           title-includes: '[RELEASE] Release version ${{ matrix.release_version }}'
       - name: Create Issue From File
-        if: steps.check_if_issue_exists.issues == '[]'
+        if: steps.check_if_issue_exists.outputs.issues == '[]'
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: '[RELEASE] Release version ${{ matrix.release_version }}'
