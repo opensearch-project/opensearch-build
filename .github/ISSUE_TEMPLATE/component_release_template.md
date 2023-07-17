@@ -32,11 +32,11 @@ If including changes in this release, increment the version on `{{RELEASE_VERSIO
 - [ ] Assign this issue to a release owner.
 - [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1).
 - [ ] All the tasks in this issue have been reviewed by the release owner.
-- [ ] Create, update, triage and label all features and issues targeted for this release with `v__REPLACE_MAJOR_MINOR_PATCH__`.
+- [ ] Create, update, triage and label all features and issues targeted for this release with `v{{RELEASE_VERSION}}`.
 
 ### CI/CD
 
-- [ ] All code changes for `__{REPLACE_MAJOR_MINOR_PATCH}__` are complete.
+- [ ] All code changes for `{{RELEASE_VERSION}}` are complete.
 - [ ] Ensure working and passing CI.
 - [ ] Check that this repo is included in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/{{RELEASE_VERSION}}).
 
@@ -45,7 +45,7 @@ If including changes in this release, increment the version on `{{RELEASE_VERSIO
 - [ ] Update to the `{{RELEASE_VERSION}}` release branch in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/{{RELEASE_VERSION}}).
 - [ ] Increment the version on the parent branch to the next development iteration.
 - [ ] Gather, review and publish release notes following the [rules](https://github.com/opensearch-project/opensearch-plugins/blob/main/RELEASE_NOTES.md) and back port it to the release branch.[git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
-- [ ] Confirm that all changes for `__{REPLACE_MAJOR_MINOR_PATCH}__` have been merged.
+- [ ] Confirm that all changes for `{{RELEASE_VERSION}}` have been merged.
 - [ ] Add this repo to the [manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/) for the next developer iteration.
 
 ### Release Testing
