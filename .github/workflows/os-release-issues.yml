@@ -107,6 +107,7 @@ jobs:
         with:
           title: '[RELEASE] Release version ${{ matrix.release_version }}'
           content-filepath: ../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md
-          labels: 'v${{ matrix.release_version }}'
+          labels: |
+            v${{ matrix.release_version }}
           token: ${{ steps.github_app_token.outputs.token }}
           repository: opensearch-project/${{ matrix.entry.repo }}
