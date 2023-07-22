@@ -89,7 +89,6 @@ jobs:
           actions: 'find-issues'
           repo: opensearch-project/${{ matrix.entry.repo }}
           token: ${{ steps.github_app_token.outputs.token }}
-          issue-state: 'open'
           title-includes: '[RELEASE] Release version ${{ matrix.release_version }}'
       - name: Replace Placeholders
         if: steps.check_if_plugin_repo_issue_exists.outputs.issues == '[]'
