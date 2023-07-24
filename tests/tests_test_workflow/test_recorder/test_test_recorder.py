@@ -80,7 +80,7 @@ class TestTestRecorder(unittest.TestCase):
 
         component_yml = test_recorder._generate_yml(mock_test_result_data, "working-directory")
 
-        mock_open.assert_has_calls([call(os.path.join("working-directory", "sql.yml"), 'w')])
+        mock_open.assert_has_calls([call(os.path.join("working-directory", "sql.yml"), 'w', encoding='utf-8')])
         mock_file_path.assert_called_once_with(None, "sql", "with-security")
         mock_list_files.assert_called()
         mock_update_path.assert_called()
