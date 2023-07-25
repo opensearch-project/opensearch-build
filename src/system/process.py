@@ -66,9 +66,9 @@ class Process:
                 try:
                     for item in proc.open_files():
                         if self.stdout.name == item.path:
-                            logging.warning(f"stdout {item} is being used by process with this detail {proc}")
-                except Exception:
-                    pass
+                            raise Exception(f"stdout {item} is being used by process {proc}")
+                except Exception as err:
+                    logging.warning(f"{err.args}")
             os.unlink(self.stdout.name)
             self.stdout = None
 
@@ -81,9 +81,9 @@ class Process:
                 try:
                     for item in proc.open_files():
                         if self.stderr.name == item.path:
-                            logging.warning(f"stderr {item} is being used by process with this detail {proc}")
-                except Exception:
-                    pass
+                            raise Exception(f"stderr {item} is being used by process {proc}")
+                except Exception as err:
+                    logging.warning(f"{err.args}")
             os.unlink(self.stderr.name)
             self.stderr = None
 

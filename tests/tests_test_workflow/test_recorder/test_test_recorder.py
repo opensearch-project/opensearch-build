@@ -114,6 +114,24 @@ class TestTestRecorder(unittest.TestCase):
         list_files = test_recorder._get_list_files("mock_dir")
         self.assertEqual(list_files, ["file1", "file2"])
 
+    @patch("builtins.open", new_callable=mock_open)
+    def test_generate_std_files(self, mock_open: Mock, *mock: Any) -> None:
+        test_recorder = TestRecorder(
+            "1234",
+            "integ-test",
+            "working-directory"
+        )
+        test_recorder._generate_std_files("mock_stdout", "mock_stderr", "mock_path")
+
+        mock_file = MagicMock()
+        mock_open.return_value = mock_file
+
+        mock_open.assert_has_calls([call(os.path.join("mock_path", "stdout.txt"), 'w', encoding='utf-8')])
+        mock_open.assert_has_calls([call(os.path.join("mock_path", "stderr.txt"), 'w', encoding='utf-8')])
+
+        mock_open.assert_has_calls([call().write("mock_stdout")])
+        mock_open.assert_has_calls([call().write("mock_stderr")])
+
 
 class TestLocalClusterLogs(unittest.TestCase):
 

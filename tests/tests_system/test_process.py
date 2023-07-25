@@ -60,3 +60,14 @@ class TestProcess(unittest.TestCase):
             process_handler.terminate()
 
         self.assertEqual(str(ctx.exception), "Process has not started")
+
+    @patch('psutil.Process')
+    @patch('subprocess.Popen')
+    @patch('psutil.process_iter')
+    def test_terminate_file_not_closed(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
+        process_handler = Process()
+
+        process_handler.start("mock_command", "mock_cwd")
+        process_handler.terminate()
+
+        procs.assert_called
