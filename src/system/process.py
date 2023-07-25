@@ -68,7 +68,7 @@ class Process:
                         if self.stdout.name == item.path:
                             raise Exception(f"stdout {item} is being used by process {proc}")
                 except Exception as err:
-                    logging.warning(f"{err.args}")
+                    logging.error(f"{err.args}")
             os.unlink(self.stdout.name)
             self.stdout = None
 
@@ -83,7 +83,7 @@ class Process:
                         if self.stderr.name == item.path:
                             raise Exception(f"stderr {item} is being used by process {proc}")
                 except Exception as err:
-                    logging.warning(f"{err.args}")
+                    logging.error(f"{err.args}")
             os.unlink(self.stderr.name)
             self.stderr = None
 
