@@ -16,8 +16,8 @@ def docker_args = [
 ]
 
 def agent_nodes_docker = [
-    "x64": "Jenkins-Agent-AL2-X64-C54xlarge-Single-Host",
-    "arm64": "Jenkins-Agent-AL2-Arm64-C6g4xlarge-Single-Host",
+    "x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Single-Host",
+    "arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Single-Host",
 ]
 
 def agent_nodes = [
