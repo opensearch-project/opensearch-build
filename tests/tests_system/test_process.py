@@ -42,7 +42,7 @@ class TestProcess(unittest.TestCase):
     def test_file_open_mode(self, mock_tempfile: MagicMock) -> None:
         process_handler = Process()
         process_handler.start("./tests/tests_system/data/wait_for_input.sh", ".")
-        mock_tempfile.assert_has_calls([call(delete=False, mode='r+'), call(delete=False, mode='r+')])
+        mock_tempfile.assert_has_calls([call(delete=False, encoding='utf-8', mode='r+')])
 
     def test_start_twice(self) -> None:
         process_handler = Process()
@@ -60,3 +60,14 @@ class TestProcess(unittest.TestCase):
             process_handler.terminate()
 
         self.assertEqual(str(ctx.exception), "Process has not started")
+
+    @patch('psutil.Process')
+    @patch('subprocess.Popen')
+    @patch('psutil.process_iter')
+    def test_terminate_file_not_closed(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
+        process_handler = Process()
+
+        process_handler.start("mock_command", "mock_cwd")
+        process_handler.terminate()
+
+        procs.assert_called
