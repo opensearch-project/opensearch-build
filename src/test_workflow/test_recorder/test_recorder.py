@@ -49,9 +49,9 @@ class TestRecorder:
         return os.path.realpath(dest_directory)
 
     def _generate_std_files(self, stdout: str, stderr: str, output_path: str) -> None:
-        with open(os.path.join(output_path, "stdout.txt"), "w") as stdout_file:
+        with open(os.path.join(output_path, "stdout.txt"), "w", encoding='utf-8') as stdout_file:
             stdout_file.write(stdout)
-        with open(os.path.join(output_path, "stderr.txt"), "w") as stderr_file:
+        with open(os.path.join(output_path, "stderr.txt"), "w", encoding='utf-8') as stderr_file:
             stderr_file.write(stderr)
 
     def _generate_yml(self, test_result_data: TestResultData, output_path: str) -> str:
@@ -68,7 +68,7 @@ class TestRecorder:
             "test_result": "PASS" if (test_result_data.exit_code == 0) else "FAIL",
             "test_result_files": test_result_file
         }
-        with open(os.path.join(output_path, "%s.yml" % test_result_data.component_name), "w") as file:
+        with open(os.path.join(output_path, "%s.yml" % test_result_data.component_name), "w", encoding='utf-8') as file:
             yaml.dump(outcome, file)
         return os.path.realpath("%s.yml" % test_result_data.component_name)
 

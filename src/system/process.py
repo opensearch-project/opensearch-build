@@ -26,8 +26,8 @@ class Process:
         if self.started:
             raise ProcessStartedError(self.pid)
 
-        self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False)
-        self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False)
+        self.stdout = tempfile.NamedTemporaryFile(mode="r+", delete=False, encoding='utf-8')
+        self.stderr = tempfile.NamedTemporaryFile(mode="r+", delete=False, encoding='utf-8')
 
         self.require_sudo = require_sudo
 
@@ -58,15 +58,33 @@ class Process:
         logging.info(f"Process killed with exit code {self.process.returncode}")
 
         if self.stdout:
-            self.__stdout_data__ = open(self.stdout.name, 'r').read()
+            self.stdout.seek(0)
+            self.__stdout_data__ = self.stdout.read()
+            self.stdout.flush()
             self.stdout.close()
-            os.remove(self.stdout.name)
+            for proc in psutil.process_iter():
+                try:
+                    for item in proc.open_files():
+                        if self.stdout.name == item.path:
+                            raise Exception(f"stdout {item} is being used by process {proc}")
+                except Exception as err:
+                    logging.error(f"{err.args}")
+            os.unlink(self.stdout.name)
             self.stdout = None
 
         if self.stderr:
-            self.__stderr_data__ = open(self.stderr.name, 'r').read()
+            self.stderr.seek(0)
+            self.__stderr_data__ = self.stderr.read()
+            self.stderr.flush()
             self.stderr.close()
-            os.remove(self.stderr.name)
+            for proc in psutil.process_iter():
+                try:
+                    for item in proc.open_files():
+                        if self.stderr.name == item.path:
+                            raise Exception(f"stderr {item} is being used by process {proc}")
+                except Exception as err:
+                    logging.error(f"{err.args}")
+            os.unlink(self.stderr.name)
             self.stderr = None
 
         self.return_code = self.process.returncode
