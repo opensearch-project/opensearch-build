@@ -58,15 +58,12 @@ pipeline {
             printPostContent: false
         )
         parameterizedCron '''
-            H 1 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-            H 4 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-            H 9 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-            H 12 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-            H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
-            H 20 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
             H 3 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host
             H 6 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host
             H 9 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host
+            H 12 * * * %GIT_REFERENCE=1.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 17 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
+            H 20 * * * %GIT_REFERENCE=2.x;AGENT_LABEL=Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host
         '''
     }
     environment {
@@ -100,35 +97,39 @@ pipeline {
                     def CREDENTIAL_ID = 'jenkins-production-dockerhub-credential-readonly'
 
                     echo("Build Cause: ${BUILD_CAUSE}")
-                    withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        def dockerLogin = sh(returnStdout: true, script: "set +x && echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
+                    if ( ! params.AGENT_LABEL.toLowerCase().contains('windows')) {
+                        withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            def dockerLogin = sh(returnStdout: true, script: "set +x && echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
+                        }
+                    }
 
-                        if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
-                            def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
-                            println("Triggered by GitHub: ${pr_to_clone_url}")
-                            if ("$pr_number" == "Null") {
-                                currentBuild.description = """runner: ${agent_name}<br><a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
-                            }
-                            else {
-                                currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
-                            }
-
-                            runGradleCheck(
-                                gitRepoUrl: "${pr_from_clone_url}",
-                                gitReference: "${pr_from_sha}"
-                            )
+                    if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
+                        def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
+                        println("Triggered by GitHub: ${pr_to_clone_url}")
+                        if ("$pr_number" == "Null") {
+                            currentBuild.description = """runner: ${agent_name}<br><a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
                         }
                         else {
-                            println("Triggered by User or Triggered by Timer")
-                            def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
-                            currentBuild.description = """runner: ${agent_name}<br>git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
-
-                            runGradleCheck(
-                                gitRepoUrl: "${GIT_REPO_URL}",
-                                gitReference: "${GIT_REFERENCE}"
-                            )
+                            currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
                         }
 
+                        runGradleCheck(
+                            gitRepoUrl: "${pr_from_clone_url}",
+                            gitReference: "${pr_from_sha}"
+                        )
+                    }
+                    else {
+                        println("Triggered by User or Triggered by Timer")
+                        def repo_url = "${GIT_REPO_URL}".replace(".git", "/commit")
+                        currentBuild.description = """runner: ${agent_name}<br>git: <a href="${GIT_REPO_URL}">${GIT_REPO_URL}</a><br>ref: <a href="${repo_url}/${GIT_REFERENCE}">${GIT_REFERENCE}</a>"""
+
+                        runGradleCheck(
+                            gitRepoUrl: "${GIT_REPO_URL}",
+                            gitReference: "${GIT_REFERENCE}"
+                        )
+                    }
+
+                    if ( ! params.AGENT_LABEL.toLowerCase().contains('windows')) {
                         sh("docker logout")
                     }
                 }
@@ -153,7 +154,9 @@ pipeline {
         always {
             script {
                 postCleanup()
-                sh "docker logout && docker image prune -f --all"
+                if ( ! params.AGENT_LABEL.toLowerCase().contains('windows')) {
+                    sh("docker logout && docker image prune -f --all")
+                }
             }
         }
     }
