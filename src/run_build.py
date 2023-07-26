@@ -67,6 +67,7 @@ def main() -> int:
                 builder.checkout(work_dir.name)
                 builder.build(build_recorder)
                 builder.export_artifacts(build_recorder)
+                logging.info(f"Successfully built {component.name}")
             except:
                 logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
                 raise
