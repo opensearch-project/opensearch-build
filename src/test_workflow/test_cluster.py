@@ -83,6 +83,7 @@ class TestCluster(abc.ABC):
     def terminate(self) -> None:
         if self.service:
             self.termination_result = self.service.terminate()
+            self.__save_test_result_data(self.termination_result)
 
         for service in self.dependencies:
             termination_result = service.terminate()
@@ -91,8 +92,6 @@ class TestCluster(abc.ABC):
 
         if not self.termination_result:
             raise ClusterServiceNotInitializedException()
-
-        self.__save_test_result_data(self.termination_result)
 
         self.service.uninstall()
 

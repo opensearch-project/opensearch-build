@@ -67,7 +67,14 @@ class TestProcess(unittest.TestCase):
     def test_terminate_file_process(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
         process_handler = Process()
 
+        mock_process1 = MagicMock()
+        mock_process2 = MagicMock()
+        procs.return_value = [mock_process1, mock_process2]
+
         process_handler.start("mock_command", "mock_cwd")
         process_handler.terminate()
 
-        procs.assert_called
+        procs.assert_called()
+
+        mock_process1.open_files.assert_called()
+        mock_process2.open_files.assert_called()
