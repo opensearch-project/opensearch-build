@@ -87,6 +87,7 @@ class TestCluster(abc.ABC):
         for service in self.dependencies:
             termination_result = service.terminate()
             self.__save_test_result_data(termination_result)
+            service.uninstall()
 
         if not self.termination_result:
             raise ClusterServiceNotInitializedException()

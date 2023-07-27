@@ -64,7 +64,7 @@ class TestProcess(unittest.TestCase):
     @patch('psutil.Process')
     @patch('subprocess.Popen')
     @patch('psutil.process_iter')
-    def test_terminate_file_not_closed(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
+    def test_terminate_file_process(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
         process_handler = Process()
 
         process_handler.start("mock_command", "mock_cwd")
