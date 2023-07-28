@@ -123,8 +123,9 @@ class BenchmarkTestCluster:
             suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
         return {
             "distributionUrl": self.manifest.build.location if isinstance(self.manifest, BundleManifest) else
-            f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-"
-            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz",
+            f"https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/{self.manifest.build.version}/"
+            f"{self.manifest.build.id}/linux/{self.manifest.build.architecture}/tar/builds/opensearch/dist/opensearch-min-"
+            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}.tar.gz",
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
