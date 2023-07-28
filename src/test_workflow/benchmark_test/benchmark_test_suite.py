@@ -38,16 +38,16 @@ class BenchmarkTestSuite:
         if args.benchmark_config:
             self.command += f" -v {args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
 
-        if args.expanded_data_size is not None:
+        if args.expanded_data_size is None:
+            self.command += f" opensearchproject/opensearch-benchmark:latest execute-test --workload={self.args.workload} " \
+                            f"--pipeline=benchmark-only --target-hosts={endpoint}"
+        else:
             self.command += " --entrypoint /bin/bash opensearchproject/opensearch-benchmark:latest -c \"" \
                             f"opensearch-benchmark execute-test --workload={self.args.workload} " \
                             f"--pipeline=benchmark-only --target-hosts={endpoint} " \
                             f"--include-tasks=index-append --workload-params='ingest_percentage:0.1'; " \
                             f"expand-data-corpus.py -c {args.expanded_data_size}; " \
                             f"opensearch-benchmark execute-test --workload={self.args.workload} " \
-                            f"--pipeline=benchmark-only --target-hosts={endpoint}"
-        else:
-            self.command += f" opensearchproject/opensearch-benchmark:latest execute-test --workload={self.args.workload} " \
                             f"--pipeline=benchmark-only --target-hosts={endpoint}"
 
         if args.workload_params:
@@ -61,13 +61,13 @@ class BenchmarkTestSuite:
         if args.capture_node_stat:
             self.command += " --telemetry node-stats"
 
-        if args.expanded_data_size is not None:
-            self.command += "\""
-
     def execute(self) -> None:
         if self.security:
             self.command += ' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"'
         else:
             self.command += ' --client-options="timeout:300"'
+
+        if self.args.expanded_data_size is not None:
+            self.command += "\""
         logging.info(f"Executing {self.command}")
         subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
