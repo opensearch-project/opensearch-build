@@ -98,7 +98,8 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
     @patch("test_workflow.test_cluster.TestResultData")
-    def test_terminate(self, mock_test_result_data: Mock, mock_service_opensearch_dashboards: Mock, mock_service_opensearch: Mock) -> None:
+    def test_terminate(self, mock_test_result_data: Mock, mock_service_opensearch_dashboards: Mock,
+                       mock_service_opensearch: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
@@ -139,6 +140,13 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
         mock_service_opensearch_dashboards_object.terminate.assert_called_once()
 
         mock_test_result_data.assert_has_calls([
+            call(self.component_name,
+                 self.component_test_config,
+                 123,
+                 "test stdout_data",
+                 "test stderr_data",
+                 mock_log_files
+                 ),
             call(
                 self.component_name,
                 self.component_test_config,
@@ -146,20 +154,15 @@ class LocalTestClusterOpenSearchDashboardsTests(unittest.TestCase):
                 "test stdout_data",
                 "test stderr_data",
                 mock_log_files_opensearch
-            ),
-            call(self.component_name,
-                 self.component_test_config,
-                 123,
-                 "test stdout_data",
-                 "test stderr_data",
-                 mock_log_files)
+            )
         ])
 
         self.assertEqual(mock_local_cluster_logs.save_test_result_data.call_count, 2)
 
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearch")
     @patch("test_workflow.integ_test.local_test_cluster_opensearch_dashboards.ServiceOpenSearchDashboards")
-    def test_terminate_service_not_initialized(self, mock_service_opensearch_dashboards: Mock, mock_service_opensearch: Mock) -> None:
+    def test_terminate_service_not_initialized(self, mock_service_opensearch_dashboards: Mock,
+                                               mock_service_opensearch: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
