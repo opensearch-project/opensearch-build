@@ -901,6 +901,7 @@ pipeline {
     post {
         always {
             node(AGENT_X64) {
+                checkout scm
                 script {
                     buildInfoYaml(
                         componentName: COMPONENT_NAME,
@@ -909,13 +910,16 @@ pipeline {
                     )
                     unstash "buildInfo_yml"
                     archiveArtifacts artifacts: 'buildInfo.yml'
+                    closeBuildSuccessGithubIssue(
+                        message: buildMessage(search: 'Successfully built'),
+                        inputManifestPath: "manifests/$INPUT_MANIFEST"
+                    )
                     postCleanup()
                 }
             }
         }
         success {
             node(AGENT_X64) {
-                checkout scm
                 script {
                     List<String> stages = []
                     if (params.BUILD_PLATFORM.contains('linux')) {
@@ -943,11 +947,6 @@ pipeline {
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
-                    closeBuildSuccessGithubIssue(
-                        message: buildMessage(search: 'Successfully built'),
-                        inputManifestPath: "manifests/$INPUT_MANIFEST"
-                    )
-
                     postCleanup()
                 }
             }
