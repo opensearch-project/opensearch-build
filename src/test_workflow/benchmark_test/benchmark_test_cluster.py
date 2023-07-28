@@ -67,14 +67,14 @@ class BenchmarkTestCluster:
             f" --require-approval=never --plugin cdk-assume-role-credential-plugin"
             f" -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} "
         )
-        self.params = "".join(params_list)  # + role_params
+        self.params = "".join(params_list) + role_params
         self.is_endpoint_public = False
         self.cluster_endpoint = None
         self.cluster_endpoint_with_port = None
         self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}-{self.manifest.build.id}-{self.manifest.build.architecture}"
 
     def start(self) -> None:
-        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file} --require-approval never"
+        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
 
         logging.info(f'Executing "{command}" in {os.getcwd()}')
         subprocess.check_call(command, cwd=os.getcwd(), shell=True)
@@ -123,9 +123,8 @@ class BenchmarkTestCluster:
             suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
         return {
             "distributionUrl": self.manifest.build.location if isinstance(self.manifest, BundleManifest) else
-            f"https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/{self.manifest.build.version}/"
-            f"{self.manifest.build.id}/linux/{self.manifest.build.architecture}/tar/builds/opensearch/dist/opensearch-min-"
-            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}.tar.gz",
+            f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-"
+            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz",
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
