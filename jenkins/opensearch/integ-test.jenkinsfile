@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@4.2.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.4.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -160,6 +160,13 @@ pipeline {
                                                         testManifest: "manifests/${TEST_MANIFEST}",
                                                         localPath: "${WORKSPACE}/${distribution}",
                                                         switchUserNonRoot: "${switch_user_non_root}"
+                                                    )
+                                                    String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
+                                                    closeGithubIssue(
+                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                        closeComment: closeCommentMessage,
+                                                        label: "autocut,v${version},integ-test-failure"
                                                     )
                                                 }
                                             } catch (e) {
