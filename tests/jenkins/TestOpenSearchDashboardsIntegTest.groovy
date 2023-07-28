@@ -24,7 +24,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('4.2.2')
+                .defaultVersion('5.4.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -137,13 +137,28 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
     }
 
     @Test
+    void CheckCloseGHissue() {
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
+        helper.addShMock('gh issue list --repo https://github.com/opensearch-project/dashboards-visualization.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure', '', 0)
+        assertThrows(Exception) {
+            runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+        }
+        assertJobStatusFailure()
+        runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S \"[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue close bbb\nccc -R opensearch-project/dashboards-visualizations --comment \"Closing the issue as the Integration Test passed for ganttChartDashboards<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}"))
+    }
+
+    @Test
     void checkGHexistingIssue() {
         helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
         assertThrows(Exception) {
             runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
-        assertThat(getCommandExecutions('println', 'Issue'), hasItem('Issue already exists in the repository, skipping.'))
+        assertThat(getCommandExecutions('println', 'Issue'), hasItem('Issue already exists, adding a comment.'))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S \"[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue comment bbb\nccc --repo https://github.com/opensearch-project/dashboards-observability.git --body \"The integration test failed at distribution level for component observabilityDashboards<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Steps to reproduce: See https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#integration-tests<br>* See all log files:<br> - [With security](https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/215/linux/x64/tar/test-results/215/integ-test/observabilityDashboards/with-security/observabilityDashboards.yml) (if applicable)<br> - [Without security](https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/215/linux/x64/tar/test-results/215/integ-test/observabilityDashboards/without-security/observabilityDashboards.yml) (if applicable)<br><br>\", returnStdout=true}"))
     }
 
     def getCommandExecutions(methodName, command) {
