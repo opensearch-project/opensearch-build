@@ -13,11 +13,12 @@
       - [Creating a New Version](#creating-a-new-version)
     - [Release Manager](#release-manager)
     - [Release label](#release-label)
-    - [Release issue](#release-issue)
+    - [Release Issue](#release-issue)
       - [Release Issue Update](#release-issue-update)
-    - [Increase the build frequency](#increase-the-build-frequency)
+    - [Increase the Build Frequency](#increase-the-build-frequency)
+    - [Update the Maven Publish Workflow](#update-the-maven-publish-workflow)
   - **[Campaigns](#campaigns)**
-    - [Components Release Issue](#components-release-issue)
+    - [Component Release Issues](#component-release-issues)
        - [Issue Creation Process Overview](#issue-creation-process-overview)
     - [Release Campaigns](#release-campaigns)
   - **[Release Branch Readiness](#release-branch-readiness)**
@@ -39,10 +40,10 @@
        - [Integ Test TAR](#integ-test-tar)
        - [Integ Test RPM](#integ-test-rpm)
        - [Docker Build and Scan](#docker-build-and-scan)
-         - [Docker RC freeze](#docker-rc-freeze)
+         - [Docker RC Freeze](#docker-rc-freeze)
        - [Benchmark Tests](#benchmark-tests)
        - [Backwards Compatibility Tests](#backwards-compatibility-tests)
-       - [Windows Integ Test](#windows-integ-test)
+       - [Windows Integration Test](#windows-integration-test)
        - [Broadcast and Communication](#broadcast-and-communication)
        - [Release Candidate Lock](#release-candidate-lock)
   - **[Release](#release)**
@@ -50,7 +51,7 @@
           - [Release Labeled Issues](#release-labeled-issues)
           - [Go or No-Go](#go-or-no-go)
           - [Promote Repos](#promote-repos)
-          - [Promote artifacts](#promote-artifacts)
+          - [Promote Artifacts](#promote-artifacts)
           - [Release Notes](#release-notes)
       - [Main Release](#main-release)
           - [Maven Promotion](#maven-promotion)
@@ -60,6 +61,7 @@
              - [Publish blog posts](#publish-blog-posts)
              - [Advertise on Social Media](#advertise-on-social-media)
           - [Release Validation](#release-validation)
+      - [Release Checklist](#release-checklist)
   - **[Post Release](#post-release)**
       - [Release Tags](#release-tags)
       - [Input Manifest Update](#input-manifest-update)
@@ -67,7 +69,6 @@
       - [Decrease the build frequency](#decrease-the-build-frequency)
       - [Retrospective Issue](#retrospective-issue)
       - [Helm and Ansible Playbook release](#helm-and-ansible-playbook-release)
-      - [Close the AUTOCUT issues](#close-the-autocut-issues)
       - [Upcoming Release Preparation](#upcoming-release-preparation)
   - **[Communication Templates](#communication-templates)**
       - [Release Announcement](#release-announcement)
@@ -128,7 +129,7 @@ The final output of the assemble workflow and manifest that is added to the fina
 
 #### AUTOCUT issues
 
-These are the issues created by automation with the distribution build and integ-test worklows failure, the automation detects the component failure and raises an issue in the respective component repo. Sample [integ-test failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/914) and [distribution build failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/732).
+These are the issues created by automation with the distribution build and integ-test workflows failure, the automation detects the component failure and raises an issue in the respective component repo. Sample [integ-test failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/914) and [distribution build failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/732). The created `AUTOCUT` issues will have the updated information with latest build failure details, the automation also detects if the component build has passed and closes the issues automatically. For more details refer the [closeBuildSuccessGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/closeBuildSuccessGithubIssue.groovy) and [createGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/createGithubIssue.groovy) libraries part of the distribution build and integ-test worklows.
 
 
 #### Build Workflows
@@ -146,6 +147,7 @@ These are the issues created by automation with the distribution build and integ
 | [Docker Build](https://build.ci.opensearch.org/job/docker-build/)                                                             |   Workflow that builds the   OpenSearch  and OpenSearch Dashboards docker images           |
 | [Docker Copy](https://build.ci.opensearch.org/job/docker-copy/)                                                               |  Workflow that copies the created docker images to multiple DockerHub and ECR repositories                   |
 | [Docker Scan](https://build.ci.opensearch.org/job/docker-scan/)                                                               |     Workflow that checks vulnerabilities for a given docker image as an input.                |
+| [1.x Maven Publish](https://build.ci.opensearch.org/job/snapshot-maven-publish-1.x/)                                                               |     Workflow that published snapshot maven artifcats, used only for 1.3.x versions. Fore more details check https://github.com/opensearch-project/job-scheduler/issues/319.                |
 
 
 #### Release Workflows
@@ -166,15 +168,15 @@ Each new OpenSearch release process starts when any one component increments a v
 
 ### Release Manager
 
-The release managers to a specific OpenSearch release will be assigned through volunteer model. The request for release managers will be posted in [OpenSearch public slack workspace](https://opensearch.slack.com/archives/C0561HRK961) (under releases channel) and selected on first come first served (FCFS) model.
-Note: The release managers should be maintainers of a repo under OpenSearch GitHub organization.
+The release manager to a specific OpenSearch release will be assigned through volunteer model. The request for a release manager will be posted in [OpenSearch public Slack #releases channel](https://opensearch.slack.com/archives/C0561HRK961) and selected on first come first served (FCFS) model.
+Note: The release manager should be a maintainer of a repo under OpenSearch GitHub organization.
 
 ### Release Label
 
 The release label creation is part of the version increment workflows running in the build repo [OpenSearch Version Increment Workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/os-increment-plugin-versions.yml),
 [OpenSearch Dashboards Version Increment Workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/osd-increment-plugin-versions.yml). These workflows not only raise a pull request for a version increment but also verify if the release label exists for a given version. If it doesn't, they proceed to create it.
 
-### Release issue
+### Release Issue
 
 This issue captures the state of the OpenSearch release, its assignee is responsible for driving the release. Please contact them or @mention them on this issue for help. There are linked issues on components of the release where individual components can be tracked. More details are included in the Maintainers Release owner section.
 
@@ -183,17 +185,21 @@ This issue captures the state of the OpenSearch release, its assignee is respons
 
 The release issue is created by an [automation workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml). Once the release manager is finalized, the release manager should be updating the created release issue. Sample [Release Issue 2.8.0](https://github.com/opensearch-project/opensearch-build/issues/3434). Update the release issue issue so all `__REPLACE_RELEASE-__` placeholders have actual dates.
 
-### Increase the build frequency
+### Increase the Build Frequency
 
 Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile). This will ensure the [Distribution Build](#distribution-build) workflow is called every hour to build and detect the components failure early that are part of the [Input Manifest](#input-manifest).
+
+### Update the Maven Publish Workflow
+
+This step is necessary solely for the `1.3.x` release process; you can find more information in the [issue](https://github.com/opensearch-project/job-scheduler/issues/319). Please make sure to update and execute the `1.x Maven Publish workflow`; you can find the workflow specifics in the [Build Workflows](#build-workflows) section. Additionally, you can refer to a relevant [sample PR](https://github.com/opensearch-project/opensearch-build/pull/3838).
 
 ## Campaigns
 
 This section is not required for a patch release.
 
-### Components Release Issue
+### Component Release Issues
 
-Create a release issue in each component repository and then update the "components" section of the release issue with the corresponding release issues generated in each component repository. Refer to the sample [component issues](https://github.com/opensearch-project/opensearch-build/issues/3434#issue-1679791812) for a specific release. Utilize the existing [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) to generate the component release issue. Make sure that all the release issues created earlier are linked to this release issue and assigned to a designated owner within the component team.
+The component release issues are auto created by the workflows part of the build repo [OpenSearch components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/os-release-issues.yml), [OpenSearch Dashboards components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/osd-release-issues.yml). These workflows creates the release issues based on the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) and links back the global release issue part of the build. Sample component release issues created for [2.10.0](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aopensearch-project+%5BRELEASE%5D+Release+version+2.10.0+in%3Atitle+)
 
 #### Issue Creation Process Overview
 
@@ -214,9 +220,11 @@ The `Release Branch Readiness date` is determined as the release date minus 14 d
 ### Release Branch
 
 Not applicable for patch release.
+
 #### Core
 
 This step requires both OpenSearch and OpenSearch Dashboards to create a release branch that will be used for the release.
+
 #### Components
 
 This step requires that every team participating in a release has their release branch created for the corresponding release by the date listed on this step. The [Distribution Build](#distribution-build) workflow will also start using the release branch to create release candidate instead of `.x` branches.
@@ -336,7 +344,7 @@ Following are the details for the docker image build and scan. The docker images
 | OpenSearch Dashboards  | [Build](https://build.ci.opensearch.org/job/docker-build/3370/)  | [Scan](https://build.ci.opensearch.org/job/docker-scan/1557/artifact/scan_docker_image.txt)   |
 
 
-##### Docker RC freeze
+##### Docker RC Freeze
 
 This to ensure that [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile) wont re-build periodically and override the docker, the RC docker is created with build number. This step can be skipped if the input `BUILD_DOCKER: build_docker_with_build_number_tag` (Ref [Workflow Trigger](#workflow-trigger) used in the [Distribution Build](#distribution-build).
 
@@ -347,7 +355,7 @@ This to ensure that [check-for-build.jenkinsfile](https://github.com/opensearch-
 
 #### Benchmark Tests
 
-For running the benchmark tests, use the `benchmark-test` job part of the [Build Workflows](#build-workflows). For more details in running the benchmark tests refer [Benchmarking Tests](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#benchmarking-tests) section part of the [test workflow](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow). This job offers multiple options to test the performance of a specific version cluster using various metrics. The performance results can be accessed via the [OpenSearch Performance Benchmarks dashboard](https://opensearch.org/benchmarks).
+For running the benchmark tests, use the `benchmark-test` job part of the [Build Workflows](#build-workflows). For more details in running the benchmark tests refer [Benchmarking Tests](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#benchmarking-tests) section part of the [test workflow](https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow). This job offers multiple options to test the performance of a specific version cluster using various metrics. The benchmark performance results can be accessed via the [OpenSearch Performance Benchmarks dashboard](https://opensearch.org/benchmarks). Sample benchmark tests for [2.9.0 release](https://github.com/opensearch-project/opensearch-build/issues/3616#issuecomment-1642764515).
 
 
 #### Backwards Compatibility Tests
@@ -361,7 +369,7 @@ On board the components/plugins to the test [Test Manifest](#test-manifest) with
         - with-security
 ```
 
-#### Windows Integ Test
+#### Windows Integration Test
 
 Currently, the windows integration tests for a release is manual. The manually tested windows zip is being evaluated and approved by the plugin teams for sign off. In order to test the windows distribution, two instances need to be created: one with security features enabled and another without security. Afterward, API calls should be tested by launching the OpenSearch and Dashboard processes through direct execution of the `.bat` file.
 
@@ -406,7 +414,7 @@ Get the Go / No-Go votes from project management committee (PMC) before staging 
 | APT  | [apt-os](https://build.ci.opensearch.org/job/distribution-promote-repos/)     | [apt-osd](https://build.ci.opensearch.org/job/distribution-promote-repos/49/) |
 
 
-#### Promote artifacts
+#### Promote Artifacts
 
 | Artifacts | OpenSearch (Sample Runs)                                                                                                                                                                   | OpenSearch Dashboards (Sample Runs)                                                                                                                                                           |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -451,6 +459,10 @@ Coordinate with the project management team to ensure the social media advertise
 
 Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifcats, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
 
+### Release Checklist
+
+Please update the checklist either in the release issue body or as a new comment to the release issue. By following and updating the release checklist, we can ensure the success of the release. Sample release checklist for [2.9.0 release](https://github.com/opensearch-project/opensearch-build/issues/3616#issuecomment-1646312725).
+
 ## Post Release
 
 Once the release is completed following are the activities that needs to be completed by the release manager:
@@ -479,9 +491,6 @@ Create an issue for a retrospective, solicit feedback, and publish a summary. Sa
 
 Update and release the [Helm chart](https://github.com/opensearch-project/helm-charts) and [ansible playbook](https://github.com/opensearch-project/ansible-playbook) with the new OpenSearch and Dashboard version. Sample helm chart [PR](https://github.com/opensearch-project/helm-charts/pull/431/files) and ansible [PR](https://github.com/opensearch-project/ansible-playbook/pull/131).
 
-### Close the AUTOCUT issues
-
-Close the created `[AUTOCUT]` issues as part of the integration and distribution build workflows. Refer the [AUTOCUT issues](#autocut-issues) for more information.
 ### Upcoming Release Preparation
 
 The release manager for the current release should ensure that a release manager is assigned for the upcoming release. This can be achieved by coordinating in a Slack channel and [@opensearch-project/engineering-effectiveness](https://github.com/orgs/opensearch-project/teams/engineering-effectiveness) team should assist in assigning the user to the upcoming [Release issue](#release-issue).
