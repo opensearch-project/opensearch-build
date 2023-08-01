@@ -1,0 +1,173 @@
+---
+schema-version: '1.0'
+name: OpenSearch
+test-run:
+  Command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+    opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+  TestType: integ-test
+  TestManifest: manifests/2.8.0/opensearch-2.8.0-test.yml
+  DistributionManifest: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar/dist/opensearch/manifest.yml
+  TestID: '5109'
+components:
+  - name: alerting
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component alerting
+    configs:
+      - name: with-security
+        status: FAIL
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/alerting.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/alerting.yml
+  - name: anomaly-detection
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component anomaly-detection
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/with-security/anomaly-detection.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/without-security/anomaly-detection.yml
+  - name: asynchronous-search
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component asynchronous-search
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/with-security/asynchronous-search.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/without-security/asynchronous-search.yml
+  - name: cross-cluster-replication
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component cross-cluster-replication
+    configs:
+      - name: with-security
+        status: Not Available
+        yml: URL not available
+      - name: without-security
+        status: Not Available
+        yml: URL not available
+  - name: geospatial
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component geospatial
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/geospatial.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/without-security/geospatial.yml
+  - name: index-management
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component index-management
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/with-security/index-management.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/without-security/index-management.yml
+  - name: k-NN
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component k-NN
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/with-security/k-NN.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/without-security/k-NN.yml
+  - name: ml-commons
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component ml-commons
+    configs:
+      - name: with-security
+        status: FAIL
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/with-security/ml-commons.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/without-security/ml-commons.yml
+  - name: neural-search
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component neural-search
+    configs:
+      - name: with-security
+        status: FAIL
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/with-security/neural-search.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/without-security/neural-search.yml
+  - name: notifications
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component notifications
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/with-security/notifications.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/without-security/notifications.yml
+  - name: opensearch-observability
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component opensearch-observability
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/with-security/opensearch-observability.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/without-security/opensearch-observability.yml
+  - name: opensearch-reports
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component opensearch-reports
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/with-security/opensearch-reports.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/without-security/opensearch-reports.yml
+  - name: security
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component security
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security/with-security/security.yml
+  - name: security-analytics
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component security-analytics
+    configs:
+      - name: with-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/with-security/security-analytics.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/without-security/security-analytics.yml
+  - name: sql
+    command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
+      opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
+      --component sql
+    configs:
+      - name: with-security
+        status: FAIL
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/with-security/sql.yml
+      - name: without-security
+        status: PASS
+        yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/without-security/sql.yml
