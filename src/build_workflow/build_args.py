@@ -26,6 +26,7 @@ class BuildArgs:
     platform: str
     architecture: str
     distribution: str
+    continue_on_error: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Build an OpenSearch Distribution")
@@ -95,6 +96,13 @@ class BuildArgs:
             default="tar",
             dest="distribution"
         )
+        parser.add_argument(
+            "--continue-on-error",
+            dest="continue_on_error",
+            default=False,
+            action="store_true",
+            help="Do not fail the distribution build on any plugin component failure.",
+        )
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
@@ -107,6 +115,7 @@ class BuildArgs:
         self.architecture = args.architecture
         self.distribution = args.distribution
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
+        self.continue_on_error = args.continue_on_error
 
     def component_command(self, name: str) -> str:
         return " ".join(

@@ -45,6 +45,14 @@ class TestBuildArgs(unittest.TestCase):
         self.assertTrue(BuildArgs().keep)
 
     @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
+    def test_continue_on_error_default(self) -> None:
+        self.assertFalse(BuildArgs().continue_on_error)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST, "--continue-on-error"])
+    def test_continue_on_error_true(self) -> None:
+        self.assertTrue(BuildArgs().continue_on_error)
+
+    @patch("argparse._sys.argv", [BUILD_PY, OPENSEARCH_MANIFEST])
     def test_snapshot_default(self) -> None:
         self.assertFalse(BuildArgs().snapshot)
 
