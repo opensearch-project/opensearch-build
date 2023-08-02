@@ -198,6 +198,13 @@ pipeline {
             }
             post {
                 always {
+                    createTestRunManifest(
+                        testManifest: "manifests/${TEST_MANIFEST}",
+                        buildManifest: BUILD_MANIFEST,
+                        testRunID: "${env.BUILD_NUMBER}",
+                        testType: "integ-test",
+                    )
+                    sh("cat test-run.yml")
                     postCleanup()
                 }
             }
