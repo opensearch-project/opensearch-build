@@ -13,7 +13,7 @@ pipeline {
     }
     triggers {
         parameterizedCron '''
-            H 1 * * * %INPUT_MANIFEST=1.3.11/opensearch-1.3.11.yml
+            H 1 * * * %INPUT_MANIFEST=1.3.12/opensearch-1.3.12.yml
         '''
     }
     parameters {
