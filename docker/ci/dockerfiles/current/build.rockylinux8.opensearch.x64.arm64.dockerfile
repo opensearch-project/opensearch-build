@@ -79,9 +79,9 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
 
 # Add k-NN Library dependencies
 # EL8 requires install config-manager and enable powertools to consume openblas-static
-RUN dnf install epel-release -y && dnf repolist && \
-    dnf install -y 'dnf-command(config-manager)' && \
+RUN dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
+    dnf install epel-release -y && dnf repolist && \
     dnf install openblas-static lapack gcc-gfortran -y && dnf clean all
 RUN pip3 install cmake==3.23.3
 
