@@ -71,14 +71,15 @@ def main() -> int:
                 logging.info(f"Successfully built {component.name}")
             except:
                 logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                if args.continue_on_error and component.name not in ['OpenSearch', 'OpenSearch Dashboards']:
+                if args.continue_on_error and component.name not in ['OpenSearch', 'OpenSearch-Dashboards']:
                     failed_plugins.append(component.name)
                     continue
                 else:
                     raise
 
         build_recorder.write_manifest()
-    logging.info(f"Failed plugins are {failed_plugins}")
+    if len(failed_plugins) > 0:
+        logging.error(f"Failed plugins are {failed_plugins}")
     logging.info("Done.")
     return 0
 

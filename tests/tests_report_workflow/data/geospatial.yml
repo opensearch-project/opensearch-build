@@ -1,0 +1,45 @@
+# yamllint disable-file
+component_name: geospatial
+run_id: 5109
+test_config: with-security
+test_result: PASS
+test_result_files:
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/stdout.txt
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/stderr.txt
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/stdout.txt
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/stderr.txt
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/gc.log.00
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/gc.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_deprecation.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_task_detailslog.json
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_index_search_slowlog.json
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_index_indexing_slowlog.json
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_server.json
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_deprecation.json
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_index_indexing_slowlog.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_index_search_slowlog.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/opensearch-service-logs/opensearchcluster1_task_detailslog.log
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/index.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/js/report.js
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/css/style.css
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/css/base-style.css
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.index.mapper.xypoint.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.plugin.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.index.query.xyshape.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.index.mapper.xyshape.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.index.query.xypoint.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.processor.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.rest.action.upload.geojson.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.search.aggregations.bucket.geogrid.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/packages/org.opensearch.geospatial.stats.upload.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.index.mapper.xypoint.XYPointFieldMapperIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.plugin.GeospatialPluginIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.index.query.xyshape.XYShapeQueryIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.rest.action.upload.geojson.RestUploadGeoJSONActionIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.index.mapper.xyshape.XYShapeFieldMapperIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.processor.FeatureProcessorIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.stats.upload.RestUploadStatsActionIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.index.query.xypoint.XYPointQueryIT.html
+  - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/opensearch-integ-test/classes/org.opensearch.geospatial.search.aggregations.bucket.geogrid.GeoHexAggregationIT.html
+test_type: integ-test
