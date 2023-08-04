@@ -131,3 +131,11 @@ components:
     platforms:
       - linux
       - windows
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
