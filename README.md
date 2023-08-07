@@ -7,33 +7,33 @@
 
 - [Releasing OpenSearch](#releasing-opensearch)
   - [Releases and Versions](#releases-and-versions)
-  - [Creating a New Version](#creating-a-new-version)
-  - [Onboarding a New Plugin](#onboarding-a-new-plugin)
-  - [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
-    - [Building from Source](#building-from-source)
-    - [Assembling a Distribution](#assembling-a-distribution)
-    - [Building Patches](#building-patches)
-    - [Min snapshots](#min-snapshots)
-    - [CI/CD Environment](#cicd-environment)
-    - [Build Numbers](#build-numbers)
-    - [Latest Distribution Url](#latest-distribution-url)
-    - [Testing the Distribution](#testing-the-distribution)
-    - [Checking Release Notes](#checking-release-notes)
-    - [Signing Artifacts](#signing-artifacts)
-      - [PGP](#pgp)
-      - [Windows](#windows)
-    - [Signing RPM artifacts](#signing-rpm-artifacts)
-  - [Making a Release](#making-a-release)
-    - [Releasing for Linux](#releasing-for-linux)
-    - [Releasing for FreeBSD](#releasing-for-freebsd)
-    - [Releasing for Windows](#releasing-for-windows)
-    - [Releasing for MacOS](#releasing-for-macos)
-  - [Utilities](#utilities)
-    - [Checking Out Source](#checking-out-source)
-    - [Cross-Platform Builds](#cross-platform-builds)
-    - [Sanity Checking the Bundle](#sanity-checking-the-bundle)
-    - [Auto-Generating Manifests](#auto-generating-manifests)
-  - [Deploying Infrastructure](#deploying-infrastructure)
+  - [Release labels](#release-labels)
+- [Onboarding a New Plugin](#onboarding-a-new-plugin)
+- [Building and Testing an OpenSearch Distribution](#building-and-testing-an-opensearch-distribution)
+  - [Building from Source](#building-from-source)
+  - [Assembling a Distribution](#assembling-a-distribution)
+  - [Building Patches](#building-patches)
+  - [Min snapshots](#min-snapshots)
+  - [CI/CD Environment](#cicd-environment)
+  - [Build Numbers](#build-numbers)
+  - [Latest Distribution Url](#latest-distribution-url)
+  - [Testing the Distribution](#testing-the-distribution)
+  - [Checking Release Notes](#checking-release-notes)
+  - [Signing Artifacts](#signing-artifacts)
+    - [PGP](#pgp)
+    - [Windows](#windows)
+  - [Signing RPM artifacts](#signing-rpm-artifacts)
+- [Making a Release](#making-a-release)
+  - [Releasing for Linux](#releasing-for-linux)
+  - [Releasing for FreeBSD](#releasing-for-freebsd)
+  - [Releasing for Windows](#releasing-for-windows)
+  - [Releasing for MacOS](#releasing-for-macos)
+- [Utilities](#utilities)
+  - [Checking Out Source](#checking-out-source)
+  - [Cross-Platform Builds](#cross-platform-builds)
+  - [Sanity Checking the Bundle](#sanity-checking-the-bundle)
+  - [Auto-Generating Manifests](#auto-generating-manifests)
+- [Deploying Infrastructure](#deploying-infrastructure)
 - [Contributing](#contributing)
 - [Getting Help](#getting-help)
 - [Code of Conduct](#code-of-conduct)
@@ -41,22 +41,22 @@
 - [License](#license)
 - [Copyright](#copyright)
 
-## Releasing OpenSearch
+### Releasing OpenSearch
 
-### Releases and Versions
+Please refer to the [release process document](./RELEASE_PROCESS_OPENSEARCH.md) for detailed information on how to release the OpenSearch and OpenSearch Dashboards software.
+
+
+#### Releases and Versions
 
 The OpenSearch project releases as versioned distributions of OpenSearch, OpenSearch Dashboards, and the OpenSearch plugins. It [follows semantic versioning](https://opensearch.org/blog/technical-post/2021/08/what-is-semver/). Software, such as Data Prepper, clients, and the Logstash output plugin, are versioned independently of the OpenSearch Project. They also may have independent releases from the main project distributions. The OpenSearch Project may also release software under alpha, beta, release candidate, and generally available labels. The definition of when to use these labels is derived from [the Wikipedia page on Software release lifecycle](https://en.wikipedia.org/wiki/Software_release_life_cycle). Below is the definition of when to use each label.
 
-Release labels:
+#### Release labels:
 
 * **Alpha** - The code is released with instructions to build. Built distributions of the software may not be available. Some features many not be complete. Additional testing and developement work is planned. Distributions will be postfixed with `-alphaX` where "X" is the number of the alpha version  (e.g., "2.0-alpha1").
 * **Beta** - Built distributions of the software are available. All features are completed. Additional testing and developement work is planned. Distributions will be postfixed with `-betaX` where "X" is the number of the beta version  (e.g., "2.0.0-beta1").
 * **Release Candidate** - Built distributions of the software are available. All features are completed. Code is tested and minimal validation remains. At this stage the software is potentially stable and will release unless signficant bugs emerge. Distributions will be postfixed with `-rcX` where "X" is the number of the release candidate version (e.g., "2.0.0-rc1").
 * **Generally Available** - Built distributions of the software are available. All features are completed and documented. All testing is completed. Distributions for generally available versions are not postfixed with an additional label (e.g., "2.0.0").
 
-### Creating a New Version
-
-Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.0.0.yml](manifests/2.0.0/opensearch-2.0.0.yml). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Onboarding a New Plugin
 
@@ -210,9 +210,10 @@ RPM artifacts are signed via a legacy shell script which uses a [macros template
 
 See [src/sign_workflow](./src/sign_workflow) for more information.
 
+
 ### Making a Release
 
-#### Releasing for Linux / Windows
+#### Releasing for Linux and Windows
 
 The Linux / Windows release is managed by a team at Amazon following [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#2649](https://github.com/opensearch-project/opensearch-build/issues/2649)).
 
@@ -276,6 +277,7 @@ Check for updates and create any new manifests.
 ```
 
 See [src/manifests_workflow](./src/manifests_workflow) for more information.
+
 
 ### Deploying Infrastructure
 
