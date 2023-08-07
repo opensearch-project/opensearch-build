@@ -9,7 +9,7 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: b0b8fc858121f006066984ea8d58b7377eb617e1
+    ref: 449ae09d39d53a1e7b343715cfc2833278e6556e
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
     ref: d5a89c3f4453a0ba0cf75b433dd1fe9f553bcd04
@@ -34,7 +34,7 @@ components:
     ref: a12ee1292b4a3f859f20865e188457b3239aa5d8
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: f44b2b948152ffc6aa5a779a91393f71ee5b9f59
+    ref: 87dd14e49e09df03bd3f5734cda4fdcf691c1d2d
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: 73a61b742e19e84f70d5ec928bf1418dc55c7129
