@@ -1,0 +1,189 @@
+---
+schema-version: '1.0'
+name: OpenSearch
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: index-management
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        path.repo: [/tmp]
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: anomaly-detection
+    integ-test:
+      build-dependencies:
+        - job-scheduler
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: asynchronous-search
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: alerting
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: notifications
+    working-directory: notifications
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: sql
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        script.context.field.max_compilations_rate: 1000/1m
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: k-NN
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: neural-search
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: opensearch-reports
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: opensearch-observability
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+    bwc-test:
+      test-configs:
+        - with-security
+
+  - name: ml-commons
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: cross-cluster-replication
+    integ-test:
+      topology:
+        - cluster_name: leader
+          data_nodes: 2
+          cluster_manager_nodes: 0
+        - cluster_name: follower
+          data_nodes: 2
+          cluster_manager_nodes: 0
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: security
+    integ-test:
+      test-configs:
+        - with-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: geospatial
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
+
+  - name: security-analytics
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
