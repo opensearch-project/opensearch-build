@@ -7,6 +7,7 @@ pipeline {
     agent none
     options {
         timeout(time: 24, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Docker-Host-Benchmark-Test'
