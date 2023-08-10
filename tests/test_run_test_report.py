@@ -39,7 +39,7 @@ class TestRunTestReport(unittest.TestCase):
         self.assertTrue(out.startswith("usage:"))
 
     @patch("argparse._sys.argv", ["run_test_report.py", TEST_MANIFEST_PATH, "-p", "opensearch=foo"])
-    @patch('run_test_report.TestRunRunner')
+    @patch('run_test_report.TestReportRunner')
     def test_main(self, runner_mock: Mock, *mocks: Any) -> None:
 
         main()

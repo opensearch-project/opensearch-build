@@ -10,9 +10,9 @@ from typing import Optional
 from manifests.component_manifest import Component, ComponentManifest, Components
 
 
-class TestRunManifest(ComponentManifest['TestRunManifest', 'TestComponents']):
+class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents']):
     """
-    TestRunManifest contains the aggregated test results for the components.
+    TestReportManifest contains the aggregated test results for the components.
 
     The format for schema version 1.0 is:
         schema-version: '1.0'
@@ -149,7 +149,7 @@ class TestComponent(Component):
                 }
 
 
-TestRunManifest.VERSIONS = {"1.0": TestRunManifest}
+TestReportManifest.VERSIONS = {"1.0": TestReportManifest}
 
 TestComponent.__test__ = False  # type: ignore[attr-defined]
-TestRunManifest.__test__ = False  # type: ignore[attr-defined]
+TestReportManifest.__test__ = False  # type: ignore[attr-defined]
