@@ -10,16 +10,16 @@ import unittest
 
 import yaml
 
-from manifests.test_run_manifest import TestRunManifest
+from manifests.test_report_manifest import TestReportManifest
 
 
-class TestTestRunManifest(unittest.TestCase):
+class TestTestReportManifest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.maxDiff = None
         self.data_path = os.path.realpath(os.path.join(os.path.dirname(__file__), "data"))
         self.manifest_filename = os.path.join(self.data_path, "test-run.yml")
-        self.manifest = TestRunManifest.from_path(self.manifest_filename)
+        self.manifest = TestReportManifest.from_path(self.manifest_filename)
 
     def test_test_run(self) -> None:
         self.assertEqual(self.manifest.name, "OpenSearch")

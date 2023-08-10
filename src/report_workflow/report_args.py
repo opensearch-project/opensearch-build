@@ -30,7 +30,7 @@ class ReportArgs:
         parser.add_argument("--base-path", type=str, default="",
                             help="Specify base paths for the integration test logs.")
         parser.add_argument("--test-type", type=str, default="integ-test", help="Specify test type of this.")
-        parser.add_argument("--output-path", type=str, help="Specify the path location for the test-run manifest.")
+        parser.add_argument("--output-path", type=str, help="Specify the path location for the test-report manifest.")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, dest="components", nargs='*', help="Test a specific component or components instead of the entire distribution.")
         parser.add_argument(
