@@ -1,5 +1,5 @@
 #### Generate test-report manifest for each test.
-The input requires a mandatory `test-manifest-path`, `--artifact-paths`, `--base-path`, `--test-type` and `--test-run-id`, optional `--output-path` and `--component` to automatically generate the test-report manifest after testing.
+As the name specifies, the test report workflow helps to automatically generate a consolidated report of the tests run at distribution level along with commands to reproduce the error and associated failures.
 
 *Usage*
 ```
@@ -18,7 +18,7 @@ The following options are available.
 | --base-path          <required> | Base paths of testing logs.                                                    |
 | --test-type          <required> | Type of tests report generates on.                                             |
 | --output-path        <optional> | Specify the path location for the test-report manifest.                        |
-| --test-run-id        <required> | Specify the unique execution id for the test.                                  |
+| --test-run-id        <required> | Specify the unique execution id that matches the id of the test.               |
 | --component          <optional> | Specify a specific component or components instead of the entire distribution. |
 | --verbose            <optional> | Show more verbose output.                                                      |
 
