@@ -41,6 +41,7 @@ class BenchmarkArgs:
     user_tag: str
     target_hosts: str
     capture_node_stat: bool
+    capture_segment_replication_stat: bool
     logging_level: int
 
     def __init__(self) -> None:
@@ -91,6 +92,8 @@ class BenchmarkArgs:
                                  "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
         parser.add_argument("--capture-node-stat", dest="capture_node_stat", action="store_true",
                             help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
+        parser.add_argument("--capture_segment_replication_stat", dest="capture_segment_replication_stat", action="store_true",
+                            help="Enable opensearch-benchmark to segment_replication stat metrics such as replication lag.")
         parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
 
@@ -119,4 +122,5 @@ class BenchmarkArgs:
         self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
         self.use_50_percent_heap = args.use_50_percent_heap
         self.capture_node_stat = args.capture_node_stat
+        self.capture_segment_replication_stat = args.capture_segment_replication_stat
         self.logging_level = args.logging_level
