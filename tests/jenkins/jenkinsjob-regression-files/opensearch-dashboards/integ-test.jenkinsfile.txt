@@ -4,6 +4,8 @@
       integ-test.pipeline(groovy.lang.Closure)
          integ-test.credentials(jenkins-artifact-bucket-name)
          integ-test.timeout({time=4, unit=HOURS})
+         integ-test.logRotator({daysToKeepStr=30})
+         integ-test.buildDiscarder(null)
          integ-test.echo(Executing on agent [label:none])
          integ-test.stage(verify-parameters, groovy.lang.Closure)
             integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])

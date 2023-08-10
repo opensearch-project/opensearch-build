@@ -4,6 +4,8 @@
       integ-test.pipeline(groovy.lang.Closure)
          integ-test.credentials(jenkins-artifact-bucket-name)
          integ-test.timeout({time=4, unit=HOURS})
+         integ-test.logRotator({daysToKeepStr=30})
+         integ-test.buildDiscarder(null)
          integ-test.echo(Executing on agent [label:none])
          integ-test.parameterizedCron(
             H 3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml

@@ -3,6 +3,8 @@
       benchmark-test.library({identifier=jenkins@5.1.0, retriever=null})
       benchmark-test.pipeline(groovy.lang.Closure)
          benchmark-test.timeout({time=24, unit=HOURS})
+         benchmark-test.logRotator({daysToKeepStr=30})
+         benchmark-test.buildDiscarder(null)
          benchmark-test.echo(Executing on agent [label:none])
          benchmark-test.parameterizedCron(
             H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.7.0/7771/linux/x64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;USE_50_PERCENT_HEAP=true;USER_TAGS=run-type:nightly,segrep:disabled,arch:x64,instance-type:r5.xlarge,major-version:2x,cluster-config:x64-r5.xlarge-3-data-3-shards-1-replica;WORKLOAD_PARAMS={"number_of_replicas":"1","number_of_shards":"3"}
