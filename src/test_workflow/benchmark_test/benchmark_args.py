@@ -91,7 +91,7 @@ class BenchmarkArgs:
                                  "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
         parser.add_argument("--capture-node-stat", dest="telemetry", action="append_const", const="node-stats",
                             help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
-        parser.add_argument("--capture_segment_replication_stat", dest="telemetry", action="append_const",
+        parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const",
                             const="segment-replication-stats",
                             help="Enable opensearch-benchmark to segment_replication stat metrics such as replication lag.")
         parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,

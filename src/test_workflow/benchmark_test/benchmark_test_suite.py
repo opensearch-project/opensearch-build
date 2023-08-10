@@ -49,7 +49,7 @@ class BenchmarkTestSuite:
             self.command += f" {user_tag}"
 
         if args.telemetry:
-            self.command += " --telemetry="
+            self.command += " --telemetry "
             for value in args.telemetry:
                 self.command += f"{value},"
 
