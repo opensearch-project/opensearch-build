@@ -11,14 +11,14 @@ e.g.
 ```
 The following options are available.
 
-| name                 | description                                                                    |
-|----------------------|--------------------------------------------------------------------------------|
-| test-manifest-path   | Specify a test manifest path.                                                  |
-| -p, --artifact-paths | Artifact paths of distributions used for testing.                              |
-| --base-path          | Base paths of testing logs.                                                    |
-| --test-type          | Type of tests report generates on.                                             |
-| --output-path        | Specify the path location for the test-report manifest.                        |
-| --test-run-id        | Specify the unique execution id for the test.                                  |
-| --component          | Specify a specific component or components instead of the entire distribution. |
-| --verbose            | Show more verbose output.                                                      |
+| name                            | description                                                                    |
+|---------------------------------|--------------------------------------------------------------------------------|
+| test-manifest-path   <required> | Specify a test manifest path.                                                  |
+| -p, --artifact-paths <required> | Artifact paths of distributions used for testing.                              |
+| --base-path          <required> | Base paths of testing logs.                                                    |
+| --test-type          <required> | Type of tests report generates on.                                             |
+| --output-path        <optional> | Specify the path location for the test-report manifest.                        |
+| --test-run-id        <required> | Specify the unique execution id for the test.                                  |
+| --component          <optional> | Specify a specific component or components instead of the entire distribution. |
+| --verbose            <optional> | Show more verbose output.                                                      |
 
