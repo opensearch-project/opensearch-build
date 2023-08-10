@@ -48,11 +48,10 @@ class BenchmarkTestSuite:
             user_tag = f"--user-tag=\"{args.user_tag}\""
             self.command += f" {user_tag}"
 
-        self.command += " --telemetry="
-        if args.capture_node_stat:
-            self.command += "node-stats,"
-        if args.capture_segment_replication_stat:
-            self.command += "segment-replication-stats,"
+        if args.telemetry:
+            self.command += " --telemetry="
+            for value in args.telemetry:
+                self.command += f"{value},"
 
     def execute(self) -> None:
         if self.security:
