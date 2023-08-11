@@ -65,6 +65,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
     def test_create_single_node_insecure(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.insecure = True
+        self.args.data_instance_type = 'r5.4xlarge'
         TestBenchmarkTestCluster.setUp(self, self.args)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-007-x64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -76,6 +77,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertEqual(self.benchmark_test_cluster.endpoint_with_port, 'www.example.com:80')
         self.assertEqual(self.benchmark_test_cluster.port, 80)
         self.assertTrue("securityDisabled=true" in self.benchmark_test_cluster.params)
+        self.assertTrue("dataInstanceType=r5.4xlarge" in self.benchmark_test_cluster.params)
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:

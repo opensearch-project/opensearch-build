@@ -33,6 +33,7 @@ class BenchmarkArgs:
     ml_node_storage: int
     jvm_sys_props: str
     additional_config: str
+    data_instance_type: str
     use_50_percent_heap: bool
     enable_remote_store: bool
     workload: str
@@ -80,6 +81,8 @@ class BenchmarkArgs:
                             help="User provided data-node ebs block storage size, defaults to 100Gb")
         parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",
                             help="Enable Remote Store feature in OpenSearch")
+        parser.add_argument("--data-instance-type", dest="data_instance_type",
+                            help="EC2 instance type for data node, defaults to r5.xlarge.")
         parser.add_argument("--workload", dest="workload", required=True,
                             help="Name of the workload that OpenSearch Benchmark should run")
         parser.add_argument("--benchmark-config", dest="benchmark_config",
@@ -112,6 +115,7 @@ class BenchmarkArgs:
         self.data_node_storage = args.data_node_storage if args.data_node_storage else None
         self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
         self.enable_remote_store = args.enable_remote_store
+        self.data_instance_type = args.data_instance_type if args.data_instance_type else None
         self.workload = args.workload
         self.workload_params = args.workload_params if args.workload_params else None
         self.benchmark_config = args.benchmark_config if args.benchmark_config else None
