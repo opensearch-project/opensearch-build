@@ -190,7 +190,7 @@ class TestRunBuild(unittest.TestCase):
             main()
         mock_logging_error.assert_called_with(f"Error building common-utils, retry with: run_build.py {self.NON_OPENSEARCH_MANIFEST} --component common-utils")
 
-    @patch("argparse._sys.argv", ["run_build.py", NON_OPENSEARCH_MANIFEST, "-p", "linux", "--continue-on-error", "--component", "sql" ,"alerting"])
+    @patch("argparse._sys.argv", ["run_build.py", NON_OPENSEARCH_MANIFEST, "-p", "linux", "--continue-on-error", "--component", "sql", "alerting"])
     @patch("run_build.Builders.builder_from", return_value=MagicMock())
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
