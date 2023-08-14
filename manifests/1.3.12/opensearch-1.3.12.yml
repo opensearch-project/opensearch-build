@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 9ec3b126e9dc91512202db55e6ba24a583365ea1
+    ref: tags/1.3.12
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: c7d9073c3617b4c577dd505bc10278b8ae3861f4
+    ref: tags/1.3.12.0
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -25,7 +25,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 32eb73b20a08474dc2d339b3c3955603a79b122a
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -34,7 +34,7 @@ components:
       - windows
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: a3830bde6f406eb92a1385508db2603212f052c7
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
@@ -43,7 +43,7 @@ components:
       - windows
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 24f17f6be313c9b7fb30e38abcb4ec26fa92b673
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -52,7 +52,7 @@ components:
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 85f913e0445d2cd5d756374af06d680ddccad05d
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -61,7 +61,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 6371544d4d345415fd59bc9048ad873b93045165
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -70,7 +70,7 @@ components:
       - windows
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 3411ed8360c148ad1f07ae23387d48e8aefc8fdb
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
@@ -79,7 +79,7 @@ components:
       - windows
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 135291111ef99766c88f12a6ae8c14c28d5675ce
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -88,7 +88,7 @@ components:
       - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 0dfb1e6207587856b915fb356f3493fd5d69b462
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
@@ -97,7 +97,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 9252ade32ce64dcb8000a3a345a676414c8d200a
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -106,7 +106,7 @@ components:
       - windows
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: ee11a2af2b3e1eb85e3cc596d3588a9a91c51a3f
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -115,7 +115,7 @@ components:
       - windows
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: ee741d5e046cb42f81222a10594754c2e1353b15
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -124,7 +124,7 @@ components:
       - windows
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 19b0d7f756dd7be79b54974115591102fb1f5195
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -133,7 +133,7 @@ components:
       - windows
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 741fd941c955cc1579852d271477e1a94e3c5fe6
+    ref: tags/1.3.12.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version

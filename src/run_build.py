@@ -71,7 +71,7 @@ def main() -> int:
                 logging.info(f"Successfully built {component.name}")
             except:
                 logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                if args.continue_on_error and component.name not in ['OpenSearch', 'OpenSearch-Dashboards']:
+                if args.continue_on_error and component.name not in ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']:
                     failed_plugins.append(component.name)
                     continue
                 else:

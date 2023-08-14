@@ -181,6 +181,20 @@ class TestRunBuild(unittest.TestCase):
     @patch("run_build.BuildRecorder", return_value=MagicMock())
     @patch("run_build.TemporaryDirectory")
     @patch("run_build.logging.error")
+    def test_common_utils_failure_continue_on_error(self, mock_logging_error: Mock, mock_temp: Mock, mock_recorder: Mock, mock_builder_from: Mock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        mock_builder = Mock()
+        mock_builder.build.side_effect = Exception("Error building")
+        mock_builder_from.return_value = mock_builder
+        with pytest.raises(Exception, match="Error building"):
+            main()
+        mock_logging_error.assert_called_with(f"Error building common-utils, retry with: run_build.py {self.NON_OPENSEARCH_MANIFEST} --component common-utils")
+
+    @patch("argparse._sys.argv", ["run_build.py", NON_OPENSEARCH_MANIFEST, "-p", "linux", "--continue-on-error", "--component", "sql", "alerting"])
+    @patch("run_build.Builders.builder_from", return_value=MagicMock())
+    @patch("run_build.BuildRecorder", return_value=MagicMock())
+    @patch("run_build.TemporaryDirectory")
+    @patch("run_build.logging.error")
     def test_fail_plugins_continue_on_error(self, mock_logging_error: Mock, mock_temp: Mock, mock_recorder: Mock, mock_builder_from: Mock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_builder = Mock()
@@ -188,7 +202,7 @@ class TestRunBuild(unittest.TestCase):
         mock_builder_from.return_value = mock_builder
 
         main()
-        mock_logging_error.assert_called_with("Failed plugins are ['common-utils', 'job-scheduler', 'sql', 'alerting']")
+        mock_logging_error.assert_called_with("Failed plugins are ['sql', 'alerting']")
 
     @patch("argparse._sys.argv", ["run_build.py", NON_OPENSEARCH_MANIFEST, "-p", "linux"])
     @patch("run_build.Builders.builder_from", return_value=MagicMock())

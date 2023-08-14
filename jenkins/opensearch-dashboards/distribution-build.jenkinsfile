@@ -131,31 +131,6 @@ pipeline {
                 }
             }
         }
-        stage('Initialize the job info yaml report') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image dockerAgent.image
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    buildInfoYaml(
-                        componentName: COMPONENT_NAME,
-                        inputManifest: "manifests/$INPUT_MANIFEST",
-                        status: "NOT_STARTED",
-                        stage: "INITIALIZE_STAGE"
-                    )
-                }
-            }
-            post {
-                always {
-                    postCleanup()
-                }
-            }
-        }
         stage('build') {
             parallel {
                 stage('build-and-test-linux-x64-tar') {
@@ -851,13 +826,6 @@ pipeline {
             node(AGENT_X64) {
                 checkout scm
                 script {
-                    buildInfoYaml(
-                        componentName: COMPONENT_NAME,
-                        status: currentBuild.result,
-                        stage: "FINALIZE_STAGE"
-                    )
-                    unstash "buildInfo_yml"
-                    archiveArtifacts artifacts: 'buildInfo.yml'
                     closeBuildSuccessGithubIssue(
                         message: buildMessage(search: 'Successfully built'),
                         search: "Successfully built",
