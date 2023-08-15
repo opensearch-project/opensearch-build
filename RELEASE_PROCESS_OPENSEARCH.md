@@ -215,11 +215,11 @@ If exists any release specific issues/campaigns link it back to the release issu
 
 ## Release Branch Readiness
 
-The `Release Branch Readiness date` is determined as the release date minus 14 days.
+The `Release Branch Readiness date` is determined as the release date minus 4 days.
 
 ### Release Branch
 
-Not applicable for patch release.
+This release branch creation is not applicable for patch release.
 
 #### Core
 
