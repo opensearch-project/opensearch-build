@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.1.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -195,6 +195,11 @@ pipeline {
             trim: true
         )
         string(
+            name: 'DATA_INSTANCE_TYPE',
+            description: 'EC2 instance type for data node, empty defaults to r5.xlarge.',
+            trim: true
+        )
+        string(
             name: 'DATA_NODE_STORAGE',
             description: 'Data node ebs block storage size, empty value defaults to 100Gb',
             trim: true
@@ -300,6 +305,7 @@ pipeline {
                                 clientNodeCount: CLIENT_NODE_COUNT,
                                 ingestNodeCount: INGEST_NODE_COUNT,
                                 mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
                                 userTag: USER_TAGS.isEmpty() ? "security-enabled:true" : "${USER_TAGS},security-enabled:true",
                                 workloadParams: WORKLOAD_PARAMS,
                                 additionalConfig: ADDITIONAL_CONFIG,
@@ -346,6 +352,7 @@ pipeline {
                                 clientNodeCount: CLIENT_NODE_COUNT,
                                 ingestNodeCount: INGEST_NODE_COUNT,
                                 mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
                                 userTag: USER_TAGS.isEmpty() ? "security-enabled:false" : "${USER_TAGS},security-enabled:false",
                                 workloadParams: WORKLOAD_PARAMS,
                                 additionalConfig: ADDITIONAL_CONFIG,
