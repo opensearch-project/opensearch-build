@@ -167,7 +167,7 @@ pipeline {
                                 platform: 'linux',
                                 architecture: 'x64',
                                 distribution: 'tar',
-                                continueOnError: ${params.CONTINUE_ON_ERROR}
+                                continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
@@ -742,7 +742,7 @@ pipeline {
                                 platform: 'windows',
                                 architecture: 'x64',
                                 distribution: "zip",
-                                continueOnError: ${params.CONTINUE_ON_ERROR}
+                                continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
