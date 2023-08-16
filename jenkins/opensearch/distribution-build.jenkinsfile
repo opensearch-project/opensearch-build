@@ -70,7 +70,7 @@ pipeline {
         )
         booleanParam(
             name: 'CONTINUE_ON_ERROR',
-            description: 'Continue building the distribution even if a single or few component fails',
+            description: 'Continue building the distribution even if a one or more component fails',
             defaultValue: true
         )
     }
