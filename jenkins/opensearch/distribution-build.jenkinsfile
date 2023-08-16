@@ -376,6 +376,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -403,6 +404,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -467,6 +469,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -494,6 +497,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -545,7 +549,8 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'arm64',
-                                distribution: "tar"
+                                distribution: "tar",
+                                continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -627,6 +632,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -654,6 +660,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -718,6 +725,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -745,6 +753,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
