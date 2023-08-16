@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.1.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.5.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -195,6 +195,11 @@ pipeline {
             trim: true
         )
         string(
+            name: 'DATA_INSTANCE_TYPE',
+            description: 'EC2 instance type for data node, empty defaults to r5.xlarge.',
+            trim: true
+        )
+        string(
             name: 'DATA_NODE_STORAGE',
             description: 'Data node ebs block storage size, empty value defaults to 100Gb',
             trim: true
@@ -232,6 +237,11 @@ pipeline {
         booleanParam(
             name: 'CAPTURE_NODE_STAT',
             description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+            defaultValue: false
+        )
+        booleanParam(
+            name: 'CAPTURE_SEGMENT_REPLICATION_STAT',
+            description: 'Enable opensearch-benchmark segment-replication-stats telemetry to capture metrics such as replication lag.',
             defaultValue: false
         )
     }
@@ -295,13 +305,15 @@ pipeline {
                                 clientNodeCount: CLIENT_NODE_COUNT,
                                 ingestNodeCount: INGEST_NODE_COUNT,
                                 mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
                                 userTag: USER_TAGS.isEmpty() ? "security-enabled:true" : "${USER_TAGS},security-enabled:true",
                                 workloadParams: WORKLOAD_PARAMS,
                                 additionalConfig: ADDITIONAL_CONFIG,
                                 dataStorageSize: DATA_NODE_STORAGE,
                                 mlStorageSize: ML_NODE_STORAGE,
                                 jvmSysProps: JVM_SYS_PROPS,
-                                captureNodeStat: CAPTURE_NODE_STAT
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT
                             )
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
@@ -340,13 +352,15 @@ pipeline {
                                 clientNodeCount: CLIENT_NODE_COUNT,
                                 ingestNodeCount: INGEST_NODE_COUNT,
                                 mlNodeCount: ML_NODE_COUNT,
+                                dataInstanceType: DATA_INSTANCE_TYPE,
                                 userTag: USER_TAGS.isEmpty() ? "security-enabled:false" : "${USER_TAGS},security-enabled:false",
                                 workloadParams: WORKLOAD_PARAMS,
                                 additionalConfig: ADDITIONAL_CONFIG,
                                 dataStorageSize: DATA_NODE_STORAGE,
                                 mlStorageSize: ML_NODE_STORAGE,
                                 jvmSysProps: JVM_SYS_PROPS,
-                                captureNodeStat: CAPTURE_NODE_STAT
+                                captureNodeStat: CAPTURE_NODE_STAT,
+                                captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT
                             )
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
