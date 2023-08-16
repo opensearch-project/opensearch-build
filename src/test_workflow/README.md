@@ -7,6 +7,7 @@
       - [Identifying Regressions in Nightly Performance Tests](#identifying-regressions-in-nightly-performance-tests)
     - [Identifying Issues in Longevity Tests](#identifying-issues-in-longevity-tests)
   - [Benchmark Tests](#benchmarking-tests)
+    - [Onboard feature for nightly benchmark runs](#onboard-feature-for-nightly-benchmark-runs)
 - [Testing in CI/CD](#testing-in-cicd)
   - [Test Workflow (in development)](#test-workflow-in-development)
   - [Component-Level Details](#component-level-details)
@@ -28,7 +29,7 @@ Testing is run via `./test.sh`.
 The following options are available.
 
 | name                   | description                                                             |
-| ---------------------- | ----------------------------------------------------------------------- |
+|------------------------|-------------------------------------------------------------------------|
 | test-type              | Run tests of a test suite. [integ-test, bwc-test, perf-test]            |
 | test-manifest-path     | Specify a test manifest path.                                           |
 | --paths                | Location of manifest(s).                                                |
@@ -192,6 +193,29 @@ Runs benchmarking tests on a remote opensource OpenSearch cluster, uses [OpenSea
 At a high-level the benchmarking test workflow uses [opensearch-cluster-cdk](https://github.com/opensearch-project/opensearch-cluster-cdk.git) to first set-up an OpenSearch cluster (single/multi-node) and then executes `opensearch-benchmark` to run benchmark test against that cluster. The performance metric that opensearch-benchmark generates during the run are ingested into another OS cluster for further analysis and dashboarding purpose.
 
 The benchmarking tests will be run nightly and if you have a feature in any released/un-released OpenSearch version that you want to benchmark periodically please create an issue and the team will reach out to you. In case you want to run the benchmarking test locally you can use `opensearch-cluster-cdk` repo to spin up an OS cluster in your personal AWS account and then use `opensearch-benchmark` to run performance test against it. The detailed instructions are available on respective GitHub repositories.
+
+#### Onboard feature for nightly benchmark runs:
+
+1. Checkout [opensearch-build](https://github.com/opensearch-project/opensearch-build) repo and open `jenkins/opensearch/benchmark-test.jenkinsfile` file.
+2. You will then need add an entry in `parameterizedCron` section of the jenkinsfile.
+3. The structure of the `parameterizedCron` section as follows:   
+   1. Schedule: `H <HOUR> * * *`, edit the `HOUR` section to any hour of the day, 0-24. `H` adds a jitter to the cron to make sure multiple crons are not started together.   
+   2. BUNDLE_MANIFEST_URL: The distribution manifest URL that contains the artifact details such as tar location, arch, build id, commit-id, etc. 
+   3. TEST_WORKLOAD: This could be any workload that [opensearch-benchmark-workload](https://github.com/opensearch-project/opensearch-benchmark-workloads) repo provides, if not provided `nyc-taxis` is used as default.   
+   4. SINGLE_NODE_CLUSTER: Values are `true/false`. Do you want to run the benchmark against a single-node cluster or multi-node.    
+   5. USE_50_PERCENT_HEAP: Values are `true/false`. Recommended to use 50 percent physical memory as heap. Keep this `true`.   
+   6. MIN_DISTRIBUTION: Values are `true/false`. If the `BUNDLE_MANIFEST_URL` you provided is for a min/snapshot distribution then set this as `true` else don't provide this parameter.    
+   7. ADDITIONAL_CONFIG: The configuration that needs to be added to `opensearch.yml` to enable your feature.   
+   8. USER_TAGS: The metadata that needs to be added to the benchmark metrics ingested in datastore, this helps filter out the metrics for each use-case. Mandatory tags are `run-type:nightly,segrep:<disabled|enabled>,arch:<arm64|x64>,instance-type:<instance-type>,major-version:<3x|2x>,cluster-config:<arch>-<instance-type>-<string that will help identify the feature>`
+   9. WORKLOAD_PARAMS: Additional parameters that need to be passed to opensearch-benchmark workload.
+   10. To get more information on each parameter and explore more options please visit [here](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/opensearch/benchmark-test.jenkinsfile#L140-L247)    
+
+Here's the sample entry for enabling nightly runs for `remote-store` feature   
+```
+H 9 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;TEST_WORKLOAD=http_logs;SINGLE_NODE_CLUSTER=false;DATA_NODE_COUNT=3;USE_50_PERCENT_HEAP=true;ENABLE_REMOTE_STORE=true;CAPTURE_SEGMENT_REPLICATION_STAT=true;USER_TAGS=run-type:nightly,segrep:enabled-with-remote-store,arch:arm64,instance-type:r6g.xlarge,major-version:2x,cluster-config:arm64-r6g.xlarge-3-data-3-shards;ADDITIONAL_CONFIG=opensearch.experimental.feature.remote_store.enabled:true cluster.remote_store.enabled:true opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT;WORKLOAD_PARAMS={"number_of_replicas":"2","number_of_shards":"3"}
+```
+
+Once you have added the configuration in the jenkinsfile please raise the PR and opensearch-infra team will review it.   
 
 ## Testing in CI/CD
 
