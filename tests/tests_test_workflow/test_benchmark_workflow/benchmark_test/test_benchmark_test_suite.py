@@ -14,13 +14,13 @@ from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 class TestBenchmarkTestSuite(unittest.TestCase):
     def setUp(self, config: Optional[str] = None, tag: Optional[str] = None,
-              workload_params: Optional[str] = None, telemetry: Optional[bool] = None) -> None:
+              workload_params: Optional[str] = None, telemetry: Optional[list] = None) -> None:
         self.args = Mock()
         self.args.workload = "nyc_taxis"
         self.args.benchmark_config = config
         self.args.user_tag = tag
         self.args.workload_params = workload_params
-        self.args.capture_node_stat = telemetry
+        self.args.telemetry = telemetry
         self.endpoint = "abc.com"
         self.benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=False, args=self.args)
 
@@ -44,7 +44,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                              'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
 
     def test_execute_default_with_optional_args(self) -> None:
-        TestBenchmarkTestSuite.setUp(self, "/home/test/benchmark.ini", "key1:value1,key2:value2", "{\"number_of_replicas\":\"1\"}", True)
+        TestBenchmarkTestSuite.setUp(self, "/home/test/benchmark.ini", "key1:value1,key2:value2", "{\"number_of_replicas\":\"1\"}", ['node-stats', 'test'])
         with patch("subprocess.check_call") as mock_check_call:
             self.benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)
@@ -54,4 +54,4 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                                 '--workload=nyc_taxis '
                                                                 '--pipeline=benchmark-only --target-hosts=abc.com '
                                                                 '--workload-params \'{"number_of_replicas":"1"}\' '
-                                                                '--user-tag="key1:value1,key2:value2" --telemetry node-stats --client-options="timeout:300"')
+                                                                '--user-tag="key1:value1,key2:value2" --telemetry node-stats,test, --client-options="timeout:300"')
