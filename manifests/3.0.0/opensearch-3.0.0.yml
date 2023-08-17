@@ -156,3 +156,28 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: security-analytics
+    repository: https://github.com/opensearch-project/security-analytics.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
