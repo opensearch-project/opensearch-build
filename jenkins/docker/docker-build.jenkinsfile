@@ -1,3 +1,18 @@
+def docker_images = [
+    "linux": "opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1",
+    "windows": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1"
+]
+
+def docker_args = [
+    "linux": "-u root -v /var/run/docker.sock:/var/run/docker.sock",
+    "windows": "-u ContainerAdministrator -v //./pipe/docker_engine://./pipe/docker_engine"
+]
+
+def agent_nodes = [
+    "linux": "Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder",
+    "windows": "Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host",
+]
+
 pipeline {
     options {
         timeout(time: 5, unit: 'HOURS')
@@ -22,12 +37,17 @@ pipeline {
             description: 'The script path of the docker build script, assuming you are already in root dir of DOCKER_BUILD_GIT_REPOSITORY.',
             trim: true
         )
+        choice(
+            name: 'DOCKER_BUILD_OS',
+            description: 'Build docker image on which operating system.',
+            choices: ['linux', 'windows'],
+        )
     }
     stages {
         stage('Parameters Check') {
             steps {
                 script {
-                    if(! DOCKER_BUILD_GIT_REPOSITORY.startsWith('https://github.com/opensearch-project/')) {
+                    if (! DOCKER_BUILD_GIT_REPOSITORY.startsWith('https://github.com/opensearch-project/')) {
                         currentBuild.result = 'ABORTED'
                         error('The repository needs to be an opensearch-project repository')
                     }
@@ -37,9 +57,9 @@ pipeline {
         stage('docker-build') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder'
-                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1'
-                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    label agent_nodes["${DOCKER_BUILD_OS}"]
+                    image docker_images["${DOCKER_BUILD_OS}"]
+                    args docker_args["${DOCKER_BUILD_OS}"]
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
                 }
