@@ -46,6 +46,8 @@ chown -R opensearch.adm ${log_dir}
 chmod 750 ${log_dir}
 
 chown -R opensearch.opensearch ${data_dir}
+chmod 750 ${data_dir}
+
 chown -R opensearch.opensearch ${pid_dir}
 
 # Reload systemctl daemon
