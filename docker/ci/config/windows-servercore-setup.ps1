@@ -200,6 +200,9 @@ cmake --version
 # Install zip
 scoop install zip
 
+# Install docker
+scoop install docker
+
 # Scoop cleanup
 scoop cache rm *
 
