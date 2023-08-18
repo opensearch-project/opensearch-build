@@ -170,8 +170,8 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
 
 %dir %attr(750, %{name}, %{name}) %{data_dir}
-%dir %attr(750, %{name}, %{name}) %{log_dir}
-%dir %attr(750, %{name}, %{name}) %{pid_dir}
+%attr(750, %{name}, %{name}) %{log_dir}
+%attr(750, %{name}, %{name}) %{pid_dir}
 
 # Permissions
 %defattr(-, root, root)
