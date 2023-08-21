@@ -21,6 +21,7 @@ class TestDockerBuild extends BuildPipelineTest {
     String dockerBuildGitRespository = 'https://github.com/opensearch-project/opensearch-build'
     String dockerBuildGitRespositoryReference = 'main'
     String dockerBuildScriptwithCommands = 'bash docker/ci/build-image-multi-arch.sh -v <TAG_NAME> -f <DOCKERFILE PATH>'
+    String dockerBuildOS = 'linux'
 
     @Override
     @Before
@@ -41,6 +42,7 @@ class TestDockerBuild extends BuildPipelineTest {
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY', dockerBuildGitRespository)
         binding.setVariable('DOCKER_BUILD_GIT_REPOSITORY_REFERENCE', dockerBuildGitRespositoryReference)
         binding.setVariable('DOCKER_BUILD_SCRIPT_WITH_COMMANDS', dockerBuildScriptwithCommands)
+        binding.setVariable('DOCKER_BUILD_OS', dockerBuildOS)
 
     }
 
@@ -64,6 +66,9 @@ class TestDockerBuild extends BuildPipelineTest {
 
         // Validate the docker-build.sh is called with correct predefined credential
         assertCallStack().contains("docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)")
+
+        // Make sure dockerBuildOS is deciding agent_node docker_nodes docker_args correctly
+        assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
 
         printCallStack()
     }
