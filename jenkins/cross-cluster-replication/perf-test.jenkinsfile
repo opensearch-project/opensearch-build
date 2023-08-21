@@ -21,7 +21,6 @@ pipeline {
             trim: true
         )
     }
-
     stages {
         stage('validate-and-set-parameters') {
             agent {
