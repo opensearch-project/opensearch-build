@@ -9,17 +9,10 @@ pipeline {
         timeout(time: 10, unit: 'HOURS')
     }
     environment {
-        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Docker-Host-Perf-Test'
+        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Docker-Host-Benchmark-Test'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-performance-test-v3'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'ccr-perf-test'
-    }
-    triggers {
-        parameterizedCron '''
-            H 0 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/x64/tar/dist/opensearch/manifest.yml;
-            H 5 * * * %BUNDLE_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/latest/linux/arm64/tar/dist/opensearch/manifest.yml;
-
-        '''
     }
     parameters {
         string(
@@ -28,7 +21,6 @@ pipeline {
             trim: true
         )
     }
-
     stages {
         stage('validate-and-set-parameters') {
             agent {
