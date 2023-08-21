@@ -8,6 +8,7 @@
 
 
 from sign_workflow.signer import Signer
+from sign_workflow.signer_jar import SignerJar
 from sign_workflow.signer_mac import SignerMac
 from sign_workflow.signer_pgp import SignerPGP
 from sign_workflow.signer_windows import SignerWindows
@@ -18,6 +19,7 @@ class Signers:
         "windows": SignerWindows,
         "linux": SignerPGP,
         "mac": SignerMac,
+        "jar_signer": SignerJar
     }
 
     @classmethod
