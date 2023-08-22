@@ -35,23 +35,25 @@ class BenchmarkTestSuite:
         self.args = args
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
         self.command = 'docker run --rm'
-        if args.benchmark_config:
+        if self.args.benchmark_config:
             self.command += f" -v {args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
         self.command += f" opensearchproject/opensearch-benchmark:latest execute-test --workload={self.args.workload} " \
                         f"--pipeline=benchmark-only --target-hosts={endpoint}"
 
-        if args.workload_params:
+        if self.args.workload_params:
             logging.info(f"Workload Params are {args.workload_params}")
             self.command += f" --workload-params '{args.workload_params}'"
 
-        if args.user_tag:
+        if self.args.user_tag:
             user_tag = f"--user-tag=\"{args.user_tag}\""
             self.command += f" {user_tag}"
 
-        if args.telemetry:
+        if self.args.telemetry:
             self.command += " --telemetry "
-            for value in args.telemetry:
+            for value in self.args.telemetry:
                 self.command += f"{value},"
+            if self.args.telemetry_params:
+                self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
     def execute(self) -> None:
         if self.security:

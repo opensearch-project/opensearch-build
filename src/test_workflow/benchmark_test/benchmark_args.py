@@ -42,6 +42,7 @@ class BenchmarkArgs:
     user_tag: str
     target_hosts: str
     telemetry: list
+    telemetry_params: str
     logging_level: int
 
     def __init__(self) -> None:
@@ -97,6 +98,8 @@ class BenchmarkArgs:
         parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const",
                             const="segment-replication-stats",
                             help="Enable opensearch-benchmark to segment_replication stat metrics such as replication lag.")
+        parser.add_argument("--telemetry-params", dest="telemetry_params",
+                            help="Allows to set parameters for telemetry devices. Accepts json input.")
         parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
 
@@ -126,4 +129,5 @@ class BenchmarkArgs:
         self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
         self.use_50_percent_heap = args.use_50_percent_heap
         self.telemetry = args.telemetry
+        self.telemetry_params = args.telemetry_params if args.telemetry_params else None
         self.logging_level = args.logging_level
