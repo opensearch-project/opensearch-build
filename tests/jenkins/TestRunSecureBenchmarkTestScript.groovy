@@ -26,7 +26,7 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('5.5.0')
+                        .defaultVersion('5.7.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -90,6 +90,7 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
         binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_WORKLOAD', 'nyc-taxis')
         binding.setVariable('WEBHOOK_URL', 'test://artifact.url')
+        binding.setVariable('TELEMETRY_PARAMS', '{"telemetry_setting":"value"}')
 
         super.setUp()
     }
@@ -135,8 +136,8 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(2))
         assertThat(testScriptCommands, hasItems(
-                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true    --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3       --data-node-storage 100  ".toString(),
-                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false --without-security   --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3       --data-node-storage 100  ".toString()
+                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true    --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString(),
+                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false --without-security   --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
 
