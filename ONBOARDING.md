@@ -53,7 +53,7 @@ This document describes steps to onboard a new component to universal or 1-click
 See https://github.com/opensearch-project/opensearch-build/issues/1234 for details about end to end workflow.
 
 1. Please ensure that [opensearch-ci-bot](https://github.com/opensearch-ci-bot) has the write access to your repository. If not, request by creating an [issue](https://github.com/opensearch-project/opensearch-build/issues) in this repository.
-1. Add a webhook token as credentials to [CI system](https://build.ci.opensearch.org/) using configuration as code.
+1. Add a webhook token as credentials to [CI system](https://build.ci.opensearch.org/) using configuration as code. To generate the token, use command `head -30 /dev/urandom | sha512sum | awk '{print $1;}'` that generates random alpha-numeric string.
 1. Create a Jenkins workflow that utilizes one of the [build libraries](https://github.com/opensearch-project/opensearch-build-libraries#library-details) to publish the artifacts to right platform. Please check the [library requirements and retrieval methods](https://github.com/opensearch-project/opensearch-build-libraries#jenkins-shared-libraries) before using it.
 1. For publishing to a new platform (other than ones specified above) a new library needs to be added. (ETA: 2 weeks)
 1. **Release Drafter**: Release drafter is a GitHub Action workflow that drafts a release that may or may not contain the release artifacts. The drafted release acts as a trigger to the Jenkins workflow. It also acts as a staging environment for release artifacts. This is to make sure the build environment remains the same even for release artifacts. [Example](https://github.com/opensearch-project/opensearch-py/blob/main/.github/workflows/release-drafter.yml)
