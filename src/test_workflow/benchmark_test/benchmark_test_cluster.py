@@ -137,6 +137,7 @@ class BenchmarkTestCluster:
             "serverAccessType": config["Constants"]["serverAccessType"],
             "restrictServerAccessTo": config["Constants"]["restrictServerAccessTo"],
             "additionalConfig": self.args.additional_config,
+            "dataInstanceType": self.args.data_instance_type,
             "managerNodeCount": self.args.manager_node_count,
             "dataNodeCount": self.args.data_node_count,
             "clientNodeCount": self.args.client_node_count,

@@ -24,7 +24,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.4.1')
+                .defaultVersion('5.6.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -38,6 +38,8 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         def buildId = 215
         def buildManifest = "tests/jenkins/data/opensearch-dashboards-3.0.0-build.yml"
         def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/${buildId}/linux/x64/tar/builds/opensearch-dashboards/opensearch-dashboards-3.0.0-linux-x64.tar.gz"
+        def buildManifestOpenSearch = "tests/jenkins/data/opensearch-3.0.0-build.yml"
+        def buildManifestUrlOpenSearch = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/${buildId}/linux/x64/tar/dist/opensearch/opensearch-3.0.0-linux-x64.tar.gz"
         def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
         def bucketName = 'job-s3-bucket-name'
 
@@ -55,12 +57,16 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('WEBHOOK_URL', 'htth://WEBHOOK_URL_dummy.com')
         binding.setVariable('TEST_MANIFEST', testManifest)
         binding.setVariable('BUILD_MANIFEST_URL', buildManifestUrl)
+        binding.setVariable('BUILD_MANIFEST_URL_OPENSEARCH', buildManifestUrlOpenSearch)
         binding.setVariable('BUILD_NUMBER', '215')
         binding.setVariable('ARTIFACT_BUCKET_NAME', bucketName)
         binding.setVariable('RUN_DISPLAY_URL', 'https://some/url/redirect')
         binding.setVariable('AGENT_LABEL', agentLabel)
         binding.setVariable('BUILD_MANIFEST', buildManifest)
+        binding.setVariable('BUILD_MANIFEST_OPENSEARCH', buildManifestOpenSearch)
         binding.setVariable('BUILD_ID', "${buildId}")
+        binding.setVariable('distribution', 'tar' )
+        binding.setVariable('COMPONENT_NAME', '' )
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2', args:'-e JAVA_HOME=/opt/java/openjdk-11']
@@ -103,6 +109,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component reportsDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString(),
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString()
         ))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItems('./report.sh manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/215/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/3.0.0/215/linux/x64/tar --test-run-id 215 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '))
     }
 
     @Test

@@ -1,6 +1,6 @@
-lib = library(identifier: 'jenkins@jenkins_report', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
-    remote: 'https://github.com/zelinh/opensearch-build-libraries.git',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 def docker_images = [
@@ -23,6 +23,7 @@ def agent_nodes = [
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     agent none
     environment {
@@ -198,22 +199,22 @@ pipeline {
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
                                                     String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
-//                                                     closeGithubIssue(
-//                                                         repoUrl: buildManifestObj.getRepo("${local_component}"),
-//                                                         issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
-//                                                         closeComment: closeCommentMessage,
-//                                                         label: "autocut,v${version},integ-test-failure"
-//                                                     )
+                                                    closeGithubIssue(
+                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                        closeComment: closeCommentMessage,
+                                                        label: "autocut,v${version},integ-test-failure"
+                                                    )
                                                 }
                                             } catch (e) {
                                                 echo "Error running integtest for component ${local_component}, creating Github issue"
                                                 String issueBodyMessage = "The integration test failed at distribution level for component ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Steps to reproduce: See https://github.com/opensearch-project/opensearch-build/tree/main/src/test_workflow#integration-tests<br>* See all log files:<br> - [With security](https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/${local_component}/with-security/${local_component}.yml) (if applicable)<br> - [Without security](https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/${local_component}/without-security/${local_component}.yml) (if applicable)<br><br>"
-//                                                 createGithubIssue(
-//                                                     repoUrl: buildManifestObj.getRepo("${local_component}"),
-//                                                     issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
-//                                                     issueBody: issueBodyMessage,
-//                                                     label: "autocut,v${version},integ-test-failure"
-//                                                 )
+                                                createGithubIssue(
+                                                    repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                    issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                    issueBody: issueBodyMessage,
+                                                    label: "autocut,v${version},integ-test-failure"
+                                                )
                                                 throw new Exception("Error running integtest for component ${local_component}", e)
                                             } finally {
                                                 echo "Completed running integtest for component ${local_component}"
@@ -234,14 +235,27 @@ pipeline {
             }
             post {
                 always {
-                    createTestRunManifest(
-                        testManifest: "manifests/${TEST_MANIFEST}",
-                        buildManifest: BUILD_MANIFEST_OPENSEARCH,
-                        buildManifestDashboards: BUILD_MANIFEST,
-                        testRunID: "${env.BUILD_NUMBER}",
-                        testType: "integ-test",
-                    )
-                    sh("cat test-run.yml")
+                    script {
+                        node(AGENT_LABEL) {
+                            docker.withRegistry('https://public.ecr.aws/') {
+                                docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                    unstash "integtest-opensearch-dashboards-$BUILD_NUMBER"
+                                    downloadBuildManifest(
+                                        url: BUILD_MANIFEST_URL_OPENSEARCH,
+                                        path: BUILD_MANIFEST_OPENSEARCH
+                                    )
+                                    createUploadTestReportManifest(
+                                        testManifest: "manifests/${TEST_MANIFEST}",
+                                        buildManifest: BUILD_MANIFEST_OPENSEARCH,
+                                        dashboardsBuildManifest: BUILD_MANIFEST,
+                                        testRunID: "${env.BUILD_NUMBER}",
+                                        testType: "integ-test",
+                                        componentName: "${COMPONENT_NAME}",
+                                    )
+                                }
+                            }
+                        }
+                    }
                     postCleanup()
                 }
             }

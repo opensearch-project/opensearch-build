@@ -15,22 +15,22 @@ import validators
 import yaml
 
 from manifests.test_manifest import TestManifest
-from manifests.test_run_manifest import TestRunManifest
+from manifests.test_report_manifest import TestReportManifest
 from report_workflow.report_args import ReportArgs
 
 
-class TestRunRunner:
+class TestReportRunner:
     args: ReportArgs
     test_manifest: TestManifest
     tests_dir: str
-    test_run_manifest: TestRunManifest
+    test_report_manifest: TestReportManifest
     test_run_data: dict
 
     def __init__(self, args: ReportArgs, test_manifest: TestManifest) -> None:
         self.args = args
         self.base_path = args.base_path
         self.test_manifest = test_manifest
-        self.test_run_data = self.test_run_manifest_data_template("manifest")
+        self.test_run_data = self.test_report_manifest_data_template("manifest")
         self.product_name = test_manifest.__to_dict__().get("name")
         self.name = self.product_name.replace(" ", "-").lower()
         self.components = self.args.components
@@ -63,13 +63,13 @@ class TestRunRunner:
         return test_run_data
 
     def generate_report(self, data: dict, output_dir: str) -> Any:
-        test_run_manifest = TestRunManifest(data)
-        test_run_manifetest_run_manifest_file = os.path.join(output_dir, "test-run.yml")
-        logging.info(f"Generating test-run.yml in {output_dir}")
-        return test_run_manifest.to_file(test_run_manifetest_run_manifest_file)
+        test_report_manifest = TestReportManifest(data)
+        test_report_manifest_file = os.path.join(output_dir, "test-report.yml")
+        logging.info(f"Generating test-report.yml in {output_dir}")
+        return test_report_manifest.to_file(test_report_manifest_file)
 
     def component_entry(self, component_name: str) -> Any:
-        component = self.test_run_manifest_data_template("component")
+        component = self.test_report_manifest_data_template("component")
         component["name"] = component_name
         component["command"] = generate_test_command(self.test_type, self.test_manifest_path, self.artifact_paths, component_name)
 
@@ -102,7 +102,7 @@ class TestRunRunner:
             component["configs"].append(config_dict)
         return component
 
-    def test_run_manifest_data_template(self, template_type: str) -> Any:
+    def test_report_manifest_data_template(self, template_type: str) -> Any:
         templates = {
             "manifest": {
                 "schema-version": "1.0",
@@ -134,4 +134,4 @@ def generate_test_command(test_type: str, test_manifest_path: str, artifacts_pat
     return command
 
 
-TestRunRunner.__test__ = False  # type:ignore
+TestReportRunner.__test__ = False  # type:ignore

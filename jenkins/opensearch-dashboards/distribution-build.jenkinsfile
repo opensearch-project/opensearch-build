@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.4.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -75,6 +75,11 @@ pipeline {
             description: 'To create a github issue for failing component or not.',
             defaultValue: true
         )
+        booleanParam(
+            name: 'CONTINUE_ON_ERROR',
+            description: 'Continue building the distribution even if a one or more component fails',
+            defaultValue: true
+        )
     }
     stages {
         stage('verify-parameters') {
@@ -131,31 +136,6 @@ pipeline {
                 }
             }
         }
-        stage('Initialize the job info yaml report') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image dockerAgent.image
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                script {
-                    buildInfoYaml(
-                        componentName: COMPONENT_NAME,
-                        inputManifest: "manifests/$INPUT_MANIFEST",
-                        status: "NOT_STARTED",
-                        stage: "INITIALIZE_STAGE"
-                    )
-                }
-            }
-            post {
-                always {
-                    postCleanup()
-                }
-            }
-        }
         stage('build') {
             parallel {
                 stage('build-and-test-linux-x64-tar') {
@@ -186,7 +166,8 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64',
-                                distribution: 'tar'
+                                distribution: 'tar',
+                                continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
@@ -275,6 +256,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -302,6 +284,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -370,6 +353,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -397,6 +381,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'x64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -457,6 +442,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'tar',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-tar-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -491,6 +477,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'tar',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-tar-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
 
@@ -581,6 +568,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -614,6 +602,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'rpm',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -681,6 +670,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -708,6 +698,7 @@ pipeline {
                                         platform: 'linux',
                                         architecture: 'arm64',
                                         distribution: 'deb',
+                                        continueOnError: params.CONTINUE_ON_ERROR,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -760,7 +751,8 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'windows',
                                 architecture: 'x64',
-                                distribution: "zip"
+                                distribution: "zip",
+                                continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -851,18 +843,21 @@ pipeline {
             node(AGENT_X64) {
                 checkout scm
                 script {
-                    buildInfoYaml(
-                        componentName: COMPONENT_NAME,
-                        status: currentBuild.result,
-                        stage: "FINALIZE_STAGE"
-                    )
-                    unstash "buildInfo_yml"
-                    archiveArtifacts artifacts: 'buildInfo.yml'
+                    def findFailedPlugins = buildMessage(search: 'Failed plugins')
+                    if (findFailedPlugins != null) {
+                        currentBuild.result = 'UNSTABLE'
+                    }
                     closeBuildSuccessGithubIssue(
                         message: buildMessage(search: 'Successfully built'),
-                        search: "Successfully built",
+                        search: 'Successfully built',
                         inputManifestPath: "manifests/$INPUT_MANIFEST"
                     )
+                    if (params.CREATE_GITHUB_ISSUE) {
+                        createBuildFailureGithubIssue(
+                            message: buildMessage(search: 'Error building'),
+                            inputManifestPath: "manifests/$INPUT_MANIFEST"
+                        )
+                    }
                     postCleanup()
                 }
             }
@@ -919,13 +914,6 @@ pipeline {
                             manifest: "${INPUT_MANIFEST}"
                         )
                     }
-                    if (params.CREATE_GITHUB_ISSUE) {
-                        createBuildFailureGithubIssue(
-                            message: buildMessage(search: 'Error building'),
-                            inputManifestPath: "manifests/$INPUT_MANIFEST"
-                        )
-                    }
-
                     postCleanup()
                 }
             }

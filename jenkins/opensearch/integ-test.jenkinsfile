@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.4.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -23,12 +23,19 @@ def agent_nodes = [
 pipeline {
     options {
         timeout(time: 4, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     agent none
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+    }
+    triggers {
+        parameterizedCron '''
+            H 3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            '''
     }
     parameters {
         string(
@@ -198,13 +205,22 @@ pipeline {
             }
             post {
                 always {
-                    createTestRunManifest(
-                        testManifest: "manifests/${TEST_MANIFEST}",
-                        buildManifest: BUILD_MANIFEST,
-                        testRunID: "${env.BUILD_NUMBER}",
-                        testType: "integ-test",
-                    )
-                    sh("cat test-run.yml")
+                        script {
+                            node(AGENT_LABEL) {
+                                docker.withRegistry('https://public.ecr.aws/') {
+                                    docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
+                                        unstash "integtest-opensearch-$BUILD_NUMBER"
+                                        createUploadTestReportManifest(
+                                            testManifest: "manifests/${TEST_MANIFEST}",
+                                            buildManifest: BUILD_MANIFEST,
+                                            testRunID: "${env.BUILD_NUMBER}",
+                                            testType: "integ-test",
+                                            componentName: "${COMPONENT_NAME}",
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     postCleanup()
                 }
             }

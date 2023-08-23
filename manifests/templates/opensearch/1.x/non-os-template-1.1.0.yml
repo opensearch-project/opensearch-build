@@ -1,0 +1,30 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 1.1.0
+components:
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: tags/1.1.0.0
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: tags/1.1.0.0
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: tags/1.1.0.0
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: plugin
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: tags/1.1.0.0
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting

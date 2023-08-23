@@ -3,6 +3,8 @@
       bwc-test.library({identifier=jenkins@1.0.4, retriever=null})
       bwc-test.pipeline(groovy.lang.Closure)
          bwc-test.timeout({time=4, unit=HOURS})
+         bwc-test.logRotator({daysToKeepStr=30})
+         bwc-test.buildDiscarder(null)
          bwc-test.echo(Executing on agent [label:none])
          bwc-test.stage(verify-parameters, groovy.lang.Closure)
             bwc-test.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])

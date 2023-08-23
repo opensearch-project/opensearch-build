@@ -13,90 +13,130 @@ I noticed that a manifest was automatically created in [manifests/{{ env.VERSION
 
 ## This Release Issue
 
-This issue captures the state of the OpenSearch release, its assignee is responsible for driving the release. Please contact them or @mention them on this issue for help. There are linked issues on components of the release where individual components can be tracked.  More details are included in the Maintainers [Release owner](https://github.com/opensearch-project/opensearch-build/blob/main/MAINTAINERS.md#release-owner) section.
-
-## Release Steps
-
-There are several steps to the release process, these steps are completed as the whole release and components that are behind present risk to the release.  The release owner completes the tasks in this ticket, whereas component owners resolve tasks on their ticket in their repositories.
-
-Steps have completion dates for coordinating efforts between the components of a release; components can start as soon as they are ready far in advance of a future release.
-
-### Component List
-
-To aid in understanding the state of the release there is a table with status indicating each component state. This is updated based on the status of the component issues.
+This issue captures the state of the OpenSearch release, its assignee (Release Manager) is responsible for driving the release. Please contact them or @mention them on this issue for help. There are linked issues on components of the release where individual components can be tracked. For more information check the the [Release Process OpenSearch Guide](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md).
 
 </p>
 </details>
 
-### Preparation
+Please refer to the following link for the release version dates: [Release Schedule and Maintenance Policy](https://opensearch.org/releases.html).
 
-- [ ] Assign this issue to a release owner.
-- [ ] Declare a pencils down date for new features to be merged. 
-- [ ] __REPLACE_RELEASE-minus-14-days__ is pencils down date for feature freeze.
-- [ ] Update the Campaigns section to include monitoring campaigns during this release. 
-- [ ] Update this issue so all `__REPLACE_RELEASE-__` placeholders have actual dates.
-- [ ] Document any new quality requirements or changes.
-- [ ] Finalize scope and feature set and update [the Public Roadmap](https://github.com/orgs/opensearch-project/projects/1). 
-- [ ] [Create a release issue in every component repo](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) based on [component release issue template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) and link back to this issue, update Components section with these links.
-- [ ] Ensure the label is created in each component repo for this new version, and the next minor release. [Create a version label](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-or-update-labels-in-all-plugin-repos)
-- [ ] Ensure that all release issues created above are assigned to an owner in the component team.
-- [ ] Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [jenkinsFile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile).
+### [Preparation](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#preparation)
 
-### Campaigns
+- [ ] [Release manager](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-manager) assigned.
+- [ ] Existence of label in each component repo. For more information check the [release-label](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-label) section.
+- [ ] [Increase the build frequency](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#increase-the-build-frequency).
+- [ ] [Release Issue](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-issue).
 
-__REPLACE with OpenSearch wide initiatives to improve quality and consistency.__
+### [Campaigns](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#campaigns)
 
-### Release Branch - _Ends __REPLACE_RELEASE-minus-14-days__
+- [ ] [Component Release Issue](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#component-release-issue).
+- [ ] [Release Campaigns](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-campaigns).
 
-- [ ] Component versions are auto-incremented to {{ env.VERSION }} version.
-- [ ] Plugins team to ensure working CI in component repositories and merge the version increment PRs.
-- [ ] OpenSearch / OpenSearch-Dashboards core cut branch `<MajorVersion>.<MinorVersion>` early.
-- [ ] All component repos create `<MajorVersion>.<MinorVersion>` branch for the release.
+### [Release Branch and Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-branch-readiness) - _Ends __REPLACE_RELEASE-minus-14-days__
 
-### Feature Freeze - _Ends __REPLACE_RELEASE-minus-12-days__
+- [ ] [Core Release Branch](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#core).
+- [ ] [Core Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#core-version-increment).
+- [ ] [Components Release Branch](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#components).
+- [ ] [Components Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#components-version-increment).
+
+### [Feature Freeze](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#code-complete-and-feature-freeze) - _Ends __REPLACE_RELEASE-minus-12-days__
 
 - [ ] OpenSearch / OpenSearch-Dashboards core and components teams finalize their features.
-- [ ] Create Jenkins workflows that run daily snapshot builds for [OpenSearch](https://build.ci.opensearch.org/job/distribution-build-opensearch/) and [OpenSearch Dashboards](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/).
-- [ ] Make pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) with the corresponding checks.
 
-### Code Complete - _Ends __REPLACE_RELEASE-minus-10-days___
+### [Code Complete](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#code-complete-and-feature-freeze) - _Ends __REPLACE_RELEASE-minus-10-days___
 
-- [ ] Code Complete: Make sure that the code for this specific version of the release is ready and the branch corresponding to this release has been added to this release version manifest.
-- [ ] Verify pull requests to add each component to [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml) have been merged.
-- [ ] Gather, review and combine the release notes from components repositories.
+- [ ] Mark this as done once the [Code Complete](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#code-complete-and-feature-freeze) is reviewed.
+- [ ] Create/Verify pull requests to add each component to relase input [manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-{{ env.VERSION }}.yml) and [manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}/opensearch-dashboards-{{ env.VERSION }}.yml).
 
-### Release testing - _Ends __REPLACE_RELEASE-minus-6-days___
+### [Release Candidate Creation and Testing](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-candidate-creation-and-testing) - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] Declare a release candidate build, and provide the instructions with the release candidates for teams on testing (__REPLACE_RELEASE-minus-8-days__).
-- [ ] Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary else manually run the build workflow and declare new release candidate.
-- [ ] After generate the release candidates, raise PR to lock input manifest refs of both OS and OSD builds with the commit ids from distribution manifest of the release candidates.
-- [ ] Sanity Testing (__REPLACE_RELEASE-minus-8-days__ - __REPLACE_RELEASE-minus-6-days__): Sanity testing and fixing of critical issues found by teams. Teams test their components within the distribution, ensuring integration, backwards compatibility, and perf tests pass.
-- [ ] Publish all test results in the comments of this issue.
+- [ ] [Generate Release Candidate](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-candidate).
+- [ ] [Integ Test TAR](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#integ-test-tar).
+- [ ] [Integ Test RPM](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#integ-test-rpm).
+- [ ] [Docker Build and Scan](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#docker-build-and-scan).
+- [ ] [Backwards Compatibility Tests](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#backwards-compatibility-tests).
+- [ ] [Windows Integration Test](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#windows-integration-test).
+- [ ] [Broadcast and Communication](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#broadcast-and-communication).
+- [ ] [Release Candidate Lock](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-candidate-lock).
 
-### Performance testing validation - _Ends __REPLACE_RELEASE-minus-6-days___
+### [Performance testing validation](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#benchmark-tests) - _Ends __REPLACE_RELEASE-minus-6-days___
 
-- [ ] Performance tests do not show a regression.
+- [ ] Post the benchmark-tests
 - [ ] Longevity tests do not show any issues.
 
-### Release - _Ends {__REPLACE_RELEASE-day}_
+### [Pre Release](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#pre-release) - _Ends __REPLACE_RELEASE-minus-1-days___
 
-- [ ] Verify [all issues labeled `v{{ env.VERSION }}` in all projects](https://github.com/opensearch-project/project-meta#find-labeled-issues) have been resolved.
-- [ ] Complete [documentation](https://github.com/opensearch-project/documentation-website) for this release.
-- [ ] Author [blog post](https://github.com/opensearch-project/project-website) for this release.
-- [ ] __REPLACE_RELEASE-minus-1-day - Publish this release on [opensearch.org](https://opensearch.org/downloads.html).
-- [ ] __REPLACE_RELEASE-day - Publish a [blog post](https://github.com/opensearch-project/project-website) - release is launched!
+- [ ] [Release Labeled Issues](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-labeled-issues).
+- [ ] [Go or No-Go](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#go-or-no-go).
+- [ ] [Promote Repos](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#promote-repos).
+- [ ] [Promote artifacts](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#promote-artifacts).
+- [ ] [Release Notes](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-notes).
 
-### Post Release
+### [Release](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#main-release) - _Ends {__REPLACE_RELEASE-day}_
 
-- [ ] Create [release tags](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/release-tag/release-tag.jenkinsfile) for each component (Jenkins job name: release-tag-creation).
-- [ ] Replace refs in [manifests/{{ env.VERSION }}](/opensearch-project/opensearch-build/tree/main/manifests/{{ env.VERSION }}) with tags and remove checks.
-- [ ] If this is a major or minor version release, stop building previous patch version.
-- [ ] Generate distribution release notes reviewed by PM team for opensearch-build repository.
-- [ ] Increment version for Helm Charts [(sample PR)](https://github.com/opensearch-project/helm-charts/pull/246) for the `{{ env.VERSION }}` release.
-- [ ] Increment version for Ansible Charts [(sample PR)](https://github.com/opensearch-project/ansible-playbook/pull/50) for the `{{ env.VERSION }}` release.
-- [ ] Prepare [for next patch release](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin) by incrementing patch versions for each component.
-- [ ] Update [this template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) with any new or missed steps.
-- [ ] Create an issue for a retrospective, solicit feedback, and publish a summary.
+- [ ] [Maven Promotion](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#maven-promotion).
+- [ ] [Docker Promotion](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#docker-promotion).
+- [ ] [Release Validation](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-validation).
+- [ ] [Collaboration with the Project Management Team](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#collaboration-with-the-project-management-team).
+
+### [Release Checklist](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-checklist).
+
+<br>
+<details><summary>Release Checklist</summary>
+<p>
+
+### Pre-Release activities
+- [ ] Promote Repos.
+   - - [ ] OS
+   - - [ ] OSD
+- [ ] Promote Artifacts.
+   - - [ ] Windows
+   - - [ ] Linux Debian
+   - - [ ] Linux RPM
+   - - [ ] Linux TAR
+- [ ] Consolidated Release Notes.
+
+### Release activities
+- [ ] Docker Promotion.
+- [ ] Release Validation part 1.
+     -  - [ ] OpenSearch and OpenSearch Dashboard Validation.
+     -  - [ ] Validate the native plugin installation.
+- [ ] Merge consolidated release notes PR.
+- [ ] Website and Documentation Changes.
+    - - [ ] Merge staging website PR.
+    - - [ ] Promote the website changes to prod.
+    - - [ ] Add website alert.
+- [ ] Release Validation part 2.
+    -  - [ ] Validate the artifact download URL's and signatures. 
+- [ ] Release Validation part 3.
+    -  - [ ] Trigger the validation build (Search for `Completed validation for <>` in the logs).
+- [ ] Maven Promotion.
+- [ ] Publish blog posts.
+- [ ] Advertise on Social Media.
+- [ ]  Post on public slack and Github Release issue.
+
+### Post-Release activities
+- [ ] Release Tags.
+- [ ] Input Manifest Update.
+- [ ] Decrease the Build Frequency.
+- [ ] OpenSearch Build Release notes.
+- [ ] Retrospective Issue.
+- [ ] Helm and Ansible Playbook release.
+- [ ] Upcoming Release Preparation.
+
+</p>
+</details>
+<br>
+
+### [Post Release](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#post-release)
+
+- [ ] [Release Tags](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-tags).
+- [ ] [Input Manifest Update](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#input-manifest-update).
+- [ ] [OpenSearch Build Release notes](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#opensearch-build-release-notes).
+- [ ] [Decrease the Build Frequency](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#decrease-the-build-frequency).
+- [ ] [Retrospective Issue](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#retrospective-issue).
+- [ ] [Helm and Ansible Playbook release](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#helm-and-ansible-playbook-release).
+- [ ] [Upcoming Release Preparation](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#upcoming-release-preparation).
 
 ### Components
 

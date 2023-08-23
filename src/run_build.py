@@ -24,6 +24,7 @@ def main() -> int:
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
+    failed_plugins = []
 
     if args.ref_manifest:
         manifest = manifest.stable()
@@ -70,10 +71,15 @@ def main() -> int:
                 logging.info(f"Successfully built {component.name}")
             except:
                 logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
-                raise
+                if args.continue_on_error and component.name not in ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']:
+                    failed_plugins.append(component.name)
+                    continue
+                else:
+                    raise
 
         build_recorder.write_manifest()
-
+    if len(failed_plugins) > 0:
+        logging.error(f"Failed plugins are {failed_plugins}")
     logging.info("Done.")
     return 0
 

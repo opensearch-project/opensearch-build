@@ -33,7 +33,7 @@ class BwcTestRunner(abc.ABC):
 
         self.tests_dir = os.path.join(os.getcwd(), "test-results")
         os.makedirs(self.tests_dir, exist_ok=True)
-        self.test_recorder = TestRecorder(self.args.test_run_id, "bwc-test", self.tests_dir)
+        self.test_recorder = TestRecorder(self.args.test_run_id, "bwc-test", self.tests_dir, args.base_path)
 
     def run(self) -> TestSuiteResults:
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:

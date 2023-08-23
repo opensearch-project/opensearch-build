@@ -1,0 +1,23 @@
+---
+name: OpenSearch
+build:
+  name: OpenSearch
+  version: 3.0.0
+  platform: linux
+  architecture: x64
+  distribution: tar
+  id: '8184'
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 1164221ee2b8ba3560f0ff492309867beea28433
+    commit_id: 1164221ee2b8ba3560f0ff492309867beea28433
+    artifacts:
+      maven:
+        - maven/org/opensearch/opensearch-dissect/maven-metadata.xml
+        - maven/org/opensearch/opensearch-dissect/maven-metadata.xml.sha1
+        - maven/org/opensearch/opensearch-dissect/maven-metadata.xml.md5
+        - maven/org/opensearch/opensearch-dissect/maven-metadata.xml.sha256
+        - maven/org/opensearch/opensearch-dissect/maven-metadata.xml.sha512
+        - maven/org/opensearch/opensearch-dissect/2.9.0/opensearch-dissect-2.9.0.jar
+        - maven/org/opensearch/opensearch-dissect/2.9.0/opensearch-dissect-2.9.0.jar.sha1

@@ -51,14 +51,24 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
+COPY --chown=0:0 config/yq-setup.sh /tmp/
+RUN /tmp/yq-setup.sh
+
+# Install JDK
+RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \
+    mkdir -p /opt/java/openjdk-11 && \
+    tar -xzf /opt/jdk11.tar.gz --strip-components 1 -C /opt/java/openjdk-11/ && \
+    rm /opt/jdk11.tar.gz
 
 # Create user group
 RUN groupadd -g 1000 opensearch && \
     useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
     mkdir -p /usr/share/opensearch && \
     chown -R 1000:1000 /usr/share/opensearch
+
+# ENV JDK
+ENV JAVA_HOME=/opt/java/openjdk-11
+ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Installing higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
