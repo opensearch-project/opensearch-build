@@ -573,21 +573,6 @@ pipeline {
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
                                             ]
                                     }
-                                },
-                                'bwc-test': {
-                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
-                                    if (!skipBwcTests) {
-                                        def bwcTestResults =
-                                            build job: BWC_TEST_JOB_NAME,
-                                            propagate: false,
-                                            wait: false,
-                                            parameters: [
-                                                string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_ARM64)
-                                            ]
-                                    }
                                 }
                             ])
                         }
