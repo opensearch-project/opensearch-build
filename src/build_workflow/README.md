@@ -71,6 +71,7 @@ The following options are available in `build.sh`.
 | -p, --platform          | Specify platform to build, default is platform of build system.                        |
 | --component [name ...]  | Rebuild a subset of components by name, e.g. `--component common-utils job-scheduler`. |
 | --keep                  | Do not delete the temporary working directory on both success or error.                |
+| --continue-on-error     | Do not fail the bundle build on plugin component failure.                              |
 | -l, --lock              | Generate a stable reference manifest.                                                  |
 | -v, --verbose           | Show more verbose output.                                                              |
 
