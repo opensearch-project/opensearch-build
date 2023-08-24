@@ -32,7 +32,7 @@ Please refer to the following link for the release version dates: [Release Sched
 - [ ] [Component Release Issue](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#component-release-issue).
 - [ ] [Release Campaigns](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-campaigns).
 
-### [Release Branch and Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-branch-readiness) - _Ends __REPLACE_RELEASE-minus-14-days__
+### [Release Branch and Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-branch-readiness) - _Ends __REPLACE_RELEASE-minus-4-days__
 
 - [ ] [Core Release Branch](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#core).
 - [ ] [Core Version Increment](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#core-version-increment).
