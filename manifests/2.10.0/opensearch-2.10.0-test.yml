@@ -83,6 +83,8 @@ components:
       test-configs:
         - with-security
         - without-security
+      additional-cluster-configs:
+        plugins.neural_search.hybrid_search_enabled: true
 
   - name: notifications
     working-directory: notifications
