@@ -8,6 +8,7 @@ on:
 
 jobs:
   update:
+    if: github.repository == 'opensearch-project/opensearch-build'
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9

@@ -17,6 +17,7 @@ on:
           - debug
 jobs:
   plugin-version-increment-sync:
+    if: github.repository == 'opensearch-project/opensearch-build'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

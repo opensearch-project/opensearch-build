@@ -18,6 +18,7 @@ on:
 
 jobs:
   list-manifest-versions:
+    if: github.repository == 'opensearch-project/opensearch-build'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
