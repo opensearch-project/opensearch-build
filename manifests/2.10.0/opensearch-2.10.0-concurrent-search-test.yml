@@ -108,6 +108,7 @@ components:
         opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
+        plugins.neural_search.hybrid_search_enabled: true
 
   - name: opensearch-reports
     integ-test:
