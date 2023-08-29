@@ -1,5 +1,6 @@
 - [Overview](#overview)
 - [Current Maintainers](#current-maintainers)
+- [Emeritus Maintainers](#Emeritus-maintainers)
 - [Release Owner](#release-owner)
   - [Release Activities](#release-activities)
   - [Dealing with Ambiguity](#dealing-with-ambiguity)
@@ -37,6 +38,15 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Divya Madala  | [Divyaasm](https://github.com/Divyaasm)  | Amazon      |
 | Daniel (dB.) Doubrovkine  | [dblock](https://github.com/dblock)      | Amazon      |
 | Tianle Huang | [tianleh](https://github.com/tianleh)    | Amazon      |
+
+## Emeritus Maintainers
+
+| Maintainer        | GitHub ID                                               | Affiliation |
+| ----------------- | ------------------------------------------------------- | ----------- |
+| Abhinav Gupta     | [abhinavGupta16](https://github.com/abhinavGupta16)     | Amazon      |
+| Cameron Skinner   | [camerski](https://github.com/camerski)                 | Amazon      |
+| Marc Handalian    | [mch2](https://github.com/mch2)                         | Amazon      |
+| Peter Nied        | [peternied](https://github.com/peternied)               | Amazon      |
 
 ## Release Owner
 
