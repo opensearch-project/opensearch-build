@@ -43,7 +43,7 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 
 | Maintainer        | GitHub ID                                               | Affiliation |
 | ----------------- | ------------------------------------------------------- | ----------- |
-| Abhinav Gupta     | [abhinavGupta16](https://github.com/abhinavGupta16)     | Microsoft   |
+| Abhinav Gupta     | [abhinavGupta16](https://github.com/abhinavGupta16)     | Amazon      |
 | Cameron Skinner   | [camerski](https://github.com/camerski)                 | Amazon      |
 | Marc Handalian    | [mch2](https://github.com/mch2)                         | Amazon      |
 | Peter Nied        | [peternied](https://github.com/peternied)               | Amazon      |
