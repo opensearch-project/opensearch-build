@@ -81,7 +81,10 @@ $zlibRegFilePath
 regedit /s $zlibRegFilePath
 
 # Install jdk
-$jdkVersionList = "temurin8-jdk JAVA8_HOME", "temurin11-jdk JAVA11_HOME", "temurin17-jdk JAVA17_HOME", "temurin19-jdk JAVA19_HOME", "openjdk20 JAVA20_HOME", "openjdk14 JAVA14_HOME"
+# Temurin jdk does not have all the versions supported on scoop, especially version 14, 20, and above
+# As of now we will switch everything to openjdk as it has the most complete lineup on scoop
+# This will also affect the distribution build jenkinsfile as it has dependencies on the names
+$jdkVersionList = "openjdk8 JAVA8_HOME", "openjdk11 JAVA11_HOME", "openjdk14 JAVA14_HOME", "openjdk17 JAVA17_HOME", "openjdk19 JAVA19_HOME", "openjdk20 JAVA20_HOME"
 Foreach ($jdkVersion in $jdkVersionList)
 {
     $jdkVersion
@@ -94,8 +97,6 @@ Foreach ($jdkVersion in $jdkVersionList)
     [System.Environment]::SetEnvironmentVariable($jdkArray[1], "$JAVA_HOME_TEMP", [System.EnvironmentVariableTarget]::User)
     java -version
 }
-# Need to reset to jdk11 for Jenkins Agent to start
-scoop reset temurin11-jdk
 $JAVA_HOME_TEMP = [System.Environment]::GetEnvironmentVariable("JAVA_HOME", [System.EnvironmentVariableTarget]::User).replace("\", "/")
 $JAVA_HOME_TEMP
 [System.Environment]::SetEnvironmentVariable('JAVA_HOME', "$JAVA_HOME_TEMP", [System.EnvironmentVariableTarget]::User)
