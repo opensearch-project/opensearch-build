@@ -224,9 +224,6 @@ Remove-Item 'get-pip.py' -Force
 # Refresh env vars
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-# Speed up docker
-Set-MpPreference -DisableRealtimeMonitoring $true
-
 # Enable Long Path
 set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled -Type DWORD -Value 1 -Force
 
