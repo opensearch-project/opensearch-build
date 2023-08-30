@@ -5,24 +5,19 @@ lib = library(identifier: 'jenkins@5.7.1', retriever: modernSCM([
 
 pipeline {
     options {
-        timeout(time: 7, unit: 'HOURS')
+        timeout(time: 2, unit: 'HOURS')
     }
     agent none
     parameters {
-        string(
+        choice(
             name: 'PRODUCT',
-            description: "OpenSearch / OpenSearch-Dashboards",
-            trim: true
+            choices: ['opensearch', 'opensearch-dashboards'],
+            description: "Choose the product type among OpenSearch / OpenSearch-Dashboards."
         )
-        string(
+        choice(
             name: 'TAG',
-            description: "Enter tag of the Product",
-            trim: true
-        )
-        booleanParam(
-            name: 'RE_RELEASE',
-            defaultValue: true,
-            description: "Forces to create a Docker-Copy if the Docker Build is successful"
+            choices: ['2', '1'],
+            description: "Choose the tag of the Product.",
         )
     }
     stages {
@@ -43,7 +38,7 @@ pipeline {
                             patchDockerImage(
                                 product: "${PRODUCT}",
                                 tag: "${TAG}",
-                                re_release: "${RE_RELEASE}"
+                                re_release: true
                             )
                         }
                     }

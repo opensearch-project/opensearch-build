@@ -2,7 +2,7 @@
       docker-re-release.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
       docker-re-release.library({identifier=jenkins@5.7.1, retriever=null})
       docker-re-release.pipeline(groovy.lang.Closure)
-         docker-re-release.timeout({time=7, unit=HOURS})
+         docker-re-release.timeout({time=2, unit=HOURS})
          docker-re-release.echo(Executing on agent [label:none])
          docker-re-release.stage(Patch Docker Image, groovy.lang.Closure)
             docker-re-release.script(groovy.lang.Closure)
