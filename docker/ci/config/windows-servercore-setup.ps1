@@ -84,7 +84,7 @@ regedit /s $zlibRegFilePath
 # Temurin jdk does not have all the versions supported on scoop, especially version 14, 20, and above
 # As of now we will switch everything to openjdk as it has the most complete lineup on scoop
 # This will also affect the distribution build jenkinsfile as it has dependencies on the names
-$jdkVersionList = "openjdk8 JAVA8_HOME", "openjdk11 JAVA11_HOME", "openjdk14 JAVA14_HOME", "openjdk17 JAVA17_HOME", "openjdk19 JAVA19_HOME", "openjdk20 JAVA20_HOME"
+$jdkVersionList = "openjdk8-redhat JAVA8_HOME", "openjdk11 JAVA11_HOME", "openjdk14 JAVA14_HOME", "openjdk17 JAVA17_HOME", "openjdk19 JAVA19_HOME", "openjdk20 JAVA20_HOME"
 Foreach ($jdkVersion in $jdkVersionList)
 {
     $jdkVersion
