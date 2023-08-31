@@ -51,7 +51,7 @@ class TestRunCi(unittest.TestCase):
         self.assertEqual(mock_lists.return_value.checkout.call_count, mock_lists.call_count)
         self.assertEqual(mock_lists.return_value.check.call_count, mock_lists.call_count)
 
-    OPENSEARCH_TEST_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/1.3.8/opensearch-1.3.8-test.yml"))
+    OPENSEARCH_TEST_MANIFEST = os.path.realpath(os.path.join(os.path.dirname(__file__), "../manifests/3.0.0/opensearch-3.0.0-test.yml"))
 
     @patch("argparse._sys.argv", ["run_ci.py", OPENSEARCH_TEST_MANIFEST])
     @patch("logging.info")

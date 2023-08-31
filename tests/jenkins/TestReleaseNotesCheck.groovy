@@ -20,7 +20,7 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
     String comment = 'NO_COMMENT'
     String gitIssueNumber = '123456'
     String commentUniqueID = '123456'
-    String inputManifest = '2.7.0/opensearch-2.7.0.yml'
+    String inputManifest = '3.0.0/opensearch-3.0.0.yml'
 
     @Override
     @Before
