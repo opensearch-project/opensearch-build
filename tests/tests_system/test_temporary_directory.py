@@ -57,9 +57,7 @@ class TestTemporaryDirectory(unittest.TestCase):
     def test_path_windows(self) -> None:
         with TemporaryDirectory() as work_dir:
             if current_platform() == "windows":
-                print('windows')
                 windows_home_dir = os.path.expanduser('~')
                 self.assertTrue(str(work_dir.path).startswith(windows_home_dir))
             else:
-                print('others')
                 self.assertTrue(str(work_dir.path).startswith(tempfile.gettempdir()))
