@@ -202,6 +202,7 @@ cmake --version
 
 # Install zip
 scoop install zip
+scoop install unzip
 
 # Install docker
 scoop install docker
@@ -214,10 +215,10 @@ wget https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py
 python get-pip.py
 pip --version
 # Install pipenv
-pip install pipenv
+pip install pipenv==2023.6.12
 pipenv --version
 # Install awscli
-pip install awscli
+pip install awscli==1.22.12
 aws --version
 # Cleanup
 pip cache remove * 
