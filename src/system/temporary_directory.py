@@ -14,6 +14,8 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any
 
+from system.os import current_platform
+
 
 def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
     excvalue = exc[1]
@@ -38,7 +40,12 @@ def g__handleRemoveReadonly(func: FunctionType, path: str, exc: Any) -> Any:
 class TemporaryDirectory:
     def __init__(self, keep: bool = False, chdir: bool = False) -> None:
         self.keep = keep
-        self.name = tempfile.mkdtemp()
+        if current_platform() == "windows":
+            windows_home_dir = os.path.expanduser('~')
+            self.name = tempfile.mkdtemp(dir=windows_home_dir)
+        else:
+            self.name = tempfile.mkdtemp()
+
         if chdir:
             self.curdir = os.getcwd()
             os.chdir(self.name)

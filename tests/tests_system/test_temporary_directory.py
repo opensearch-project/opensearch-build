@@ -7,9 +7,11 @@
 
 import os
 import stat
+import tempfile
 import unittest
 from pathlib import Path
 
+from system.os import current_platform
 from system.temporary_directory import TemporaryDirectory
 
 
@@ -51,3 +53,11 @@ class TestTemporaryDirectory(unittest.TestCase):
         with TemporaryDirectory() as work_dir:
             self.assertIsInstance(work_dir.path, Path)
             self.assertTrue(work_dir.path.exists())
+
+    def test_path_windows(self) -> None:
+        with TemporaryDirectory() as work_dir:
+            if current_platform() == "windows":
+                windows_home_dir = os.path.expanduser('~')
+                self.assertTrue(str(work_dir.path).startswith(windows_home_dir))
+            else:
+                self.assertTrue(str(work_dir.path).startswith(tempfile.gettempdir()))
