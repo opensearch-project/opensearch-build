@@ -17,6 +17,7 @@ FROM amazonlinux:2 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
+ARG VERSION
 ARG TEMP_DIR=/tmp/opensearch-dashboards
 ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 
