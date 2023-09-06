@@ -69,4 +69,4 @@ if [ -z "$TYPE" ]; then
 fi
 
 # Run script
-crane ls public.ecr.aws/opensearchstaging/ci-runner | grep -Eo '.*v[0-9]' | sort -r | uniq | grep $PLATFORM-$USAGE-$TYPE
+crane ls public.ecr.aws/opensearchstaging/ci-runner | grep -Eo '.*v[0-9]' | sort -r | uniq | grep $PLATFORM-$USAGE-$TYPE | sed 's/^/public.ecr.aws\/opensearchstaging\/ci-runner\:/g'
