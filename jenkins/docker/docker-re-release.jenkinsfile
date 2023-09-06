@@ -1,0 +1,54 @@
+lib = library(identifier: 'jenkins@5.7.1', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 2, unit: 'HOURS')
+    }
+    agent none
+    parameters {
+        choice(
+            name: 'PRODUCT',
+            choices: ['opensearch', 'opensearch-dashboards'],
+            description: "Choose the product type among OpenSearch / OpenSearch-Dashboards."
+        )
+        choice(
+            name: 'TAG',
+            choices: ['2', '1'],
+            description: "Choose the tag of the Product.",
+        )
+    }
+    stages {
+        stage("Docker re-release") {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder'
+                    image 'opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1'
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            stages {
+                stage('Patch Docker Image') {
+                    steps {
+                        script {
+                            patchDockerImage(
+                                product: "${PRODUCT}",
+                                tag: "${TAG}",
+                                re_release: true
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
