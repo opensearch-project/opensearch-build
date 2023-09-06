@@ -9,9 +9,9 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
-        IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v3' // required for rpm to create digest sha256 correctly with rpm 4.12+
+        AGENT_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+        AGENT_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
+        IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8 already
         IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
     }
     parameters {
