@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# This dockerfile generates an AmazonLinux-based image containing an OpenSearch-Dashboards installation (1.x Only).
+# This dockerfile generates an AmazonLinux-based image containing an OpenSearch-Dashboards installation (2.x and above since release 2.10.0).
 # Dockerfile for building an OpenSearch-Dashboards image.
 # It assumes that the working directory contains four files: an OpenSearch-Dashboards tarball (opensearch-dashboards.tgz), opensearch_dashboards.yml, opensearch-dashboards-docker-entrypoint.sh, and example certs.
 # Build arguments:
@@ -13,7 +13,7 @@
 #   OPENSEARCH_DASHBOARDS_HOME: Optional. Specify the opensearch-dashboards root directory. Defaults to /usr/share/opensearch-dashboards.
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2 AS linux_stage_0
+FROM amazonlinux:2023 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -24,7 +24,7 @@ ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Create an opensearch-dashboards user, group, and directory
 RUN groupadd -g $GID opensearch-dashboards && \
@@ -36,6 +36,7 @@ COPY * $TEMP_DIR/
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
     MAJOR_VERSION_ENTRYPOINT=`echo $VERSION | cut -d. -f1` && \
     MAJOR_VERSION_YML=`echo $VERSION | cut -d. -f1` && \
+    echo $MAJOR_VERSION_ENTRYPOINT && echo $MAJOR_VERSION_YML && \
     if ! (ls $TEMP_DIR | grep -E "opensearch-dashboards-docker-entrypoint-.*.x.sh" | grep $MAJOR_VERSION_ENTRYPOINT); then MAJOR_VERSION_ENTRYPOINT="default"; fi && \
     if ! (ls $TEMP_DIR | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJOR_VERSION_YML); then MAJOR_VERSION_YML="default"; fi && \
     cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-$MAJOR_VERSION_ENTRYPOINT.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
@@ -47,7 +48,7 @@ RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASH
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
-FROM amazonlinux:2
+FROM amazonlinux:2023
 
 ARG UID=1000
 ARG GID=1000
@@ -56,10 +57,10 @@ ARG OPENSEARCH_DASHBOARDS_HOME=/usr/share/opensearch-dashboards
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Install Reporting dependencies
-RUN yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && dnf clean all
 
 # Create an opensearch-dashboards user, group
 RUN groupadd -g $GID opensearch-dashboards && \

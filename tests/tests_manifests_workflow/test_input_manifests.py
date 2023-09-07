@@ -60,7 +60,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "OpenSearch", "version": "0.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3",
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4",
                                  "args": "-e JAVA_HOME=/opt/java/openjdk-17"}},
             },
         )
@@ -85,7 +85,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.0",
                 "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v4", }},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-build-v1", }},
             },
         )
 

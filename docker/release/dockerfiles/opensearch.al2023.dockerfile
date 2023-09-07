@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-# This dockerfile generates an AmazonLinux-based image containing an OpenSearch installation (1.x Only).
+# This dockerfile generates an AmazonLinux-based image containing an OpenSearch installation (2.x and above since release 2.10.0).
 # Dockerfile for building an OpenSearch image.
 # It assumes that the working directory contains these files: an OpenSearch tarball (opensearch.tgz), log4j2.properties, opensearch.yml, opensearch-docker-entrypoint.sh, opensearch-onetime-setup.sh.
 # Build arguments:
@@ -14,7 +14,7 @@
 
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2 AS linux_stage_0
+FROM amazonlinux:2023 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -27,7 +27,7 @@ ARG PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR=$OPENSEARCH_PATH_CONF/opensearch-perf
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Create an opensearch user, group, and directory
 RUN groupadd -g $GID opensearch && \
@@ -50,7 +50,7 @@ RUN ls -l $TEMP_DIR && \
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
-FROM amazonlinux:2
+FROM amazonlinux:2023
 
 ARG UID=1000
 ARG GID=1000
@@ -59,7 +59,7 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -71,7 +71,8 @@ WORKDIR $OPENSEARCH_HOME
 
 # Set $JAVA_HOME
 RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh && \
-    echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile.d/java_home.sh
+    echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile.d/java_home.sh && \
+    ls -l $OPENSEARCH_HOME
 
 ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
 ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin

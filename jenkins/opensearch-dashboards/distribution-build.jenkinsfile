@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.6.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.8.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -9,10 +9,12 @@ pipeline {
     }
     agent none
     environment {
-        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
-        AGENT_ARM64 = 'Jenkins-Agent-AL2-Arm64-C6g4xlarge-Docker-Host'
-        IMAGE_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v3' // required for rpm to create digest sha256 correctly with rpm 4.12+
-        IMAGE_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
+        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host'
+        IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8 already
+        IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
+        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1' // required for windows to build zip distribution
         JOB_NAME_OPENSEARCH = 'distribution-build-opensearch'
     }
     parameters {
@@ -85,7 +87,7 @@ pipeline {
         stage('verify-parameters') {
             agent {
                 docker {
-                    label AGENT_X64
+                    label AGENT_LINUX_X64
                     image 'docker/library/alpine:3'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true
@@ -152,7 +154,7 @@ pipeline {
                     }
                     agent {
                         docker {
-                            label AGENT_X64
+                            label AGENT_LINUX_X64
                             image dockerAgent.image
                             args dockerAgent.args
                             registryUrl 'https://public.ecr.aws/'
@@ -205,7 +207,7 @@ pipeline {
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                 string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                                string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                                             ]
                                     }
                                 }
@@ -236,12 +238,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_X64 }
+                    agent { label AGENT_LINUX_X64 }
                     stages {
                         stage('build-archive-linux-x64-rpm') {
                             agent {
                                 docker {
-                                    label AGENT_X64
+                                    label AGENT_LINUX_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -270,8 +272,8 @@ pipeline {
                         stage('assemble-archive-and-test-linux-x64-rpm') {
                             agent {
                                 docker {
-                                    label AGENT_X64
-                                    image IMAGE_RPM
+                                    label AGENT_LINUX_X64
+                                    image IMAGE_LINUX_RPM
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -303,7 +305,7 @@ pipeline {
                                         wait: false,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_X64)
+                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                                         ]
                                 }
                             }
@@ -333,12 +335,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_X64 }
+                    agent { label AGENT_LINUX_X64 }
                     stages {
                         stage('build-archive-linux-x64-deb') {
                             agent {
                                 docker {
-                                    label AGENT_X64
+                                    label AGENT_LINUX_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -367,8 +369,8 @@ pipeline {
                         stage('assemble-archive-and-test-linux-x64-deb') {
                             agent {
                                 docker {
-                                    label AGENT_X64
-                                    image IMAGE_DEB
+                                    label AGENT_LINUX_X64
+                                    image IMAGE_LINUX_DEB
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -422,12 +424,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_X64 }
+                    agent { label AGENT_LINUX_X64 }
                     stages {
                         stage('build-archive-linux-arm64-tar') {
                             agent {
                                 docker {
-                                    label AGENT_X64
+                                    label AGENT_LINUX_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -462,7 +464,7 @@ pipeline {
                         stage('assemble-archive-and-test-linux-arm64-tar') {
                             agent {
                                 docker {
-                                    label AGENT_ARM64
+                                    label AGENT_LINUX_ARM64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -515,7 +517,7 @@ pipeline {
                                                     parameters: [
                                                         string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                                                         string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                                                        string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                                        string(name: 'AGENT_LABEL', value: AGENT_LINUX_ARM64)
                                                     ]
                                             }
                                         }
@@ -548,12 +550,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_X64 }
+                    agent { label AGENT_LINUX_X64 }
                     stages {
                         stage('build-archive-linux-arm64-rpm') {
                             agent {
                                 docker {
-                                    label AGENT_X64
+                                    label AGENT_LINUX_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -588,8 +590,8 @@ pipeline {
                         stage('assemble-archive-and-test-linux-arm64-rpm') {
                             agent {
                                 docker {
-                                    label AGENT_ARM64
-                                    image IMAGE_RPM
+                                    label AGENT_LINUX_ARM64
+                                    image IMAGE_LINUX_RPM
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -620,7 +622,7 @@ pipeline {
                                         wait: false,
                                         parameters: [
                                             string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_ARM64)
+                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_ARM64)
                                         ]
                                 }
                             }
@@ -650,12 +652,12 @@ pipeline {
                             }
                         }
                     }
-                    agent { label AGENT_X64 }
+                    agent { label AGENT_LINUX_X64 }
                     stages {
                         stage('build-archive-linux-arm64-deb') {
                             agent {
                                 docker {
-                                    label AGENT_X64
+                                    label AGENT_LINUX_X64
                                     image dockerAgent.image
                                     args dockerAgent.args
                                     registryUrl 'https://public.ecr.aws/'
@@ -684,8 +686,8 @@ pipeline {
                         stage('assemble-archive-and-test-linux-arm64-deb') {
                             agent {
                                 docker {
-                                    label AGENT_ARM64
-                                    image IMAGE_DEB
+                                    label AGENT_LINUX_ARM64
+                                    image IMAGE_LINUX_DEB
                                     registryUrl 'https://public.ecr.aws/'
                                     alwaysPull true
                                 }
@@ -740,8 +742,11 @@ pipeline {
                         }
                     }
                     agent {
-                        node {
-                            label 'Jenkins-Agent-Windows2019-X64-C54xlarge-Single-Host'
+                        docker {
+                            label AGENT_WINDOWS_X64
+                            image IMAGE_WINDOWS_ZIP
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
                         }
                     }
                     steps {
@@ -781,7 +786,7 @@ pipeline {
         stage('update index file') {
             agent {
                 docker {
-                    label AGENT_X64
+                    label AGENT_LINUX_X64
                     image dockerAgent.image
                     args dockerAgent.args
                     registryUrl 'https://public.ecr.aws/'
@@ -815,7 +820,7 @@ pipeline {
             }
             agent {
                 docker {
-                    label AGENT_X64
+                    label AGENT_LINUX_X64
                     image dockerAgent.image
                     args dockerAgent.args
                     registryUrl 'https://public.ecr.aws/'
@@ -840,7 +845,7 @@ pipeline {
     }
     post {
         always {
-            node(AGENT_X64) {
+            node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
                     def findFailedPlugins = buildMessage(search: 'Failed plugins')
@@ -863,7 +868,7 @@ pipeline {
             }
         }
         success {
-            node(AGENT_X64) {
+            node(AGENT_LINUX_X64) {
                 script {
                     List<String> stages = []
                     if (params.BUILD_PLATFORM.contains('linux')) {
@@ -903,7 +908,7 @@ pipeline {
             }
         }
         failure {
-            node(AGENT_X64) {
+            node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
                     if (params.PUBLISH_NOTIFICATION) {

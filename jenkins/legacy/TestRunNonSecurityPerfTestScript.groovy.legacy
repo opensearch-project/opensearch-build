@@ -51,7 +51,7 @@ class TestRunNonSecurityPerfTestScript extends BuildPipelineTest {
         helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod("cfnDescribe", [Map])
         helper.registerAllowedMethod("cfnDelete", [Map])
-        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
+        binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_IMAGE', 'opensearchstaging/ci-runner:ci-runner-centos7-v1')
         binding.setVariable('ARCHITECTURE', 'x64')
         binding.setVariable('ARTIFACT_BUCKET_NAME', 'test_bucket')
