@@ -4,7 +4,7 @@ lib = library(identifier: 'jenkins@2.0.2', retriever: modernSCM([
 ]))
 
 def docker_images = [
-    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v3",
+    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4",
     "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2",
 ]
 
@@ -41,7 +41,7 @@ pipeline {
         stage('promote repo') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+                    label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
                     image docker_images["${DISTRIBUTION_REPO_TYPE}"]
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true

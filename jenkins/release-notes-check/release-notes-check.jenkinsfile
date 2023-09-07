@@ -36,7 +36,7 @@ pipeline {
         )
     }
     environment {
-        AGENT_X64 = 'Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host'
+        AGENT_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
     }
     stages {
         stage('detect docker image + args') {

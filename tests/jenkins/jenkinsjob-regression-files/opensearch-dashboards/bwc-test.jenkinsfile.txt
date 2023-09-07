@@ -11,7 +11,7 @@
             bwc-test.script(groovy.lang.Closure)
                bwc-test.fileExists(manifests/tests/jenkins/data/opensearch-dashboards-1.2.0-test.yml)
          bwc-test.stage(detect docker image + args, groovy.lang.Closure)
-            bwc-test.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+            bwc-test.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             bwc-test.script(groovy.lang.Closure)
                bwc-test.detectTestDockerAgent()
                   detectTestDockerAgent.legacySCM(groovy.lang.Closure)
