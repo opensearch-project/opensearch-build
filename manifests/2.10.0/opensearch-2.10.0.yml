@@ -181,3 +181,12 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+  - name: custom-codecs
+    repository: https://github.com/opensearch-project/custom-codecs.git
+    ref: '2.10'
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
