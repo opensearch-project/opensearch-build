@@ -39,7 +39,7 @@ class ReleaseNotes:
         results = []
         with TemporaryDirectory(chdir=True) as work_dir:
             results.append(component.name)
-            results.append(component.ref)
+            results.append(f"[{component.ref}]")
             with GitRepository(
                     component.repository,
                     component.ref,
