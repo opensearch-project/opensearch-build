@@ -49,7 +49,7 @@ components:
     ref: '2.10'
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: '2.10'
+    ref: tags/2.9.0.0
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: '2.10'
