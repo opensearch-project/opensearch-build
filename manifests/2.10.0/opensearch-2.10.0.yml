@@ -52,7 +52,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '2.10'
+    ref: tags/2.10.0.0
     platforms:
       - linux
       - windows
