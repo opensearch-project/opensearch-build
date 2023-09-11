@@ -29,9 +29,19 @@ pipeline {
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         BUILD_MANIFEST_OPENSEARCH = "build-manifest-opensearch.yml"
-        BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
-        BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch"
+        BUILD_JOB_NAME = "distribution-build-opensearch-dashboards-dashboards"
+        BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch-dashboards"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
+    }
+    triggers {
+        parameterizedCron '''
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/tar/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/tar/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/rpm/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/rpm/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/rpm/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/rpm/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/deb/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/deb/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/deb/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/deb/builds/opensearch/manifest.yml
+            '''
     }
     parameters {
         string(
@@ -46,12 +56,12 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
+            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL_OPENSEARCH',
-            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
+            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
