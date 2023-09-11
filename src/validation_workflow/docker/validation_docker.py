@@ -84,7 +84,7 @@ class ValidateDocker(Validation):
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_cases()
+                    _test_result, _counter = ApiTestCases().test_cases(self.args.projects)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')

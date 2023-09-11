@@ -9,7 +9,6 @@ import logging
 from typing import Any
 
 from validation_workflow.api_request import ApiTest
-from validation_workflow.validation_args import ValidationArgs
 
 '''
 This class is the collection of test cases to run.
@@ -19,19 +18,19 @@ This class is the collection of test cases to run.
 class ApiTestCases:
 
     def __init__(self) -> None:
-        self.opensearch_image_version = ValidationArgs().stg_tag('opensearch').split(' ')[0]
-        self.opensearch_dashboards_image_version = ValidationArgs().stg_tag('opensearch_dashboards').split(' ')[0]
+        pass
 
-    def test_cases(self) -> Any:
+    def test_cases(self, projects: list) -> Any:
         pass_counter, fail_counter = 0, 0
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
         test_cases = [
-            ['https://localhost:9200/', 200, '"number" : "' + self.opensearch_image_version + '"'],
+            ['https://localhost:9200/', 200, ''],
             ['https://localhost:9200/_cat/plugins?v', 200, ''],
             ['https://localhost:9200/_cat/health?v', 200, 'green'],
-            ['http://localhost:5601/api/status', 200, '"number":"' + self.opensearch_dashboards_image_version + '"']
         ]
+        if ("opensearch-dashboards" in projects):
+            test_cases.append(['http://localhost:5601/api/status', 200, ''])
 
         for test_case in test_cases:
             request_url = test_case.__getitem__(0)

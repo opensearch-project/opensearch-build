@@ -6,6 +6,8 @@
 # compatible open source license.
 
 
+import logging
+import shutil
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -13,19 +15,30 @@ from validation_workflow.validation_args import ValidationArgs
 
 
 class Validation(ABC):
-    """
-    Abstract class for all types of artifact validation
-    """
 
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__()
         self.args = args
 
+    def check_url(self, url: str) -> bool:
+        if self.download(url, self.tmp_dir) and self.is_url_valid(url):  # type: ignore
+            logging.info(f"Valid URL - {url} and Download Successful !")
+            return True
+        else:
+            raise Exception(f"Invalid url - {url}")
+
+    def copy_artifact(self, filepath: str, tempdir_path: str) -> bool:
+        if filepath:
+            shutil.copy2(filepath, tempdir_path)
+            return True
+        else:
+            raise Exception("Provide local file path")
+
     def run(self) -> Any:
         try:
             return self.download_artifacts() and self.installation() and self.start_cluster() and self.validation() and self.cleanup()
-        except Exception:
-            return False
+        except Exception as e:
+            raise Exception(f'An error occurred while running the validation tests: {str(e)}')
 
     @abstractmethod
     def download_artifacts(self) -> bool:

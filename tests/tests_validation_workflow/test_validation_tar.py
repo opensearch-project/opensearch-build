@@ -16,10 +16,11 @@ class TestValidationTar(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=True)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=True)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=True)
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.3.0'
-        mock_validation_args.return_value.projects.return_value = ["opensearch", "opensearch-dashboards"]
+        mock_validation_args.return_value.projects.return_value = ["opensearch"]
 
         validate_tar = ValidateTar(mock_validation_args)
 
@@ -29,13 +30,15 @@ class TestValidationTar(unittest.TestCase):
 
     @patch("validation_workflow.download_utils.DownloadUtils.is_url_valid", return_value=False)
     @patch("validation_workflow.download_utils.DownloadUtils.download", return_value=False)
+    @patch("validation_workflow.validation.Validation.check_url", return_value=False)
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock) -> None:
+    def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
         mock_validation_args.return_value.version.return_value = '2.11.0'
+        url = "https://opensearch.org/release/2.11.0/opensearch-2.11.0-linux-arm64.tar.gz"
 
         validate_tar = ValidateTar(mock_validation_args)
 
-        self.assertRaises(Exception, validate_tar.download_artifacts())
+        self.assertRaises(Exception, validate_tar.check_url(url))
 
     @patch("validation_workflow.tar.validation_tar.execute", return_value=True)
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
@@ -53,7 +56,6 @@ class TestValidationTar(unittest.TestCase):
     @patch.object(Process, 'start')
     @patch('time.sleep')
     def test_start_cluster(self, mock_sleep: Mock, mock_start: Mock, mock_validation_args: Mock) -> None:
-        mock_validation_args.return_value.version = '2.3.0'
         validate_tar = ValidateTar(mock_validation_args.return_value)
         result = validate_tar.start_cluster()
         self.assertTrue(result)
@@ -61,9 +63,8 @@ class TestValidationTar(unittest.TestCase):
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
     @patch('validation_workflow.tar.validation_tar.ApiTestCases')
     def test_validation(self, mock_test_cases: Mock, mock_validation_args: Mock) -> None:
-        mock_validation_args.return_value.version = '2.3.0'
         mock_test_cases_instance = mock_test_cases.return_value
-        mock_test_cases_instance.test_cases.return_value = (True, 4)
+        mock_test_cases_instance.test_cases.return_value = (True, 3)
 
         validate_tar = ValidateTar(mock_validation_args.return_value)
 

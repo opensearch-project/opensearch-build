@@ -49,6 +49,7 @@ class TestValidateDocker(unittest.TestCase):
         mock_validation_args.return_value.OSD_image = 'opensearchstaging/opensearch-osd'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
+        mock_validation_args.return_value.projects = ["opensearch"]
         mock_docker_image.return_value = MagicMock()
         mock_container.return_value = (True, 'test_file.yml')
         mock_test_cases_instance = mock_test.return_value
@@ -67,7 +68,7 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
         mock_test.assert_called_once()
-        mock_test.assert_has_calls([call(), call().test_cases()])
+        mock_test.assert_has_calls([call(), call().test_cases(['opensearch'])])
 
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     def test_cleanup(self, mock_validation_args: Mock) -> None:

@@ -51,3 +51,11 @@ class TestValidationArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--verbose"])
     def test_verbose_true(self) -> None:
         self.assertTrue(ValidationArgs().logging_level, logging.DEBUG)
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.rpm"])
+    def test_file_path(self) -> None:
+        self.assertNotEqual(ValidationArgs().file_path, "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.rpm")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312"])
+    def test_artifact_type(self) -> None:
+        self.assertNotEqual(ValidationArgs().artifact_type, "production")

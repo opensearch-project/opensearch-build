@@ -9,6 +9,8 @@ import argparse
 import logging
 import textwrap
 
+from test_workflow.test_kwargs import TestKwargs
+
 
 class ValidationArgs:
     SUPPORTED_PLATFORMS = ["linux"]
@@ -26,8 +28,17 @@ class ValidationArgs:
         parser.add_argument(
             "--version",
             type=str,
-            required=True,
-            help="(manadatory) Product version to validate"
+            required=False,
+            help="(manadatory for production) Product version to validate",
+            default=""
+        )
+        parser.add_argument(
+            "--file-path",
+            nargs='*',
+            action=TestKwargs,
+            help="(manadatory for production) Product URL or file-path to validate",
+            default={},
+            dest="file_path"
         )
         parser.add_argument(
             "-d",
@@ -38,7 +49,6 @@ class ValidationArgs:
             dest="distribution"
         )
         parser.add_argument(
-            "-p",
             "--platform",
             type=str,
             choices=self.SUPPORTED_PLATFORMS,
@@ -50,7 +60,7 @@ class ValidationArgs:
             type=str,
             required=False,
             help="(optional) The opensearchstaging OpenSearch image build number if required, for example : 6039\n",
-            default="",
+            default="latest",
             dest="os_build_number",
         )
         parser.add_argument(
@@ -58,7 +68,7 @@ class ValidationArgs:
             type=str,
             required=False,
             help="(optional) The opensearchstaging OpenSearchDashboard image build number if required, for example : 4104\n",
-            default="",
+            default="latest",
             dest="osd_build_number",
         )
         parser.add_argument(
@@ -85,6 +95,21 @@ class ValidationArgs:
             choices=["x64", "arm64"],
             default="x64"
         )
+        parser.add_argument(
+            "-p",
+            "--projects",
+            nargs='+',
+            help="Enter type of projects to be validated",
+            choices=["opensearch", "opensearch-dashboards"],
+            default=["opensearch"]
+        )
+        parser.add_argument(
+            "--artifact-type",
+            help="Enter type of artifacts that needs to be validated",
+            choices=["staging", "production"],
+            default="production",
+            dest="artifact_type",
+        )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
             "--validate-digest-only",
@@ -98,19 +123,42 @@ class ValidationArgs:
             help="(optional) Use only staging artifact to run docker and API test, will not validate digest")
 
         args = parser.parse_args()
+
+        if (not (args.version or args.file_path)):
+            raise Exception("Provide either version number or File Path")
+        if(args.file_path):
+            args.distribution = self.get_distribution_type(args.file_path)
+            if("opensearch-dashboards" in args.file_path.keys()):
+                args.projects.append("opensearch-dashboards")
+        if (('opensearch' not in args.projects)):
+            raise Exception("Provide OpenSearch Artifact details along with OpenSearch DashBoards to validate")
+
         self.version = args.version
+        self.file_path = args.file_path
+        self.artifact_type = args.artifact_type
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform
-        self.projects = ["opensearch", "opensearch-dashboards"]
+        self.projects = args.projects
         self.arch = args.arch
         self.OS_image = 'opensearchproject/opensearch'
         self.OSD_image = 'opensearchproject/opensearch-dashboards'
+        self.build_number = {"opensearch": args.os_build_number, "opensearch-dashboards": args.osd_build_number}
         self.os_build_number = args.os_build_number
         self.osd_build_number = args.osd_build_number
         self.docker_source = args.docker_source
         self.validate_digest_only = args.validate_digest_only
         self.using_staging_artifact_only = args.using_staging_artifact_only
+
+    def get_distribution_type(self, file_path: dict) -> str:
+        if (any("tar" in value for value in file_path.values())):
+            return 'tar'
+        elif (any("rpm" in value for value in file_path.values())):
+            return 'rpm'
+        elif (any("repo" in value for value in file_path.values())):
+            return 'yum'
+        else:
+            raise Exception("Provided distribution is not supported")
 
     def stg_tag(self, image_type: str) -> str:
         return " ".join(
