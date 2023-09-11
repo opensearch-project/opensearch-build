@@ -36,11 +36,15 @@ echo " sudo systemctl enable opensearch-dashboards.service"
 echo "### You can start opensearch-dashboards service by executing"
 echo " sudo systemctl start opensearch-dashboards.service"
 
-# Set owner
-chown -R opensearch-dashboards.opensearch-dashboards ${product_dir}
-chown -R opensearch-dashboards.opensearch-dashboards ${config_dir}
-chown -R opensearch-dashboards.opensearch-dashboards ${log_dir}
+# Set ownership and permissions
+chmod -R u=rwX,g=rX,o= ${config_dir}
+
+chown -R opensearch-dashboards.adm ${log_dir}
+chmod 750 ${log_dir}
+
 chown -R opensearch-dashboards.opensearch-dashboards ${data_dir}
+chmod 750 ${data_dir}
+
 chown -R opensearch-dashboards.opensearch-dashboards ${pid_dir}
 
 exit 0
