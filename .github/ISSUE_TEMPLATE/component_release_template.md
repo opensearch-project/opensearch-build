@@ -43,7 +43,6 @@ If including changes in this release, increment the version on `{{RELEASE_VERSIO
 
 ### Pre-Release
 
-- [ ] Update to the `{{RELEASE_VERSION}}` release branch in the [distribution manifest](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/{{RELEASE_VERSION}}).
 - [ ] Increment the version on the parent branch to the next development iteration.
 - [ ] Gather, review and publish release notes following the [rules](https://github.com/opensearch-project/opensearch-plugins/blob/main/RELEASE_NOTES.md) and back port it to the release branch.[git-release-notes](https://github.com/ariatemplates/git-release-notes) may be used to generate release notes from your commit history.
 - [ ] Confirm that all changes for `{{RELEASE_VERSION}}` have been merged.
