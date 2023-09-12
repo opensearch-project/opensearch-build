@@ -29,8 +29,8 @@ pipeline {
     environment {
         BUILD_MANIFEST = "build-manifest.yml"
         BUILD_MANIFEST_OPENSEARCH = "build-manifest-opensearch.yml"
-        BUILD_JOB_NAME = "distribution-build-opensearch-dashboards-dashboards"
-        BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch-dashboards"
+        BUILD_JOB_NAME = "distribution-build-opensearch-dashboards"
+        BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
     triggers {
