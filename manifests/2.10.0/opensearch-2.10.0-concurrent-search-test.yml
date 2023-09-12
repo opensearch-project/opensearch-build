@@ -82,6 +82,7 @@ components:
         - without-security
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
+        plugins.query.datasources.encryption.masterkey: 4fc8fee6a3fd7d6ca01772e5
         opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
