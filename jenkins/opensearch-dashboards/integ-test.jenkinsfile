@@ -33,6 +33,12 @@ pipeline {
         BUILD_JOB_NAME_OPENSEARCH = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
+    triggers {
+        parameterizedCron '''
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/tar/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 1 * * * %TEST_MANIFEST=2.10.0/opensearch-dashboards-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/tar/builds/opensearch-dashboards/manifest.yml;BUILD_MANIFEST_URL_OPENSEARCH=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            '''
+    }
     parameters {
         string(
             name: 'COMPONENT_NAME',
