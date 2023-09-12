@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 80d7730439037d6a3348771aea9f59f2fd160bea
+    ref: 2166b4794e91a5f412e88e2fbb723152afb7ba14
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: c6639d9ae8f4a854dfad7b0ce6287ea3695a7ffd
+    ref: e9d36379eedd1bbe9f11bc3e0512f87a8c808b58
     platforms:
       - linux
       - windows
@@ -43,7 +43,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 9937b18209da18a77748111e64b98cb9384c3a9b
+    ref: a3da2221d23bf4384020fe234fb97d46548b52c7
     platforms:
       - linux
       - windows
@@ -52,7 +52,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: bfca2730f6a18f60aa46abbd757a2c730b64f3eb
+    ref: 6daa697bcd4c73ea411bb765eddf2fac95a29065
     platforms:
       - linux
       - windows
@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 5b24f615ba2d1c732ff6da3b0277f39630264f67
+    ref: 5fccfd5c8aa7b4b28afad50b3bc7868623d20deb
     platforms:
       - linux
       - windows
