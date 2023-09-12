@@ -13,7 +13,7 @@
 #   OPENSEARCH_DASHBOARDS_HOME: Optional. Specify the opensearch-dashboards root directory. Defaults to /usr/share/opensearch-dashboards.
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2 AS linux_stage_0
+FROM public.ecr.aws/amazonlinux/amazonlinux:2 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -47,7 +47,7 @@ RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASH
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
-FROM amazonlinux:2
+FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 ARG UID=1000
 ARG GID=1000

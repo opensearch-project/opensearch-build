@@ -14,7 +14,7 @@
 
 
 ########################### Stage 0 ########################
-FROM amazonlinux:2023 AS linux_stage_0
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023 AS linux_stage_0
 
 ARG UID=1000
 ARG GID=1000
@@ -27,7 +27,7 @@ ARG PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR=$OPENSEARCH_PATH_CONF/opensearch-perf
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
+RUN dnf update --releasever=latest -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Create an opensearch user, group, and directory
 RUN groupadd -g $GID opensearch && \
@@ -50,7 +50,7 @@ RUN ls -l $TEMP_DIR && \
 
 ########################### Stage 1 ########################
 # Copy working directory to the actual release docker images
-FROM amazonlinux:2023
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 ARG UID=1000
 ARG GID=1000
@@ -59,7 +59,7 @@ ARG OPENSEARCH_HOME=/usr/share/opensearch
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
-RUN dnf update -y && dnf install -y tar gzip shadow-utils which && dnf clean all
+RUN dnf update --releasever=latest -y && dnf install -y tar gzip shadow-utils which && dnf clean all
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
