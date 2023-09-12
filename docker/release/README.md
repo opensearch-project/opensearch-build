@@ -2,13 +2,22 @@
 We support building OpenSearch and OpenSearch Dashboards docker for both [multi-CPU](https://docs.docker.com/desktop/multi-arch/) and single CPU architectures.
 Users are welcome to choose either type of the image to build on their local development environment, or directly pulling existing images published on Docker Hub:
 
-[OpenSearch Docker Repository](https://hub.docker.com/r/opensearchproject/opensearch/)
+[OpenSearch DockerHub Repository](https://hub.docker.com/r/opensearchproject/opensearch/)
 
-[OpenSearch-Dashboards Docker Repository](https://hub.docker.com/r/opensearchproject/opensearch-dashboards/)
+[OpenSearch-Dashboards DockerHub Repository](https://hub.docker.com/r/opensearchproject/opensearch-dashboards/)
+
+[OpenSearch ECR Repository](https://gallery.ecr.aws/opensearchproject/opensearch/)
+
+[OpenSearch-Dashboards ECR Repository](https://gallery.ecr.aws/opensearchproject/opensearch-dashboards/)
 
 ```
+# DockerHub
 docker pull opensearchproject/opensearch:latest
 docker pull opensearchproject/opensearch-dashboards:latest
+
+# ECR
+docker pull public.ecr.aws/opensearchproject/opensearch:latest
+docker pull public.ecr.aws/opensearchproject/opensearch-dashboards:latest
 ```
 
 ### Building Docker Images
@@ -31,6 +40,10 @@ Verify if you have Docker Desktop or Docker Buildx Standalone by running:
 
 You need to run both script within the `opensearch-build/docker/release` folder. Running them
   within other path would cause the scripts to fail.
+
+
+The OpenSearch and OpenSearch-Dashboards Docker image is based on [AmazonLinux container images](https://github.com/amazonlinux/container-images) and sourced directly from the official [AmazonLinux ECR Repository](https://gallery.ecr.aws/amazonlinux/amazonlinux/) to get timely updates.
+
 
 #### Build single-arch image with these commands:
   * OpenSearch 1.0.0 x64:
