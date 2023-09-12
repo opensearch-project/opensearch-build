@@ -19,7 +19,6 @@ class TestValidationTar(unittest.TestCase):
     @patch("validation_workflow.validation.Validation.check_url", return_value=True)
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
     def test_download_artifacts(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
-        mock_validation_args.return_value.version.return_value = '2.3.0'
         mock_validation_args.return_value.projects.return_value = ["opensearch"]
 
         validate_tar = ValidateTar(mock_validation_args)
@@ -33,7 +32,6 @@ class TestValidationTar(unittest.TestCase):
     @patch("validation_workflow.validation.Validation.check_url", return_value=False)
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
     def test_download_artifacts_error(self, mock_validation_args: Mock, mock_is_url_valid: Mock, mock_download: Mock, mock_check_url: Mock) -> None:
-        mock_validation_args.return_value.version.return_value = '2.11.0'
         url = "https://opensearch.org/release/2.11.0/opensearch-2.11.0-linux-arm64.tar.gz"
 
         validate_tar = ValidateTar(mock_validation_args)

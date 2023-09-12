@@ -23,6 +23,10 @@ class TestValidationArgs(unittest.TestCase):
         self.assertEqual(ValidationArgs().version, "2.3.0")
         self.assertNotEqual(ValidationArgs().version, "2.1.0")
 
+    @patch("argparse._sys.argv", [VALIDATION_PY])
+    def test_arguments(self) -> None:
+        self.assertRaises(Exception, "Provide either version number or File Path")
+
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.1.0", "--distribution", "rpm"])
     def test_rpm_distribution(self) -> None:
         self.assertEqual(ValidationArgs().distribution, "rpm")
@@ -59,3 +63,11 @@ class TestValidationArgs(unittest.TestCase):
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312"])
     def test_artifact_type(self) -> None:
         self.assertNotEqual(ValidationArgs().artifact_type, "production")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
+    def test_set_projects(self) -> None:
+        self.assertEqual(ValidationArgs().projects, ["opensearch"])
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch-dashboards"])
+    def test_projects_exception(self) -> None:
+        self.assertRaises(Exception, "Provide OpenSearch Artifact details along with OpenSearch DashBoards to validate")

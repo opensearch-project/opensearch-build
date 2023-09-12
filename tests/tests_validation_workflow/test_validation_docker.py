@@ -20,6 +20,7 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.is_container_daemon_running')
     def test_download_artifacts(self, mock_is_container_daemon_running: Mock, mock_validation_args: Mock, mock_get_image_id: Mock) -> None:
         mock_validation_args = Mock()
+        mock_validation_args.return_value.projects = ["opensearch"]
         mock_validation_args.return_value.docker_source = 'dockerhub'
         mock_validation_args.return_value.using_staging_artifact_only = True
 
@@ -59,7 +60,7 @@ class TestValidateDocker(unittest.TestCase):
 
         # Create instance of ValidateDocker class
         validate_docker = ValidateDocker(mock_validation_args.return_value)
-        validate_docker.image_ids = ['images_id_0', 'images_id_0']
+        validate_docker.image_ids = {'opensearch': 'images_id_0'}
 
         # Call validation method and assert the result
         result = validate_docker.validation()

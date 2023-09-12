@@ -80,6 +80,24 @@ class TestValidationRpm(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_test_cases.assert_called_once()
 
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('validation_workflow.rpm.validation_rpm.ApiTestCases')
+    def test_failed_testcases(self, mock_test_cases: Mock, mock_validation_args: Mock) -> None:
+        # Set up mock objects
+        mock_validation_args.return_value.version = '2.3.0'
+        mock_test_cases_instance = mock_test_cases.return_value
+        mock_test_cases_instance.test_cases.return_value = (True, 1)
+
+        # Create instance of ValidateRpm class
+        validate_rpm = ValidateRpm(mock_validation_args.return_value)
+
+        # Call validation method and assert the result
+        validate_rpm.validation()
+        self.assertRaises(Exception, "Not all tests Pass : 1")
+
+        # Assert that the mock methods are called as expected
+        mock_test_cases.assert_called_once()
+
     @patch("validation_workflow.rpm.validation_rpm.execute", return_value=True)
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     def test_cleanup(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
