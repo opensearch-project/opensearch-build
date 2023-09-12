@@ -52,12 +52,12 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
+            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL_OPENSEARCH',
-            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
+            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
