@@ -97,7 +97,11 @@ jobs:
           # Read the file contents and replace the placeholders
           file_path="../opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
           RELEASE_VERSION="${{ matrix.release_version }}"
-          RELEASE_ISSUE_NUMBER=$(echo '${{ steps.check_if_build_repo_issue_exists.outputs.issues }}' | jq '.[0].number')
+          BUILD_REPO_ISSUE_OUTPUT=$(cat <<EOF
+          ${{ steps.check_if_build_repo_issue_exists.outputs.issues }}
+          EOF
+          )
+          RELEASE_ISSUE_NUMBER=$(echo $BUILD_REPO_ISSUE_OUTPUT | jq -r '.[0].number')
           RELEASE_ISSUE="https://github.com/opensearch-project/opensearch-build/issues/${RELEASE_ISSUE_NUMBER}"
           RELEASE_VERSION_X=$(echo "${{ matrix.release_version }}" | awk -F'.' '{print $1}').x
           sed -e "s|{{RELEASE_VERSION}}|${RELEASE_VERSION}|g" -e "s|{{RELEASE_ISSUE}}|${RELEASE_ISSUE}|g" -e "s|{{RELEASE_VERSION_X}}|${RELEASE_VERSION_X}|g" "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"
