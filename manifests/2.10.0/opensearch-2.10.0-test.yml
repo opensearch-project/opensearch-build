@@ -131,3 +131,9 @@ components:
     bwc-test:
       test-configs:
         - with-security
+
+  - name: custom-codecs
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
