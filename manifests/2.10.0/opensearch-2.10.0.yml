@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 5fccfd5c8aa7b4b28afad50b3bc7868623d20deb
+    ref: 521214bb3f0a1e612f3af4ece74e1e3eb00686ed
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 4299ace3d55b15e8f6d8c9c8099d9c9b42e38cdf
+    ref: d2c087c80f14c9a80566d0f5914e8fafd4f952ed
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 6a9363138ddf039e083c0994e9614319f780b2d5
+    ref: 3095e3cf1f56357bfe10690446da2adfe7782621
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 96518087e35e513c214a3711e8ae62b87dff2254
+    ref: ab4cc0e6ce3195e4e48aef892c00e2b7345fe697
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 0b4bc0817e7267fc5b6a5dc0fdc2b56518a4b1a3
+    ref: ae57d3a51923aa232fc04da2c6dd4e3592447091
     platforms:
       - linux
       - windows
