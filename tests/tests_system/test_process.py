@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import tempfile
 import unittest
 from unittest.mock import MagicMock, call, patch
@@ -61,13 +62,44 @@ class TestProcess(unittest.TestCase):
 
         self.assertEqual(str(ctx.exception), "Process has not started")
 
+    @patch('os.unlink')
     @patch('psutil.Process')
     @patch('subprocess.Popen')
     @patch('psutil.process_iter')
-    def test_terminate_file_not_closed(self, procs: MagicMock, subprocess: MagicMock, process: MagicMock) -> None:
+    def test_terminate_process_file_not_closed(self, mock_procs: MagicMock, mock_subprocess: MagicMock, mock_process: MagicMock, mock_os_unlink: MagicMock) -> None:
         process_handler = Process()
 
+        mock_process1 = MagicMock()
+        mock_process2 = MagicMock()
+
+        mock_item1 = MagicMock()
+        mock_process1.open_files.return_value = [mock_item1]
+
+        mock_item2 = MagicMock()
+        mock_process2.open_files.return_value = [mock_item2]
+
+        mock_procs.return_value = [mock_process1, mock_process2]
+
         process_handler.start("mock_command", "mock_cwd")
+
+        mock_item1.path = process_handler.stdout.name
+        mock_item2.path = process_handler.stderr.name
+
         process_handler.terminate()
 
-        procs.assert_called
+        mock_procs.assert_called()
+
+        mock_process1.open_files.assert_called()
+        mock_process2.open_files.assert_called()
+
+        with self.assertLogs(level='ERROR') as log:
+            logging.error(f'stdout {mock_item1} is being used by process {mock_process1}')
+            self.assertEqual(len(log.output), 1)
+            self.assertEqual(len(log.records), 1)
+            self.assertIn(f'stdout {mock_item1} is being used by process {mock_process1}', log.output[0])
+
+        with self.assertLogs(level='ERROR') as log:
+            logging.error(f'stderr {mock_item2} is being used by process {mock_process2}')
+            self.assertEqual(len(log.output), 1)
+            self.assertEqual(len(log.records), 1)
+            self.assertIn(f'stderr {mock_item2} is being used by process {mock_process2}', log.output[0])
