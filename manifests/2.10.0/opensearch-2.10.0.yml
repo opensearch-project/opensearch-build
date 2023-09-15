@@ -183,7 +183,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 196d5538d67732109479b4253469677e63f1bb8b
+    ref: 3437b438af35e93d321a232833f66e39131ff038
     platforms:
       - linux
       - windows
