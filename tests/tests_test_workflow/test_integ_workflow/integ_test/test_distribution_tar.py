@@ -54,4 +54,4 @@ class TestDistributionTar(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"rm -rf {self.work_dir}/*", args_list[0][0][0])
+        self.assertEqual(f"rm -rf {os.path.join(self.work_dir, 'opensearch-1.3.0')}", args_list[0][0][0])
