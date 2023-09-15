@@ -99,7 +99,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             config,
             self.test_recorder,
         ) as (endpoint, port):
-            self.pretty_print_message("Running integration tests for " + self.component.name)
+            self.pretty_print_message("Running integration tests for " + self.component.name + " " + config)
             os.chdir(self.work_dir)
             return self.execute_integtest_sh(endpoint, port, security, config)
 

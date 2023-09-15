@@ -1,4 +1,4 @@
-lib = library(identifier: 'jenkins@5.7.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.9.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -7,17 +7,20 @@ def docker_images = [
     "tar": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4",
     "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
     "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3",
+    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1",
 ]
 
 def docker_args = [
     "tar": "-u 1000",
     "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
     "deb": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
+    "zip": "-u ContainerAdministrator",
 ]
 
 def agent_nodes = [
-    "x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
-    "arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
+    "linux_x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
+    "linux_arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
+    "windows_x64": "Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host",
 ]
 
 pipeline {
@@ -52,18 +55,18 @@ pipeline {
         )
         string(
             name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.5.0/5367/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
+            description: 'The build manifest URL for OpenSearch Dashboards, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.9.0/6391/linux/x64/tar/builds/opensearch-dashboards/manifest.yml.',
             trim: true
         )
         string(
             name: 'BUILD_MANIFEST_URL_OPENSEARCH',
-            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.5.0/6976/linux/x64/tar/builds/opensearch/manifest.yml".',
+            description: 'The build manifest URL OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.9.0/8172/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
         )
     }
     stages {
         stage('verify-parameters') {
-            agent { label agent_nodes["x64"] }
+            agent { label agent_nodes["linux_x64"] }
             steps {
                 script {
                     if (TEST_MANIFEST == '' || !fileExists("manifests/${TEST_MANIFEST}")) {
@@ -94,6 +97,7 @@ pipeline {
                     def buildManifestObj = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
                     def buildManifestObjOpenSearch = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST_OPENSEARCH))
                     env.architecture = buildManifestObj.getArtifactArchitecture()
+                    env.platform = buildManifestObj.getArtifactPlatform()
                     env.buildId = buildManifestObj.getArtifactBuildId()
                     env.buildIdOpenSearch = buildManifestObjOpenSearch.getArtifactBuildId()
                     env.distribution = buildManifestObj.getDistribution()
@@ -102,10 +106,10 @@ pipeline {
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
-                    env.AGENT_LABEL = agent_nodes["$architecture"]
+                    env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
 
-                    echo "Version: ${version}, VersionOpenSearch: ${env.versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
-                    currentBuild.description = "$architecture, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
+                    echo "Version: ${version}, VersionOpenSearch: ${versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
+                    currentBuild.description = "$architecture, $platform, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
 
                     if (! env.version.equals(env.versionOpenSearch)) {
                         currentBuild.result = 'ABORTED'
@@ -144,27 +148,35 @@ pipeline {
                         }
                     }
 
-                    echo "Downloading from S3: ${artifactPathOpenSearch}"
-                    downloadFromS3(
-                        assumedRoleName: 'opensearch-bundle',
-                        roleAccountNumberCred: 'jenkins-aws-account-public',
-                        downloadPath: "${artifactPathOpenSearch}/",
-                        bucketName: "${ARTIFACT_BUCKET_NAME}",
-                        localPath: "${WORKSPACE}/artifacts",
-                        force: true
-                      )
-                    sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
+                    if (env.platform != 'windows') {
+                        echo "Not on Windows, stash repository+artifacts"
+                        echo "Downloading from S3: ${artifactPathOpenSearch}"
+                        downloadFromS3(
+                            assumedRoleName: 'opensearch-bundle',
+                            roleAccountNumberCred: 'jenkins-aws-account-public',
+                            downloadPath: "${artifactPathOpenSearch}/",
+                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                            localPath: "${WORKSPACE}/artifacts",
+                            force: true
+                          )
+                        sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
 
-                    echo "Downloading from S3: ${artifactPath}"
-                    downloadFromS3(
-                        assumedRoleName: 'opensearch-bundle',
-                        roleAccountNumberCred: 'jenkins-aws-account-public',
-                        downloadPath: "${artifactPath}/",
-                        bucketName: "${ARTIFACT_BUCKET_NAME}",
-                        localPath: "${WORKSPACE}/artifacts",
-                        force: true
-                      )
-                    sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
+                        echo "Downloading from S3: ${artifactPath}"
+                        downloadFromS3(
+                            assumedRoleName: 'opensearch-bundle',
+                            roleAccountNumberCred: 'jenkins-aws-account-public',
+                            downloadPath: "${artifactPath}/",
+                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                            localPath: "${WORKSPACE}/artifacts",
+                            force: true
+                          )
+                        sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
+                        sh("rm -rf $WORKSPACE/artifacts")
+
+                    }
+                    else {
+                        echo "On Windows Platform, stash repository only"
+                    }
 
                     // Stash the current working directory files, aka opensearch-build repo
                     // Unstash later in each triggered stage to run integTest
@@ -178,7 +190,7 @@ pipeline {
                         // https://web.archive.org/web/20181121065904/http://blog.freeside.co/2013/03/29/groovy-gotcha-for-loops-and-closure-scope/
                         def local_component = component.trim()
                         def local_component_index = componentList.indexOf(local_component)
-                        def wait_seconds = local_component_index * 10
+                        def wait_seconds = local_component_index * 20
 
                         echo "Adding Component: ${local_component}"
                         componentTests["Run Integtest ${local_component}"] = {
@@ -195,6 +207,35 @@ pipeline {
                                                     // https://github.com/opensearch-project/opensearch-build/blob/6ed1ce3c583233eae4fe1027969d778cfc7660f7/src/test_workflow/test_recorder/test_recorder.py#L99
                                                     sh("echo ${local_component} with index ${local_component_index} will sleep ${wait_seconds} seconds to reduce load && sleep ${wait_seconds}")
                                                     unstash "integtest-opensearch-dashboards-$BUILD_NUMBER"
+                                                    if (env.platform == 'windows') {
+                                                        echo "On Windows Platform, unstash repository and download the artifacts"
+                                                        echo "Downloading from S3: ${artifactPathOpenSearch}"
+                                                        downloadFromS3(
+                                                            assumedRoleName: 'opensearch-bundle',
+                                                            roleAccountNumberCred: 'jenkins-aws-account-public',
+                                                            downloadPath: "${artifactPathOpenSearch}/",
+                                                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                                            localPath: "${WORKSPACE}/artifacts",
+                                                            force: true
+                                                          )
+                                                        sh("cp -a $WORKSPACE/artifacts/${artifactPathOpenSearch} $WORKSPACE")
+
+                                                        echo "Downloading from S3: ${artifactPath}"
+                                                        downloadFromS3(
+                                                            assumedRoleName: 'opensearch-bundle',
+                                                            roleAccountNumberCred: 'jenkins-aws-account-public',
+                                                            downloadPath: "${artifactPath}/",
+                                                            bucketName: "${ARTIFACT_BUCKET_NAME}",
+                                                            localPath: "${WORKSPACE}/artifacts",
+                                                            force: true
+                                                          )
+                                                        sh("cp -a $WORKSPACE/artifacts/${artifactPath} $WORKSPACE")
+                                                        sh("rm -rf $WORKSPACE/artifacts")
+                                                    }
+                                                    else {
+                                                        echo "Not on Windows, unstash repository+artifacts"
+                                                    }
+
                                                     sh("rm -rf test-results")
                                                     runIntegTestScript(
                                                         jobName: "$BUILD_JOB_NAME",
@@ -245,7 +286,11 @@ pipeline {
                         node(AGENT_LABEL) {
                             docker.withRegistry('https://public.ecr.aws/') {
                                 docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
-                                    unstash "integtest-opensearch-dashboards-$BUILD_NUMBER"
+                                    checkout scm
+                                    downloadBuildManifest(
+                                        url: BUILD_MANIFEST_URL,
+                                        path: BUILD_MANIFEST
+                                    )
                                     downloadBuildManifest(
                                         url: BUILD_MANIFEST_URL_OPENSEARCH,
                                         path: BUILD_MANIFEST_OPENSEARCH
