@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: ab4cc0e6ce3195e4e48aef892c00e2b7345fe697
+    ref: a50fc55e9c42091186fe3fb0cab51a380206b6e2
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: ae57d3a51923aa232fc04da2c6dd4e3592447091
+    ref: 1268aca36ca8ab55cd6a577842e6851dfb9983aa
     platforms:
       - linux
       - windows
