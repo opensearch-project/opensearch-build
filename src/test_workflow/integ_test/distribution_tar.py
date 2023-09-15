@@ -39,5 +39,5 @@ class DistributionTar(Distribution):
         return start_cmd_map[self.filename]
 
     def uninstall(self) -> None:
-        logging.info(f"Cleanup {self.work_dir}/* content after the test")
-        subprocess.check_call(f"rm -rf {self.work_dir}/*", shell=True)
+        logging.info(f"Cleanup {self.install_dir} content after the test")
+        subprocess.check_call(f"rm -rf {self.install_dir}", shell=True)
