@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 2166b4794e91a5f412e88e2fbb723152afb7ba14
+    ref: 5c809bb657a4667ae8d0f5641c0ea2875d2a7352
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: a50fc55e9c42091186fe3fb0cab51a380206b6e2
+    ref: dc1b9bf958b2dae4b3fdab8cee69894338417e9d
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 1268aca36ca8ab55cd6a577842e6851dfb9983aa
+    ref: ee3f571b8539acd2eaac479fb612ee4c2c5a69fb
     platforms:
       - linux
       - windows
