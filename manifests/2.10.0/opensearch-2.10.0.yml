@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 5c809bb657a4667ae8d0f5641c0ea2875d2a7352
+    ref: eee49cb340edc6c4d489bcd9324dda571fc8dc03
     checks:
       - gradle:publish
       - gradle:properties:version
