@@ -42,7 +42,6 @@ ln -s ${data_dir} ${buildroot}${product_dir}/data
 ln -s ${log_dir}  ${buildroot}${product_dir}/logs
 
 # Change Permissions
-chmod -Rf g-s ${buildroot}/*
-chmod -Rf u=rwX,g=rX,o=rX ${buildroot}/*
+chmod -Rf a+rX,u+w,g-w,o-w ${buildroot}/*
 
 exit 0
