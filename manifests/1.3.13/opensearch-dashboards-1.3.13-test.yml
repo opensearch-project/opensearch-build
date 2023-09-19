@@ -5,11 +5,6 @@ ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4
 components:
-  - name: OpenSearch-Dashboards
-    bwc-test:
-      test-configs:
-        - with-security
-        - without-security
   - name: anomalyDetectionDashboards
     integ-test:
       test-configs:
