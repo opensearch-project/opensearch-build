@@ -13,9 +13,9 @@ def docker_images = [
 // Note: The resource locking must be complied with the AGENT_NODE specs above
 def docker_args = [
     "tar": "-u 1000 --cpus 4 --memory 8g",
-    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
-    "deb": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro",
-    "zip": "-u ContainerAdministrator",
+    "rpm": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cpus 4 --memory 8g",
+    "deb": "--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --cpus 4 --memory 8g",
+    "zip": "-u ContainerAdministrator --cpus 4 --memory 8g",
 ]
 
 def agent_nodes = [
