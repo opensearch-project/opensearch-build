@@ -76,6 +76,7 @@ exit 0
 
 %post
 set -e
+chown -R root.%{name} %{config_dir}
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
     systemctl daemon-reload
