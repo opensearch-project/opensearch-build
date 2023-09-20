@@ -133,9 +133,9 @@ if [ -d %{product_dir}/plugins/opensearch-security ]; then
     echo " See demo certs creation log in %{log_dir}/install_demo_configuration.log"
 fi
 echo "### Upcoming breaking change in packaging"
-echo " We are planing to tighten the permissions of installed files in a future version of the 2.x or above opensearch package."
-echo " If you setup tooling that needs read access to the OpenSearch configuration files, we invite you to add the user running these tools to the 'opensearch' group."
-echo " More info: https://github.com/opensearch-project/opensearch-build/pull/4043"
+echo " In a future release of OpenSearch Dashboards, we plan to change the permissions associated with access to installed files"
+echo " If you are configuring tools that require read access to the OpenSearch configuration files, we recommend you add the user that runs these tools to the 'opensearch' group"
+echo " For more information, see https://github.com/opensearch-project/opensearch-build/pull/4043"
 exit 0
 
 %preun
