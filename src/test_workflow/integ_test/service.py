@@ -112,14 +112,14 @@ class Service(abc.ABC):
         logging.info(f"Downloaded bundle to {os.path.realpath(bundle_name)}")
         return bundle_name
 
-    def wait_for_service(self) -> None:
+    def wait_for_service(self) -> bool:
         logging.info("Waiting for service to become available")
 
         for attempt in range(10):
             try:
                 logging.info(f"Pinging service attempt {attempt}")
                 if self.service_alive():
-                    return
+                    return True
             except requests.exceptions.ConnectionError:
                 logging.info("Service not available, yet")
                 stdout = self.process_handler.stdout_data
@@ -129,7 +129,8 @@ class Service(abc.ABC):
                 if stderr:
                     logging.info("- stderr:\n{stderr}")
             time.sleep(10)
-        raise ClusterCreationException("Cluster is not available after 10 attempts")
+        logging.error("Cluster is not available after 10 attempts")
+        return False
 
     @property
     @abc.abstractmethod
