@@ -13,7 +13,6 @@ from unittest.mock import MagicMock, Mock, PropertyMock, call, mock_open, patch
 import requests
 
 from test_workflow.dependency_installer import DependencyInstaller
-from test_workflow.integ_test.service import ClusterCreationException
 from test_workflow.integ_test.service_opensearch import ServiceOpenSearch
 
 
@@ -301,6 +300,7 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stdout_data.assert_not_called()
         mock_process_stderr_data.assert_not_called()
 
+    @patch('test_workflow.integ_test.service.logging.error')
     @patch("time.sleep")
     @patch.object(ServiceOpenSearch, "service_alive", return_value=False)
     @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
@@ -310,7 +310,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stderr_data: Mock,
         mock_process_stdout_data: Mock,
         mock_service_alive: Mock,
-        mock_time_sleep: Mock
+        mock_time_sleep: Mock,
+        mock_logging_error: Mock
     ) -> None:
         service = ServiceOpenSearch(
             self.version,
@@ -321,16 +322,15 @@ class ServiceOpenSearchTests(unittest.TestCase):
             self.work_dir
         )
 
-        with self.assertRaises(ClusterCreationException) as ctx:
-            service.wait_for_service()
-
-        self.assertEqual(str(ctx.exception), "Cluster is not available after 10 attempts")
+        service.wait_for_service()
 
         self.assertEqual(mock_service_alive.call_count, 10)
         self.assertEqual(mock_time_sleep.call_count, 10)
         mock_process_stdout_data.assert_not_called()
         mock_process_stderr_data.assert_not_called()
+        mock_logging_error.assert_called_with('Cluster is not available after 10 attempts')
 
+    @patch('test_workflow.integ_test.service.logging.error')
     @patch("time.sleep")
     @patch.object(ServiceOpenSearch, "service_alive", side_effect=requests.exceptions.ConnectionError())
     @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
@@ -340,7 +340,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
         mock_process_stderr_data: Mock,
         mock_process_stdout_data: Mock,
         mock_service_alive: Mock,
-        mock_time_sleep: Mock
+        mock_time_sleep: Mock,
+        mock_logging_error: Mock
     ) -> None:
 
         service = ServiceOpenSearch(
@@ -352,15 +353,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
             self.work_dir
         )
 
-        with self.assertRaises(ClusterCreationException) as ctx:
-            service.wait_for_service()
-
-        self.assertEqual(str(ctx.exception), "Cluster is not available after 10 attempts")
+        service.wait_for_service()
 
         self.assertEqual(mock_service_alive.call_count, 10)
         self.assertEqual(mock_time_sleep.call_count, 10)
         self.assertEqual(mock_process_stdout_data.call_count, 10)
         self.assertEqual(mock_process_stderr_data.call_count, 10)
+        mock_logging_error.assert_called_with('Cluster is not available after 10 attempts')
 
     @patch("time.sleep")
     @patch.object(

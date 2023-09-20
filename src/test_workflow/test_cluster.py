@@ -10,7 +10,7 @@ import os
 from contextlib import contextmanager
 from typing import Any, Generator, List, Tuple
 
-from test_workflow.integ_test.service import Service
+from test_workflow.integ_test.service import ClusterCreationException, Service
 from test_workflow.integ_test.service_termination_result import ServiceTerminationResult
 from test_workflow.test_recorder.log_recorder import LogRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
@@ -31,14 +31,14 @@ class TestCluster(abc.ABC):
     """
 
     def __init__(
-        self,
-        work_dir: str,
-        component_name: str,
-        component_test_config: str,
-        security_enabled: bool,
-        additional_cluster_config: dict,
-        save_logs: LogRecorder,
-        cluster_port: int = 9200
+            self,
+            work_dir: str,
+            component_name: str,
+            component_test_config: str,
+            security_enabled: bool,
+            additional_cluster_config: dict,
+            save_logs: LogRecorder,
+            cluster_port: int = 9200
     ) -> None:
         self.work_dir = os.path.join(work_dir, "local-test-cluster")
         self.component_name = component_name
@@ -78,7 +78,9 @@ class TestCluster(abc.ABC):
             service.start()
 
         for service in self.all_services:
-            service.wait_for_service()
+            if not service.wait_for_service():
+                self.terminate()
+                raise ClusterCreationException("Cluster is not available after 10 attempts")
 
     def terminate(self) -> None:
         if self.service:

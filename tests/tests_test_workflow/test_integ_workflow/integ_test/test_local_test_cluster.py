@@ -9,8 +9,10 @@ import os
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
+import pytest
+
 from test_workflow.integ_test.local_test_cluster import LocalTestCluster
-from test_workflow.integ_test.service import ServiceTerminationResult
+from test_workflow.integ_test.service import ClusterCreationException, ServiceTerminationResult
 from test_workflow.test_cluster import ClusterServiceNotInitializedException
 
 
@@ -33,13 +35,13 @@ class LocalTestClusterTests(unittest.TestCase):
         self.test_recorder = None
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
-    def test_start(self, mock_service: Mock) -> None:
+    def test_start_without_exception(self, mock_service: Mock) -> None:
         mock_test_recorder = MagicMock()
         mock_local_cluster_logs = MagicMock()
         mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
 
-        mock_service_object = MagicMock()
-        mock_service.return_value = mock_service_object
+        mock_service_object = mock_service.return_value
+        mock_service_object.wait_for_service.return_value = True
 
         cluster = LocalTestCluster(
             self.dependency_installer,
@@ -66,6 +68,43 @@ class LocalTestClusterTests(unittest.TestCase):
 
         mock_service_object.start.assert_called_once()
         mock_service_object.wait_for_service.assert_called_once()
+
+    @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
+    def test_start_with_exception(self, mock_service: Mock) -> None:
+        mock_test_recorder = MagicMock()
+        mock_local_cluster_logs = MagicMock()
+        mock_test_recorder.local_cluster_logs = mock_local_cluster_logs
+
+        mock_service_object = mock_service.return_value
+        mock_service_object.wait_for_service.return_value = False
+
+        cluster = LocalTestCluster(
+            self.dependency_installer,
+            self.work_dir,
+            self.component_name,
+            self.additional_cluster_config,
+            self.manifest,
+            self.security_enabled,
+            self.component_test_config,
+            mock_test_recorder,
+        )
+
+        with pytest.raises(ClusterCreationException):
+            cluster.start()
+
+        mock_service.assert_called_once_with(
+            "1.1.0",
+            "tar",
+            self.additional_cluster_config,
+            self.security_enabled,
+            self.dependency_installer,
+            os.path.join(self.work_dir, "local-test-cluster"),
+            9200
+        )
+
+        mock_service_object.start.assert_called_once()
+        mock_service_object.wait_for_service.assert_called_once()
+        mock_service_object.terminate.assert_called_once()
 
     @patch("test_workflow.integ_test.local_test_cluster.ServiceOpenSearch")
     @patch("test_workflow.test_cluster.TestResultData")
