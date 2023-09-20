@@ -90,7 +90,7 @@ echo " sudo systemctl enable opensearch-dashboards.service"
 echo "### You can start opensearch-dashboards service by executing"
 echo " sudo systemctl start opensearch-dashboards.service"
 echo "### Upcoming breaking change in packaging"
-echo " We are planing to tighten the permissions of installed files in a future version of the opensearch-dashboards package."
+echo " We are planing to tighten the permissions of installed files in a future version of the 2.x or above opensearch-dashboards package."
 echo " If you setup tooling that needs read access to the OpenSearch Dashboards configuration files, we invite you to add the user running these tools to the 'opensearch-dashboards' group."
 echo " More info: https://github.com/opensearch-project/opensearch-build/pull/4043"
 exit 0
