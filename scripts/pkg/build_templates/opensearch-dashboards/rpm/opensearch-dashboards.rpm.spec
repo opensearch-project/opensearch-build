@@ -89,6 +89,10 @@ echo " sudo systemctl daemon-reload"
 echo " sudo systemctl enable opensearch-dashboards.service"
 echo "### You can start opensearch-dashboards service by executing"
 echo " sudo systemctl start opensearch-dashboards.service"
+echo "### Upcoming breaking change in packaging"
+echo " In a future release of OpenSearch Dashboards, we plan to change the permissions associated with access to installed files"
+echo " If you are configuring tools that require read access to the OpenSearch Dashboards configuration files, we recommend you add the user that runs these tools to the 'opensearch-dashboards' group"
+echo " For more information, see https://github.com/opensearch-project/opensearch-build/pull/4043"
 exit 0
 
 %preun
