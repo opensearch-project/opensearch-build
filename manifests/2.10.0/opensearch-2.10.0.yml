@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: ee3f571b8539acd2eaac479fb612ee4c2c5a69fb
+    ref: e005b5a4686b9f65e4af2e85ee4d79f35e520572
     platforms:
       - linux
       - windows
