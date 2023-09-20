@@ -11,6 +11,10 @@
 # In order to run images with systemd, you need to run in privileged mode: `docker run --privileged -it -v /sys/fs/cgroup:/sys/fs/cgroup:ro <image_tag>`
 # If you use this image in jenkins pipeline you need to add these arguments: `args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'`
 
+# 20230920: On Docker host with systemd version > 247 you need to use these args:
+# https://github.com/opensearch-project/opensearch-build/issues/4047
+# --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host
+
 ########################### Stage 0 ########################
 FROM rockylinux:8 AS linux_stage_0
 
@@ -30,10 +34,10 @@ RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GC
 RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake && dnf clean all
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
+RUN groupadd -g 1000 test-user && \
+    useradd -u 1000 -g 1000 -d /usr/share/test-user test-user && \
+    mkdir -p /usr/share/test-user && \
+    chown -R 1000:1000 /usr/share/test-user
 
 # install yq
 COPY --chown=0:0 config/yq-setup.sh /tmp/
@@ -41,16 +45,16 @@ RUN /tmp/yq-setup.sh
 
 # Change User
 USER 1000
-WORKDIR /usr/share/opensearch
+WORKDIR /usr/share/test-user
 
 # Hard code node version and yarn version for now
 # nvm environment variables
-ENV NVM_DIR /usr/share/opensearch/.nvm
+ENV NVM_DIR /usr/share/test-user/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
 ARG CYPRESS_VERSION_LIST="5.6.0 9.5.4 12.13.0"
-ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
-ENV CYPRESS_LOCATION_954 /usr/share/opensearch/.cache/Cypress/9.5.4
+ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION_954 /usr/share/test-user/.cache/Cypress/9.5.4
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -74,9 +78,9 @@ RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cyp
 USER 0
 
 # Add legacy cypress 5.6.0 / 9.5.4 for ARM64 Architecture
-RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/opensearch/.cache/Cypress/$cypress_version && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
-    chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
+RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/test-user/.cache/Cypress/$cypress_version && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/test-user/.cache/Cypress/ && \
+    chown 1000:1000 -R /usr/share/test-user/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
 
 ########################### Stage 1 ########################
 FROM rockylinux:8
@@ -90,23 +94,30 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-
 
 # Create user group
 RUN dnf install -y sudo && \
-    groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/opensearch
+    groupadd -g 1000 test-user && \
+    useradd -u 1000 -g 1000 -d /usr/share/test-user test-user && \
+    mkdir -p /usr/share/test-user && \
+    chown -R 1000:1000 /usr/share/test-user && \
+    groupadd -g 1001 opensearch && \
+    useradd -u 1001 -g 1001 opensearch && \
+    groupadd -g 1002 opensearch-dashboards && \
+    useradd -u 1002 -g 1002 opensearch-dashboards && \
+    usermod -a -G opensearch test-user && \
+    usermod -a -G opensearch-dashboards test-user && \
+    id && \
+    echo "test-user ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/test-user
 
 # Copy from Stage0
-COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
-ENV NVM_DIR /usr/share/opensearch/.nvm
+COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/test-user /usr/share/test-user
+ENV NVM_DIR /usr/share/test-user/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
-ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Check dirs
-RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/opensearch && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
+RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/test-user && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Add Python dependencies
 RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
@@ -122,7 +133,7 @@ RUN dnf groupinstall -y "Development Tools" && dnf clean all
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
+RUN /tmp/jdk-setup.sh && dnf remove -y "java-1.8.0*" && /tmp/yq-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
