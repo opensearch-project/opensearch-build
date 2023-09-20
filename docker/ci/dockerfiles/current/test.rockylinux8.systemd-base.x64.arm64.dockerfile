@@ -11,7 +11,7 @@
 # In order to run images with systemd, you need to run in privileged mode: `docker run --privileged -it -v /sys/fs/cgroup:/sys/fs/cgroup:ro <image_tag>`
 # If you use this image in jenkins pipeline you need to add these arguments: `args '--entrypoint=/usr/sbin/init -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'`
 
-# 20230920: On AL2023 you need to use these args:
+# 20230920: On Docker host with systemd version > 247 you need to use these args:
 # https://github.com/opensearch-project/opensearch-build/issues/4047
 # --entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host
 
