@@ -32,23 +32,23 @@ COPY --chown=0:0 config/yq-setup.sh /tmp/
 RUN /tmp/yq-setup.sh
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/opensearch -m opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch 
+RUN groupadd -g 1000 test-user && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/test-user -m test-user && \
+    mkdir -p /usr/share/test-user && \
+    chown -R 1000:1000 /usr/share/test-user
 
 # Change User
 USER 1000
-WORKDIR /usr/share/opensearch
+WORKDIR /usr/share/test-user
 
 # Hard code node version and yarn version for now
 # nvm environment variables
-ENV NVM_DIR /usr/share/opensearch/.nvm
+ENV NVM_DIR /usr/share/test-user/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
 ARG CYPRESS_VERSION_LIST="5.6.0 9.5.4 12.13.0"
-ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
-ENV CYPRESS_LOCATION_954 /usr/share/opensearch/.cache/Cypress/9.5.4
+ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION_954 /usr/share/test-user/.cache/Cypress/9.5.4
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -72,9 +72,9 @@ RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cyp
 USER 0
 
 # Add legacy cypress 5.6.0 / 9.5.4 for ARM64 Architecture
-RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/opensearch/.cache/Cypress/$cypress_version && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/opensearch/.cache/Cypress/ && \
-    chown 1000:1000 -R /usr/share/opensearch/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
+RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/test-user/.cache/Cypress/$cypress_version && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/test-user/.cache/Cypress/ && \
+    chown 1000:1000 -R /usr/share/test-user/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
 
 ########################### Stage 1 ########################
 FROM ubuntu:20.04
@@ -107,23 +107,30 @@ RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
 
 # Create user group
 RUN apt-get install -y sudo && \
-    groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch && \
-    echo "opensearch ALL=(root) NOPASSWD:`which systemctl`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/opensearch
+    groupadd -g 1000 test-user && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d /usr/share/test-user -m test-user && \
+    mkdir -p /usr/share/test-user && \
+    chown -R 1000:1000 /usr/share/test-user && \
+    groupadd -g 1001 opensearch && \
+    useradd -u 1001 -g 1001 -s /bin/bash -d /home/opensearch -m opensearch && \
+    groupadd -g 1002 opensearch-dashboards && \
+    useradd -u 1002 -g 1002 -s /bin/bash -d /home/opensearch-dashboards -m opensearch-dashboards && \
+    usermod -a -G opensearch test-user && \
+    usermod -a -G opensearch-dashboards test-user && \
+    id && \
+    echo "test-user ALL=(root) NOPASSWD:`which systemctl`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/test-user
 
 # Copy from Stage0
-COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/opensearch /usr/share/opensearch
-ENV NVM_DIR /usr/share/opensearch/.nvm
+COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/test-user /usr/share/test-user
+ENV NVM_DIR /usr/share/test-user/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
-ENV CYPRESS_LOCATION /usr/share/opensearch/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Check dirs
-RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/opensearch && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
+RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/test-user && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
