@@ -49,7 +49,8 @@ class TestReportRunner:
         self.test_run_data["name"] = self.product_name
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
-            self.test_run_data["components"].append(self.component_entry(component.name))
+            if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
+                self.test_run_data["components"].append(self.component_entry(component.name))
         return self.test_run_data
 
     def update_test_run_data(self) -> dict:
