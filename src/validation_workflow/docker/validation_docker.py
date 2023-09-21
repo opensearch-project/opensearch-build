@@ -39,6 +39,7 @@ class ValidateDocker(Validation):
                 self.get_artifact_image_name(product, using_staging_artifact_only),
                 self.args.version if not self.args.using_staging_artifact_only else ValidationArgs().stg_tag(product).replace(" ", ""))
             self.image_ids = {key: value for key, value in zip(product_names, list(map(get_image_id, product_names)))}
+            self.image_ids = {key: value.strip() for key, value in self.image_ids.items()}
 
             return True
 
@@ -83,7 +84,7 @@ class ValidateDocker(Validation):
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_cases(self.args.projects)
+                    _test_result, _counter = ApiTestCases().test_apis(self.args.projects)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')

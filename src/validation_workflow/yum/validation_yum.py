@@ -7,6 +7,7 @@
 
 import logging
 import os
+import re
 import time
 
 from system.execute import execute
@@ -34,12 +35,15 @@ class ValidateYum(Validation, DownloadUtils):
                 if ("https:" not in self.args.file_path.get(project)):
                     self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
                 else:
+                    self.args.version = re.search(r'(\d+\.\d+\.\d+)', os.path.basename(self.args.file_path.get(project))).group(1)
                     self.check_url(self.args.file_path.get(project))
+
             else:
                 if (self.args.artifact_type == "staging"):
-                    self.args.file_path[project] = f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/linux/{self.args.arch}/rpm/dist/{project}/{project}-{self.args.version}-linux-{self.args.arch}.staging.repo"  # noqa: E501
+                    self.args.file_path[project] = f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/linux/{self.args.arch}/rpm/dist/{project}/{project}-{self.args.version}.staging.repo"  # noqa: E501
                 else:
                     self.args.file_path[project] = f"{self.base_url_production}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo"
+
                 self.check_url(self.args.file_path.get(project))
         return True
 
@@ -51,9 +55,9 @@ class ValidateYum(Validation, DownloadUtils):
                 logging.info('Removed previous versions of Opensearch')
                 urllink = f"{self.args.file_path.get(project)} -o /etc/yum.repos.d/{os.path.basename(self.args.file_path.get(project))}"
                 execute(f'sudo curl -SL {urllink}', ".")
-                execute(f"sudo yum install '{project}' -y", ".")
+                execute(f"sudo yum install '{project}-{self.args.version}' -y", ".")
         except:
-            raise Exception('Failed to install Opensearch')
+            raise Exception('Failed to Install Opensearch')
         return True
 
     def start_cluster(self) -> bool:
@@ -67,7 +71,7 @@ class ValidateYum(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_cases(self.args.projects)
+        test_result, counter = ApiTestCases().test_apis(self.args.projects)
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True

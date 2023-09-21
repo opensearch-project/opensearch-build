@@ -20,22 +20,23 @@ class ApiTestCases:
     def __init__(self) -> None:
         pass
 
-    def test_cases(self, projects: list) -> Any:
+    @staticmethod
+    def test_apis(projects: list) -> Any:
         pass_counter, fail_counter = 0, 0
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
-        test_cases = [
+        test_apis = [
             ['https://localhost:9200/', 200, ''],
             ['https://localhost:9200/_cat/plugins?v', 200, ''],
             ['https://localhost:9200/_cat/health?v', 200, 'green'],
         ]
         if ("opensearch-dashboards" in projects):
-            test_cases.append(['http://localhost:5601/api/status', 200, ''])
+            test_apis.append(['http://localhost:5601/api/status', 200, ''])
 
-        for test_case in test_cases:
-            request_url = test_case.__getitem__(0)
-            success_status_code = test_case.__getitem__(1)
-            validate_string = test_case.__getitem__(2)
+        for test_api in test_apis:
+            request_url = test_api.__getitem__(0)
+            success_status_code = test_api.__getitem__(1)
+            validate_string = test_api.__getitem__(2)
 
             status_code, response_text = ApiTest(str(request_url)).api_get()
             logging.info(f"\nRequest_url ->{str(request_url)} \n")
