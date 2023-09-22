@@ -31,4 +31,4 @@ jobs:
             tianleh
             peternied
           allowed-files: |
-            manifest/*/*.yml
+            manifests/*/*.yml
