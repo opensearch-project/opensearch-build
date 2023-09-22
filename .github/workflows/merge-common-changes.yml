@@ -15,7 +15,7 @@ jobs:
 
       - uses: peternied/discerning-merger@main
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           allowed-authors: |
             dependabot
             opensearch-trigger-bot
