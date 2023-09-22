@@ -1,0 +1,33 @@
+---
+name: merge common changes
+
+on:
+  check_suite:
+    types:
+      - completed
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: peternied/discerning-merger@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          allowed-authors: |
+            dependabot
+            opensearch-trigger-bot
+            peterzhuamazon
+            bbarani
+            gaiksaya
+            rishabh6788
+            zelinh
+            jordarlu
+            prudhvigodithi
+            Divyaasm
+            dblock
+            tianleh
+            peternied
+          allowed-files: |
+            manifest/*/*.yml
