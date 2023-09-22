@@ -3,8 +3,6 @@ name: merge common changes
 
 on:
   check_run:
-    types:
-      - completed
 
 jobs:
   auto-merge:
