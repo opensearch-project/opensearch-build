@@ -2,7 +2,10 @@
 name: merge common changes
 
 on:
+  workflow_dispatch:
   check_run:
+  check_suite:
+  pull_request_target: 
 
 jobs:
   auto-merge:
