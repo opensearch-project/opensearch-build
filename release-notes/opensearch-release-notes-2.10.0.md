@@ -48,7 +48,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Custom Codecs
-* Initial release with ZSTD codec support
+* Moving ZSTD codec support from OpenSearch core to standalone plugin `custom-codecs`
 
 
 ### OpenSearch Dashboards Maps
