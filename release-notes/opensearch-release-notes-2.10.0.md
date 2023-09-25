@@ -2,9 +2,25 @@ OpenSearch and OpenSearch Dashboards 2.10.0 Release Notes
 
 ## Release Highlights
 
+OpenSearch 2.10.0 includes a number of new features for search, security, and machine learning applications, as well as user interface improvements and new options for durable data storage. This release also includes new experimental tools to boost search performance and build conversational search applications.
+
 ### New Features
 
+* Remote-backed storage is now generally available, offering a production-ready alternative to snapshots or replica copies for durable data backup.
+* Segment replication is now fully integrated with remote-backed storage. This allows users to select remote-backed storage as the source for replication, with the potential to reduce compute resources on ingest.
+* New hybrid query functionality and a built-in normalization processor offer a way to improve relevance for search results. Now, you can combine and normalize the relevance scores of lexical queries with natural language-based k-NN vector search queries within OpenSearch.
+* You can now define custom log types with Security Analytics and use them as you would other log data to build detectors, create custom rules, provide additional mappings, and more.
+* A new visual theme for OpenSearch Dashboards includes changes to typography, colors, and actions for light mode and dark mode designs, providing an updated user experience.
+* Updates to the Discover tool in OpenSearch Dashboards include usability improvements designed to make the tool more intuitive and cohesive.
+* A new IP2Geo processor accesses location data based on IP addresses using external databases, allowing OpenSearch to enrich data with up-to-date geographical location information.
+* With  this release, OpenSearch Dashboards is upgraded to version 18 of Node.js, with backward-compatible support for Node.js versions 14 and 16. Users have the flexibility to choose from these versions to run the web application. As a result of this update, the Docker images for OpenSearch and OpenSearch Dashboards now use Amazon Linux 2023 as the base image, changed from Amazon Linux 2.
+
 ### Experimental Features
+
+OpenSearch 2.10.0 includes the following experimental features. Experimental features are disabled by default. For instructions on how to enable them, refer to the documentation for the feature.
+
+* Build conversational search applications with new tools as part of ML Commons, including new APIs that enable conversational search and conversational memory as well as integrations with search pipelines that allow the use of conversational memory and large language models (LLMs) to answer questions.
+* Concurrent segment search gives you the option to query index segments in parallel at the shard level. This can deliver improved latency for many types of search queries.
 
 ## Release Details
 [OpenSearch and OpenSearch Dashboards 2.10.0](https://opensearch.org/versions/opensearch-2-10-0.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
