@@ -25,7 +25,6 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const workflowRunId = context.payload.workflow_run.id;
-            const workflowRunId = context.payload.workflow_run.id;
             console.log(JSON.stringify(context.payload));
             const workflowRun = await github.rest.actions.getWorkflowRun({
               owner,
