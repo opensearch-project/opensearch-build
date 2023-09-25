@@ -3,6 +3,9 @@ name: merge common changes
 
 on:
   workflow_run:
+    workflows:
+      - Link Checker
+      - yaml-lint
     types: completed
   workflow_dispatch:
   check_run:
