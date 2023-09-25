@@ -52,7 +52,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 6daa697bcd4c73ea411bb765eddf2fac95a29065
+    ref: 6daaaa7bcaaaaaaaaaafac95a29065
     platforms:
       - linux
       - windows
@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 521214bb3f0a1e612f3af4ece74e1e3eb00686ed
+    ref: 521214bb3f0a1e612f3af4ec74e1e3eb00686ed
     platforms:
       - linux
       - windows
