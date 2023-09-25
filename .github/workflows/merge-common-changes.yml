@@ -14,26 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - id: identify-triggering-pr
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const workflowRunId = context.payload.workflow_run.id;
-            console.log(JSON.stringify(context.payload));
-            const workflowRun = await github.rest.actions.getWorkflowRun({
-              owner,
-              repo,
-              run_id: workflowRunId,
-            });
-            const trigger = workflowRun.data.event;
-            return workflowRun.data?.pull_requests[0]?.number;
-
-      - uses: peternied/discerning-merger@main
-        if: steps.identify-triggering-pr.outputs.result != null
+      - id: find-triggering-pr
+        uses: peternied/find-triggering-pr@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.identify-triggering-pr.outputs.result }}
+
+      - uses: peternied/discerning-merger@main
+        if: steps.find-triggering-pr.outputs.pr-number != null
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.find-triggering-pr.outputs.pr-number }}
           allowed-authors: |
             dependabot
             opensearch-trigger-bot
