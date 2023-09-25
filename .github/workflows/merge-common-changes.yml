@@ -33,7 +33,7 @@ jobs:
             const trigger = workflowRun.data.event;
             console.log(JSON.stringify(workflowRun.data));
 
-            return { "pr": workflowRun.data.?pull_requests[0].?number };
+            return { "pr": workflowRun.data?.pull_requests[0]?.number };
 
       - uses: peternied/discerning-merger@main
         if: steps.identify-triggering-pr.outputs.result != null
