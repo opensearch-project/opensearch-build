@@ -64,7 +64,6 @@ class ValidateDocker(Validation):
             self.image_names_list = [self.args.OS_image, self.args.OSD_image]
             self.image_names_list = [x for x in self.image_names_list if (os.path.basename(x) in self.args.projects)]
             self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids.values(), self.image_names_list)))  # type: ignore
-
             if all(self.image_digests):
                 logging.info('Image digest is validated.\n\n')
                 if self.args.validate_digest_only:

@@ -11,6 +11,7 @@ import shutil
 from abc import ABC, abstractmethod
 from typing import Any
 
+from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation_args import ValidationArgs
 
 
@@ -21,7 +22,7 @@ class Validation(ABC):
         self.args = args
 
     def check_url(self, url: str) -> bool:
-        if self.download(url, self.tmp_dir) and self.is_url_valid(url):  # type: ignore
+        if DownloadUtils().download(url, self.tmp_dir) and DownloadUtils().is_url_valid(url):  # type: ignore
             logging.info(f"Valid URL - {url} and Download Successful !")
             return True
         else:

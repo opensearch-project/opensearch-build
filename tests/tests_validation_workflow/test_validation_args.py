@@ -83,3 +83,13 @@ class TestValidationArgs(unittest.TestCase):
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().projects, ["opensearch"])
         self.assertEqual(str(ctx.exception), "Provided distribution is not supported")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.tar.gz"])
+    def test_get_distribution_type_tar(self) -> None:
+        result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
+        self.assertEqual(result, "tar")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.x.staging.repo "])
+    def test_get_distribution_type_yum(self) -> None:
+        result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
+        self.assertEqual(result, "yum")

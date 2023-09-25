@@ -44,7 +44,7 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
     @patch('time.sleep', return_value=None)
-    def test_validation(self, mock_time_sleep: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
+    def test_staging(self, mock_time_sleep: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
         mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
@@ -59,8 +59,6 @@ class TestValidateDocker(unittest.TestCase):
 
         # Create instance of ValidateDocker class
         validate_docker = ValidateDocker(mock_validation_args.return_value)
-
-        validate_docker.image_names_list = ['opensearchproject/opensearch']
         validate_docker.image_ids = {'opensearch': 'images_id_0'}
         validate_docker.replacements = [('opensearchproject/opensearch:1', 'images_id_0')]
 
@@ -72,6 +70,39 @@ class TestValidateDocker(unittest.TestCase):
         mock_container.assert_called_once()
         mock_test.assert_called_once()
         mock_test.assert_has_calls([call(), call().test_apis(['opensearch'])])
+
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_http_request')
+    @patch('validation_workflow.docker.validation_docker.ValidationArgs')
+    @patch('validation_workflow.docker.validation_docker.InspectDockerImage')
+    @patch('validation_workflow.docker.validation_docker.ApiTestCases')
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
+    @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
+    @patch('time.sleep', return_value=None)
+    def test_digests(self, mock_time_sleep: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
+        # Set up mock objects
+        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
+        mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.using_staging_artifact_only = False
+        mock_validation_args.return_value.validate_digest_only = True
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_docker_image.return_value = MagicMock()
+        mock_container.return_value = (True, 'test_file.yml')
+        mock_test_apis_instance = mock_test.return_value
+        mock_test_apis_instance.test_apis.return_value = (True, 2)
+        mock_digest.return_value = True
+        mock_check_http.return_value = True
+
+        # Create instance of ValidateDocker class
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+
+        validate_docker.image_names_list = ['opensearchproject/opensearch']
+        validate_docker.image_ids = {'opensearch': 'images_id_0'}
+        validate_docker.image_digests = [True]
+        validate_docker.replacements = [('opensearchproject/opensearch:1', 'images_id_0')]
+
+        # Call validation method and assert the result
+        result = validate_docker.validation()
+        self.assertTrue(result)
 
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     def test_cleanup(self, mock_validation_args: Mock) -> None:
