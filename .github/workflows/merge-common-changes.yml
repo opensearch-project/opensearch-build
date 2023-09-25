@@ -25,23 +25,21 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const workflowRunId = context.payload.workflow_run.id;
+            const workflowRunId = context.payload.workflow_run.id;
+            console.log(JSON.stringify(context.payload));
             const workflowRun = await github.rest.actions.getWorkflowRun({
               owner,
               repo,
               run_id: workflowRunId,
             });
             const trigger = workflowRun.data.event;
-            console.log(JSON.stringify(workflowRun.data));
-
-            const result = { "pr": workflowRun.data?.pull_requests[0]?.number };
-            console.log(JSON.stringify(result));
-            return result;
+            return workflowRun.data?.pull_requests[0]?.number;
 
       - uses: peternied/discerning-merger@main
         if: steps.identify-triggering-pr.outputs.result != null
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.identify-triggering-pr.outputs.result.pr }}
+          pull-request-number: ${{ steps.identify-triggering-pr.outputs.result }}
           allowed-authors: |
             dependabot
             opensearch-trigger-bot
