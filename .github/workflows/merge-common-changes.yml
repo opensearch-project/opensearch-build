@@ -7,11 +7,6 @@ on:
       - Link Checker
       - yaml-lint
     types: completed
-  workflow_dispatch:
-  check_run:
-  check_suite:
-  pull_request_target:
-  status:
 
 jobs:
   auto-merge:
