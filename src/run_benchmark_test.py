@@ -22,9 +22,13 @@ def main() -> int:
     """
     benchmark_args = BenchmarkArgs()
     console.configure(level=benchmark_args.logging_level)
-    manifest: Union[BundleManifest, BuildManifest] = BundleManifest.from_file(benchmark_args.bundle_manifest) if not benchmark_args.min_distribution else \
-        BuildManifest.from_file(benchmark_args.bundle_manifest)
-    BenchmarkTestRunners.from_args(benchmark_args, manifest).run()
+    if benchmark_args.bundle_manifest:
+        manifest: Union[BundleManifest, BuildManifest] = BundleManifest.from_file(benchmark_args.bundle_manifest) if not benchmark_args.min_distribution else \
+            BuildManifest.from_file(benchmark_args.bundle_manifest)
+        BenchmarkTestRunners.from_args(benchmark_args, manifest).run()
+    else:
+        BenchmarkTestRunners.from_args(benchmark_args).run()
+
     return 0
 
 

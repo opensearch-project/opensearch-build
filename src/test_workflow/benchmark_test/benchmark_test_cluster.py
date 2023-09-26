@@ -117,14 +117,23 @@ class BenchmarkTestCluster:
                    tries=tries, delay=delay, backoff=backoff)
 
     def setup_cdk_params(self, config: dict) -> dict:
-        if self.args.stack_suffix:
+        suffix = ''
+        if self.args.stack_suffix and self.manifest:
             suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
-        else:
+        elif self.manifest:
             suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
+        elif self.args.stack_suffix:
+            suffix = self.args.stack_suffix
+
+        if self.manifest:
+            artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else f"https" \
+                           f"://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
+                           f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
+        else:
+            artifact_url = self.args.distribution_url.strip()
+
         return {
-            "distributionUrl": self.manifest.build.location if isinstance(self.manifest, BundleManifest) else
-            f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-"
-            f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz",
+            "distributionUrl": artifact_url,
             "vpcId": config["Constants"]["VpcId"],
             "account": config["Constants"]["AccountId"],
             "region": config["Constants"]["Region"],
