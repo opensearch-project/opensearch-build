@@ -11,6 +11,13 @@ on:
     - cron: 0 0 * * *
 
 jobs:
+  run-yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Validate YAML file
+        run: yamllint manifests/**/*.yml
+
   list-manifests11:
     runs-on: ubuntu-latest
     outputs:
