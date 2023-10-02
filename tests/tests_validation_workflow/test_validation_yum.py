@@ -68,10 +68,10 @@ class TestValidationYum(unittest.TestCase):
     def test_exceptions(self, mock_validation_args: Mock) -> None:
         with self.assertRaises(Exception) as e1:
             mock_validation_args.return_value.projects = ["opensearch"]
-            mock_validation_args.return_value.file_path = {"opensearch": "/src/files/opensearch.staging.reop"}
+            mock_validation_args.return_value.file_path = {"opensearch": "/src/files/opensearch.staging.repo"}
             validate_yum = ValidateYum(mock_validation_args.return_value)
             validate_yum.installation()
-        self.assertEqual(str(e1.exception), "Failed to Install Opensearch")
+        self.assertEqual(str(e1.exception), "Failed to install Opensearch")
 
         with self.assertRaises(Exception) as e2:
             mock_validation_args.return_value.projects = ["opensearch"]

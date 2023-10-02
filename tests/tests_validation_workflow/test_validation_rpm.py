@@ -70,7 +70,7 @@ class TestValidationRpm(unittest.TestCase):
             mock_validation_args.return_value.file_path = {"opensearch": "/src/files/opensearch.rpm"}
             validate_rpm = ValidateRpm(mock_validation_args.return_value)
             validate_rpm.installation()
-        self.assertEqual(str(e1.exception), "Failed to Install Opensearch")
+        self.assertEqual(str(e1.exception), "Failed to install Opensearch")
 
         with self.assertRaises(Exception) as e2:
             mock_validation_args.return_value.projects = ["opensearch"]

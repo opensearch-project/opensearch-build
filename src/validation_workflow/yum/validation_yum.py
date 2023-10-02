@@ -26,8 +26,6 @@ class ValidateYum(Validation, DownloadUtils):
         self.base_url_staging = "https://ci.opensearch.org/ci/dbc/distribution-build-"
         self.tmp_dir = TemporaryDirectory()
 
-        # shutil.copy2(localfilepath, temporaryfile_path)
-
     def download_artifacts(self) -> bool:
         isFilePathEmpty = bool(self.args.file_path)
         for project in self.args.projects:
@@ -57,7 +55,7 @@ class ValidateYum(Validation, DownloadUtils):
                 execute(f'sudo curl -SL {urllink}', ".")
                 execute(f"sudo yum install '{project}-{self.args.version}' -y", ".")
         except:
-            raise Exception('Failed to Install Opensearch')
+            raise Exception('Failed to install Opensearch')
         return True
 
     def start_cluster(self) -> bool:

@@ -49,7 +49,7 @@ class ValidateRpm(Validation, DownloadUtils):
                 execute(f'sudo yum remove {project} -y', ".")
                 execute(f'sudo rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)
         except:
-            raise Exception('Failed to Install Opensearch')
+            raise Exception('Failed to install Opensearch')
         return True
 
     def start_cluster(self) -> bool:

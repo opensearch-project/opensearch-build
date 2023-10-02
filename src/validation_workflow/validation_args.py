@@ -131,7 +131,7 @@ class ValidationArgs:
             args.distribution = self.get_distribution_type(args.file_path)
             args.projects = args.file_path.keys()
         if (('opensearch' not in args.projects)):
-            raise Exception("Provide OpenSearch Artifact details along with OpenSearch DashBoards to validate")
+            raise Exception("Missing OpenSearch OpenSearch artifact details! Please provide the same along with OpenSearch-Dashboards to validate")
 
         self.version = args.version
         self.file_path = args.file_path

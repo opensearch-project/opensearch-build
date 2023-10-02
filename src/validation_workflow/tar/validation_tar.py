@@ -50,7 +50,7 @@ class ValidateTar(Validation, DownloadUtils):
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
         except:
-            raise Exception('Failed to Install Opensearch')
+            raise Exception('Failed to install Opensearch')
         return True
 
     def start_cluster(self) -> bool:
@@ -79,5 +79,5 @@ class ValidateTar(Validation, DownloadUtils):
             if ("opensearch-dashboards" in self.args.projects):
                 self.osd_process.terminate()
         except:
-            raise Exception('Failed to terminate the processes that started OS and OSD')
+            raise Exception('Failed to terminate the processes that started OpenSearch and OpenSearch-Dashboards')
         return True

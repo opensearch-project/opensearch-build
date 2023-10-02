@@ -36,7 +36,7 @@ class Validation(ABC):
             shutil.copy2(filepath, tempdir_path)
             return True
         else:
-            raise Exception("Provide local file path")
+            raise Exception("Provided path for local artifacts does not exist")
 
     def run(self) -> Any:
         try:

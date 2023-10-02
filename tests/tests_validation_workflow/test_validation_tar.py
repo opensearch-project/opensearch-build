@@ -152,8 +152,7 @@ class TestValidateTar(unittest.TestCase):
     def test_cleanup_exception(self, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         validate_tar = ValidateTar(mock_validation_args.return_value)
-        validate_tar.os_process.terminate = MagicMock(side_effect=Exception('Failed to terminate the processes that started OS and OSD'))  # type: ignore
         with self.assertRaises(Exception) as context:
             validate_tar.cleanup()
 
-        self.assertEqual(str(context.exception), 'Failed to terminate the processes that started OS and OSD')
+        self.assertEqual(str(context.exception), 'Failed to terminate the processes that started OpenSearch and OpenSearch-Dashboards')

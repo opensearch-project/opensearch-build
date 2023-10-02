@@ -76,7 +76,7 @@ class TestValidationArgs(unittest.TestCase):
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().distribution, "rpm")
             self.assertEqual(ValidationArgs().projects, ["opensearch-dashboards"])
-        self.assertEqual(str(ctx.exception), "Provide OpenSearch Artifact details along with OpenSearch DashBoards to validate")
+        self.assertEqual(str(ctx.exception), "Missing OpenSearch OpenSearch artifact details! Please provide the same along with OpenSearch-Dashboards to validate")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.zip"])
     def test_file_path_distribution_type(self) -> None:
