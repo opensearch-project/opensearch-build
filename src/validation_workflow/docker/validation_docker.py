@@ -33,14 +33,14 @@ class ValidateDocker(Validation):
             assert self.is_container_daemon_running(), 'Docker daemon is not running. Exiting the docker validation.'
 
             # STEP 1 . pull the images for OS and OSD
-            product_names = ["opensearch", "opensearch_dashboards"]
+            product_names = self.args.projects
             using_staging_artifact_only = 'staging' if self.args.using_staging_artifact_only else 'production'
             get_image_id = lambda product: self.get_image_id(  # noqa: E731
                 self.get_artifact_image_name(product, using_staging_artifact_only),
                 self.args.version if not self.args.using_staging_artifact_only else ValidationArgs().stg_tag(product).replace(" ", ""))
-            self.image_ids = list(map(get_image_id, product_names))
-            logging.info(f'the opensearch image ID is : {self.image_ids[0]}')
-            logging.info(f'the opensearch-dashboards image ID is : {self.image_ids[1]} \n\n')
+            self.image_ids = {key: value for key, value in zip(product_names, list(map(get_image_id, product_names)))}
+            self.image_ids = {key: value.strip() for key, value in self.image_ids.items()}
+
             return True
 
         except AssertionError as e:
@@ -62,8 +62,8 @@ class ValidateDocker(Validation):
         # STEP 2 . inspect image digest between opensearchproject(downloaded/local) and opensearchstaging(dockerHub)
         if not self.args.using_staging_artifact_only:
             self.image_names_list = [self.args.OS_image, self.args.OSD_image]
-            self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids, self.image_names_list)))  # type: ignore
-
+            self.image_names_list = [x for x in self.image_names_list if (os.path.basename(x) in self.args.projects)]
+            self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids.values(), self.image_names_list)))  # type: ignore
             if all(self.image_digests):
                 logging.info('Image digest is validated.\n\n')
                 if self.args.validate_digest_only:
@@ -75,8 +75,7 @@ class ValidateDocker(Validation):
         # STEP 3 . spin-up OS/OSD cluster
         if not self.args.validate_digest_only:
             return_code, self._target_yml_file = self.run_container(
-                self.image_ids[0],
-                self.image_ids[1],
+                self.image_ids,
                 self.args.version
             )
             if return_code:
@@ -84,7 +83,7 @@ class ValidateDocker(Validation):
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_cases()
+                    _test_result, _counter = ApiTestCases().test_apis(self.args.projects)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')
@@ -167,7 +166,7 @@ class ValidateDocker(Validation):
                     'staging': 'opensearchstaging/opensearch',
                     'production': 'opensearchproject/opensearch'
                 },
-                'opensearch_dashboards': {
+                'opensearch-dashboards': {
                     'staging': 'opensearchstaging/opensearch-dashboards',
                     'production': 'opensearchproject/opensearch-dashboards'
                 }
@@ -177,7 +176,7 @@ class ValidateDocker(Validation):
                     'staging': 'public.ecr.aws/opensearchstaging/opensearch',
                     'production': 'public.ecr.aws/opensearchproject/opensearch'
                 },
-                'opensearch_dashboards': {
+                'opensearch-dashboards': {
                     'staging': 'public.ecr.aws/opensearchstaging/opensearch-dashboards',
                     'production': 'public.ecr.aws/opensearchproject/opensearch-dashboards'
                 }
@@ -236,7 +235,7 @@ class ValidateDocker(Validation):
         else:
             raise Exception(f'error on pulling image : return code {str(result_pull.returncode)}')
 
-    def run_container(self, OpenSearch_image_id: str, OpenSearchDashboard_image_id: str, version: str) -> Any:
+    def run_container(self, image_ids: dict, version: str) -> Any:
         self.docker_compose_files = {
             '1': 'docker-compose-1.x.yml',
             '2': 'docker-compose-2.x.yml'
@@ -250,10 +249,8 @@ class ValidateDocker(Validation):
         self.source_file = os.path.join('docker', 'release', 'dockercomposefiles', self.docker_compose_files[self.major_version_number])
         shutil.copy2(self.source_file, self.target_yml_file)
 
-        self.replacements = [
-            (f'opensearchproject/opensearch:{self.major_version_number}', f'{OpenSearch_image_id}'),
-            (f'opensearchproject/opensearch-dashboards:{self.major_version_number}', f'{OpenSearchDashboard_image_id}')
-        ]
+        self.replacements = [(f'opensearchproject/{key}:{self.major_version_number}', value) for key, value in image_ids.items()]
+
         list(map(lambda r: self.inplace_change(self.target_yml_file, r[0], r[1]), self.replacements))
 
         # spin up containers

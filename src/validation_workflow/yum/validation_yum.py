@@ -6,6 +6,8 @@
 # compatible open source license.
 
 import logging
+import os
+import re
 import time
 
 from system.execute import execute
@@ -20,17 +22,27 @@ class ValidateYum(Validation, DownloadUtils):
 
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__(args)
-        self.base_url = "https://artifacts.opensearch.org/releases/bundle/"
+        self.base_url_production = "https://artifacts.opensearch.org/releases/bundle/"
+        self.base_url_staging = "https://ci.opensearch.org/ci/dbc/distribution-build-"
         self.tmp_dir = TemporaryDirectory()
 
     def download_artifacts(self) -> bool:
+        isFilePathEmpty = bool(self.args.file_path)
         for project in self.args.projects:
-            url = f"{self.base_url}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo"
-            if ValidateYum.is_url_valid(url) and ValidateYum.download(url, self.tmp_dir):
-                logging.info(f"Valid URL - {url} and Download Successful !")
+            if (isFilePathEmpty):
+                if ("https:" not in self.args.file_path.get(project)):
+                    self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
+                else:
+                    self.args.version = re.search(r'(\d+\.\d+\.\d+)', os.path.basename(self.args.file_path.get(project))).group(1)
+                    self.check_url(self.args.file_path.get(project))
+
             else:
-                logging.info(f"Invalid URL - {url}")
-                raise Exception(f"Invalid url - {url}")
+                if (self.args.artifact_type == "staging"):
+                    self.args.file_path[project] = f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/linux/{self.args.arch}/rpm/dist/{project}/{project}-{self.args.version}.staging.repo"  # noqa: E501
+                else:
+                    self.args.file_path[project] = f"{self.base_url_production}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo"
+
+                self.check_url(self.args.file_path.get(project))
         return True
 
     def installation(self) -> bool:
@@ -39,7 +51,7 @@ class ValidateYum(Validation, DownloadUtils):
             for project in self.args.projects:
                 execute(f'sudo yum remove {project} -y', ".")
                 logging.info('Removed previous versions of Opensearch')
-                urllink = f"{self.base_url}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo -o /etc/yum.repos.d/{project}-{self.args.version[0:1]}.x.repo"
+                urllink = f"{self.args.file_path.get(project)} -o /etc/yum.repos.d/{os.path.basename(self.args.file_path.get(project))}"
                 execute(f'sudo curl -SL {urllink}', ".")
                 execute(f"sudo yum install '{project}-{self.args.version}' -y", ".")
         except:
@@ -49,7 +61,6 @@ class ValidateYum(Validation, DownloadUtils):
     def start_cluster(self) -> bool:
         try:
             for project in self.args.projects:
-                execute(f'sudo systemctl enable {project}', ".")
                 execute(f'sudo systemctl start {project}', ".")
                 time.sleep(20)
                 execute(f'sudo systemctl status {project}', ".")
@@ -58,7 +69,7 @@ class ValidateYum(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_cases()
+        test_result, counter = ApiTestCases().test_apis(self.args.projects)
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True
@@ -69,6 +80,7 @@ class ValidateYum(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl stop {project}', ".")
-        except:
-            raise Exception('Failed to Stop Cluster')
+                execute(f'sudo yum remove {project} -y', ".")
+        except Exception as e:
+            raise Exception(f'Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards. {str(e)}')
         return True
