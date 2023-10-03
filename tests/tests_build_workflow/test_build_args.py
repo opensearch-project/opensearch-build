@@ -17,7 +17,7 @@ class TestBuildArgs(unittest.TestCase):
 
     BUILD_PY = "./src/run_build.py"
 
-    BUILD_SH = "./scripts/build.sh"
+    BUILD_SH = "./build.sh"
 
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(

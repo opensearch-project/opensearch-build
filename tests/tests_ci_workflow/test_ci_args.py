@@ -16,7 +16,7 @@ class TestCiArgs(unittest.TestCase):
 
     CI_PY = "./src/run_ci.py"
 
-    CI_SH = "./scripts/ci.sh"
+    CI_SH = "./ci.sh"
 
     OPENSEARCH_MANIFEST = os.path.realpath(
         os.path.join(
