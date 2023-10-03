@@ -23,13 +23,13 @@ The build workflow builds components declared in an input manifest from source, 
 The following example builds a snapshot version of OpenSearch 1.2.0.
 
 ```bash
-./build.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
+./scripts/build.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
 ```
 
 While the following builds a snapshot version of OpenSearch-Dashboards 1.2.0.
 
 ```bash
-./build.sh manifests/1.2.0/opensearch-dashboards-1.2.0.yml --snapshot
+./scripts/build.sh manifests/1.2.0/opensearch-dashboards-1.2.0.yml --snapshot
 ```
 
 The [OpenSearch repo](https://github.com/opensearch-project/OpenSearch) is built first, followed by [common-utils](https://github.com/opensearch-project/common-utils), and all declared plugin repositories. These dependencies are published to maven local under `~/.m2`, and subsequent project builds pick those up. 
@@ -87,14 +87,14 @@ Builds can automatically generate a `manifest.lock` file with stable git referen
 MANIFEST=manifests/1.2.0/opensearch-1.2.0.yml
 SHAS=shas
 
-./build.sh --lock $MANIFEST # generates opensearch-1.2.0.yml.lock
+./scripts/build.sh --lock $MANIFEST # generates opensearch-1.2.0.yml.lock
 
 MANIFEST_SHA=$(sha1sum $MANIFEST.lock | cut -f1 -d' ') # generate a checksum of the stable manifest
 
 if test -f "$SHAS/$MANIFEST_SHA.lock"; then
   echo "Skipping $MANIFEST_SHA"
 else
-  ./build.sh $MANIFEST.lock # rebuild using stable references in .lock
+  ./scripts/build.sh $MANIFEST.lock # rebuild using stable references in .lock
   mkdir -p $SHAS
   cp $MANIFEST.lock $SHAS/$MANIFEST_SHA.lock # save the stable reference manifest
 fi

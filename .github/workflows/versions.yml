@@ -32,7 +32,7 @@ jobs:
           key: ${{ runner.os }}-build-cache-maven-local
       - name: Update OpenSearch Manifests
         run: |
-          ./manifests.sh update
+          ./scripts/manifests.sh update
       - name: GitHub App token
         id: github_app_token
         uses: tibdex/github-app-token@v1.6.0

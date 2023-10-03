@@ -69,7 +69,7 @@ The distribution workflow builds a complete OpenSearch and OpenSearch Dashboards
 #### Building from Source
 
 ```bash
-./build.sh manifests/1.3.0/opensearch-1.3.0.yml 
+./scripts/build.sh manifests/1.3.0/opensearch-1.3.0.yml 
 ```
 
 This builds OpenSearch 1.3.0 from source, placing the output into `./builds/opensearch`. 
@@ -79,7 +79,7 @@ See [build workflow](src/build_workflow) for more information.
 #### Assembling a Distribution 
 
 ```bash
-./assemble.sh builds/opensearch/manifest.yml
+./scripts/assemble.sh builds/opensearch/manifest.yml
 ```
 
 The assembling step takes output from the build step, installs plugins, and assembles a full distribition into the `dist` folder. 
@@ -160,7 +160,7 @@ For bundled artifacts, here are some examples for LINUX and Windows:
 Tests the OpenSearch distribution, including integration, backwards-compatibility and performance tests.
 
 ```bash
-./test.sh <test-type> <test-manifest-path> <path>
+./scripts/test.sh <test-type> <test-manifest-path> <path>
 ```
 
 See [src/test_workflow](./src/test_workflow) for more information.
@@ -171,7 +171,7 @@ Workflow to check if the release notes exists or not and shows the latest commit
 
 To run:
 ```bash
-./release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
+./scripts/release_notes.sh check manifests/2.2.0/opensearch-2.2.0.yml --date 2022-07-26
 ```
 
 See [src/release_notes_workflow](./src/release_notes_workflow) for more information.
@@ -182,7 +182,7 @@ For all types of signing within OpenSearch project we use `opensearch-signer-cli
 Usage:
 
 ```bash
-./sign.sh builds/opensearch/manifest.yml
+./scripts/sign.sh builds/opensearch/manifest.yml
 ```
 
 The tool currently supports following platforms for signing.
@@ -232,7 +232,7 @@ At this moment there's no official MacOS distribution. However, this project doe
 The [checkout workflow](src/checkout_workflow) checks out source code for a given manifest for further examination.
 
 ```bash
-./checkout.sh manifests/1.3.0/opensearch-1.3.0.yml
+./scripts/checkout.sh manifests/1.3.0/opensearch-1.3.0.yml
 ```
 
 See [src/checkout_workflow](./src/checkout_workflow) for more information.
@@ -243,8 +243,8 @@ You can perform cross-platform builds. For example, build and assemble a Windows
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plugin during assemble
-./build.sh manifests/1.3.0/opensearch-1.3.0.yml --snapshot --platform windows
-./assemble.sh builds/opensearch/manifest.yml
+./scripts/build.sh manifests/1.3.0/opensearch-1.3.0.yml --snapshot --platform windows
+./scripts/assemble.sh builds/opensearch/manifest.yml
 ```
 
 This will produce `dist/opensearch-1.3.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
@@ -256,7 +256,7 @@ This workflow runs sanity checks on every component present in the bundle, execu
 The following example sanity-checks components in the the OpenSearch 1.3.0 manifest.
 
 ```bash
-./ci.sh manifests/1.3.0/opensearch-1.3.0.yml --snapshot
+./scripts/ci.sh manifests/1.3.0/opensearch-1.3.0.yml --snapshot
 ```
 
 See [src/ci_workflow](./src/ci_workflow) for more information.
@@ -268,12 +268,12 @@ The [manifests workflow](src/manifests_workflow) reacts to version increments in
 Show information about existing manifests. 
 
 ```bash
-./manifests.sh list
+./scripts/manifests.sh list
 ```
 Check for updates and create any new manifests. 
 
 ```bash
-./manifests.sh update
+./scripts/manifests.sh update
 ```
 
 See [src/manifests_workflow](./src/manifests_workflow) for more information.

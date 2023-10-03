@@ -5,7 +5,7 @@
 ## Assemble a Distribution 
 
 ```bash
-./assemble.sh builds/opensearch/manifest.yml
+./scripts/assemble.sh builds/opensearch/manifest.yml
 ```
 
 The assembling step takes output from the build step, installs plugins, and assembles a full distribition into the `dist` folder. The input requires a path to the build manifest and is expected to be inside the `builds` directory that contains `dist`, `maven`, `plugins` and `core-plugins` subdirectories from the build step.

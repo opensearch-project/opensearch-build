@@ -121,13 +121,13 @@ class TestCCRPerfTest extends BuildPipelineTest {
     void testCCRPerfTestScript_verifyScriptExecutions() {
         runScript("jenkins/cross-cluster-replication/perf-test.jenkinsfile")
 
-        def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
-            shCommand -> shCommand.contains('./test.sh')
+        def testScriptCommands = getCommandExecutions('sh', './scripts/test.sh').findAll {
+            shCommand -> shCommand.contains('./scripts/test.sh')
         }
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItem(
-            "./test.sh perf-test --stack test-single-security-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml     --component cross-cluster-replication".toString()
+            "./scripts/test.sh perf-test --stack test-single-security-1236-x64-perf-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config config.yml     --component cross-cluster-replication".toString()
         ))
 
         def resultUploadScriptCommands = getCommandExecutions('s3Upload', 'test-results').findAll {

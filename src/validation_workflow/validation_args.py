@@ -21,10 +21,10 @@ class ValidationArgs:
             description="Validation Framework for Validation Workflow.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=textwrap.dedent('''\
-                Example :   ./validation.sh --version 2.3.0 --distribution rpm --platform linux
-                            ./validation.sh --version 2.3.0 --distribution docker --os-build-number 6039 --osd-build-number 4104 --using-staging-artifact-only
-                            ./validation.sh --version 2.3.0 --projects opensearch opensearch-dashboards --artifact-type staging
-                            ./validation.sh --file-path https://artifacts.opensearch.org/releases/bundle/opensearch/2.3.0/opensearch-2.3.0-linux-x64.tar.gz
+                Example :   ./scripts/validation.sh --version 2.3.0 --distribution rpm --platform linux
+                            ./scripts/validation.sh --version 2.3.0 --distribution docker --os-build-number 6039 --osd-build-number 4104 --using-staging-artifact-only
+                            ./scripts/validation.sh --version 2.3.0 --projects opensearch opensearch-dashboards --artifact-type staging
+                            ./scripts/validation.sh --file-path https://artifacts.opensearch.org/releases/bundle/opensearch/2.3.0/opensearch-2.3.0-linux-x64.tar.gz
         '''))
         parser.add_argument(
             "--version",

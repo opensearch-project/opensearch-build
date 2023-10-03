@@ -74,7 +74,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_type = "integ-test"
 
         test_run_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
-        self.assertEqual(test_run_dict.get("Command"), " ".join(["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=foo/bar"]))
+        self.assertEqual(test_run_dict.get("Command"), " ".join(["./scripts/test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=foo/bar"]))
         self.assertEqual(test_run_dict.get("TestType"), "integ-test")
         self.assertEqual(test_run_dict.get("TestManifest"), self.TEST_MANIFEST_PATH)
         self.assertEqual(test_run_dict.get("DistributionManifest"), os.path.join("foo/bar", "dist", "opensearch", "manifest.yml"))
@@ -89,7 +89,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_type = "integ-test"
 
         test_run_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
-        self.assertEqual(test_run_dict.get("Command"), " ".join(["./test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=https://foo/bar"]))
+        self.assertEqual(test_run_dict.get("Command"), " ".join(["./scripts/test.sh", "integ-test", self.TEST_MANIFEST_PATH, "--paths", "opensearch=https://foo/bar"]))
         self.assertEqual(test_run_dict.get("TestType"), "integ-test")
         self.assertEqual(test_run_dict.get("TestManifest"), self.TEST_MANIFEST_PATH)
         self.assertEqual(test_run_dict.get("DistributionManifest"), "/".join(["https://foo/bar", "dist", "opensearch", "manifest.yml"]))

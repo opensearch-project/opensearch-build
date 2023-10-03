@@ -33,7 +33,7 @@ The following checks are available.
 The following example sanity-checks components in the the OpenSearch 1.2.0 manifest.
 
 ```bash
-./ci.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
+./scripts/ci.sh manifests/1.2.0/opensearch-1.2.0.yml --snapshot
 ```
 
 ### Ci.sh Options

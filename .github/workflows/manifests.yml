@@ -54,7 +54,7 @@ jobs:
           python -m pip install --upgrade pipenv wheel
       - name: OpenSearch Manifests
         run: |-
-          ./ci.sh ${{ matrix.manifest }} --snapshot
+          ./scripts/ci.sh ${{ matrix.manifest }} --snapshot
 
   manifest-checks-jdk17:
     needs: list-manifests17
@@ -80,4 +80,4 @@ jobs:
           python -m pip install --upgrade pipenv wheel
       - name: OpenSearch Manifests
         run: |-
-          ./ci.sh ${{ matrix.manifest }} --snapshot
+          ./scripts/ci.sh ${{ matrix.manifest }} --snapshot

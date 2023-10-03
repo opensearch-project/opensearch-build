@@ -128,7 +128,7 @@ def generate_component_yml_ref(base_path: str, test_number: str, test_type: str,
 
 
 def generate_test_command(test_type: str, test_manifest_path: str, artifacts_path: str, component: str = "") -> str:
-    command = " ".join(["./test.sh", test_type, test_manifest_path, "--paths", artifacts_path])
+    command = " ".join(["./scripts/test.sh", test_type, test_manifest_path, "--paths", artifacts_path])
     if component:
         command = " ".join([command, "--component", component])
     logging.info(command)

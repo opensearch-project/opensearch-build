@@ -7,13 +7,13 @@ This workflow reacts to version increments in OpenSearch and its components by e
 Show information about existing manifests. 
 
 ```bash
-./manifests.sh list
+./scripts/manifests.sh list
 ```
 
 Check for updates and create any new manifests. 
 
 ```bash
-./manifests.sh update
+./scripts/manifests.sh update
 ```
 
 The following options are available.

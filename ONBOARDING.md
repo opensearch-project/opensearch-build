@@ -25,9 +25,9 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
 3. Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT tagged artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
 
-4. Execute `./build.sh` to ensure your component builds and all artifacts are correctly placed into ./artifacts/ with correct output names.
+4. Execute `./scripts/build.sh` to ensure your component builds and all artifacts are correctly placed into ./artifacts/ with correct output names.
 
-5. Execute `./assemble.sh` to ensure the full bundle is assembled and placed in to /bundles/*.tar.gz.  Unpack the tarball to ensure all your components are placed in their correct locations.
+5. Execute `./scripts/assemble.sh` to ensure the full bundle is assembled and placed in to /bundles/*.tar.gz.  Unpack the tarball to ensure all your components are placed in their correct locations.
 
 6. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
 

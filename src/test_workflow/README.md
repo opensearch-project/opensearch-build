@@ -22,7 +22,7 @@
 
 ## Testing a Distribution
 
-Testing is run via `./test.sh`.
+Testing is run via `./scripts/test.sh`.
 
 ### Test.sh Options
 
@@ -47,37 +47,37 @@ To run integration tests locally, use below command. This pulls down the built b
 Usage:
 
 ```bash
-./test.sh integ-test <test-manifest-path> <target>
+./scripts/test.sh integ-test <test-manifest-path> <target>
 ```
 
 For example, build locally and run integration tests.
 
 ```bash
-./build.sh manifests/1.3.5/opensearch-1.3.5.yml
-./assemble.sh builds/opensearch/manifest.yml
-./test.sh integ-test manifests/1.3.5/opensearch-1.3.5-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+./scripts/build.sh manifests/1.3.5/opensearch-1.3.5.yml
+./scripts/assemble.sh builds/opensearch/manifest.yml
+./scripts/test.sh integ-test manifests/1.3.5/opensearch-1.3.5-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
 ```
 
 Or run integration tests against an existing build.
 
 ```bash
-./test.sh integ-test manifests/1.3.5/opensearch-1.3.5-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/5960/linux/x64/tar # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+./scripts/test.sh integ-test manifests/1.3.5/opensearch-1.3.5-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/5960/linux/x64/tar # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 To run OpenSearch Dashboards integration tests.
 
 ```bash
-./test.sh integ-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/5960/linux/x64/tar
+./scripts/test.sh integ-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.5/5960/linux/x64/tar
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.5/4056/linux/x64/tar
 ```
 
 To run OpenSearch Dashboards integration tests with local artifacts on different distributions
 ```bash
-./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/tar
-./test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/rpm opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/rpm
+./scripts/test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/tar opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/tar
+./scripts/test.sh integ-test manifests/2.0.0/opensearch-dashboards-2.0.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/rpm opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.0.0-rc1/latest/linux/x64/rpm
 ```
 
-:warning: RPM Test requires user to run the `./test.sh` command with sudo permission, as rpm requires root to install and start the service.
+:warning: RPM Test requires user to run the `./scripts/test.sh` command with sudo permission, as rpm requires root to install and start the service.
 
 
 ### Backwards Compatibility Tests
@@ -87,27 +87,27 @@ Runs backward compatibility invoking `run_bwc_test.py` in each component from a 
 Usage:
 
 ```bash
-./test.sh bwc-test <test-manifest-path> <target>
+./scripts/test.sh bwc-test <test-manifest-path> <target>
 ```
 
 For example, build locally and run BWC tests.
 
 ```bash
-./build.sh manifests/1.3.0/opensearch-1.3.0.yml
-./assemble.sh builds/opensearch/manifest.yml
-./test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
+./scripts/build.sh manifests/1.3.0/opensearch-1.3.0.yml
+./scripts/assemble.sh builds/opensearch/manifest.yml
+./scripts/test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml . # looks for "./builds/opensearch/manifest.yml" and "./dist/opensearch/manifest.yml"
 ```
 
 Or run BWC tests against an existing build.
 
 ```bash
-./test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/tar # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
+./scripts/test.sh bwc-test manifests/1.3.0/opensearch-1.3.0-test.yml --paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.0.0-rc1/latest/linux/x64/tar # looks for https://.../builds/opensearch/manifest.yml and https://.../dist/opensearch/manifest.yml
 ```
 
 To run OpenSearch Dashboards BWC tests.
 
 ```bash
-./test.sh bwc-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths 
+./scripts/test.sh bwc-test manifests/1.3.0/opensearch-dashboards-1.3.0-test.yml --paths 
 opensearch-dashboards=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.5/4056/linux/x64/tar
 ```
 

@@ -6,7 +6,7 @@
 The signing step (optional) takes the manifest file created from the build step and signs all its component artifacts using a tool called `opensearch-signer-client` (in progress of being open-sourced). The input requires a path to the build manifest and is expected to be inside the artifacts directory with the same directories mentioned in the build step. 
 
 ```bash
-./sign.sh builds/opensearch/manifest.yml
+./scripts/sign.sh builds/opensearch/manifest.yml
 ```
 
 ### Sign.sh Options

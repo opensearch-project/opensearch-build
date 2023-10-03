@@ -24,7 +24,7 @@ class TestTestReportManifest(unittest.TestCase):
     def test_test_run(self) -> None:
         self.assertEqual(self.manifest.name, "OpenSearch")
         test_run = self.manifest.test_run
-        self.assertEqual(test_run.command, "./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml "
+        self.assertEqual(test_run.command, "./scripts/test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml "
                                            "--paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar")
         self.assertEqual(test_run.test_type, "integ-test")
         self.assertEqual(test_run.test_manifest, "manifests/2.8.0/opensearch-2.8.0-test.yml")
@@ -34,7 +34,7 @@ class TestTestReportManifest(unittest.TestCase):
     def test_component(self) -> None:
         component = self.manifest.components["alerting"]
         self.assertEqual(component.name, "alerting")
-        self.assertEqual(component.command, "./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml "
+        self.assertEqual(component.command, "./scripts/test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml "
                                             "--paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar --component alerting")
         self.assertEqual(component.configs.configs[0]["name"], "with-security")
         self.assertEqual(component.configs.configs[0]["status"], "FAIL")
