@@ -130,14 +130,14 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
     void testRunSecureBenchmarkTestScript_verifyScriptExecutions() {
         runScript("jenkins/opensearch/benchmark-test.jenkinsfile")
 
-        def testScriptCommands = getCommandExecutions('sh', './scripts/test.sh').findAll {
-            shCommand -> shCommand.contains('./scripts/test.sh')
+        def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
+            shCommand -> shCommand.contains('./test.sh')
         }
 
         assertThat(testScriptCommands.size(), equalTo(2))
         assertThat(testScriptCommands, hasItems(
-                "./scripts/test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true    --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString(),
-                "./scripts/test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false --without-security   --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:true    --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307-secure --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString(),
+                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-bundle.yml --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false --without-security   --use-50-percent-heap --enable-remote-store  --capture-segment-replication-stat --suffix 307 --manager-node-count 3 --data-node-count 3       --data-node-storage 100   --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
 

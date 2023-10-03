@@ -85,8 +85,8 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     void integTests_runs_consistently() {
         super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./scripts/test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
-        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./scripts/report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/8184/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/8184/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
     }
 
     @Test
@@ -106,7 +106,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     @Test
     void checkGHissueCreation() {
         super.setUp()
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./scripts/test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
         helper.addShMock('gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S "[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure', '', 0)
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
@@ -117,7 +117,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
     @Test
     void CheckCloseGHissue() {
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./scripts/test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
         runScript('jenkins/opensearch/integ-test.jenkinsfile')
         assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S \"[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
         assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue close bbb\nccc -R opensearch-project/OpenSearch --comment \"Closing the issue as the Integration Test passed for OpenSearch<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}"))
@@ -126,7 +126,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     @Test
     void checkGHexistingIssue() {
         super.setUp()
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./scripts/test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar ', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar ', '', 1)
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
         }

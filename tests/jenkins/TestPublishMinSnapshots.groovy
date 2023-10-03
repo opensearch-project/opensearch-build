@@ -74,7 +74,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-build-manifest.yml' as File).text)
         })
         runScript('jenkins/opensearch/publish-min-snapshots.jenkinsfile')
-        assertThat(getCommands('sh', 'tar'), hasItem('./scripts/build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a x64 --snapshot'))
+        assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a x64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems('{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz}',
         '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.sha512}',
         '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz.build-manifest.yml}'))
@@ -87,7 +87,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-windows-build-manifest.yml' as File).text)
         })
         runScript('jenkins/opensearch/publish-min-snapshots.jenkinsfile')
-        assertThat(getCommands('sh', 'windows'), hasItem('./scripts/build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot'))
+        assertThat(getCommands('sh', 'windows'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems('{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip}',
         '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.sha512}',
         '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-windows-x64-latest.zip.build-manifest.yml}'))
@@ -99,7 +99,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-build-manifest.yml' as File).text)
         })
         runScript('jenkins/opensearch/publish-min-snapshots.jenkinsfile')
-        assertThat(getCommands('sh', 'darwin'), hasItem('./scripts/build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a x64 --snapshot'))
+        assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a x64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems('{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz}',
         '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512}',
         '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.build-manifest.yml}'))
