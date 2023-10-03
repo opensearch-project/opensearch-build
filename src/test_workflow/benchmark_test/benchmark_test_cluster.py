@@ -71,7 +71,9 @@ class BenchmarkTestCluster:
         self.is_endpoint_public = False
         self.cluster_endpoint = None
         self.cluster_endpoint_with_port = None
-        self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}-{self.manifest.build.id}-{self.manifest.build.architecture}"
+        self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}"
+        if self.manifest:
+            self.stack_name += f"-{self.manifest.build.id}-{self.manifest.build.architecture}"
 
     def start(self) -> None:
         command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
@@ -112,7 +114,8 @@ class BenchmarkTestCluster:
         logging.info(f"Waiting for domain at {self.endpoint} to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
-        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth("admin", "admin"), "verify": False}  # type: ignore
+        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth("admin", "admin"),  # type: ignore
+                                                                "verify": False}  # type: ignore
         retry_call(requests.get, fkwargs=request_args,
                    tries=tries, delay=delay, backoff=backoff)
 
@@ -126,9 +129,9 @@ class BenchmarkTestCluster:
             suffix = self.args.stack_suffix
 
         if self.manifest:
-            artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else f"https" \
-                           f"://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
-                           f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
+            artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
+                f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
+                f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
         else:
             artifact_url = self.args.distribution_url.strip()
 
@@ -139,9 +142,9 @@ class BenchmarkTestCluster:
             "region": config["Constants"]["Region"],
             "suffix": suffix,
             "securityDisabled": str(self.args.insecure).lower(),
-            "cpuArch": self.manifest.build.architecture,
+            "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
             "singleNodeCluster": str(self.args.single_node).lower(),
-            "distVersion": self.manifest.build.version,
+            "distVersion": self.manifest.build.version if self.manifest else self.args.distribution_version,
             "minDistribution": str(self.args.min_distribution).lower(),
             "serverAccessType": config["Constants"]["serverAccessType"],
             "restrictServerAccessTo": config["Constants"]["restrictServerAccessTo"],
