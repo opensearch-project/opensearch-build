@@ -11,24 +11,20 @@ on:
     - cron: 0 0 * * *
 
 jobs:
-  list-manifests11:
+  list-changed-manifests:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
-      - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
-
-  list-manifests17:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v3
-      - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
-
+      - uses: actions/checkout@v2
+      - name: Get changed manifest files
+        uses: tj-actions/changed-files@v5
+        id: changed-files
+        with:
+          filepaths: |
+            manifests/**/*.yml
+            manifests/templates/**/
+      - name: Set unique changed manifests as matrix
+        id: set-matrix
+        run: echo "::set-output name=matrix::${{ steps.changed-files.outputs.files }}"
 
   manifest-checks-jdk11:
     needs: list-manifests11
@@ -38,7 +34,7 @@ jobs:
       JDK_VERSION: 11
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-manifests11.outputs.matrix) }}
+        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -64,7 +60,7 @@ jobs:
       JDK_VERSION: 17
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-manifests17.outputs.matrix) }}
+        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
