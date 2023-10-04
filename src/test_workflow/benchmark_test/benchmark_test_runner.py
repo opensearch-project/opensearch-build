@@ -24,7 +24,11 @@ class BenchmarkTestRunner(abc.ABC):
         self.args = args
         self.test_manifest = test_manifest
 
-        self.security = "security" in self.test_manifest.components and not self.args.insecure
+        if self.test_manifest:
+            self.security = "security" in self.test_manifest.components and not self.args.insecure
+        else:
+            self.security = False
+
         self.tests_dir = os.path.join(os.getcwd(), "test-results", "benchmark-test", f"{'with' if self.security else 'without'}-security")
         os.makedirs(self.tests_dir, exist_ok=True)
 
