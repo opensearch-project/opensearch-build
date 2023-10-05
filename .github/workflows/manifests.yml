@@ -23,7 +23,7 @@ jobs:
         with:
           separator: ' '
           json: true 
-          path: manifests/**/*.yml
+          path: manifests
       - name: Set unique changed manifests as matrix
         id: set-matrix
         run: echo "name=matrix::${{ steps.changed-files.outputs.files }}" >> "$GITHUB_OUTPUT"
