@@ -37,7 +37,7 @@ jobs:
       JDK_VERSION: 11
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
+        manifest: ${{ fromJson(needs. changed-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -63,7 +63,7 @@ jobs:
       JDK_VERSION: 17
     strategy:
       matrix:
-        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
+        manifest: ${{ fromJson(needs. changed-files.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
       - name: Set Up JDK ${{ env.JDK_VERSION }}
