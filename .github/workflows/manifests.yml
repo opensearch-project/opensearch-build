@@ -21,6 +21,7 @@ jobs:
         uses: tj-actions/changed-files@v39
         id: changed-files
         with:
+          path: 'manifests/**/*.yml'
           json: true
           quotepath: false
             
