@@ -21,9 +21,8 @@ jobs:
         uses: tj-actions/changed-files@v5
         id: changed-files
         with:
-          filepaths: |
-            manifests/**/*.yml
-            manifests/templates/**/
+          path: manifests/**/*.yml
+            
       - name: Set unique changed manifests as matrix
         id: set-matrix
         run: echo "::set-output name=matrix::${{ steps.changed-files.outputs.files }}"
