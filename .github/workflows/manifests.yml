@@ -27,7 +27,7 @@ jobs:
           quotepath: false
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: echo "matrix=${{ steps.changed-files.outputs.all_changed_files }}" >> "$GITHUB_OUTPUT"
+        run: echo "matrix={\"files\"${{ steps.changed-files.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
   
   manifest-checks-jdk11:
     needs: [list-changed-manifests]
