@@ -1,7 +1,7 @@
 ---
 schema-version: '1.0'
 build:
-  name: OpenSearchTesting
+  name: OpenSearch
   version: 2.11.0
 ci:
   image:
