@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get changed manifest files
-        uses: tj-actions/changed-files@v5
+        uses: tj-actions/changed-files@v39
         id: changed-files
         with:
           json: true
