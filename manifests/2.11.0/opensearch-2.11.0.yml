@@ -181,7 +181,7 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: custom-codecs
+  - name: custom-codecsasfdgn
     repository: https://github.com/opensearch-project/custom-codecs.git
     ref: 2.x
     platforms:

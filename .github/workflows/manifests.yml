@@ -21,11 +21,12 @@ jobs:
         uses: tj-actions/changed-files@v5
         id: changed-files
         with:
-          files: manifests/**/*.yml
+          json: true
+          quotepath: false
             
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: echo "::set-output name=matrix::${{ steps.changed-files.outputs.files }}"
+        run: echo "name=matrix::${{ steps.changed-files.outputs.files }}" >> "$GITHUB_OUTPUT"
 
   manifest-checks-jdk11:
     needs: list-changed-manifests
