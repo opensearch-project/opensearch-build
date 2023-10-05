@@ -297,6 +297,8 @@ pipeline {
                                         testType: "integ-test",
                                         componentName: "${COMPONENT_NAME}",
                                     )
+                                    echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
+                                    archiveArtifacts artifacts: 'test-report.yml'
                                 }
                             }
                         }
