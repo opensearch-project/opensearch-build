@@ -10,8 +10,13 @@ cd $OPENSEARCH_HOME
 KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
 ##Security Plugin
 if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
-        bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
-        echo "done security"
+        echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+        echo "OpenSearch 2.11.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
+        echo "Please define an environment variable 'initialAdminPassword' with a password string."
+        echo "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under $OPENSEARCH_PATH_CONF folder."
+        echo "If no password is provided, a password will be generated for you"
+        bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s -g || exit 1
+        echo "Demo security config installed"
 fi
 
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$OPENSEARCH_PATH_CONF/opensearch-performance-analyzer/log4j2.xml \

@@ -38,7 +38,8 @@ function setupSecurityPlugin {
             echo "OpenSearch 2.11.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
             echo "Please define an environment variable 'initialAdminPassword' with a password string."
             echo "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under $OPENSEARCH_PATH_CONF folder."
-            bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || exit 1
+            echo "If no password is provided, a password will be generated for you"
+            bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s -g || exit 1
         fi
 
         if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
