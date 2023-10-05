@@ -93,7 +93,10 @@ exit 0
 set -e
 # Apply Security Settings
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
-    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
+    echo "OpenSearch 2.11.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
+    echo "Please define an environment variable 'initialAdminPassword' with a password string."
+    echo "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under $OPENSEARCH_PATH_CONF folder."
+    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || exit 1> %{log_dir}/install_demo_configuration.log 2>&1
 fi
 chown -R %{name}.%{name} %{config_dir}
 chown -R %{name}.%{name} %{log_dir}
