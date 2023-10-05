@@ -16,7 +16,8 @@ jobs:
   list-changed-manifests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Get changed manifest files
         uses: tj-actions/changed-files@v39
         id: changed-files
