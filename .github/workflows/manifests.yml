@@ -16,17 +16,18 @@ jobs:
   list-changed-manifests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Get changed manifest files
         uses: tj-actions/changed-files@v39
         id: changed-files
+        uses: ./
         with:
           separator: ' '
           json: true 
-          path: manifests
+          quotepath: false
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: echo "name=matrix::${{ steps.changed-files.outputs.files }}" >> "$GITHUB_OUTPUT"
+        run: echo "matrix={\"files\":${{ steps.changed-files.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
   manifest-checks-jdk11:
     needs: list-changed-manifests
