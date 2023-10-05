@@ -14,20 +14,21 @@ jobs:
   list-changed-manifests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Get changed manifest files
-        uses: tj-actions/changed-files@v5
-        id: changed-files
+        uses: tj-actions/changed-files@v39
+        id: list-changed-manifests
         with:
-          filepaths: |
-            manifests/**/*.yml
-            manifests/templates/**/
+          separator: ' '
+        
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: echo "::set-output name=matrix::${{ steps.changed-files.outputs.files }}"
-
+        run: |
+          echo "matrix=$(${{ steps.list-changed-manifests.outputs.all_changed_files }} | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split(" ")[:-1]') " >> GITHUB_OUTPUT
+            
   manifest-checks-jdk11:
-    needs: list-manifests11
+    needs: list-changed-manifests
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
@@ -53,7 +54,7 @@ jobs:
           ./ci.sh ${{ matrix.manifest }} --snapshot
 
   manifest-checks-jdk17:
-    needs: list-manifests17
+    needs: list-changed-manifests
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
