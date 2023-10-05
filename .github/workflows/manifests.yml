@@ -27,10 +27,10 @@ jobs:
           quotepath: false
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: echo "name=matrix::${{ steps.changed-files.outputs.files }}" >> "$GITHUB_OUTPUT"
-
+        run: echo "matrix=${{ steps.changed-files.outputs.all_changed_files }}" >> "$GITHUB_OUTPUT"
+  
   manifest-checks-jdk11:
-    needs: list-changed-manifests
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
@@ -56,7 +56,7 @@ jobs:
           ./ci.sh ${{ matrix.manifest }} --snapshot
 
   manifest-checks-jdk17:
-    needs: list-changed-manifests
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
