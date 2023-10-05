@@ -191,6 +191,3 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
 
-
-
-
