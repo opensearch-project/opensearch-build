@@ -81,3 +81,4 @@ jobs:
       - name: OpenSearch Manifests
         run: |-
           ./ci.sh ${{ matrix.manifest }} --snapshot
+
