@@ -18,11 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get changed manifest files
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@v39
         id: changed-files
         with:
           separator: ' '
-            
+          json: true 
+          path: manifests/**/*.yml
       - name: Set unique changed manifests as matrix
         id: set-matrix
         run: echo "name=matrix::${{ steps.changed-files.outputs.files }}" >> "$GITHUB_OUTPUT"
