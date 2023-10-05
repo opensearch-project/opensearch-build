@@ -22,11 +22,11 @@ jobs:
         uses: tj-actions/changed-files@v39
         id: changed-files
         with:
-          separator: ' '
+          separator: '/'
       - name: Set unique changed manifests as matrix
         id: set-matrix
         run: |
-          echo "matrix=$( ${{ steps.changed-files.outputs.all_changed_files }} | jq -R -s -c 'split(" ")[:-1]')" >> GITHUB_OUTPUT
+          echo "matrix=$( ${{ steps.changed-files.outputs.all_changed_files }} | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split(" ")[:-1]')" >> GITHUB_OUTPUT
           
         #run: echo "matrix=$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
   
