@@ -13,6 +13,8 @@ on:
 jobs:
   list-changed-manifests:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,22 +22,23 @@ jobs:
         uses: tj-actions/changed-files@v39
         id: list-changed-manifests
         with:
-          separator: ' '
+          files: manifests/**/opensearch*.yml
+          json: true
+          quotepath: false
+          dir_names: false
         
       - name: Set unique changed manifests as matrix
         id: set-matrix
-        run: |
-          echo "matrix=$(${{ steps.list-changed-manifests.outputs.all_changed_files }} | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split(" ")[:-1]') " >> GITHUB_OUTPUT
-            
+        run: echo "matrix={\"manifest\":${{ steps.list-changed-manifests.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
+    
   manifest-checks-jdk11:
-    needs: list-changed-manifests
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
       JDK_VERSION: 11
     strategy:
-      matrix:
-        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -54,14 +57,13 @@ jobs:
           ./ci.sh ${{ matrix.manifest }} --snapshot
 
   manifest-checks-jdk17:
-    needs: list-changed-manifests
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
       JDK_VERSION: 17
     strategy:
-      matrix:
-        manifest: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
