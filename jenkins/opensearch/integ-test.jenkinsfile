@@ -190,22 +190,26 @@ pipeline {
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
                                                     String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
-                                                    closeGithubIssue(
-                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
-                                                        closeComment: closeCommentMessage,
-                                                        label: "autocut,v${version},integ-test-failure"
-                                                    )
+                                                    if (env.distribution == 'tar') {
+                                                        closeGithubIssue(
+                                                            repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                            issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                            closeComment: closeCommentMessage,
+                                                            label: "autocut,v${version},integ-test-failure"
+                                                        )
+                                                    }
                                                 }
                                             } catch (e) {
                                                 echo "Error running integtest for component ${local_component}, creating Github issue"
                                                 String issueBodyMessage = "The integration test failed at distribution level for component ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._"
-                                                createGithubIssue(
-                                                    repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                    issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
-                                                    issueBody: issueBodyMessage,
-                                                    label: "autocut,v${version},integ-test-failure"
-                                                )
+                                                if (env.distribution == 'tar') {
+                                                    createGithubIssue(
+                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                        issueBody: issueBodyMessage,
+                                                        label: "autocut,v${version},integ-test-failure"
+                                                    )
+                                                }
                                                 throw new Exception("Error running integtest for component ${local_component}", e)
                                             } finally {
                                                 echo "Completed running integtest for component ${local_component}"
