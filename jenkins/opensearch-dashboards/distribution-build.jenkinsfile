@@ -182,8 +182,8 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
+                                    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
                                     if (!skipIntegTests) {
                                         def integTestResults =
                                             build job: INTEG_TEST_JOB_NAME,
@@ -197,8 +197,8 @@ pipeline {
                                     }
                                 },
                                 'bwc-test': {
-                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
+                                    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
                                     if (!skipBwcTests) {
                                         def bwcTestResults =
                                             build job: BWC_TEST_JOB_NAME,
@@ -492,8 +492,8 @@ pipeline {
 
                                     parallel([
                                         'integ-test': {
-                                            Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                                            echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                            Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == ''|| TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
+                                            echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string:INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
                                             if (!skipIntegTests) {
                                                 def integTestResults =
                                                     build job: INTEG_TEST_JOB_NAME,
@@ -507,8 +507,8 @@ pipeline {
                                             }
                                         },
                                         'bwc-test': {
-                                            Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                                            echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                            Boolean skipBwcTests = (BWC_TEST_JOB_NAME == ''|| TEST_MANIFEST == '' || buildManifestUrl == '')
+                                            echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
                                             if (!skipBwcTests) {
                                                 def bwcTestResults =
                                                     build job: BWC_TEST_JOB_NAME,

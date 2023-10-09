@@ -45,6 +45,7 @@ jobs:
           - {repo: security}
           - {repo: security-analytics}
           - {repo: sql}
+          - {repo: custom-codecs}
         branch:
           - '1.3'
           - 2.x
@@ -58,6 +59,7 @@ jobs:
           - {entry: {repo: neural-search}, branch: '1.3'}
           - {entry: {repo: security-analytics}, branch: '1.3'}
           - {entry: {repo: notifications, path: notifications}, branch: '1.3'}
+          - {entry: {repo: custom-codecs}, branch: '1.3'}
     steps:
       - name: Check out OpenSearch repo
         uses: actions/checkout@v3

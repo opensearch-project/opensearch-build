@@ -1,0 +1,180 @@
+lib = library(identifier: 'jenkins@5.8.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent none
+    environment {
+        AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+        AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
+        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
+        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host'
+        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1' // required for windows to build zip distribution
+    }
+    parameters {
+        string(
+            name: 'INPUT_MANIFEST',
+            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            trim: true
+        )
+    }
+    stages {
+        stage('Detect Docker-images') {
+            agent {
+                docker {
+                    label AGENT_LINUX_X64
+                    image 'docker/library/alpine:3'
+                    registryUrl 'https://public.ecr.aws/'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    dockerAgent = detectDockerAgent()
+                    env.javaVersionNumber = dockerAgent.javaVersion.replaceAll("[^0-9]", "") // Only get number
+                    currentBuild.description = INPUT_MANIFEST
+                }
+            }
+        }
+        stage('Build OpenSearch-min Snapshots') {
+            parallel {
+                stage('linux-x64-tar') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'x64',
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('linux-arm64-tar') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_ARM64
+                            image dockerAgent.image
+                            args dockerAgent.args
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'linux',
+                                architecture: 'arm64',
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('macos-x64-tar') {
+                    agent {
+                        node {
+                            label AGENT_MACOS_X64
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'darwin',
+                                architecture: 'x64',
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading darwin min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('windows-x64-zip') {
+                    agent {
+                        docker {
+                            label AGENT_WINDOWS_X64
+                            image IMAGE_WINDOWS_ZIP
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
+                            sh("scoop reset `scoop list jdk | grep ${env.javaVersionNumber} | head -1 | cut -d ' ' -f1`")
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'windows',
+                                architecture: 'x64',
+                                distribution: 'zip',
+                                snapshot: true
+                            )
+                            echo("Uploading windows min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'zip'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

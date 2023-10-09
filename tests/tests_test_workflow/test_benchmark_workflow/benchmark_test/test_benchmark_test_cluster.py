@@ -18,7 +18,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     BUNDLE_MANIFEST = os.path.join(DATA, "bundle_manifest.yml")
 
-    def setUp(self, args: Optional[Mock] = None) -> None:
+    def setUp(self, args: Optional[Mock] = None, use_manifest: bool = True) -> None:
         self.args = Mock()
         if args:
             self.args = args
@@ -28,7 +28,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
             self.args.insecure = False
             self.args.single_node = True
             self.args.min_distribution = False
-        self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST)
+        self.manifest = BundleManifest.from_path(self.BUNDLE_MANIFEST) if use_manifest else None
         self.stack_name = "stack"
         self.security = True
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
@@ -95,3 +95,19 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertTrue("singleNodeCluster=false" in self.benchmark_test_cluster.params)
         self.assertTrue("use50PercentHeap=true" in self.benchmark_test_cluster.params)
         self.assertTrue("enableRemoteStore=true" in self.benchmark_test_cluster.params)
+
+    @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
+    def test_create_multi_node_without_manifest(self, mock_wait_for_processing: Optional[Mock]) -> None:
+        self.args.distribution_url = "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz"
+        self.args.distribution_version = '2.10.0'
+        TestBenchmarkTestCluster.setUp(self, self.args, False)
+        mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix": {"loadbalancerurl": "www.example.com"}}])
+        with patch("subprocess.check_call") as mock_check_call:
+            with patch("builtins.open", MagicMock()):
+                with patch("json.load", mock_file):
+                    self.benchmark_test_cluster.start()
+                    self.assertEqual(mock_check_call.call_count, 1)
+        self.assertTrue("opensearch-infra-stack-test-suffix" in self.benchmark_test_cluster.stack_name)
+        self.assertTrue("cpuArch=x64" in self.benchmark_test_cluster.params)
+        self.assertTrue("distVersion=2.10.0" in self.benchmark_test_cluster.params)
+        self.assertTrue("distributionUrl=https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz" in self.benchmark_test_cluster.params)

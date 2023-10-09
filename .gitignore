@@ -35,3 +35,5 @@ out.txt
 
 /manifests/**/*.yml.lock
 vars/
+
+test-report.yml

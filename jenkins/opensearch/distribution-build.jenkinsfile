@@ -34,14 +34,14 @@ pipeline {
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.",
-            defaultValue: "integ-test",
+            description: 'Name of integration test job that will be triggered, e.g. Playground/integ-test. A non-null empty value here will skip integration tests.',
+            defaultValue: 'integ-test',
             trim: true
         )
         string(
             name: 'BWC_TEST_JOB_NAME',
-            description: "Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.",
-            defaultValue: "bwc-test",
+            description: 'Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test.  A non-null empty value here will skip BWC tests.',
+            defaultValue: 'bwc-test',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
@@ -88,15 +88,15 @@ pipeline {
             }
             steps {
                 script {
-                    echo("Detect Docker Images and Related Parameters")
+                    echo('Detect Docker Images and Related Parameters')
                     dockerAgent = detectDockerAgent()
-                    env.javaVersionNumber = dockerAgent.javaVersion.replaceAll("[^0-9]", "") // Only get number
+                    env.javaVersionNumber = dockerAgent.javaVersion.replaceAll('[^0-9]', '') // Only get number
                     currentBuild.description = INPUT_MANIFEST
 
-                    echo("Verify Build Platforms")
+                    echo('Verify Build Platforms')
                     def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
                     echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = "linux macos windows"
+                    def all_platforms = 'linux macos windows'
                     echo("All Supported Platforms: '${all_platforms}'")
 
                     if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
@@ -115,169 +115,31 @@ pipeline {
         }
         stage('build') {
             parallel {
-                stage('build-opensearch-snapshot-linux-x64-tar') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
-                        }
-                    }
-                    environment {
-                        SNAPSHOT_REPO_URL = "https://aws.oss.sonatype.org/content/repositories/snapshots/"
-                    }
+                stage('Trigger-min-snapshot-build') {
                     agent {
                         docker {
-                            label AGENT_LINUX_X64
-                            image dockerAgent.image
-                            args dockerAgent.args
+                            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+                            image 'docker/library/alpine:3'
                             registryUrl 'https://public.ecr.aws/'
                             alwaysPull true
                         }
                     }
                     steps {
                         script {
-                            buildManifest(
-                                componentName: "OpenSearch",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'linux',
-                                architecture: 'x64',
-                                distribution: 'tar',
-                                snapshot: true
-                            )
-                            echo("Uploading min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'tar'
-                            )
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
-                        }
-                    }
-                }
-                stage('build-opensearch-snapshot-linux-arm64-tar') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('linux')
-                        }
-                    }
-                    agent {
-                        docker {
-                            label AGENT_LINUX_ARM64
-                            image dockerAgent.image
-                            args dockerAgent.args
-                            registryUrl 'https://public.ecr.aws/'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            buildManifest(
-                                componentName: "OpenSearch",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'linux',
-                                architecture: 'arm64',
-                                distribution: 'tar',
-                                snapshot: true
-                            )
-                            echo("Uploading min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'tar'
-                            )
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
-                        }
-                    }
-                }
-                stage('build-opensearch-snapshot-macos-x64-tar') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('macos')
-                        }
-                    }
-                    agent {
-                        node {
-                            label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
-                        }
-                    }
-                    tools {
-                        jdk dockerAgent.javaVersion
-                    }
-                    steps {
-                        script {
-                            buildManifest(
-                                componentName: "OpenSearch",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'darwin',
-                                architecture: 'x64',
-                                distribution: 'tar',
-                                snapshot: true
-                            )
-                            echo("Uploading darwin min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'tar'
-                            )
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
-                        }
-                    }
-                }
-                stage('build-opensearch-snapshot-windows-x64-zip') {
-                    when {
-                        beforeAgent true
-                        expression{
-                            params.BUILD_PLATFORM.contains('windows')
-                        }
-                    }
-                    agent {
-                        docker {
-                            label AGENT_WINDOWS_X64
-                            image IMAGE_WINDOWS_ZIP
-                            registryUrl 'https://public.ecr.aws/'
-                            alwaysPull true
-                        }
-                    }
-                    steps {
-                        script {
-                            echo("Switching to Java ${env.javaVersionNumber} on Windows Docker Container")
-                            sh("scoop reset `scoop list jdk | grep ${env.javaVersionNumber} | head -1 | cut -d ' ' -f1`")
-                            buildManifest(
-                                componentName: "OpenSearch",
-                                inputManifest: "manifests/${INPUT_MANIFEST}",
-                                platform: 'windows',
-                                architecture: 'x64',
-                                distribution: 'zip',
-                                snapshot: true
-                            )
-                            echo("Uploading windows min snapshots to S3")
-                            uploadMinSnapshotsToS3(
-                                fileActions: [createSha512Checksums()],
-                                distribution: 'zip'
-                            )
-                        }
-                    }
-                    post {
-                        always {
-                            postCleanup()
+                            def snapshotBuild =
+                                build job: 'publish-opensearch-min-snapshots',
+                                propagate: false,
+                                wait: false,                               
+                                parameters: [
+                                    string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
+                                ]
                         }
                     }
                 }
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -297,7 +159,7 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'x64',
-                                distribution: "tar",
+                                distribution: 'tar',
                                 continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -310,8 +172,8 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
+                                    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running integration tests'}"
                                     if (!skipIntegTests) {
                                         def integTestResults =
                                             build job: INTEG_TEST_JOB_NAME,
@@ -324,8 +186,8 @@ pipeline {
                                     }
                                 },
                                 'bwc-test': {
-                                    Boolean skipBwcTests = BWC_TEST_JOB_NAME == ''
-                                    echo "${skipBwcTests ? 'Skipping BWC tests' : 'Running BWC tests'}"
+                                    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
+                                    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
                                     if (!skipBwcTests) {
                                         def bwcTestResults =
                                             build job: BWC_TEST_JOB_NAME,
@@ -357,7 +219,7 @@ pipeline {
                 stage('build-and-test-linux-x64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -450,7 +312,7 @@ pipeline {
                 stage('build-and-test-linux-x64-deb') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -513,7 +375,6 @@ pipeline {
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
                                 }
                             }
                             post {
@@ -534,7 +395,7 @@ pipeline {
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -554,7 +415,7 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'linux',
                                 architecture: 'arm64',
-                                distribution: "tar",
+                                distribution: 'tar',
                                 continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -566,8 +427,8 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    Boolean skipIntegTests = INTEG_TEST_JOB_NAME == ''
-                                    echo "${skipIntegTests ? 'Skipping integration tests' : 'Running integration tests'}"
+                                    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
+                                    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running integration tests'}"
                                     if (!skipIntegTests) {
                                         def integTestResults =
                                             build job: INTEG_TEST_JOB_NAME,
@@ -598,7 +459,7 @@ pipeline {
                 stage('build-and-test-linux-arm64-rpm') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -691,7 +552,7 @@ pipeline {
                 stage('build-and-test-linux-arm64-deb') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('linux')
                         }
                     }
@@ -754,7 +615,6 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
                                 }
                             }
                             post {
@@ -775,7 +635,7 @@ pipeline {
                 stage('build-and-test-windows-x64-zip') {
                     when {
                         beforeAgent true
-                        expression{
+                        expression {
                             params.BUILD_PLATFORM.contains('windows')
                         }
                     }
@@ -796,7 +656,7 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'windows',
                                 architecture: 'x64',
-                                distribution: "zip",
+                                distribution: 'zip',
                                 continueOnError: params.CONTINUE_ON_ERROR
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
@@ -806,7 +666,6 @@ pipeline {
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
-
                         }
                     }
                     post {
@@ -847,11 +706,11 @@ pipeline {
         stage('docker build') {
             when {
                 beforeAgent true
-                allOf{
+                allOf {
                     expression {
                         params.BUILD_DOCKER != 'do_not_build_docker'
                     }
-                    expression{
+                    expression {
                         params.BUILD_PLATFORM.contains('linux')
                     }
                 }
@@ -919,7 +778,7 @@ pipeline {
                             'assemble-archive-and-test-linux-arm64-deb',
                         ]
                     }
-                    if (params.BUILD_PLATFORM.contains('windows')){
+                    if (params.BUILD_PLATFORM.contains('windows')) {
                         stages.add('build-and-test-windows-x64-zip')
                     }
 

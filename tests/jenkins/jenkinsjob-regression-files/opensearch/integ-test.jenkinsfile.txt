@@ -7,12 +7,6 @@
          integ-test.logRotator({daysToKeepStr=30})
          integ-test.buildDiscarder(null)
          integ-test.echo(Executing on agent [label:none])
-         integ-test.parameterizedCron(
-            H */3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H */3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            H */3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
-            H */3 * * * %TEST_MANIFEST=2.10.0/opensearch-2.10.0-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.10.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
-            )
          integ-test.stage(verify-parameters, groovy.lang.Closure)
             integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host])
             integ-test.script(groovy.lang.Closure)
@@ -153,6 +147,8 @@ ccc -R opensearch-project/OpenSearch --comment "Closing the issue as the Integra
                      createUploadTestReportManifest.echo(Uploading to s3://dummy_job/3.0.0/8184/linux/x64/tar/test-results/234/integ-test/test-report.yml)
                      createUploadTestReportManifest.withAWS({role=opensearch-test, roleAccount=AWS_ACCOUNT_PUBLIC, duration=900, roleSessionName=jenkins-session}, groovy.lang.Closure)
                         createUploadTestReportManifest.s3Upload({file=/tmp/workspace/test-report.yml, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/8184/linux/x64/tar/test-results/234/integ-test/test-report.yml})
+               integ-test.echo(Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test/3.0.0/8184/linux/x64/tar/test-results/234/integ-test/test-report.yml)
+               integ-test.archiveArtifacts({artifacts=test-report.yml})
          integ-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          integ-test.node(Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, groovy.lang.Closure)

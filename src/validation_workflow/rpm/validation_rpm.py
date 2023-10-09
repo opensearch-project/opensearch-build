@@ -21,28 +21,33 @@ class ValidateRpm(Validation, DownloadUtils):
 
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__(args)
-        self.base_url = "https://artifacts.opensearch.org/releases/bundle/"
+        self.base_url_production = "https://artifacts.opensearch.org/releases/bundle/"
+        self.base_url_staging = "https://ci.opensearch.org/ci/dbc/distribution-build-"
         self.tmp_dir = TemporaryDirectory()
 
     def download_artifacts(self) -> bool:
-        architectures = ["x64", "arm64"]
+        isFilePathEmpty = bool(self.args.file_path)
         for project in self.args.projects:
-            for architecture in architectures:
-                url = f"{self.base_url}{project}/{self.args.version}/{project}-{self.args.version}-linux-{architecture}.rpm"
-                if ValidateRpm.is_url_valid(url) and ValidateRpm.download(url, self.tmp_dir):
-                    logging.info(f"Valid URL - {url} and Download Successful !")
+            if (isFilePathEmpty):
+                if ("https:" not in self.args.file_path.get(project)):
+                    self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
                 else:
-                    logging.info(f"Invalid URL - {url}")
-                    raise Exception(f"Invalid url - {url}")
+                    self.check_url(self.args.file_path.get(project))
+            else:
+                if (self.args.artifact_type == "staging"):
+                    self.args.file_path[project] = f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/linux/{self.args.arch}/{self.args.distribution}/dist/{project}/{project}-{self.args.version}-linux-{self.args.arch}.rpm"  # noqa: E501
+                else:
+                    self.args.file_path[project] = f"{self.base_url_production}{project}/{self.args.version}/{project}-{self.args.version}-linux-{self.args.arch}.rpm"
+                self.check_url(self.args.file_path.get(project))
         return True
 
     def installation(self) -> bool:
         try:
             execute('sudo rpm --import https://artifacts.opensearch.org/publickeys/opensearch.pgp', str(self.tmp_dir.path), True, False)
             for project in self.args.projects:
+                self.filename = os.path.basename(self.args.file_path.get(project))
                 execute(f'sudo yum remove {project} -y', ".")
-                path = os.path.join(self.tmp_dir.path, project + "-" + self.args.version + "-linux-" + self.args.arch + ".rpm")
-                execute(f'sudo rpm -ivh {path}', str(self.tmp_dir.path), True, False)
+                execute(f'sudo rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)
         except:
             raise Exception('Failed to install Opensearch')
         return True
@@ -50,7 +55,6 @@ class ValidateRpm(Validation, DownloadUtils):
     def start_cluster(self) -> bool:
         try:
             for project in self.args.projects:
-                execute(f'sudo systemctl enable {project}', ".")
                 execute(f'sudo systemctl start {project}', ".")
                 time.sleep(20)
                 (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
@@ -64,7 +68,7 @@ class ValidateRpm(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_cases()
+        test_result, counter = ApiTestCases().test_apis(self.args.projects)
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True
@@ -75,6 +79,7 @@ class ValidateRpm(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl stop {project}', ".")
-        except:
-            raise Exception('Failed to Stop Cluster')
+                execute(f'sudo yum remove {project} -y', ".")
+        except Exception as e:
+            raise Exception(f'Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards. {str(e)}')
         return True
