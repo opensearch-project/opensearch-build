@@ -96,7 +96,7 @@ We currently use ZenHub only with our public and opensource repositories.
 ### Setting up ZenHub
 
 ZenHub can be easily added as an [extension]((https://www.zenhub.com/extension)) to chrome and firefox which can be downloaded for free from the ZenHub website. 
-Alternatively, we can use a the ZenHub [webapp link](https://app.zenhub.com/workspaces/engineering-effectiveness-614cf4272a385f0015d2b48f/board?repos=357723952,406037663) to view the board.
+Alternatively, we can use the ZenHub [webapp link](https://app.zenhub.com/workspaces/engineering-effectiveness-614cf4272a385f0015d2b48f/board?repos=357723952,406037663) to view the board.
 
 ### Sprint Board
 
@@ -117,16 +117,16 @@ If you are using the webapp - here is the [link](https://app.zenhub.com/workspac
 7. **Done -** Issues tested and ready to be deployed to production. Verify the acceptance criteria and close the issue.
 8. **Closed -** Issues that are deployed to production and closed
 
-Description for each pipeline can also be found on the sprint board by clicking on the 3 dots next to the pipleine name.
+Description for each pipeline can also be found on the sprint board by clicking on the 3 dots next to the pipeline name.
 
 ### Creating Issues
 
 Follow the steps below to create issues on ZenHub workflow -
 
 1. Create the issue for the desired repository following the required guidelines for mandatory and optional fields on GitHub.
-2. Add an acceptance criteria for the issue
+2. Add acceptance criteria for the issue
 3. Add relevant tags to the issue. This would help us to track and filter issues.
-4. Select the correct pipeline for the issue (defaults to New Issues )
+4. Select the correct pipeline for the issue (defaults to New Issues)
 5. Mark the issue for a sprint (if known)
 
 ### Managing issues/stories
@@ -158,7 +158,7 @@ ZenHub provides an elegant way to incorporate epics reducing a lot of manual wor
 ### Recurring Team Meetings
 
 - **Standup -** Daily standups can easily be managed using the sprint board. The moderator should select the filter for the current sprint and change filter for assignees as we move forward with the standup. 
-This would ensure that all the tasks the an individual is working on is correctly represented on the sprint board.<br>
+This would ensure that all the tasks an individual is working on is correctly represented on the sprint board.<br>
 
   Everyone should spend approximately 1 minute to discuss the work without interruption, answering questions like - What did I do yesterday? What is the plan for today? What help I might need from others? After everyone turns, we can discuss go-backs if any. The Moderator keeps track of the time.
 
