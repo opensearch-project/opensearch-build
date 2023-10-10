@@ -20,6 +20,34 @@ This issue captures the state of the OpenSearch release, its assignee (Release M
 
 Please refer to the following link for the release version dates: [Release Schedule and Maintenance Policy](https://opensearch.org/releases.html).
 
+### [Entrance Criteria](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#entrance-criteria-to-start-release-window)
+Criteria | Status | Description  | Comments
+-- | -- | -- | --
+Documentation draft PRs are up and in tech review for all component changes | :red_circle: |   |
+Sanity testing is done for all components | :red_circle: |   |
+Code coverage has not decreased (all new code has tests) | :red_circle: |   |
+Release notes are ready and available for all components | :red_circle: |   |
+Roadmap is up-to-date (information is available to create release highlights) | :red_circle: |   |
+Release ticket is cut, and there's a forum post announcing the start of the window | :red_circle: |   |
+[Any necessary security reviews](##Security-Reviews) are complete | :red_circle: |   |
+
+### OpenSearch {{ env.VERSION }} [exit criteria](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#exit-criteria-to-close-release-window) status:
+Criteria | Status | Description  | Comments
+-- | -- | -- | --
+Performance tests are run, results are posted to the release ticket and there no unexpected regressions | :red_circle: |   |
+No unpatched vulnerabilities of medium or higher severity that have been publicly known for more than 60 days | :red_circle: |   |
+Documentation has been fully reviewed and   signed off by the documentation community. | :red_circle: |   |
+All integration tests are passing |  :red_circle: |   |
+Release blog is ready | :red_circle: |   |
+
+### OpenSearch-Dashboards {{ env.VERSION }} [exit criteria](https://github.com/opensearch-project/.github/blob/main/RELEASING.md#exit-criteria-to-close-release-window) status:
+Criteria | Status | Description  | Comments
+-- | -- | -- | --
+Documentation has been fully reviewed and   signed off by the documentation community | :red_circle: |   |
+No unpatched vulnerabilities of medium or higher severity that have been publicly known for more than 60 days | :red_circle: |   |
+All integration tests are passing | :red_circle: |   |
+Release blog is ready | :red_circle: |   |
+
 ### [Preparation](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#preparation)
 
 - [ ] [Release manager](https://github.com/opensearch-project/opensearch-build/blob/main/RELEASE_PROCESS_OPENSEARCH.md#release-manager) assigned.
