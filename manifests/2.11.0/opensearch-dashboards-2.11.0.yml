@@ -9,16 +9,16 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 6fe4542a4a4ccdfa97662a5b04e3a4c0d1104d76
+    ref: 3c838160fe6b453881ba326c6c8f57e11cf10fdd
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 215910295d8b00d49cbd25f30c074b82a6f84889
+    ref: b0877cfc1a55a5b024493732b2892e22a221ff94
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 3f169c42d71d2dcf5775d7629c9cbbc94d36ed9f
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 6a24c3189a82afcf64d6e3e6bb38ef0850ffb76d
+    ref: 854efb3fe8c1dcae2648c03451d199fb6275ba2d
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
