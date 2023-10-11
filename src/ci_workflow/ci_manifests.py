@@ -27,15 +27,27 @@ class CiManifests:
             return CiInputManifest
 
     @staticmethod
-    def __check_duplicate_component_names(file: TextIOWrapper) -> None:
+    def __get_duplicate_component_names(count_component_names: Counter) -> list:
+        duplicate_component_names = []
+        for component_name, count in count_component_names.items():
+            if count > 1:
+                duplicate_component_names.append(component_name)
+        return duplicate_component_names
 
+    @staticmethod
+    def __check_duplicate_component_names(file: TextIOWrapper) -> None:
         yaml_dict = yaml.safe_load(file)
         component_names = []
         for component in yaml_dict['components']:
             component_names.append(component['name'])
+        count_component_names = Counter(component_names)
 
-        if set(Counter(component_names).values()) != set([1]):
-            raise ValueError(f"Duplicate components in manifest {file.name}")
+        if set(count_component_names.values()) != set([1]):
+            duplicate_component_names = CiManifests.__get_duplicate_component_names(count_component_names)
+            duplicate_component_names_string = ', '.join(duplicate_component_names)
+            raise ValueError(f"Duplicate components in manifest {file.name}. "
+                             f"Following are the components:"
+                             f"\n{duplicate_component_names_string}")
         file.seek(0)
 
     @classmethod
