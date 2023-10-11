@@ -62,7 +62,7 @@ The OpenSearch and OpenSearch-Dashboards Docker image is based on [AmazonLinux c
     ```
     ./build-image-single-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch-dashboards.al2.dockerfile -p opensearch-dashboards -a arm64 -t opensearch-dashboards-1.0.0.tar.gz
     ```
-#### Build multi-arch image with this commands (only support x64 + arm64 in one image for now), the image will immediately uploaded to a docker registry so you need to provide docker repo name:
+#### Build multi-arch image with this commands (only support x64 + arm64 in one image for now), the image will be immediately uploaded to a docker registry, so you need to provide docker repo name:
   * OpenSearch 1.0.0:
     ```
     ./build-image-multi-arch.sh -v 1.0.0 -f ./dockerfiles/opensearch.al2.dockerfile -p opensearch -a "x64,arm64" -r "<Docker Hub RepoName>/<Docker Image Name>:<Tag Name>"
@@ -116,7 +116,7 @@ Here are three example scenarios of using above variables:
      $ docker run -it --network="host" -e opensearchproject/opensearch-dashboards:1.1.0
      ```
 
-### Disable Performance Analyzer Agent Cli and Related Configurations
+### Disable Performance Analyzer Agent CLI and Related Configurations
 (This change is added after OpenSearch 2.4.0 and after OpenSearch 1.3.6)
 
   * 1 for OpenSearch:

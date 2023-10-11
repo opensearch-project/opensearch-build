@@ -1,4 +1,4 @@
-- [OpenSearch Releas Process](#opensearch-release-process)
+- [OpenSearch Release Process](#opensearch-release-process)
   - **[Preparation](#preparation)**
     - [Release Terminology and Knowledge Center](#release-terminology-and-knowledge-center)
       - [Definitions](#definitions)
@@ -103,7 +103,7 @@ These manifests are integral to the comprehensive testing of the core and compon
 
 | OpenSearch | OpenSearch Dashboards | 
 | --- | --- |
-| [opensearch-2.8.0-test.yml](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.8.0/opensearch-2.8.0-test.yml) | [opensearch-dashboards-2.8.0-test.yml](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.8.0/opensearch-dashboards-2.8.0-test.yml)
+| [opensearch-2.8.0-test.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-2.8.0/manifests/2.8.0/opensearch-2.8.0-test.yml) | [opensearch-dashboards-2.8.0-test.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-2.8.0/manifests/2.8.0/opensearch-dashboards-2.8.0-test.yml)
 
 ##### Build Manifest
 
@@ -129,14 +129,14 @@ The final output of the assemble workflow and manifest that is added to the fina
 
 #### AUTOCUT issues
 
-These are the issues created by automation with the distribution build and integ-test workflows failure, the automation detects the component failure and raises an issue in the respective component repo. Sample [integ-test failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/914) and [distribution build failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/732). The created `AUTOCUT` issues will have the updated information with latest build failure details, the automation also detects if the component build has passed and closes the issues automatically. For more details refer the [closeBuildSuccessGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/closeBuildSuccessGithubIssue.groovy) and [createGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/createGithubIssue.groovy) libraries part of the distribution build and integ-test worklows.
+These are the issues created by automation with the distribution build and integ-test workflows failure, the automation detects the component failure and raises an issue in the respective component repo. Sample [integ-test failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/914) and [distribution build failure AUTOCUT issue](https://github.com/opensearch-project/k-NN/issues/732). The created `AUTOCUT` issues will have the updated information with latest build failure details, the automation also detects if the component build has passed and closes the issues automatically. For more details refer the [closeBuildSuccessGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/closeBuildSuccessGithubIssue.groovy) and [createGithubIssue.groovy](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/vars/createGithubIssue.groovy) libraries part of the distribution build and integ-test workflows.
 
 
 #### Build Workflows
 
-| Wokflow                                                                                                                       | Description         |
+| Workflow                                                                                                                       | Description         |
 | ----------------------------------------------------------------------------------------------------------------------------- | ------------------- |
-| [Check for Build](https://build.ci.opensearch.org/job/check-for-build/)                                                       | Workflow that peridically triggers the distribution workflows using parameterized cron. |
+| [Check for Build](https://build.ci.opensearch.org/job/check-for-build/)                                                       | Workflow that periodically triggers the distribution workflows using parameterized cron. |
 | [OpenSearch Distribution Build](https://build.ci.opensearch.org/job/distribution-build-opensearch/)                           |   Workflow that is responsible to build/assemble the OpenSearch and its components.               |
 | [OpenSearch Dashboards Distribution Build](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/) |   Workflow that is responsible to build/assemble the OpenSearch Dashboards and its components.                  |
 | [OpenSearch Integ Test](https://build.ci.opensearch.org/job/integ-test/)                                                      |      Workflow that runs integ tests for OpenSearch and its components.          |
@@ -147,24 +147,24 @@ These are the issues created by automation with the distribution build and integ
 | [Docker Build](https://build.ci.opensearch.org/job/docker-build/)                                                             |   Workflow that builds the   OpenSearch  and OpenSearch Dashboards docker images           |
 | [Docker Copy](https://build.ci.opensearch.org/job/docker-copy/)                                                               |  Workflow that copies the created docker images to multiple DockerHub and ECR repositories                   |
 | [Docker Scan](https://build.ci.opensearch.org/job/docker-scan/)                                                               |     Workflow that checks vulnerabilities for a given docker image as an input.                |
-| [1.x Maven Publish](https://build.ci.opensearch.org/job/snapshot-maven-publish-1.x/)                                                               |     Workflow that published snapshot maven artifcats, used only for 1.3.x versions. Fore more details check https://github.com/opensearch-project/job-scheduler/issues/319.                |
+| [1.x Maven Publish](https://build.ci.opensearch.org/job/snapshot-maven-publish-1.x/)                                                               |     Workflow that published snapshot maven artifacts, used only for 1.3.x versions. For more details check this [issue-319](https://github.com/opensearch-project/job-scheduler/issues/319).                |
 
 
 #### Release Workflows
 
-| Wokflow                                                                                  | Description         |
+| Workflow                                                                                  | Description         |
 | ---------------------------------------------------------------------------------------- | ------------------- |
 | [Release Notes Tracker](https://build.ci.opensearch.org/job/release-notes-tracker/)      | Workflow that identifies if a component has a release notes added based on the commit history.  |
 | [Promote Repos](https://build.ci.opensearch.org/job/distribution-promote-repos/)         |   Workflow that signs and promotes the APT/YUM repos to the production buckets accessed via the cloudfront.                 |
-| [Promote artifacts](https://build.ci.opensearch.org/job/distribution-promote-artifacts/) | Workflow that signs and promotes all the release artifcats           to the production buckets accessed via the cloudfront.         |
+| [Promote artifacts](https://build.ci.opensearch.org/job/distribution-promote-artifacts/) | Workflow that signs and promotes all the release artifacts           to the production buckets accessed via the cloudfront.         |
 | [Publish to Maven](https://build.ci.opensearch.org/job/publish-to-maven/)                |   Workflow that signs and publishes to the central maven repository.                  |
-| [Docker Promotion](https://build.ci.opensearch.org/job/docker-promotion/)                |  Workflow that promotoes the docker images to production docker repositories.                   |
+| [Docker Promotion](https://build.ci.opensearch.org/job/docker-promotion/)                |  Workflow that promotes the docker images to production docker repositories.                   |
 | [Validation Workflow](https://build.ci.opensearch.org/job/distribution-validation)       |     Workflow that validates the released distribution.                 |
 
 
 #### Creating a New Version
 
-Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.0.0.yml](manifests/2.0.0/opensearch-2.0.0.yml). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
+Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.9.0.yml](manifests/2.9.0/opensearch-2.9.0.yml)). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Release Manager
 
@@ -183,11 +183,11 @@ This issue captures the state of the OpenSearch release, its assignee is respons
 
 #### Release Issue Update
 
-The release issue is created by an [automation workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml). Once the release manager is finalized, the release manager should be updating the created release issue. Sample [Release Issue 2.8.0](https://github.com/opensearch-project/opensearch-build/issues/3434). Update the release issue issue so all `__REPLACE_RELEASE-__` placeholders have actual dates.
+The release issue is created by an [automation workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml). Once the release manager is finalized, the release manager should be updating the created release issue. Sample [Release Issue 2.8.0](https://github.com/opensearch-project/opensearch-build/issues/3434). Update the release issue so all `__REPLACE_RELEASE-__` placeholders have actual dates.
 
 ### Increase the Build Frequency
 
-Increase the build frequency for the this release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile). This will ensure the [Distribution Build](#distribution-build) workflow is called every hour to build and detect the components failure early that are part of the [Input Manifest](#input-manifest).
+Increase the build frequency for the release from once a day (H 1 * * *) to once every hour (H/60 * * * *) in [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile). This will ensure the [Distribution Build](#distribution-build) workflow is called every hour to build and detect the components failure early that are part of the [Input Manifest](#input-manifest).
 
 ### Update the Maven Publish Workflow
 
@@ -199,11 +199,11 @@ This section is not required for a patch release.
 
 ### Component Release Issues
 
-The component release issues are auto created by the workflows part of the build repo [OpenSearch components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/os-release-issues.yml), [OpenSearch Dashboards components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/osd-release-issues.yml). These workflows creates the release issues based on the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) and links back the global release issue part of the build. Sample component release issues created for [2.10.0](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aopensearch-project+%5BRELEASE%5D+Release+version+2.10.0+in%3Atitle+)
+The component release issues are auto created by the workflows part of the build repo [OpenSearch components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/os-release-issues.yml), [OpenSearch Dashboards components](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/osd-release-issues.yml). These workflows create the release issues based on the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md) and links back the global release issue part of the build. Sample component release issues created for [2.10.0](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aopensearch-project+%5BRELEASE%5D+Release+version+2.10.0+in%3Atitle+).
 
 #### Issue Creation Process Overview
 
-Inside the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md), replace the fields `RELEASE_VERSION`, `RELEASE_BRANCH_X`, `RELEASE_BRANCH` and `RELEASE_ISSUE` to desired release values before creating the release issues across the component/plugin repos. Once the fields are replaced use the  `meta` and `gh` cli to create the issues. Find the list of components/plugins from the [opensearch-plugins](https://github.com/opensearch-project/opensearch-plugins) repo (for [OpenSearch](https://github.com/opensearch-project/opensearch-plugins/tree/main/plugins), for [OpenSearch Dashboards](https://github.com/opensearch-project/opensearch-plugins/tree/main/dashboards-plugins)) and use the `meta` cli to create the release issues.  For more details check the [create-an-issue-in-all-plugin-repos](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) section.
+Inside the template [component_release_template.md](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/component_release_template.md), replace the fields `RELEASE_VERSION`, `RELEASE_BRANCH_X`, `RELEASE_BRANCH` and `RELEASE_ISSUE` to desired release values before creating the release issues across the component/plugin repos. Once the fields are replaced, use the  `meta` and `gh` cli to create the issues. Find the list of components/plugins from the [opensearch-plugins](https://github.com/opensearch-project/opensearch-plugins) repo (for [OpenSearch](https://github.com/opensearch-project/opensearch-plugins/tree/main/plugins), for [OpenSearch Dashboards](https://github.com/opensearch-project/opensearch-plugins/tree/main/dashboards-plugins)) and use the `meta` cli to create the release issues.  For more details check the [create-an-issue-in-all-plugin-repos](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#create-an-issue-in-all-plugin-repos) section.
 
 ```
 meta exec "gh issue create --label v2.8.0 --title 'Release version 2.8.0' --body-file /tmp/opensearch-build/.github/ISSUE_TEMPLATE/component_release_template.md"
@@ -211,7 +211,7 @@ meta exec "gh issue create --label v2.8.0 --title 'Release version 2.8.0' --body
 
 ### Release Campaigns
 
-If exists any release specific issues/campaigns link it back to the release issue. Sample linked [issues/campaigns](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1552138916)
+If exists any release specific issues/campaigns, link it back to the release issue. Sample linked [issues/campaigns](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1552138916)
 
 ## Release Branch Readiness
 
@@ -305,7 +305,7 @@ All components (which are ready after completion of version increment)
 
 ### Release Candidate
 
-Now once all the version increment PR’s are completed and all the components are part of the input manifest, now its time to generate the RC. Use the [Distribution Build](#distribution-build) to generate the release candidate. Use the following section as the reference to generate the RC, validate it and broadcast it for a given release. The process of `Release Candidate Generation and Testing` should commence at least 6 days prior to the release date.
+Now once all the version increment PRs are completed and all the components are part of the input manifest, now it's time to generate the RC. Use the [Distribution Build](#distribution-build) to generate the release candidate. Use the following section as the reference to generate the RC, validate it and broadcast it for a given release. The process of `Release Candidate Generation and Testing` should commence at least 6 days prior to the release date.
 
 #### Sample Build details
 
@@ -336,7 +336,7 @@ Following are the RPM integ test jobs for a given RC based on the above section 
 
 #### Docker Build and Scan
 
-Following are the details for the docker image build and scan. The docker images are built using the TAR artifact generated as part of the [Distribution Build](#distribution-build) (From the above example `OS: 7848`, `OSD: 6126`). The [Distribution Build](#distribution-build) workflow with input `BUILD_DOCKER` (Ref [Workflow Trigger](#workflow-trigger)) triggers the [docker-build] workflow as dowmstream.
+Following are the details for the docker image build and scan. The docker images are built using the TAR artifact generated as part of the [Distribution Build](#distribution-build) (From the above example `OS: 7848`, `OSD: 6126`). The [Distribution Build](#distribution-build) workflow with input `BUILD_DOCKER` (Ref [Workflow Trigger](#workflow-trigger)) triggers the [docker-build] workflow as downstream.
 
 | Docker | build | scan |
 |----------|----------|----------|
@@ -346,7 +346,7 @@ Following are the details for the docker image build and scan. The docker images
 
 ##### Docker RC Freeze
 
-This to ensure that [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile) wont re-build periodically and override the docker, the RC docker is created with build number. This step can be skipped if the input `BUILD_DOCKER: build_docker_with_build_number_tag` (Ref [Workflow Trigger](#workflow-trigger) used in the [Distribution Build](#distribution-build).
+This to ensure that [check-for-build.jenkinsfile](https://github.com/opensearch-project/opensearch-build/blob/main/jenkins/check-for-build.jenkinsfile) won't re-build periodically and override the docker, the RC docker is created with build number. This step can be skipped if the input `BUILD_DOCKER: build_docker_with_build_number_tag` (Ref [Workflow Trigger](#workflow-trigger) used in the [Distribution Build](#distribution-build)).
 
 | Docker Freeze | copy |
 |----------|----------|
@@ -361,7 +361,7 @@ For running the benchmark tests, use the `benchmark-test` job part of the [Build
 #### Backwards Compatibility Tests
 
 For more details in running the BWC tests refer [Backwards Compatibility Tests](https://github.com/opensearch-project/opensearch-plugins/blob/main/TESTING.md#bwc-tests-on-distribution-bundle-level) section.
-On board the components/plugins to the test [Test Manifest](#test-manifest) with the `bwc-test` setting. Example as follows.
+On board the components/plugins to the test [Test Manifest](#test-manifest) with the `bwc-test` setting. Example as follows:
 ```
   - name: index-management
     bwc-test:
@@ -375,9 +375,9 @@ Currently, the windows integration tests for a release is manual. The manually t
 
 #### Broadcast and Communication
 
-Broadcast the release candidate in OpenSearch public slack workspace and the release GitHub issue using format [sample broadcast mesaage](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1571201919) to gather votes.
+Broadcast the release candidate in OpenSearch public slack workspace and the release GitHub issue using format [sample broadcast message](https://github.com/opensearch-project/opensearch-build/issues/3434#issuecomment-1571201919) to gather votes.
 
-As a release manager it is essential to ensure the successful completion of all the above mentioned jobs. In the event of failures during integration tests or scans, the release manager should collaborate with the component teams and initiate a re-run to ensure that all jobs are executed successfully.
+As a release manager, it is essential to ensure the successful completion of all the above mentioned jobs. In the event of failures during integration tests or scans, the release manager should collaborate with the component teams and initiate a re-run to ensure that all jobs are executed successfully.
 
 Post all the job related failures in the `Release issue`, Sample [post](https://github.com/opensearch-project/opensearch-build/issues/3331#issuecomment-1550461519).
 
@@ -387,7 +387,7 @@ All the failed logs are in s3 accessed through the cloudfront. Sample [link](htt
 
 #### Release Candidate Lock
 
-Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary else manually run the build workflow and declare new release candidate.
+Stop builds for this version of OpenSearch and/or OpenSearch Dashboards in order to avoid accidental commits going in unknowingly. Restart only if necessary, else manually run the build workflow and declare new release candidate.
 
 Once the RC is finalized, in order to exclude the release from running periodically, at this point it is necessary for the release manager to lock the input manifest and update the `check-for-build.jenkins` to remove it from the scheduled execution, sample [PR](https://github.com/opensearch-project/opensearch-build/pull/3523/files).
 
@@ -400,7 +400,7 @@ Ensure that all pre-release activities listed below are completed before proceed
 
 #### Release Labeled Issues
 
-Verify all issues labeled with with this release have been resolved. Coordinate with the core/components team to close the gaps in resolving the issues labeled with with this release.
+Verify all issues labeled with this release have been resolved. Coordinate with the core/components team to close the gaps in resolving the issues labeled with this release.
 
 #### Go or No-Go
 
@@ -420,7 +420,7 @@ Get the Go / No-Go votes from project management committee (PMC) before staging 
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Windows   | [os-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/233/)                                                                                              | [osd-windows-zip-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/234/)                                                                                                |
 | Debian    | [os-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/235/),  [os-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/236/)            | [osd-deb-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/237/),    [osd-deb-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/238/)           |
-| TAR       | [os-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/243/),       [os-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/246/)       | [osd-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/244/),              [osd-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/245/) |
+| TAR       | [os-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/243/),       [os-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/246/)       | [osd-tar-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/245/), [osd-tar-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/244/)               |
 | RPM       | [os-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/239/),             [os-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/240/) | [osd-rpm-arm64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/241/),         [osd-rpm-x64](https://build.ci.opensearch.org/job/distribution-promote-artifacts/242/)      |
 
 
@@ -434,7 +434,7 @@ Coordinate with the plugin teams and create a consolidates release notes. Sample
 Release the artifacts to production distribution channels, update the website and inform the community of the release.
 
 #### Maven Promotion
-Promote OpenSearch to maven, trigger the `publish-to-maven worfklow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
+Promote OpenSearch to maven, trigger the `publish-to-maven workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/publish-to-maven/17/console).
 
 #### Docker Promotion
 Publish the images to docker and ECR, trigger the `docker promotion workflow` (Ref [Release Workflows](#release-workflows)), sample [run](https://build.ci.opensearch.org/job/docker-promotion/32/console).
@@ -453,11 +453,11 @@ Coordinate with the documentation website team to ensure the changes are in plac
 
 ##### Advertise on Social Media
 
-Coordinate with the project management team to ensure the social media advertisement is completed
+Coordinate with the project management team to ensure the social media advertisement is completed.
 
 #### Release Validation
 
-Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifcats, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
+Use the validation workflow (Ref [Release Workflows](#release-workflows)) to validate the published artifacts, sample [validation workflow run](https://build.ci.opensearch.org/job/distribution-validation/3/console).
 
 ### Release Checklist
 
@@ -497,7 +497,7 @@ The release manager for the current release should ensure that a release manager
 
 ## Communication Templates
 
-Please utilize the provided communication templates to effectively coordinate with the teams involved in the release process. These templates are designed to assist you in communicating through the GitHub release issue and the public Slack channel called `#release`.
+Please utilize the provided communication templates to effectively coordinate with the teams involved in the release process. These templates are designed to assist you in communicating through the GitHub release issue and the [public Slack #releases channel](https://opensearch.slack.com/archives/C0561HRK961).
 
 ### Release Announcement
 
