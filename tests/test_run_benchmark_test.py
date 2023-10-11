@@ -15,7 +15,7 @@ import pytest
 from run_benchmark_test import main
 
 
-class TestRunPerfTest(unittest.TestCase):
+class TestRunBenchmarkTest(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
@@ -66,3 +66,10 @@ class TestRunPerfTest(unittest.TestCase):
         main()
         self.assertEqual(0, os_mock_runner.call_count)
         self.assertEqual(1, plugin_mock_runner.call_count)
+
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--distribution-url", "test.url", "--distribution-version", "2.10.0",
+                                  "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
+    @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
+    def test_default_execute_benchmark_test_without_manifest(self, mock_runner: Mock) -> None:
+        main()
+        self.assertEqual(1, mock_runner.call_count)
