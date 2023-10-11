@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 70f84776f7cfac59df496573710bb28c6825be88
+    ref: da5d82942385c34544016cf361b517c2bb3d36c4
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: f729cc019a35297875953f6bb6330730d4634b1b
+    ref: e9c5da00fd63fa4b38207909ca6d2a97284a7a26
     platforms:
       - linux
       - windows
