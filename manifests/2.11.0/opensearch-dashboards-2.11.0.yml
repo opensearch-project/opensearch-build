@@ -12,13 +12,13 @@ components:
     ref: 3c838160fe6b453881ba326c6c8f57e11cf10fdd
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: b0877cfc1a55a5b024493732b2892e22a221ff94
+    ref: 31c9fe94600c2a05931ed86ffa79826c3dbabb74
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 3f169c42d71d2dcf5775d7629c9cbbc94d36ed9f
+    ref: 022a3f5f2e1e47b71affd3428720e3babdbef9ce
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 854efb3fe8c1dcae2648c03451d199fb6275ba2d
+    ref: 24aa9f34774563438fe8982ba73ef4a19d9276f1
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
@@ -31,7 +31,7 @@ components:
     ref: ff5fb8027f0263ea04cf991f75febcdce88ce80b
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: 5f32b78294adb2a5704dc33d9267d580430a1952
+    ref: 3aed10d2e1228295f2af07f8a0c6eda79f50d794
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
     ref: fdc9f446301987eda68cb821b099268566ab6a5a
@@ -43,13 +43,13 @@ components:
     ref: 9f2f96b5755b92037842d208681cab09900a7c2a
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 7c573cba222c48711cd0fd170ef5e08486d4a131
+    ref: e9b2c05421b7edff1e6b36806e98694120163ca6
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: 4b03bee10ee9fc88c2228a4d75e573b643c7c58a
+    ref: e74f59908c0b51cca676ab667f4629fed1ba0629
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: 3bb8afea634a364c78ed3431cad20e5263688fdb
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: a869ba08361b0ce089e7bff3cd6ea09b2c558787
+    ref: 93424f903bc8069bc2cfa609905051dec4f43273
