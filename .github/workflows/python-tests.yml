@@ -9,7 +9,7 @@ jobs:
     with:
       platform: centos7
       usage: opensearch
-      build_ref: ${github.ref}
+      build_ref: main
 
   python-tests:
     strategy:
