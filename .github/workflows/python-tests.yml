@@ -6,9 +6,6 @@ on: [push, pull_request]
 jobs:
   Get-CI-Image-Tag:
     uses: ./.github/workflows/get-ci-image-tag.yml
-    with:
-      platform: centos7
-      usage: opensearch
 
   python-tests:
     strategy:

@@ -3,11 +3,12 @@ name: Get CI Image Tag
 on:
   workflow_call:
     inputs:
-      platform:
-        required: true
+      product:
+        required: false
         type: string
-      usage:
-        required: true
+        default: 'opensearch'
+      platform:
+        required: false
         type: string
       build_ref:
         required: false
@@ -37,7 +38,17 @@ jobs:
       - name: Get ci image version from opensearch-build repository scripts
         id: step-ci-image-version-linux
         run: |
+          PRODUCT=${{ inputs.product }}
+          PLATFORM=${{ inputs.platform }}
+          if [[ -z "$PLATFORM" ]]; then
+              if [[ "$PRODUCT" = "opensearch" ]]; then
+                  PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
+              else
+                  PLATFORM="rockylinux8"
+              fi
+          fi
           crane version
-          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p ${{ inputs.platform }} -u ${{ inputs.usage }} -t build | head -1`
+          echo $PRODUCT $PLATFORM
+          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t build | head -1`
           echo $CI_IMAGE_VERSION
           echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT
