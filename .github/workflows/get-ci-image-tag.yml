@@ -10,7 +10,6 @@ on:
       platform:
         required: false
         type: string
-        default: 'centos7'
       build_ref:
         required: false
         type: string
@@ -41,9 +40,11 @@ jobs:
         run: |
           PRODUCT=${{ inputs.product }}
           PLATFORM=${{ inputs.platform }}
-          if [[ ! -z "$PLATFORM" ]]; then
-              if [[ "$PRODUCT" != "opensearch" ]]; then
-                  PLATFORM="rockylinux8" # Temp measure before centos7 deprecation on opensearch for k-NN
+          if [[ -z "$PLATFORM" ]]; then
+              if [[ "$PRODUCT" = "opensearch" ]]; then
+                  PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
+              else
+                  PLATFORM="rockylinux8"
               fi
           fi
           crane version
