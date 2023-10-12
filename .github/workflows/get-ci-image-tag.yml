@@ -1,3 +1,4 @@
+---
 name: Get CI Image Tag
 on:
   workflow_call:
@@ -30,9 +31,9 @@ jobs:
       - name: Checkout opensearch-build repository
         uses: actions/checkout@v2
         with:
-            repository: 'opensearch-project/opensearch-build'
-            ref: ${{ inputs.build_ref }}
-            path: 'opensearch-build'
+          repository: 'opensearch-project/opensearch-build'
+          ref: ${{ inputs.build_ref }}
+          path: 'opensearch-build'
       - name: Get ci image version from opensearch-build repository scripts
         id: step-ci-image-version-linux
         run: |
@@ -40,5 +41,3 @@ jobs:
           CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p ${{ inputs.platform }} -u ${{ inputs.usage }} -t build | head -1`
           echo $CI_IMAGE_VERSION
           echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT
-
-
