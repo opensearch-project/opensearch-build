@@ -39,15 +39,15 @@ jobs:
       - name: Get ci image version from opensearch-build repository scripts
         id: step-ci-image-version-linux
         run: |
-          PRODUCT=${{ inputs.platform }}
+          PRODUCT=${{ inputs.product }}
           PLATFORM=${{ inputs.platform }}
-          if [[ ! -z \$PLATFORM ]]; then
-              if [[ \$PRODUCT != "opensearch" ]]; then
+          if [[ ! -z "$PLATFORM" ]]; then
+              if [[ "$PRODUCT" != "opensearch" ]]; then
                   PLATFORM="rockylinux8" # Temp measure before centos7 deprecation on opensearch for k-NN
               fi
           fi
           crane version
-          echo \$PRODUCT \$PLATFORM
-          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p \$PLATFORM -u \$PRODUCT -t build | head -1`
+          echo $PRODUCT $PLATFORM
+          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u \PRODUCT -t build | head -1`
           echo $CI_IMAGE_VERSION
           echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT
