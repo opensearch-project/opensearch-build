@@ -7,8 +7,6 @@ on:
     paths:
       - 'manifests/**/*.yml'
       - '!manifests/templates/**/'
-  schedule:
-    - cron: 0 0 * * *
 
 jobs:
   list-changed-manifests:
