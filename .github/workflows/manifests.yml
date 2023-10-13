@@ -2,43 +2,40 @@
 name: manifests
 
 on:
-  push:
   pull_request:
     paths:
       - 'manifests/**/*.yml'
       - '!manifests/templates/**/'
-  schedule:
-    - cron: 0 0 * * *
 
 jobs:
-  list-manifests11:
+  list-changed-manifests:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
-      - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2<2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get changed manifest files
+        uses: tj-actions/changed-files@v39
+        id: list-changed-manifests
+        with:
+          files: manifests/**/opensearch*.yml
+          json: true
+          quotepath: false
+          dir_names: false
 
-  list-manifests17:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v3
-      - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls manifests/**/opensearch*.yml | awk -F/ '{if($2>2)print$0}' | jq -R -s -c 'split("\n")[:-1]')"
-
+      - name: Set unique changed manifests as matrix
+        id: set-matrix
+        run: echo "matrix={\"manifest\":${{ steps.list-changed-manifests.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
   manifest-checks-jdk11:
-    needs: list-manifests11
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
       JDK_VERSION: 11
     strategy:
-      matrix:
-        manifest: ${{ fromJson(needs.list-manifests11.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
@@ -57,14 +54,13 @@ jobs:
           ./ci.sh ${{ matrix.manifest }} --snapshot
 
   manifest-checks-jdk17:
-    needs: list-manifests17
+    needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
       JDK_VERSION: 17
     strategy:
-      matrix:
-        manifest: ${{ fromJson(needs.list-manifests17.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - name: Set Up JDK ${{ env.JDK_VERSION }}
