@@ -12,20 +12,20 @@ components:
     ref: 3c838160fe6b453881ba326c6c8f57e11cf10fdd
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 31c9fe94600c2a05931ed86ffa79826c3dbabb74
+    ref: 07cf4ff6612df8860ac1d8f0751e20316218081c
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 022a3f5f2e1e47b71affd3428720e3babdbef9ce
+    ref: f1aac6cd908bffea460c75d2bca3ad6c70184537
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 24aa9f34774563438fe8982ba73ef4a19d9276f1
+    ref: 2159bfc43a50045b8ec07f97ff642dd08c9af552
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
-    ref: 93092dbf97820c257d9c51a2856321e83a0a4eee
+    ref: 4d441b5261b0c475c5ab795e18e6c620281bbb4e
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: aeb4974e45acf4b00ab6ffa66f28e5ff1c3d51b0
+    ref: 70f97eff251f9c177c303324135bf572a6f6e0ff
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: ff5fb8027f0263ea04cf991f75febcdce88ce80b
@@ -34,7 +34,7 @@ components:
     ref: 3aed10d2e1228295f2af07f8a0c6eda79f50d794
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: fdc9f446301987eda68cb821b099268566ab6a5a
+    ref: 52f255a1c378b3bd1b1071e61d0380f29430b80e
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
     ref: 58d9170136ab59708e2d72b089080d24cd856171
@@ -49,7 +49,7 @@ components:
     ref: e74f59908c0b51cca676ab667f4629fed1ba0629
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 3bb8afea634a364c78ed3431cad20e5263688fdb
+    ref: bcfb48867679fa07e75a623f4ca456d46d7364cb
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: 93424f903bc8069bc2cfa609905051dec4f43273
+    ref: cec1fce8edbde4d9a107d96270463228381c94bf

@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: fdf4b36ad42e8b8db4c51692ddb8301b417aeef0
+    ref: 4a3c770b86ed0ea668797e3a4dd2ef740e031424
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -52,13 +52,13 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: c3e53e20a69dc8eb401653594a130c2a4fd4b6bd
+    ref: bc03bd4746e3b1e23dec8d615d70e1d841cb6dc1
     platforms:
       - linux
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 5c3a3c2fab950abc368a2ab69f483f825c2284d2
+    ref: 9a49f40456218de9134656c14051818c5616ef05
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 78c8c89f318ebee78a5f9ea398cafd9aea33e3fb
+    ref: f8ff706930030c444a3d018caf1f8cc42e1977c4
     platforms:
       - linux
       - windows
@@ -123,7 +123,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 34ee39d04c0721ab52375d65f16b64b46726a140
+    ref: b729164dcec202a81778d2bae65fc7e035c84fd9
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 7b7be1c42ab70b79b8674c85bf6edf0f65cbbe44
+    ref: 765ab362554f995608263820435bb8155493d75f
     platforms:
       - linux
       - windows
