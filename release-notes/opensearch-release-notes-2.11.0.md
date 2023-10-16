@@ -53,7 +53,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Dashboards Query Workbench
-
 * Add table acceleration flyout ([#128](https://github.com/opensearch-project/dashboards-query-workbench/pull/128)) ([#135](https://github.com/opensearch-project/dashboards-query-workbench/pull/135)) ([#137](https://github.com/opensearch-project/dashboards-query-workbench/pull/137)) ([#140](https://github.com/opensearch-project/dashboards-query-workbench/pull/140))
 * Update validations for acceleration ([#133](https://github.com/opensearch-project/dashboards-query-workbench/pull/133))
 * Add materialized view visual builder and query builder ([#129](https://github.com/opensearch-project/dashboards-query-workbench/pull/129))
@@ -63,7 +62,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch Dashboards Reporting
-
 * Enable Reporting for new OSD Discover module ([#184](https://github.com/opensearch-project/dashboards-reporting/pull/184)) ([#190](https://github.com/opensearch-project/dashboards-reporting/pull/190)) ([#212](https://github.com/opensearch-project/dashboards-reporting/pull/212))
 
 
@@ -372,7 +370,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ### OpenSearch Index Management
 * Increment version to 2.11.0-SNAPSHOT. ([#922](https://github.com/opensearch-project/index-management/pull/922))
-
 
 
 ### OpenSearch Job Scheduler
