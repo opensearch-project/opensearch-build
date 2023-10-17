@@ -1,0 +1,54 @@
+---
+name: Get CI Image Tag
+on:
+  workflow_call:
+    inputs:
+      product:
+        required: false
+        type: string
+        default: 'opensearch'
+      platform:
+        required: false
+        type: string
+      build_ref:
+        required: false
+        type: string
+        default: 'main'
+    outputs:
+      ci-image-version-linux:
+        description: The ci image version for linux build
+        value: ${{ jobs.Get-CI-Image-Tag.outputs.output-ci-image-version-linux }}
+
+jobs:
+  Get-CI-Image-Tag:
+    runs-on: ubuntu-latest
+    outputs:
+      output-ci-image-version-linux: ${{ steps.step-ci-image-version-linux.outputs.ci-image-version-linux }}
+    steps:
+      - name: Install crane
+        uses: iarekylew00t/crane-installer@v1
+        with:
+          crane-release: v0.15.2
+      - name: Checkout opensearch-build repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'opensearch-project/opensearch-build'
+          ref: ${{ inputs.build_ref }}
+          path: 'opensearch-build'
+      - name: Get ci image version from opensearch-build repository scripts
+        id: step-ci-image-version-linux
+        run: |
+          PRODUCT=${{ inputs.product }}
+          PLATFORM=${{ inputs.platform }}
+          if [[ -z "$PLATFORM" ]]; then
+              if [[ "$PRODUCT" = "opensearch" ]]; then
+                  PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
+              else
+                  PLATFORM="rockylinux8"
+              fi
+          fi
+          crane version
+          echo $PRODUCT $PLATFORM
+          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t build | head -1`
+          echo $CI_IMAGE_VERSION
+          echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT
