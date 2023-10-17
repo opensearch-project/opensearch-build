@@ -45,7 +45,7 @@ class CiManifests:
         if set(count_component_names.values()) != set([1]):
             duplicate_component_names = CiManifests.__get_duplicate_component_names(count_component_names)
             duplicate_component_names_string = ', '.join(duplicate_component_names)
-            raise ValueError(f"Found {duplicate_component_names_string} as a duplicate component(s) in manifest {file.name}. "
+            raise ValueError(f"Found {duplicate_component_names_string} as a duplicate component(s) in manifest {file.name}. ")
         file.seek(0)
 
     @classmethod
