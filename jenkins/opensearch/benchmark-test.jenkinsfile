@@ -232,6 +232,7 @@ pipeline {
                         currentBuild.description = "Running benchmark test for build number: ${BUILD_ID} Manifest: ${BUNDLE_MANIFEST_URL}"
                     }
                     else {
+                        BUNDLE_MANIFEST = ''
                         env.HAS_SECURITY = "false"
                         env.ARCHITECTURE = "x64"
                         echo "HAS_SECURITY: ${env.HAS_SECURITY}"
