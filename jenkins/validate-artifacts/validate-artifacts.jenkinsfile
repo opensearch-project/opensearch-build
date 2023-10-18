@@ -33,12 +33,12 @@ pipeline {
     parameters {
         string(
             name: 'OPENSEARCH_ARTIFACT_URL',
-            description: 'Enter url link of the OpenSearch artifact',
+            description: 'Enter OpenSearch artifact URL',
             trim: true
         )
         string(
             name: 'OPENSEARCH_DASHBOARDS_ARTIFACT_URL',
-            description: 'Enter url link of the OpenSearch artifact, to be provided along with OPENSEARCH_ARTIFACT_URL for validation',
+            description: 'Enter OpenSearch-Dashboards artifact URL',
             trim: true
         )
         string(
@@ -70,25 +70,21 @@ pipeline {
             description: 'Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
             trim: true,
         )
-        string(
+        choice(
             name: 'OPTIONAL_ARGS',
-            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only',
-            trim: true,
-            defaultValue: "using-staging-artifact-only"
+            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only.',
+            choices: ['using-staging-artifact-only', 'validate-digest-only'],
         )
-        string(
+        choice(
             name: 'PROJECTS',
-            description: 'Enter opensearch or opensearch-dashboards',
-            trim: true,
-            defaultValue: "opensearch"
+            description: 'Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards).',
+            choices: ['opensearch', 'Both']
         )
-        string(
+        choice(
             name: 'ARTIFACT_TYPE',
-            description: 'Determine the artifact type among staging or production ',
-            trim: true,
-            defaultValue: "production"
+            description: 'Determine the artifact type among staging or production.',
+            choices: ['production', 'staging'],
         )
-
 
     }
 
@@ -102,6 +98,10 @@ pipeline {
                     OPENSEARCH_ARTIFACT_URL ? url_paths["opensearch"] = OPENSEARCH_ARTIFACT_URL : null
                     OPENSEARCH_DASHBOARDS_ARTIFACT_URL ? url_paths['opensearch-dashboards'] = OPENSEARCH_DASHBOARDS_ARTIFACT_URL : null
 
+                    if (PROJECTS == 'Both') {
+                        PROJECTS = "opensearch opensearch-dashboards"
+                    }
+
                     if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL && OPENSEARCH_ARTIFACT_URL == "") {
                         currentBuild.result = 'ABORTED'
                         error("Provide OPENSEARCH_ARTIFACT_URL to validate")
@@ -112,11 +112,9 @@ pipeline {
                         DISTRIBUTION = url_paths.values().find { it.contains("tar.gz") } ? "tar" : (url_paths.values().find { it.contains("rpm") } ? "rpm" : "yum")
                     }
 
-                    env.FILE_PATH = url_paths
-
                     if(VERSION == '' && OPENSEARCH_ARTIFACT_URL == '') {
                         currentBuild.result = 'ABORTED'
-                        error("Provide either version or URLs to validate")
+                        error("Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value")
                     }
 
                     if (DISTRIBUTION.contains('docker') && (OS_BUILD_NUMBER == '' || OSD_BUILD_NUMBER == '')) {
@@ -191,6 +189,9 @@ pipeline {
                                                         stage("${local_distribution}") {
                                                             unstash "validate-artifacts-$BUILD_NUMBER"
 
+                                                            OS_BUILD_NUMBER = OS_BUILD_NUMBER ?: "latest"
+                                                            OSD_BUILD_NUMBER = OSD_BUILD_NUMBER ?: "latest"
+
                                                             validateArtifacts(
                                                                 version: "$VERSION",
                                                                 distribution: "${local_distribution}",
@@ -228,20 +229,21 @@ pipeline {
         stage('Validate artifacts from urls'){
             when {
                 expression {
-                    VERSION == '' && OPENSEARCH_ARTIFACT_URL != ''
+                    VERSION == ''
                 }
             }
-            agent {
-                docker {
-                    label agent_nodes["$ARCHITECTURE"]
-                    image docker_images["$DISTRIBUTION"]
-                    args docker_args["$DISTRIBUTION"]
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
+            agent {label agent_nodes["x64"] }
             steps {
                 script {
+                    agent {
+                        docker {
+                            label agent_nodes["$ARCHITECTURE"]
+                            image docker_images["$DISTRIBUTION"]
+                            args docker_args["$DISTRIBUTION"]
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
 
                     if (OPENSEARCH_ARTIFACT_URL) {
                         env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
