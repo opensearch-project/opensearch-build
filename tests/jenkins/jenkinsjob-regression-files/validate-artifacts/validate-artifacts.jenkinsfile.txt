@@ -9,7 +9,7 @@
             validate-artifacts.script(groovy.lang.Closure)
          validate-artifacts.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
-         validate-artifacts.stage(Validation Stage, groovy.lang.Closure)
+         validate-artifacts.stage(Validate, groovy.lang.Closure)
             validate-artifacts.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host])
             validate-artifacts.script(groovy.lang.Closure)
                validate-artifacts.stash({includes=**, name=validate-artifacts-123})

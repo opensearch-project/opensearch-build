@@ -56,7 +56,7 @@ pipeline {
         )
         string(
             name: 'ARCHITECTURE',
-            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults "x64 arm64"',
+            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
             trim: true,
             defaultValue: "x64 arm64"
         )
