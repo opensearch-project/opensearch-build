@@ -26,6 +26,7 @@ case "${ARCH}" in
        JDKS+="2e3c19c1707205c6b90cc04b416e8d83078ed98417d5a69dce3cf7dc0d7cfbca@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.3_7.tar.gz "
        JDKS+="5e8d7b3189364afd78d936bad140dbe1e7025d4b96d530ed5536d035c21afb7c@https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.1%2B10/OpenJDK19U-jdk_aarch64_linux_hotspot_19.0.1_10.tar.gz "
        JDKS+="b16c0271899de1f0e277dc0398bfff11b54511765f104fa938929ac484dc926d@https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.1%2B9/OpenJDK20U-jdk_aarch64_linux_hotspot_20.0.1_9.tar.gz "
+       JDKS+="33e440c237438aa2e3866d84ead8d4e00dc0992d98d9fd0ee2fe48192f2dbc4b@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21%2B35/OpenJDK21U-jdk_aarch64_linux_hotspot_21_35.tar.gz "
        ;;
    amd64|x86_64)
        # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
@@ -35,6 +36,7 @@ case "${ARCH}" in
        JDKS+="81f5bed21077f9fbb04909b50391620c78b9a3c376593c0992934719c0de6b73@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.3_7.tar.gz "
        JDKS+="163da7ea140210bae97c6a4590c757858ab4520a78af0e3e33129863d4087552@https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.1%2B10/OpenJDK19U-jdk_x64_linux_hotspot_19.0.1_10.tar.gz "
        JDKS+="43ad054f135a7894dc87ad5d10ad45d8e82846186515892acdbc17c2c5cd27e4@https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.1%2B9/OpenJDK20U-jdk_x64_linux_hotspot_20.0.1_9.tar.gz "
+       JDKS+="82f64c53acaa045370d6762ebd7441b74e6fda14b464d54d1ff8ca941ec069e6@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21%2B35/OpenJDK21U-jdk_x64_linux_hotspot_21_35.tar.gz "
        ;;
    *)
        echo "Unsupported arch: ${ARCH}"
