@@ -26,7 +26,7 @@ class TestRunSecureBenchmarkTestScript extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('5.10.0')
+                        .defaultVersion('5.10.2')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
