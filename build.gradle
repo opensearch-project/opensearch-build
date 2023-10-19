@@ -33,6 +33,7 @@ dependencies {
     testImplementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.4.1'
     testImplementation group: 'com.lesfurets', name:'jenkins-pipeline-unit', version: '1.13'
+    implementation group: 'org.json', name: 'json', version: '20231013'
 }
 
 configurations.all {
