@@ -18,6 +18,8 @@ from test_workflow.json_args import JsonArgs
 # Contains the arguments required to run a perf test.
 class BenchmarkArgs:
     bundle_manifest: IO
+    distribution_url: str
+    distribution_version: str
     stack_suffix: str
     config: IO
     keep: bool
@@ -47,8 +49,10 @@ class BenchmarkArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-        parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.",
-                            required=True)
+        parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
+        parser.add_argument("--distribution-url", dest="distribution_url", help="Link to a downloadable OpenSearch tarball.")
+        parser.add_argument("--distribution-version", dest="distribution_version",
+                            help="provide OpenSearch version if using distribution-url param.")
         parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance test")
         parser.add_argument("--component", dest="component", default="OpenSearch",
                             help="Component name that needs to be performance tested")
@@ -104,7 +108,9 @@ class BenchmarkArgs:
                             const=logging.DEBUG, dest="logging_level")
 
         args = parser.parse_args()
-        self.bundle_manifest = args.bundle_manifest
+        self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
+        self.distribution_url = args.distribution_url if args.distribution_url else None
+        self.distribution_version = args.distribution_version if args.distribution_version else None
         self.stack_suffix = args.suffix if args.suffix else None
         self.config = args.config
         self.keep = args.keep
@@ -131,3 +137,8 @@ class BenchmarkArgs:
         self.telemetry = args.telemetry
         self.telemetry_params = args.telemetry_params if args.telemetry_params else None
         self.logging_level = args.logging_level
+
+        if self.bundle_manifest is None and self.distribution_url is None:
+            raise Exception('Please provide either --bundle-manifest or --distribution-url to run the performance test.')
+        elif self.distribution_url and self.distribution_version is None:
+            raise Exception("--distribution-version is required parameter while using --distribution-url param.")

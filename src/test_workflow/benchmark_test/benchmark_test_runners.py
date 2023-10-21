@@ -21,5 +21,5 @@ class BenchmarkTestRunners:
     }
 
     @classmethod
-    def from_args(cls, args: BenchmarkArgs, test_manifest: Union[BundleManifest, BuildManifest]) -> BenchmarkTestRunner:
+    def from_args(cls, args: BenchmarkArgs, test_manifest: Union[BundleManifest, BuildManifest] = None) -> BenchmarkTestRunner:
         return cls.RUNNERS.get(args.component, BenchmarkTestRunnerOpenSearchPlugins)(args, test_manifest)

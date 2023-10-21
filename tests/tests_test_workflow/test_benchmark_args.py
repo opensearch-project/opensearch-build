@@ -65,3 +65,23 @@ class TestBenchmarkArgs(unittest.TestCase):
         self.assertEqual(test_args.additional_config,
                          '{"opensearch.experimental.feature.replication_type.enabled": "true", "key": "value"}')
         self.assertEqual(test_args.jvm_sys_props, "key1=value1,key2=value2")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "--distribution-url", "https://artifacts.opensearch.org/2.10.0/opensearch-2.10.0-linux-x64.tar.gz",
+                                  "--distribution-version", "2.10.0", "--config", TEST_CONFIG_PATH, "--workload", "test"])
+    def test_benchmark_with_distribution_url_and_version(self) -> None:
+        test_args = BenchmarkArgs()
+        self.assertEqual(test_args.distribution_url, "https://artifacts.opensearch.org/2.10.0/opensearch-2.10.0-linux-x64.tar.gz")
+        self.assertEqual(test_args.distribution_version, "2.10.0")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "--distribution-url", "https://artifacts.opensearch.org/2.10.0/opensearch-2.10.0-linux-x64.tar.gz",
+                                  "--distribution-version", None, "--config", TEST_CONFIG_PATH, "--workload", "test"])
+    def test_benchmark_with_distribution_url_and_without_version(self) -> None:
+        with self.assertRaises(Exception) as context:
+            BenchmarkArgs()
+        self.assertEqual(str(context.exception), "--distribution-version is required parameter while using --distribution-url param.")
+
+    @patch("argparse._sys.argv", [ARGS_PY, "--config", TEST_CONFIG_PATH, "--workload", "test"])
+    def test_benchmark_without_distribution_url_and_without_manifest(self) -> None:
+        with self.assertRaises(Exception) as context:
+            BenchmarkArgs()
+        self.assertEqual(str(context.exception), "Please provide either --bundle-manifest or --distribution-url to run the performance test.")

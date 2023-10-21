@@ -16,7 +16,7 @@
   - [Min snapshots](#min-snapshots)
   - [CI/CD Environment](#cicd-environment)
   - [Build Numbers](#build-numbers)
-  - [Latest Distribution Url](#latest-distribution-url)
+  - [Latest Distribution URL](#latest-distribution-url)
   - [Testing the Distribution](#testing-the-distribution)
   - [Checking Release Notes](#checking-release-notes)
   - [Signing Artifacts](#signing-artifacts)
@@ -27,7 +27,7 @@
   - [Releasing for Linux](#releasing-for-linux)
   - [Releasing for FreeBSD](#releasing-for-freebsd)
   - [Releasing for Windows](#releasing-for-windows)
-  - [Releasing for MacOS](#releasing-for-macos)
+  - [Releasing for macOS](#releasing-for-macos)
 - [Utilities](#utilities)
   - [Checking Out Source](#checking-out-source)
   - [Cross-Platform Builds](#cross-platform-builds)
@@ -52,9 +52,9 @@ The OpenSearch project releases as versioned distributions of OpenSearch, OpenSe
 
 #### Release labels:
 
-* **Alpha** - The code is released with instructions to build. Built distributions of the software may not be available. Some features many not be complete. Additional testing and developement work is planned. Distributions will be postfixed with `-alphaX` where "X" is the number of the alpha version  (e.g., "2.0-alpha1").
-* **Beta** - Built distributions of the software are available. All features are completed. Additional testing and developement work is planned. Distributions will be postfixed with `-betaX` where "X" is the number of the beta version  (e.g., "2.0.0-beta1").
-* **Release Candidate** - Built distributions of the software are available. All features are completed. Code is tested and minimal validation remains. At this stage the software is potentially stable and will release unless signficant bugs emerge. Distributions will be postfixed with `-rcX` where "X" is the number of the release candidate version (e.g., "2.0.0-rc1").
+* **Alpha** - The code is released with instructions to build. Built distributions of the software may not be available. Some features many not be complete. Additional testing and development work is planned. Distributions will be postfixed with `-alphaX` where "X" is the number of the alpha version  (e.g., "2.0-alpha1").
+* **Beta** - Built distributions of the software are available. All features are completed. Additional testing and development work is planned. Distributions will be postfixed with `-betaX` where "X" is the number of the beta version  (e.g., "2.0.0-beta1").
+* **Release Candidate** - Built distributions of the software are available. All features are completed. Code is tested and minimal validation remains. At this stage the software is potentially stable and will release unless significant bugs emerge. Distributions will be postfixed with `-rcX` where "X" is the number of the release candidate version (e.g., "2.0.0-rc1").
 * **Generally Available** - Built distributions of the software are available. All features are completed and documented. All testing is completed. Distributions for generally available versions are not postfixed with an additional label (e.g., "2.0.0").
 
 
@@ -82,15 +82,15 @@ See [build workflow](src/build_workflow) for more information.
 ./assemble.sh builds/opensearch/manifest.yml
 ```
 
-The assembling step takes output from the build step, installs plugins, and assembles a full distribition into the `dist` folder. 
+The assembling step takes output from the build step, installs plugins, and assembles a full distribution into the `dist` folder. 
 
 See [assemble workflow](src/assemble_workflow) for more information.
 
 #### Building Patches
 
-A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.3.1.yml](/manifests/1.3.1/opensearch-1.3.1.yml) for an example.
+A patch release contains output from previous versions mixed with new source code. Manifests can mix such references. See [opensearch-1.3.1.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-1.3.1/manifests/1.3.1/opensearch-1.3.1.yml) for an example.
 
-OpenSearch is often released with changes in `opensearch-min`, and no changes to plugins other than a version bump. This can be performed by a solo Engineer following [a cookbook](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin). See also [opensearch-build#1375](https://github.com/opensearch-project/opensearch-build/issues/1375) which aims to automate incrementing versions for the next development iteration.
+OpenSearch is often released with changes in `opensearch-min`, and no changes to plugins other than a version bump. This can be performed by a solo engineer following [a cookbook](https://github.com/opensearch-project/opensearch-plugins/blob/main/META.md#increment-a-version-in-every-plugin). See also [opensearch-build#1375](https://github.com/opensearch-project/opensearch-build/issues/1375) which aims to automate incrementing versions for the next development iteration.
 
 #### Min Snapshots
 
@@ -100,7 +100,7 @@ Linux:
 ```
 https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-linux-x64-latest.tar.gz
 ```
-Macos:
+macOS:
 ```
 https://artifacts.opensearch.org/snapshots/core/opensearch/<version>-SNAPSHOT/opensearch-min-<version>-SNAPSHOT-darwin-x64-latest.tar.gz
 ```
@@ -118,7 +118,7 @@ See [jenkins](./jenkins) and [docker](./docker) for more information.
 
 #### Build Numbers
 
-The distribution url and the build output manifest include a Jenkins auto-incremented build number. For example, the [manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) from [OpenSearch build 5905](https://build.ci.opensearch.org/job/distribution-build-opensearch/5905/) contains the following.
+The distribution URL and the build output manifest include a Jenkins auto-incremented build number. For example, the [manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) from [OpenSearch build 5905](https://build.ci.opensearch.org/job/distribution-build-opensearch/5905/) contains the following.
 
 ```yml
 build:
@@ -130,22 +130,22 @@ build:
   id: '5905'
 ```
 
-#### Latest Distribution Url
+#### Latest Distribution URL
 
 Use the `latest` keyword in the URL to obtain the latest build for a given version. For example `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/rpm/dist/opensearch/manifest.yml` redirects to [build 5905](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/5905/linux/x64/rpm/dist/opensearch/manifest.yml) at the time of writing this.
 
-The `latest` keyword is resolved to a specific build number by checking an `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/index.json). This file has contents such as this.
+The `latest` keyword is resolved to a specific build number by checking the `index.json` [file](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/index.json). This file has contents such as this.
 
 ```
 {"latest":"5905"}
 ```
 
-The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for different combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` url only works when the distribution build job succeeds at least once for the given product and version.
+The file is updated when a distribution build job is completed for the given product and version (or is created when such distribution job succeeds for the first time). Since one distribution build job consists of multiple stages for different combinations of distribution type, platform and architecture, the `index.json` is only modified once all stages succeed. With this said, the `latest` URL only works when the distribution build job succeeds at least once for the given product and version.
 
-The resolution logic is implemented in the [CloudFront url rewriter](https://github.com/opensearch-project/opensearch-ci/tree/main/resources/cf-url-rewriter). 
-The TTL (time to live) is set to `5 mins` which means that the `latest` url may need up to 5 mins to get new contents after `index.json` is updated.
+The resolution logic is implemented in the [CloudFront URL rewriter](https://github.com/opensearch-project/opensearch-ci/tree/main/resources/cf-url-rewriter). 
+The TTL (time to live) is set to `5 mins` which means that the `latest` URL may need up to 5 mins to get new contents after `index.json` is updated.
 
-All the artifacts accessible through the regular distribution url can be accessed by the `latest` url. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
+All the artifacts accessible through the regular distribution URL can be accessed by the `latest` URL. This includes both OpenSearch Core, OpenSearch Dashboards Core and their plugins. 
 
 For example, you can download the latest .tar.gz distribution build of OpenSearch 2.2.0 directly at `https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/opensearch-2.2.0-linux-x64.tar.gz`, without having to first download and parse the [complete build manifest](https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.2.0/latest/linux/x64/tar/dist/opensearch/manifest.yml).
 
@@ -167,7 +167,7 @@ See [src/test_workflow](./src/test_workflow) for more information.
 
 #### Checking Release Notes
 
-Workflow to check if the release notes exists or not and shows the latest commit for OpenSearch and Dashboard distributions.
+Workflow to check if the release notes exist or not and shows the latest commit for OpenSearch and Dashboard distributions.
 
 To run:
 ```bash
@@ -189,12 +189,12 @@ The tool currently supports following platforms for signing.
 
 ##### PGP
 
-Anything can be signed using PGP signing eg: tarball, any type of file, etc. A .sig file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc as well as maven artifacts are signed using PGP signing. See [this page](https://opensearch.org/verify-signatures.html) for how to verify signatures.
+Anything can be signed using PGP signing eg: tarball, any type of file, etc. A `.sig` file will be returned containing the signature. OpenSearch and OpenSearch dashboards distributions, components such as data prepper, etc. as well as maven artifacts are signed using PGP signing. See [this page](https://opensearch.org/verify-signatures.html) for how to verify signatures.
 
 
 ##### Windows
 
-Windows signing can be used to sign windows executables such as .msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1, and any PE file that is supported by [Signtool.exe](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
+Windows signing can be used to sign windows executables such as `.msi, .msp, .msm, .cab, .dll, .exe, .appx, .appxbundle, .msix, .msixbundle, .sys, .vxd, .ps1, .psm1`, and any PE file that is supported by [Signtool.exe](https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe). Various windows artifacts such as SQL OBDC, opensearch-cli, etc are signed using this method. 
 Windows code signing uses EV (Extended Validated) code signing certificates.
 
 |  Types of signing/Details   | Digest           | Cipher  | Key Size|
@@ -221,9 +221,9 @@ The Linux / Windows release is managed by a team at Amazon following [this relea
 
 The FreeBSD ports and packages for OpenSearch are managed by a community [OpenSearch Team](https://wiki.freebsd.org/OpenSearch) at FreeBSD.  When a new release is rolled out, this team will update the port and commit it to the FreeBSD ports tree. Anybody is welcome to help the team by providing patches for [upgrading the ports](https://docs.freebsd.org/en/books/porters-handbook/book/#port-upgrading) following the [FreeBSD Porter's Handbook](https://docs.freebsd.org/en/books/porters-handbook/book/) instructions.
 
-#### Releasing for MacOS
+#### Releasing for macOS
 
-At this moment there's no official MacOS distribution. However, this project does support building and assembling OpenSearch for MacOS. See [opensearch-build#37](https://github.com/opensearch-project/opensearch-build/issues/37) and [#38](https://github.com/opensearch-project/opensearch-build/issues/38) for more details.
+At this moment there's no official macOS distribution. However, this project does support building and assembling OpenSearch for macOS. See [opensearch-build#37](https://github.com/opensearch-project/opensearch-build/issues/37) and [#38](https://github.com/opensearch-project/opensearch-build/issues/38) for more details.
 
 ### Utilities
 
@@ -239,7 +239,7 @@ See [src/checkout_workflow](./src/checkout_workflow) for more information.
 
 #### Cross-Platform Builds
 
-You can perform cross-platform builds. For example, build and assemble a Windows distribution on MacOS.
+You can perform cross-platform builds. For example, build and assemble a Windows distribution on macOS.
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plugin during assemble
@@ -247,13 +247,13 @@ export JAVA_HOME=$(/usr/libexec/java_home) # required by OpenSearch install-plug
 ./assemble.sh builds/opensearch/manifest.yml
 ```
 
-This will produce `dist/opensearch-1.3.0-SNAPSHOT-windows-x64.zip` on Linux and MacOS.
+This will produce `dist/opensearch-1.3.0-SNAPSHOT-windows-x64.zip` on Linux and macOS.
 
 #### Sanity Checking the Bundle
 
 This workflow runs sanity checks on every component present in the bundle, executed as part of the [manifests workflow](.github/workflows/manifests.yml) in this repository. It ensures that the component GitHub repositories are correct and versions in those components match the OpenSearch version.
 
-The following example sanity-checks components in the the OpenSearch 1.3.0 manifest.
+The following example sanity-checks components in the OpenSearch 1.3.0 manifest.
 
 ```bash
 ./ci.sh manifests/1.3.0/opensearch-1.3.0.yml --snapshot
