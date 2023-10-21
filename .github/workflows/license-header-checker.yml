@@ -9,4 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Add License Header
-        run: npx @kt3k/license-checker
+        uses: kt3k/license_checker@v1.0.6
