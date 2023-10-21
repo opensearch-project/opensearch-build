@@ -5,7 +5,7 @@
   
 ## Scripts
 
-This folder contains default and custom scripts located by [src/paths/script_finder.py](../src/paths/script_finder.py)), and the following scripts which are used in either tar/docker or legacy github actions.
+This folder contains default and custom scripts located by [src/paths/script_finder.py](../src/paths/script_finder.py), and the following scripts which are used in either tar/docker or legacy github actions.
 
 #### Run Deployment Script
 
@@ -20,7 +20,7 @@ This is a script to deploy a single node OpenSearch + OpenSearch-Dashboards clus
     ulimit -n 65535
     ```
 
-  * You must make this edit on the LINUX host and restart docker deamon for OpenSearch process to run.
+  * You must make this edit on the LINUX host and restart docker daemon for OpenSearch process to run.
     This will also prevent errors during Dashboards integtest (cypress) so that headless chrome will not crash.
     * Option 1 (Recommended):
       ```
@@ -67,7 +67,7 @@ This is a script to deploy a single node OpenSearch + OpenSearch-Dashboards clus
     ```
     ./deploy_single_tar_cluster.sh -v 1.0.0 -t releases -a arm64 -s false
     ```
-  * The script allows in process wait and cleanup, meaning a `SIGINT / SIGTERM / SIGEXIT` or any child process throlwing `EXIT` signal will result in termination of the
+  * The script allows in process wait and cleanup, meaning a `SIGINT / SIGTERM / SIGEXIT` or any child process throwing `EXIT` signal will result in termination of the
     cluster as well as the temporary working directory.
   * If you want to run the deployment in detach mode, just run the command with `nohup <commands> &`.
 

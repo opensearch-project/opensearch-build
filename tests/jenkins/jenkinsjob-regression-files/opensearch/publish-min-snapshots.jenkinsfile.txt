@@ -126,7 +126,7 @@
             publish-min-snapshots.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.echo(Switching to Java 17 on Windows Docker Container)
-               publish-min-snapshots.sh(scoop reset `scoop list jdk | grep 17 | head -1 | cut -d ' ' -f1`)
+               publish-min-snapshots.sh(scoop reset `scoop list jdk | cut -d ' ' -f1 | grep 17 | head -1`)
                publish-min-snapshots.buildManifest({componentName=OpenSearch, inputManifest=manifests/3.0.0/opensearch-3.0.0.yml, platform=windows, architecture=x64, distribution=zip, snapshot=true})
                   buildManifest.sh(./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot)
                publish-min-snapshots.echo(Uploading windows min snapshots to S3)
