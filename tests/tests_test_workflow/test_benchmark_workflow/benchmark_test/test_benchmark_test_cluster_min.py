@@ -31,7 +31,7 @@ class TestBenchmarkTestClusterMin(unittest.TestCase):
         self.security = True
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
                                      "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234",
-                                     "isInternal": "true"}}
+                                     "isInternal": "true", "IamRoleArn": ""}}
         self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
@@ -47,3 +47,4 @@ class TestBenchmarkTestClusterMin(unittest.TestCase):
         self.assertTrue("minDistribution=true" in self.benchmark_test_cluster.params)
         self.assertTrue("distributionUrl=https://artifacts.opensearch.org/snapshots/core/opensearch/2.9.0-SNAPSHOT/"
                         "opensearch-min-2.9.0-SNAPSHOT-linux-arm64-latest.tar.gz" in self.benchmark_test_cluster.params)
+        self.assertTrue("customRoleArn" not in self.benchmark_test_cluster.params)
