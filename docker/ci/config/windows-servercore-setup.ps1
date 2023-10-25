@@ -206,6 +206,7 @@ scoop install unzip
 
 # Install docker
 scoop install docker
+scoop install docker-compose
 
 # Scoop cleanup
 scoop cache rm *
