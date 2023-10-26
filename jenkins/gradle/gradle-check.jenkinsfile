@@ -105,7 +105,8 @@ pipeline {
 
                     echo("Build Cause: ${BUILD_CAUSE}")
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        def dockerLogin = sh(returnStdout: true, script: "set +x && echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin").trim()
+
+                        def dockerLogin = sh(returnStdout: true, script: "set +x && echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin || echo docker error").trim()
 
                         if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
                             def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
@@ -133,7 +134,7 @@ pipeline {
                             )
                         }
 
-                        sh("docker logout")
+                        sh("docker logout || echo docker error")
                     }
                 }
             }
@@ -157,7 +158,7 @@ pipeline {
         always {
             script {
                 postCleanup()
-                sh "docker logout && docker image prune -f --all"
+                sh "(docker logout && docker image prune -f --all) || echo docker error"
             }
         }
     }
