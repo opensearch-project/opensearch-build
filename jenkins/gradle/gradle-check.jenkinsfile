@@ -50,7 +50,7 @@ pipeline {
         choice(
             name: 'AGENT_LABEL',
             description: 'Choose which jenkins agent to run gradle check on',
-            choices: ['Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host', 'Jenkins-Agent-Windows2019-X64-M58xlarge-Single-Host'],
+            choices: ['Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host', 'Jenkins-Agent-Windows2019-X64-C524xlarge-Single-Host'],
         )
     }
     triggers {
@@ -106,7 +106,7 @@ pipeline {
                     echo("Build Cause: ${BUILD_CAUSE}")
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
 
-                        def dockerLogin = sh(returnStdout: true, script: "set +x && echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin || echo docker error").trim()
+                        def dockerLogin = sh(returnStdout: true, script: "set +x && (echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin) || echo docker error").trim()
 
                         if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
                             def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
