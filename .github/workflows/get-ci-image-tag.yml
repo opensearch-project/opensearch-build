@@ -14,6 +14,13 @@ on:
         required: false
         type: string
         default: 'main'
+      version:
+        required: false
+        type: string
+      type:
+        required: false
+        type: string
+        default: 'build'
     outputs:
       ci-image-version-linux:
         description: The ci image version for linux build
@@ -30,7 +37,7 @@ jobs:
         with:
           crane-release: v0.15.2
       - name: Checkout opensearch-build repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'opensearch-project/opensearch-build'
           ref: ${{ inputs.build_ref }}
@@ -40,6 +47,7 @@ jobs:
         run: |
           PRODUCT=${{ inputs.product }}
           PLATFORM=${{ inputs.platform }}
+          TYPE=${{ inputs.type }}
           if [[ -z "$PLATFORM" ]]; then
               if [[ "$PRODUCT" = "opensearch" ]]; then
                   PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
@@ -49,6 +57,6 @@ jobs:
           fi
           crane version
           echo $PRODUCT $PLATFORM
-          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t build | head -1`
+          CI_IMAGE_VERSION=`opensearch-build/docker/ci/get-ci-images.sh -p $PLATFORM -u $PRODUCT -t $TYPE | head -1`
           echo $CI_IMAGE_VERSION
           echo "ci-image-version-linux=$CI_IMAGE_VERSION" >> $GITHUB_OUTPUT

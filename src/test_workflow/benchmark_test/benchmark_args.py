@@ -40,6 +40,9 @@ class BenchmarkArgs:
     enable_remote_store: bool
     workload: str
     workload_params: str
+    test_procedure: str
+    exclude_tasks: str
+    include_tasks: str
     benchmark_config: IO
     user_tag: str
     target_hosts: str
@@ -97,6 +100,14 @@ class BenchmarkArgs:
         parser.add_argument("--workload-params", dest="workload_params",
                             help="With this parameter you can inject variables into workloads. Parameters differs "
                                  "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
+        parser.add_argument("--test-procedure", dest="test_procedure",
+                            help="Defines a test procedure to use. You can find a list of test procedures by using "
+                                 "opensearch-benchmark list test-procedures. E.g. --test-procedure=\"ingest-only\"")
+        parser.add_argument("--exclude-tasks", dest="exclude_tasks",
+                            help="Defines a comma-separated list of test procedure tasks not to run. E.g. --exclude-tasks=\"index-append\"")
+        parser.add_argument("--include-tasks", dest="include_tasks",
+                            help="Defines a comma-separated list of test procedure tasks to run. By default, all tasks listed in a test procedure array are run."
+                                 " E.g. --include-tasks=\"scroll\"")
         parser.add_argument("--capture-node-stat", dest="telemetry", action="append_const", const="node-stats",
                             help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
         parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const",
@@ -130,6 +141,9 @@ class BenchmarkArgs:
         self.data_instance_type = args.data_instance_type if args.data_instance_type else None
         self.workload = args.workload
         self.workload_params = args.workload_params if args.workload_params else None
+        self.test_procedure = args.test_procedure if args.test_procedure else None
+        self.exclude_tasks = args.exclude_tasks if args.exclude_tasks else None
+        self.include_tasks = args.include_tasks if args.include_tasks else None
         self.benchmark_config = args.benchmark_config if args.benchmark_config else None
         self.user_tag = args.user_tag if args.user_tag else None
         self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None

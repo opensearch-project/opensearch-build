@@ -1,6 +1,6 @@
    docker-re-release.run()
       docker-re-release.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
-      docker-re-release.library({identifier=jenkins@5.7.2, retriever=null})
+      docker-re-release.library({identifier=jenkins@5.6.0, retriever=null})
       docker-re-release.pipeline(groovy.lang.Closure)
          docker-re-release.timeout({time=2, unit=HOURS})
          docker-re-release.echo(Executing on agent [label:none])
@@ -8,7 +8,7 @@
             docker-re-release.script(groovy.lang.Closure)
                docker-re-release.patchDockerImage({product=opensearch, tag=1, re_release=true})
                   patchDockerImage.legacySCM(groovy.lang.Closure)
-                  patchDockerImage.library({identifier=jenkins@5.8.0, retriever=null})
+                  patchDockerImage.library({identifier=jenkins@main, retriever=null})
                   patchDockerImage.sh(#!/bin/bash
     set -e
     set +x
@@ -23,7 +23,7 @@
                   InputManifest.asBoolean()
                   patchDockerImage.buildDockerImage({inputManifest=manifests/1.3.0/opensearch-1.3.0.yml, buildNumber=7756, buildDate=20230619, buildOption=re_release_docker_image, artifactUrlX64=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.0/7756/linux/x64/tar/dist/opensearch/opensearch-1.3.0-linux-x64.tar.gz, artifactUrlArm64=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.3.0/7756/linux/arm64/tar/dist/opensearch/opensearch-1.3.0-linux-arm64.tar.gz})
                      buildDockerImage.legacySCM(groovy.lang.Closure)
-                     buildDockerImage.library({identifier=jenkins@5.8.0, retriever=null})
+                     buildDockerImage.library({identifier=jenkins@5.5.0, retriever=null})
                      buildDockerImage.readYaml({file=manifests/1.3.0/opensearch-1.3.0.yml})
                      InputManifest.asBoolean()
                      buildDockerImage.echo(Triggering docker-build)

@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 
-class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
+class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
     @Override
     @Before
     void setUp() {
@@ -59,10 +59,10 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
         binding.setVariable('BUILD_NUMBER', '307')
         binding.setVariable('BUILD_URL', 'test://artifact.url')
         binding.setVariable('BUILD_ID', '1234')
-        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
-        binding.setVariable('BUNDLE_MANIFEST_URL', 'test://artifact.url')
-        binding.setVariable('DISTRIBUTION_URL', '')
-        binding.setVariable('DISTRIBUTION_VERSION', '')
+        binding.setVariable('BUNDLE_MANIFEST', '')
+        binding.setVariable('BUNDLE_MANIFEST_URL', '')
+        binding.setVariable('DISTRIBUTION_URL', 'https://artifacts.com/artifact.tar.gz')
+        binding.setVariable('DISTRIBUTION_VERSION', '3.0.0')
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
         binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
@@ -98,23 +98,14 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
     }
 
     @Test
-    public void testRunNonSecurityBenchmarkTestScript_verifyPipeline() {
+    public void testRunBenchmarkTestScriptDistributionUrl_verifyPipeline() {
         super.testPipeline("jenkins/opensearch/benchmark-test.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-distribution-url.jenkinsfile")
     }
 
     @Test
-    void testRunNonSecurityBenchmarkTestScript_verifyArtifactDownloads() {
+    void testRunBenchmarkTestScriptDistributionUrl_verifyArtifactDownloads() {
         runScript("jenkins/opensearch/benchmark-test.jenkinsfile")
-
-        def curlCommands = getCommandExecutions('sh', 'curl').findAll {
-            shCommand -> shCommand.contains('curl')
-        }
-
-        assertThat(curlCommands.size(), equalTo(3))
-        assertThat(curlCommands, hasItem(
-                "curl -sSL test://artifact.url --output tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml".toString()
-        ))
 
         def s3DownloadCommands = getCommandExecutions('s3Download', 'bucket').findAll {
             shCommand -> shCommand.contains('bucket')
@@ -128,7 +119,7 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
     }
 
     @Test
-    void testRunNonSecurityBenchmarkTestScript_verifyScriptExecutions() {
+    void testRunBenchmarkTestScriptDistributionUrl_verifyScriptExecutions() {
         runScript("jenkins/opensearch/benchmark-test.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
@@ -136,30 +127,16 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
         }
 
         assertThat(testScriptCommands.size(), equalTo(1))
-        assertThat(testScriptCommands, hasItem(
-                "./test.sh benchmark-test --bundle-manifest tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml   --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag distribution-build-id:1236,arch:x64,os-commit-id:22408088f002a4fc8cdd3b2ed7438866c14c5069,run-type:test,security-enabled:false --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge   --data-node-storage 100   ".toString()
+        assertThat(testScriptCommands, hasItems(
+                "./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge   --data-node-storage 100   ".toString()
         ))
     }
 
     @Test
-    void testRunSecurityBenchmarkTestScript_verifyJob_aborted() {
-        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-bundle.yml')
-        binding.setVariable('HAS_SECURITY', true)
-        helper.registerAllowedMethod("cfnDescribe", [Map.class]) { throw exception }
-        helper.registerAllowedMethod('sh', [String.class], { String cmd ->
-            updateBuildStatus('ABORTED')
-        })
-        runScript("jenkins/opensearch/benchmark-test.jenkinsfile")
-
-        assertJobStatusAborted()
-        assertCallStack()
-        assertCallStack().contains("cfnDescribe({stack=opensearch-infra-stack-307-1234-x64})")
-        assertCallStack().contains("Stack 'opensearch-infra-stack-307-1234-x64' does not exist, nothing to remove")
-    }
-
-    @Test
-    void testRunNonSecurityBenchmarkTestScript_verifyJob_aborted() throws Exception{
-        binding.setVariable('BUNDLE_MANIFEST', 'tests/jenkins/data/opensearch-1.3.0-non-security-bundle.yml')
+    void testRunBenchmarkTestScriptDistributionUrl_verifyJob_aborted() throws Exception {
+        binding.setVariable('BUNDLE_MANIFEST', '')
+        binding.setVariable('DISTRIBUTION_URL', 'https://artifacts.com/artifact.tar.gz')
+        binding.setVariable('DISTRIBUTION_VERSION', '3.0.0')
         binding.setVariable('HAS_SECURITY', false)
         helper.registerAllowedMethod("cfnDescribe", [Map.class]) { args -> return true}
         helper.registerAllowedMethod('sh', [String.class], { String cmd ->
@@ -169,8 +146,8 @@ class TestRunNonSecBenchmarkTestScript extends BuildPipelineTest{
 
         assertJobStatusAborted()
         assertCallStack()
-        assertCallStack().contains("cfnDescribe({stack=opensearch-infra-stack-307-1234-x64})")
-        assertCallStack().contains("cfnDelete({stack=opensearch-infra-stack-307-1234-x64, pollInterval=1000})")
+        assertCallStack().contains("cfnDescribe({stack=opensearch-infra-stack-307})")
+        assertCallStack().contains("cfnDelete({stack=opensearch-infra-stack-307, pollInterval=1000})")
     }
 
     def getCommandExecutions(methodName, command) {
