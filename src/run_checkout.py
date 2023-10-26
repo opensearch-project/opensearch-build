@@ -12,7 +12,7 @@ import sys
 
 from checkout_workflow.checkout_args import CheckoutArgs
 from git.git_repository import GitRepository
-from manifests.input_manifest import InputComponentFromSource, InputManifest
+from manifests.input_manifest import InputManifest
 from system import console
 from system.temporary_directory import TemporaryDirectory
 
@@ -27,12 +27,12 @@ def main() -> int:
 
         for component in manifest.components.select():
             logging.info(f"Checking out {component.name}")
-            if type(component) is InputComponentFromSource:
+            if hasattr(component, "repository"):
                 with GitRepository(
-                    component.repository,
-                    component.ref,
+                    component.repository,    # type: ignore[attr-defined]
+                    component.ref,  # type: ignore[attr-defined]
                     os.path.join(work_dir.name, component.name),
-                    component.working_directory,
+                    component.working_directory,  # type: ignore[attr-defined]
                 ) as repo:
                     logging.debug(f"Checked out {component.name} into {repo.dir}")
 

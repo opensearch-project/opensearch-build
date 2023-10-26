@@ -1,0 +1,85 @@
+---
+schema-version: '1.0'
+build:
+  name: OpenSearch
+  version: 2.11.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 4dcad6dd1fd45b6bd91f041a041829c8687278fa
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: aaa4c2a061601105c62cbaf9838a0a4bd9986aa3
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: 0a2fef228bb687995d2e3ddefa88ecf1e191ffd7
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: 916471ac8312d34888e39c592919a5fbbfd79492
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: 2a7f1b01589d893c0b1f153c4edc68295f85d0e5
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: bc03bd4746e3b1e23dec8d615d70e1d841cb6dc1
+    platforms:
+      - linux
+      - windows
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: 9a49f40456218de9134656c14051818c5616ef05
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: 3897ad179437e683033d6918ebb6b4edf439dd4d
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: 51e6c00770d27fb4eabc20c38bdeff23c5c45997
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
