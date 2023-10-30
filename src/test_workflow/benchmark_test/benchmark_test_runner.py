@@ -42,7 +42,7 @@ class BenchmarkTestRunner(abc.ABC):
 
     def get_git_ref(self) -> str:
         if self.test_manifest:
-            os_major_version = self.test_manifest.version.split(".")[0]
+            os_major_version = self.test_manifest.build.version.split(".")[0]
             if os_major_version in ['2', '3']:
                 return 'main'
             else:
