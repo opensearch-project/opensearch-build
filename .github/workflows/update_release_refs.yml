@@ -1,0 +1,46 @@
+name: Update Release Refs
+
+on:
+  workflow_dispatch:
+    inputs:
+      new_version:
+        description: 'New version number'
+        required: true
+
+permissions:
+  id-token: write
+  contents: write
+  issues: write
+
+jobs:
+  update_tags_and_create_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x  # Replace with your desired Python version
+
+    - name: Update Tags
+      run: |
+        python update_release_refs.py 
+
+    # - name: Commit and Push Changes
+    #   run: |
+    #     git config --global user.email "your-email@example.com"
+    #     git config --global user.name "Your Name"
+    #     git add .
+    #     git commit -m "Update tags to ${{ github.event.inputs.new_version }}"
+    #     git push
+
+
+    # - name: Create Pull Request
+    #   uses: actions/checkout@v2
+    #   with:
+    #     ref: "refs/heads/main"  # Replace with the branch you want to create the PR against
+    #     path: ./my-repo # The path to your repository
+
