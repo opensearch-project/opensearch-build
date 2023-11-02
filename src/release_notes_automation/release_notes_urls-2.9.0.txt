@@ -1,0 +1,15 @@
+https://raw.githubusercontent.com/opensearch-project/alerting/2.9.0.0/release-notes/opensearch-alerting.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/anomaly-detection/2.9.0.0/release-notes/opensearch-anomaly-detection.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/asynchronous-search/2.9.0.0/release-notes/opensearch-asynchronous-search.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/common-utils/2.9.0.0/release-notes/opensearch-common-utils.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/geospatial/2.9.0.0/release-notes/opensearch-geospatial.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/k-NN/2.9.0.0/release-notes/opensearch-knn.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/ml-commons/2.9.0.0/release-notes/opensearch-ml-common.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/neural-search/2.9.0.0/release-notes/opensearch-neural-search.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/notifications/2.9.0.0/release-notes/opensearch-notifications.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/observability/2.9.0.0/release-notes/opensearch-observability.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/reporting/2.9.0.0/release-notes/opensearch-reporting.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/performance-analyzer/2.9.0.0/release-notes/opensearch-performance-analyzer.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/security/2.9.0.0/release-notes/opensearch-security.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/security-analytics/2.9.0.0/release-notes/opensearch-security-analytics.release-notes-2.9.0.0.md
+https://raw.githubusercontent.com/opensearch-project/sql/2.9.0.0/release-notes/opensearch-sql.release-notes-2.9.0.0.md
