@@ -32,17 +32,17 @@ class ReleaseNotes:
                 continue
             if type(component) is InputComponentFromSource:
                 table_result.append(self.check(component))
-        
+
         # Sort table_result based on Repo column
         table_result.sort(key=lambda x: x[0])
-        
+
         if self.action_type == "check":
             headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists"]
         elif self.action_type == "compile":
             headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists", "Full Path", "URL"]
         else:
             raise ValueError("Invalid action_type. Use 'check' or 'compile'.")
-        
+
         writer = MarkdownTableWriter(
             table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
             headers=headers,
@@ -72,7 +72,7 @@ class ReleaseNotes:
                     results.append(None)
                     results.append(None)
                 results.append(release_notes.exists())
-                
+
                 if(release_notes.exists()):
                     releasenote = os.path.basename(release_notes.full_path)
                     # print("CHECK release_notes.full_path:", releasenote)

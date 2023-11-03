@@ -12,7 +12,6 @@ from collections import defaultdict
 
 import mistune
 import requests
-from pytablewriter import MarkdownTableWriter
 
 from manifests.input_manifest import InputManifest
 from release_notes_workflow.release_notes import ReleaseNotes
@@ -38,17 +37,17 @@ def main() -> int:
         end_index = url.find('.release-notes', start_index)
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
-        component_name = url[start_index + len('release-notes/') : end_index]
+        component_name = url[start_index + len('release-notes/'):end_index]
         formatted_name = ' '.join(word.capitalize() for word in component_name.split('-'))
         return formatted_name
 
-    def create_urls_file_if_not_exists():
+    def create_urls_file_if_not_exists() -> None:
         # print("enter create_urls_file function")
         urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
         if os.path.exists(urls_filepath):
-            # print("URLs file already exists. Skipping creation.")
+            print("URLs file already exists. Skipping creation.")
             return
-        # print("URLs file does not exist. Creating...")
+        print("URLs file does not exist. Creating...")
 
         release_notes = ReleaseNotes(manifest_file, args.date, args.action)
         table = release_notes.table()
@@ -71,7 +70,7 @@ def main() -> int:
         urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
         with open(urls_filepath, 'w') as urls_file:
             urls_file.writelines('\n'.join(urls))
-        
+
     if args.action == "check":
         # print("check")
         create_urls_file_if_not_exists()
@@ -95,7 +94,7 @@ def main() -> int:
 
     # # TODO: store unknown categories
     # unknown_categories = defaultdict(list)
-    
+
     for url in unique_urls:
         if not url.startswith("#"):
             response = requests.get(url)
@@ -144,7 +143,7 @@ def main() -> int:
 
     # Filter content for each category
     with open(RELEASE_NOTE_MD_path, 'w') as outfile:
-        outfile.write(f"Release Notes {BUILD_VERSION}\n\n")
+        outfile.write(markdown(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
         for category in RELEASENOTES_CATEGORIES.split(','):
             outfile.write(markdown(f'\n## {category}\n\n'))
             for plugin, categories in plugin_data.items():
@@ -155,7 +154,7 @@ def main() -> int:
                 if category.lower() in [cat.lower() for cat in categories.keys()]:
                     # print(f"Category: {category}")
                     outfile.write(markdown(f'\n### {plugin}\n\n'))
-                    
+
                     for cat, content_list in categories.items():
                         # print(f"cat: {cat}")
                         # print(f"content_list: {content_list}")
@@ -178,8 +177,6 @@ def main() -> int:
         shutil.move(RELEASE_NOTE_MD_path, args.output)
     else:
         print(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
-
-    
     return 0
 
 # sub categories obtained:
