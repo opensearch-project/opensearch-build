@@ -1,3 +1,4 @@
+---
 name: Update Release Refs
 
 on:
@@ -17,30 +18,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out the code
-      uses: actions/checkout@v3
+      - name: Check out the code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x  # Replace with your desired Python version
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Replace with your desired Python version
 
-    - name: Update Tags
-      run: |
-        python update_release_refs.py 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
 
-    # - name: Commit and Push Changes
-    #   run: |
-    #     git config --global user.email "your-email@example.com"
-    #     git config --global user.name "Your Name"
-    #     git add .
-    #     git commit -m "Update tags to ${{ github.event.inputs.new_version }}"
-    #     git push
+      - name: Update Tags
+        run: |
+          python .github/workflows/update_release_refs.py "${{ github.workspace }}/manifests/${{ inputs.new_version }}"
+      # ${{ inputs.new_version }}
+      # - name: Commit and Push Changes
+      #   run: |
+      #     git config --global user.email "your-email@example.com"
+      #     git config --global user.name "Your Name"
+      #     git add .
+      #     git commit -m "Update tags to ${{ github.event.inputs.new_version }}"
+      #     git push
 
 
-    # - name: Create Pull Request
-    #   uses: actions/checkout@v2
-    #   with:
-    #     ref: "refs/heads/main"  # Replace with the branch you want to create the PR against
-    #     path: ./my-repo # The path to your repository
-
+      # - name: Create Pull Request
+      #   uses: actions/checkout@v2
+      #   with:
+      #     ref: "refs/heads/main"  # Replace with the branch you want to create the PR against
+      #     path: ./my-repo # The path to your repository

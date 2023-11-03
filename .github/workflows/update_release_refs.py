@@ -1,8 +1,10 @@
 import os
-import re
+import yaml
+import sys
 
+folder_path = sys.argv[1]
 # Define the folder where YAML files are located
-folder_path = "1.3.15"  # Replace with the actual folder path
+# folder_path = f"/manifests/{new_version}"  # Replace with the actual folder path
 
 # Get the folder name and use it as the new version
 new_version = os.path.basename(folder_path)
@@ -14,21 +16,16 @@ same_version_components = ['OpenSearch', 'common-utils']
 for filename in os.listdir(folder_path):
     if filename.endswith('.yml'):
         yaml_file = os.path.join(folder_path, filename)
-        print(yaml_file)
         with open(yaml_file, 'r') as file:
-            yaml_code = file.read()
-
-        # for component_name in same_version_components:
-            # Update the 'ref' for 'OpenSearch' and 'common-utils'
-        ref_pattern = "ref: .*"
-        print(re.findall(ref_pattern,yaml_code))
-        updated_yaml = re.sub(ref_pattern, f"ref: tags/{new_version}", yaml_code)
-        # # Update the 'ref' for other components
-        # other_components_pattern = f"name: (?!{'|'.join(same_version_components)})\w+\n\s+ref: "
-        # updated_yaml = re.sub(other_components_pattern, lambda match: match.group() + ".0", updated_yaml)
-
-        # Save the updated content back to the file
+            data = yaml.safe_load(file)
+        for component in data.get('components', []):
+            if component['name'] in same_version_components:
+                ref = component.get('ref', 'Not found')
+                component['ref'] = f'tags/{new_version}'
+            else:
+                component['ref'] = f'tags/{new_version}.0'
+                
         with open(yaml_file, 'w') as file:
-            file.write(updated_yaml)
+            yaml.dump(data, file)
 
 print(f"Ref values updated in the specified YAML files in the folder. New version: {new_version}")
