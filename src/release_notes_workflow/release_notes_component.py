@@ -26,7 +26,7 @@ class ReleaseNotesComponent:
     @property
     def path(self) -> str:
         release_notes_path = os.path.join(self.root, "release-notes")
-        print("ReleaseNotesComponent path:", release_notes_path)
+        # print("ReleaseNotesComponent path:", release_notes_path)
         return release_notes_path
     
     # combine path with the file in files_in_path such that it ends with the filename
@@ -41,12 +41,12 @@ class ReleaseNotesComponent:
 
     def path_exists(self) -> bool:
         path_exists = os.path.exists(self.path)
-        print("ReleaseNotesComponent path_exists:", path_exists)
+        # print("ReleaseNotesComponent path_exists:", path_exists)
         return path_exists
 
     def exists(self) -> bool:
         files_in_path = os.listdir(self.path)
-        print("ReleaseNotesComponent files_in_path:", files_in_path)
+        # print("ReleaseNotesComponent files_in_path:", files_in_path)
         return self.path_exists() and any(fname.endswith(self.filename) for fname in files_in_path)
 
 class ReleaseNotesOpenSearch(ReleaseNotesComponent):
@@ -54,7 +54,7 @@ class ReleaseNotesOpenSearch(ReleaseNotesComponent):
     @property
     def filename(self) -> str:
         release_notes_filename = f'.release-notes-{self.build_version}.md'
-        print("ReleaseNotesOpenSearch filename:", release_notes_filename)
+        # print("ReleaseNotesOpenSearch filename:", release_notes_filename)
         return release_notes_filename
 
 class ReleaseNotesOpenSearchPlugin(ReleaseNotesComponent):
@@ -62,7 +62,7 @@ class ReleaseNotesOpenSearchPlugin(ReleaseNotesComponent):
     @property
     def filename(self) -> str:
         release_notes_filename = f'.release-notes-{self.build_version}.0.md'
-        print("ReleaseNotesOpenSearchPlugin filename:", release_notes_filename)
+        # print("ReleaseNotesOpenSearchPlugin filename:", release_notes_filename)
         return release_notes_filename
 
 class ReleaseNotesComponents:
@@ -70,8 +70,8 @@ class ReleaseNotesComponents:
     @classmethod
     def from_component(self, component: InputComponentFromSource, build_version: str, root: str) -> ReleaseNotesComponent:
         if component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards':
-            print("ReleaseNotesComponents: Creating ReleaseNotesOpenSearch")
+            # print("ReleaseNotesComponents: Creating ReleaseNotesOpenSearch")
             return ReleaseNotesOpenSearch(component, build_version, root)
         else:
-            print("ReleaseNotesComponents: Creating ReleaseNotesOpenSearchPlugin")
+            # print("ReleaseNotesComponents: Creating ReleaseNotesOpenSearchPlugin")
             return ReleaseNotesOpenSearchPlugin(component, build_version, root)

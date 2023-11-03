@@ -6,12 +6,14 @@
 # compatible open source license.
 
 import os
-import requests
-from collections import defaultdict
-import mistune
 import re
+import shutil
+from collections import defaultdict
 
+import mistune
+import requests
 from pytablewriter import MarkdownTableWriter
+
 from manifests.input_manifest import InputManifest
 from release_notes_workflow.release_notes import ReleaseNotes
 from release_notes_workflow.release_notes_check_args import ReleaseNotesCheckArgs
@@ -57,6 +59,7 @@ def main() -> int:
             table.dump(table_file)
 
         if args.output is not None:
+            print(f"Moving {table_filepath} to {args.output}")
             shutil.move(table_filepath, args.output)
         else:
             with open(table_filepath, 'r') as table_file:
@@ -86,10 +89,6 @@ def main() -> int:
             urls = [line.strip() for line in file if line.strip()]
 
         unique_urls = list(set(urls))
-
-        RELEASE_NOTE_MD_path = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
-        os.makedirs(os.path.dirname(RELEASE_NOTE_MD_path), exist_ok=True)
-        # print(f"RELEASE_NOTE_MD_path: {RELEASE_NOTE_MD_path}")
 
     # store plugin data
     plugin_data = defaultdict(lambda: defaultdict(list))
@@ -139,6 +138,10 @@ def main() -> int:
     # Markdown renderer
     markdown = mistune.create_markdown()
 
+    RELEASE_NOTE_MD_path = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
+    os.makedirs(os.path.dirname(RELEASE_NOTE_MD_path), exist_ok=True)
+    # print(f"RELEASE_NOTE_MD_path: {RELEASE_NOTE_MD_path}")
+
     # Filter content for each category
     with open(RELEASE_NOTE_MD_path, 'w') as outfile:
         outfile.write(f"Release Notes {BUILD_VERSION}\n\n")
@@ -170,7 +173,12 @@ def main() -> int:
                     #     outfile.write('\n')
 
     # print("=====================================================")
-    print(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
+    if args.output is not None:
+        print(f"Moving {RELEASE_NOTE_MD} to {args.output}")
+        shutil.move(RELEASE_NOTE_MD_path, args.output)
+    else:
+        print(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
+
     
     return 0
 
