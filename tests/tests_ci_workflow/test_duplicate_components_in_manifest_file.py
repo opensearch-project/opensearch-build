@@ -21,5 +21,5 @@ class TestDuplicateComponentsInManifestFile(unittest.TestCase):
         self.assertTrue(
             "Found sql, k-NN, performance-analyzer, opensearch-observability, anomaly-detection, "
             "index-management as a duplicate component(s) in manifest "
-            "/home/ch1/Documents/rblcoder/opensearch-build/tests/tests_ci_workflow/data/opensearch-1.3.11-with-duplicates.yml."
+            + manifest_filename
             in str(valueErrorException.exception))
