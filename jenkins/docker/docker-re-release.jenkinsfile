@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@5.6.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.11.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -46,8 +46,7 @@ pipeline {
                         script {
                             patchDockerImage(
                                 product: "${PRODUCT}",
-                                tag: "${TAG}",
-                                re_release: true
+                                tag: "${TAG}"
                             )
                         }
                     }
