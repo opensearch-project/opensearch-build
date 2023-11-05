@@ -1,6 +1,6 @@
 import os
-import yaml
 import sys
+import yaml
 
 folder_path = sys.argv[1]
 # Define the folder where YAML files are located
