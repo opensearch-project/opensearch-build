@@ -29,6 +29,13 @@ def main() -> int:
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 
+    def capitalize_acronyms(formatted_name) -> str:
+        acronyms = ["sql", "ml", "knn"]
+        for acronym in acronyms:
+            pattern = re.compile(re.escape(acronym), re.IGNORECASE)
+            formatted_name = re.sub(pattern, acronym.upper(), formatted_name)
+        return formatted_name
+
     def format_component_name_from_url(url) -> str:
         start_index = url.find("release-notes/")
         if start_index == -1:
@@ -37,8 +44,8 @@ def main() -> int:
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
         component_name = url[start_index + len("release-notes/") : end_index]
-        formatted_name = " ".join(word.capitalize() for word in component_name.split("-"))
-        return formatted_name
+        formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
+        return capitalize_acronyms(formatted_name)
 
     def create_urls_file_if_not_exists() -> None:
         urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
@@ -128,10 +135,14 @@ def main() -> int:
                             content_to_end = content[content_start:]
                         else:
                             content_to_end = content[content_start : content.find(headings[i + 1])]
-                    # remove heading from obtained content to avoid duplication
+                    content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
                     parts = content_to_end.split("*", 1)
                     if len(parts) == 2:
                         content_to_end = "*" + parts[1]
+                    else:
+                        content_to_end = content_to_end.lstrip().lstrip("-")
+                        if len(content_to_end) > 0:
+                            content_to_end = "* " + content_to_end
                     plugin_data[plugin_name][heading].append(content_to_end)
                     # print(plugin_data[plugin_name][heading])
     print("Compilation complete.")
@@ -156,11 +167,11 @@ def main() -> int:
 
             for plugin, categories in plugin_data.items():
                 if category.lower() in [cat.lower() for cat in categories.keys()]:
-                    temp_content.append(markdown(f"\n### {plugin}\n\n"))
                     for cat, content_list in categories.items():
                         if cat.lower() == category.lower():
                             for content in content_list:
                                 if content.strip():
+                                    temp_content.append(markdown(f"\n### {plugin}\n\n"))
                                     temp_content.append(markdown(content))
 
             if len(temp_content) > 1:
@@ -170,14 +181,17 @@ def main() -> int:
                 print(f"\n## {category} was empty\n\n")
 
         # Handle unknown categories
+        temp_content = []
         for plugin, categories in plugin_data.items():
             for cat, content_list in categories.items():
                 if cat.lower() not in RELEASENOTES_CATEGORIES.lower():
-                    outfile.write(markdown(f"\n## {cat.upper()} [NEW CATEGORY]\n\n"))
-                    outfile.write(markdown(f"\n### {plugin}\n\n"))
-                    for content in content_list:
-                        outfile.write(markdown(content))
-                        outfile.write("\n")
+                    temp_content.append(f"\n## {cat.upper()}\n\n")
+                    temp_content.append(f"\n### {plugin}\n\n")
+                    temp_content.extend(content_list)
+        if temp_content:
+            outfile.write(markdown("## NON-COMPLIANT"))
+            for item in temp_content:
+                outfile.write(markdown(item))
 
     if args.output is not None:
         print(f"Moving {RELEASE_NOTE_MD} to {args.output}")
