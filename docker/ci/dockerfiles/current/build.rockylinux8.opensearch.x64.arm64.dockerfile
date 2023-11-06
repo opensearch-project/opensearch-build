@@ -13,6 +13,8 @@
 FROM rockylinux:8
 
 ARG MAVEN_DIR=/usr/local/apache-maven
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Ensure localedef running correct with root permission
 USER 0
@@ -23,10 +25,10 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-
     dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq gh
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
+RUN groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -d $CONTAINER_USER_HOME $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # Add Python dependencies
 RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
@@ -69,7 +71,7 @@ RUN . /etc/profile.d/rvm.sh && rvm install 2.6.0 && rvm --default use 2.6.0 && d
 
 ENV RUBY_HOME=/usr/local/rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=/usr/local/rvm/bin
-ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
 ENV GEM_PATH=$GEM_HOME
 ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 
@@ -87,10 +89,10 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
 RUN pip3 install cmake==3.23.3
 
 # Change User
-USER 1000
-WORKDIR /usr/share/opensearch
+USER $CONTAINER_USER
+WORKDIR $CONTAINER_USER_HOME
 
 # Install fpm for opensearch dashboards core
 RUN gem install fpm -v 1.14.2
-ENV PATH=/usr/share/opensearch/.gem/gems/fpm-1.14.2/bin:$PATH
+ENV PATH=$CONTAINER_USER_HOME/.gem/gems/fpm-1.14.2/bin:$PATH
 RUN fpm -v

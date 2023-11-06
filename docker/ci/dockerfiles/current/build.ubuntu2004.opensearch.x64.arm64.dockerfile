@@ -11,6 +11,8 @@
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Install python dependencies
 RUN apt-get update -y && apt-get install -y software-properties-common
@@ -42,13 +44,13 @@ RUN curl -o- https://www.aptly.info/pubkey.txt | apt-key add - && \
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
+RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch -m opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch 
+RUN groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME -m $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # Install gh cli
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
@@ -57,5 +59,5 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     apt-get update && apt-get install -y gh && apt-get clean
 
 # Change User
-USER 1000
-WORKDIR /usr/share/opensearch
+USER $CONTAINER_USER
+WORKDIR $CONTAINER_USER_HOME

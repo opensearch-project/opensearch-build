@@ -20,6 +20,8 @@
 FROM rockylinux:8 AS linux_stage_0
 
 ENV container docker
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 USER 0
 
@@ -35,27 +37,27 @@ RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GC
 RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake && dnf clean all
 
 # Create user group
-RUN groupadd -g 1000 test-user && \
-    useradd -u 1000 -g 1000 -d /usr/share/test-user test-user && \
-    mkdir -p /usr/share/test-user && \
-    chown -R 1000:1000 /usr/share/test-user
+RUN groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -d $CONTAINER_USER_HOME $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # install yq
 COPY --chown=0:0 config/yq-setup.sh /tmp/
 RUN /tmp/yq-setup.sh
 
 # Change User
-USER 1000
-WORKDIR /usr/share/test-user
+USER $CONTAINER_USER
+WORKDIR $CONTAINER_USER_HOME
 
 # Hard code node version and yarn version for now
 # nvm environment variables
-ENV NVM_DIR /usr/share/test-user/.nvm
+ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
 ARG CYPRESS_VERSION_LIST="5.6.0 9.5.4 12.13.0"
-ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
-ENV CYPRESS_LOCATION_954 /usr/share/test-user/.cache/Cypress/9.5.4
+ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION_954 $CONTAINER_USER_HOME/.cache/Cypress/9.5.4
 # install nvm
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -68,7 +70,7 @@ RUN source $NVM_DIR/nvm.sh \
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # install yarn
-COPY --chown=1000:1000 config/yarn-version.sh /tmp
+COPY --chown=$CONTAINER_USER:$CONTAINER_USER config/yarn-version.sh /tmp
 RUN npm install -g yarn@`/tmp/yarn-version.sh main`
 # Add legacy cypress@5.6.0 for 1.x line
 # Add legacy cypress@9.5.4 for pre-2.8.0 releases
@@ -79,12 +81,15 @@ RUN for cypress_version in $CYPRESS_VERSION_LIST; do npm install -g cypress@$cyp
 USER 0
 
 # Add legacy cypress 5.6.0 / 9.5.4 for ARM64 Architecture
-RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf /usr/share/test-user/.cache/Cypress/$cypress_version && \
-    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C /usr/share/test-user/.cache/Cypress/ && \
-    chown 1000:1000 -R /usr/share/test-user/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
+RUN if [ `uname -m` = "aarch64" ]; then for cypress_version in 5.6.0 9.5.4; do rm -rf $CONTAINER_USER_HOME/.cache/Cypress/$cypress_version && \
+    curl -SLO https://ci.opensearch.org/ci/dbc/tools/Cypress-$cypress_version-arm64.tar.gz && tar -xzf Cypress-$cypress_version-arm64.tar.gz -C $CONTAINER_USER_HOME/.cache/Cypress/ && \
+    chown $CONTAINER_USER:$CONTAINER_USER -R $CONTAINER_USER_HOME/.cache/Cypress/$cypress_version && rm -vf Cypress-$cypress_version-arm64.tar.gz; done; fi
 
 ########################### Stage 1 ########################
 FROM rockylinux:8
+
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 USER 0
 
@@ -95,30 +100,30 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-
 
 # Create user group
 RUN dnf install -y sudo && \
-    groupadd -g 1000 test-user && \
-    useradd -u 1000 -g 1000 -d /usr/share/test-user test-user && \
-    mkdir -p /usr/share/test-user && \
-    chown -R 1000:1000 /usr/share/test-user && \
+    groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -d $CONTAINER_USER_HOME $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME && \
     groupadd -g 1001 opensearch && \
     useradd -u 1001 -g 1001 opensearch && \
     groupadd -g 1002 opensearch-dashboards && \
     useradd -u 1002 -g 1002 opensearch-dashboards && \
-    usermod -a -G opensearch test-user && \
-    usermod -a -G opensearch-dashboards test-user && \
+    usermod -a -G opensearch $CONTAINER_USER && \
+    usermod -a -G opensearch-dashboards $CONTAINER_USER && \
     id && \
-    echo "test-user ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/test-user
+    echo "$CONTAINER_USER ALL=(root) NOPASSWD:`which systemctl`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/$CONTAINER_USER
 
 # Copy from Stage0
-COPY --from=linux_stage_0 --chown=1000:1000 /usr/share/test-user /usr/share/test-user
-ENV NVM_DIR /usr/share/test-user/.nvm
+COPY --from=linux_stage_0 --chown=$CONTAINER_USER:$CONTAINER_USER $CONTAINER_USER_HOME $CONTAINER_USER_HOME
+ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
 ENV NODE_VERSION 18.16.0
 ENV CYPRESS_VERSION 12.13.0
-ENV CYPRESS_LOCATION /usr/share/test-user/.cache/Cypress/$CYPRESS_VERSION
+ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Check dirs
-RUN source $NVM_DIR/nvm.sh && ls -al /usr/share/test-user && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
+RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Add Python dependencies
 RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
