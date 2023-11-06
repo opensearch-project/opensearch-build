@@ -48,7 +48,7 @@ RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jd
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
-    useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME -m $CONTAINER_USER && \
     mkdir -p $CONTAINER_USER_HOME && \
     chown -R 1000:1000 $CONTAINER_USER_HOME
 
