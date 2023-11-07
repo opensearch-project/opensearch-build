@@ -1,5 +1,6 @@
 import os
 import sys
+
 import yaml
 
 folder_path = sys.argv[1]
