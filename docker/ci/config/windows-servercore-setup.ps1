@@ -84,7 +84,7 @@ regedit /s $zlibRegFilePath
 # Temurin jdk does not have all the versions supported on scoop, especially version 14, 20, and above
 # As of now we will mix temurin and openjdk as temurin for production has support policies for fixes and patches
 # We need to make sure we do not mis-install temurin and openjdk with the same version or the distribution build code will have issues
-$jdkVersionList = "temurin8-jdk JAVA8_HOME", "temurin11-jdk JAVA11_HOME", "openjdk14 JAVA14_HOME", "temurin17-jdk JAVA17_HOME", "temurin19-jdk JAVA19_HOME", "openjdk20 JAVA20_HOME", "openjdk21 JAVA21_HOME"
+$jdkVersionList = "temurin8-jdk JAVA8_HOME", "temurin11-jdk JAVA11_HOME", "openjdk14 JAVA14_HOME", "temurin17-jdk JAVA17_HOME", "temurin19-jdk JAVA19_HOME", "openjdk20 JAVA20_HOME", "temurin21-jdk JAVA21_HOME"
 Foreach ($jdkVersion in $jdkVersionList)
 {
     $jdkVersion

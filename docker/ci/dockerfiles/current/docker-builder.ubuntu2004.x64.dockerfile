@@ -17,6 +17,8 @@
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Import necessary repository for installing qemu 5.0
 RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y
@@ -45,10 +47,10 @@ RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jd
     rm /opt/jdk11.tar.gz
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch 
+RUN groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME -m $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # ENV JDK
 ENV JAVA_HOME=/opt/java/openjdk-11

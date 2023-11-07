@@ -15,6 +15,8 @@
 FROM centos:7
 
 ARG MAVEN_DIR=/usr/local/apache-maven
+ARG CONTAINER_USER=ci-runner
+ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Ensure localedef running correct with root permission
 USER 0
@@ -62,10 +64,10 @@ RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jd
     rm /opt/jdk11.tar.gz
 
 # Create user group
-RUN groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g 1000 -d /usr/share/opensearch opensearch && \
-    mkdir -p /usr/share/opensearch && \
-    chown -R 1000:1000 /usr/share/opensearch
+RUN groupadd -g 1000 $CONTAINER_USER && \
+    useradd -u 1000 -g 1000 -d $CONTAINER_USER_HOME $CONTAINER_USER && \
+    mkdir -p $CONTAINER_USER_HOME && \
+    chown -R 1000:1000 $CONTAINER_USER_HOME
 
 # ENV JDK
 ENV JAVA_HOME=/opt/java/openjdk-11
@@ -115,8 +117,8 @@ RUN mkdir -p /tmp/osslsigncode && cd /tmp/osslsigncode && source /etc/profile.d/
 RUN yum install -y patch make ruby openssl-devel && yum clean all
 
 # Change User
-USER 1000
-WORKDIR /usr/share/opensearch
+USER $CONTAINER_USER
+WORKDIR $CONTAINER_USER_HOME
 
 # Installing PKG builder dependencies with rvm
 RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - && \
@@ -131,20 +133,20 @@ CMD ["/bin/bash", "-l"]
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 
 # Installing ruby related dependencies
-# Need to run either `. /usr/share/opensearch/.rvm/scripts/rvm` or `source /usr/share/opensearch/.rvm/scripts/rvm` 
+# Need to run either `. $CONTAINER_USER_HOME/.rvm/scripts/rvm` or `source $CONTAINER_USER_HOME/.rvm/scripts/rvm` 
 # and force bash if needed before using the rvm command for any activities, or rvm will not correctly use version
-RUN . /usr/share/opensearch/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
+RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
     rvm install jruby-9.3.0.0
 
-ENV RUBY_HOME=/usr/share/opensearch/.rvm/rubies/ruby-2.6.0/bin
-ENV RVM_HOME=/usr/share/opensearch/.rvm/bin
-ENV GEM_HOME=/usr/share/opensearch/.gem
+ENV RUBY_HOME=$CONTAINER_USER_HOME/.rvm/rubies/ruby-2.6.0/bin
+ENV RVM_HOME=$CONTAINER_USER_HOME/.rvm/bin
+ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
 ENV GEM_PATH=$GEM_HOME
-ENV CARGO_PATH=/usr/share/opensearch/.cargo/bin
+ENV CARGO_PATH=$CONTAINER_USER_HOME/.cargo/bin
 ENV PATH=$RUBY_HOME:$RVM_HOME:$CARGO_PATH:$PATH
 
 # nvm environment variables
-ENV NVM_DIR /usr/share/opensearch/.nvm
+ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
 ENV NODE_VERSION 16.20.0
 ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0"
 
@@ -152,7 +154,7 @@ ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0"
 # https://github.com/creationix/nvm#install-script
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 # Installing node and npm
-COPY --chown=1000:1000 config/yarn-version.sh /tmp
+COPY --chown=$CONTAINER_USER:$CONTAINER_USER config/yarn-version.sh /tmp
 RUN source $NVM_DIR/nvm.sh && \
     for node_version in $NODE_VERSION_LIST; do nvm install $node_version; npm install -g yarn@`/tmp/yarn-version.sh main`; done
 # Add node and npm to path so the commands are available
