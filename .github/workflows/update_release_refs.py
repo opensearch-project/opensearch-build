@@ -25,7 +25,7 @@ for filename in os.listdir(folder_path):
                 component['ref'] = f'tags/{new_version}'
             else:
                 component['ref'] = f'tags/{new_version}.0'
-                
+
         with open(yaml_file, 'w') as file:
             yaml.dump(data, file)
 
