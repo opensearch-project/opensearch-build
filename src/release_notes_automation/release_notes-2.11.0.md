@@ -11,35 +11,6 @@
 
 <h2>ENHANCEMENTS</h2>
 
-<h3>Opensearch Neural Search</h3>
-
-<ul>
-<li>Add <code>max_token_score</code> parameter to improve the execution efficiency for <code>neural_sparse</code> query clause (<a href="https://github.com/opensearch-project/neural-search/pull/348">#348</a>)</li>
-</ul>
-
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Add neural search default processor for non OpenAI/Cohere scenario (<a href="https://github.com/opensearch-project/ml-commons/pull/1274">#1274</a>)</li>
-<li>Add tokenizer and sparse encoding (<a href="https://github.com/opensearch-project/ml-commons/pull/1301">#1301</a>)</li>
-<li>allow input null for text docs input (<a href="https://github.com/opensearch-project/ml-commons/pull/1402">#1402</a>)</li>
-<li>Add support for context_size and include 'interaction_id' in SearchRequest (<a href="https://github.com/opensearch-project/ml-commons/pull/1385">#1385</a>)</li>
-<li>adding model level metric in node level (<a href="https://github.com/opensearch-project/ml-commons/pull/1330">#1330</a>)</li>
-<li>add status code to model tensor (<a href="https://github.com/opensearch-project/ml-commons/pull/1443">#1443</a>)</li>
-<li>add bedrockURL to trusted connector regex list (<a href="https://github.com/opensearch-project/ml-commons/pull/1461">#1461</a>)</li>
-<li>Performance enhacement for predict action by caching model info (<a href="https://github.com/opensearch-project/ml-commons/pull/1472">#1472</a>)</li>
-</ul>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Adds support for alerts and triggers on group by based sigma rules. (<a href="https://github.com/opensearch-project/security-analytics/pull/545">#545</a>)</li>
-<li>Auto expand replicas. (<a href="https://github.com/opensearch-project/security-analytics/pull/547">#547</a>)</li>
-<li>Auto expand replicas for logtype index. (<a href="https://github.com/opensearch-project/security-analytics/pull/568">#568</a>)</li>
-<li>Adding WAF Log type. (<a href="https://github.com/opensearch-project/security-analytics/pull/617">#617</a>)</li>
-<li>Add category to custom log types. (<a href="https://github.com/opensearch-project/security-analytics/pull/634">#634</a>)</li>
-</ul>
-
 <h3>Opensearch Alerting</h3>
 
 <ul>
@@ -57,6 +28,25 @@
 <ul>
 <li>Added support for ignore_unmapped in KNN queries. <a href="https://github.com/opensearch-project/k-NN/pull/1071">#1071</a></li>
 <li>Add graph creation stats to the KNNStats API. <a href="https://github.com/opensearch-project/k-NN/pull/1141">#1141</a></li>
+</ul>
+
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>Add neural search default processor for non OpenAI/Cohere scenario (<a href="https://github.com/opensearch-project/ml-commons/pull/1274">#1274</a>)</li>
+<li>Add tokenizer and sparse encoding (<a href="https://github.com/opensearch-project/ml-commons/pull/1301">#1301</a>)</li>
+<li>allow input null for text docs input (<a href="https://github.com/opensearch-project/ml-commons/pull/1402">#1402</a>)</li>
+<li>Add support for context_size and include 'interaction_id' in SearchRequest (<a href="https://github.com/opensearch-project/ml-commons/pull/1385">#1385</a>)</li>
+<li>adding model level metric in node level (<a href="https://github.com/opensearch-project/ml-commons/pull/1330">#1330</a>)</li>
+<li>add status code to model tensor (<a href="https://github.com/opensearch-project/ml-commons/pull/1443">#1443</a>)</li>
+<li>add bedrockURL to trusted connector regex list (<a href="https://github.com/opensearch-project/ml-commons/pull/1461">#1461</a>)</li>
+<li>Performance enhacement for predict action by caching model info (<a href="https://github.com/opensearch-project/ml-commons/pull/1472">#1472</a>)</li>
+</ul>
+
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Add <code>max_token_score</code> parameter to improve the execution efficiency for <code>neural_sparse</code> query clause (<a href="https://github.com/opensearch-project/neural-search/pull/348">#348</a>)</li>
 </ul>
 
 <h3>Opensearch SQL</h3>
@@ -91,12 +81,34 @@
 <li>Add early rejection from RestHandler for unauthorized requests (<a href="https://github.com/opensearch-project/security/pull/3418">#3418</a>)</li>
 </ul>
 
-<h2>BUG FIXES</h2>
-
-<h3>Opensearch Neural Search</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Fixed exception in Hybrid Query for one shard and multiple node (<a href="https://github.com/opensearch-project/neural-search/pull/396">#396</a>)</li>
+<li>Adds support for alerts and triggers on group by based sigma rules. (<a href="https://github.com/opensearch-project/security-analytics/pull/545">#545</a>)</li>
+<li>Auto expand replicas. (<a href="https://github.com/opensearch-project/security-analytics/pull/547">#547</a>)</li>
+<li>Auto expand replicas for logtype index. (<a href="https://github.com/opensearch-project/security-analytics/pull/568">#568</a>)</li>
+<li>Adding WAF Log type. (<a href="https://github.com/opensearch-project/security-analytics/pull/617">#617</a>)</li>
+<li>Add category to custom log types. (<a href="https://github.com/opensearch-project/security-analytics/pull/634">#634</a>)</li>
+</ul>
+
+<h2>BUG FIXES</h2>
+
+<h3>Opensearch Alerting</h3>
+
+<ul>
+<li>Fix workflow execution for first run. (<a href="https://github.com/opensearch-project/alerting/pull/1227">#1227</a>)</li>
+</ul>
+
+<h3>Opensearch Geospatial</h3>
+
+<ul>
+<li>Fix flaky test, testIndexingMultiPolygon (<a href="https://github.com/opensearch-project/geospatial/pull/483">#483</a>)</li>
+</ul>
+
+<h3>Opensearch Index Management</h3>
+
+<ul>
+<li>Fix auto managed index always have -2 seqNo bug. (<a href="https://github.com/opensearch-project/index-management/pull/924">#924</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -120,30 +132,10 @@
 <li>Fix prompt passing for Bedrock by passing a single string prompt for Bedrock models. (<a href="https://github.com/opensearch-project/ml-commons/pull/1490">#1490</a>)</li>
 </ul>
 
-<h3>Opensearch Security Analytics</h3>
+<h3>Opensearch Neural Search</h3>
 
 <ul>
-<li>Fixes verifying workflow test when security is enabled. (<a href="https://github.com/opensearch-project/security-analytics/pull/563">#563</a>)</li>
-<li>Fix flaky integration tests. (<a href="https://github.com/opensearch-project/security-analytics/pull/581">#581</a>)</li>
-<li>Sigma Aggregation rule fixes. (<a href="https://github.com/opensearch-project/security-analytics/pull/622">#622</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Fix workflow execution for first run. (<a href="https://github.com/opensearch-project/alerting/pull/1227">#1227</a>)</li>
-</ul>
-
-<h3>Opensearch Geospatial</h3>
-
-<ul>
-<li>Fix flaky test, testIndexingMultiPolygon (<a href="https://github.com/opensearch-project/geospatial/pull/483">#483</a>)</li>
-</ul>
-
-<h3>Opensearch Index Management</h3>
-
-<ul>
-<li>Fix auto managed index always have -2 seqNo bug. (<a href="https://github.com/opensearch-project/index-management/pull/924">#924</a>)</li>
+<li>Fixed exception in Hybrid Query for one shard and multiple node (<a href="https://github.com/opensearch-project/neural-search/pull/396">#396</a>)</li>
 </ul>
 
 <h3>Opensearch Performance Analyzer</h3>
@@ -175,13 +167,15 @@
 <li>For read-only tenants filter with allow list (<a href="https://github.com/opensearch-project/security/commit/c3e53e20a69dc8eb401653594a130c2a4fd4b6bd">c3e53e2</a>)</li>
 </ul>
 
-<h2>INFRASTRUCTURE</h2>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Ignore tests that may be flaky. (<a href="https://github.com/opensearch-project/security-analytics/pull/596">#596</a>)</li>
+<li>Fixes verifying workflow test when security is enabled. (<a href="https://github.com/opensearch-project/security-analytics/pull/563">#563</a>)</li>
+<li>Fix flaky integration tests. (<a href="https://github.com/opensearch-project/security-analytics/pull/581">#581</a>)</li>
+<li>Sigma Aggregation rule fixes. (<a href="https://github.com/opensearch-project/security-analytics/pull/622">#622</a>)</li>
 </ul>
+
+<h2>INFRASTRUCTURE</h2>
 
 <h3>Opensearch Alerting</h3>
 
@@ -189,16 +183,16 @@
 <li>Ignore flaky security test suites. (<a href="https://github.com/opensearch-project/alerting/pull/1188">#1188</a>)</li>
 </ul>
 
-<h3>Opensearch Geospatial</h3>
-
-<ul>
-<li>Add integration test against security enabled cluster (<a href="https://github.com/opensearch-project/geospatial/pull/513">#513</a>)</li>
-</ul>
-
 <h3>Opensearch Anomaly Detection</h3>
 
 <ul>
 <li>Add dependabot.yml (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1026">#1026</a>)</li>
+</ul>
+
+<h3>Opensearch Geospatial</h3>
+
+<ul>
+<li>Add integration test against security enabled cluster (<a href="https://github.com/opensearch-project/geospatial/pull/513">#513</a>)</li>
 </ul>
 
 <h3>Opensearch Index Management</h3>
@@ -223,13 +217,13 @@
 <li>Run IT tests with security plugin (#335) #1986 by @MitchellGale in https://github.com/opensearch-project/sql/pull/2022</li>
 </ul>
 
-<h2>DOCUMENTATION</h2>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Added 2.11.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/660">#660</a>)</li>
+<li>Ignore tests that may be flaky. (<a href="https://github.com/opensearch-project/security-analytics/pull/596">#596</a>)</li>
 </ul>
+
+<h2>DOCUMENTATION</h2>
 
 <h3>Opensearch Alerting</h3>
 
@@ -256,32 +250,24 @@
 <li>Add documentation for S3GlueConnector. in https://github.com/opensearch-project/sql/pull/2234</li>
 </ul>
 
-<h2>MAINTENANCE</h2>
-
-<h3>Opensearch Neural Search</h3>
-
-<ul>
-<li>Consumed latest changes from core, use QueryPhaseSearcherWrapper as parent class for Hybrid QPS (<a href="https://github.com/opensearch-project/neural-search/pull/356">#356</a>)</li>
-</ul>
-
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Ignoring Redeploy test on MacOS due to known failures (<a href="https://github.com/opensearch-project/ml-commons/pull/1414">#1414</a>)</li>
-<li>throw exception when model group not found during update request (<a href="https://github.com/opensearch-project/ml-commons/pull/1447">#1447</a>)</li>
-<li>Add a setting to control the update connector API (<a href="https://github.com/opensearch-project/ml-commons/pull/1274">#1274</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Bump version to 2.11. (<a href="https://github.com/opensearch-project/security-analytics/pull/631">#631</a>)</li>
+<li>Added 2.11.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/660">#660</a>)</li>
 </ul>
+
+<h2>MAINTENANCE</h2>
 
 <h3>Opensearch Alerting</h3>
 
 <ul>
 <li>Increment version to 2.11.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/alerting/pull/1116">#1116</a>)</li>
+</ul>
+
+<h3>Opensearch Asynchronous Search</h3>
+
+<ul>
+<li>Increment version to 2.11.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/446">#446</a>)</li>
 </ul>
 
 <h3>Opensearch Index Management</h3>
@@ -305,16 +291,30 @@
 <li>bump VachaShah/backport from 1.1.4 to 2.2.0 (<a href="https://github.com/opensearch-project/job-scheduler/pull/515">#515</a>)(<a href="https://github.com/opensearch-project/job-scheduler/pull/516">#516</a>)</li>
 </ul>
 
-<h3>Opensearch Reporting</h3>
+<h3>Opensearch KNN</h3>
 
 <ul>
-<li>Update demo certs used in integ tests (<a href="https://github.com/opensearch-project/reporting/pull/755">#755</a>)</li>
+<li>Update bytebuddy to 1.14.7 <a href="https://github.com/opensearch-project/k-NN/pull/1135">#1135</a></li>
 </ul>
 
-<h3>Opensearch Asynchronous Search</h3>
+<h3>Opensearch ML Common</h3>
 
 <ul>
-<li>Increment version to 2.11.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/446">#446</a>)</li>
+<li>Ignoring Redeploy test on MacOS due to known failures (<a href="https://github.com/opensearch-project/ml-commons/pull/1414">#1414</a>)</li>
+<li>throw exception when model group not found during update request (<a href="https://github.com/opensearch-project/ml-commons/pull/1447">#1447</a>)</li>
+<li>Add a setting to control the update connector API (<a href="https://github.com/opensearch-project/ml-commons/pull/1274">#1274</a>)</li>
+</ul>
+
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Consumed latest changes from core, use QueryPhaseSearcherWrapper as parent class for Hybrid QPS (<a href="https://github.com/opensearch-project/neural-search/pull/356">#356</a>)</li>
+</ul>
+
+<h3>Opensearch Notifications</h3>
+
+<ul>
+<li>Bump bwc version to 2.11(<a href="https://github.com/opensearch-project/notifications/pull/763">#763</a>)</li>
 </ul>
 
 <h3>Opensearch Performance Analyzer</h3>
@@ -324,16 +324,10 @@
 <li>Add tracer to getTransports <a href="https://github.com/opensearch-project/performance-analyzer/pull/556">#556</a></li>
 </ul>
 
-<h3>Opensearch Notifications</h3>
+<h3>Opensearch Reporting</h3>
 
 <ul>
-<li>Bump bwc version to 2.11(<a href="https://github.com/opensearch-project/notifications/pull/763">#763</a>)</li>
-</ul>
-
-<h3>Opensearch KNN</h3>
-
-<ul>
-<li>Update bytebuddy to 1.14.7 <a href="https://github.com/opensearch-project/k-NN/pull/1135">#1135</a></li>
+<li>Update demo certs used in integ tests (<a href="https://github.com/opensearch-project/reporting/pull/755">#755</a>)</li>
 </ul>
 
 <h3>Opensearch Security</h3>
@@ -363,21 +357,13 @@
 <li>Bump com.nulab-inc:zxcvbn from 1.8.0 to 1.8.2 (<a href="https://github.com/opensearch-project/security/pull/3357">#3357</a>)</li>
 </ul>
 
-<h2>REFACTORING</h2>
-
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>register new versions to a model group based on the name provided (<a href="https://github.com/opensearch-project/ml-commons/pull/1452">#1452</a>)</li>
-<li>if model version fails to register, update model group accordingly (<a href="https://github.com/opensearch-project/ml-commons/pull/1463">#1463</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Address search request timeouts as transient error. (<a href="https://github.com/opensearch-project/security-analytics/pull/561">#561</a>)</li>
-<li>Change ruleId if it exists. (<a href="https://github.com/opensearch-project/security-analytics/pull/628">#628</a>)</li>
+<li>Bump version to 2.11. (<a href="https://github.com/opensearch-project/security-analytics/pull/631">#631</a>)</li>
 </ul>
+
+<h2>REFACTORING</h2>
 
 <h3>Opensearch Alerting</h3>
 
@@ -393,6 +379,13 @@
 <li>[2.x] Fix TransportService constructor due to changes in core plus guava bump (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1069">#1069</a>)</li>
 </ul>
 
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>register new versions to a model group based on the name provided (<a href="https://github.com/opensearch-project/ml-commons/pull/1452">#1452</a>)</li>
+<li>if model version fails to register, update model group accordingly (<a href="https://github.com/opensearch-project/ml-commons/pull/1463">#1463</a>)</li>
+</ul>
+
 <h3>Opensearch SQL</h3>
 
 <ul>
@@ -401,6 +394,13 @@
 <li>Check for existence of security plugin in https://github.com/opensearch-project/sql/pull/2069</li>
 <li>Always use snapshot version for security plugin download in https://github.com/opensearch-project/sql/pull/2061</li>
 <li>Add customized result index in data source etc in https://github.com/opensearch-project/sql/pull/2220</li>
+</ul>
+
+<h3>Opensearch Security Analytics</h3>
+
+<ul>
+<li>Address search request timeouts as transient error. (<a href="https://github.com/opensearch-project/security-analytics/pull/561">#561</a>)</li>
+<li>Change ruleId if it exists. (<a href="https://github.com/opensearch-project/security-analytics/pull/628">#628</a>)</li>
 </ul>
 
 <h2>EXPERIMENTAL</h2>

@@ -43,7 +43,7 @@ def main() -> int:
         end_index = url.find(".release-notes", start_index)
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
-        component_name = url[start_index + len("release-notes/") : end_index]
+        component_name = url[start_index + len("release-notes/"): end_index]
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
@@ -134,7 +134,7 @@ def main() -> int:
                         if i == len(headings) - 1:
                             content_to_end = content[content_start:]
                         else:
-                            content_to_end = content[content_start : content.find(headings[i + 1])]
+                            content_to_end = content[content_start: content.find(headings[i + 1])]
                     content_to_end = content_to_end.replace(f"### {heading}", "").lstrip()
                     parts = content_to_end.split("*", 1)
                     if len(parts) == 2:
@@ -144,11 +144,8 @@ def main() -> int:
                         if len(content_to_end) > 0:
                             content_to_end = "* " + content_to_end
                     plugin_data[plugin_name][heading].append(content_to_end)
-                    # print(plugin_data[plugin_name][heading])
+    plugin_data = dict(sorted(plugin_data.items()))
     print("Compilation complete.")
-    # print("Unique Headings:")
-    # for heading in sorted(unique_headings):
-    #     print(heading)
 
     # Markdown renderer
     markdown = mistune.create_markdown()

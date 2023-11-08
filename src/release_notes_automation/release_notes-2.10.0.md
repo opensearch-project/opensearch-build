@@ -1,10 +1,19 @@
 <h1>OpenSearch and OpenSearch Dashboards 2.10.0 Release Notes</h1>
 <h2>FEATURES</h2>
 
-<h3>Opensearch KNN</h3>
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Add Clear Cache API (<a href="https://github.com/opensearch-project/k-NN/pull/740">#740</a>)</li>
+<li>Add workflowIds field in getAlerts API  (<a href="https://github.com/opensearch-project/alerting/pull/1014">#1014</a>)</li>
+<li>add alertId parameter in get chained alert API and paginate associated alerts if alertId param is mentioned (<a href="https://github.com/opensearch-project/alerting/pull/1071">#1071</a>)</li>
+<li>Chained Alert Behaviour Changes (<a href="https://github.com/opensearch-project/alerting/pull/1079">#1079</a>)</li>
+</ul>
+
+<h3>Opensearch Common Utils</h3>
+
+<ul>
+<li>common utils to support Microsoft teams in notifications (<a href="https://github.com/opensearch-project/common-utils/pull/428">#428</a>)</li>
+<li>support list of monitor ids in Chained Monitor Findings (<a href="https://github.com/opensearch-project/common-utils/pull/514">#514</a>)</li>
 </ul>
 
 <h3>Opensearch Custom Codecs</h3>
@@ -26,17 +35,22 @@
 <li>make control center index as system index. (<a href="https://github.com/opensearch-project/index-management/pull/919">#919</a>)</li>
 </ul>
 
-<h3>Opensearch Common Utils</h3>
+<h3>Opensearch KNN</h3>
 
 <ul>
-<li>common utils to support Microsoft teams in notifications (<a href="https://github.com/opensearch-project/common-utils/pull/428">#428</a>)</li>
-<li>support list of monitor ids in Chained Monitor Findings (<a href="https://github.com/opensearch-project/common-utils/pull/514">#514</a>)</li>
+<li>Add Clear Cache API (<a href="https://github.com/opensearch-project/k-NN/pull/740">#740</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
 
 <ul>
 <li>Conversations and Generative AI in OpenSearch (<a href="https://github.com/opensearch-project/ml-commons/issues/1150">#1150</a>)</li>
+</ul>
+
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Improved Hybrid Search relevancy by Score Normalization and Combination (<a href="https://github.com/opensearch-project/neural-search/pull/241/">#241</a>)</li>
 </ul>
 
 <h3>Opensearch Security Analytics</h3>
@@ -47,21 +61,15 @@
 <li>Using alerting workflows in detectors (<a href="https://github.com/opensearch-project/security-analytics/pull/541">#541</a>)</li>
 </ul>
 
-<h3>Opensearch Neural Search</h3>
-
-<ul>
-<li>Improved Hybrid Search relevancy by Score Normalization and Combination (<a href="https://github.com/opensearch-project/neural-search/pull/241/">#241</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Add workflowIds field in getAlerts API  (<a href="https://github.com/opensearch-project/alerting/pull/1014">#1014</a>)</li>
-<li>add alertId parameter in get chained alert API and paginate associated alerts if alertId param is mentioned (<a href="https://github.com/opensearch-project/alerting/pull/1071">#1071</a>)</li>
-<li>Chained Alert Behaviour Changes (<a href="https://github.com/opensearch-project/alerting/pull/1079">#1079</a>)</li>
-</ul>
-
 <h2>ENHANCEMENTS</h2>
+
+<h3>Opensearch Anomaly Detection</h3>
+
+<ul>
+<li>Defaults anomaly grade to 0 if negative. (<a href="https://github.com/opensearch-project/anomaly-detection/pull/977">#977</a>)</li>
+<li>Update RCF to v3.8 and Enable Auto AD with 'Alert Once' Option (<a href="https://github.com/opensearch-project/anomaly-detection/pull/979">#979</a>)</li>
+<li>Revert &quot;Enforce DOCUMENT Replication for AD Indices&quot; (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1006">#1006</a>)</li>
+</ul>
 
 <h3>Opensearch KNN</h3>
 
@@ -69,6 +77,22 @@
 <li>Enabled the IVF algorithm to work with Filters of K-NN Query. (<a href="https://github.com/opensearch-project/k-NN/pull/1013">#1013</a>)</li>
 <li>Improved the logic to switch to exact search for restrictive filters search for better recall. (<a href="https://github.com/opensearch-project/k-NN/pull/1059">#1059</a>)</li>
 <li>Added max distance computation logic to enhance the switch to exact search in filtered Nearest Neighbor Search. (<a href="https://github.com/opensearch-project/k-NN/pull/1066">#1066</a>)</li>
+</ul>
+
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>Add feature flags for remote inference (<a href="https://github.com/opensearch-project/ml-commons/pull/1223">#1223</a>)</li>
+<li>Add eligible node role settings (<a href="https://github.com/opensearch-project/ml-commons/pull/1197">#1197</a>)</li>
+<li>Add more stats: connector count, connector/config index status (<a href="https://github.com/opensearch-project/ml-commons/pull/1180">#1180</a>)</li>
+</ul>
+
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Changed format for hybrid query results to a single list of scores with delimiter (<a href="https://github.com/opensearch-project/neural-search/pull/259">#259</a>)</li>
+<li>Added validations for score combination weights in Hybrid Search (<a href="https://github.com/opensearch-project/neural-search/pull/265">#265</a>)</li>
+<li>Made hybrid search active by default (<a href="https://github.com/opensearch-project/neural-search/pull/274">#274</a>)</li>
 </ul>
 
 <h3>Opensearch Performance Analyzer</h3>
@@ -84,14 +108,6 @@
 
 <ul>
 <li>[Backport 2.x] Added support of timestamp/date/time using curly brackets by @matthewryanwells in https://github.com/opensearch-project/sql/pull/1908</li>
-</ul>
-
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Add feature flags for remote inference (<a href="https://github.com/opensearch-project/ml-commons/pull/1223">#1223</a>)</li>
-<li>Add eligible node role settings (<a href="https://github.com/opensearch-project/ml-commons/pull/1197">#1197</a>)</li>
-<li>Add more stats: connector count, connector/config index status (<a href="https://github.com/opensearch-project/ml-commons/pull/1180">#1180</a>)</li>
 </ul>
 
 <h3>Opensearch Security</h3>
@@ -110,28 +126,21 @@
 <li>System index permissions (<a href="https://github.com/opensearch-project/security/pull/2887">#2887</a>)</li>
 </ul>
 
-<h3>Opensearch Neural Search</h3>
-
-<ul>
-<li>Changed format for hybrid query results to a single list of scores with delimiter (<a href="https://github.com/opensearch-project/neural-search/pull/259">#259</a>)</li>
-<li>Added validations for score combination weights in Hybrid Search (<a href="https://github.com/opensearch-project/neural-search/pull/265">#265</a>)</li>
-<li>Made hybrid search active by default (<a href="https://github.com/opensearch-project/neural-search/pull/274">#274</a>)</li>
-</ul>
-
-<h3>Opensearch Anomaly Detection</h3>
-
-<ul>
-<li>Defaults anomaly grade to 0 if negative. (<a href="https://github.com/opensearch-project/anomaly-detection/pull/977">#977</a>)</li>
-<li>Update RCF to v3.8 and Enable Auto AD with 'Alert Once' Option (<a href="https://github.com/opensearch-project/anomaly-detection/pull/979">#979</a>)</li>
-<li>Revert &quot;Enforce DOCUMENT Replication for AD Indices&quot; (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1006">#1006</a>)</li>
-</ul>
-
 <h2>BUG FIXES</h2>
 
-<h3>Opensearch KNN</h3>
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Update Faiss parameter construction to allow HNSW+PQ to work (<a href="https://github.com/opensearch-project/k-NN/pull/1074">#1074</a>)</li>
+<li>fix get alerts alertState query filter (<a href="https://github.com/opensearch-project/alerting/pull/1064">#1064</a>)</li>
+</ul>
+
+<h3>Opensearch Cross Cluster Replication</h3>
+
+<ul>
+<li>Settings are synced before syncing mapping (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/994">#994</a>)</li>
+<li>Handled OpenSearchRejectExecuteException, introduced new setting <code>plugins.replication.follower.concurrent_writers_per_shard</code>. (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1004">#1004</a>)</li>
+<li>Fixed tests relying on wait_for_active_shards, fixed test for single Node and consume numNodes (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1091">#1091</a>)</li>
+<li>Excessive logging avoided during certain exception types such as OpensearchTimeoutException (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1114">#1114</a>)</li>
 </ul>
 
 <h3>Opensearch Geospatial</h3>
@@ -150,18 +159,10 @@
 <li>fix intelliJ IDEA gradle sync error (<a href="https://github.com/opensearch-project/index-management/pull/916">#916</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>Opensearch KNN</h3>
 
 <ul>
-<li>[2.x] bump okhttp to 4.10.0 (#2043) by @joshuali925 in https://github.com/opensearch-project/sql/pull/2044</li>
-<li>[Backport 2.x] Okio upgrade to 3.5.0 by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1963</li>
-<li>[Backport 2.x] Fixed response codes For Requests With security exception. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2029</li>
-<li>[Backport 2.x] Backport breaking changes by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1920</li>
-<li>[Manual Backport #1943] Fixing string format change #1943 by @MitchellGale in https://github.com/opensearch-project/sql/pull/1946</li>
-<li>[Backport 2.x] Fix CVE by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1944</li>
-<li>[Backport 2.x] Breaking change OpenSearch main project - Action movement (#1958) by @MitchellGale in https://github.com/opensearch-project/sql/pull/1965</li>
-<li>[Backport 2.x] Update backport CI, add PR merged condition by @ps48 in https://github.com/opensearch-project/sql/pull/1970</li>
-<li>[Backport 2.x] Fixed exception when datasource is updated with existing configuration. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2008</li>
+<li>Update Faiss parameter construction to allow HNSW+PQ to work (<a href="https://github.com/opensearch-project/k-NN/pull/1074">#1074</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -176,20 +177,25 @@
 <li>Fix core package name to address compilation errors (<a href="https://github.com/opensearch-project/ml-commons/pull/1157">#1157</a>)</li>
 </ul>
 
-<h3>Opensearch Security Analytics</h3>
+<h3>Opensearch Reporting</h3>
 
 <ul>
-<li>Fix for mappings of custom log types &amp; other bug fixes (<a href="https://github.com/opensearch-project/security-analytics/pull/505">#505</a>)</li>
-<li>Fixes detectorType incompatibility with detector rules (<a href="https://github.com/opensearch-project/security-analytics/pull/524">#524</a>)</li>
+<li>Update import from upstream breaking changes (<a href="https://github.com/opensearch-project/reporting/pull/739">#739</a>)</li>
+<li>Fix from upstream import changes (<a href="https://github.com/opensearch-project/reporting/pull/748">#748</a>)</li>
 </ul>
 
-<h3>Opensearch Cross Cluster Replication</h3>
+<h3>Opensearch SQL</h3>
 
 <ul>
-<li>Settings are synced before syncing mapping (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/994">#994</a>)</li>
-<li>Handled OpenSearchRejectExecuteException, introduced new setting <code>plugins.replication.follower.concurrent_writers_per_shard</code>. (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1004">#1004</a>)</li>
-<li>Fixed tests relying on wait_for_active_shards, fixed test for single Node and consume numNodes (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1091">#1091</a>)</li>
-<li>Excessive logging avoided during certain exception types such as OpensearchTimeoutException (<a href="https://github.com/opensearch-project/cross-cluster-replication/pull/1114">#1114</a>)</li>
+<li>[2.x] bump okhttp to 4.10.0 (#2043) by @joshuali925 in https://github.com/opensearch-project/sql/pull/2044</li>
+<li>[Backport 2.x] Okio upgrade to 3.5.0 by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1963</li>
+<li>[Backport 2.x] Fixed response codes For Requests With security exception. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2029</li>
+<li>[Backport 2.x] Backport breaking changes by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1920</li>
+<li>[Manual Backport #1943] Fixing string format change #1943 by @MitchellGale in https://github.com/opensearch-project/sql/pull/1946</li>
+<li>[Backport 2.x] Fix CVE by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1944</li>
+<li>[Backport 2.x] Breaking change OpenSearch main project - Action movement (#1958) by @MitchellGale in https://github.com/opensearch-project/sql/pull/1965</li>
+<li>[Backport 2.x] Update backport CI, add PR merged condition by @ps48 in https://github.com/opensearch-project/sql/pull/1970</li>
+<li>[Backport 2.x] Fixed exception when datasource is updated with existing configuration. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2008</li>
 </ul>
 
 <h3>Opensearch Security</h3>
@@ -205,34 +211,44 @@
 <li>Fix permissions issues while reading keys in PKCS#1 format (<a href="https://github.com/opensearch-project/security/pull/3289">#3289</a>)</li>
 </ul>
 
-<h3>Opensearch Reporting</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Update import from upstream breaking changes (<a href="https://github.com/opensearch-project/reporting/pull/739">#739</a>)</li>
-<li>Fix from upstream import changes (<a href="https://github.com/opensearch-project/reporting/pull/748">#748</a>)</li>
+<li>Fix for mappings of custom log types &amp; other bug fixes (<a href="https://github.com/opensearch-project/security-analytics/pull/505">#505</a>)</li>
+<li>Fixes detectorType incompatibility with detector rules (<a href="https://github.com/opensearch-project/security-analytics/pull/524">#524</a>)</li>
 </ul>
+
+<h2>INFRASTRUCTURE</h2>
 
 <h3>Opensearch Alerting</h3>
 
 <ul>
-<li>fix get alerts alertState query filter (<a href="https://github.com/opensearch-project/alerting/pull/1064">#1064</a>)</li>
+<li>Upgrade the backport workflow (<a href="https://github.com/opensearch-project/alerting/pull/1029">#1028</a>)</li>
+<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/alerting/pull/1115">#1115</a>)</li>
 </ul>
 
-<h2>INFRASTRUCTURE</h2>
+<h3>Opensearch Anomaly Detection</h3>
+
+<ul>
+<li>Adds auto release workflow (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1003">#1003</a>)</li>
+<li>upgrading commons-lang3 version to fix conflict issue (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1014">#1014</a>)</li>
+<li>Updates demo certs for integ tests (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1021">#1021</a>)</li>
+<li>Upgrade AD's bwc baseline version to 1.3.2 to resolve cluster join issue (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1029">#1029</a>)</li>
+</ul>
+
+<h3>Opensearch Asynchronous Search</h3>
+
+<ul>
+<li>Updates demo certs used in rest tests (<a href="https://github.com/opensearch-project/asynchronous-search/pull/341">#341</a>)</li>
+<li>Adding release workflow for the asynchronous search (<a href="https://github.com/opensearch-project/asynchronous-search/pull/330">#330</a>)</li>
+<li>Refactoring changes in main (<a href="https://github.com/opensearch-project/asynchronous-search/pull/328">#328</a>)</li>
+</ul>
 
 <h3>Opensearch Geospatial</h3>
 
 <ul>
 <li>Make jacoco report to be generated faster in local (<a href="https://github.com/opensearch-project/geospatial/pull/267">#267</a>)</li>
 <li>Exclude lombok generated code from jacoco coverage report (<a href="https://github.com/opensearch-project/geospatial/pull/268">#268</a>)</li>
-</ul>
-
-<h3>Opensearch Performance Analyzer</h3>
-
-<ul>
-<li>Update BWC version to 2.9.0 <a href="https://github.com/opensearch-project/performance-analyzer/pull/529">#529</a></li>
-<li>Update performance-analyzer-commons library version <a href="https://github.com/opensearch-project/performance-analyzer/pull/446">#537</a></li>
-<li>Upgrade gRPC protobug to mitigate connection termination issue <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/471">#471</a></li>
 </ul>
 
 <h3>Opensearch Index Management</h3>
@@ -242,6 +258,13 @@
 <li>Fixed the publish maven workflow to execute after pushes to release branches. (<a href="https://github.com/opensearch-project/index-management/pull/837">#837</a>)</li>
 <li>Upgrade the backport workflow. (<a href="https://github.com/opensearch-project/index-management/pull/862">#862</a>)</li>
 <li>Updates demo certs used in integ tests. (<a href="https://github.com/opensearch-project/index-management/pull/921">#921</a>)</li>
+</ul>
+
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/ml-commons/pull/1291">#1291</a>)</li>
+<li>Add Auto Release Workflow (<a href="https://github.com/opensearch-project/ml-commons/pull/1306">#1306</a>)</li>
 </ul>
 
 <h3>Opensearch Notifications</h3>
@@ -255,6 +278,20 @@
 <li>Updates demo certs used in integ tests(<a href="https://github.com/opensearch-project/notifications/pull/756">#756</a>)</li>
 </ul>
 
+<h3>Opensearch Observability</h3>
+
+<ul>
+<li>Update backport CI, add PR merged condition in https://github.com/opensearch-project/observability/pull/1587</li>
+</ul>
+
+<h3>Opensearch Performance Analyzer</h3>
+
+<ul>
+<li>Update BWC version to 2.9.0 <a href="https://github.com/opensearch-project/performance-analyzer/pull/529">#529</a></li>
+<li>Update performance-analyzer-commons library version <a href="https://github.com/opensearch-project/performance-analyzer/pull/446">#537</a></li>
+<li>Upgrade gRPC protobug to mitigate connection termination issue <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/471">#471</a></li>
+</ul>
+
 <h3>Opensearch SQL</h3>
 
 <ul>
@@ -265,44 +302,25 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>(#1506) Remove reservedSymbolTable and replace with HIDDEN_FIELD_NAME… by @acarbonetto in https://github.com/opensearch-project/sql/pull/1964</li>
 </ul>
 
-<h3>Opensearch ML Common</h3>
+<h2>DOCUMENTATION</h2>
+
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/ml-commons/pull/1291">#1291</a>)</li>
-<li>Add Auto Release Workflow (<a href="https://github.com/opensearch-project/ml-commons/pull/1306">#1306</a>)</li>
+<li>Added 2.10 release notes (<a href="https://github.com/opensearch-project/alerting/pull/1117">#1117</a>)</li>
 </ul>
 
 <h3>Opensearch Asynchronous Search</h3>
 
 <ul>
-<li>Updates demo certs used in rest tests (<a href="https://github.com/opensearch-project/asynchronous-search/pull/341">#341</a>)</li>
-<li>Adding release workflow for the asynchronous search (<a href="https://github.com/opensearch-project/asynchronous-search/pull/330">#330</a>)</li>
-<li>Refactoring changes in main (<a href="https://github.com/opensearch-project/asynchronous-search/pull/328">#328</a>)</li>
+<li>Add 2.10.0 release notes (<a href="https://github.com/opensearch-project/asynchronous-search/pull/353">#353</a>)</li>
 </ul>
 
-<h3>Opensearch Observability</h3>
+<h3>Opensearch Common Utils</h3>
 
 <ul>
-<li>Update backport CI, add PR merged condition in https://github.com/opensearch-project/observability/pull/1587</li>
+<li>Added 2.10.0.0 release notes (<a href="https://github.com/opensearch-project/common-utils/pull/531">#531</a>)</li>
 </ul>
-
-<h3>Opensearch Anomaly Detection</h3>
-
-<ul>
-<li>Adds auto release workflow (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1003">#1003</a>)</li>
-<li>upgrading commons-lang3 version to fix conflict issue (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1014">#1014</a>)</li>
-<li>Updates demo certs for integ tests (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1021">#1021</a>)</li>
-<li>Upgrade AD's bwc baseline version to 1.3.2 to resolve cluster join issue (<a href="https://github.com/opensearch-project/anomaly-detection/pull/1029">#1029</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Upgrade the backport workflow (<a href="https://github.com/opensearch-project/alerting/pull/1029">#1028</a>)</li>
-<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/alerting/pull/1115">#1115</a>)</li>
-</ul>
-
-<h2>DOCUMENTATION</h2>
 
 <h3>Opensearch Index Management</h3>
 
@@ -310,10 +328,15 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Added 2.10 release notes. (<a href="https://github.com/opensearch-project/index-management/pull/925">#925</a>)</li>
 </ul>
 
-<h3>Opensearch Common Utils</h3>
+<h3>Opensearch ML Common</h3>
 
 <ul>
-<li>Added 2.10.0.0 release notes (<a href="https://github.com/opensearch-project/common-utils/pull/531">#531</a>)</li>
+<li>Updating cohere blueprint doc (<a href="https://github.com/opensearch-project/ml-commons/pull/1213">#1213</a>)</li>
+<li>Fixing docs (<a href="https://github.com/opensearch-project/ml-commons/pull/1193">#1193</a>)</li>
+<li>Add model auto redeploy tutorial (<a href="https://github.com/opensearch-project/ml-commons/pull/1175">#1175</a>)</li>
+<li>Add remote inference tutorial (<a href="https://github.com/opensearch-project/ml-commons/pull/1158">#1158</a>)</li>
+<li>Adding blueprint examples for remote inference (<a href="https://github.com/opensearch-project/ml-commons/pull/1155">#1155</a>)</li>
+<li>Updating developer guide for CCI contributors (<a href="https://github.com/opensearch-project/ml-commons/pull/1049">#1049</a>)</li>
 </ul>
 
 <h3>Opensearch Notifications</h3>
@@ -328,41 +351,33 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>[Backport 2.x] Fix doctest data by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1998</li>
 </ul>
 
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Updating cohere blueprint doc (<a href="https://github.com/opensearch-project/ml-commons/pull/1213">#1213</a>)</li>
-<li>Fixing docs (<a href="https://github.com/opensearch-project/ml-commons/pull/1193">#1193</a>)</li>
-<li>Add model auto redeploy tutorial (<a href="https://github.com/opensearch-project/ml-commons/pull/1175">#1175</a>)</li>
-<li>Add remote inference tutorial (<a href="https://github.com/opensearch-project/ml-commons/pull/1158">#1158</a>)</li>
-<li>Adding blueprint examples for remote inference (<a href="https://github.com/opensearch-project/ml-commons/pull/1155">#1155</a>)</li>
-<li>Updating developer guide for CCI contributors (<a href="https://github.com/opensearch-project/ml-commons/pull/1049">#1049</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Added 2.10.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/555">#555</a>)</li>
 </ul>
 
-<h3>Opensearch Asynchronous Search</h3>
-
-<ul>
-<li>Add 2.10.0 release notes (<a href="https://github.com/opensearch-project/asynchronous-search/pull/353">#353</a>)</li>
-</ul>
+<h2>MAINTENANCE</h2>
 
 <h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Added 2.10 release notes (<a href="https://github.com/opensearch-project/alerting/pull/1117">#1117</a>)</li>
+<li>Increment version to 2.10.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/alerting/pull/1018">#1018</a>)</li>
+<li>exclude &lt;v32 version of google guava dependency from google java format and add google guava 32.0.1 to resolve CVE CVE-2023-2976 (<a href="https://github.com/opensearch-project/alerting/pull/1094">#1094</a>)</li>
 </ul>
 
-<h2>MAINTENANCE</h2>
-
-<h3>Opensearch KNN</h3>
+<h3>Opensearch Asynchronous Search</h3>
 
 <ul>
-<li>Update Guava Version to 32.0.1 (<a href="https://github.com/opensearch-project/k-NN/pull/1019">#1019</a>)</li>
+<li>Upgrade Guava version to 32.0.1 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/347">#347</a>)</li>
+<li>Increment version to 2.10.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/321">#321</a>)</li>
+</ul>
+
+<h3>Opensearch Common Utils</h3>
+
+<ul>
+<li>Upgrade the backport workflow (<a href="https://github.com/opensearch-project/common-utils/pull/487">#487</a>)</li>
+<li>Updates demo certs used in rest tests (<a href="https://github.com/opensearch-project/common-utils/pull/518">#518</a>)</li>
 </ul>
 
 <h3>Opensearch Geospatial</h3>
@@ -373,32 +388,29 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Version bump for spotlss and apache commons(<a href="https://github.com/opensearch-project/geospatial/pull/400">#400</a>)</li>
 </ul>
 
-<h3>Opensearch Performance Analyzer</h3>
-
-<ul>
-<li>Address core refactor changes for Task foundation classes and StreamIO <a href="https://github.com/opensearch-project/performance-analyzer/pull/522">#522</a></li>
-<li>Address xcontent changes in core <a href="https://github.com/opensearch-project/performance-analyzer/pull/526">#526</a></li>
-<li>Remove usage of deprecated &quot;master&quot; APIs <a href="https://github.com/opensearch-project/performance-analyzer/pull/513">#513</a></li>
-<li>Update docker-compose.yml <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/465">#465</a></li>
-</ul>
-
 <h3>Opensearch Index Management</h3>
 
 <ul>
 <li>Increment version to 2.10.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/index-management/pull/852">#852</a>)</li>
 </ul>
 
-<h3>Opensearch Common Utils</h3>
+<h3>Opensearch Job Scheduler</h3>
 
 <ul>
-<li>Upgrade the backport workflow (<a href="https://github.com/opensearch-project/common-utils/pull/487">#487</a>)</li>
-<li>Updates demo certs used in rest tests (<a href="https://github.com/opensearch-project/common-utils/pull/518">#518</a>)</li>
+<li>Update packages according to a change in OpenSearch core (<a href="https://github.com/opensearch-project/job-scheduler/pull/422">#422</a>) (<a href="https://github.com/opensearch-project/job-scheduler/pull/431">#431</a>)</li>
+<li>Xcontent changes to ODFERestTestCase (<a href="https://github.com/opensearch-project/job-scheduler/pull/440">#440</a>)</li>
+<li>Update LifecycleListener import (<a href="https://github.com/opensearch-project/job-scheduler/pull/445">#445</a>)</li>
+<li>Bump slf4j-api to 2.0.7, ospackage to 11.4.0, google-java-format to 1.17.0, guava to 32.1.2-jre and spotless to 6.20.0 (<a href="https://github.com/opensearch-project/job-scheduler/pull/453">#453</a>)</li>
+<li>Fixing Strings import (<a href="https://github.com/opensearch-project/job-scheduler/pull/459">#459</a>)</li>
+<li>bump com.cronutils:cron-utils from 9.2.0 to 9.2.1 (<a href="https://github.com/opensearch-project/job-scheduler/pull/458">#458</a>)</li>
+<li>React to changes in ActionListener and ActionFuture (<a href="https://github.com/opensearch-project/job-scheduler/pull/467">#467</a>)</li>
+<li>bump com.diffplug.spotless from 6.20.0 to 6.21.0 (<a href="https://github.com/opensearch-project/job-scheduler/pull/484">#484</a>)</li>
 </ul>
 
-<h3>Opensearch Notifications</h3>
+<h3>Opensearch KNN</h3>
 
 <ul>
-<li>[AUTO] Increment version to 2.10.0-SNAPSHOT(<a href="https://github.com/opensearch-project/notifications/pull/706">#706</a>)</li>
+<li>Update Guava Version to 32.0.1 (<a href="https://github.com/opensearch-project/k-NN/pull/1019">#1019</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -411,10 +423,26 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Bump aws-encryption-sdk-java to fix CVE-2023-33201 (<a href="https://github.com/opensearch-project/ml-commons/pull/1309">#1309</a>)</li>
 </ul>
 
-<h3>Opensearch Security Analytics</h3>
+<h3>Opensearch Notifications</h3>
 
 <ul>
-<li>Bump version to 2.10 and resolve compile issues (<a href="https://github.com/opensearch-project/security-analytics/pull/521">#521</a>)</li>
+<li>[AUTO] Increment version to 2.10.0-SNAPSHOT(<a href="https://github.com/opensearch-project/notifications/pull/706">#706</a>)</li>
+</ul>
+
+<h3>Opensearch Performance Analyzer</h3>
+
+<ul>
+<li>Address core refactor changes for Task foundation classes and StreamIO <a href="https://github.com/opensearch-project/performance-analyzer/pull/522">#522</a></li>
+<li>Address xcontent changes in core <a href="https://github.com/opensearch-project/performance-analyzer/pull/526">#526</a></li>
+<li>Remove usage of deprecated &quot;master&quot; APIs <a href="https://github.com/opensearch-project/performance-analyzer/pull/513">#513</a></li>
+<li>Update docker-compose.yml <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/465">#465</a></li>
+</ul>
+
+<h3>Opensearch Reporting</h3>
+
+<ul>
+<li>Fix CI (<a href="https://github.com/opensearch-project/reporting/pull/738">#738</a>)</li>
+<li>Update backport CI, add PR merged condition (<a href="https://github.com/opensearch-project/reporting/pull/745">#745</a>)</li>
 </ul>
 
 <h3>Opensearch Security</h3>
@@ -469,46 +497,25 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Demo Configuration changes (<a href="https://github.com/opensearch-project/security/pull/3330">#3330</a>)</li>
 </ul>
 
-<h3>Opensearch Reporting</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Fix CI (<a href="https://github.com/opensearch-project/reporting/pull/738">#738</a>)</li>
-<li>Update backport CI, add PR merged condition (<a href="https://github.com/opensearch-project/reporting/pull/745">#745</a>)</li>
-</ul>
-
-<h3>Opensearch Asynchronous Search</h3>
-
-<ul>
-<li>Upgrade Guava version to 32.0.1 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/347">#347</a>)</li>
-<li>Increment version to 2.10.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/321">#321</a>)</li>
-</ul>
-
-<h3>Opensearch Job Scheduler</h3>
-
-<ul>
-<li>Update packages according to a change in OpenSearch core (<a href="https://github.com/opensearch-project/job-scheduler/pull/422">#422</a>) (<a href="https://github.com/opensearch-project/job-scheduler/pull/431">#431</a>)</li>
-<li>Xcontent changes to ODFERestTestCase (<a href="https://github.com/opensearch-project/job-scheduler/pull/440">#440</a>)</li>
-<li>Update LifecycleListener import (<a href="https://github.com/opensearch-project/job-scheduler/pull/445">#445</a>)</li>
-<li>Bump slf4j-api to 2.0.7, ospackage to 11.4.0, google-java-format to 1.17.0, guava to 32.1.2-jre and spotless to 6.20.0 (<a href="https://github.com/opensearch-project/job-scheduler/pull/453">#453</a>)</li>
-<li>Fixing Strings import (<a href="https://github.com/opensearch-project/job-scheduler/pull/459">#459</a>)</li>
-<li>bump com.cronutils:cron-utils from 9.2.0 to 9.2.1 (<a href="https://github.com/opensearch-project/job-scheduler/pull/458">#458</a>)</li>
-<li>React to changes in ActionListener and ActionFuture (<a href="https://github.com/opensearch-project/job-scheduler/pull/467">#467</a>)</li>
-<li>bump com.diffplug.spotless from 6.20.0 to 6.21.0 (<a href="https://github.com/opensearch-project/job-scheduler/pull/484">#484</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Increment version to 2.10.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/alerting/pull/1018">#1018</a>)</li>
-<li>exclude &lt;v32 version of google guava dependency from google java format and add google guava 32.0.1 to resolve CVE CVE-2023-2976 (<a href="https://github.com/opensearch-project/alerting/pull/1094">#1094</a>)</li>
+<li>Bump version to 2.10 and resolve compile issues (<a href="https://github.com/opensearch-project/security-analytics/pull/521">#521</a>)</li>
 </ul>
 
 <h2>REFACTORING</h2>
 
-<h3>Opensearch KNN</h3>
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Fix TransportAddress Refactoring Changes in Core (<a href="https://github.com/opensearch-project/k-NN/pull/1020">#1020</a>)</li>
+<li>Update actionGet to SuspendUntil for ClusterMetrics (<a href="https://github.com/opensearch-project/alerting/pull/1067">#1067</a>)</li>
+<li>Resolve compile issues from core changes and update CIs (<a href="https://github.com/opensearch-project/alerting/pull/1100">#1100</a>)</li>
+</ul>
+
+<h3>Opensearch Anomaly Detection</h3>
+
+<ul>
+<li>Refactor due to core updates: Replace and modify classes and methods. (<a href="https://github.com/opensearch-project/anomaly-detection/pull/974">#974</a>)</li>
 </ul>
 
 <h3>Opensearch Geospatial</h3>
@@ -526,6 +533,28 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Handle core breaking change. (<a href="https://github.com/opensearch-project/index-management/pull/895">#895</a>)</li>
 <li>Set preference to _primary when searching control-center index. (<a href="https://github.com/opensearch-project/index-management/pull/911">#911</a>)</li>
 <li>Add primary first preference to all search requests. (<a href="https://github.com/opensearch-project/index-management/pull/912">#912</a>)</li>
+</ul>
+
+<h3>Opensearch KNN</h3>
+
+<ul>
+<li>Fix TransportAddress Refactoring Changes in Core (<a href="https://github.com/opensearch-project/k-NN/pull/1020">#1020</a>)</li>
+</ul>
+
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>Renaming metrics (<a href="https://github.com/opensearch-project/ml-commons/pull/1224">#1224</a>)</li>
+<li>Changing messaging for IllegalArgumentException on duplicate model groups (<a href="https://github.com/opensearch-project/ml-commons/pull/1294">#1294</a>)</li>
+<li>Fixing some error message handeling (<a href="https://github.com/opensearch-project/ml-commons/pull/1222">#1222</a>)</li>
+</ul>
+
+<h3>Opensearch Observability</h3>
+
+<ul>
+<li>Fix from upstream core.action changes in https://github.com/opensearch-project/observability/pull/1590</li>
+<li>Pull jackson,mockito versions from upstream in https://github.com/opensearch-project/observability/pull/1598</li>
+<li>Updates demo certs used in integ tests in https://github.com/opensearch-project/observability/pull/1600</li>
 </ul>
 
 <h3>Opensearch SQL</h3>
@@ -546,14 +575,6 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <hr />
 <p><strong>Full Changelog</strong>: https://github.com/opensearch-project/sql/compare/2.3.0.0...v.2.10.0.0</p>
 
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Renaming metrics (<a href="https://github.com/opensearch-project/ml-commons/pull/1224">#1224</a>)</li>
-<li>Changing messaging for IllegalArgumentException on duplicate model groups (<a href="https://github.com/opensearch-project/ml-commons/pull/1294">#1294</a>)</li>
-<li>Fixing some error message handeling (<a href="https://github.com/opensearch-project/ml-commons/pull/1222">#1222</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
@@ -564,35 +585,7 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/security-analytics/pull/543">#543</a>)</li>
 </ul>
 
-<h3>Opensearch Observability</h3>
-
-<ul>
-<li>Fix from upstream core.action changes in https://github.com/opensearch-project/observability/pull/1590</li>
-<li>Pull jackson,mockito versions from upstream in https://github.com/opensearch-project/observability/pull/1598</li>
-<li>Updates demo certs used in integ tests in https://github.com/opensearch-project/observability/pull/1600</li>
-</ul>
-
-<h3>Opensearch Anomaly Detection</h3>
-
-<ul>
-<li>Refactor due to core updates: Replace and modify classes and methods. (<a href="https://github.com/opensearch-project/anomaly-detection/pull/974">#974</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Update actionGet to SuspendUntil for ClusterMetrics (<a href="https://github.com/opensearch-project/alerting/pull/1067">#1067</a>)</li>
-<li>Resolve compile issues from core changes and update CIs (<a href="https://github.com/opensearch-project/alerting/pull/1100">#1100</a>)</li>
-</ul>
-
 <h2>NON-COMPLIANT</h2>
-<h2>FEATURES/ENHANCEMENTS</h2>
-<h3>Opensearch Notifications</h3>
-<ul>
-<li>Support SNS FIFO queues(<a href="https://github.com/opensearch-project/notifications/pull/716">#716</a>)</li>
-<li>Supuport Microsoft teams(<a href="https://github.com/opensearch-project/notifications/pull/676">#676</a>,<a href="https://github.com/opensearch-project/notifications/pull/746">#746</a>)</li>
-<li>Support auto upgrade mapping logic(<a href="https://github.com/opensearch-project/notifications/pull/699">#699</a>)</li>
-</ul>
 <h2>ADDED</h2>
 <h3>Opensearch Job Scheduler</h3>
 <ul>
@@ -604,4 +597,11 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <h3>Opensearch Job Scheduler</h3>
 <ul>
 <li>Call listner.onFailure when lock creation failed (<a href="https://github.com/opensearch-project/job-scheduler/pull/435">#435</a>) (<a href="https://github.com/opensearch-project/job-scheduler/pull/443">#443</a>)</li>
+</ul>
+<h2>FEATURES/ENHANCEMENTS</h2>
+<h3>Opensearch Notifications</h3>
+<ul>
+<li>Support SNS FIFO queues(<a href="https://github.com/opensearch-project/notifications/pull/716">#716</a>)</li>
+<li>Supuport Microsoft teams(<a href="https://github.com/opensearch-project/notifications/pull/676">#676</a>,<a href="https://github.com/opensearch-project/notifications/pull/746">#746</a>)</li>
+<li>Support auto upgrade mapping logic(<a href="https://github.com/opensearch-project/notifications/pull/699">#699</a>)</li>
 </ul>

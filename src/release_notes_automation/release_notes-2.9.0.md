@@ -1,12 +1,16 @@
 <h1>OpenSearch and OpenSearch Dashboards 2.9.0 Release Notes</h1>
 <h2>FEATURES</h2>
 
-<h3>Opensearch Security Analytics</h3>
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>New Log Type JSON format. (<a href="https://github.com/opensearch-project/security-analytics/pull/465">#465</a>)</li>
-<li>Correlation rule search, delete and edit API. (<a href="https://github.com/opensearch-project/security-analytics/pull/476">#476</a>)</li>
-<li>Logtypes PR v2. (<a href="https://github.com/opensearch-project/security-analytics/pull/482">#482</a>)</li>
+<li>Adds transport layer actions for CRUD workflows. (<a href="https://github.com/opensearch-project/alerting/pull/934">#934</a>)</li>
+<li>Added rest layer for the workflow. (<a href="https://github.com/opensearch-project/alerting/pull/963">#963</a>)</li>
+<li>[BucketLevelMonitor] Multi-term agg support. (<a href="https://github.com/opensearch-project/alerting/pull/964">#964</a>)</li>
+<li>Check if AD backend role is enabled. (<a href="https://github.com/opensearch-project/alerting/pull/968">#968</a>)</li>
+<li>Add workflow_id field in alert mapping json. (<a href="https://github.com/opensearch-project/alerting/pull/969">#969</a>)</li>
+<li>Adds chained alerts. (<a href="https://github.com/opensearch-project/alerting/pull/976">#976</a>)</li>
+<li>Implemented support for configuring a cluster metrics monitor to call cat/indices, and cat/shards. (<a href="https://github.com/opensearch-project/alerting/pull/992">#992</a>)</li>
 </ul>
 
 <h3>Opensearch Common Utils</h3>
@@ -21,16 +25,11 @@
 <li>Implemented support for configuring a cluster metrics monitor to call cat/indices, and cat/shards. (<a href="https://github.com/opensearch-project/common-utils/pull/479">#479</a>)</li>
 </ul>
 
-<h3>Opensearch Alerting</h3>
+<h3>Opensearch KNN</h3>
 
 <ul>
-<li>Adds transport layer actions for CRUD workflows. (<a href="https://github.com/opensearch-project/alerting/pull/934">#934</a>)</li>
-<li>Added rest layer for the workflow. (<a href="https://github.com/opensearch-project/alerting/pull/963">#963</a>)</li>
-<li>[BucketLevelMonitor] Multi-term agg support. (<a href="https://github.com/opensearch-project/alerting/pull/964">#964</a>)</li>
-<li>Check if AD backend role is enabled. (<a href="https://github.com/opensearch-project/alerting/pull/968">#968</a>)</li>
-<li>Add workflow_id field in alert mapping json. (<a href="https://github.com/opensearch-project/alerting/pull/969">#969</a>)</li>
-<li>Adds chained alerts. (<a href="https://github.com/opensearch-project/alerting/pull/976">#976</a>)</li>
-<li>Implemented support for configuring a cluster metrics monitor to call cat/indices, and cat/shards. (<a href="https://github.com/opensearch-project/alerting/pull/992">#992</a>)</li>
+<li>Added support for Efficient Pre-filtering for Faiss Engine (<a href="https://github.com/opensearch-project/k-NN/pull/936">#936</a>)</li>
+<li>Add Support for Lucene Byte Sized Vector (<a href="https://github.com/opensearch-project/k-NN/pull/971">#971</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -53,34 +52,15 @@
 <li>Add spark connector (<a href="https://github.com/opensearch-project/sql/pull/1780">#1780</a>)</li>
 </ul>
 
-<h3>Opensearch KNN</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Added support for Efficient Pre-filtering for Faiss Engine (<a href="https://github.com/opensearch-project/k-NN/pull/936">#936</a>)</li>
-<li>Add Support for Lucene Byte Sized Vector (<a href="https://github.com/opensearch-project/k-NN/pull/971">#971</a>)</li>
+<li>New Log Type JSON format. (<a href="https://github.com/opensearch-project/security-analytics/pull/465">#465</a>)</li>
+<li>Correlation rule search, delete and edit API. (<a href="https://github.com/opensearch-project/security-analytics/pull/476">#476</a>)</li>
+<li>Logtypes PR v2. (<a href="https://github.com/opensearch-project/security-analytics/pull/482">#482</a>)</li>
 </ul>
 
 <h2>ENHANCEMENTS</h2>
-
-<h3>Opensearch Performance Analyzer</h3>
-
-<ul>
-<li>Remove heap allocation rate as the input metric to HotShardClusterRca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/411">#411</a></li>
-<li>Set ThreadMetricsRca evaluation period from 12 seconds to 5 seconds <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/410">#410</a></li>
-<li>Add unit tests for the REST layer in RCA Agent <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/436">#436</a></li>
-</ul>
-
-<h3>Opensearch Security</h3>
-
-<ul>
-<li>Use boucycastle PEM reader instead of reg expression (<a href="https://github.com/opensearch-project/security/pull/2877">#2877</a>)</li>
-<li>Adding field level security test cases for FlatFields (<a href="https://github.com/opensearch-project/security/pull/2876">#2876</a>) (<a href="https://github.com/opensearch-project/security/pull/2893">#2893</a>)</li>
-<li>Add password message to /dashboardsinfo endpoint (<a href="https://github.com/opensearch-project/security/pull/2949">#2949</a>) (<a href="https://github.com/opensearch-project/security/pull/2955">#2955</a>)</li>
-<li>Add .plugins-ml-connector to system index (<a href="https://github.com/opensearch-project/security/pull/2947">#2947</a>) (<a href="https://github.com/opensearch-project/security/pull/2954">#2954</a>)</li>
-<li>Parallel test jobs for CI (<a href="https://github.com/opensearch-project/security/pull/2861">#2861</a>) (<a href="https://github.com/opensearch-project/security/pull/2936">#2936</a>)</li>
-<li>Adds a check to skip serialization-deserialization if request is for same node (<a href="https://github.com/opensearch-project/security/pull/2765">#2765</a>) (<a href="https://github.com/opensearch-project/security/pull/2973">#2973</a>)</li>
-<li>Add workflow cluster permissions to alerting roles and add .plugins-ml-config in the system index (<a href="https://github.com/opensearch-project/security/pull/2996">#2996</a>)</li>
-</ul>
 
 <h3>Opensearch Anomaly Detection</h3>
 
@@ -93,6 +73,14 @@
 <ul>
 <li>create model group automatically with first model version (<a href="https://github.com/opensearch-project/ml-commons/pull/1063">#1063</a>)</li>
 <li>init master key automatically (<a href="https://github.com/opensearch-project/ml-commons/pull/1075">#1075</a>))</li>
+</ul>
+
+<h3>Opensearch Performance Analyzer</h3>
+
+<ul>
+<li>Remove heap allocation rate as the input metric to HotShardClusterRca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/411">#411</a></li>
+<li>Set ThreadMetricsRca evaluation period from 12 seconds to 5 seconds <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/410">#410</a></li>
+<li>Add unit tests for the REST layer in RCA Agent <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/436">#436</a></li>
 </ul>
 
 <h3>Opensearch SQL</h3>
@@ -114,32 +102,19 @@
 <li>Remove Default master encryption key from settings (<a href="https://github.com/opensearch-project/sql/pull/1851">#1851</a>)</li>
 </ul>
 
+<h3>Opensearch Security</h3>
+
+<ul>
+<li>Use boucycastle PEM reader instead of reg expression (<a href="https://github.com/opensearch-project/security/pull/2877">#2877</a>)</li>
+<li>Adding field level security test cases for FlatFields (<a href="https://github.com/opensearch-project/security/pull/2876">#2876</a>) (<a href="https://github.com/opensearch-project/security/pull/2893">#2893</a>)</li>
+<li>Add password message to /dashboardsinfo endpoint (<a href="https://github.com/opensearch-project/security/pull/2949">#2949</a>) (<a href="https://github.com/opensearch-project/security/pull/2955">#2955</a>)</li>
+<li>Add .plugins-ml-connector to system index (<a href="https://github.com/opensearch-project/security/pull/2947">#2947</a>) (<a href="https://github.com/opensearch-project/security/pull/2954">#2954</a>)</li>
+<li>Parallel test jobs for CI (<a href="https://github.com/opensearch-project/security/pull/2861">#2861</a>) (<a href="https://github.com/opensearch-project/security/pull/2936">#2936</a>)</li>
+<li>Adds a check to skip serialization-deserialization if request is for same node (<a href="https://github.com/opensearch-project/security/pull/2765">#2765</a>) (<a href="https://github.com/opensearch-project/security/pull/2973">#2973</a>)</li>
+<li>Add workflow cluster permissions to alerting roles and add .plugins-ml-config in the system index (<a href="https://github.com/opensearch-project/security/pull/2996">#2996</a>)</li>
+</ul>
+
 <h2>BUG FIXES</h2>
-
-<h3>Opensearch Performance Analyzer</h3>
-
-<ul>
-<li>Fix NPE issue in ShardStateCollector, which was impacted by changes from upstream core <a href="https://github.com/opensearch-project/performance-analyzer/pull/489">#489</a></li>
-<li>Fix Mockito initialization issue <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/443">#443</a></li>
-</ul>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Fixed compile issues related to latest OS core repo changes. (<a href="https://github.com/opensearch-project/security-analytics/pull/412">#412</a>)</li>
-</ul>
-
-<h3>Opensearch Reporting</h3>
-
-<ul>
-<li>Removing guava dependency to fix jarhell (<a href="https://github.com/opensearch-project/reporting/pull/709">#709</a>)</li>
-</ul>
-
-<h3>Opensearch Common Utils</h3>
-
-<ul>
-<li>OpenSearch commons strings library dependency import. (<a href="https://github.com/opensearch-project/common-utils/pull/474">#474</a>)</li>
-</ul>
 
 <h3>Opensearch Alerting</h3>
 
@@ -149,6 +124,12 @@
 <li>Resolve string issues from core. (<a href="https://github.com/opensearch-project/alerting/pull/987">#987</a>)</li>
 <li>Fix getAlerts RBAC problem. (<a href="https://github.com/opensearch-project/alerting/pull/991">#991</a>)</li>
 <li>Fix alert constructor with noop trigger to use execution id and workflow id. (<a href="https://github.com/opensearch-project/alerting/pull/994">#994</a>)</li>
+</ul>
+
+<h3>Opensearch Common Utils</h3>
+
+<ul>
+<li>OpenSearch commons strings library dependency import. (<a href="https://github.com/opensearch-project/common-utils/pull/474">#474</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -165,6 +146,25 @@
 <li>fix init master key bug (<a href="https://github.com/opensearch-project/ml-commons/pull/1094">#1094</a>)</li>
 </ul>
 
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Fix update document with knnn_vector size not matching issue (<a href="https://github.com/opensearch-project/neural-search/pull/208">#208</a>)</li>
+</ul>
+
+<h3>Opensearch Performance Analyzer</h3>
+
+<ul>
+<li>Fix NPE issue in ShardStateCollector, which was impacted by changes from upstream core <a href="https://github.com/opensearch-project/performance-analyzer/pull/489">#489</a></li>
+<li>Fix Mockito initialization issue <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/443">#443</a></li>
+</ul>
+
+<h3>Opensearch Reporting</h3>
+
+<ul>
+<li>Removing guava dependency to fix jarhell (<a href="https://github.com/opensearch-project/reporting/pull/709">#709</a>)</li>
+</ul>
+
 <h3>Opensearch SQL</h3>
 
 <ul>
@@ -172,30 +172,13 @@
 <li>Fix CSV/RAW output header being application/json rather than plain/text (<a href="https://github.com/opensearch-project/sql/pull/1779">#1779</a>)</li>
 </ul>
 
-<h3>Opensearch Neural Search</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>Fix update document with knnn_vector size not matching issue (<a href="https://github.com/opensearch-project/neural-search/pull/208">#208</a>)</li>
+<li>Fixed compile issues related to latest OS core repo changes. (<a href="https://github.com/opensearch-project/security-analytics/pull/412">#412</a>)</li>
 </ul>
 
 <h2>INFRASTRUCTURE</h2>
-
-<h3>Opensearch Notifications</h3>
-
-<ul>
-<li>Run publish maven snapshots on all branches matching pattern (<a href="https://github.com/opensearch-project/notifications/pull/698">#698</a>)</li>
-<li>Strings compile fix due to core package change(<a href="https://github.com/opensearch-project/notifications/pull/680">#680</a>)</li>
-</ul>
-
-<h3>Opensearch Performance Analyzer</h3>
-
-<ul>
-<li>Update the BWC version to 2.8.0 <a href="https://github.com/opensearch-project/performance-analyzer/pull/446">#446</a></li>
-<li>Upgrade bcprov to bcprov-jdk15to18 in performance-analyzer <a href="https://github.com/opensearch-project/performance-analyzer/pull/493">#493</a></li>
-<li>Upgrade bcprov to bcprov-jdk15to18 in performance-analyzer-rca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/439">439</a></li>
-<li>Upgrade bcpkix to bcpkix-jdk15to18 in performance-analyzer-rca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/446">446</a></li>
-<li>Upgrade checkstyle version from 9.3 to 10.3.3 <a href="https://github.com/opensearch-project/performance-analyzer/pull/495">#495</a></li>
-</ul>
 
 <h3>Opensearch Anomaly Detection</h3>
 
@@ -219,6 +202,23 @@
 <li>IT Security Tests for model access control (<a href="https://github.com/opensearch-project/ml-commons/pull/1095">#1095</a>)</li>
 </ul>
 
+<h3>Opensearch Notifications</h3>
+
+<ul>
+<li>Run publish maven snapshots on all branches matching pattern (<a href="https://github.com/opensearch-project/notifications/pull/698">#698</a>)</li>
+<li>Strings compile fix due to core package change(<a href="https://github.com/opensearch-project/notifications/pull/680">#680</a>)</li>
+</ul>
+
+<h3>Opensearch Performance Analyzer</h3>
+
+<ul>
+<li>Update the BWC version to 2.8.0 <a href="https://github.com/opensearch-project/performance-analyzer/pull/446">#446</a></li>
+<li>Upgrade bcprov to bcprov-jdk15to18 in performance-analyzer <a href="https://github.com/opensearch-project/performance-analyzer/pull/493">#493</a></li>
+<li>Upgrade bcprov to bcprov-jdk15to18 in performance-analyzer-rca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/439">439</a></li>
+<li>Upgrade bcpkix to bcpkix-jdk15to18 in performance-analyzer-rca <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/446">446</a></li>
+<li>Upgrade checkstyle version from 9.3 to 10.3.3 <a href="https://github.com/opensearch-project/performance-analyzer/pull/495">#495</a></li>
+</ul>
+
 <h3>Opensearch SQL</h3>
 
 <ul>
@@ -230,22 +230,10 @@
 
 <h2>DOCUMENTATION</h2>
 
-<h3>Opensearch Notifications</h3>
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Add 2.9.0 release notes (<a href="https://github.com/opensearch-project/notifications/pull/702">#702</a>)</li>
-</ul>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Added 2.9.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/486">#486</a>)</li>
-</ul>
-
-<h3>Opensearch Common Utils</h3>
-
-<ul>
-<li>Added 2.9 release notes. (<a href="https://github.com/opensearch-project/common-utils/pull/482">#482</a>)</li>
+<li>Added 2.9 release notes. (<a href="https://github.com/opensearch-project/alerting/pull/1010">#1010</a>)</li>
 </ul>
 
 <h3>Opensearch Anomaly Detection</h3>
@@ -254,10 +242,10 @@
 <li>Updated Maintainers and CODE_OWNERS list (<a href="https://github.com/opensearch-project/anomaly-detection/pull/926">#926</a>)</li>
 </ul>
 
-<h3>Opensearch Alerting</h3>
+<h3>Opensearch Common Utils</h3>
 
 <ul>
-<li>Added 2.9 release notes. (<a href="https://github.com/opensearch-project/alerting/pull/1010">#1010</a>)</li>
+<li>Added 2.9 release notes. (<a href="https://github.com/opensearch-project/common-utils/pull/482">#482</a>)</li>
 </ul>
 
 <h3>Opensearch ML Common</h3>
@@ -267,6 +255,12 @@
 <li>updating docs for model group id (<a href="https://github.com/opensearch-project/ml-commons/pull/980">#980</a>)</li>
 </ul>
 
+<h3>Opensearch Notifications</h3>
+
+<ul>
+<li>Add 2.9.0 release notes (<a href="https://github.com/opensearch-project/notifications/pull/702">#702</a>)</li>
+</ul>
+
 <h3>Opensearch SQL</h3>
 
 <ul>
@@ -274,18 +268,59 @@
 <li>Updated <code>protocol.rst</code> with new wording for error message (<a href="https://github.com/opensearch-project/sql/pull/1662">#1662</a>)</li>
 </ul>
 
-<h2>MAINTENANCE</h2>
-
-<h3>Opensearch Notifications</h3>
+<h3>Opensearch Security Analytics</h3>
 
 <ul>
-<li>[AUTO] Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/notifications/pull/690">#690</a>)</li>
+<li>Added 2.9.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/486">#486</a>)</li>
+</ul>
+
+<h2>MAINTENANCE</h2>
+
+<h3>Opensearch Alerting</h3>
+
+<ul>
+<li>Increment version to 2.9.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/alerting/pull/950">#950</a>)</li>
+</ul>
+
+<h3>Opensearch Asynchronous Search</h3>
+
+<ul>
+<li>Increment version to 2.9.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/300">300</a>)</li>
+</ul>
+
+<h3>Opensearch Common Utils</h3>
+
+<ul>
+<li>Increment version to 2.9.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/common-utils/pull/444">#444</a>)</li>
+<li>Modify triggers to push snapshots on all branches. (<a href="https://github.com/opensearch-project/common-utils/pull/454">#454</a>)</li>
 </ul>
 
 <h3>Opensearch Geospatial</h3>
 
 <ul>
 <li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/geospatial/pull/329">#329</a>)</li>
+</ul>
+
+<h3>Opensearch ML Common</h3>
+
+<ul>
+<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/ml-commons/pull/955">#955</a>)</li>
+<li>Manual CVE backport (<a href="https://github.com/opensearch-project/ml-commons/pull/1008">#1008</a>)</li>
+<li>Fix build. (<a href="https://github.com/opensearch-project/ml-commons/pull/1018">#1018</a>)</li>
+<li>Fix the refactor change brought by core backport (<a href="https://github.com/opensearch-project/ml-commons/pull/1047">#1047</a>)</li>
+<li>change to compileOnly to avoid jarhell (<a href="https://github.com/opensearch-project/ml-commons/pull/1062">#1062</a>)</li>
+</ul>
+
+<h3>Opensearch Neural Search</h3>
+
+<ul>
+<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/neural-search/pull/191">#191</a>)</li>
+</ul>
+
+<h3>Opensearch Notifications</h3>
+
+<ul>
+<li>[AUTO] Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/notifications/pull/690">#690</a>)</li>
 </ul>
 
 <h3>Opensearch Performance Analyzer</h3>
@@ -295,6 +330,12 @@
 <li>Update licenses files for 2.9 <a href="https://github.com/opensearch-project/performance-analyzer/pull/501">#501</a></li>
 <li>Swap jboss annotation dependency for jakarta annotations <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/407">#407</a></li>
 <li>Ensures compatibility check readiness <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/438">#438</a></li>
+</ul>
+
+<h3>Opensearch Reporting</h3>
+
+<ul>
+<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/reporting/pull/712">#712</a>)</li>
 </ul>
 
 <h3>Opensearch Security</h3>
@@ -325,48 +366,19 @@
 <li>Gradle update. (<a href="https://github.com/opensearch-project/security-analytics/pull/437">#437</a>)</li>
 </ul>
 
-<h3>Opensearch Reporting</h3>
+<h2>REFACTORING</h2>
+
+<h3>Opensearch Alerting</h3>
 
 <ul>
-<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/reporting/pull/712">#712</a>)</li>
+<li>Use strong password in security test. (<a href="https://github.com/opensearch-project/alerting/pull/933">#933</a>)</li>
 </ul>
 
 <h3>Opensearch Common Utils</h3>
 
 <ul>
-<li>Increment version to 2.9.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/common-utils/pull/444">#444</a>)</li>
-<li>Modify triggers to push snapshots on all branches. (<a href="https://github.com/opensearch-project/common-utils/pull/454">#454</a>)</li>
+<li>Pass workflow id in alert constructors. (<a href="https://github.com/opensearch-project/common-utils/pull/465">#465</a>)</li>
 </ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Increment version to 2.9.0-SNAPSHOT. (<a href="https://github.com/opensearch-project/alerting/pull/950">#950</a>)</li>
-</ul>
-
-<h3>Opensearch ML Common</h3>
-
-<ul>
-<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/ml-commons/pull/955">#955</a>)</li>
-<li>Manual CVE backport (<a href="https://github.com/opensearch-project/ml-commons/pull/1008">#1008</a>)</li>
-<li>Fix build. (<a href="https://github.com/opensearch-project/ml-commons/pull/1018">#1018</a>)</li>
-<li>Fix the refactor change brought by core backport (<a href="https://github.com/opensearch-project/ml-commons/pull/1047">#1047</a>)</li>
-<li>change to compileOnly to avoid jarhell (<a href="https://github.com/opensearch-project/ml-commons/pull/1062">#1062</a>)</li>
-</ul>
-
-<h3>Opensearch Neural Search</h3>
-
-<ul>
-<li>Increment version to 2.9.0-SNAPSHOT (<a href="https://github.com/opensearch-project/neural-search/pull/191">#191</a>)</li>
-</ul>
-
-<h3>Opensearch Asynchronous Search</h3>
-
-<ul>
-<li>Increment version to 2.9.0 (<a href="https://github.com/opensearch-project/asynchronous-search/pull/300">300</a>)</li>
-</ul>
-
-<h2>REFACTORING</h2>
 
 <h3>Opensearch Geospatial</h3>
 
@@ -380,27 +392,15 @@
 <li>Add class for loading mapping templates in bulk (<a href="https://github.com/opensearch-project/observability/pull/1550">#1550</a>)</li>
 </ul>
 
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Use strong password in security test. (<a href="https://github.com/opensearch-project/security-analytics/pull/452">#452</a>)</li>
-</ul>
-
-<h3>Opensearch Common Utils</h3>
-
-<ul>
-<li>Pass workflow id in alert constructors. (<a href="https://github.com/opensearch-project/common-utils/pull/465">#465</a>)</li>
-</ul>
-
-<h3>Opensearch Alerting</h3>
-
-<ul>
-<li>Use strong password in security test. (<a href="https://github.com/opensearch-project/alerting/pull/933">#933</a>)</li>
-</ul>
-
 <h3>Opensearch SQL</h3>
 
 <ul>
 <li>Simplify OpenSearchIndexScanBuilder (<a href="https://github.com/opensearch-project/sql/pull/1738">#1738</a>)</li>
+</ul>
+
+<h3>Opensearch Security Analytics</h3>
+
+<ul>
+<li>Use strong password in security test. (<a href="https://github.com/opensearch-project/security-analytics/pull/452">#452</a>)</li>
 </ul>
 
