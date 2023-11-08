@@ -12,15 +12,14 @@ from ci_workflow.ci_check_list_dist import CiCheckListDist
 from ci_workflow.ci_check_list_source import CiCheckListSource
 from ci_workflow.ci_check_list_source_ref import CiCheckListSourceRef
 from ci_workflow.ci_target import CiTarget
-from manifests.input_manifest import InputComponentFromDist, InputComponentFromSource
 
 
 class CiCheckLists(ABC):
     @classmethod
     def from_component(self, component: Any, target: CiTarget) -> Any:
-        if type(component) is InputComponentFromDist:
+        if hasattr(component, "dist"):
             return CiCheckListDist(component, target)
-        elif type(component) is InputComponentFromSource:
+        elif hasattr(component, "repository"):
             if len(component.checks) > 0:
                 return CiCheckListSource(component, target)
             else:
