@@ -26,8 +26,8 @@ class ReleaseNotes:
     def table(self) -> MarkdownTableWriter:
         table_result = []
         for component in self.manifest.components.select():
-            if type(component) is InputComponentFromSource:
-                table_result.append(self.check(component))
+            if hasattr(component, "repository"):
+                table_result.append(self.check(component))  # type: ignore[arg-type]
         writer = MarkdownTableWriter(
             table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
             headers=["Repo", "Branch", "CommitID", "Commit Date", "Release Notes"],

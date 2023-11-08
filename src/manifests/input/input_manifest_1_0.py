@@ -10,8 +10,8 @@ An InputManifest is an immutable view of the input manifest for the build system
 The manifest contains information about the product that is being built (in the `build` section),
 and the components that make up the product in the `components` section.
 
-The format for schema version 1.1 is:
-schema-version: "1.1"
+The format for schema version 1.0 is:
+schema-version: "1.0"
 build:
   name: string
   version: string
@@ -44,17 +44,11 @@ from typing import Callable, Iterator, List, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components
-from manifests.input.input_manifest_1_0 import InputManifest_1_0
 
 
-class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
-    VERSIONS = {
-        "1.0": InputManifest_1_0,
-        # "1.1": current
-    }
-
+class InputManifest_1_0(ComponentManifest['InputManifest_1_0', 'InputComponents_1_0']):
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "build": {
             "required": True,
             "type": "dict",
@@ -92,7 +86,6 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                             "working_directory": {"type": "string"},
                             "checks": {"type": "list", "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]}},
                             "platforms": {"type": "list", "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]}},
-                            "depends_on": {"type": "list", "schema": {"type": "string"}}
                         },
                     },
                     {
@@ -115,18 +108,18 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         self.build = self.Build(data["build"])
         self.ci = self.Ci(data.get("ci", None))
 
-        self.components = InputComponents(data.get("components", []))  # type: ignore[assignment]
+        self.components = InputComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "1.1",
+            "schema-version": "1.0",
             "build": self.build.__to_dict__(),
             "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": self.components.__to_dict__(),
         }
 
-    def stable(self) -> 'InputManifest':
-        manifest: 'InputManifest' = copy.deepcopy(self)
+    def stable(self) -> 'InputManifest_1_0':
+        manifest: 'InputManifest_1_0' = copy.deepcopy(self)
         manifest.components.__stabilize__()
         return manifest
 
@@ -174,16 +167,16 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
             return self.name.lower().replace(" ", "-")
 
 
-class InputComponents(Components['InputComponent']):
+class InputComponents_1_0(Components['InputComponent_1_0 ']):
     @classmethod
-    def __create__(self, data: dict) -> 'InputComponent':
-        return InputComponent._from(data)  # type: ignore[no-any-return]
+    def __create__(self, data: dict) -> 'InputComponent_1_0':
+        return InputComponent_1_0._from(data)  # type: ignore[no-any-return]
 
     def __stabilize__(self) -> None:
         for component in self.values():
             component.__stabilize__()
 
-    def select(self, focus: List[str] = [], platform: str = None) -> Iterator['InputComponent']:
+    def select(self, focus: List[str] = [], platform: str = None) -> Iterator['InputComponent_1_0']:
         """
         Select components.
 
@@ -197,7 +190,7 @@ class InputComponents(Components['InputComponent']):
             if len(invalid) > 0:
                 raise ValueError(f"Unknown component{'s'[:len(invalid) != 1]}={','.join(invalid)}.")
 
-        by_focus_and_platform: Callable[['InputComponent'], bool] = lambda component: component.__matches__(focus, platform)
+        by_focus_and_platform: Callable[['InputComponent_1_0'], bool] = lambda component: component.__matches__(focus, platform)
         selected, it = itertools.tee(filter(by_focus_and_platform, self.values()))
 
         if not any(it):
@@ -206,19 +199,18 @@ class InputComponents(Components['InputComponent']):
         return selected
 
 
-class InputComponent(Component):
+class InputComponent_1_0(Component):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.platforms = data.get("platforms", None)
-        self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
-        self.depends_on = data.get("depends_on", None)
+        self.checks = list(map(lambda entry: Check_1_0(entry), data.get("checks", [])))
 
     @classmethod
-    def _from(self, data: dict) -> 'InputComponent':
+    def _from(self, data: dict) -> 'InputComponent_1_0':
         if "repository" in data:
-            return InputComponentFromSource(data)
+            return InputComponentFromSource_1_0(data)
         elif "dist" in data:
-            return InputComponentFromDist(data)
+            return InputComponentFromDist_1_0(data)
         else:
             raise ValueError(f"Invalid component data: {data}")
 
@@ -240,7 +232,7 @@ class InputComponent(Component):
         pass
 
 
-class InputComponentFromSource(InputComponent):
+class InputComponentFromSource_1_0(InputComponent_1_0):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.repository = data["repository"]
@@ -260,11 +252,10 @@ class InputComponentFromSource(InputComponent):
             "working_directory": self.working_directory,
             "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
             "platforms": self.platforms,
-            "depends_on": self.depends_on,
         }
 
 
-class InputComponentFromDist(InputComponent):
+class InputComponentFromDist_1_0(InputComponent_1_0):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.dist = data["dist"]
@@ -278,7 +269,7 @@ class InputComponentFromDist(InputComponent):
         }
 
 
-class Check:
+class Check_1_0:
     def __init__(self, data: dict) -> None:
         if isinstance(data, dict):
             if len(data) != 1:
@@ -295,4 +286,4 @@ class Check:
             return self.name  # type: ignore[no-any-return]
 
 
-InputManifest.VERSIONS = {"1.0": InputManifest_1_0, "1.1": InputManifest}
+InputManifest_1_0.VERSIONS = {"1.0": InputManifest_1_0}
