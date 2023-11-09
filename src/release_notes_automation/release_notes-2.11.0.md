@@ -49,26 +49,6 @@
 <li>Add <code>max_token_score</code> parameter to improve the execution efficiency for <code>neural_sparse</code> query clause (<a href="https://github.com/opensearch-project/neural-search/pull/348">#348</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Enable PPL lang and add datasource to async query API in https://github.com/opensearch-project/sql/pull/2195</li>
-<li>Refactor Flint Auth in https://github.com/opensearch-project/sql/pull/2201</li>
-<li>Add conf for spark structured streaming job in https://github.com/opensearch-project/sql/pull/2203</li>
-<li>Submit long running job only when auto_refresh = false in https://github.com/opensearch-project/sql/pull/2209</li>
-<li>Bug Fix, handle DESC TABLE response in https://github.com/opensearch-project/sql/pull/2213</li>
-<li>Drop Index Implementation in https://github.com/opensearch-project/sql/pull/2217</li>
-<li>Enable PPL Queries in https://github.com/opensearch-project/sql/pull/2223</li>
-<li>Read extra Spark submit parameters from cluster settings in https://github.com/opensearch-project/sql/pull/2236</li>
-<li>Spark Execution Engine Config Refactor in https://github.com/opensearch-project/sql/pull/2266</li>
-<li>Provide auth.type and auth.role_arn paramters in GET Datasource API response. in https://github.com/opensearch-project/sql/pull/2283</li>
-<li>Add support for <code>date_nanos</code> and tests. (#337) in https://github.com/opensearch-project/sql/pull/2020</li>
-<li>Applied formatting improvements to Antlr files based on spotless changes (#2017) by @MitchellGale in https://github.com/opensearch-project/sql/pull/2023</li>
-<li>Revert &quot;Guarantee datasource read api is strong consistent read (#1815)&quot; in https://github.com/opensearch-project/sql/pull/2031</li>
-<li>Add _primary preference only for segment replication enabled indices in https://github.com/opensearch-project/sql/pull/2045</li>
-<li>Changed allowlist config to denylist ip config for datasource uri hosts in https://github.com/opensearch-project/sql/pull/2058</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -89,6 +69,26 @@
 <li>Auto expand replicas for logtype index. (<a href="https://github.com/opensearch-project/security-analytics/pull/568">#568</a>)</li>
 <li>Adding WAF Log type. (<a href="https://github.com/opensearch-project/security-analytics/pull/617">#617</a>)</li>
 <li>Add category to custom log types. (<a href="https://github.com/opensearch-project/security-analytics/pull/634">#634</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Enable PPL lang and add datasource to async query API in https://github.com/opensearch-project/sql/pull/2195</li>
+<li>Refactor Flint Auth in https://github.com/opensearch-project/sql/pull/2201</li>
+<li>Add conf for spark structured streaming job in https://github.com/opensearch-project/sql/pull/2203</li>
+<li>Submit long running job only when auto_refresh = false in https://github.com/opensearch-project/sql/pull/2209</li>
+<li>Bug Fix, handle DESC TABLE response in https://github.com/opensearch-project/sql/pull/2213</li>
+<li>Drop Index Implementation in https://github.com/opensearch-project/sql/pull/2217</li>
+<li>Enable PPL Queries in https://github.com/opensearch-project/sql/pull/2223</li>
+<li>Read extra Spark submit parameters from cluster settings in https://github.com/opensearch-project/sql/pull/2236</li>
+<li>Spark Execution Engine Config Refactor in https://github.com/opensearch-project/sql/pull/2266</li>
+<li>Provide auth.type and auth.role_arn paramters in GET Datasource API response. in https://github.com/opensearch-project/sql/pull/2283</li>
+<li>Add support for <code>date_nanos</code> and tests. (#337) in https://github.com/opensearch-project/sql/pull/2020</li>
+<li>Applied formatting improvements to Antlr files based on spotless changes (#2017) by @MitchellGale in https://github.com/opensearch-project/sql/pull/2023</li>
+<li>Revert &quot;Guarantee datasource read api is strong consistent read (#1815)&quot; in https://github.com/opensearch-project/sql/pull/2031</li>
+<li>Add _primary preference only for segment replication enabled indices in https://github.com/opensearch-project/sql/pull/2045</li>
+<li>Changed allowlist config to denylist ip config for datasource uri hosts in https://github.com/opensearch-project/sql/pull/2058</li>
 </ul>
 
 <h2>BUG FIXES</h2>
@@ -144,22 +144,6 @@
 <li>Update Jooq version and address bind variable failure in AdmissionControl Emitter <a href="https://github.com/opensearch-project/performance-analyzer/pull/493">#493</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>fix broken link for connectors doc in https://github.com/opensearch-project/sql/pull/2199</li>
-<li>Fix response codes returned by JSON formatting them in https://github.com/opensearch-project/sql/pull/2200</li>
-<li>Bug fix, datasource API should be case sensitive in https://github.com/opensearch-project/sql/pull/2202</li>
-<li>Minor fix in dropping covering index in https://github.com/opensearch-project/sql/pull/2240</li>
-<li>Fix Unit tests for FlintIndexReader in https://github.com/opensearch-project/sql/pull/2242</li>
-<li>Bug Fix , delete OpenSearch index when DROP INDEX in https://github.com/opensearch-project/sql/pull/2252</li>
-<li>Correctly Set query status in https://github.com/opensearch-project/sql/pull/2232</li>
-<li>Exclude generated files from spotless  in https://github.com/opensearch-project/sql/pull/2024</li>
-<li>Fix mockito core conflict. in https://github.com/opensearch-project/sql/pull/2131</li>
-<li>Fix <code>ASCII</code> function and groom UT for text functions. (#301) in https://github.com/opensearch-project/sql/pull/2029</li>
-<li>Fixed response codes For Requests With security exception. in https://github.com/opensearch-project/sql/pull/2036</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -173,6 +157,22 @@
 <li>Fixes verifying workflow test when security is enabled. (<a href="https://github.com/opensearch-project/security-analytics/pull/563">#563</a>)</li>
 <li>Fix flaky integration tests. (<a href="https://github.com/opensearch-project/security-analytics/pull/581">#581</a>)</li>
 <li>Sigma Aggregation rule fixes. (<a href="https://github.com/opensearch-project/security-analytics/pull/622">#622</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>fix broken link for connectors doc in https://github.com/opensearch-project/sql/pull/2199</li>
+<li>Fix response codes returned by JSON formatting them in https://github.com/opensearch-project/sql/pull/2200</li>
+<li>Bug fix, datasource API should be case sensitive in https://github.com/opensearch-project/sql/pull/2202</li>
+<li>Minor fix in dropping covering index in https://github.com/opensearch-project/sql/pull/2240</li>
+<li>Fix Unit tests for FlintIndexReader in https://github.com/opensearch-project/sql/pull/2242</li>
+<li>Bug Fix , delete OpenSearch index when DROP INDEX in https://github.com/opensearch-project/sql/pull/2252</li>
+<li>Correctly Set query status in https://github.com/opensearch-project/sql/pull/2232</li>
+<li>Exclude generated files from spotless  in https://github.com/opensearch-project/sql/pull/2024</li>
+<li>Fix mockito core conflict. in https://github.com/opensearch-project/sql/pull/2131</li>
+<li>Fix <code>ASCII</code> function and groom UT for text functions. (#301) in https://github.com/opensearch-project/sql/pull/2029</li>
+<li>Fixed response codes For Requests With security exception. in https://github.com/opensearch-project/sql/pull/2036</li>
 </ul>
 
 <h2>INFRASTRUCTURE</h2>
@@ -210,17 +210,17 @@
 <li>Update PULL_REQUEST_TEMPLATE.md <a href="https://github.com/opensearch-project/performance-analyzer/pull/560">#560)</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>bump aws-encryption-sdk-java to 1.71 in https://github.com/opensearch-project/sql/pull/2057</li>
-<li>Run IT tests with security plugin (#335) #1986 by @MitchellGale in https://github.com/opensearch-project/sql/pull/2022</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Ignore tests that may be flaky. (<a href="https://github.com/opensearch-project/security-analytics/pull/596">#596</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>bump aws-encryption-sdk-java to 1.71 in https://github.com/opensearch-project/sql/pull/2057</li>
+<li>Run IT tests with security plugin (#335) #1986 by @MitchellGale in https://github.com/opensearch-project/sql/pull/2022</li>
 </ul>
 
 <h2>DOCUMENTATION</h2>
@@ -243,17 +243,17 @@
 <li>Add 2.11.0 release notes (<a href="https://github.com/opensearch-project/notifications/issues/774">#774</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Datasource description in https://github.com/opensearch-project/sql/pull/2138</li>
-<li>Add documentation for S3GlueConnector. in https://github.com/opensearch-project/sql/pull/2234</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Added 2.11.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/660">#660</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Datasource description in https://github.com/opensearch-project/sql/pull/2138</li>
+<li>Add documentation for S3GlueConnector. in https://github.com/opensearch-project/sql/pull/2234</li>
 </ul>
 
 <h2>MAINTENANCE</h2>
@@ -386,7 +386,14 @@
 <li>if model version fails to register, update model group accordingly (<a href="https://github.com/opensearch-project/ml-commons/pull/1463">#1463</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>Opensearch Security Analytics</h3>
+
+<ul>
+<li>Address search request timeouts as transient error. (<a href="https://github.com/opensearch-project/security-analytics/pull/561">#561</a>)</li>
+<li>Change ruleId if it exists. (<a href="https://github.com/opensearch-project/security-analytics/pull/628">#628</a>)</li>
+</ul>
+
+<h3>SQL</h3>
 
 <ul>
 <li>Merging Async Query APIs feature branch into main. in https://github.com/opensearch-project/sql/pull/2163</li>
@@ -394,13 +401,6 @@
 <li>Check for existence of security plugin in https://github.com/opensearch-project/sql/pull/2069</li>
 <li>Always use snapshot version for security plugin download in https://github.com/opensearch-project/sql/pull/2061</li>
 <li>Add customized result index in data source etc in https://github.com/opensearch-project/sql/pull/2220</li>
-</ul>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Address search request timeouts as transient error. (<a href="https://github.com/opensearch-project/security-analytics/pull/561">#561</a>)</li>
-<li>Change ruleId if it exists. (<a href="https://github.com/opensearch-project/security-analytics/pull/628">#628</a>)</li>
 </ul>
 
 <h2>EXPERIMENTAL</h2>
@@ -413,7 +413,7 @@
 
 <h2>NON-COMPLIANT</h2>
 <h2>SECURITY</h2>
-<h3>Opensearch SQL</h3>
+<h3>SQL</h3>
 <ul>
 <li>bump okhttp to 4.10.0 (#2043) by @joshuali925 in https://github.com/opensearch-project/sql/pull/2044</li>
 <li>bump okio to 3.4.0 by @joshuali925 in https://github.com/opensearch-project/sql/pull/2047</li>

@@ -25,18 +25,6 @@
 <li>Support notification integration with long running operations. (<a href="https://github.com/opensearch-project/index-management/pull/712">#712</a>, <a href="https://github.com/opensearch-project/index-management/pull/722">#722</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Support for pagination in v2 engine of SELECT * FROM &lt;table&gt; queries (<a href="https://github.com/opensearch-project/sql/pull/1666">#1666</a>)</li>
-<li>Support Alternate Datetime Formats (<a href="https://github.com/opensearch-project/sql/pull/1664">#1664</a>)</li>
-<li>Create new anonymizer for new engine (<a href="https://github.com/opensearch-project/sql/pull/1665">#1665</a>)</li>
-<li>Add Support for Nested Function Use In WHERE Clause Predicate Expresion (<a href="https://github.com/opensearch-project/sql/pull/1657">#1657</a>)</li>
-<li>Cross cluster search in PPL (<a href="https://github.com/opensearch-project/sql/pull/1512">#1512</a>)</li>
-<li>Added COSH to V2 engine (<a href="https://github.com/opensearch-project/sql/pull/1428">#1428</a>)</li>
-<li>REST API for GET,PUT and DELETE (<a href="https://github.com/opensearch-project/sql/pull/1482">#1482</a>)</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -55,6 +43,18 @@
 <li>SearchRule API - source filtering. (<a href="https://github.com/opensearch-project/security-analytics/pull/374">#374</a>)</li>
 <li>Alias and dataStream end-to-end ITs. (<a href="https://github.com/opensearch-project/security-analytics/pull/373">#373</a>)</li>
 <li>add rules to correlations for correlation engine. (<a href="https://github.com/opensearch-project/security-analytics/pull/423">#423</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Support for pagination in v2 engine of SELECT * FROM &lt;table&gt; queries (<a href="https://github.com/opensearch-project/sql/pull/1666">#1666</a>)</li>
+<li>Support Alternate Datetime Formats (<a href="https://github.com/opensearch-project/sql/pull/1664">#1664</a>)</li>
+<li>Create new anonymizer for new engine (<a href="https://github.com/opensearch-project/sql/pull/1665">#1665</a>)</li>
+<li>Add Support for Nested Function Use In WHERE Clause Predicate Expresion (<a href="https://github.com/opensearch-project/sql/pull/1657">#1657</a>)</li>
+<li>Cross cluster search in PPL (<a href="https://github.com/opensearch-project/sql/pull/1512">#1512</a>)</li>
+<li>Added COSH to V2 engine (<a href="https://github.com/opensearch-project/sql/pull/1428">#1428</a>)</li>
+<li>REST API for GET,PUT and DELETE (<a href="https://github.com/opensearch-project/sql/pull/1482">#1482</a>)</li>
 </ul>
 
 <h2>ENHANCEMENTS</h2>
@@ -84,14 +84,6 @@
 <li>Add model group rest ITs (<a href="https://github.com/opensearch-project/ml-commons/pull/942">#942</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Minor clean up of datetime and other classes (<a href="https://github.com/opensearch-project/sql/pull/1310">#1310</a>)</li>
-<li>Add integration JDBC tests for cursor/fetch_size feature (<a href="https://github.com/opensearch-project/sql/pull/1315">#1315</a>)</li>
-<li>Refactoring datasource changes to a new module. (<a href="https://github.com/opensearch-project/sql/pull/1504">#1504</a>)</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -100,6 +92,14 @@
 <li>Changes in role.yml for long-running operation notification feature in Index-Management repo (<a href="https://github.com/opensearch-project/security/pull/2789">#2789</a>)</li>
 <li>Rest admin permissions (<a href="https://github.com/opensearch-project/security/pull/2411">#2411</a>)</li>
 <li>Separate config option to enable restapi: permissions (<a href="https://github.com/opensearch-project/security/pull/2605">#2605</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Minor clean up of datetime and other classes (<a href="https://github.com/opensearch-project/sql/pull/1310">#1310</a>)</li>
+<li>Add integration JDBC tests for cursor/fetch_size feature (<a href="https://github.com/opensearch-project/sql/pull/1315">#1315</a>)</li>
+<li>Refactoring datasource changes to a new module. (<a href="https://github.com/opensearch-project/sql/pull/1504">#1504</a>)</li>
 </ul>
 
 <h2>BUG FIXES</h2>
@@ -162,12 +162,6 @@
 <li>Removing guava dependency to fix jarhell (<a href="https://github.com/opensearch-project/reporting/pull/709">#709</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Fixing bug where Nested functions used in WHERE, GROUP BY, HAVING, and ORDER BY clauses don't fallback to legacy engine. (<a href="https://github.com/opensearch-project/sql/pull/1549">#1549</a>)</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -181,6 +175,12 @@
 <li>Findings index mappings fix. (<a href="https://github.com/opensearch-project/security-analytics/pull/409">#409</a>)</li>
 <li>fix for input validation of correlation rule names. (<a href="https://github.com/opensearch-project/security-analytics/pull/428">#428</a>)</li>
 <li>fix for failure in syslogs mappings view api. (<a href="https://github.com/opensearch-project/security-analytics/pull/435">#435</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Fixing bug where Nested functions used in WHERE, GROUP BY, HAVING, and ORDER BY clauses don't fallback to legacy engine. (<a href="https://github.com/opensearch-project/sql/pull/1549">#1549</a>)</li>
 </ul>
 
 <h2>INFRASTRUCTURE</h2>
@@ -264,18 +264,18 @@
 <li>Add 2.8.0 release notes (<a href="https://github.com/opensearch-project/notifications/pull/682">#682</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>Opensearch Security Analytics</h3>
+
+<ul>
+<li>Added 2.8.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/444">#444</a>)</li>
+</ul>
+
+<h3>SQL</h3>
 
 <ul>
 <li>Add Nested Documentation for 2.7 Related Features (<a href="https://github.com/opensearch-project/sql/pull/1620">#1620</a>)</li>
 <li>Update usage example doc for PPL cross-cluster search (<a href="https://github.com/opensearch-project/sql/pull/1610">#1610</a>)</li>
 <li>Documentation and other papercuts for datasource api launch (<a href="https://github.com/opensearch-project/sql/pull/1530">#1530</a>)</li>
-</ul>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Added 2.8.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/444">#444</a>)</li>
 </ul>
 
 <h2>MAINTENANCE</h2>
@@ -365,18 +365,6 @@
 <li>Increment version to 2.8.0-SNAPSHOT (<a href="https://github.com/opensearch-project/reporting/pull/688">#688</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Fix IT - address breaking changes from upstream. (<a href="https://github.com/opensearch-project/sql/pull/1659">#1659</a>)</li>
-<li>Increment version to 2.8.0-SNAPSHOT (<a href="https://github.com/opensearch-project/sql/pull/1552">#1552</a>)</li>
-<li>Backport maintainer list update to <code>2.x</code>. (<a href="https://github.com/opensearch-project/sql/pull/1650">#1650</a>)</li>
-<li>Backport jackson and gradle update from #1580 to 2.x (<a href="https://github.com/opensearch-project/sql/pull/1596">#1596</a>)</li>
-<li>adding reflections as a dependency (<a href="https://github.com/opensearch-project/sql/pull/1596">#1559</a>)</li>
-<li>Bump org.json dependency version (<a href="https://github.com/opensearch-project/sql/pull/1586">#1586</a>)</li>
-<li>Integ Test Fix (<a href="https://github.com/opensearch-project/sql/pull/1541">#1541</a>)</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -390,6 +378,18 @@
 <li>Fixed compile issues related to latest OS core repo changes. (<a href="https://github.com/opensearch-project/security-analytics/pull/412">#412</a>)</li>
 <li>Moved CODEOWNERS files to align with org requirements. (<a href="https://github.com/opensearch-project/security-analytics/pull/418">#418</a>)</li>
 <li>Update CODEOWNERS. (<a href="https://github.com/opensearch-project/security-analytics/pull/434">#434</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Fix IT - address breaking changes from upstream. (<a href="https://github.com/opensearch-project/sql/pull/1659">#1659</a>)</li>
+<li>Increment version to 2.8.0-SNAPSHOT (<a href="https://github.com/opensearch-project/sql/pull/1552">#1552</a>)</li>
+<li>Backport maintainer list update to <code>2.x</code>. (<a href="https://github.com/opensearch-project/sql/pull/1650">#1650</a>)</li>
+<li>Backport jackson and gradle update from #1580 to 2.x (<a href="https://github.com/opensearch-project/sql/pull/1596">#1596</a>)</li>
+<li>adding reflections as a dependency (<a href="https://github.com/opensearch-project/sql/pull/1596">#1559</a>)</li>
+<li>Bump org.json dependency version (<a href="https://github.com/opensearch-project/sql/pull/1586">#1586</a>)</li>
+<li>Integ Test Fix (<a href="https://github.com/opensearch-project/sql/pull/1541">#1541</a>)</li>
 </ul>
 
 <h2>REFACTORING</h2>

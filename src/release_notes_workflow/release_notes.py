@@ -27,14 +27,13 @@ class ReleaseNotes:
     def table(self) -> MarkdownTableWriter:
         table_result = []
         for component in self.manifest.components.select():
-            # print("TABLE component.name:", component.name)
             if component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards' or component.name == 'notifications-core':
                 continue
-            if type(component) is InputComponentFromSource:
-                table_result.append(self.check(component))
+            if hasattr(component, "repository"):
+                table_result.append(self.check(component))  # type: ignore[arg-type]
 
         # Sort table_result based on Repo column
-        table_result.sort(key=lambda x: x[0])
+        table_result.sort(key=lambda x: (x[0], x[1]) if len(x) > 1 else x[0])
 
         if self.action_type == "check":
             headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists"]
@@ -75,9 +74,7 @@ class ReleaseNotes:
 
                 if(release_notes.exists()):
                     releasenote = os.path.basename(release_notes.full_path)
-                    # print("CHECK release_notes.full_path:", releasenote)
                     results.append(releasenote)
-                    # results.append(release_notes.full_path)
                     repo_name = component.repository.split("/")[-1].split('.')[0]
                     repo_ref = component.ref.split("/")[-1]
                     url = f"https://raw.githubusercontent.com/opensearch-project/{repo_name}/{repo_ref}/release-notes/{releasenote}"

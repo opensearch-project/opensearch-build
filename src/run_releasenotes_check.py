@@ -29,14 +29,14 @@ def main() -> int:
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 
-    def capitalize_acronyms(formatted_name) -> str:
+    def capitalize_acronyms(formatted_name: str) -> str:
         acronyms = ["sql", "ml", "knn"]
         for acronym in acronyms:
             pattern = re.compile(re.escape(acronym), re.IGNORECASE)
             formatted_name = re.sub(pattern, acronym.upper(), formatted_name)
         return formatted_name
 
-    def format_component_name_from_url(url) -> str:
+    def format_component_name_from_url(url: str) -> str:
         start_index = url.find("release-notes/")
         if start_index == -1:
             raise ValueError("'release-notes/' not found in the URL")
@@ -44,6 +44,8 @@ def main() -> int:
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
         component_name = url[start_index + len("release-notes/"): end_index]
+        if component_name == "opensearch-sql":
+            component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
@@ -78,6 +80,7 @@ def main() -> int:
 
     if args.action == "check":
         create_urls_file_if_not_exists()
+        return 0
 
     elif args.action == "compile":
         create_urls_file_if_not_exists()
@@ -93,8 +96,7 @@ def main() -> int:
         unique_urls = list(set(urls))
 
     # store plugin data
-    plugin_data = defaultdict(lambda: defaultdict(list))
-
+    plugin_data: defaultdict = defaultdict(lambda: defaultdict(list))
     # handle custom headings
     heading_mapping = {
         "Feature": "Features",
@@ -144,7 +146,7 @@ def main() -> int:
                         if len(content_to_end) > 0:
                             content_to_end = "* " + content_to_end
                     plugin_data[plugin_name][heading].append(content_to_end)
-    plugin_data = dict(sorted(plugin_data.items()))
+    plugin_data = defaultdict(list, sorted(plugin_data.items()))
     print("Compilation complete.")
 
     # Markdown renderer
