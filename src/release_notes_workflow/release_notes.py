@@ -41,7 +41,7 @@ class ReleaseNotes:
             headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists", "Full Path", "URL"]
         else:
             raise ValueError("Invalid action_type. Use 'check' or 'compile'.")
-
+            
         writer = MarkdownTableWriter(
             table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
             headers=headers,

@@ -38,7 +38,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         runner = BenchmarkTestRunners.from_args(benchmark_args, test_manifest)
         runner.run()
 
-        mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-cluster-cdk.git", "main",
+        mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-cluster-cdk.git", "1.x",
                                     os.path.join(tempfile.gettempdir(), "opensearch-cluster-cdk"))
         self.assertEqual(mock_suite.call_count, 1)
         self.assertEqual(mock_cluster.call_count, 1)

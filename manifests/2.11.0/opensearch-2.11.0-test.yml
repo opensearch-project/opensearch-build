@@ -36,6 +36,13 @@ components:
 
   - name: cross-cluster-replication
     integ-test:
+      topology:
+        - cluster_name: leader
+          data_nodes: 2
+          cluster_manager_nodes: 0
+        - cluster_name: follower
+          data_nodes: 2
+          cluster_manager_nodes: 0
       test-configs:
         - with-security
         - without-security

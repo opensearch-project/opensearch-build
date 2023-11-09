@@ -26,7 +26,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('5.10.2')
+                        .defaultVersion('5.11.0')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -76,6 +76,9 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
         binding.setVariable('ENABLE_REMOTE_STORE', 'false')
         binding.setVariable('USER_TAGS', 'run-type:test')
         binding.setVariable('WORKLOAD_PARAMS', '')
+        binding.setVariable('TEST_PROCEDURE', 'append-no-conflicts')
+        binding.setVariable('EXCLUDE_TASKS', '')
+        binding.setVariable('INCLUDE_TASKS', '')
         binding.setVariable('ADDITIONAL_CONFIG', '')
         binding.setVariable('CLIENT_NODE_COUNT', '')
         binding.setVariable('INGEST_NODE_COUNT', '')
@@ -128,7 +131,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge   --data-node-storage 100   ".toString()
+                "./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100   ".toString()
         ))
     }
 
