@@ -44,6 +44,8 @@ def main() -> int:
         if end_index == -1:
             raise ValueError("'.release-notes' not found after 'release-notes/'")
         component_name = url[start_index + len("release-notes/"): end_index]
+        if component_name == "opensearch-sql":
+            component_name = "SQL"
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
@@ -78,6 +80,7 @@ def main() -> int:
 
     if args.action == "check":
         create_urls_file_if_not_exists()
+        return
 
     elif args.action == "compile":
         create_urls_file_if_not_exists()

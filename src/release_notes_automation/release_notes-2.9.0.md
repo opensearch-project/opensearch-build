@@ -45,19 +45,19 @@
 <li>Change connector access control creation allow empty list (<a href="https://github.com/opensearch-project/ml-commons/pull/1069">#1069</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Enable Table Function and PromQL function (<a href="https://github.com/opensearch-project/sql/pull/1719">#1719</a>)</li>
-<li>Add spark connector (<a href="https://github.com/opensearch-project/sql/pull/1780">#1780</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>New Log Type JSON format. (<a href="https://github.com/opensearch-project/security-analytics/pull/465">#465</a>)</li>
 <li>Correlation rule search, delete and edit API. (<a href="https://github.com/opensearch-project/security-analytics/pull/476">#476</a>)</li>
 <li>Logtypes PR v2. (<a href="https://github.com/opensearch-project/security-analytics/pull/482">#482</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Enable Table Function and PromQL function (<a href="https://github.com/opensearch-project/sql/pull/1719">#1719</a>)</li>
+<li>Add spark connector (<a href="https://github.com/opensearch-project/sql/pull/1780">#1780</a>)</li>
 </ul>
 
 <h2>ENHANCEMENTS</h2>
@@ -83,7 +83,19 @@
 <li>Add unit tests for the REST layer in RCA Agent <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/436">#436</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>Opensearch Security</h3>
+
+<ul>
+<li>Use boucycastle PEM reader instead of reg expression (<a href="https://github.com/opensearch-project/security/pull/2877">#2877</a>)</li>
+<li>Adding field level security test cases for FlatFields (<a href="https://github.com/opensearch-project/security/pull/2876">#2876</a>) (<a href="https://github.com/opensearch-project/security/pull/2893">#2893</a>)</li>
+<li>Add password message to /dashboardsinfo endpoint (<a href="https://github.com/opensearch-project/security/pull/2949">#2949</a>) (<a href="https://github.com/opensearch-project/security/pull/2955">#2955</a>)</li>
+<li>Add .plugins-ml-connector to system index (<a href="https://github.com/opensearch-project/security/pull/2947">#2947</a>) (<a href="https://github.com/opensearch-project/security/pull/2954">#2954</a>)</li>
+<li>Parallel test jobs for CI (<a href="https://github.com/opensearch-project/security/pull/2861">#2861</a>) (<a href="https://github.com/opensearch-project/security/pull/2936">#2936</a>)</li>
+<li>Adds a check to skip serialization-deserialization if request is for same node (<a href="https://github.com/opensearch-project/security/pull/2765">#2765</a>) (<a href="https://github.com/opensearch-project/security/pull/2973">#2973</a>)</li>
+<li>Add workflow cluster permissions to alerting roles and add .plugins-ml-config in the system index (<a href="https://github.com/opensearch-project/security/pull/2996">#2996</a>)</li>
+</ul>
+
+<h3>SQL</h3>
 
 <ul>
 <li>Pagination: Support WHERE clause, column list in SELECT clause and for functions and expressions in the query (<a href="https://github.com/opensearch-project/sql/pull/1500">#1500</a>)</li>
@@ -100,18 +112,6 @@
 <li>Add EMR client to spark connector (<a href="https://github.com/opensearch-project/sql/pull/1790">#1790</a>)</li>
 <li>Improved error codes in case of data sourcde API security exception (<a href="https://github.com/opensearch-project/sql/pull/1753">#1753</a>)</li>
 <li>Remove Default master encryption key from settings (<a href="https://github.com/opensearch-project/sql/pull/1851">#1851</a>)</li>
-</ul>
-
-<h3>Opensearch Security</h3>
-
-<ul>
-<li>Use boucycastle PEM reader instead of reg expression (<a href="https://github.com/opensearch-project/security/pull/2877">#2877</a>)</li>
-<li>Adding field level security test cases for FlatFields (<a href="https://github.com/opensearch-project/security/pull/2876">#2876</a>) (<a href="https://github.com/opensearch-project/security/pull/2893">#2893</a>)</li>
-<li>Add password message to /dashboardsinfo endpoint (<a href="https://github.com/opensearch-project/security/pull/2949">#2949</a>) (<a href="https://github.com/opensearch-project/security/pull/2955">#2955</a>)</li>
-<li>Add .plugins-ml-connector to system index (<a href="https://github.com/opensearch-project/security/pull/2947">#2947</a>) (<a href="https://github.com/opensearch-project/security/pull/2954">#2954</a>)</li>
-<li>Parallel test jobs for CI (<a href="https://github.com/opensearch-project/security/pull/2861">#2861</a>) (<a href="https://github.com/opensearch-project/security/pull/2936">#2936</a>)</li>
-<li>Adds a check to skip serialization-deserialization if request is for same node (<a href="https://github.com/opensearch-project/security/pull/2765">#2765</a>) (<a href="https://github.com/opensearch-project/security/pull/2973">#2973</a>)</li>
-<li>Add workflow cluster permissions to alerting roles and add .plugins-ml-config in the system index (<a href="https://github.com/opensearch-project/security/pull/2996">#2996</a>)</li>
 </ul>
 
 <h2>BUG FIXES</h2>
@@ -165,17 +165,17 @@
 <li>Removing guava dependency to fix jarhell (<a href="https://github.com/opensearch-project/reporting/pull/709">#709</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Fixed bug of byte/short not handling 0 denominator in divide/modulus equations (<a href="https://github.com/opensearch-project/sql/pull/1716">#1716</a>)</li>
-<li>Fix CSV/RAW output header being application/json rather than plain/text (<a href="https://github.com/opensearch-project/sql/pull/1779">#1779</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Fixed compile issues related to latest OS core repo changes. (<a href="https://github.com/opensearch-project/security-analytics/pull/412">#412</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Fixed bug of byte/short not handling 0 denominator in divide/modulus equations (<a href="https://github.com/opensearch-project/sql/pull/1716">#1716</a>)</li>
+<li>Fix CSV/RAW output header being application/json rather than plain/text (<a href="https://github.com/opensearch-project/sql/pull/1779">#1779</a>)</li>
 </ul>
 
 <h2>INFRASTRUCTURE</h2>
@@ -219,7 +219,7 @@
 <li>Upgrade checkstyle version from 9.3 to 10.3.3 <a href="https://github.com/opensearch-project/performance-analyzer/pull/495">#495</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>SQL</h3>
 
 <ul>
 <li>stopPrometheus task in doctest build.gradle now runs upon project failure in startOpenSearch (<a href="https://github.com/opensearch-project/sql/pull/1747">#1747</a>)</li>
@@ -261,17 +261,17 @@
 <li>Add 2.9.0 release notes (<a href="https://github.com/opensearch-project/notifications/pull/702">#702</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Updated documentation of round function return type (<a href="https://github.com/opensearch-project/sql/pull/1725">#1725</a>)</li>
-<li>Updated <code>protocol.rst</code> with new wording for error message (<a href="https://github.com/opensearch-project/sql/pull/1662">#1662</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Added 2.9.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/486">#486</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Updated documentation of round function return type (<a href="https://github.com/opensearch-project/sql/pull/1725">#1725</a>)</li>
+<li>Updated <code>protocol.rst</code> with new wording for error message (<a href="https://github.com/opensearch-project/sql/pull/1662">#1662</a>)</li>
 </ul>
 
 <h2>MAINTENANCE</h2>
@@ -392,15 +392,15 @@
 <li>Add class for loading mapping templates in bulk (<a href="https://github.com/opensearch-project/observability/pull/1550">#1550</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>Simplify OpenSearchIndexScanBuilder (<a href="https://github.com/opensearch-project/sql/pull/1738">#1738</a>)</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Use strong password in security test. (<a href="https://github.com/opensearch-project/security-analytics/pull/452">#452</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>Simplify OpenSearchIndexScanBuilder (<a href="https://github.com/opensearch-project/sql/pull/1738">#1738</a>)</li>
 </ul>
 

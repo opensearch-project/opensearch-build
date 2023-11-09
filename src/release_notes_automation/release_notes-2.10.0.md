@@ -104,12 +104,6 @@
 <li>Handle Reader thread termination gracefully <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/476">#476</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>[Backport 2.x] Added support of timestamp/date/time using curly brackets by @matthewryanwells in https://github.com/opensearch-project/sql/pull/1908</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -124,6 +118,12 @@
 <li>Command cat/indices will filter results per the Do Not Fail On Forbidden setting (<a href="https://github.com/opensearch-project/security/pull/3236">#3236</a>)</li>
 <li>Generate new demo certs with IPv6 loopback added to SAN in node certificate (<a href="https://github.com/opensearch-project/security/pull/3268">#3268</a>)</li>
 <li>System index permissions (<a href="https://github.com/opensearch-project/security/pull/2887">#2887</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>[Backport 2.x] Added support of timestamp/date/time using curly brackets by @matthewryanwells in https://github.com/opensearch-project/sql/pull/1908</li>
 </ul>
 
 <h2>BUG FIXES</h2>
@@ -184,20 +184,6 @@
 <li>Fix from upstream import changes (<a href="https://github.com/opensearch-project/reporting/pull/748">#748</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>[2.x] bump okhttp to 4.10.0 (#2043) by @joshuali925 in https://github.com/opensearch-project/sql/pull/2044</li>
-<li>[Backport 2.x] Okio upgrade to 3.5.0 by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1963</li>
-<li>[Backport 2.x] Fixed response codes For Requests With security exception. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2029</li>
-<li>[Backport 2.x] Backport breaking changes by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1920</li>
-<li>[Manual Backport #1943] Fixing string format change #1943 by @MitchellGale in https://github.com/opensearch-project/sql/pull/1946</li>
-<li>[Backport 2.x] Fix CVE by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1944</li>
-<li>[Backport 2.x] Breaking change OpenSearch main project - Action movement (#1958) by @MitchellGale in https://github.com/opensearch-project/sql/pull/1965</li>
-<li>[Backport 2.x] Update backport CI, add PR merged condition by @ps48 in https://github.com/opensearch-project/sql/pull/1970</li>
-<li>[Backport 2.x] Fixed exception when datasource is updated with existing configuration. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2008</li>
-</ul>
-
 <h3>Opensearch Security</h3>
 
 <ul>
@@ -216,6 +202,20 @@
 <ul>
 <li>Fix for mappings of custom log types &amp; other bug fixes (<a href="https://github.com/opensearch-project/security-analytics/pull/505">#505</a>)</li>
 <li>Fixes detectorType incompatibility with detector rules (<a href="https://github.com/opensearch-project/security-analytics/pull/524">#524</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>[2.x] bump okhttp to 4.10.0 (#2043) by @joshuali925 in https://github.com/opensearch-project/sql/pull/2044</li>
+<li>[Backport 2.x] Okio upgrade to 3.5.0 by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1963</li>
+<li>[Backport 2.x] Fixed response codes For Requests With security exception. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2029</li>
+<li>[Backport 2.x] Backport breaking changes by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1920</li>
+<li>[Manual Backport #1943] Fixing string format change #1943 by @MitchellGale in https://github.com/opensearch-project/sql/pull/1946</li>
+<li>[Backport 2.x] Fix CVE by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1944</li>
+<li>[Backport 2.x] Breaking change OpenSearch main project - Action movement (#1958) by @MitchellGale in https://github.com/opensearch-project/sql/pull/1965</li>
+<li>[Backport 2.x] Update backport CI, add PR merged condition by @ps48 in https://github.com/opensearch-project/sql/pull/1970</li>
+<li>[Backport 2.x] Fixed exception when datasource is updated with existing configuration. by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/2008</li>
 </ul>
 
 <h2>INFRASTRUCTURE</h2>
@@ -292,7 +292,7 @@
 <li>Upgrade gRPC protobug to mitigate connection termination issue <a href="https://github.com/opensearch-project/performance-analyzer-rca/pull/471">#471</a></li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>SQL</h3>
 
 <ul>
 <li>[Backport 2.x] Add _primary preference only for segment replication enabled indices by @opensearch-trigger-bot in
@@ -345,16 +345,16 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Add 2.10.0 release notes (<a href="https://github.com/opensearch-project/notifications/pull/755">#755</a>)</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
-
-<ul>
-<li>[Backport 2.x] Fix doctest data by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1998</li>
-</ul>
-
 <h3>Opensearch Security Analytics</h3>
 
 <ul>
 <li>Added 2.10.0 release notes. (<a href="https://github.com/opensearch-project/security-analytics/pull/555">#555</a>)</li>
+</ul>
+
+<h3>SQL</h3>
+
+<ul>
+<li>[Backport 2.x] Fix doctest data by @opensearch-trigger-bot in https://github.com/opensearch-project/sql/pull/1998</li>
 </ul>
 
 <h2>MAINTENANCE</h2>
@@ -557,7 +557,17 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 <li>Updates demo certs used in integ tests in https://github.com/opensearch-project/observability/pull/1600</li>
 </ul>
 
-<h3>Opensearch SQL</h3>
+<h3>Opensearch Security Analytics</h3>
+
+<ul>
+<li>Fix google-java-format-1.17.0.jar: 1 vulnerabilities (<a href="https://github.com/opensearch-project/security-analytics/pull/526">#526</a>)</li>
+<li>segment replication changes (<a href="https://github.com/opensearch-project/security-analytics/pull/529">#529</a>)</li>
+<li>Use core OpenSearch version of commons-lang3 (<a href="https://github.com/opensearch-project/security-analytics/pull/535">#535</a>)</li>
+<li>Force google guava to 32.0.1 (<a href="https://github.com/opensearch-project/security-analytics/pull/536">#536</a>)</li>
+<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/security-analytics/pull/543">#543</a>)</li>
+</ul>
+
+<h3>SQL</h3>
 
 <ul>
 <li>[Backport 2.x] Applied formatting improvements to Antlr files based on spotless changes (#2017) by @MitchellGale in</li>
@@ -574,16 +584,6 @@ https://github.com/opensearch-project/sql/pull/2036</li>
 </ul>
 <hr />
 <p><strong>Full Changelog</strong>: https://github.com/opensearch-project/sql/compare/2.3.0.0...v.2.10.0.0</p>
-
-<h3>Opensearch Security Analytics</h3>
-
-<ul>
-<li>Fix google-java-format-1.17.0.jar: 1 vulnerabilities (<a href="https://github.com/opensearch-project/security-analytics/pull/526">#526</a>)</li>
-<li>segment replication changes (<a href="https://github.com/opensearch-project/security-analytics/pull/529">#529</a>)</li>
-<li>Use core OpenSearch version of commons-lang3 (<a href="https://github.com/opensearch-project/security-analytics/pull/535">#535</a>)</li>
-<li>Force google guava to 32.0.1 (<a href="https://github.com/opensearch-project/security-analytics/pull/536">#536</a>)</li>
-<li>Updates demo certs used in integ tests (<a href="https://github.com/opensearch-project/security-analytics/pull/543">#543</a>)</li>
-</ul>
 
 <h2>NON-COMPLIANT</h2>
 <h2>ADDED</h2>
