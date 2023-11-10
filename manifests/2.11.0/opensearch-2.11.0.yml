@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 4dcad6dd1fd45b6bd91f041a041829c8687278fa
+    ref: tags/2.11.0
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: aaa4c2a061601105c62cbaf9838a0a4bd9986aa3
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -25,7 +25,7 @@ components:
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 0a2fef228bb687995d2e3ddefa88ecf1e191ffd7
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -34,7 +34,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 916471ac8312d34888e39c592919a5fbbfd79492
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -43,7 +43,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 2a7f1b01589d893c0b1f153c4edc68295f85d0e5
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -52,13 +52,13 @@ components:
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: bc03bd4746e3b1e23dec8d615d70e1d841cb6dc1
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 9a49f40456218de9134656c14051818c5616ef05
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -67,7 +67,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 3897ad179437e683033d6918ebb6b4edf439dd4d
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -76,7 +76,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 51e6c00770d27fb4eabc20c38bdeff23c5c45997
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -85,7 +85,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 16f601b6ff9aa381de3caee1273c6aa2001ce804
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -95,7 +95,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 16f601b6ff9aa381de3caee1273c6aa2001ce804
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - gradle:dependencies:opensearch.version: notifications
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: bd11e813ebd5ac002c3d34ed2c965325d5874b77
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -114,7 +114,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: f8ff706930030c444a3d018caf1f8cc42e1977c4
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -123,7 +123,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: b729164dcec202a81778d2bae65fc7e035c84fd9
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -132,7 +132,7 @@ components:
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: e291c1cc8e84d1db727ecf3faf04ef30ebcf0d17
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -141,7 +141,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 35d476461feba246a2eea705e75d99553b495d0c
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 765ab362554f995608263820435bb8155493d75f
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: ec20fc35a1adbd9ac873c12b4f4d2378b5f9fd8a
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -167,7 +167,7 @@ components:
       - gradle:properties:version
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 319bbb2e3a4246083eab02a357e7b15b881f2f49
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows
@@ -175,7 +175,7 @@ components:
       - gradle:properties:version
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: d907f1986f76a390dbe6a856f41d61203cadb6e1
+    ref: tags/2.11.0.0
     platforms:
       - linux
     checks:
@@ -183,7 +183,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 486ed652b7de41c34d81d8d663ca02302fed78ae
+    ref: tags/2.11.0.0
     platforms:
       - linux
       - windows

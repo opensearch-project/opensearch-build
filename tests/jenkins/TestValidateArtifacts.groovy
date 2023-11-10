@@ -40,6 +40,8 @@ class TestValidateArtifacts extends BuildPipelineTest {
         binding.setVariable('OSD_BUILD_NUMBER', "4104")
         binding.setVariable('DISTRIBUTION', "docker tar rpm yum")
         binding.setVariable('ARCHITECTURE', "x64 arm64")
+        binding.setVariable('PROJECTS', "Both")
+        binding.setVariable('ARTIFACT_TYPE', "production")
         binding.setVariable('OPTIONAL_ARGS', "using-staging-artifact-only")
 
         helper.registerAllowedMethod('fileExists', [String.class], { args ->
@@ -53,10 +55,10 @@ class TestValidateArtifacts extends BuildPipelineTest {
     public void testValidateArtifactsPipeline() {
         super.testPipeline("jenkins/validate-artifacts/validate-artifacts.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/validate-artifacts/validate-artifacts.jenkinsfile")
-        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution docker --arch x64 --os-build-number 6039 --osd-build-number 4104 --using-staging-artifact-only '))
-        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution tar --arch arm64'))
-        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution rpm --arch x64'))
-        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution yum --arch arm64'))
+        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution docker --arch x64 --os-build-number 6039 --osd-build-number 4104 --projects opensearch opensearch-dashboards --using-staging-artifact-only '))
+        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution tar --arch x64 --os-build-number 6039 --osd-build-number 4104 --projects opensearch opensearch-dashboards --artifact-type production'))
+        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution rpm --arch x64 --os-build-number 6039 --osd-build-number 4104 --projects opensearch opensearch-dashboards --artifact-type production'))
+        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --version 2.3.0 --distribution yum --arch x64 --os-build-number 6039 --osd-build-number 4104 --projects opensearch opensearch-dashboards --artifact-type production'))
 
     }
 
@@ -67,6 +69,32 @@ class TestValidateArtifacts extends BuildPipelineTest {
         runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
         assertJobStatusFailure()
         assertThat(getCommandExecutions('error', ''), hasItem('Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER args for Docker Validation'))
+    }
+
+    @Test
+    public void testFilePath() {
+        binding.setVariable('VERSION', "")
+        binding.setVariable('OPENSEARCH_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch/1.3.12/8230/linux/x64/tar/opensearch-1.3.12-linux-x64.tar.gz")
+        binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz")
+        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        assertThat(getCommandExecutions('sh', 'validation.sh'), hasItem('/tmp/workspace/validation.sh  --file-path opensearch=https://ci.opensearch/distribution-build-opensearch/1.3.12/8230/linux/x64/tar/opensearch-1.3.12-linux-x64.tar.gz opensearch-dashboards=https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz'))
+    }
+
+    @Test
+    public void testWhenFilePathOrVersionNotProvided() {
+        binding.setVariable('VERSION', "")
+        binding.setVariable('OPENSEARCH_ARTIFACT_URL', "")
+        binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "")
+        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        assertThat(getCommandExecutions('error', ''), hasItem('Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value'))
+    }
+
+    @Test
+    public void testWhenOSArtifactIsNotProvided() {
+        binding.setVariable('OPENSEARCH_ARTIFACT_URL', "")
+        binding.setVariable('OPENSEARCH_DASHBOARDS_ARTIFACT_URL', "https://ci.opensearch/distribution-build-opensearch-dashboards/1.3.12/8230/linux/x64/tar/opensearch-dashboards-1.3.12-linux-x64.tar.gz")
+        runScript('jenkins/validate-artifacts/validate-artifacts.jenkinsfile')
+        assertThat(getCommandExecutions('error', ''), hasItem('Provide OPENSEARCH_ARTIFACT_URL to validate'))
     }
 
     def getCommandExecutions(methodName, command) {

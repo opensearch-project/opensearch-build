@@ -95,10 +95,12 @@ class LocalClusterLogs(LogRecorder):
 
     def __init__(self, parent_class: TestRecorder) -> None:
         self.parent_class = parent_class
+        self.number_of_nodes = 0
 
     def save_test_result_data(self, test_result_data: TestResultData) -> None:
         base = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
-        dest_directory = os.path.join(base, "local-cluster-logs")
+        dest_directory = os.path.join(base, "local-cluster-logs/id-" + str(self.number_of_nodes))
+        self.number_of_nodes += 1
         os.makedirs(dest_directory, exist_ok=True)
         logging.info(
             f"Recording local cluster logs for {test_result_data.component_name} with test configuration as "

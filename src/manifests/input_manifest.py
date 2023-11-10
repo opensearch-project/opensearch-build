@@ -130,6 +130,13 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         manifest.components.__stabilize__()
         return manifest
 
+    def plugins_depend_on(self, plugin: str) -> List[str]:
+        plugins = []
+        for component in self.components.select():
+            if component.depends_on is not None and plugin in component.depends_on:
+                plugins.append(component.name)
+        return plugins
+
     class Ci:
         def __init__(self, data: dict) -> None:
             self.image = None if data is None else self.Image(data.get("image", None))

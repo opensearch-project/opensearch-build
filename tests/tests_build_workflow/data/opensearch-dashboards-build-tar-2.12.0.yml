@@ -1,0 +1,18 @@
+---
+schema-version: '1.2'
+build:
+  name: OpenSearch Dashboards
+  version: 2.12.0
+  platform: linux
+  architecture: x64
+  distribution: tar
+  id: '6768'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 2.x
+    commit_id: ce7260410b6139bb4fec8d5f133f9675349ad691
+    artifacts:
+      dist:
+        - dist/opensearch-dashboards-min-2.12.0-linux-x64.tar.gz
+    version: 2.12.0.0

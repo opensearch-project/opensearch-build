@@ -29,7 +29,8 @@ class BenchmarkTestRunner(abc.ABC):
         else:
             self.security = False
 
-        self.tests_dir = os.path.join(os.getcwd(), "test-results", "benchmark-test", f"{'with' if self.security else 'without'}-security")
+        self.tests_dir = os.path.join(os.getcwd(), "test-results", "benchmark-test",
+                                      f"{'with' if self.security else 'without'}-security")
         os.makedirs(self.tests_dir, exist_ok=True)
 
     @abc.abstractmethod
@@ -38,3 +39,17 @@ class BenchmarkTestRunner(abc.ABC):
 
     def run(self) -> None:
         self.run_tests()
+
+    def get_git_ref(self) -> str:
+        if self.test_manifest:
+            os_major_version = self.test_manifest.build.version.split(".")[0]
+            if os_major_version in ['2', '3']:
+                return 'main'
+            else:
+                return '1.x'
+        else:
+            os_major_version = self.args.distribution_version.split(".")[0]
+            if os_major_version in ['2', '3']:
+                return 'main'
+            else:
+                return '1.x'

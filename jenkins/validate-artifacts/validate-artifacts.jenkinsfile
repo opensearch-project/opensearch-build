@@ -1,3 +1,12 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
 lib = library(identifier: 'jenkins@4.2.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -32,8 +41,19 @@ pipeline {
     agent none
     parameters {
         string(
+            name: 'OPENSEARCH_ARTIFACT_URL',
+            description: 'Enter OpenSearch artifact URL',
+            trim: true
+        )
+        string(
+            name: 'OPENSEARCH_DASHBOARDS_ARTIFACT_URL',
+            description: 'Enter OpenSearch-Dashboards artifact URL',
+            trim: true
+        )
+        string(
             name: 'VERSION',
-            description: 'Enter the OpenSearch and OpenSearch Dashboards version that needs to be validated',
+            description: 'Enter the OpenSearch and OpenSearch Dashboards version to validate only when the URLs are not provided',
+            defaultValue: "",
             trim: true
         )
         string(
@@ -45,25 +65,34 @@ pipeline {
         )
         string(
             name: 'ARCHITECTURE',
-            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults "x64,arm64"',
+            description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
             trim: true,
             defaultValue: "x64 arm64"
         )
         string(
             name: 'OS_BUILD_NUMBER',
-            description: 'Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation',
+            description: 'Enter the build number for OpenSearch - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
             trim: true,
         )
         string(
             name: 'OSD_BUILD_NUMBER',
-            description: 'Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation',
+            description: 'Enter the build number for OpenSearch Dashboards - This parameter is applicable only for Docker Validation and staging artifacts referred by build numbers',
             trim: true,
         )
-        string(
+        choice(
             name: 'OPTIONAL_ARGS',
-            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only',
-            trim: true,
-            defaultValue: "using-staging-artifact-only"
+            description: 'Optional args for docker validation. Currently supports validate-digest-only or using-staging-artifact-only. Defaults to using-staging-artifact-only.',
+            choices: ['using-staging-artifact-only', 'validate-digest-only'],
+        )
+        choice(
+            name: 'PROJECTS',
+            description: 'Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards).',
+            choices: ['opensearch', 'Both']
+        )
+        choice(
+            name: 'ARTIFACT_TYPE',
+            description: 'Determine the artifact type among staging or production.',
+            choices: ['production', 'staging'],
         )
 
     }
@@ -73,12 +102,35 @@ pipeline {
             agent { label agent_nodes["x64"] }
             steps {
                 script {
-                    if (VERSION == '') {
-                        currentBuild.result = 'ABORTED'
-                        error('VERSION cannot be empty. Please provide version of the artifacts to validate')
+                    def url_paths = [:]
+
+                    OPENSEARCH_ARTIFACT_URL ? url_paths["opensearch"] = OPENSEARCH_ARTIFACT_URL : null
+                    OPENSEARCH_DASHBOARDS_ARTIFACT_URL ? url_paths['opensearch-dashboards'] = OPENSEARCH_DASHBOARDS_ARTIFACT_URL : null
+
+                    if (PROJECTS == 'Both') {
+                        PROJECTS = "opensearch opensearch-dashboards"
                     }
 
-                    if (params.DISTRIBUTION.contains('docker') && (OS_BUILD_NUMBER == '' || OSD_BUILD_NUMBER == '')) {
+                    if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL && OPENSEARCH_ARTIFACT_URL == "") {
+                        currentBuild.result = 'ABORTED'
+                        error("Provide OPENSEARCH_ARTIFACT_URL to validate")
+                    }
+
+                    if(OPENSEARCH_ARTIFACT_URL) {
+                        ARCHITECTURE = url_paths.values().find { it.contains("x64") } ? "x64" : "arm64"
+                        DISTRIBUTION = url_paths.values().find { it.contains("tar.gz") } ? "tar" : (url_paths.values().find { it.contains("repo") } ? "yum" : "rpm")
+                        env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
+                        if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL) {
+                           FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
+                        }
+                    }
+
+                    if(VERSION == '' && OPENSEARCH_ARTIFACT_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value")
+                    }
+
+                    if (DISTRIBUTION.contains('docker') && (OS_BUILD_NUMBER == '' || OSD_BUILD_NUMBER == '')) {
                         currentBuild.result = 'ABORTED'
                         error("Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER args for Docker Validation")
                     }
@@ -90,8 +142,6 @@ pipeline {
                 }
             }
         }
-
-
         stage('Validate') {
             agent {label agent_nodes["x64"] }
             steps {
@@ -126,6 +176,7 @@ pipeline {
                                                         arch: "${local_architecture}",
                                                         "os-build-number": "$OS_BUILD_NUMBER",
                                                         "osd-build-number": "$OSD_BUILD_NUMBER",
+                                                        projects: "$PROJECTS",
                                                         "$OPTIONAL_ARGS" : ""
                                                     )
                                                 }
@@ -145,11 +196,26 @@ pipeline {
                                                         stage("${local_distribution}") {
                                                             unstash "validate-artifacts-$BUILD_NUMBER"
 
-                                                            validateArtifacts(
-                                                                version: "$VERSION",
-                                                                distribution: "${local_distribution}",
-                                                                arch: "${local_architecture}"
-                                                            )
+                                                            OS_BUILD_NUMBER = OS_BUILD_NUMBER ?: "latest"
+                                                            OSD_BUILD_NUMBER = OSD_BUILD_NUMBER ?: "latest"
+
+                                                            if (VERSION) {
+
+                                                                validateArtifacts(
+                                                                    version: "$VERSION",
+                                                                    distribution: "${local_distribution}",
+                                                                    arch: "${local_architecture}",
+                                                                    "os-build-number": "$OS_BUILD_NUMBER",
+                                                                    "osd-build-number": "$OSD_BUILD_NUMBER",
+                                                                    projects: "$PROJECTS",
+                                                                    "artifact-type": "$ARTIFACT_TYPE"
+                                                                )
+                                                            }
+                                                            else {
+
+                                                                validateArtifacts("file-path": "$FILEPATH")
+
+                                                            }
                                                         }
                                                     } catch (e) {
                                                         echo "Error occurred while validating ${local_distribution}-${local_architecture}"
