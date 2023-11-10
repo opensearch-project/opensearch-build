@@ -25,7 +25,8 @@ def main() -> int:
     manifest_file = InputManifest.from_file(args.manifest)
     BUILD_VERSION = manifest_file.build.version
 
-    BASE_FILE_PATH = "release_notes_automation"
+    # storing temporary release notes for testing purposes
+    BASE_FILE_PATH = "release_notes_workflow/results"
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 

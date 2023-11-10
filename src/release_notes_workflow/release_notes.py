@@ -38,10 +38,10 @@ class ReleaseNotes:
         if self.action_type == "check":
             headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists"]
         elif self.action_type == "compile":
-            headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists", "Full Path", "URL"]
+            headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists", "URL"]
         else:
             raise ValueError("Invalid action_type. Use 'check' or 'compile'.")
-            
+
         writer = MarkdownTableWriter(
             table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
             headers=headers,
@@ -74,12 +74,10 @@ class ReleaseNotes:
 
                 if(release_notes.exists()):
                     releasenote = os.path.basename(release_notes.full_path)
-                    results.append(releasenote)
                     repo_name = component.repository.split("/")[-1].split('.')[0]
                     repo_ref = component.ref.split("/")[-1]
                     url = f"https://raw.githubusercontent.com/opensearch-project/{repo_name}/{repo_ref}/release-notes/{releasenote}"
                     results.append(url)
                 else:
-                    results.append(None)
                     results.append(None)
         return results

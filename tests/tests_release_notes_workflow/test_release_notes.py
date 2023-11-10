@@ -25,7 +25,7 @@ class TestReleaseNotes(unittest.TestCase):
         )
         OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "default", "manifest.yml"))
         self.manifest_file = InputManifest.from_file(open(OPENSEARCH_MANIFEST))
-        self.release_notes = ReleaseNotes(self.manifest_file, "2022-07-26")
+        self.release_notes = ReleaseNotes(self.manifest_file, "2022-07-26", "check")
         self.component = InputComponentFromSource({"name": "OpenSearch", "repository": "url", "ref": "ref"})
 
     @patch("subprocess.check_output", return_value=''.encode())
