@@ -45,7 +45,7 @@ def main() -> int:
     if args.incremental:
         buildIncremental = BuildIncremental(manifest, args.distribution)
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
-        logging.info(f"These are plugins need for incremental build: {buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)}")
+        logging.info(f"Plugins for incremental build: {buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)}")
         return 0
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
