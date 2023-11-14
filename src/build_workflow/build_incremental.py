@@ -4,8 +4,6 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
-#
-# This page intentionally left blank.
 
 import logging
 import os
@@ -24,7 +22,7 @@ class BuildIncremental:
     def commits_diff(self, input_manifest: InputManifest) -> List[str]:
         build_manifest_path = os.path.join(self.distribution, "builds", input_manifest.build.filename, "manifest.yml")
         if not os.path.exists(build_manifest_path):
-            logging.info("Previous build manifest is not exists. Rebuilding Core.")
+            logging.info("Previous build manifest does not exist. Rebuilding Core.")
             return [input_manifest.build.name.replace(" ", "-")]
         previous_build_manifest = BuildManifest.from_path(build_manifest_path)
         stable_input_manifest = input_manifest.stable()
@@ -35,11 +33,11 @@ class BuildIncremental:
         for component in stable_input_manifest.components.select():
             if component.name not in previous_build_manifest.components:
                 plugins.append(component.name)
-                logging.info(f"Adding {component.name} since it's not in previous build manifest")
+                logging.info(f"Adding {component.name} since it is missing from previous build manifest")
                 continue
             if component.ref != previous_build_manifest.components[component.name].commit_id:  # type: ignore[attr-defined]
                 plugins.append(component.name)
-                logging.info(f"Adding {component.name} because it has different commit ID and needs to be incremental built.")
+                logging.info(f"Adding {component.name} because it has different commit ID and needs to be rebuilt.")
                 continue
         return plugins
 
@@ -49,7 +47,7 @@ class BuildIncremental:
             return []
 
         if any(core in changed_plugins for core in ("OpenSearch", "OpenSearch-Dashboards")):
-            logging.info("Core changes, rebuilding all.")
+            logging.info("Core engine has new changes, rebuilding all components.")
             return [component.name for component in input_manifest.components.select()]
 
         queue = changed_plugins

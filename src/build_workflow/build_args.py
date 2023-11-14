@@ -110,7 +110,7 @@ class BuildArgs:
             dest="incremental",
             default=False,
             action="store_true",
-            help="Incremental build the plugin with changes based on previous build.",
+            help="Given previous build artifacts are present, build incrementally.",
         )
 
         args = parser.parse_args()
