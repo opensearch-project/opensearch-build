@@ -61,7 +61,7 @@ ENV TINI_VERSION=v0.19.0
 RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
 
 # Add Tini to use as init (PID1) process.
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /bin/tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} ./tini
 RUN chmod 755 ./tini
 
 # Install Reporting dependencies
