@@ -4,5 +4,5 @@
 
 This repository hosts the build, test and release scripts for OpenSearch and OpenSearch Dashboards distributions.
 
-List of pages in this wiki:
+See each page below for more details:
 - [Building a Distribution from the source](https://github.com/opensearch-project/opensearch-build/wiki/Building-an-OpenSearch-and-OpenSearch-Dashboards-Distribution)
