@@ -5,6 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import logging
 import os
 import re
 import shutil
@@ -31,10 +32,9 @@ def main() -> int:
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 
     def capitalize_acronyms(formatted_name: str) -> str:
-        acronyms = ["sql", "ml", "knn"]
-        for acronym in acronyms:
-            pattern = re.compile(re.escape(acronym), re.IGNORECASE)
-            formatted_name = re.sub(pattern, acronym.upper(), formatted_name)
+        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons", "ml commons": "ML Commons"}
+        for acronym, replacement in acronyms.items():
+            formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name, flags=re.IGNORECASE)
         return formatted_name
 
     def format_component_name_from_url(url: str) -> str:
@@ -51,11 +51,6 @@ def main() -> int:
         return capitalize_acronyms(formatted_name)
 
     def create_urls_file_if_not_exists() -> None:
-        urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
-        if os.path.exists(urls_filepath):
-            print("URLs file already exists. Skipping creation.")
-            return
-        print("URLs file does not exist. Creating...")
 
         release_notes = ReleaseNotes(manifest_file, args.date, args.action)
         table = release_notes.table()
@@ -66,16 +61,16 @@ def main() -> int:
             table.dump(table_file)
 
         if args.output is not None:
-            print(f"Moving {table_filepath} to {args.output}")
+            logging.info(f"Moving {table_filepath} to {args.output}")
             shutil.move(table_filepath, args.output)
         else:
             with open(table_filepath, "r") as table_file:
-                print(table_file.read())
+                logging.info(table_file.read())
 
         urls = [row[-1].strip() for row in table.value_matrix if row[-1]]
 
-        os.makedirs(os.path.dirname(urls_filepath), exist_ok=True)
         urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
+        os.makedirs(os.path.dirname(urls_filepath), exist_ok=True)
         with open(urls_filepath, "w") as urls_file:
             urls_file.writelines("\n".join(urls))
 
@@ -148,7 +143,7 @@ def main() -> int:
                             content_to_end = "* " + content_to_end
                     plugin_data[plugin_name][heading].append(content_to_end)
     plugin_data = defaultdict(list, sorted(plugin_data.items()))
-    print("Compilation complete.")
+    logging.info("Compilation complete.")
 
     # Markdown renderer
     markdown = mistune.create_markdown()
@@ -178,7 +173,7 @@ def main() -> int:
                 outfile.write("\n".join(temp_content))
                 outfile.write("\n")
             else:
-                print(f"\n## {category} was empty\n\n")
+                logging.info(f"\n## {category} was empty\n\n")
 
         # Handle unknown categories
         temp_content = []
@@ -194,10 +189,10 @@ def main() -> int:
                 outfile.write(markdown(item))
 
     if args.output is not None:
-        print(f"Moving {RELEASE_NOTE_MD} to {args.output}")
+        logging.info(f"Moving {RELEASE_NOTE_MD} to {args.output}")
         shutil.move(RELEASE_NOTE_MD_path, args.output)
     else:
-        print(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
+        logging.info(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
     return 0
 
 

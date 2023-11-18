@@ -2,18 +2,18 @@
   - [Components Release Notes Check](#components-release-notes-check)
   - [Consolidated Release Notes](#consolidated-release-notes)
 
-## Consolidated Release Notes Automation
+## Consolidated Release Notes
 
 ### Components Release Notes Check 
 
 Pulls the latest code to check if the release notes exists and whether new commits have been made based on user passed argument `--date`. Outputs a formated markdown table as follows.
 
-#### *Usage*
+#### Usage
 ```
 ./release_notes.sh check manifests/3.0.0/opensearch-3.0.0.yml --date 2022-07-26
 ```
 
-#### *Sample Output*
+#### Sample Output
 ```
 #  OpenSearch CommitID(after 2022-07-26) & Release Notes info
 |          Repo           |   Branch   |CommitID|Commit Date|Release Notes|
@@ -47,15 +47,15 @@ The following options are available.
 This workflow generates a consolidated release notes for all the components. 
 It utilizes the output from the preceding step to compile these consolidated release notes. If the preceding step hasn't been executed, it will automatically run that step first before generating the consolidated release notes. 
 
-#### *Usage*
+#### Usage
 ```
 ./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml --date 2022-07-26
 ```
 
-#### *Sample Output*
+#### Sample Output
 Two output files are generated:
-- Markdown table containing links to individual components' release notes for quick reference
-- Consolidated release notes for all the components
+- Markdown table containing links to individual components' release notes for quick reference (Example: `release_notes_table-2.10.0.md`)
+- Consolidated release notes for all the components (Example: `release_notes-2.10.0.md`)
 
 <details> 
 <summary>Markdown table with links</summary>

@@ -43,6 +43,8 @@ class ReleaseNotesComponent:
         return path_exists
 
     def exists(self) -> bool:
+        if not os.path.exists(self.path):
+            return False
         files_in_path = os.listdir(self.path)
         return self.path_exists() and any(fname.endswith(self.filename) for fname in files_in_path)
 
