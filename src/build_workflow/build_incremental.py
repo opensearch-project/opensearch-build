@@ -29,17 +29,17 @@ class BuildIncremental:
         if previous_build_manifest.build.version != stable_input_manifest.build.version:
             logging.info("The version of previous build manifest doesn't match the current input manifest. Rebuilding Core.")
             return [input_manifest.build.name.replace(" ", "-")]
-        plugins = []
+        components = []
         for component in stable_input_manifest.components.select():
             if component.name not in previous_build_manifest.components:
-                plugins.append(component.name)
+                components.append(component.name)
                 logging.info(f"Adding {component.name} since it is missing from previous build manifest")
                 continue
             if component.ref != previous_build_manifest.components[component.name].commit_id:  # type: ignore[attr-defined]
-                plugins.append(component.name)
+                components.append(component.name)
                 logging.info(f"Adding {component.name} because it has different commit ID and needs to be rebuilt.")
                 continue
-        return plugins
+        return components
 
     # Given updated plugins and look into the depends_on of all components to finalize a list of rebuilding components.
     def rebuild_plugins(self, changed_plugins: List, input_manifest: InputManifest) -> List[str]:
