@@ -20,10 +20,9 @@ class TestReleaseNotes(unittest.TestCase):
         MANIFESTS = os.path.join(
             os.path.dirname(__file__),
             "..",
-            "..",
-            "manifests",
+            "data",
         )
-        OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "templates", "opensearch", "test", "manifest.yml"))
+        OPENSEARCH_MANIFEST = os.path.realpath(os.path.join(MANIFESTS, "opensearch-test-main.yml"))
         self.manifest_file = InputManifest.from_file(open(OPENSEARCH_MANIFEST))
         self.release_notes = ReleaseNotes(self.manifest_file, "2022-07-26", "compile")
         self.component = InputComponentFromSource({"name": "OpenSearch-test", "repository": "url", "ref": "ref"})
