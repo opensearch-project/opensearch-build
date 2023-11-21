@@ -32,8 +32,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: flow-framework
-    repository: https://github.com/opensearch-project/flow-framework.git
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
     ref: 2.x
     platforms:
       - linux
@@ -41,8 +41,17 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
-  - name: k-NN
-    repository: https://github.com/opensearch-project/k-NN.git
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: flow-framework
+    repository: https://github.com/opensearch-project/flow-framework.git
     ref: 2.x
     platforms:
       - linux
