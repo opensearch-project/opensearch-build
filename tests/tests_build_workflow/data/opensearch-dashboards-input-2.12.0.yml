@@ -1,0 +1,18 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 2.12.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-build-v1
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 361df7741b699e67c03f68a8550a5b8edcb1c838
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: a0be908272a67dec0d39211b432c9d415eee780c
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: 42a0be2aedc4f28e0e37cde6936783767881d5e7

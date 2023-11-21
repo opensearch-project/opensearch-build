@@ -27,6 +27,7 @@ class BuildArgs:
     architecture: str
     distribution: str
     continue_on_error: bool
+    incremental: bool
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Build an OpenSearch Distribution")
@@ -103,6 +104,14 @@ class BuildArgs:
             action="store_true",
             help="Do not fail the distribution build on any plugin component failure.",
         )
+        parser.add_argument(
+            "-i",
+            "--incremental",
+            dest="incremental",
+            default=False,
+            action="store_true",
+            help="Given previous build artifacts are present, build incrementally.",
+        )
 
         args = parser.parse_args()
         self.logging_level = args.logging_level
@@ -116,6 +125,7 @@ class BuildArgs:
         self.distribution = args.distribution
         self.script_path = sys.argv[0].replace("/src/run_build.py", "/build.sh")
         self.continue_on_error = args.continue_on_error
+        self.incremental = args.incremental
 
     def component_command(self, name: str) -> str:
         return " ".join(

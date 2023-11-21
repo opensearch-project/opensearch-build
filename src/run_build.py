@@ -11,6 +11,7 @@ import os
 import sys
 
 from build_workflow.build_args import BuildArgs
+from build_workflow.build_incremental import BuildIncremental
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
 from build_workflow.builders import Builders
@@ -40,6 +41,12 @@ def main() -> int:
         return 0
 
     output_dir = BuildOutputDir(manifest.build.filename, args.distribution).dir
+
+    if args.incremental:
+        buildIncremental = BuildIncremental(manifest, args.distribution)
+        list_of_updated_plugins = buildIncremental.commits_diff(manifest)
+        logging.info(f"Plugins for incremental build: {buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)}")
+        return 0
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")

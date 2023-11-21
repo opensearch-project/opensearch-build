@@ -156,6 +156,16 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(neural_search_component.depends_on[0], "ml-commons")
         self.assertEqual(neural_search_component.depends_on[1], "k-NN")
 
+    def test_plugins_depend_on(self) -> None:
+        path = os.path.join(self.manifests_path, "templates", "opensearch", "2.x", "os-template-2.12.0.yml")
+        manifest = InputManifest.from_path(path)
+        plugins_depend_on_cu = manifest.plugins_depend_on("common-utils")
+        self.assertTrue(plugins_depend_on_cu)
+        self.assertEqual(len(plugins_depend_on_cu), 3)
+        self.assertTrue("cross-cluster-replication" in plugins_depend_on_cu)
+        self.assertTrue("ml-commons" in plugins_depend_on_cu)
+        self.assertTrue("notifications-core" in plugins_depend_on_cu)
+
     def test_to_dict(self) -> None:
         path = os.path.join(self.manifests_path, "templates", "opensearch", "1.x", "os-template-1.1.0.yml")
         manifest = InputManifest.from_path(path)

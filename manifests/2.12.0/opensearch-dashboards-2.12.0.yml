@@ -1,5 +1,5 @@
 ---
-schema-version: '1.0'
+schema-version: '1.1'
 build:
   name: OpenSearch Dashboards
   version: 2.12.0
