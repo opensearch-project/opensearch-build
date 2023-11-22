@@ -531,9 +531,7 @@ pipeline {
                                     }
                                 }
                                 always {
-                                    script{
-                                        postCleanup()
-                                    }
+                                    postCleanup()
                                 }
                             }
                         }
@@ -632,9 +630,7 @@ pipeline {
                                     }
                                 }
                                 always {
-                                    script {
-                                        postCleanup()
-                                    }
+                                    postCleanup()
                                 }
                             }
                         }
