@@ -15,6 +15,7 @@ on:
 
 jobs:
   automatic-merge-manifests:
+    if: github.repository == 'opensearch-project/opensearch-build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +48,7 @@ jobs:
             manifests/*/*.yml
 
   automatic-merge-new-manifests:
+    if: github.repository == 'opensearch-project/opensearch-build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
