@@ -55,6 +55,13 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Dashboards Reporting
 * Use core navigation instead of hard coding URLs ([#229](https://github.com/opensearch-project/dashboards-reporting/pull/229)) ([#231](https://github.com/opensearch-project/dashboards-reporting/pull/231))
 
+### OpenSearch Dashboards Security Analytics 
+* Omit field from mapping payload if it matches index field; Abort detector creation when mapping has failed. ([#752](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/752))
+
+### OpenSearch Geospatial
+* Add default value in denylist ([#583](https://github.com/opensearch-project/geospatial/pull/583))
+* Add denylist ip config for datasource endpoint ([#573](https://github.com/opensearch-project/geospatial/pull/573))
+
 ### OpenSearch Index Management
 * Add more error notification at fail points ([#1013](https://github.com/opensearch-project/index-management/pull/1013))
 * Set the rollover action to idempotent ([#1012](https://github.com/opensearch-project/index-management/pull/1012))
@@ -84,22 +91,12 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## ENHANCEMENTS
 
-### OpenSearch Geospatial
-* Add default value in denylist ([#583](https://github.com/opensearch-project/geospatial/pull/583))
-* Add denylist ip config for datasource endpoint ([#573](https://github.com/opensearch-project/geospatial/pull/573))
-
 ### OpenSearch Security Analytics
 * Add rollover & archival mechanism for correlation history indices ([#670](https://github.com/opensearch-project/security-analytics/pull/670))
-
-### OpenSearch Security Analytics-Dashboards
-* Omit field from mapping payload if it matches index field; Abort detector creation when mapping has failed. ([#752](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/752))
-
-## FEATURES
 
 ### OpenSearch Common Utils
 * Adds fields param in toxcontent() for doc level query ([#549](https://github.com/opensearch-project/common-utils/pull/549))
 * Adds 'fields' parameter in doc level query object ([#546](https://github.com/opensearch-project/common-utils/pull/546))
-Footer
 
 ## INFRASTRUCTURE
 
@@ -108,7 +105,6 @@ Footer
 
 ### OpenSearch Performance Analyzer
 * Set Autopublish to true in Jenkins publish for performance-analyzer-commons repo [#45](https://github.com/opensearch-project/performance-analyzer-commons/pull/45)
-Member
 * Upgrade performance-analyzer-commons version to 1.2.0 [#598](https://github.com/opensearch-project/performance-analyzer/pull/598)
 
 ### OpenSearch k-NN
@@ -137,7 +133,6 @@ Member
 * Update build.gradle to use isSnapshot logic [#521](https://github.com/opensearch-project/performance-analyzer-rca/pull/521)
 * Add separate metric for cluster manager service events and metrics [#579](https://github.com/opensearch-project/performance-analyzer/pull/579)
 * Add separate metric in commons repo for cluster manager service events and metrics [#51](https://github.com/opensearch-project/performance-analyzer-commons/pull/51)
-Member
 
 ### OpenSearch Reporting
 * Increment version to 2.11.1-SNAPSHOT ([#923](https://github.com/opensearch-project/reporting/pull/923))
