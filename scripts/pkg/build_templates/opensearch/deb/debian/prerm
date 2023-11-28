@@ -14,11 +14,11 @@ set -e
 echo "Running OpenSearch Pre-Removal Script"
 
 # Stop existing service
-if command -v systemctl >/dev/null && systemctl is-active opensearch.service >/dev/null; then
+if [ -d /run/systemd/system ] && systemctl is-active opensearch.service >/dev/null; then
     echo "Stop existing opensearch.service"
     systemctl --no-reload stop opensearch.service
 fi
-if command -v systemctl >/dev/null && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
+if [ -d /run/systemd/system ] && systemctl is-active opensearch-performance-analyzer.service >/dev/null; then
     echo "Stop existing opensearch-performance-analyzer.service"
     systemctl --no-reload stop opensearch-performance-analyzer.service
 fi

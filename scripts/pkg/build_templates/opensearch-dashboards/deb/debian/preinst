@@ -14,7 +14,7 @@ set -e
 echo "Running OpenSearch-Dashboards Pre-Installation Script"
 
 # Stop existing service
-if command -v systemctl >/dev/null && systemctl is-active opensearch-dashboards.service >/dev/null; then
+if [ -d /run/systemd/system ] && systemctl is-active opensearch-dashboards.service >/dev/null; then
     echo "Stop existing opensearch-dashboards.service"
     systemctl --no-reload stop opensearch-dashboards.service
 fi
