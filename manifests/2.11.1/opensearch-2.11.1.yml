@@ -16,7 +16,7 @@ components:
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: eae4612b234916fcbbef57b8e041d3ecdb487620
+    ref: 080ecfee46cc000570ca932208312bdc337f8cf4
     platforms:
       - linux
       - windows
@@ -150,7 +150,7 @@ components:
       - gradle:dependencies:opensearch.version
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 2e37dfae11fc5aff24cb82de6f26d6a4be24dba2
+    ref: c41858ed6e99c6c7d1a678a92bd17f344364513a
     platforms:
       - linux
       - windows
@@ -159,7 +159,7 @@ components:
       - gradle:dependencies:opensearch.version: alerting
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 29f2cae5cbd755d41ea72ad2a9b60f9f3639a539
+    ref: 53fce5514918bee2b07a6cb2d8fd61c7a71da6b7
     platforms:
       - linux
       - windows
