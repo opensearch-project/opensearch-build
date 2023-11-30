@@ -10,32 +10,18 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 ## BUG FIXES
 
-### Cross-Cluster-Replication
+### OpenSearch Cross Cluster Replication
 * Fix CCR compatibility with remote translogs ([#1276](https://github.com/opensearch-project/cross-cluster-replication/pull/1276))
 
 ### OpenSearch Alerting
 * Fix for ConcurrentModificationException with linkedHashmap. ([#1255](https://github.com/opensearch-project/alerting/pull/1255))
 
-### OpenSearch Alerting Dashboards
+### OpenSearch Dashboards Alerting
 * Removed "last updated by" sections from the UI. ( ([#767](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/767))
 * Fixed bucket monitor groupBy/aggregation display bug. ([#827](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/827))
 
 ### OpenSearch Dashboards Observability
-* Fix for explorer data grid not paginating by @opensearch-trigger-bot in ([#1141](https://github.com/opensearch-project/dashboards-observability/pull/1141)
-* Allow patch on allowedRoles by @opensearch-trigger-bot in ([#1145](https://github.com/opensearch-project/dashboards-observability/pull/1145)
-* Update URL of create datasources, fix spacing by @opensearch-trigger-bot in ([#1154](([#1154](https://github.com/opensearch-project/dashboards-observability/pull/1154))
-* Disable integration set up button if invalid by @opensearch-trigger-bot in ([#1161](https://github.com/opensearch-project/dashboards-observability/pull/1161)
-* Switch from toast to callout for integration set up failures by @opensearch-trigger-bot in ([#1159](https://github.com/opensearch-project/dashboards-observability/pull/1159)
-* Remove loading progress for integration setup by @opensearch-trigger-bot in ([#1162](https://github.com/opensearch-project/dashboards-observability/pull/1162)
-* Fix integration labeling to identify S3 integrations by @opensearch-trigger-bot in ([#1164](https://github.com/opensearch-project/dashboards-observability/pull/1164)
-* Quiet react-dnd draggableId/droppableId warnings. by @opensearch-trigger-bot in ([#1166](https://github.com/opensearch-project/dashboards-observability/pull/1166)
-* Fix events home table and toast life time by @kavithacm in ([#1170](https://github.com/opensearch-project/dashboards-observability/pull/1170)
-* Fixed Visualization Config Panel dark mode by @opensearch-trigger-bot in ([#1176](https://github.com/opensearch-project/dashboards-observability/pull/1176)
-* Bug fixes for observability count distribution and application analytics by @opensearch-trigger-bot in ([#1189](https://github.com/opensearch-project/dashboards-observability/pull/1189)
-* Correct query schema for ELB mview generation by @opensearch-trigger-bot in ([#1199](https://github.com/opensearch-project/dashboards-observability/pull/1199)
-* [Explorer] Fixes for cancel button and saved object loading by @opensearch-trigger-bot in ([#1201](https://github.com/opensearch-project/dashboards-observability/pull/1201)
-* Saved object datasource backward compatibility fixes by @opensearch-trigger-bot in ([#1210](https://github.com/opensearch-project/dashboards-observability/pull/1210)
-* disabling inspect and default pattern/timestamp buttons when using async data sources by @opensearch-trigger-bot in ([#1212](https://github.com/opensearch-project/dashboards-observability/pull/1212)
+* Switch heading types on integrations setup page by @opensearch-trigger-bot in ([#1137](https://github.com/opensearch-project/dashboards-observability/pull/1137))
 
 ### OpenSearch Dashboards Query Workbench
 * Add materlized views, manual refresh option and minor fixes by @opensearch-trigger-bot in https://github.com/opensearch-project/dashboards-query-workbench/pull/161
@@ -85,18 +71,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Fix issue with response content-types changed in 2.11 ([#3721](https://github.com/opensearch-project/security/pull/3721))
 
 ### OpenSearch Security Analytics
-* Fix for doc level query constructor change ([#651](https://github.com/opensearch-project/security-analytics/pull/651))
+* add rollover & archival mechanism for correlation history indices ([#670](https://github.com/opensearch-project/security-analytics/pull/670))
 * Return rule fields which do not have aliases ([#652](https://github.com/opensearch-project/security-analytics/pull/652))
 * Fix detector writeTo() method missing fields ([#695](https://github.com/opensearch-project/security-analytics/pull/695))
-
-## ENHANCEMENTS
-
-### OpenSearch Security Analytics
-* Add rollover & archival mechanism for correlation history indices ([#670](https://github.com/opensearch-project/security-analytics/pull/670))
-
-### OpenSearch Common Utils
-* Adds fields param in toxcontent() for doc level query ([#549](https://github.com/opensearch-project/common-utils/pull/549))
-* Adds 'fields' parameter in doc level query object ([#546](https://github.com/opensearch-project/common-utils/pull/546))
 
 ## INFRASTRUCTURE
 
@@ -115,13 +92,8 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Alerting
 * Increment version to 2.11.1-SNAPSHOT. ([#1274](https://github.com/opensearch-project/alerting/pull/1274))
 
-### OpenSearch Alerting Dashboards
+### OpenSearch Dashboards Alerting
 * Incremented version to 2.11.1. ([#788](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/788))
-
-### OpenSearch Dashboards Observability
-* Switch heading types on integrations setup page by @opensearch-trigger-bot in ([#1137](https://github.com/opensearch-project/dashboards-observability/pull/1137)
-* Remove husky pre-commit checks (#1192) by @ps48 in ([#1193](https://github.com/opensearch-project/dashboards-observability/pull/1193)
-* Revert commits back to after 2.11 release by @mengweieric in ([#1231](https://github.com/opensearch-project/dashboards-observability/pull/1231)
 
 ### OpenSearch Dashboards Query Workbench
 * Design changes for loading tree elements, changed the banner, updated tests by @opensearch-trigger-bot in https://github.com/opensearch-project/dashboards-query-workbench/pull/172
@@ -137,31 +109,16 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Reporting
 * Increment version to 2.11.1-SNAPSHOT ([#923](https://github.com/opensearch-project/reporting/pull/923))
 
-### OpenSearch Security Analytics-Dashboards
+### OpenSearch Dashboards Security Analytics
 * Increment version to 2.11.1.0. ([#771](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/771))
-
-## REFACTORING
-
-### OpenSearch Alerting
-* Handle Doc level query 'fields' param for query string query. ([#1240](https://github.com/opensearch-project/alerting/pull/1240))
-* Add nested fields param mapping findings index for doc level queries. ([#1276](https://github.com/opensearch-project/alerting/pull/1276))
-
-### OpenSearch Dashboards Observability
-* [Explorer] Modify text in empty prompt by @opensearch-trigger-bot in ([#1182](https://github.com/opensearch-project/dashboards-observability/pull/1182)
-* [Explorer] Supports session for s3 direct query by @opensearch-trigger-bot in ([#1183](https://github.com/opensearch-project/dashboards-observability/pull/1183)
-* Support cancellation of async queries by @opensearch-trigger-bot in ([#1186](https://github.com/opensearch-project/dashboards-observability/pull/1186)
-* Add integrations queries for Flint by @opensearch-trigger-bot in ([#1195](https://github.com/opensearch-project/dashboards-observability/pull/1195)
-* Link integrations from datasources UI by @opensearch-trigger-bot in ([#1207](https://github.com/opensearch-project/dashboards-observability/pull/1207)
-* Add S3 integration for Nginx and VPC by @opensearch-trigger-bot in ([#1216](https://github.com/opensearch-project/dashboards-observability/pull/1216)
-* Update empty allowed roles to admin only by @opensearch-trigger-bot in ([#1220](https://github.com/opensearch-project/dashboards-observability/pull/1220)
 
 ## DOCUMENTATION
 
-### OpenSearch Alerting Dashboards
-* Added 2.11.1 release notes. ([#1306](https://github.com/opensearch-project/alerting/pull/1306))
-
-### OpenSearch Dashboards Observability
+### OpenSearch Dashboards Alerting
 * Add 2.11.1 release notes. ([#828](https://github.com/opensearch-project/alerting-dashboards-plugin/pull/828))
+
+### OpenSearch Alerting
+* Added 2.11.1 release notes. ([#1306](https://github.com/opensearch-project/alerting/pull/1306))
 
 ### OpenSearch Index Management
 * Increment version to 2.11.1-SNAPSHOT. ([#1016](https://github.com/opensearch-project/index-management/pull/1016))
@@ -169,5 +126,5 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 ### OpenSearch Security Analytics
 * Added 2.11.1 release notes.([#727](https://github.com/opensearch-project/security-analytics/pull/727))
 
-### OpenSearch Security Analytics-Dashboards
+### OpenSearch Dashboards Security Analytics 
 * Added release notes for 2.11.1 ([#785](https://github.com/opensearch-project/security-analytics-dashboards-plugin/pull/785))
