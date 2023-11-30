@@ -4,7 +4,7 @@ Pulls the latest code to check if the release notes exists and whether new commi
 
 *Usage*
 ```
-./release_notes.sh check manifests/3.0.0/opensearch-3.0.0.yml --date 2022-07-26
+./scripts/release_notes.sh check manifests/3.0.0/opensearch-3.0.0.yml --date 2022-07-26
 ```
 
 *Sample Output*

@@ -26,7 +26,7 @@
                   release-notes-check.sh(
                                 #!/bin/bash
                                 set +e
-                                ./release_notes.sh check manifests/${INPUT_MANIFEST} --date ${GIT_LOG_DATE} --output table.md
+                                ./scripts/release_notes.sh check manifests/${INPUT_MANIFEST} --date ${GIT_LOG_DATE} --output table.md
                                 echo "Adding Comment on issue $GIT_ISSUE_NUMBER"
                                 gh repo clone https://github.com/opensearch-project/opensearch-build.git; cd opensearch-build
                                 gh issue comment ${GIT_ISSUE_NUMBER} --body-file ../table.md --repo opensearch-project/opensearch-build

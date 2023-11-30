@@ -5,7 +5,7 @@
 This workflow checks out source code for a given manifest for further examination.
 
 ```bash
-./checkout.sh manifests/1.2.0/opensearch-1.2.0.yml
+./scripts/checkout.sh manifests/1.2.0/opensearch-1.2.0.yml
 ```
 
 The following options are available.

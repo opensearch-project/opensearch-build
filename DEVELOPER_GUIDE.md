@@ -116,10 +116,10 @@ BUILD SUCCESSFUL in 7s
 
 ### Build OpenSearch
 
-Try running `./build.sh`. It should complete and show usage.
+Try running `./scripts/build.sh`. It should complete and show usage.
 
 ```
-$ ./build.sh 
+$ ./scripts/build.sh 
 Installing dependencies in . ...
 Installing dependencies from Pipfile.lock (41aca1)…
  🐍  ▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉ 14/14 — 00:00:01
