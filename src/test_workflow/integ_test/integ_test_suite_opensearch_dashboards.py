@@ -12,7 +12,6 @@ from pathlib import Path
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
-from manifests.input_manifest import InputManifest
 from manifests.test_manifest import TestComponent
 from paths.script_finder import ScriptFinder
 from system.execute import execute
