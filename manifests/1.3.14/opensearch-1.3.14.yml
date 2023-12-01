@@ -58,3 +58,39 @@ components:
       - gradle:dependencies:opensearch.version
     platforms:
       - linux
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
