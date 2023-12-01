@@ -12,6 +12,7 @@ from pathlib import Path
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
+from manifests.input_manifest import InputManifest
 from manifests.test_manifest import TestComponent
 from paths.script_finder import ScriptFinder
 from system.execute import execute
@@ -24,6 +25,8 @@ from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
+from test_workflow.test_args import TestArgs
+
 
 
 class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
@@ -56,11 +59,16 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
             build_manifest_opensearch
         )
 
-        # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
+        args = TestArgs()
+        if args.ft_repo_ref != None:
+            ref = InputManifest.from_path(args.ft_repo_ref)
+        else:
+            ref = build_manifest_opensearch_dashboards.components['functionalTestDashboards'].ref
 
+        # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
         self.repo = GitRepository(
             build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
-            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id,
+            ref,
             os.path.join(self.work_dir, self.component.name),
             test_config.working_directory
         )
