@@ -2,7 +2,7 @@
 
 ## Release Details
 
-[OpenSearch and OpenSearch Dashboards 2.11.1](https://opensearch.org/versions/opensearch-2.11.1.html) includes the following bug fixes, infrastructure, enhancements, maintenance and documentation updates.
+[OpenSearch and OpenSearch Dashboards 2.11.1](https://opensearch.org/versions/opensearch-2-11-1.html) includes the following bug fixes, infrastructure, enhancements, maintenance and documentation updates.
 
 OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/main/release-notes/opensearch.release-notes-2.11.1.md).
 
