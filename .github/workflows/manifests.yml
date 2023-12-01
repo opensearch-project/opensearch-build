@@ -2,9 +2,6 @@
 name: manifests
 
 on:
-  push:
-    branches:
-      - 'manifests-jdks'
   pull_request:
     paths:
       - 'manifests/**/*.yml'
