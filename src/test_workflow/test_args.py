@@ -34,10 +34,10 @@ class TestArgs:
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, dest="components", nargs='*', help="Test a specific component or components instead of the entire distribution.")
         parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
+        parser.add_argument("--ft-repo-ref", type=str, default=None, dest="ft_repo_ref", help="Specify ref for functionalTestDashboards repo tests.")
         parser.add_argument(
             "-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level"
         )
-        parser.add_argument("--ft-repo-ref", type=str, default=None, dest = "ft_repo_ref", help="Specify ref for functionalTestDashboards repo tests")
         args = parser.parse_args()
         self.test_run_id = args.test_run_id or uuid.uuid4().hex
         self.components = args.components

@@ -24,6 +24,7 @@ class IntegTestRunnerOpenSearchDashboards(IntegTestRunner):
     def __init__(self, args: TestArgs, test_manifest: TestManifest) -> None:
         self.properties_dependency = IntegTestStartPropertiesOpenSearch(args.paths.get("opensearch", os.getcwd()))
         self.properties = IntegTestStartPropertiesOpenSearchDashboards(args.paths.get("opensearch-dashboards", os.getcwd()))
+        self.ft_repo_ref = args.ft_repo_ref
         super().__init__(args, test_manifest, self.properties.build_manifest.components)
         logging.info("Entering integ test for OpenSearch Dashboards")
 

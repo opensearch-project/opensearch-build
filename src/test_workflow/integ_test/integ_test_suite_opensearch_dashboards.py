@@ -24,7 +24,7 @@ from test_workflow.test_recorder.test_recorder import TestRecorder
 from test_workflow.test_recorder.test_result_data import TestResultData
 from test_workflow.test_result.test_component_results import TestComponentResults
 from test_workflow.test_result.test_result import TestResult
-from test_workflow.test_args import TestArgs
+
 
 class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
     dependency_installer_opensearch_dashboards: DependencyInstallerOpenSearchDashboards
@@ -43,7 +43,8 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         build_manifest_opensearch: BuildManifest,
         build_manifest_opensearch_dashboards: BuildManifest,
         work_dir: Path,
-        test_recorder: TestRecorder
+        test_recorder: TestRecorder,
+        ft_repo_ref: str = None
     ) -> None:
 
         super().__init__(
@@ -57,10 +58,10 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
         )
 
         # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
-        args = TestArgs()
-        functionalTestDashboards_ref = build_manifest_opensearch_dashboards.components['functionalTestDashboards'].ref
-        if args.ft_repo_ref != None:
-            functionalTestDashboards_ref = args.ft_repo_ref
+
+        functionalTestDashboards_ref = build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id
+        if ft_repo_ref is not None:
+            functionalTestDashboards_ref = ft_repo_ref
 
         self.repo = GitRepository(
             build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
