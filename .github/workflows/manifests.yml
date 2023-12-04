@@ -3,9 +3,6 @@ name: manifests
 
 on:
   pull_request:
-    paths:
-      - 'manifests/**/*.yml'
-      - '!manifests/templates/**/'
 
 jobs:
   list-changed-manifests:
