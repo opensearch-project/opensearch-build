@@ -28,10 +28,10 @@ jobs:
   manifest-checks:
     needs: [list-changed-manifests]
     runs-on: ubuntu-latest
-    fail-fast: false
     env:
       PYTHON_VERSION: 3.9
     strategy:
+      fail-fast: false
       matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
