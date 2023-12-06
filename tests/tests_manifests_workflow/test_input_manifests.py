@@ -7,8 +7,9 @@
 
 import os
 import unittest
-import yaml
 from unittest.mock import MagicMock, call, mock_open, patch
+
+import yaml
 
 from manifests_workflow.input_manifests import InputManifests
 
