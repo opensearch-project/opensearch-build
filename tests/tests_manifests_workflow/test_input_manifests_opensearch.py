@@ -9,7 +9,6 @@ import os
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from manifests.component_manifest import Component, ComponentFromSource
 from manifests_workflow.input_manifests_opensearch import InputManifestsOpenSearch
 
 
