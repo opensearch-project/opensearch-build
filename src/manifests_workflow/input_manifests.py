@@ -14,8 +14,7 @@ from typing import Dict, List, Type, Union
 
 import ruamel.yaml
 
-from manifests.component_manifest import ComponentFromSource
-from manifests.input_manifest import InputComponents, InputManifest
+from manifests.input_manifest import InputManifest
 from manifests.manifests import Manifests
 from manifests_workflow.component_opensearch import ComponentOpenSearch
 from manifests_workflow.component_opensearch_dashboards_min import ComponentOpenSearchDashboardsMin
@@ -126,7 +125,7 @@ class InputManifests(Manifests):
         manifest.build.version = version
 
         for component in manifest.components.select():
-            component.ref = branch
+            component.ref = branch  # type: ignore
 
         return manifest
 

@@ -1,8 +1,8 @@
 ---
-schema-version: '1.1'
+schema-version: '1.0'
 build:
   name: OpenSearch
-  version: 'replace'
+  version: version_replace
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -25,7 +25,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -34,7 +34,7 @@ components:
       - windows
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
@@ -43,7 +43,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -52,7 +52,7 @@ components:
       - windows
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -61,7 +61,7 @@ components:
       - windows
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -70,7 +70,7 @@ components:
       - windows
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
@@ -79,7 +79,7 @@ components:
       - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
@@ -88,7 +88,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -97,7 +97,7 @@ components:
       - windows
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -106,7 +106,7 @@ components:
       - windows
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -115,7 +115,7 @@ components:
       - windows
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -123,7 +123,7 @@ components:
       - linux
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -132,7 +132,7 @@ components:
       - windows
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 'replace'
+    ref: ref_replace
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version

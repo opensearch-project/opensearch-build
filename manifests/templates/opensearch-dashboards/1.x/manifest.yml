@@ -1,40 +1,40 @@
 ---
-schema-version: '1.1'
+schema-version: '1.0'
 build:
   name: OpenSearch Dashboards
-  version: 'replace'
+  version: version_replace
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v4
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 'replace'
+    ref: ref_replace
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: 'replace'
+    ref: ref_replace
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 'replace'
+    ref: ref_replace
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
-    ref: 'replace'
+    ref: ref_replace
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 'replace'
+    ref: ref_replace
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 'replace'
+    ref: ref_replace
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: 'replace'
+    ref: ref_replace
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 'replace'
+    ref: ref_replace
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 'replace'
+    ref: ref_replace
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 'replace'
+    ref: ref_replace

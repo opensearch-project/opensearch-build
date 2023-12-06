@@ -7,12 +7,14 @@
 
 import os
 import unittest
+import yaml
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from manifests_workflow.input_manifests import InputManifests
 
 
 class TestInputManifests(unittest.TestCase):
+
     def test_manifests_path(self) -> None:
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
@@ -41,60 +43,54 @@ class TestInputManifests(unittest.TestCase):
 
     def test_create_manifest_opensearch(self) -> None:
         input_manifests = InputManifests("OpenSearch")
-        input_manifest = input_manifests.create_manifest("1.2.3", [])
-        self.assertEqual(
-            input_manifest.to_dict(),
-            {
-                "schema-version": "1.0",
-                "build": {"name": "OpenSearch", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3",
-                                 "args": "-e JAVA_HOME=/opt/java/openjdk-11"}},
-            },
-        )
+        input_manifest = input_manifests.create_manifest("1.2.3", "1.3")
+        template = os.path.join(InputManifests.manifests_path(), "templates", "opensearch", "1.x", "manifest.yml")
+        with open(template) as f:
+            template_dict = yaml.load(f, Loader=yaml.FullLoader)
+        template_dict["build"]["version"] = "1.2.3"
+        for component in template_dict["components"]:
+            component["ref"] = "1.3"
+        self.assertEqual(input_manifest.to_dict(), template_dict)
 
     def test_create_manifest_opensearch_from_default(self) -> None:
         input_manifests = InputManifests("OpenSearch")
-        input_manifest = input_manifests.create_manifest("0.2.3", [])
-        self.assertEqual(
-            input_manifest.to_dict(),
-            {
-                "schema-version": "1.0",
-                "build": {"name": "OpenSearch", "version": "0.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3",
-                                 "args": "-e JAVA_HOME=/opt/java/openjdk-17"}},
-            },
-        )
+        input_manifest = input_manifests.create_manifest("4.0.0", "main")
+        template = os.path.join(InputManifests.manifests_path(), "templates", "opensearch", "default", "manifest.yml")
+        with open(template) as f:
+            template_dict = yaml.load(f, Loader=yaml.FullLoader)
+        template_dict["build"]["version"] = "4.0.0"
+        for component in template_dict["components"]:
+            component["ref"] = "main"
+        self.assertEqual(input_manifest.to_dict(), template_dict)
 
     def test_create_manifest_opensearch_dashboards(self) -> None:
         input_manifests = InputManifests("OpenSearch Dashboards")
-        input_manifest = input_manifests.create_manifest("1.2.3", [])
-        self.assertEqual(
-            input_manifest.to_dict(),
-            {
-                "schema-version": "1.0",
-                "build": {"name": "OpenSearch Dashboards", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v4", }},
-            },
-        )
+        input_manifest = input_manifests.create_manifest("2.12.0", "2.x")
+        template = os.path.join(InputManifests.manifests_path(), "templates", "opensearch-dashboards", "2.x", "manifest.yml")
+        with open(template) as f:
+            template_dict = yaml.load(f, Loader=yaml.FullLoader)
+        template_dict["build"]["version"] = "2.12.0"
+        for component in template_dict["components"]:
+            component["ref"] = "2.x"
+        self.assertEqual(input_manifest.to_dict(), template_dict)
 
     def test_create_manifest_opensearch_dashboards_from_default(self) -> None:
         input_manifests = InputManifests("OpenSearch Dashboards")
-        input_manifest = input_manifests.create_manifest("4.2.3", [])
-        self.assertEqual(
-            input_manifest.to_dict(),
-            {
-                "schema-version": "1.0",
-                "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-build-v1", }},
-            },
-        )
+        input_manifest = input_manifests.create_manifest("4.0.0", "main")
+        template = os.path.join(InputManifests.manifests_path(), "templates", "opensearch-dashboards", "default", "manifest.yml")
+        with open(template) as f:
+            template_dict = yaml.load(f, Loader=yaml.FullLoader)
+        template_dict["build"]["version"] = "4.0.0"
+        for component in template_dict["components"]:
+            component["ref"] = "main"
+        self.assertEqual(input_manifest.to_dict(), template_dict)
 
     @patch("os.makedirs")
     @patch("manifests_workflow.input_manifests.InputManifests.create_manifest")
     def test_write_manifest(self, mock_create_manifest: MagicMock, mock_makedirs: MagicMock) -> None:
         input_manifests = InputManifests("opensearch")
-        input_manifests.write_manifest('0.1.2', [])
-        mock_create_manifest.assert_called_with('0.1.2', [])
+        input_manifests.write_manifest('0.1.2', "main")
+        mock_create_manifest.assert_called_with('0.1.2', "main")
         mock_makedirs.assert_called_with(os.path.join(InputManifests.manifests_path(), '0.1.2'), exist_ok=True)
         mock_create_manifest.return_value.to_file.assert_called_with(
             os.path.join(InputManifests.manifests_path(), '0.1.2', 'opensearch-0.1.2.yml')

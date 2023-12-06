@@ -30,17 +30,15 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch("os.chdir")
-    @patch("manifests_workflow.input_manifests.InputComponents")
     @patch("manifests_workflow.input_manifests.InputManifest.from_file")
-    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifest.from_path")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
     @patch("manifests_workflow.input_manifests.InputManifest")
     def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch_min: MagicMock,
                     mock_input_manifest_from_path: MagicMock, mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
-                    mock_input_manifest_from_file: MagicMock, mock_input_manifest_component: MagicMock,
-                    *mocks: MagicMock) -> None:
+                    mock_input_manifest_from_file: MagicMock, *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
         mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
         mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
