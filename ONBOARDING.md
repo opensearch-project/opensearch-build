@@ -5,6 +5,7 @@
   - [Onboard to Build Workflow](#onboard-to-build-workflow)
   - [Onboard to `test-workflow`](#onboard-to-test-workflow)
 - [Onboarding to universal/1-click release process](#onboarding-to-universal--1-click-release-process)
+- [Onboard to PyPi GitHub Action release](#onboard-to-pypi-github-action-release)
   
 ## Component Onboarding
 
@@ -79,3 +80,46 @@ See https://github.com/opensearch-project/opensearch-build/issues/1234 for detai
 1. Add `RELEASING.md` file to the repository documenting how to release the artifact. [Example](https://github.com/opensearch-project/opensearch-py-ml/blob/main/RELEASING.md)
 1. **Adding tests:** Each library has a respective library tester associated with it that can be used to test you jenkins workflow. This tests can be used to verify that the workflow is making the calls. The build system used is gradle. 
 For example, this [PublishToNpm test](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/tests/jenkins/TestPublishToNpm.groovy) uses [PublishToNpmLibTester](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/tests/jenkins/lib-testers/PublishToNpmLibTester.groovy) with expected parameter that can be unique to your workflow. The assertions makes sure that calls to npm registry is made which is mandatory to release an artifact.
+
+
+## Onboard to PyPi GitHub Action release
+
+Since PyPi has announced the removal of the PGP signature [here](https://blog.pypi.org/posts/2023-05-23-removing-pgp/), it is no longer necessary to run our Jenkins workflow from Universal build as it was mainly focusing on signing.
+
+With PyPi supporting [OpenID Connect (OIDC)](https://docs.pypi.org/trusted-publishers/adding-a-publisher/) authentication and the addition of trusted publisher on GitHub, the entire release publishing workflow can be executed on GitHub.
+
+Essential part of publishing to PyPi is:
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+which uses action [pypa/gh-action-pypi-publish](https://github.com/marketplace/actions/pypi-publish) for release. It has built-in support for trusted publishing.
+
+Requirement for this publish action is enabling the permission to get id-token within the stage.
+
+    permissions:
+      id-token: write
+
+### Step by step process
+
+Sample workflow can be found [here](https://github.com/opensearch-project/opensearch-py/blob/5b28423f7145168d7263943ca4ae9722812e4771/.github/workflows/release-drafter.yml).
+
+For any of new repo to onboard GHA workflow release, there are two parts:
+
+1. Create the GitHub workflow e.g. `release-drafter.yml` inside the repo.
+    * Allow the GHA triggered by tag creation.
+    * Set up the respective python version and python build stage.
+    * Enable permissions for these actions.
+        * ```
+          permissions:
+          id-token: write
+          contents: write
+          ```
+        * `id-token: write` is required for publishing with `pypa/gh-action-pypi-publish`.
+        * `contents: write` is needed for publishing GitHub official release with `softprops/action-gh-release@v1`.
+    * Publish to PyPi with `pypa/gh-action-pypi-publish`. There is an option to publish to Test PyPi. More information can be found [here](https://github.com/marketplace/actions/pypi-publish).
+    * Generate GitHub release with `softprops/action-gh-release@v1`.
+
+2. Create an issue with our team to help set up trusted publisher in PyPi.
+
+
