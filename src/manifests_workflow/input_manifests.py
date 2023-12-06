@@ -95,47 +95,15 @@ class InputManifests(Manifests):
 
             logging.info(f"Checking {self.name} {branches} branches")
             for branch in branches:
-                c = min_klass.checkout(
-                    path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),
+                min_component = min_klass.checkout(
+                    path=os.path.join(work_dir.name, self.prefix, branch),
                     branch=branch,
                 )
 
-                version = c.version
+                version = min_component.version
                 logging.info(f"{self.name}#{branch} is version {version}")
                 if version not in main_versions.keys():
-                    main_versions[version] = [c]
-
-            if component_klass is not None:
-                # components can increment their own version first without incrementing min
-                manifest = self.latest
-                logging.info(f"Examining components in the latest manifest of {manifest.build.name} ({manifest.build.version})")
-                for component in manifest.components.values():
-                    if component.name == self.name:
-                        continue
-
-                    if type(component) is ComponentFromSource:
-                        logging.info(f"Checking out {component.name}#main")
-                        component = component_klass.checkout(
-                            name=component.name,
-                            path=os.path.join(work_dir.name, component.name),
-                            opensearch_version=manifest.build.version,
-                            repo_url=component.repository,
-                            branch="main",
-                        )
-
-                        component_version = component.version
-                        if component_version:
-                            release_version = ".".join(component_version.split(".")[:3])
-                            if release_version not in main_versions.keys():
-                                main_versions[release_version] = []
-                            main_versions[release_version].append(component)
-                            logging.info(f"{component.name}#main is version {release_version} (from {component_version})")
-
-            # summarize
-            logging.info("Found versions on main:")
-            for main_version in main_versions.keys():
-                for component in main_versions[main_version]:
-                    logging.info(f" {component.name}={main_version}")
+                    main_versions[version] = branch
 
             # generate new manifests
             for release_version in sorted(main_versions.keys() - known_versions):
@@ -143,28 +111,28 @@ class InputManifests(Manifests):
                 self.add_to_cron(release_version)
                 self.add_to_versionincrement_workflow(release_version)
 
-    def create_manifest(self, version: str, components: List = []) -> InputManifest:
+    def create_manifest(self, version: str, branch: str) -> InputManifest:
         templates_base_path = os.path.join(self.manifests_path(), "templates")
         template_version_folder = version.split(".")[0] + ".x"
         template_full_path = os.path.join(templates_base_path, self.prefix, template_version_folder, "manifest.yml")
         if not os.path.exists(template_full_path):
+            logging.info(f"Not found: {template_full_path}")
             template_full_path = os.path.join(templates_base_path, self.prefix, "default", "manifest.yml")
+
+        logging.info(f"Using this template: {template_full_path}")
 
         manifest = InputManifest.from_file(open(template_full_path))
 
         manifest.build.version = version
-        manifests_components = []
 
-        for component in components:
-            logging.info(f" Adding {component.name}")
-            manifests_components.append(component.to_dict())
+        for component in manifest.components.select():
+            component.ref = branch
 
-        manifest.components = InputComponents(manifests_components)  # type: ignore
         return manifest
 
-    def write_manifest(self, version: str, components: List = []) -> None:
-        logging.info(f"Creating new version: {version}")
-        manifest = self.create_manifest(version, components)
+    def write_manifest(self, version: str, branch: str) -> None:
+        logging.info(f"Generating {self.prefix} manifest for version {version} on branch {branch}")
+        manifest = self.create_manifest(version, branch)
         manifest_dir = os.path.join(self.manifests_path(), version)
         os.makedirs(manifest_dir, exist_ok=True)
         manifest_path = os.path.join(manifest_dir, f"{self.prefix}-{version}.yml")
