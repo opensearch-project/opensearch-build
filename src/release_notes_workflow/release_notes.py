@@ -19,18 +19,32 @@ from system.temporary_directory import TemporaryDirectory
 
 class ReleaseNotes:
 
-    def __init__(self, manifest: InputManifest, date: str) -> None:
+    def __init__(self, manifest: InputManifest, date: str, action_type: str) -> None:
         self.manifest = manifest
         self.date = date
+        self.action_type = action_type
 
     def table(self) -> MarkdownTableWriter:
         table_result = []
         for component in self.manifest.components.select():
+            if component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards' or component.name == 'notifications-core':
+                continue
             if hasattr(component, "repository"):
                 table_result.append(self.check(component))  # type: ignore[arg-type]
+
+        # Sort table_result based on Repo column
+        table_result.sort(key=lambda x: (x[0], x[1]) if len(x) > 1 else x[0])
+
+        if self.action_type == "check":
+            headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists"]
+        elif self.action_type == "compile":
+            headers = ["Repo", "Branch", "CommitID", "Commit Date", "Release Notes Exists", "URL"]
+        else:
+            raise ValueError("Invalid action_type. Use 'check' or 'compile'.")
+
         writer = MarkdownTableWriter(
             table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
-            headers=["Repo", "Branch", "CommitID", "Commit Date", "Release Notes"],
+            headers=headers,
             value_matrix=table_result
         )
         return writer
@@ -57,4 +71,13 @@ class ReleaseNotes:
                     results.append(None)
                     results.append(None)
                 results.append(release_notes.exists())
+
+                if(release_notes.exists()):
+                    releasenote = os.path.basename(release_notes.full_path)
+                    repo_name = component.repository.split("/")[-1].split('.')[0]
+                    repo_ref = component.ref.split("/")[-1]
+                    url = f"https://raw.githubusercontent.com/opensearch-project/{repo_name}/{repo_ref}/release-notes/{releasenote}"
+                    results.append(url)
+                else:
+                    results.append(None)
         return results
