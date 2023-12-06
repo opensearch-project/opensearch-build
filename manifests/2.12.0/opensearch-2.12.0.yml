@@ -50,6 +50,15 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
     ref: 2.x
