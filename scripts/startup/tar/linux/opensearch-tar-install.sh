@@ -13,7 +13,7 @@ if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
         echo "OpenSearch 2.12.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
         echo "Please define an environment variable 'initialAdminPassword' with a password string."
         echo "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under $OPENSEARCH_PATH_CONF folder."
-        echo "If none of these are provided, the cluster will not spin u."
+        echo "If none of these are provided, the setup will quit."
         bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || exit 1
         echo "done security"
 fi
