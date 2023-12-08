@@ -34,7 +34,7 @@ components:
     ref: fb6e305fff5893c8820cad97a353465dcfc1edc6
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: f861f46379a88aab2f9a9c88dd4f2101af1bdfe4
+    ref: 307c7a0674ad1d15fe575a3dbf0a3a7213634099
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
     ref: 95231a70357834240b3169491a8ce35c36fff0cf
