@@ -37,7 +37,7 @@ function setupSecurityPlugin {
             echo "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
             echo "OpenSearch 2.12.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
             echo "Please define a `.env` file with `admin_password` variable set to a strong password."
-            echo "If these are not provided, a password will be generated per node and printed out to the logs. And one of them will be an actual admin password"
+            echo "If these are not provided, the setup will quit."
             bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s || exit 1
         fi
 

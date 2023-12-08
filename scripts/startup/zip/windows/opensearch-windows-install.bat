@@ -17,7 +17,7 @@ IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
     ECHO "Running Security Plugin Install Demo Configuration"
     ECHO "Please define an environment variable 'initialAdminPassword' with a password string."
     ECHO "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under %OPENSEARCH_PATH_CONF% folder."
-    ECHO "If none of these are provided, a password will be generated and printed out to the logs."
+    ECHO "If none of these are provided, the setup will quit."
     CALL "%OPENSEARCH_HOME%\plugins\opensearch-security\tools\install_demo_configuration.bat" -y -i -s || exit /b 1
 )
 
