@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: cedab0bd232290c2606c28ef7087106fc1a74f9a
+    ref: 21940d8239b50285ef7f98a1762ef281a5b1c7ee
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -34,7 +34,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: b653d56d561171c10049064d5a17861d97aac843
+    ref: 8924b34f9132297bfbd49fe447f2338b13a95108
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
