@@ -15,7 +15,10 @@ ECHO "OPENSEARCH_PATH_CONF: %OPENSEARCH_PATH_CONF%"
 :: Security Plugin Setups
 IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
     ECHO "Running Security Plugin Install Demo Configuration"
-    CALL "%OPENSEARCH_HOME%/plugins/opensearch-security/tools/install_demo_configuration.bat" -y -i -s
+    ECHO "Please define an environment variable 'initialAdminPassword' with a password string."
+    ECHO "Or create a file 'initialAdminPassword.txt' with a single line that contains the password string and place it under %OPENSEARCH_PATH_CONF% folder."
+    ECHO "If none of these are provided, a password will be generated and printed out to the logs."
+    CALL "%OPENSEARCH_HOME%\plugins\opensearch-security\tools\install_demo_configuration.bat" -y -i -s || exit /b 1
 )
 
 :: k-NN Plugin Setups
