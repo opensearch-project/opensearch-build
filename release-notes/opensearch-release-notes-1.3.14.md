@@ -37,3 +37,9 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 <li>Adds OpenSearch trigger bot to discerning merger list to allow automatic merges (<a href="https://github.com/opensearch-project/security/pull/3474">#3474</a>)</li>
 </ul>
 
+<h3>OpenSearch Security Dashboards Plugin</h3>
+
+<ul>
+<li>Update <code>yarn.lock</code> file (<a href="https://github.com/opensearch-project/security-dashboards-plugin/pull/1669">#1669</a>)</li>
+<li>Bump  <code>debug</code> to <code>4.3.4</code> and <code>browserify-sign</code> to <code>4.2.2</code> to address CVEs (<a href="https://github.com/opensearch-project/security-dashboards-plugin/pull/1674">#1674</a>)</li>
+</ul>
