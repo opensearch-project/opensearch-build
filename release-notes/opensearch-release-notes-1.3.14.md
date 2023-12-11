@@ -10,7 +10,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 <h2>ENHANCEMENTS</h2>
 
-<h3>Opensearch Security</h3>
+<h3>OpenSearch Security</h3>
 
 <ul>
 <li>Add early rejection from RestHandler for unauthorized requests (<a href="https://github.com/opensearch-project/security/pull/3675">#3675</a>)</li>
@@ -21,7 +21,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 <h2>BUG FIXES</h2>
 
-<h3>Opensearch Security</h3>
+<h3>OpenSearch Security</h3>
 
 <ul>
 <li>Prevent OptionalDataException from User data structures (<a href="https://github.com/opensearch-project/security/pull/3725">#3725</a>)</li>
@@ -29,7 +29,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 <h2>MAINTENANCE</h2>
 
-<h3>Opensearch Security</h3>
+<h3>OpenSearch Security</h3>
 
 <ul>
 <li>Update the version of <code>snappy-java</code> to 1.1.10.5 (<a href="https://github.com/opensearch-project/security/pull/3478">#3478</a>)</li>
