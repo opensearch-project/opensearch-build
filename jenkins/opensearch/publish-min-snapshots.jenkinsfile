@@ -123,11 +123,10 @@ pipeline {
                             label AGENT_MACOS_X64
                         }
                     }
-                    tools {
-                        jdk dockerAgent.javaVersion
-                    }
                     steps {
                         script {
+                            echo("Switching to Java ${env.javaVersionNumber} on Mac Docker Container")
+                            sh("jenv local ${dockerAgent.javaVersion}")
                             buildManifest(
                                 componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
