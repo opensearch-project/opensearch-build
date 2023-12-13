@@ -3,9 +3,6 @@ name: manifests
 
 on:
   pull_request:
-    paths:
-      - 'manifests/**/*.yml'
-      - '!manifests/templates/**/'
 
 jobs:
   list-changed-manifests:
@@ -28,45 +25,26 @@ jobs:
         id: set-matrix
         run: echo "matrix={\"manifest\":${{ steps.list-changed-manifests.outputs.all_changed_files }}}" >> "$GITHUB_OUTPUT"
 
-  manifest-checks-jdk11:
+  manifest-checks:
     needs: [list-changed-manifests]
     runs-on: ubuntu-latest
     env:
       PYTHON_VERSION: 3.9
-      JDK_VERSION: 11
     strategy:
+      fail-fast: false
       matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set Up JDK ${{ env.JDK_VERSION }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ env.JDK_VERSION }}
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install Pipenv and Dependencies
+      - name: Check JDK Version
         run: |
-          python -m pip install --upgrade pipenv wheel
-      - name: OpenSearch Manifests
-        run: |-
-          ./ci.sh ${{ matrix.manifest }} --snapshot
-
-  manifest-checks-jdk17:
-    needs: [list-changed-manifests]
-    runs-on: ubuntu-latest
-    env:
-      PYTHON_VERSION: 3.9
-      JDK_VERSION: 17
-    strategy:
-      matrix: ${{ fromJson(needs.list-changed-manifests.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set Up JDK ${{ env.JDK_VERSION }}
+          java_version=`cat ${{ matrix.manifest }} | yq -r .ci.image.args | grep -Eo '[0-9]+' || echo ''`
+          echo $java_version
+          echo "JAVA_VERSION=$java_version" >> "$GITHUB_ENV"
+      - name: Set Up JDK ${{ env.JAVA_VERSION }}
+        if: ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ env.JDK_VERSION }}
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
