@@ -10,8 +10,8 @@ An InputManifest is an immutable view of the input manifest for the build system
 The manifest contains information about the product that is being built (in the `build` section),
 and the components that make up the product in the `components` section.
 
-The format for schema version 1.0 is:
-schema-version: "1.0"
+The format for schema version 1.1 is:
+schema-version: "1.1"
 build:
   name: string
   version: string
@@ -44,11 +44,17 @@ from typing import Callable, Iterator, List, Optional
 
 from git.git_repository import GitRepository
 from manifests.component_manifest import Component, ComponentManifest, Components
+from manifests.input.input_manifest_1_0 import InputManifest_1_0
 
 
 class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
+    VERSIONS = {
+        "1.0": InputManifest_1_0,
+        # "1.1": current
+    }
+
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
         "build": {
             "required": True,
             "type": "dict",
@@ -86,6 +92,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
                             "working_directory": {"type": "string"},
                             "checks": {"type": "list", "schema": {"anyof": [{"type": "string"}, {"type": "dict"}]}},
                             "platforms": {"type": "list", "schema": {"type": "string", "allowed": ["linux", "windows", "darwin"]}},
+                            "depends_on": {"type": "list", "schema": {"type": "string"}}
                         },
                     },
                     {
@@ -112,7 +119,7 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "build": self.build.__to_dict__(),
             "ci": None if self.ci is None else self.ci.__to_dict__(),
             "components": self.components.__to_dict__(),
@@ -122,6 +129,13 @@ class InputManifest(ComponentManifest['InputManifest', 'InputComponents']):
         manifest: 'InputManifest' = copy.deepcopy(self)
         manifest.components.__stabilize__()
         return manifest
+
+    def plugins_depend_on(self, plugin: str) -> List[str]:
+        plugins = []
+        for component in self.components.select():
+            if component.depends_on is not None and plugin in component.depends_on:
+                plugins.append(component.name)
+        return plugins
 
     class Ci:
         def __init__(self, data: dict) -> None:
@@ -204,6 +218,7 @@ class InputComponent(Component):
         super().__init__(data)
         self.platforms = data.get("platforms", None)
         self.checks = list(map(lambda entry: Check(entry), data.get("checks", [])))
+        self.depends_on = data.get("depends_on", None)
 
     @classmethod
     def _from(self, data: dict) -> 'InputComponent':
@@ -252,6 +267,7 @@ class InputComponentFromSource(InputComponent):
             "working_directory": self.working_directory,
             "checks": list(map(lambda check: check.__to_dict__(), self.checks)),
             "platforms": self.platforms,
+            "depends_on": self.depends_on,
         }
 
 
@@ -286,4 +302,4 @@ class Check:
             return self.name  # type: ignore[no-any-return]
 
 
-InputManifest.VERSIONS = {"1.0": InputManifest}
+InputManifest.VERSIONS = {"1.0": InputManifest_1_0, "1.1": InputManifest}

@@ -1,6 +1,35 @@
-{
-"**/*.{py,groovy,sh,js,ts}":[
-  " Copyright OpenSearch Contributors",
-  " SPDX-License-Identifier: Apache-2.0"
-]
+{ 
+  "**/*.*": [
+    " Copyright OpenSearch Contributors",
+    " SPDX-License-Identifier: Apache-2.0"
+  ],
+  "ignore": [
+    ".md",
+    ".flake8",
+    ".yml",
+    ".yaml",
+    ".bat",
+    ".json",
+    ".txt",
+    ".config",
+    ".swp",
+    "tests/tests_test_workflow/test_integ_workflow/integ_test/data/artifacts/",
+    "tests/tests_sign_workflow/data/signature/",
+    "tests/tests_assemble_workflow/data/artifacts/",
+    ".png",
+    "settings.gradle",
+    ".git",
+    ".lychee.excludes",
+    ".whitesource",
+    ".shellcheckrc",
+    ".lock",
+    ".gradle",
+    ".cert",
+    ".key",
+    ".jar",
+    ".gz",
+    ".toml",
+    ".ini",
+    "gradle/wrapper"
+  ]
 }

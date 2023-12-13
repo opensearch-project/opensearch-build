@@ -11,15 +11,15 @@ from build_workflow.build_target import BuildTarget
 from build_workflow.builder import Builder
 from build_workflow.builder_from_dist import BuilderFromDist
 from build_workflow.builder_from_source import BuilderFromSource
-from manifests.input_manifest import InputComponent, InputComponentFromDist, InputComponentFromSource
+from manifests.input_manifest import InputComponent
 
 
 class Builders(ABC):
     @classmethod
     def builder_from(self, component: InputComponent, target: BuildTarget) -> Builder:
-        if type(component) is InputComponentFromDist:
+        if hasattr(component, "dist"):
             return BuilderFromDist(component, target)
-        elif type(component) is InputComponentFromSource:
+        elif hasattr(component, "repository"):
             return BuilderFromSource(component, target)
         else:
             raise ValueError(f"Invalid component type: {type(component)}")

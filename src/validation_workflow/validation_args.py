@@ -153,10 +153,10 @@ class ValidationArgs:
     def get_distribution_type(self, file_path: dict) -> str:
         if (any("tar" in value for value in file_path.values())):
             return 'tar'
-        elif (any("rpm" in value for value in file_path.values())):
-            return 'rpm'
         elif (any("repo" in value for value in file_path.values())):
             return 'yum'
+        elif (any("rpm" in value for value in file_path.values())):
+            return 'rpm'
         else:
             raise Exception("Provided distribution is not supported")
 

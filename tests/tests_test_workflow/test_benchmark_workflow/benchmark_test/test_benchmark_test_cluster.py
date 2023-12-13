@@ -33,7 +33,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.security = True
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
                                      "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234",
-                                     "isInternal": "true"}}
+                                     "isInternal": "true", "IamRoleArn": "arn:aws:iam::12344567890:role/customRole"}}
         self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
@@ -78,6 +78,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertEqual(self.benchmark_test_cluster.port, 80)
         self.assertTrue("securityDisabled=true" in self.benchmark_test_cluster.params)
         self.assertTrue("dataInstanceType=r5.4xlarge" in self.benchmark_test_cluster.params)
+        self.assertTrue("customRoleArn=arn:aws:iam::12344567890:role/customRole" in self.benchmark_test_cluster.params)
 
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
     def test_create_multi_node(self, mock_wait_for_processing: Optional[Mock]) -> None:

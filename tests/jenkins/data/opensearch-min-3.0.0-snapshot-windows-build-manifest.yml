@@ -1,4 +1,4 @@
---- # yamllint disable-line rule:new-lines
+---  # yamllint disable-line rule:new-lines
 schema-version: '1.2'
 build:
   name: OpenSearch

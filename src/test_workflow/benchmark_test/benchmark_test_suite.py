@@ -44,6 +44,15 @@ class BenchmarkTestSuite:
             logging.info(f"Workload Params are {args.workload_params}")
             self.command += f" --workload-params '{args.workload_params}'"
 
+        if self.args.test_procedure:
+            self.command += f" --test-procedure=\"{self.args.test_procedure}\""
+
+        if self.args.exclude_tasks:
+            self.command += f" --exclude-tasks=\"{self.args.exclude_tasks}\""
+
+        if self.args.include_tasks:
+            self.command += f" --include-tasks=\"{self.args.include_tasks}\""
+
         if self.args.user_tag:
             user_tag = f"--user-tag=\"{args.user_tag}\""
             self.command += f" {user_tag}"

@@ -1,0 +1,205 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 2.12.0
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    args: -e JAVA_HOME=/opt/java/openjdk-17
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: 05c2befd7d01fab4aef4f0d3d6722d2da240b2c6
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: ace0d5a6bf4b489bbeaccad65f62f6ccf20df491
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+    platforms:
+      - linux
+      - windows
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: aaf09b0211df15dd74ff2756f2590c360b03486b
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: 7ccb10cf5339701217c4019932bd26bf304a93aa
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: geospatial
+    repository: https://github.com/opensearch-project/geospatial.git
+    ref: f48c9dabcd4d955e5d88b0670d519cd7d341581c
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - job-scheduler
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: ea0d4ff4775ea3d8793458393ccadbe0ec8c0ef0
+    platforms:
+      - linux
+      - windows
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: ee577a1729dec1b0bb05ddc3b767a54e6e905401
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: 2ee80cde78c7099d5132af7308933724b32c1f0d
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: neural-search
+    repository: https://github.com/opensearch-project/neural-search.git
+    ref: 5442f84398f8c65378ba71dc009d75550810fce5
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+      - k-NN
+  - name: notifications-core
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: cf64c411ce4f85ce67734feb8704467b2232d171
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-notifications-core
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: notifications
+    repository: https://github.com/opensearch-project/notifications.git
+    ref: cf64c411ce4f85ce67734feb8704467b2232d171
+    working_directory: notifications
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: notifications
+    platforms:
+      - linux
+      - windows
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: 40b0260573d5ba2cd8aa371febddd5816bff4967
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: e8e5025b9577038c6c160b6ea5a1610312b66180
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: e090584440cdf4832b4225241622570fc5a8c80d
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: 3fd781eaee620895d10067baf9a368d970257455
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: 72673698e062b061e8c6734c4dd52d43208ffa3d
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: 944abf29a42ce71d8e5d62c61768f826d34b2a45
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: security-analytics
+    repository: https://github.com/opensearch-project/security-analytics.git
+    ref: 22fa49d9d02734e561be55993ff336eb713318b1
+    checks:
+      - gradle:properties:version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: 11aa4469ae2b9fb3be714ae24ef52d9bfb127510
+    checks:
+      - gradle:properties:version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler

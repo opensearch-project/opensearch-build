@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch
 
 import yaml
 
+from manifests.input.input_manifest_1_0 import Check_1_0, InputComponentFromDist_1_0, InputComponentFromSource_1_0
 from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
 from system.temporary_directory import TemporaryDirectory
 
@@ -30,8 +31,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.filename, "opensearch-dashboards")
         self.assertEqual(manifest.build.version, "1.1.1")
         self.assertEqual(len(list(manifest.components.select(focus=["alertingDashboards"]))), 1)
-        opensearch_component: InputComponentFromDist = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
-        self.assertIsInstance(opensearch_component, InputComponentFromDist)
+        opensearch_component: InputComponentFromDist_1_0 = manifest.components["OpenSearch-Dashboards"]  # type: ignore[assignment]
+        self.assertIsInstance(opensearch_component, InputComponentFromDist_1_0)
         self.assertEqual(opensearch_component.name, "OpenSearch-Dashboards")
         self.assertEqual(
             opensearch_component.dist,
@@ -39,9 +40,9 @@ class TestInputManifest(unittest.TestCase):
         )
         for component in manifest.components.values():
             if component.name in ["reportsDashboards", "functionalTestDashboards"]:
-                self.assertIsInstance(component, InputComponentFromSource)
+                self.assertIsInstance(component, InputComponentFromSource_1_0)
             else:
-                self.assertIsInstance(component, InputComponentFromDist)
+                self.assertIsInstance(component, InputComponentFromDist_1_0)
 
     def test_1_0(self) -> None:
         path = os.path.join(self.manifests_path, "templates", "opensearch", "1.x", "os-template-1.0.0.yml")
@@ -51,8 +52,8 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.filename, "opensearch")
         self.assertEqual(manifest.build.version, "1.0.0")
         self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
-        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
-        self.assertIsInstance(opensearch_component, InputComponentFromSource)
+        opensearch_component: InputComponentFromSource_1_0 = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        self.assertIsInstance(opensearch_component, InputComponentFromSource_1_0)
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -60,7 +61,7 @@ class TestInputManifest(unittest.TestCase):
         )
         self.assertEqual(opensearch_component.ref, "tags/1.0.0")
         for component in manifest.components.values():
-            self.assertIsInstance(component, InputComponentFromSource)
+            self.assertIsInstance(component, InputComponentFromSource_1_0)
 
     def test_1_1(self) -> None:
         path = os.path.join(self.manifests_path, "templates", "opensearch", "1.x", "os-template-1.1.0.yml")
@@ -71,7 +72,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(manifest.build.version, "1.1.0")
         self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         # opensearch component
-        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        opensearch_component: InputComponentFromSource_1_0 = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -80,13 +81,13 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch_component.ref, "tags/1.1.0")
         # components
         for component in manifest.components.values():
-            self.assertIsInstance(component, InputComponentFromSource)
+            self.assertIsInstance(component, InputComponentFromSource_1_0)
         # alerting component checks
-        alerting_component: InputComponentFromSource = manifest.components["alerting"]  # type: ignore[assignment]
+        alerting_component: InputComponentFromSource_1_0 = manifest.components["alerting"]  # type: ignore[assignment]
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:
-            self.assertIsInstance(check, Check)
+            self.assertIsInstance(check, Check_1_0)
         self.assertIsNone(alerting_component.checks[0].args)
         self.assertEqual(alerting_component.checks[1].args, "alerting")
 
@@ -103,7 +104,7 @@ class TestInputManifest(unittest.TestCase):
         self.assertNotEqual(len(manifest.components), 0)
         self.assertEqual(len(list(manifest.components.select(focus=["common-utils"]))), 1)
         # opensearch component
-        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        opensearch_component: InputComponentFromSource_1_0 = manifest.components["OpenSearch"]  # type: ignore[assignment]
         self.assertEqual(opensearch_component.name, "OpenSearch")
         self.assertEqual(
             opensearch_component.repository,
@@ -112,15 +113,58 @@ class TestInputManifest(unittest.TestCase):
         self.assertEqual(opensearch_component.ref, "tags/1.2.0")
         # components
         for component in manifest.components.values():
-            self.assertIsInstance(component, InputComponentFromSource)
+            self.assertIsInstance(component, InputComponentFromSource_1_0)
         # alerting component checks
         alerting_component = manifest.components["alerting"]
         self.assertIsNotNone(alerting_component)
         self.assertEqual(len(alerting_component.checks), 2)
         for check in alerting_component.checks:
-            self.assertIsInstance(check, Check)
+            self.assertIsInstance(check, Check_1_0)
         self.assertIsNone(alerting_component.checks[0].args)
         self.assertEqual(alerting_component.checks[1].args, "alerting")
+
+    def test_2_12_depends_on(self) -> None:
+        path = os.path.join(self.manifests_path, "templates", "opensearch", "2.x", "os-template-2.12.0.yml")
+        manifest = InputManifest.from_path(path)
+        self.assertEqual(manifest.version, "1.1")
+        self.assertEqual(manifest.build.name, "OpenSearch")
+        self.assertEqual(manifest.build.filename, "opensearch")
+        self.assertEqual(manifest.build.version, "2.12.0")
+        self.assertEqual(manifest.ci.image.name, "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3")
+        self.assertEqual(manifest.ci.image.args, "-e JAVA_HOME=/opt/java/openjdk-17")
+        self.assertNotEqual(len(manifest.components), 0)
+        self.assertEqual(len(list(manifest.components.select(focus=["neural-search"]))), 1)
+        # opensearch component
+        opensearch_component: InputComponentFromSource = manifest.components["OpenSearch"]  # type: ignore[assignment]
+        self.assertEqual(opensearch_component.name, "OpenSearch")
+        self.assertEqual(
+            opensearch_component.repository,
+            "https://github.com/opensearch-project/OpenSearch.git",
+        )
+        self.assertEqual(opensearch_component.ref, "c85e75cb4db7946d7d4dfd0e7317c3f684e6345d")
+        # components
+        for component in manifest.components.values():
+            self.assertIsInstance(component, InputComponentFromSource)
+        # neural-search component checks
+        neural_search_component = manifest.components["neural-search"]
+        self.assertIsNotNone(neural_search_component)
+        self.assertEqual(len(neural_search_component.checks), 2)
+        for check in neural_search_component.checks:
+            self.assertIsInstance(check, Check)
+        self.assertIsNone(neural_search_component.checks[0].args)
+        self.assertEqual(len(neural_search_component.depends_on), 2)
+        self.assertEqual(neural_search_component.depends_on[0], "ml-commons")
+        self.assertEqual(neural_search_component.depends_on[1], "k-NN")
+
+    def test_plugins_depend_on(self) -> None:
+        path = os.path.join(self.manifests_path, "templates", "opensearch", "2.x", "os-template-2.12.0.yml")
+        manifest = InputManifest.from_path(path)
+        plugins_depend_on_cu = manifest.plugins_depend_on("common-utils")
+        self.assertTrue(plugins_depend_on_cu)
+        self.assertEqual(len(plugins_depend_on_cu), 3)
+        self.assertTrue("cross-cluster-replication" in plugins_depend_on_cu)
+        self.assertTrue("ml-commons" in plugins_depend_on_cu)
+        self.assertTrue("notifications-core" in plugins_depend_on_cu)
 
     def test_to_dict(self) -> None:
         path = os.path.join(self.manifests_path, "templates", "opensearch", "1.x", "os-template-1.1.0.yml")
@@ -215,7 +259,7 @@ class TestInputManifest(unittest.TestCase):
     def test_to_file_formatted(self) -> None:
         data_path = os.path.join(os.path.dirname(__file__), "data")
         manifest = InputManifest({
-            "schema-version": "1.0",
+            "schema-version": "1.1",
             "build": {
                 "name": "OpenSearch",
                 "version": "2.0.0"

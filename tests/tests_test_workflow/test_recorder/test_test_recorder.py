@@ -146,7 +146,7 @@ class TestLocalClusterLogs(unittest.TestCase):
 
         mock_test_result_data = MagicMock()
 
-        dest_directory = os.path.join("test_base", "local-cluster-logs")
+        dest_directory = os.path.join("test_base", "local-cluster-logs/id-0")
 
         source_file_1 = os.path.join("dir", "opensearch_index_indexing_slowlog.log")
         source_file_2 = os.path.join("dir", "opensearch_deprecation.json")
