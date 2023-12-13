@@ -19,7 +19,7 @@ class ReleaseNotesCheckArgs:
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
-        parser.add_argument("action", choices=["check"], help="Operation to perform.")
+        parser.add_argument("action", choices=["check", "compile"], help="Operation to perform.")
         parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
         parser.add_argument(
             "-v",
