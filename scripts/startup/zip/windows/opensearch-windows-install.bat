@@ -15,7 +15,7 @@ ECHO "OPENSEARCH_PATH_CONF: %OPENSEARCH_PATH_CONF%"
 :: Security Plugin Setups
 IF EXIST "%OPENSEARCH_HOME%\plugins\opensearch-security" (
     ECHO "Running Security Plugin Install Demo Configuration"
-    ECHO "OpenSearch 2.12.0 onwards, the security plugin introduces a change that requires an initial password for 'admin' user."
+    ECHO "OpenSearch 2.12.0 onwards, the OpenSearch Security Plugin a change that requires an initial password for 'admin' user."
     ECHO "Please define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string."
     ECHO "If a password is not provided, the setup will quit."
     CALL "%OPENSEARCH_HOME%\plugins\opensearch-security\tools\install_demo_configuration.bat" -y -i -s || exit /b 1
