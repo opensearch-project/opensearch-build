@@ -161,7 +161,6 @@ class TestBuildIncremental(unittest.TestCase):
         self.assertTrue("OpenSearch-Dashboards" in rebuild_list)
         self.assertTrue("observabilityDashboards" in rebuild_list)
 
-    # @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST, "-p", "linux"])
     @patch("os.path.join")
     @patch("build_workflow.build_incremental.Builders.builder_from", return_value=MagicMock())
     @patch("build_workflow.build_incremental.BuildRecorder", return_value=MagicMock())

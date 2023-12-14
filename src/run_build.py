@@ -48,7 +48,6 @@ def main() -> int:
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
         logging.info(f"Plugins for incremental build: {components}")
-        # buildIncremental.build_incremental(args, manifest, ["common-utils"])
         buildIncremental.build_incremental(args, manifest, components)
         return 0
 

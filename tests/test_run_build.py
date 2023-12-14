@@ -229,3 +229,12 @@ class TestRunBuild(unittest.TestCase):
         with pytest.raises(Exception, match="Error during build"):
             main()
         mock_logging_error.assert_called_with(f"Error building common-utils, retry with: run_build.py {self.NON_OPENSEARCH_MANIFEST} --component common-utils")
+
+    @patch("argparse._sys.argv", ["run_build.py", OPENSEARCH_MANIFEST, "--incremental"])
+    @patch("run_build.BuildIncremental")
+    def test_main_incremental(self, mock_build_incremental: Mock, *mocks: Any) -> None:
+        main()
+        self.assertEqual(mock_build_incremental.call_count, 1)
+        mock_build_incremental.return_value.commits_diff.assert_called()
+        mock_build_incremental.return_value.rebuild_plugins.assert_called()
+        mock_build_incremental.return_value.build_incremental.assert_called()
