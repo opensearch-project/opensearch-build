@@ -43,6 +43,11 @@ class TestReleaseNotesCheckArgs(unittest.TestCase):
         self.assertEqual(ReleaseNotesCheckArgs().manifest.name, TestReleaseNotesCheckArgs.OPENSEARCH_MANIFEST)
         self.assertEqual(ReleaseNotesCheckArgs().date, datetime.date(2022, 7, 26))
 
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "compile", OPENSEARCH_MANIFEST, "--date", '2022-07-26'])
+    def test_manifest_compile(self) -> None:
+        self.assertEqual(ReleaseNotesCheckArgs().manifest.name, TestReleaseNotesCheckArgs.OPENSEARCH_MANIFEST)
+        self.assertEqual(ReleaseNotesCheckArgs().date, datetime.date(2022, 7, 26))
+
     @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "check", OPENSEARCH_MANIFEST])
     def test_manifest_withoutdate(self) -> None:
         with self.assertRaises(SystemExit) as cm:
@@ -55,6 +60,14 @@ class TestReleaseNotesCheckArgs(unittest.TestCase):
     def test_verbose_true(self) -> None:
         self.assertTrue(ReleaseNotesCheckArgs().logging_level, logging.DEBUG)
 
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "compile", OPENSEARCH_MANIFEST, "--date", '2022-07-26', "--verbose"])
+    def test_verbose_true_compile(self) -> None:
+        self.assertTrue(ReleaseNotesCheckArgs().logging_level, logging.DEBUG)
+
     @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "check", OPENSEARCH_MANIFEST, "--date", '2022-07-26', "--output", "test.md"])
     def test_output(self) -> None:
+        self.assertEqual(ReleaseNotesCheckArgs().output, "test.md")
+
+    @patch("argparse._sys.argv", [RELEASE_NOTES_CHECK_PY, "compile", OPENSEARCH_MANIFEST, "--date", '2022-07-26', "--output", "test.md"])
+    def test_output_compile(self) -> None:
         self.assertEqual(ReleaseNotesCheckArgs().output, "test.md")

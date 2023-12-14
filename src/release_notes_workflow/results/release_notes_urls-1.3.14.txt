@@ -1,1 +1,0 @@
-https://raw.githubusercontent.com/opensearch-project/security-dashboards-plugin/307c7a0674ad1d15fe575a3dbf0a3a7213634099/release-notes/opensearch-security-dashboards-plugin.release-notes-1.3.14.0.md
