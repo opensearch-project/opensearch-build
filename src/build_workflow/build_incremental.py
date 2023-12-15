@@ -109,7 +109,7 @@ class BuildIncremental:
                     builder.export_artifacts(build_recorder_incremental)
                     logging.info(f"Successfully built {component.name}")
                 except:
-                    logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
+                    logging.error(f"Error incremental building {component.name}.")
                     if args.continue_on_error and component.name not in ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']:
                         failed_plugins.append(component.name)
                         continue

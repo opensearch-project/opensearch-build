@@ -11,6 +11,8 @@ import unittest
 from typing import Any, List
 from unittest.mock import MagicMock, call, patch
 
+import pytest
+
 from build_workflow.build_incremental import BuildIncremental
 from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputManifest
@@ -182,8 +184,10 @@ class TestBuildIncremental(unittest.TestCase):
     @patch("build_workflow.build_incremental.Builders.builder_from", return_value=MagicMock())
     @patch("build_workflow.build_incremental.BuildRecorder", return_value=MagicMock())
     @patch("build_workflow.build_incremental.TemporaryDirectory")
-    def test_build_incremental_with_prebuild_manifest(self, mock_temp: MagicMock, mock_recorder: MagicMock, mock_builder: MagicMock, mock_build_manifest: MagicMock, mock_path_exist: MagicMock,
-                                                      mock_build_output_dir: MagicMock, mock_logging_info: MagicMock, *mocks: Any) -> None:
+    def test_build_incremental_with_prebuild_manifest(self, mock_temp: MagicMock, mock_recorder: MagicMock,
+                                                      mock_builder: MagicMock, mock_build_manifest: MagicMock,
+                                                      mock_path_exist: MagicMock, mock_build_output_dir: MagicMock,
+                                                      mock_logging_info: MagicMock, *mocks: Any) -> None:
         mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
         args = MagicMock()
         args.distribution = "tar"
@@ -204,6 +208,91 @@ class TestBuildIncremental(unittest.TestCase):
         mock_logging_info.assert_has_calls([
             call('Rebuilding common-utils'),
             call('Rebuilding opensearch-observability'),
+        ], any_order=True)
+
+        mock_recorder.assert_called_once()
+        mock_recorder.return_value.write_manifest.assert_called()
+
+    @patch("build_workflow.build_incremental.logging.error")
+    @patch("build_workflow.build_incremental.logging.info")
+    @patch("paths.build_output_dir")
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("build_workflow.build_incremental.Builders.builder_from", return_value=MagicMock())
+    @patch("build_workflow.build_incremental.BuildRecorder", return_value=MagicMock())
+    @patch("build_workflow.build_incremental.TemporaryDirectory")
+    def test_build_incremental_continue_on_fail_core(self, mock_temp: MagicMock, mock_recorder: MagicMock,
+                                                     mock_builder_from: MagicMock, mock_build_manifest: MagicMock,
+                                                     mock_path_exist: MagicMock, mock_build_output_dir: MagicMock,
+                                                     mock_logging_info: MagicMock, mock_logging_error: MagicMock,
+                                                     *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        args = MagicMock()
+        args.distribution = "tar"
+        args.keep = False
+        args.snapshot = None
+        args.platform = "linux"
+        args.architecture = "x64"
+        args.continue_on_error = True
+        mock_path_exist.return_value = True
+        mock_build_manifest.return_value = self.BUILD_MANIFEST
+        mock_builder = MagicMock()
+        mock_builder.build.side_effect = Exception("Error building")
+        mock_builder_from.return_value = mock_builder
+
+        with pytest.raises(Exception, match="Error building"):
+            self.buildIncremental.build_incremental(args, self.INPUT_MANIFEST, ["common-utils", "opensearch-observability"])
+
+        mock_logging_error.assert_called_with("Error incremental building common-utils.")
+        mock_build_manifest.assert_called_once()
+        mock_build_manifest.assert_called_with(os.path.join("tar", "builds", "opensearch", "manifest.yml"))
+        self.assertTrue(args.platform == "linux")
+        self.assertNotEqual(mock_builder.build.call_count, 0)
+        self.assertEqual(mock_builder.build.call_count, 1)
+
+        mock_logging_info.assert_has_calls([
+            call('Rebuilding common-utils')
+        ], any_order=True)
+
+        mock_recorder.assert_called_once()
+        mock_recorder.return_value.write_manifest.assert_not_called()
+
+    @patch("build_workflow.build_incremental.logging.error")
+    @patch("build_workflow.build_incremental.logging.info")
+    @patch("paths.build_output_dir")
+    @patch("os.path.exists")
+    @patch("manifests.build_manifest.BuildManifest.from_path")
+    @patch("build_workflow.build_incremental.Builders.builder_from", return_value=MagicMock())
+    @patch("build_workflow.build_incremental.BuildRecorder", return_value=MagicMock())
+    @patch("build_workflow.build_incremental.TemporaryDirectory")
+    def test_build_incremental_continue_on_fail_plugin(self, mock_temp: MagicMock, mock_recorder: MagicMock, mock_builder_from: MagicMock, mock_build_manifest: MagicMock, mock_path_exist: MagicMock,
+                                                       mock_build_output_dir: MagicMock, mock_logging_info: MagicMock, mock_logging_error: MagicMock, *mocks: Any) -> None:
+        mock_temp.return_value.__enter__.return_value.name = tempfile.gettempdir()
+        args = MagicMock()
+        args.distribution = "tar"
+        args.keep = False
+        args.snapshot = None
+        args.platform = "linux"
+        args.architecture = "x64"
+        args.continue_on_error = True
+        mock_path_exist.return_value = True
+        mock_build_manifest.return_value = self.BUILD_MANIFEST
+        mock_builder = MagicMock()
+        mock_builder.build.side_effect = Exception("Error build")
+        mock_builder_from.return_value = mock_builder
+
+        self.buildIncremental.build_incremental(args, self.INPUT_MANIFEST, ["ml-commons", "opensearch-observability"])
+
+        mock_logging_error.assert_called_with("Failed plugins are ['ml-commons', 'opensearch-observability']")
+        mock_build_manifest.assert_called_once()
+        mock_build_manifest.assert_called_with(os.path.join("tar", "builds", "opensearch", "manifest.yml"))
+        self.assertTrue(args.platform == "linux")
+        self.assertNotEqual(mock_builder.build.call_count, 0)
+        self.assertEqual(mock_builder.build.call_count, 2)
+
+        mock_logging_info.assert_has_calls([
+            call('Rebuilding ml-commons'),
+            call('Rebuilding opensearch-observability')
         ], any_order=True)
 
         mock_recorder.assert_called_once()

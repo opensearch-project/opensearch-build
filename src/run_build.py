@@ -26,7 +26,6 @@ def main() -> int:
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
     failed_plugins = []
-    components = args.components
 
     if args.ref_manifest:
         manifest = manifest.stable()
