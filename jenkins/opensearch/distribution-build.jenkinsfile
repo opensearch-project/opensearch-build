@@ -213,19 +213,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -264,15 +260,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()                                      
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -363,15 +357,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()                                      
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -472,19 +464,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -523,15 +511,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -622,15 +608,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -715,19 +699,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -797,10 +777,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    def findFailedPlugins = buildMessage(search: 'Failed plugins')
-                    if (findFailedPlugins != null) {
-                        currentBuild.result = 'UNSTABLE'
-                    }
                     closeBuildSuccessGithubIssue(
                         message: buildMessage(search: 'Successfully built'),
                         search: 'Successfully built',
