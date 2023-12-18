@@ -19,6 +19,7 @@ RESULT="null"
 TRIGGER_TOKEN=$1
 PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]'`
 PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\"}"
+MAX_API_RETRY_COUNT=2
 
 echo "Trigger Jenkins workflows"
 JENKINS_REQ=`curl -s -XPOST \
@@ -43,6 +44,7 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
     if [ -z "$WORKFLOW_URL" ] || [ "$WORKFLOW_URL" != "null" ]; then
 
         RUNNING="true"
+        RETRY_COUNT=0
 
         echo "Waiting for Jenkins to complete the run"
         while [ "$RUNNING" = "true" ] && [ "$TIMEPASS" -le "$TIMEOUT" ]; do
@@ -50,7 +52,23 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
             echo "Jenkins Workflow Url: $WORKFLOW_URL"
             TIMEPASS=$(( TIMEPASS + 30 )) && echo time pass: $TIMEPASS
             sleep 30
-            RUNNING=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .building)
+
+            CURL_RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XGET "${WORKFLOW_URL}api/json")
+            while [ "$CURL_RESPONSE_CODE" != "200" ] && [ "$RETRY_COUNT" -le "$MAX_API_RETRY_COUNT" ]; do
+                echo "API call failed with HTTP code: $CURL_RESPONSE_CODE. Retrying in 5 seconds..."
+                sleep 5
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                CURL_RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -XGET "${WORKFLOW_URL}api/json")
+            done
+
+            if [ "$CURL_RESPONSE_CODE" = "200" ]; then
+                RUNNING=$(curl -s -XGET "${WORKFLOW_URL}api/json" | jq --raw-output .building)
+            fi
+
+            if [ "$RETRY_COUNT" -ge "$MAX_API_RETRY_COUNT" ]; then
+                echo "API failed after $MAX_API_RETRY_COUNT attempts. Exiting script."
+                exit 1
+            fi
         done
 
         if [ "$RUNNING" = "true" ]; then
