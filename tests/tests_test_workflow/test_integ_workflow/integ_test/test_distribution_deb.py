@@ -40,7 +40,7 @@ class TestDistributionDeb(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"sudo dpkg --purge opensearch && sudo dpkg --install opensearch.deb && sudo chmod 0666 {self.distribution_deb.config_path}", args_list[0][0][0])
+        self.assertEqual(f"export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && sudo dpkg --purge opensearch && sudo dpkg --install opensearch.deb && sudo chmod 0666 {self.distribution_deb.config_path}", args_list[0][0][0])
 
     def test_start_cmd(self) -> None:
         self.assertEqual(self.distribution_deb.start_cmd, "sudo systemctl start opensearch")
