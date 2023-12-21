@@ -89,7 +89,7 @@ fi
 
 if [ -z "$CREDENTIAL" ]
 then
-  CREDENTIAL="admin:admin"
+  CREDENTIAL="admin:myStrongPassword123!"
 fi
 
 USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`
