@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from typing import Any, Generator, Union
 
 import requests
+import semver
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
 
@@ -121,6 +122,7 @@ class BenchmarkTestCluster:
 
     def setup_cdk_params(self, config: dict) -> dict:
         suffix = ''
+        need_strong_password = False
         if self.args.stack_suffix and self.manifest:
             suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
         elif self.manifest:
@@ -132,8 +134,12 @@ class BenchmarkTestCluster:
             artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
                 f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
                 f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
+            if not self.args.insecure and semver.compare(self.manifest.build.version, '2.12.0') != -1:
+                need_strong_password = True
         else:
             artifact_url = self.args.distribution_url.strip()
+            if not self.args.insecure and semver.compare(self.args.distribution_version, '2.12.0') != -1:
+                need_strong_password = True
 
         return {
             "distributionUrl": artifact_url,
@@ -142,6 +148,7 @@ class BenchmarkTestCluster:
             "region": config["Constants"]["Region"],
             "suffix": suffix,
             "securityDisabled": str(self.args.insecure).lower(),
+            "adminPassword": 'myStrongPassword123!' if need_strong_password else None,
             "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
             "singleNodeCluster": str(self.args.single_node).lower(),
             "distVersion": self.manifest.build.version if self.manifest else self.args.distribution_version,
