@@ -48,6 +48,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertEqual(self.benchmark_test_cluster.port, 443)
         self.assertTrue("opensearch-infra-stack-test-suffix-007-x64" in self.benchmark_test_cluster.stack_name)
         self.assertTrue("securityDisabled=false" in self.benchmark_test_cluster.params)
+        self.assertTrue("adminPassword" not in self.benchmark_test_cluster.params)
         self.assertTrue("singleNodeCluster=true" in self.benchmark_test_cluster.params)
         self.assertTrue("isInternal=true" in self.benchmark_test_cluster.params)
         self.assertTrue("distributionUrl=https://artifacts.opensearch.org/bundles/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/opensearch-1.0.0-linux-x64.tar.gz" in self.benchmark_test_cluster.params)
@@ -100,7 +101,8 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
     def test_create_multi_node_without_manifest(self, mock_wait_for_processing: Optional[Mock]) -> None:
         self.args.distribution_url = "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz"
-        self.args.distribution_version = '2.10.0'
+        self.args.distribution_version = '2.12.0'
+        self.args.insecure = False
         TestBenchmarkTestCluster.setUp(self, self.args, False)
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
@@ -110,5 +112,7 @@ class TestBenchmarkTestCluster(unittest.TestCase):
                     self.assertEqual(mock_check_call.call_count, 1)
         self.assertTrue("opensearch-infra-stack-test-suffix" in self.benchmark_test_cluster.stack_name)
         self.assertTrue("cpuArch=x64" in self.benchmark_test_cluster.params)
-        self.assertTrue("distVersion=2.10.0" in self.benchmark_test_cluster.params)
+        self.assertTrue("distVersion=2.12.0" in self.benchmark_test_cluster.params)
+        self.assertTrue("securityDisabled=false" in self.benchmark_test_cluster.params)
+        self.assertTrue("adminPassword=myStrongPassword123!" in self.benchmark_test_cluster.params)
         self.assertTrue("distributionUrl=https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz" in self.benchmark_test_cluster.params)
