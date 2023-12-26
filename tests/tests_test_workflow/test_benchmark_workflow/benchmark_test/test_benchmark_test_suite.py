@@ -25,7 +25,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.args.exclude_tasks = kwargs['exclude_tasks'] if 'exclude_tasks' in kwargs else None
         self.args.include_tasks = kwargs['include_tasks'] if 'include_tasks' in kwargs else None
         self.endpoint = "abc.com"
-        self.benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=False, args=self.args)
+        self.benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=False, distribution_version='2.3.0', args=self.args)
 
     def test_execute_default(self) -> None:
         with patch("subprocess.check_call") as mock_check_call:
@@ -35,8 +35,19 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                              'docker run --rm opensearchproject/opensearch-benchmark:latest execute-test --workload=nyc_taxis '
                              '--pipeline=benchmark-only --target-hosts=abc.com --client-options="timeout:300"')
 
+    def test_execute_security_enabled_version_212_or_greater(self) -> None:
+        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, distribution_version='2.12.0', args=self.args)
+        with patch("subprocess.check_call") as mock_check_call:
+            benchmark_test_suite.execute()
+            self.assertEqual(mock_check_call.call_count, 1)
+            self.assertEqual(benchmark_test_suite.command,
+                             'docker run --rm opensearchproject/opensearch-benchmark:latest execute-test '
+                             '--workload=nyc_taxis --pipeline=benchmark-only '
+                             '--target-hosts=abc.com --client-options="timeout:300,use_ssl:true,'
+                             'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'"')
+
     def test_execute_security_enabled(self) -> None:
-        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, args=self.args)
+        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, distribution_version='2.3.0', args=self.args)
         with patch("subprocess.check_call") as mock_check_call:
             benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)
