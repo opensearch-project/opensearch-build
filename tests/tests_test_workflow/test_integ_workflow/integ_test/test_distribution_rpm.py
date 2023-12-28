@@ -39,8 +39,12 @@ class TestDistributionRpm(unittest.TestCase):
 
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual(
-            "export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
-            + f"&& sudo yum remove -y opensearch && sudo yum install -y opensearch.rpm && sudo chmod 0666 {self.distribution_rpm.config_path}",
+            (
+                "export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && "
+                "sudo yum remove -y opensearch && "
+                "sudo yum install -y opensearch.rpm && "
+                f"sudo chmod 0666 {self.distribution_rpm.config_path}"
+            ),
             args_list[0][0][0],
         )
 
