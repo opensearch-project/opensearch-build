@@ -89,7 +89,12 @@ fi
 
 if [ -z "$CREDENTIAL" ]
 then
-  CREDENTIAL="admin:myStrongPassword123!"
+    # OpenSearch 2.12 onwards security plugins requires a password to be set to setup admin user
+  if [ "$(echo "${VERSION} 2.12" | awk '{print ($1 >= $2)}')" -eq 1 ]; then
+    CREDENTIAL="admin:myStrongPassword123!"
+  else
+    CREDENTIAL="admin:admin"
+  fi
 fi
 
 USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`
