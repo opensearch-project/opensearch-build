@@ -87,10 +87,13 @@ then
   SNAPSHOT="false"
 fi
 
+ IFS='.' read -ra version_array <<< "$OPENSEARCH_VERSION"
+
+
 if [ -z "$CREDENTIAL" ]
 then
-    # OpenSearch 2.12 onwards security plugins requires a password to be set to setup admin user
-  if [ "$(echo "${VERSION} 2.12" | awk '{print ($1 >= $2)}')" -eq 1 ]; then
+  # Starting in 2.12.0, security demo configuration script requires an initial admin password
+  if (( ${version_array[0]} > 2 || (${version_array[0]} == 2 && ${version_array[1]} >= 12) )); then
     CREDENTIAL="admin:myStrongPassword123!"
   else
     CREDENTIAL="admin:admin"
