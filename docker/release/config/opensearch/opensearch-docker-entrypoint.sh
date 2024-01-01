@@ -98,8 +98,7 @@ function runOpensearch {
     setupPerformanceAnalyzerPlugin
 
     # Start opensearch
-    "$@" "${opensearch_opts[@]}"
-
+    exec "$@" "${opensearch_opts[@]}"
 }
 
 # Prepend "opensearch" command if no argument was provided or if the first
