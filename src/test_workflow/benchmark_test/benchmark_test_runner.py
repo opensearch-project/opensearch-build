@@ -53,3 +53,10 @@ class BenchmarkTestRunner(abc.ABC):
                 return 'main'
             else:
                 return '1.x'
+
+    def get_distribution_version(self) -> str:
+        os_version_float: float
+        if self.test_manifest:
+            return self.test_manifest.build.version
+        else:
+            return self.args.distribution_version

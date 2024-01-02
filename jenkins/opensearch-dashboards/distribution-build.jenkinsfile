@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@5.11.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.12.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -230,6 +230,9 @@ pipeline {
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -274,7 +277,12 @@ pipeline {
                             }
                             post {
                                 always {
-                                    postCleanup()
+                                    script{
+                                        if (params.CONTINUE_ON_ERROR) {
+                                            markStageUnstableIfPluginsFailedToBuild()
+                                        }
+                                        postCleanup()
+                                    }
                                 }
                             }
                         }
@@ -371,7 +379,12 @@ pipeline {
                             }
                             post {
                                 always {
-                                    postCleanup()
+                                    script{
+                                        if (params.CONTINUE_ON_ERROR) {
+                                            markStageUnstableIfPluginsFailedToBuild()
+                                        }
+                                        postCleanup()
+                                    }
                                 }
                             }
                         }
@@ -465,6 +478,9 @@ pipeline {
                                             "${STAGE_NAME}",
                                             lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                         )
+                                        if (params.CONTINUE_ON_ERROR) {
+                                            markStageUnstableIfPluginsFailedToBuild()
+                                        }
                                         postCleanup()
                                     }
                                 }
@@ -591,6 +607,9 @@ pipeline {
                                             "${STAGE_NAME}",
                                             lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                         )
+                                        if (params.CONTINUE_ON_ERROR) {
+                                            markStageUnstableIfPluginsFailedToBuild()
+                                        }
                                         postCleanup()
                                     }
                                 }
@@ -688,7 +707,12 @@ pipeline {
                             }
                             post {
                                 always {
-                                    postCleanup()
+                                    script {
+                                        if (params.CONTINUE_ON_ERROR) {
+                                            markStageUnstableIfPluginsFailedToBuild()
+                                        }
+                                        postCleanup()
+                                    }
                                 }
                             }
                         }
@@ -785,6 +809,9 @@ pipeline {
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -857,10 +884,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    def findFailedPlugins = buildMessage(search: 'Failed plugins')
-                    if (findFailedPlugins != null) {
-                        currentBuild.result = 'UNSTABLE'
-                    }
                     closeBuildSuccessGithubIssue(
                         message: buildMessage(search: 'Successfully built'),
                         search: 'Successfully built',
@@ -935,3 +958,9 @@ pipeline {
     }
 }
 
+def markStageUnstableIfPluginsFailedToBuild() {
+    def stageLogs = getLogsForStage(stageName: "${STAGE_NAME}")
+    if (stageLogs.any{e -> e.contains('Failed plugins are')}) {
+        unstable('Some plugins failed to build. See the ./build.sh step for logs and more details')
+    }
+}
