@@ -59,13 +59,13 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
         # Integ-tests for OSD now clones FunctionalTestDashboards Repository by default and points to integtest.sh from FunctionalTestDashboards for all OSD plugins
 
-        functionalTestDashboards_ref = ft_repo_ref
-        if ft_repo_ref is not None:
-            functionalTestDashboards_ref = build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id
+        functional_test_dashboards_ref = build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id
+        if ft_repo_ref is None:
+            functional_test_dashboards_ref = ft_repo_ref
 
         self.repo = GitRepository(
             build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
-            functionalTestDashboards_ref,
+            functional_test_dashboards_ref,
             os.path.join(self.work_dir, self.component.name),
             test_config.working_directory
         )
