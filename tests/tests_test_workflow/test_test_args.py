@@ -154,3 +154,8 @@ class TestTestArgs(unittest.TestCase):
         test_args = TestArgs()
         self.assertEqual(test_args.base_path, "https://ci.opensearch.org/ci/dbc/integ-test/")
         self.assertEqual(test_args.test_manifest_path, self.TEST_MANIFEST_PATH)
+
+    @patch("argparse._sys.argv", [ARGS_PY, TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH, "--paths", "opensearch=" + TEST_MANIFEST_PATH, "--ft-repo-ref", "main"])
+    def test_ft_repo_ref(self) -> None:
+        test_args = TestArgs()
+        self.assertEqual(test_args.ft_repo_ref, "main")
