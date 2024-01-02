@@ -131,7 +131,7 @@ class TestRunBenchmarkTestScriptDistributionUrl extends BuildPipelineTest {
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100   ".toString()
+                "./test.sh benchmark-test  --distribution-url https://artifacts.com/artifact.tar.gz --distribution-version 3.0.0 --config /tmp/workspace/config.yml --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false,jenkins-build-id:307 --without-security   --use-50-percent-heap    --suffix 307 --manager-node-count 3 --data-node-count 3    --data-instance-type r5-4xlarge  --test-procedure append-no-conflicts    --data-node-storage 100   ".toString()
         ))
     }
 

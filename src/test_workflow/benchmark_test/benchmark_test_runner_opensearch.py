@@ -44,5 +44,5 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
             with GitRepository(self.get_cluster_repo_url(), self.get_git_ref(), current_workspace):
                 with WorkingDirectory(current_workspace):
                     with BenchmarkTestCluster.create(self.test_manifest, config, self.args, current_workspace) as test_cluster:
-                        benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.args)
+                        benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.get_distribution_version(), self.args)
                         retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
