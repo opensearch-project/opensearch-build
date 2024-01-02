@@ -125,8 +125,9 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo("Switching to Java ${env.javaVersionNumber} on Mac Docker Container")
-                            sh("jenv local ${dockerAgent.javaVersion}")
+                            echo("Switching to Java ${env.javaVersionNumber} on MacOS")
+                            sh("jenv global ${dockerAgent.javaVersion}")
+                            sh("java -version")
                             buildManifest(
                                 componentName: "OpenSearch",
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
