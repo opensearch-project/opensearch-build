@@ -29,6 +29,7 @@ jobs:
           - {repo: dashboards-reporting}
           - {repo: dashboards-visualizations, path: gantt-chart}
           - {repo: dashboards-query-workbench}
+          - {repo: dashboards-assistant}
           - {repo: dashboards-maps}
           - {repo: anomaly-detection-dashboards-plugin}
           - {repo: ml-commons-dashboards}
