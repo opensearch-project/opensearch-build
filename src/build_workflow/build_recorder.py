@@ -81,7 +81,7 @@ class BuildRecorder:
                 "version": version,
             }
             self.components_hash[name] = component
-            logging.info(f"Appended {name} component in input manifest.")
+            logging.info(f"Appended {name} component in build manifest.")
 
         def append_artifact(self, component: str, type: str, path: str) -> None:
             artifacts = self.components_hash[component]["artifacts"]

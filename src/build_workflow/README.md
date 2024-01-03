@@ -109,8 +109,8 @@ This functionality augments the existing build process by introducing the `--inc
 
 Sample command: `./build.sh manifests/2.12.0/opensearch-2.12.0.yml --incremental`.
 
-The build workflow will examine the build manifest from the previous build using the example path `tar/builds/opensearch/manifest.yml` when this command is executed.
+The build workflow will examine the build manifest from the previous build using path `{distribution}/builds/opensearch/manifest.yml` when this command is executed.
 The build workflow will be executed in accordance with the comparison between the commits for each component in the preceding build manifest and the current input manifest.
 It will contain every modified component, and every component that relies on these revised components based on the `depends_on` entry in the input manifest.
 
-Once build is finished, a new build manifest will be generated using the previous build manifest as a reference, ensuring that all non-modified components remain unchanged.
+Once build is finished, new built artifacts will override the previous artifacts and a new build manifest will be generated using the previous build manifest as a reference, ensuring that all non-modified components remain unchanged.
