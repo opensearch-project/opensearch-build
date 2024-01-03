@@ -15,6 +15,7 @@ from build_workflow.build_incremental import BuildIncremental
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
 from build_workflow.builders import Builders
+from manifests.build_manifest import BuildManifest
 from manifests.input_manifest import InputManifest
 from paths.build_output_dir import BuildOutputDir
 from system import console
@@ -25,6 +26,8 @@ def main() -> int:
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
+    build_manifest_data = {}
+    components = args.components
     failed_plugins = []
 
     if args.ref_manifest:
@@ -47,8 +50,14 @@ def main() -> int:
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
         logging.info(f"Plugins for incremental build: {components}")
-        buildIncremental.build_incremental(args, manifest, components)
-        return 0
+
+        build_manifest_path = os.path.join(args.distribution, "builds", manifest.build.filename, "manifest.yml")
+        if not os.path.exists(build_manifest_path):
+            logging.error(f"Previous build manifest missing at path: {build_manifest_path}")
+
+        logging.info(f"Build {components} incrementally.")
+
+        build_manifest_data = BuildManifest.from_path(build_manifest_path).__to_dict__()
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
@@ -65,11 +74,11 @@ def main() -> int:
             architecture=args.architecture or manifest.build.architecture,
         )
 
-        build_recorder = BuildRecorder(target)
+        build_recorder = BuildRecorder(target, build_manifest_data) if args.incremental else BuildRecorder(target)
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 
-        for component in manifest.components.select(focus=args.components, platform=target.platform):
+        for component in manifest.components.select(focus=components, platform=target.platform):
             logging.info(f"Building {component.name}")
 
             builder = Builders.builder_from(component, target)
