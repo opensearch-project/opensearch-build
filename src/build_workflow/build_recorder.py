@@ -58,10 +58,9 @@ class BuildRecorder:
             self.components_hash: Dict[str, Dict[str, Any]] = {}
 
             if build_manifest:
-                build_manifest_data = build_manifest.__to_dict__()
-                self.data = build_manifest_data
-                for components_data in build_manifest_data.get("components"):
-                    self.components_hash[components_data["name"]] = components_data
+                self.data = build_manifest.__to_dict__()
+                for component in build_manifest.components.select():
+                    self.components_hash[component.name] = component.__to_dict__()
             else:
                 self.data["build"] = {}
                 self.data["build"]["id"] = target.build_id
