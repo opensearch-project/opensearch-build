@@ -35,7 +35,7 @@ class TestBuildRecorder(unittest.TestCase):
 
     def __mock_with_manifest(self, snapshot: bool = True) -> BuildRecorder:
         build_manifest_path = os.path.join("tests", "tests_build_workflow", "data", "opensearch-build-tar-2.12.0.yml")
-        build_manifest_data = BuildManifest.from_path(build_manifest_path).__to_dict__()
+        build_manifest = BuildManifest.from_path(build_manifest_path)
         return BuildRecorder(
             BuildTarget(
                 build_id="1",
@@ -46,7 +46,7 @@ class TestBuildRecorder(unittest.TestCase):
                 architecture="x64",
                 snapshot=snapshot,
             ),
-            build_manifest_data
+            build_manifest
         )
 
     def __mock_distribution(self, snapshot: bool = True) -> BuildRecorder:

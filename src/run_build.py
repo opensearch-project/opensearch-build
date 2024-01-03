@@ -26,7 +26,7 @@ def main() -> int:
     args = BuildArgs()
     console.configure(level=args.logging_level)
     manifest = InputManifest.from_file(args.manifest)
-    build_manifest_data = {}
+    build_manifest = None
     components = args.components
     failed_plugins = []
 
@@ -57,7 +57,7 @@ def main() -> int:
 
         logging.info(f"Build {components} incrementally.")
 
-        build_manifest_data = BuildManifest.from_path(build_manifest_path).__to_dict__()
+        build_manifest = BuildManifest.from_path(build_manifest_path)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
@@ -74,7 +74,7 @@ def main() -> int:
             architecture=args.architecture or manifest.build.architecture,
         )
 
-        build_recorder = BuildRecorder(target, build_manifest_data) if args.incremental else BuildRecorder(target)
+        build_recorder = BuildRecorder(target, build_manifest) if args.incremental else BuildRecorder(target)
 
         logging.info(f"Building {manifest.build.name} ({target.architecture}) into {target.output_dir}")
 

@@ -17,7 +17,7 @@ from manifests.build_manifest import BuildManifest
 
 
 class BuildRecorder:
-    def __init__(self, target: BuildTarget, build_manifest: Dict = None) -> None:
+    def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
         self.build_manifest = self.BuildManifestBuilder(target, build_manifest)
         self.target = target
         self.name = target.name
@@ -53,13 +53,14 @@ class BuildRecorder:
         logging.info(f"Created build manifest {manifest_path}")
 
     class BuildManifestBuilder:
-        def __init__(self, target: BuildTarget, build_manfiest_data: Dict = None) -> None:
+        def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
             self.data: Dict[str, Any] = {}
             self.components_hash: Dict[str, Dict[str, Any]] = {}
 
-            if build_manfiest_data:
-                self.data = build_manfiest_data
-                for components_data in build_manfiest_data.get("components"):
+            if build_manifest:
+                build_manifest_data = build_manifest.__to_dict__()
+                self.data = build_manifest_data
+                for components_data in build_manifest_data.get("components"):
                     self.components_hash[components_data["name"]] = components_data
             else:
                 self.data["build"] = {}
