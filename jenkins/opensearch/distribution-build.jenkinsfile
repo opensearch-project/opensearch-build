@@ -138,7 +138,7 @@ pipeline {
                             def snapshotBuild =
                                 build job: 'publish-opensearch-min-snapshots',
                                 propagate: false,
-                                wait: false,                               
+                                wait: false,
                                 parameters: [
                                     string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
                                 ]
