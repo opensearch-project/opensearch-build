@@ -1,13 +1,13 @@
 
-- [Component Onboarding](#component-onboarding)
+- [Plugin Onboarding](#plugin-onboarding)
   - [Onboard to OpenSearch Meta](#onboard-to-opensearch-meta)
     - [opensearch-plugins](#opensearch-plugins)
   - [Onboard to Build Workflow](#onboard-to-build-workflow)
-  - [Onboard to `test-workflow`](#onboard-to-test-workflow)
+  - [Onboard to Test Workflow](#onboard-to-test-workflow)
 - [Onboarding to universal/1-click release process](#onboarding-to-universal--1-click-release-process)
 - [Onboard to PyPi GitHub Action release](#onboard-to-pypi-github-action-release)
   
-## Component Onboarding
+## Plugin Onboarding
 
 This document describes steps to onboard a new plugin to release workflow for continuous integration and testing.
 
@@ -22,7 +22,7 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
 1. Update a [manifest](/manifests) for a particular release to include your plugin.  For example to be included in the 1.1.0 release, you would update [opensearch-1.1.0.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-1.1.0/manifests/1.1.0/opensearch-1.1.0.yml). We require your plugin name, repository URL, and git ref that should be used. For unreleased versions this should be a branch in your repository.  Once a release is cut, these refs will be updated to build from a tag or specific commit hash.
 
-2. Create a `scripts/build.sh` if you have specific requirements that are not covered by the [default build.sh script](/scripts/default/opensearch/build.sh) and commit it to your repository.
+2. Create a `scripts/build.sh` if you have specific requirements that are not covered by the default build.sh script. See default build script for [OpenSearch plugins](./scripts/default/opensearch/build.sh) and [OpenSearch-Dashboard plugins](./scripts/default/opensearch-dashboards/build.sh) and commit it to your repository.
 
 3. Ensure your `build.sh` reads and passes along both `-Dbuild.snapshot=` and `-Dopensearch.version=` flags.  Snapshot builds should produce a -SNAPSHOT tagged artifact for example `opensearch-plugin-1.1.0.0-SNAPSHOT.zip` where a release build of the same component would produce `opensearch-plugin-1.1.0.0.zip`.
 
@@ -32,7 +32,7 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
 
 6. Publish a PR to this repo including the updated manifest and the names of the artifacts being added.
 
-### Onboard to `test-workflow`
+### Onboard to Test Workflow
 
 1. Update the test configuration file (use 1.3.0 as an example), [opensearch-1.3.0-test.yml](https://github.com/opensearch-project/opensearch-build/blob/opensearch-1.3.0/manifests/1.3.0/opensearch-1.3.0-test.yml), for a particular release, to include your plugin. This test configuration defines full suite of tests - `integ`, `bwc`, that can be run on the plugin.
 
