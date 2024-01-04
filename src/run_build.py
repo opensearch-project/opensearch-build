@@ -50,7 +50,7 @@ def main() -> int:
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
         if not components:
-            logging.info("Nothing changes. Skip all.")
+            logging.info("No commit difference found between any components. Skipping the build")
             return 0
 
         logging.info(f"Plugins for incremental build: {components}")
