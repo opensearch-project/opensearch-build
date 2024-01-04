@@ -61,6 +61,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         binding.setVariable('RUN_DISPLAY_URL', 'https://some/url/redirect')
         binding.setVariable('distribution', 'tar' )
         binding.setVariable('COMPONENT_NAME', '' )
+        binding.setVariable('UPDATE_GITHUB_ISSUES', true)
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("withAWS", [Map, Closure], { args, closure ->
