@@ -1009,7 +1009,6 @@ pipeline {
         }
     }
 }
-<<<<<<< HEAD
 
 def markStageUnstableIfPluginsFailedToBuild() {
     def stageLogs = getLogsForStage(stageName: "${STAGE_NAME}")
@@ -1017,5 +1016,3 @@ def markStageUnstableIfPluginsFailedToBuild() {
         unstable('Some plugins failed to build. See the ./build.sh step for logs and more details')
     }
 }
-=======
->>>>>>> 64015bb7 (Update indexfiles at stage level)
