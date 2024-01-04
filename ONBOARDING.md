@@ -4,8 +4,9 @@
     - [opensearch-plugins](#opensearch-plugins)
   - [Onboard to Build Workflow](#onboard-to-build-workflow)
   - [Onboard to Test Workflow](#onboard-to-test-workflow)
-- [Onboarding to universal/1-click release process](#onboarding-to-universal--1-click-release-process)
-- [Onboard to PyPi GitHub Action release](#onboard-to-pypi-github-action-release)
+- [Standalone component Onboarding](#standalone-component-onboarding)
+    - [Onboarding to universal/1-click release process](#onboarding-to-universal--1-click-release-process)
+    - [Onboard to PyPi GitHub Action release](#onboard-to-pypi-github-action-release)
   
 ## Plugin Onboarding
 
@@ -47,7 +48,11 @@ Add the new plugin to the [opensearch-plugins meta](https://github.com/opensearc
     1. It supports two test configs - `with-security` and `without-security`, which runs test with security plugin enabled and disabled respectively. Choose one or both depending on what your plugin integration tests support.
 
 
-## Onboarding to universal / 1-click release process:
+## Standalone Component Onboarding
+
+Standalone components are self-contained products that are published across diverse platforms, demanding their own release cycle that may or may not be dependent on OpenSearch or OpenSearch-Dashboard releases. Few examples of standalone components are OpenSearch clients (Java, JavaScript, Ruby, Go, Python, and Rust), data ingestion tools such as Data Prepper, and integration tools such as Logstash. See the process below to on-board to 1-click release process for standalone components. _Please note these components are not a part of the OpenSearch or OpenSearch-Dashboards distribution artifact._
+
+### Onboarding to universal / 1-click release process:
 
 This document describes steps to onboard a new component to universal or 1-click release process.
 
@@ -82,7 +87,7 @@ See https://github.com/opensearch-project/opensearch-build/issues/1234 for detai
 For example, this [PublishToNpm test](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/tests/jenkins/TestPublishToNpm.groovy) uses [PublishToNpmLibTester](https://github.com/opensearch-project/opensearch-build-libraries/blob/main/tests/jenkins/lib-testers/PublishToNpmLibTester.groovy) with expected parameter that can be unique to your workflow. The assertions makes sure that calls to npm registry is made which is mandatory to release an artifact.
 
 
-## Onboard to PyPi GitHub Action release
+### Onboard to PyPi GitHub Action release
 
 Since PyPi has [announced](https://blog.pypi.org/posts/2023-05-23-removing-pgp/) the removal of the PGP signature, it is no longer necessary to use the Jenkins environment for releasing artifacts on PyPi. The main motive behind using Jenkins as the release environment was the ease of use of OpenSearch signing system.
 
