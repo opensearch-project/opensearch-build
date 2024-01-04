@@ -49,6 +49,10 @@ def main() -> int:
         buildIncremental = BuildIncremental(manifest, args.distribution)
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
+        if not components:
+            logging.info("Nothing changes. Skip all.")
+            return 0
+
         logging.info(f"Plugins for incremental build: {components}")
 
         build_manifest_path = os.path.join(args.distribution, "builds", manifest.build.filename, "manifest.yml")
