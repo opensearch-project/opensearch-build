@@ -6,4 +6,4 @@ This repository hosts the build, test and release scripts for OpenSearch and Ope
 
 See each page below for more details:
 - [Building a Distribution from the source](https://github.com/opensearch-project/opensearch-build/wiki/Building-an-OpenSearch-and-OpenSearch-Dashboards-Distribution)
--[Testing a Distribution](https://github.com/opensearch-project/opensearch-build/wiki/Testing-the-Distribution)
+- [Testing a Distribution](https://github.com/opensearch-project/opensearch-build/wiki/Testing-the-Distribution)
