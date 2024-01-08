@@ -30,9 +30,6 @@ class DistributionRpm(Distribution):
         logging.info("rpm installation requires sudo, script will exit if current user does not have sudo access")
         rpm_install_cmd = " ".join(
             [
-                'export',
-                'OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123!',
-                '&&',
                 'sudo',
                 'yum',
                 'remove',
