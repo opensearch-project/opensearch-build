@@ -234,6 +234,15 @@ pipeline {
                                 }
                             }
                         }
+                        unstable {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_TAR
+                                    )
+                                }
+                            }
+                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
@@ -347,6 +356,15 @@ pipeline {
                                         }
                                     }
                                 }
+                                unstable {
+                                    script {
+                                        if (params.UPDATE_LATEST_URL) {
+                                            uploadIndexFile(
+                                                indexFilePath: env.INDEX_FILE_PATH_X64_RPM
+                                            )
+                                        }
+                                    }
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -442,6 +460,15 @@ pipeline {
                             }
                             post {
                                 success {
+                                    script {
+                                        if (params.UPDATE_LATEST_URL) {
+                                            uploadIndexFile(
+                                                indexFilePath: env.INDEX_FILE_PATH_X64_DEB
+                                            )
+                                        }
+                                    }
+                                }
+                                unstable {
                                     script {
                                         if (params.UPDATE_LATEST_URL) {
                                             uploadIndexFile(
@@ -592,6 +619,15 @@ pipeline {
                                         }
                                     }
                                 }
+                                unstable {
+                                    script {
+                                        if (params.UPDATE_LATEST_URL) {
+                                            uploadIndexFile(
+                                                indexFilePath: env.INDEX_FILE_PATH_ARM64_TAR
+                                            )
+                                        }
+                                    }
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -708,6 +744,15 @@ pipeline {
                                         }
                                     }
                                 }
+                                unstable {
+                                    script {
+                                        if (params.UPDATE_LATEST_URL) {
+                                            uploadIndexFile(
+                                                indexFilePath: env.INDEX_FILE_PATH_ARM64_TAR
+                                            )
+                                        }
+                                    }
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -811,6 +856,15 @@ pipeline {
                                         }
                                     }
                                 }
+                                unstable {
+                                    script {
+                                        if (params.UPDATE_LATEST_URL) {
+                                            uploadIndexFile(
+                                                indexFilePath: env.INDEX_FILE_PATH_ARM64_DEB
+                                            )
+                                        }
+                                    }
+                                }
                                 always {
                                     script {
                                         lib.jenkins.Messages.new(this).add(
@@ -867,6 +921,15 @@ pipeline {
                     }
                     post {
                         success {
+                            script {
+                                if (params.UPDATE_LATEST_URL) {
+                                    uploadIndexFile(
+                                        indexFilePath: env.INDEX_FILE_PATH_X64_ZIP
+                                    )
+                                }
+                            }
+                        }
+                        unstable {
                             script {
                                 if (params.UPDATE_LATEST_URL) {
                                     uploadIndexFile(
