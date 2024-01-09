@@ -40,7 +40,7 @@ class ServiceOpenSearch(Service):
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
-        self.password = 'myStrongPassword123!' if float('.'.join("3.0.0".split('.')[:2])) >= 2.12 else 'admin'
+        self.password = 'myStrongPassword123!' if float('.'.join(self.version.split('.')[:2])) >= 2.12 else 'admin'
 
     def start(self) -> None:
         self.dist.install(self.download())
