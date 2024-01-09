@@ -47,7 +47,6 @@ class TestPerfTestCluster(unittest.TestCase):
         self.perf_test_cluster.wait_for_processing()
 
         mock_url.assert_called_once_with("/_cluster/health")
-        self.perf_test_cluster.wait_for_processing()
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
