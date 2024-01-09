@@ -15,6 +15,7 @@ from contextlib import contextmanager
 from typing import Any, Generator, List
 
 import requests
+import semver
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
 
@@ -108,11 +109,18 @@ class PerfTestCluster(TestCluster):
         return []
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
-        # Should be invoked only if the endpoint is public.
-        assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
-        logging.info("Waiting for domain to be up")
-        url = "".join([self.endpoint_with_port, "/_cluster/health"])
-        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', 'admin'), "verify": False},
+        password = 'admin'
+        if self.manifest:
+            if semver.compare(self.manifest.build.version, '2.12.0') != -1:
+                password = 'myStrongPassword123!'
+        else:
+            if semver.compare(self.args.distribution_version, '2.12.0') != -1:
+                password = 'myStrongPassword123!'
+
+        logging.info(f"Waiting for domain at {self.endpoint} to be up")
+        protocol = "http://" if self.args.insecure else "https://"
+        url = "".join([protocol, self.endpoint, "/_cluster/health"])
+        retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', password), "verify": False},
                    tries=tries, delay=delay, backoff=backoff)
 
     @abc.abstractmethod
