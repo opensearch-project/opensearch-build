@@ -23,6 +23,17 @@ if command -v systemctl >/dev/null && systemctl is-active opensearch-performance
     systemctl --no-reload stop opensearch-performance-analyzer.service
 fi
 
+# Check if OPENSEARCH_INITIAL_ADMIN_PASSWORD is defined
+# NOTE:
+# 1. This check will need to be modified if there will be a min dist for deb in future (currently there is none)
+# 2. Currently, the demo config setup is defined to run, in postinst, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
+# 3. There is no version check here as it assumes that this change will be present in preinst scripts for deb distribution of OpenSearch 2.12 and later
+if [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
+  echo "Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
+  exit -1
+fi
+
+
 # Create user and group if they do not already exist.
 getent group opensearch > /dev/null 2>&1 || groupadd -r opensearch
 getent passwd opensearch > /dev/null 2>&1 || \

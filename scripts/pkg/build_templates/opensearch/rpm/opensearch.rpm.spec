@@ -89,6 +89,19 @@ if command -v systemctl >/dev/null && systemctl is-active opensearch-performance
     echo "Stop existing opensearch-performance-analyzer.service"
     systemctl --no-reload stop opensearch-performance-analyzer.service
 fi
+
+# Check if OPENSEARCH_INITIAL_ADMIN_PASSWORD is defined
+# NOTE:
+# 1. This check will need to be modified if there will be a min dist for rpm in future (currently there is none)
+# 2. Currently, the demo config setup is defined to run, in postinstall, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
+OPENSEARCH_REQUIRED_VERSION="2.12.0"
+OPENSEARCH_VERSION=%{_version}
+COMPARE_VERSION=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
+if [ "$COMPARE_VERSION" == "$OPENSEARCH_REQUIRED_VERSION" ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
+  echo "Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
+  exit -1
+fi
+
 # Create user and group if they do not already exist.
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent passwd %{name} > /dev/null 2>&1 || \
@@ -97,10 +110,9 @@ getent passwd %{name} > /dev/null 2>&1 || \
 exit 0
 
 %post
-set -e
 # Apply Security Settings
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
-    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1
+    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || echo "Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log." > %{log_dir}/install_demo_configuration.log 2>&1
 fi
 chown -R %{name}.%{name} %{config_dir}
 chown -R %{name}.%{name} %{log_dir}
