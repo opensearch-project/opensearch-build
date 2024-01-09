@@ -39,7 +39,7 @@ class TestPerfTestCluster(unittest.TestCase):
 
     @patch("requests.get")
     @patch("PerfTestCluster.manifest.build.version", return_value='1.0.0')
-    @patch("PerfTestcluster.endpoint_with_port", return_value='')
+    @patch("PerfTestCluster.endpoint_with_port", return_value='')
     def test_wait_for_processing(self, mock_url: Mock, mock_requests_get: Mock) -> None:
         mock_url_result = MagicMock()
         mock_url.return_value = mock_url_result
