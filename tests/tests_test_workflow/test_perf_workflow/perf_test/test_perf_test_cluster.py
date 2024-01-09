@@ -7,8 +7,7 @@
 
 import os
 import unittest
-from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
@@ -41,9 +40,14 @@ class TestPerfTestCluster(unittest.TestCase):
     @patch("requests.get")
     @patch("PerfTestCluster.manifest.build.version", return_value='1.0.0')
     @patch("PerfTestcluster.endpoint_with_port", return_value='')
-    def test_wait_for_processing(self, *mocks: Any) -> None:
+    def test_wait_for_processing(self, mock_url: Mock, mock_requests_get: Mock) -> None:
+        mock_url_result = MagicMock()
+        mock_url.return_value = mock_url_result
+
         self.perf_test_cluster.wait_for_processing()
-        self.assert_called_once_with("/_cluster/health")
+
+        mock_url.assert_called_once_with("/_cluster/health")
+        self.perf_test_cluster.wait_for_processing()
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
