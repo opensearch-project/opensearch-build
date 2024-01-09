@@ -117,9 +117,10 @@ class PerfTestCluster(TestCluster):
             if semver.compare(self.args.distribution_version, '2.12.0') != -1:
                 password = 'myStrongPassword123!'
 
+        # Should be invoked only if the endpoint is public.
+        assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
         logging.info(f"Waiting for domain at {self.endpoint} to be up")
-        protocol = "http://" if self.args.insecure else "https://"
-        url = "".join([protocol, self.endpoint, "/_cluster/health"])
+        url = "".join([self.endpoint_with_port, "/_cluster/health"])
         retry_call(requests.get, fkwargs={"url": url, "auth": HTTPBasicAuth('admin', password), "verify": False},
                    tries=tries, delay=delay, backoff=backoff)
 
