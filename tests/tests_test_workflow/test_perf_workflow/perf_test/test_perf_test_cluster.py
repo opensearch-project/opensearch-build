@@ -38,15 +38,9 @@ class TestPerfTestCluster(unittest.TestCase):
                         self.assertEqual(mock_check_call.call_count, 1)
 
     @patch("requests.get")
-    @patch("PerfTestCluster.manifest.build.version", return_value='1.0.0')
-    @patch("PerfTestCluster.endpoint_with_port", return_value='')
-    def test_wait_for_processing(self, mock_url: Mock, mock_requests_get: Mock) -> None:
-        mock_url_result = MagicMock()
-        mock_url.return_value = mock_url_result
-
+    def test_get_service_response(self, mock_requests_get: Mock) -> None:
         self.perf_test_cluster.wait_for_processing()
-
-        mock_url.assert_called_once_with("/_cluster/health")
+        mock_requests_get.assert_called_once_with('', verify=False, auth=('admin', 'admin'))
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
