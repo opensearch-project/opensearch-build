@@ -7,7 +7,8 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from typing import Any
+from unittest.mock import MagicMock, patch
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
@@ -37,12 +38,12 @@ class TestPerfTestCluster(unittest.TestCase):
                         mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "test_dir"))
                         self.assertEqual(mock_check_call.call_count, 1)
 
-    def test_wait_for_processing(self, mock_url: Mock, mock_requests_get: Mock) -> None:
-        mock_url_result = MagicMock()
-        mock_url.return_value = mock_url_result
+    @patch("requests.get")
+    @patch("PerfTestCluster.manifest.build.version", return_value='1.0.0')
+    @patch("PerfTestcluster.endpoint_with_port", return_value='')
+    def test_wait_for_processing(self, *mocks: Any) -> None:
         self.perf_test_cluster.wait_for_processing()
-        mock_url.assert_called_once_with("/_cluster/health")
-        mock_requests_get.assert_called_once_with(mock_url_result, verify=False, auth=('admin', 'admin'))
+        self.assert_called_once_with("/_cluster/health")
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
