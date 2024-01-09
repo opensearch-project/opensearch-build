@@ -113,9 +113,6 @@ class PerfTestCluster(TestCluster):
         if self.manifest:
             if semver.compare(self.manifest.build.version, '2.12.0') != -1:
                 password = 'myStrongPassword123!'
-        else:
-            if semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
 
         # Should be invoked only if the endpoint is public.
         assert self.is_endpoint_public, "wait_for_processing should be invoked only when cluster is public"
