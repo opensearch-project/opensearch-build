@@ -9,6 +9,8 @@ import os
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
+from requests.auth import HTTPBasicAuth
+
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
 from test_workflow.perf_test.perf_test_cluster_config import PerfTestClusterConfig
@@ -42,7 +44,7 @@ class TestPerfTestCluster(unittest.TestCase):
         self.perf_test_cluster.is_endpoint_public = True
         self.perf_test_cluster.cluster_endpoint_with_port = ''
         self.perf_test_cluster.wait_for_processing()
-        mock_requests_get.assert_called_with(url='/_cluster/health', verify=False, auth=HTTPBasicAuth('admin', 'admin')))
+        mock_requests_get.assert_called_with(url='/_cluster/health', verify=False, auth=HTTPBasicAuth('admin', 'admin'))
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)
