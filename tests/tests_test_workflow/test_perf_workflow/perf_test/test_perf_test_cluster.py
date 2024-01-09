@@ -39,6 +39,8 @@ class TestPerfTestCluster(unittest.TestCase):
 
     @patch("requests.get")
     def test_get_service_response(self, mock_requests_get: Mock) -> None:
+        self.perf_test_cluster.is_endpoint_public = True
+        self.perf_test_cluster.cluster_endpoint_with_port = ''
         self.perf_test_cluster.wait_for_processing()
         mock_requests_get.assert_called_once_with('', verify=False, auth=('admin', 'admin'))
 
