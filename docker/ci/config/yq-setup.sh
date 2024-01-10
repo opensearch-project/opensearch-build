@@ -24,11 +24,14 @@ VERSION="v4.27.2"
 echo "$PLATFORM-$ARCH"
 
 case $PLATFORM-$ARCH in
-    linux-x86_64)
+    linux-x86_64|linux-amd64)
         YQ_TYPE="yq_linux_amd64"
         ;;
-    linux-aarch64)
+    linux-aarch64|linux-arm64)
         YQ_TYPE="yq_linux_arm64"
+        ;;
+    linux-ppc64le)
+        YQ_TYPE="yq_linux_ppc64le"
         ;;
     freebsd-x86_64)
         YQ_TYPE="yq_freebsd_amd64"

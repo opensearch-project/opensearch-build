@@ -18,15 +18,15 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf install epel-release -y && dnf repolist && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq gh
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh /tmp
-RUN /tmp/yq-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \

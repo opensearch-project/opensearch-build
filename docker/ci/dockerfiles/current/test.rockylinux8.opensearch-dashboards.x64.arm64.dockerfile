@@ -86,9 +86,9 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip gh
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -131,6 +131,10 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
 # Add other dependencies
 RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
     pip3 install cmake==3.23.3
+
+# Tools setup
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Change User
 USER $CONTAINER_USER

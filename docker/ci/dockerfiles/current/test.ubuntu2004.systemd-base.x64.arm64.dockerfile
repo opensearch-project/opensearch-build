@@ -145,14 +145,8 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
-
-# Install gh cli
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
-    apt-get update && apt-get install -y gh && apt-get clean
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
