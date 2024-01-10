@@ -99,7 +99,7 @@ OPENSEARCH_VERSION=%{_version}
 COMPARE_VERSION=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
 if [ "$COMPARE_VERSION" == "$OPENSEARCH_REQUIRED_VERSION" ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
   echo "Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
-  exit -1
+  exit 1
 fi
 
 # Create user and group if they do not already exist.
