@@ -9,9 +9,9 @@ import logging
 import os
 
 import requests
-import semver
 import yaml
 from requests.models import Response
+from utils import get_password
 
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution
@@ -64,12 +64,9 @@ class ServiceOpenSearch(Service):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
     def get_service_response(self) -> Response:
-        password = "admin"
-        if semver.compare(self.version, '2.12.0') != -1:
-            password = "myStrongPassword123!"
         url = self.url("/_cluster/health")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("admin", password))
+        return requests.get(url, verify=False, auth=("admin", get_password(self.version)))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_yml_path, "a") as yamlfile:
