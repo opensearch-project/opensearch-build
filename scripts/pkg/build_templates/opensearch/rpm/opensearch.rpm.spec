@@ -113,7 +113,7 @@ exit 0
 set -e
 # Apply Security Settings
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
-    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || echo "ERROR: Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log." > %{log_dir}/install_demo_configuration.log 2>&1
+    sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s  > %{log_dir}/install_demo_configuration.log 2>&1 || (echo "ERROR: Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log." && exit 1)
 fi
 chown -R %{name}.%{name} %{config_dir}
 chown -R %{name}.%{name} %{log_dir}
