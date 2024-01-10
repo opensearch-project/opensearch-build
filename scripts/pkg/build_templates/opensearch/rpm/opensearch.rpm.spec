@@ -110,6 +110,7 @@ getent passwd %{name} > /dev/null 2>&1 || \
 exit 0
 
 %post
+set -e
 # Apply Security Settings
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
     sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || echo "Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log." > %{log_dir}/install_demo_configuration.log 2>&1
