@@ -16,6 +16,7 @@ from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution
 from test_workflow.integ_test.distributions import Distributions
 from test_workflow.integ_test.service import Service
+from test_workflow.integ_test.utils import get_password
 
 
 class ServiceOpenSearch(Service):
@@ -40,7 +41,6 @@ class ServiceOpenSearch(Service):
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
-        self.password = 'myStrongPassword123!' if float('.'.join(self.version.split('.')[:2])) >= 2.12 else 'admin'
 
     def start(self) -> None:
         self.dist.install(self.download())
@@ -66,7 +66,7 @@ class ServiceOpenSearch(Service):
     def get_service_response(self) -> Response:
         url = self.url("/_cluster/health")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("admin", self.password))
+        return requests.get(url, verify=False, auth=("admin", get_password(self.version)))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_yml_path, "a") as yamlfile:
