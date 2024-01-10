@@ -10,6 +10,7 @@ import os
 import subprocess
 
 import requests
+import semver
 import yaml
 from requests.models import Response
 
@@ -38,7 +39,6 @@ class ServiceOpenSearchDashboards(Service):
         super().__init__(work_dir, version, distribution, security_enabled, additional_config, dependency_installer)
         self.dist = Distributions.get_distribution("opensearch-dashboards", distribution, version, work_dir)
         self.install_dir = self.dist.install_dir
-        self.password = 'myStrongPassword123!' if float('.'.join(self.version.split('.')[:2])) >= 2.12 else 'admin'
 
     def start(self) -> None:
         self.dist.install(self.download())
@@ -85,9 +85,12 @@ class ServiceOpenSearchDashboards(Service):
         return f'http://{self.endpoint()}:{self.port()}{path}'
 
     def get_service_response(self) -> Response:
+        password = "admin"
+        if semver.compare(self.version, '2.12.0') != -1:
+            password = "myStrongPassword123!"
         url = self.url("/api/status")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("admin", self.password) if self.security_enabled else None)
+        return requests.get(url, verify=False, auth=("admin", password) if self.security_enabled else None)
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_dashboards_yml_path, "a") as yamlfile:

@@ -9,6 +9,7 @@ import logging
 import os
 
 import requests
+import semver
 import yaml
 from requests.models import Response
 
@@ -40,7 +41,6 @@ class ServiceOpenSearch(Service):
         self.dist = Distributions.get_distribution("opensearch", distribution, version, work_dir)
         self.dependency_installer = dependency_installer
         self.install_dir = self.dist.install_dir
-        self.password = 'myStrongPassword123!' if float('.'.join(self.version.split('.')[:2])) >= 2.12 else 'admin'
 
     def start(self) -> None:
         self.dist.install(self.download())
@@ -64,9 +64,12 @@ class ServiceOpenSearch(Service):
         return f'{"https" if self.security_enabled else "http"}://{self.endpoint()}:{self.port()}{path}'
 
     def get_service_response(self) -> Response:
+        password = "admin"
+        if semver.compare(self.version, '2.12.0') != -1:
+            password = "myStrongPassword123!"
         url = self.url("/_cluster/health")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("admin", self.password))
+        return requests.get(url, verify=False, auth=("admin", password))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_yml_path, "a") as yamlfile:
