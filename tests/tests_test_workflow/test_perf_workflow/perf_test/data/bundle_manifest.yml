@@ -5,7 +5,7 @@ build:
   id: 41d5ae25183d4e699e92debfbe3f83bd
   location: https://artifacts.opensearch.org/bundles/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/opensearch-1.0.0-linux-x64.tar.gz
   name: OpenSearch
-  version: 1.0.0
+  version: 3.0.0
 components:
   - commit_id: fb25458f38c30a7ab06de21b0068f1fe3ad56134
     location: https://artifacts.opensearch.org/builds/1.0.0/41d5ae25183d4e699e92debfbe3f83bd/bundle/opensearch-min-1.0.0-linux-x64.tar.gz

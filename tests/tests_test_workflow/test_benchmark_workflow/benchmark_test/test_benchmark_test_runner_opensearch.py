@@ -49,7 +49,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
                                   "--distribution-url",
                                   "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz",
                                   "--distribution-version",
-                                  "2.10.0",
+                                  "2.3.0",
                                   "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
                                   "--workload", "test",
                                   "--suffix", "test"])
@@ -67,7 +67,6 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         benchmark_args = BenchmarkArgs()
         runner = BenchmarkTestRunners.from_args(benchmark_args)
         runner.run()
-
         mock_git.assert_called_with("https://github.com/opensearch-project/opensearch-cluster-cdk.git", "main",
                                     os.path.join(tempfile.gettempdir(), "opensearch-cluster-cdk"))
         self.assertEqual(mock_suite.call_count, 1)

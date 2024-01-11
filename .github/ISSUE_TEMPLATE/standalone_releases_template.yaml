@@ -10,7 +10,7 @@ body:
         Thanks for taking the time to submit release request!
   - type: textarea
     attributes:
-      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#onboarding-to-universal--1-click-release-process)'
+      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#standalone-component-onboarding)'
       label: 'Did you read the on-boarding document'
     id: document
     validations:

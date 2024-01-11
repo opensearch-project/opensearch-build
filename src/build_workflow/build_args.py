@@ -52,14 +52,6 @@ class BuildArgs:
             help="Build snapshot.",
         )
         parser.add_argument(
-            "-c",
-            "--component",
-            dest="components",
-            nargs='*',
-            type=str,
-            help="Rebuild one or more components."
-        )
-        parser.add_argument(
             "--keep",
             dest="keep",
             action="store_true",
@@ -104,7 +96,16 @@ class BuildArgs:
             action="store_true",
             help="Do not fail the distribution build on any plugin component failure.",
         )
-        parser.add_argument(
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
+            "-c",
+            "--component",
+            dest="components",
+            nargs='*',
+            type=str,
+            help="Rebuild one or more components."
+        )
+        group.add_argument(
             "-i",
             "--incremental",
             dest="incremental",

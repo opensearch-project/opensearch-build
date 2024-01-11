@@ -20,6 +20,7 @@ class TestBuildIncremental(unittest.TestCase):
         os.path.join(os.path.dirname(__file__), "data", "opensearch-input-2.12.0.yml"))
     BUILD_MANIFEST = BuildManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml"))
+    BUILD_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "data", "opensearch-build-tar-2.12.0.yml")
     INPUT_MANIFEST_DASHBOARDS = InputManifest.from_path(
         os.path.join(os.path.dirname(__file__), "data", "opensearch-dashboards-input-2.12.0.yml"))
     BUILD_MANIFEST_DASHBOARDS = BuildManifest.from_path(

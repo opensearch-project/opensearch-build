@@ -138,7 +138,7 @@ pipeline {
                             def snapshotBuild =
                                 build job: 'publish-opensearch-min-snapshots',
                                 propagate: false,
-                                wait: false,                               
+                                wait: false,
                                 parameters: [
                                     string(name: 'INPUT_MANIFEST', value: "${INPUT_MANIFEST}"),
                                 ]
@@ -190,7 +190,8 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
                                             ]
                                     }
                                 },
@@ -213,19 +214,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -264,15 +261,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()                                      
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -363,15 +358,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()                                      
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -464,7 +457,8 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
                                             ]
                                     }
                                 }
@@ -472,19 +466,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -523,15 +513,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -622,15 +610,13 @@ pipeline {
                                 }
                             }
                             post {
-                                success {
+                                always {
                                     script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
+                                        postCleanup()
                                     }
-                                }
-                                always {
-                                    postCleanup()
                                 }
                             }
                         }
@@ -715,19 +701,15 @@ pipeline {
                         }
                     }
                     post {
-                        success {
-                            script {
-                                if (params.CONTINUE_ON_ERROR) {
-                                    markStageUnstableIfPluginsFailedToBuild()
-                                }
-                            }
-                        }
                         always {
                             script {
                                 lib.jenkins.Messages.new(this).add(
                                     "${STAGE_NAME}",
                                     lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
                                 )
+                                if (params.CONTINUE_ON_ERROR) {
+                                    markStageUnstableIfPluginsFailedToBuild()
+                                }
                                 postCleanup()
                             }
                         }
@@ -797,10 +779,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    def findFailedPlugins = buildMessage(search: 'Failed plugins')
-                    if (findFailedPlugins != null) {
-                        currentBuild.result = 'UNSTABLE'
-                    }
                     closeBuildSuccessGithubIssue(
                         message: buildMessage(search: 'Successfully built'),
                         search: 'Successfully built',

@@ -44,6 +44,12 @@ pipeline {
         BUILD_JOB_NAME = "distribution-build-opensearch"
         ARTIFACT_BUCKET_NAME = credentials('jenkins-artifact-bucket-name')
     }
+    triggers {
+        parameterizedCron '''
+            H 3 * * * %TEST_MANIFEST=2.12.0/opensearch-2.12.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/latest/linux/arm64/tar/builds/opensearch/manifest.yml
+            H 3 * * * %TEST_MANIFEST=2.12.0/opensearch-2.12.0-concurrent-search-test.yml;BUILD_MANIFEST_URL=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.12.0/latest/linux/x64/tar/builds/opensearch/manifest.yml
+            '''
+    }
     parameters {
         string(
             name: 'COMPONENT_NAME',
@@ -59,6 +65,11 @@ pipeline {
             name: 'BUILD_MANIFEST_URL',
             description: 'The build manifest URL for OpenSearch, e.g. "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.9.0/8172/linux/x64/tar/builds/opensearch/manifest.yml".',
             trim: true
+        )
+        booleanParam(
+            name: 'UPDATE_GITHUB_ISSUES',
+            description: 'If true results will create / update / close github issues',
+            defaultValue: false
         )
     }
     stages {
@@ -91,6 +102,7 @@ pipeline {
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
+                    env.updateGithubIssues = UPDATE_GITHUB_ISSUES && env.distribution == 'tar'
 
                     echo "Version: ${version}, Agent: ${AGENT_LABEL}, BuildId: ${buildId}, Distribution: ${distribution}, Components: ${componentList}"
                     currentBuild.description = "$TEST_MANIFEST, $version, $architecture, $platform, $buildId, $distribution, $componentList"
@@ -200,7 +212,7 @@ pipeline {
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
                                                     String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
-                                                    if (env.distribution == 'tar') {
+                                                    if (env.updateGithubIssues) {
                                                         closeGithubIssue(
                                                             repoUrl: buildManifestObj.getRepo("${local_component}"),
                                                             issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
@@ -212,7 +224,7 @@ pipeline {
                                             } catch (e) {
                                                 echo "Error running integtest for component ${local_component}, creating Github issue"
                                                 String issueBodyMessage = "The integration test failed at distribution level for component ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._"
-                                                if (env.distribution == 'tar') {
+                                                if (env.updateGithubIssues) {
                                                     createGithubIssue(
                                                         repoUrl: buildManifestObj.getRepo("${local_component}"),
                                                         issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",

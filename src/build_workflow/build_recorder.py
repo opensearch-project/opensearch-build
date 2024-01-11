@@ -17,8 +17,8 @@ from manifests.build_manifest import BuildManifest
 
 
 class BuildRecorder:
-    def __init__(self, target: BuildTarget) -> None:
-        self.build_manifest = self.BuildManifestBuilder(target)
+    def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
+        self.build_manifest = self.BuildManifestBuilder(target, build_manifest)
         self.target = target
         self.name = target.name
 
@@ -53,17 +53,23 @@ class BuildRecorder:
         logging.info(f"Created build manifest {manifest_path}")
 
     class BuildManifestBuilder:
-        def __init__(self, target: BuildTarget) -> None:
+        def __init__(self, target: BuildTarget, build_manifest: BuildManifest = None) -> None:
             self.data: Dict[str, Any] = {}
-            self.data["build"] = {}
-            self.data["build"]["id"] = target.build_id
-            self.data["build"]["name"] = target.name
-            self.data["build"]["version"] = target.opensearch_version
-            self.data["build"]["platform"] = target.platform
-            self.data["build"]["architecture"] = target.architecture
-            self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
-            self.data["schema-version"] = "1.2"
             self.components_hash: Dict[str, Dict[str, Any]] = {}
+
+            if build_manifest:
+                self.data = build_manifest.__to_dict__()
+                for component in build_manifest.components.select():
+                    self.components_hash[component.name] = component.__to_dict__()
+            else:
+                self.data["build"] = {}
+                self.data["build"]["id"] = target.build_id
+                self.data["build"]["name"] = target.name
+                self.data["build"]["version"] = target.opensearch_version
+                self.data["build"]["platform"] = target.platform
+                self.data["build"]["architecture"] = target.architecture
+                self.data["build"]["distribution"] = target.distribution if target.distribution else "tar"
+                self.data["schema-version"] = "1.2"
 
         def append_component(self, name: str, version: str, repository_url: str, ref: str, commit_id: str) -> None:
             component = {
@@ -75,6 +81,7 @@ class BuildRecorder:
                 "version": version,
             }
             self.components_hash[name] = component
+            logging.info(f"Appended {name} component in build manifest.")
 
         def append_artifact(self, component: str, type: str, path: str) -> None:
             artifacts = self.components_hash[component]["artifacts"]

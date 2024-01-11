@@ -99,6 +99,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
             return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-build-manifest.yml' as File).text)
         })
         runScript('jenkins/opensearch/publish-min-snapshots.jenkinsfile')
+        assertThat(getCommands('sh', '/usr/local/bin/update-alternatives'), hasItem('/usr/local/bin/update-alternatives --set java `/usr/local/bin/update-alternatives --list java | grep openjdk-17`'))
         assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a x64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems('{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz}',
         '{file=/tmp/workspace/zip/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-darwin-x64-latest.tar.gz.sha512}',
