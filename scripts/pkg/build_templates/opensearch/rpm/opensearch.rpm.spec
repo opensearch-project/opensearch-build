@@ -96,14 +96,17 @@ fi
 # 2. Currently, the demo config setup is defined to run, in postinst, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
 
 # Check if this is an upgrade by checking whether opensearch already exists
-OPENSEARCH_INSTALLED=$(rpm -qa || yum list installed | grep opensearch)
+set +e
+rpm -q opensearch || yum list installed opensearch
+OPENSEARCH_INSTALLED=$? # 0 when installed, 1 when installed
+set -e
 
 OPENSEARCH_REQUIRED_VERSION="2.12.0"
 OPENSEARCH_VERSION=%{_version}
-COMPARE_VERSION=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
+MINIMUM_OF_TWO_VERSIONS=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
 
-if [ -n "$OPENSEARCH_INSTALLED" ] && [ $OPENSEARCH_VERSION != CHANGE_VERSION ]; then
-  if [ "$COMPARE_VERSION" == "$OPENSEARCH_REQUIRED_VERSION" ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
+if [ $OPENSEARCH_INSTALLED = 1 ] && [ $OPENSEARCH_VERSION != CHANGE_VERSION ]; then
+  if [ $MINIMUM_OF_TWO_VERSIONS = $OPENSEARCH_REQUIRED_VERSION ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
     echo "ERROR: Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
     exit 1
   fi
