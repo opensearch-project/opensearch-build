@@ -32,7 +32,7 @@ fi
 
 # Check if this is an upgrade by checking whether opensearch already exists
 set +e
-dpkg -s opensearch
+dpkg-query -l opensearch | grep ^ii
 OPENSEARCH_INSTALLED=$? # 0 when installed, 1 when installed
 set -e
 
