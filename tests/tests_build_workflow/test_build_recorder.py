@@ -33,6 +33,22 @@ class TestBuildRecorder(unittest.TestCase):
             )
         )
 
+    def __mock_with_manifest(self, snapshot: bool = True) -> BuildRecorder:
+        build_manifest_path = os.path.join("tests", "tests_build_workflow", "data", "opensearch-build-tar-2.12.0.yml")
+        build_manifest = BuildManifest.from_path(build_manifest_path)
+        return BuildRecorder(
+            BuildTarget(
+                build_id="1",
+                output_dir="output_dir",
+                name="OpenSearch",
+                version="1.3.0",
+                platform="linux",
+                architecture="x64",
+                snapshot=snapshot,
+            ),
+            build_manifest
+        )
+
     def __mock_distribution(self, snapshot: bool = True) -> BuildRecorder:
         return BuildRecorder(
             BuildTarget(
@@ -191,7 +207,8 @@ class TestBuildRecorder(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
+    def test_record_artifact_check_plugin_version_properties(self, mock_plugin_check: Mock, mock_makedirs: Mock,
+                                                             mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=False)
         mock.record_component(
             "security",
@@ -212,7 +229,8 @@ class TestBuildRecorder(unittest.TestCase):
     @patch("shutil.copyfile")
     @patch("os.makedirs")
     @patch.object(BuildArtifactOpenSearchCheckPlugin, "check")
-    def test_record_artifact_check_plugin_version_properties_snapshot(self, mock_plugin_check: Mock, mock_makedirs: Mock, mock_copyfile: Mock) -> None:
+    def test_record_artifact_check_plugin_version_properties_snapshot(self, mock_plugin_check: Mock,
+                                                                      mock_makedirs: Mock, mock_copyfile: Mock) -> None:
         mock = self.__mock(snapshot=True)
         mock.record_component(
             "security",
@@ -229,3 +247,34 @@ class TestBuildRecorder(unittest.TestCase):
         mock_plugin_check.assert_called()
         mock_copyfile.assert_called()
         mock_makedirs.assert_called()
+
+    def test_append_component_with_existing_manifest(self) -> None:
+        mock = self.__mock_with_manifest(snapshot=False)
+
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("commit_id"),
+                         "aaf09b0211df15dd74ff2756f2590c360b03486b")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"),
+                         "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("repository"),
+                         "https://github.com/opensearch-project/geospatial.git")
+        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"),
+                         "e3c8902dea26fd20f56a6f144042b2623f652e3e")
+        self.assertEqual(mock.build_manifest.components_hash.get("security").get("version"), "2.12.0.0")
+
+        mock.record_component(
+            "job-scheduler",
+            MagicMock(
+                url="https://github.com/opensearch-project/job-scheduler.git",
+                ref="2.12",
+                sha="mockcommitid",
+            ),
+        )
+
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("commit_id"), "mockcommitid")
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("ref"), "2.12")
+        self.assertEqual(mock.build_manifest.components_hash.get("job-scheduler").get("repository"),
+                         "https://github.com/opensearch-project/job-scheduler.git")
+        self.assertEqual(mock.build_manifest.components_hash.get("geospatial").get("commit_id"),
+                         "8776900f2f26312b4d3a08e4343f3e3f7bdde536")
+        self.assertEqual(mock.build_manifest.components_hash.get("security").get("commit_id"),
+                         "e3c8902dea26fd20f56a6f144042b2623f652e3e")

@@ -1,6 +1,6 @@
 ---
-name: On-board plugins
-description: On-board plugins
+name: On-board plugins to the distribution
+description: On-board plugins to the distribution
 title: '[On-boarding]: '
 labels: [on-boarding, untriaged]
 body:
@@ -38,7 +38,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md)'
+      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#plugin-onboarding)'
       label: 'Did you read the on-boarding document'
     id: document
     validations:

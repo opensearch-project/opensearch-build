@@ -7,7 +7,9 @@
 
 import os
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
+
+from requests.auth import HTTPBasicAuth
 
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.perf_test.perf_test_cluster import PerfTestCluster
@@ -36,6 +38,13 @@ class TestPerfTestCluster(unittest.TestCase):
                         self.perf_test_cluster.start()
                         mock_chdir.assert_called_once_with(os.path.join(self.perf_test_cluster.current_workspace, "test_dir"))
                         self.assertEqual(mock_check_call.call_count, 1)
+
+    @patch("requests.get")
+    def test_get_service_response(self, mock_requests_get: Mock) -> None:
+        self.perf_test_cluster.is_endpoint_public = True
+        self.perf_test_cluster.cluster_endpoint_with_port = ''
+        self.perf_test_cluster.wait_for_processing()
+        mock_requests_get.assert_called_with(url='/_cluster/health', verify=False, auth=HTTPBasicAuth('admin', 'myStrongPassword123!'))
 
     def test_endpoint(self) -> None:
         self.assertEqual(self.perf_test_cluster.endpoint_with_port, None)

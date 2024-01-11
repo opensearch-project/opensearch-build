@@ -74,7 +74,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 ### OpenSearch k-NN
-* Add Clear Cache API ([#740](https://github.com/opensearch-project/k-NN/pull/740))
+* ~~Add Clear Cache API ([#740](https://github.com/opensearch-project/k-NN/pull/740))~~ Feature was mistakenly added to the release notes, although it was not included in the release.
 
 
 ### OpenSearch ML Commons

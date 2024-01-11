@@ -33,7 +33,7 @@ class DistributionTar(Distribution):
     @property
     def start_cmd(self) -> str:
         start_cmd_map = {
-            "opensearch": "./opensearch-tar-install.sh",
+            "opensearch": "export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && ./opensearch-tar-install.sh",
             "opensearch-dashboards": "./opensearch-dashboards",
         }
         return start_cmd_map[self.filename]
