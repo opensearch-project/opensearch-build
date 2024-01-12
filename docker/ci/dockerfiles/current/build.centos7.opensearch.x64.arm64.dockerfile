@@ -48,7 +48,7 @@ COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
 RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh
 
 # Install higher version of maven 3.8.x
-RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"'`  && \
+RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"' | uniq | head -n 1`  && \
     mkdir -p $MAVEN_DIR && (curl -s $MAVEN_URL | tar xzf - --strip-components=1 -C $MAVEN_DIR) && \
     echo "export M2_HOME=$MAVEN_DIR" > /etc/profile.d/maven_path.sh && \
     echo "export M2=\$M2_HOME/bin" >> /etc/profile.d/maven_path.sh && \
@@ -87,7 +87,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip && \
     ln -sfn /usr/local/bin/pip3.9 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
-    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Add k-NN Library dependencies
 RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack gcc-gfortran -y
