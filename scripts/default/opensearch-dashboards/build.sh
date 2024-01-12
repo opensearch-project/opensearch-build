@@ -91,6 +91,7 @@ else
 fi
 
 mkdir -p $OUTPUT/plugins
+PLUGIN_NAME=$(basename "$PWD")
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
