@@ -32,6 +32,9 @@ components:
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
     working_directory: gantt-chart
     ref: main
+  - name: assistantDashboards
+    repository: https://github.com/opensearch-project/dashboards-assistant.git
+    ref: main
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: main
