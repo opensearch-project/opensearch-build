@@ -97,15 +97,20 @@ fi
 
 # Check if this is an upgrade by checking whether opensearch already exists
 set +e
-rpm -q opensearch || yum list installed opensearch
-OPENSEARCH_INSTALLED=$? # 0 when installed, 1 when installed
+rpm -q opensearch > /dev/null 2>&1 || yum list installed opensearch > /dev/null 2>&1
+EX_CODE=$?
+if [ $EX_CODE -eq 0 ]; then
+  OPENSEARCH_ALREADY_INSTALLED=yes
+else
+  OPENSEARCH_ALREADY_INSTALLED=no
+fi
 set -e
 
 OPENSEARCH_REQUIRED_VERSION="2.12.0"
 OPENSEARCH_VERSION=%{_version}
 MINIMUM_OF_TWO_VERSIONS=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
 
-if [ $OPENSEARCH_INSTALLED = 1 ] && [ $OPENSEARCH_VERSION != CHANGE_VERSION ]; then
+if [ $OPENSEARCH_ALREADY_INSTALLED = no ]; then
   if [ $MINIMUM_OF_TWO_VERSIONS = $OPENSEARCH_REQUIRED_VERSION ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
     echo "ERROR: Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
     exit 1
