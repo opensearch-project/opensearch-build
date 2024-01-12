@@ -281,7 +281,7 @@ See [src/manifests_workflow](./src/manifests_workflow) for more information.
 
 ### Deploying Infrastructure
 
-Storage and access roles for the OpenSearch release process are codified in a [CDK project](./deployment/README.md).
+This project uses jenkins as the build infrastruture for building, testing and releasing the artifacts. The infrastruture is deployed using CDK and code can be found in [opensearch-ci](https://github.com/opensearch-project/opensearch-ci/tree/main) repository.
 
 ## Contributing
 
