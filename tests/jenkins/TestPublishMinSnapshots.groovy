@@ -61,12 +61,10 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
     void TestPublishMinSnapshotsUploads(){
         String currentStage = null
         helper.registerAllowedMethod('stage', [String, Closure]) { name, body ->
-        println('StageName:')
-        println(name)
             currentStage = name
             body()
         }
-        helper.registerAllowedMethod('readYaml', [Map.class]) { args ->
+        helper.registerAllowedMethod('readYaml', [Map]) { args ->
             switch (currentStage) {
                 case 'linux-x64-tar':
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-x64-build-manifest.yml' as File).text)
