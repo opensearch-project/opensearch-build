@@ -9,6 +9,10 @@
 
 set -ex
 
+# vars / libs
+. ../../../lib/shell/file_management.sh
+PLUGIN_PATH=$PWD
+
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
@@ -21,6 +25,13 @@ function usage() {
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
+
+
+function cleanup_all() {
+    File_Delete $PLUGIN_PATH
+}
+
+trap cleanup_all TERM INT EXIT
 
 while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
@@ -80,7 +91,6 @@ else
 fi
 
 mkdir -p $OUTPUT/plugins
-PLUGIN_NAME=$(basename "$PWD")
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
@@ -92,4 +102,3 @@ cd plugins/$PLUGIN_NAME; yarn $HELPER_STRING build --opensearch-dashboards-versi
 cd $CURR_DIR
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
-rm -rf ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME
