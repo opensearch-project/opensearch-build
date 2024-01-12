@@ -88,7 +88,7 @@ These are the issues created by automation with the distribution build and integ
 
 #### Creating a New Version
 
-Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.9.0.yml](manifests/2.9.0/opensearch-2.9.0.yml)). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
+Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](https://build.ci.opensearch.org/job/manifest-update/) will notice this change or it can be triggered manually, and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.9.0.yml](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.9.0/opensearch-2.9.0.yml)). After that's merged, a GitHub issue is automatically opened by [this workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml) to make a new release using [this release template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Release Manager
 
@@ -187,7 +187,7 @@ Refer the [Build Workflows](#build-workflows) section to get the details about t
 
 Ensure the proper inputs are used to initiate the distribution. For instance, here's an example for OpenSearch. It's important that the OpenSearch Dashboard distribution aligns accordingly.
 
-![Alt Text](./assests/distribution_build_os.png)
+![Alt Text](https://github.com/opensearch-project/opensearch-build/blob/main/assests/distribution_build_os.png)
 
 **COMPONENT_NAME**: To trigger a specific component, this includes standalone OpenSearch or specific plugin.</br>
 
@@ -238,25 +238,6 @@ Following is the generated build number after triggering the [Distribution Build
 | OpenSearch | OpenSearch Dashboards |
 |----------|----------|
 | [build_7848](https://build.ci.opensearch.org/job/distribution-build-opensearch/7848/console) | [build_6126](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/6126/) |
-
-
-#### Integ Test TAR
-
-Following are the TAR integ test jobs for a given RC based on the above section [Sample Build details](#sample-build-details). The integ tests are executed for artifacts generated as part of the builds `OS: 7848`, `OSD: 6126`.
-
-| Integ Test Tar | x64 | arm64 |
-|----------|----------|----------|
-| OpenSearch  | [x64](https://build.ci.opensearch.org/job/integ-test/4906/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test/4897/console)   |
-| OpenSearch Dashboards  | [x64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3531/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3530/console)   |
-
-#### Integ Test RPM
-
-Following are the RPM integ test jobs for a given RC based on the above section [Sample Build details](#sample-build-details). The integ tests for rpm are executed for artifacts generated as part of the builds `OS: 7848`, `OSD: 6126`.
-
-| Integ Test RPM | x64 | arm64 |
-|----------|----------|----------|
-| OpenSearch  | [x64](https://build.ci.opensearch.org/job/integ-test/4908/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test/4907/console)   |
-| OpenSearch Dashboards  | [x64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3532/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3533/console)   |
 
 #### Docker Build and Scan
 
