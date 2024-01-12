@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get changed manifest files
-        uses: tj-actions/changed-files@v39
+        uses: tj-actions/changed-files@v41
         id: list-changed-manifests
         with:
           files: manifests/**/opensearch*.yml
