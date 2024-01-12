@@ -142,11 +142,11 @@ class BenchmarkTestCluster:
                 f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
                 f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
             if not self.args.insecure:
-                password = get_password(self.manifest.build.version)
+                password = 'myStrongPassword123!' if get_password(self.manifest.build.version) == 'myStrongPassword123!' else None
         else:
             artifact_url = self.args.distribution_url.strip()
             if not self.args.insecure:
-                password = get_password(self.args.distribution_version)
+                password = 'myStrongPassword123!' if get_password(self.args.distribution_version) == 'myStrongPassword123!' else None
 
         return {
             "distributionUrl": artifact_url,
