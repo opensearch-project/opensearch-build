@@ -30,7 +30,8 @@ class DistributionDeb(Distribution):
         logging.info("deb installation requires sudo, script will exit if current user does not have sudo access")
         deb_install_cmd = " ".join(
             [
-                'export',
+                'sudo',
+                'env',
                 'OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123!',
                 '&&',
                 'sudo',
