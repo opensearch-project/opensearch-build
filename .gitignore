@@ -38,3 +38,5 @@ vars/
 
 test-report.yml
 src/release_notes_workflow/results/*
+
+logback.log
