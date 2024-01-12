@@ -26,7 +26,7 @@ RUN apt-get update -y && apt-get install -y software-properties-common && add-ap
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && \
     apt-get install -y debmake debhelper-compat && \
-    apt-get clean -y && pip3 install awscli==1.22.12
+    apt-get clean -y && pip3 install awscli==1.32.17
 
 # Install gh cli
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \

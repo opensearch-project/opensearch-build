@@ -95,7 +95,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip && \
     ln -sfn /usr/local/bin/pip3.9 /usr/local/bin/pip && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
-    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Installing pip packages
 RUN pip3 install twine==4.0.2 cmake==3.24.1.1
