@@ -21,6 +21,7 @@ from retry.api import retry_call  # type: ignore
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from utils.version_utils import get_password
 
 
 class BenchmarkTestCluster:
@@ -115,11 +116,9 @@ class BenchmarkTestCluster:
         # To-do: Make this better
         password = 'admin'
         if self.manifest:
-            if semver.compare(self.manifest.build.version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
+            password = get_password(self.manifest.build.version)
         else:
-            if semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
+            password = get_password(self.args.distribution_version)
 
         logging.info(f"Waiting for domain at {self.endpoint} to be up")
         protocol = "http://" if self.args.insecure else "https://"
