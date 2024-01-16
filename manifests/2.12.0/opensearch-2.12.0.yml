@@ -233,4 +233,3 @@ components:
       - gradle:dependencies:opensearch.version
     depends_on:
       - common-utils
-      - ml-commons
