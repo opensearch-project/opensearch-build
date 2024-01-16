@@ -1,82 +1,6 @@
-- [OpenSearch Release Process](#opensearch-release-process)
-  - **[Preparation](#preparation)**
-    - [Release Terminology and Knowledge Center](#release-terminology-and-knowledge-center)
-      - [Definitions](#definitions)
-      - [Types of Manifests](#types-of-manifests)
-         - [Input Manifest](#input-manifest)
-         - [Test Manifest](#test-manifest)
-         - [Build Manifest](#build-manifest)
-         - [Bundle Manifest](#bundle-manifest)
-      - [AUTOCUT issues](#autocut-issues)
-      - [Build Workflows](#build-workflows)
-      - [Release Workflows](#release-workflows)
-      - [Creating a New Version](#creating-a-new-version)
-    - [Release Manager](#release-manager)
-    - [Release label](#release-label)
-    - [Release Issue](#release-issue)
-      - [Release Issue Update](#release-issue-update)
-    - [Increase the Build Frequency](#increase-the-build-frequency)
-    - [Update the Maven Publish Workflow](#update-the-maven-publish-workflow)
-  - **[Campaigns](#campaigns)**
-    - [Component Release Issues](#component-release-issues)
-       - [Issue Creation Process Overview](#issue-creation-process-overview)
-    - [Release Campaigns](#release-campaigns)
-  - **[Release Branch Readiness](#release-branch-readiness)**
-       - [Release Branch](#release-branch)
-         - [Core](#core)
-         - [Components](#components)
-       - [Version Increment](#version-increment)
-          - [Core Version Increment](#core-version-increment)
-          - [Components Version Increment](#components-version-increment)
-  - **[Code Complete and Feature Freeze](#code-complete-and-feature-freeze)**
-  - **[Release Candidate Creation and Testing](#release-candidate-creation-and-testing)**
-    - [Distribution Build](#distribution-build)
-       - [Workflow Trigger](#workflow-trigger)
-       - [Order of Execution](#order-of-execution)
-          - [OpenSearch](#opensearch)
-          - [OpenSearch Dashboards](#opensearch-dashboards)
-    - [Release Candidate](#release-candidate)
-       - [Sample Build details](#sample-build-details)
-       - [Integ Test TAR](#integ-test-tar)
-       - [Integ Test RPM](#integ-test-rpm)
-       - [Docker Build and Scan](#docker-build-and-scan)
-         - [Docker RC Freeze](#docker-rc-freeze)
-       - [Benchmark Tests](#benchmark-tests)
-       - [Backwards Compatibility Tests](#backwards-compatibility-tests)
-       - [Windows Integration Test](#windows-integration-test)
-       - [Broadcast and Communication](#broadcast-and-communication)
-       - [Release Candidate Lock](#release-candidate-lock)
-  - **[Release](#release)**
-      - [Pre-Release](#pre-release)
-          - [Release Labeled Issues](#release-labeled-issues)
-          - [Go or No-Go](#go-or-no-go)
-          - [Promote Repos](#promote-repos)
-          - [Promote Artifacts](#promote-artifacts)
-          - [Release Notes](#release-notes)
-      - [Main Release](#main-release)
-          - [Maven Promotion](#maven-promotion)
-          - [Docker Promotion](#docker-promotion)
-          - [Collaboration with the Project Management Team](#collaboration-with-the-project-management-team)
-             - [Website and Documentation Changes](#website-and-documentation-changes)
-             - [Publish blog posts](#publish-blog-posts)
-             - [Advertise on Social Media](#advertise-on-social-media)
-          - [Release Validation](#release-validation)
-      - [Release Checklist](#release-checklist)
-  - **[Post Release](#post-release)**
-      - [Release Tags](#release-tags)
-      - [Input Manifest Update](#input-manifest-update)
-      - [OpenSearch Build Release notes](#opensearch-build-release-notes)
-      - [Decrease the build frequency](#decrease-the-build-frequency)
-      - [Retrospective Issue](#retrospective-issue)
-      - [Helm and Ansible Playbook release](#helm-and-ansible-playbook-release)
-      - [Upcoming Release Preparation](#upcoming-release-preparation)
-  - **[Communication Templates](#communication-templates)**
-      - [Release Announcement](#release-announcement)
-      - [Release Readiness](#release-readiness)
-      - [Release Candidate Announcement](#release-candidate-announcement)
-      - [Release Complete](#release-complete)
-
 # OpenSearch Release Process
+
+This document explains the OpenSearch Process in detail.
 
 ## Preparation
 ### Release Terminology and Knowledge Center
@@ -164,7 +88,7 @@ These are the issues created by automation with the distribution build and integ
 
 #### Creating a New Version
 
-Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](.github/workflows/versions.yml) will notice this change or it can be triggered [manually](https://github.com/opensearch-project/opensearch-build/actions/workflows/versions.yml), and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.9.0.yml](manifests/2.9.0/opensearch-2.9.0.yml)). After that's merged, a GitHub issue is automatically opened by [this workflow](.github/workflows/releases.yml) to make a new release using [this release template](.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](ONBOARDING.md) by submitting pull requests to each version's manifest.
+Each new OpenSearch release process starts when any one component increments a version, typically on the `main` branch. For example, [OpenSearch#1192](https://github.com/opensearch-project/OpenSearch/pull/1192) incremented the version to 2.0. The [version check automation workflow](https://build.ci.opensearch.org/job/manifest-update/) will notice this change or it can be triggered manually, and make a pull request (e.g. [opensearch-build#514](https://github.com/opensearch-project/opensearch-build/pull/514)) that adds a new manifest (e.g. [opensearch-2.9.0.yml](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.9.0/opensearch-2.9.0.yml)). After that's merged, a GitHub issue is automatically opened by [this workflow](https://github.com/opensearch-project/opensearch-build/blob/main/.github/workflows/releases.yml) to make a new release using [this release template](https://github.com/opensearch-project/opensearch-build/blob/main/.github/ISSUE_TEMPLATE/release_template.md) (e.g. [opensearch-build#566](https://github.com/opensearch-project/opensearch-build/issues/566)). Existing and new components [(re)onboard into every release](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md) by submitting pull requests to each version's manifest.
 
 ### Release Manager
 
@@ -263,7 +187,7 @@ Refer the [Build Workflows](#build-workflows) section to get the details about t
 
 Ensure the proper inputs are used to initiate the distribution. For instance, here's an example for OpenSearch. It's important that the OpenSearch Dashboard distribution aligns accordingly.
 
-![Alt Text](./assests/distribution_build_os.png)
+![Alt Text](https://github.com/opensearch-project/opensearch-build/blob/main/assests/distribution_build_os.png)
 
 **COMPONENT_NAME**: To trigger a specific component, this includes standalone OpenSearch or specific plugin.</br>
 
@@ -314,25 +238,6 @@ Following is the generated build number after triggering the [Distribution Build
 | OpenSearch | OpenSearch Dashboards |
 |----------|----------|
 | [build_7848](https://build.ci.opensearch.org/job/distribution-build-opensearch/7848/console) | [build_6126](https://build.ci.opensearch.org/job/distribution-build-opensearch-dashboards/6126/) |
-
-
-#### Integ Test TAR
-
-Following are the TAR integ test jobs for a given RC based on the above section [Sample Build details](#sample-build-details). The integ tests are executed for artifacts generated as part of the builds `OS: 7848`, `OSD: 6126`.
-
-| Integ Test Tar | x64 | arm64 |
-|----------|----------|----------|
-| OpenSearch  | [x64](https://build.ci.opensearch.org/job/integ-test/4906/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test/4897/console)   |
-| OpenSearch Dashboards  | [x64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3531/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3530/console)   |
-
-#### Integ Test RPM
-
-Following are the RPM integ test jobs for a given RC based on the above section [Sample Build details](#sample-build-details). The integ tests for rpm are executed for artifacts generated as part of the builds `OS: 7848`, `OSD: 6126`.
-
-| Integ Test RPM | x64 | arm64 |
-|----------|----------|----------|
-| OpenSearch  | [x64](https://build.ci.opensearch.org/job/integ-test/4908/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test/4907/console)   |
-| OpenSearch Dashboards  | [x64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3532/console)  | [arm64](https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/3533/console)   |
 
 #### Docker Build and Scan
 
