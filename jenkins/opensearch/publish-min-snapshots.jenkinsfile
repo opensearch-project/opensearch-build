@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@5.8.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@5.12.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -126,7 +126,7 @@ pipeline {
                     steps {
                         script {
                             echo("Switching to Java ${env.javaVersionNumber} on MacOS")
-                            sh("jenv global ${dockerAgent.javaVersion}")
+                            sh("/usr/local/bin/update-alternatives --set java `/usr/local/bin/update-alternatives --list java | grep openjdk-${env.javaVersionNumber}`")
                             sh("java -version")
                             buildManifest(
                                 componentName: "OpenSearch",

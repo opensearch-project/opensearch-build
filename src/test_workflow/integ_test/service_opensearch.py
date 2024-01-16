@@ -16,6 +16,7 @@ from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution
 from test_workflow.integ_test.distributions import Distributions
 from test_workflow.integ_test.service import Service
+from test_workflow.integ_test.utils import get_password
 
 
 class ServiceOpenSearch(Service):
@@ -65,7 +66,7 @@ class ServiceOpenSearch(Service):
     def get_service_response(self) -> Response:
         url = self.url("/_cluster/health")
         logging.info(f"Pinging {url}")
-        return requests.get(url, verify=False, auth=("admin", "admin"))
+        return requests.get(url, verify=False, auth=("admin", get_password(self.version)))
 
     def __add_plugin_specific_config(self, additional_config: dict) -> None:
         with open(self.opensearch_yml_path, "a") as yamlfile:

@@ -10,7 +10,8 @@ cd $OPENSEARCH_HOME
 KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
 ##Security Plugin
 if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
-        bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s
+        echo -e "OpenSearch 2.12.0 onwards, the OpenSearch Security Plugin introduces a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit."
+        bash $OPENSEARCH_HOME/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s || exit 1
         echo "done security"
 fi
 

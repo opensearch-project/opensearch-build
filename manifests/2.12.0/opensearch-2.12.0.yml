@@ -139,95 +139,98 @@ components:
     depends_on:
       - common-utils
       - job-scheduler
-#  - name: sql
-#    repository: https://github.com/opensearch-project/sql.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
-#    depends_on:
-#      - ml-commons
-#  - name: asynchronous-search
-#    repository: https://github.com/opensearch-project/asynchronous-search.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version
-#    depends_on:
-#      - common-utils
-#  - name: anomaly-detection
-#    repository: https://github.com/opensearch-project/anomaly-detection.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version
-#    depends_on:
-#      - common-utils
-#      - job-scheduler
-#  - name: alerting
-#    repository: https://github.com/opensearch-project/alerting.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version: alerting
-#    depends_on:
-#      - common-utils
-#  - name: security-analytics
-#    repository: https://github.com/opensearch-project/security-analytics.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#    depends_on:
-#      - common-utils
-#  - name: index-management
-#    repository: https://github.com/opensearch-project/index-management.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#    depends_on:
-#      - common-utils
-#      - job-scheduler
-#  - name: performance-analyzer
-#    repository: https://github.com/opensearch-project/performance-analyzer.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version
-#  - name: custom-codecs
-#    repository: https://github.com/opensearch-project/custom-codecs.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version
-#  - name: flow-framework
-#    repository: https://github.com/opensearch-project/flow-framework.git
-#    ref: 2.x
-#    platforms:
-#      - linux
-#      - windows
-#    checks:
-#      - gradle:properties:version
-#      - gradle:dependencies:opensearch.version
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-sql-plugin
+    depends_on:
+      - ml-commons
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+    depends_on:
+      - common-utils
+  - name: security-analytics
+    repository: https://github.com/opensearch-project/security-analytics.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+    depends_on:
+      - common-utils
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: 2.x
+    platforms:
+      - linux
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: custom-codecs
+    repository: https://github.com/opensearch-project/custom-codecs.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+  - name: flow-framework
+    repository: https://github.com/opensearch-project/flow-framework.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+      - ml-commons

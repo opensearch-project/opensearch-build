@@ -45,7 +45,7 @@ class TestDistributionTar(unittest.TestCase):
             mock_tarfile_extractall.assert_called_with(self.work_dir)
 
     def test_start_cmd(self) -> None:
-        self.assertEqual(self.distribution_tar.start_cmd, "./opensearch-tar-install.sh")
+        self.assertEqual(self.distribution_tar.start_cmd, "export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && ./opensearch-tar-install.sh")
         self.assertEqual(self.distribution_tar_dashboards.start_cmd, "./opensearch-dashboards")
 
     @patch("subprocess.check_call")

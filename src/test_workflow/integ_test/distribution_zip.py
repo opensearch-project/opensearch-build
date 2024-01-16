@@ -33,7 +33,7 @@ class DistributionZip(Distribution):
     @property
     def start_cmd(self) -> str:
         start_cmd_map = {
-            "opensearch": ".\\opensearch-windows-install.bat",
+            "opensearch": "set OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! .\\opensearch-windows-install.bat",
             "opensearch-dashboards": ".\\opensearch-dashboards.bat",
         }
         return start_cmd_map[self.filename]

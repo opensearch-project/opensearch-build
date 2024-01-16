@@ -84,6 +84,12 @@ pipeline {
             description: 'Continue building the distribution even if a one or more component fails',
             defaultValue: true
         )
+        string(
+            name: 'INCREMENTAL',
+            description: 'To trigger incremental build, put the build id for previous build or `latest`. Type in `false` to disable incremental build.'
+            defaultValue: 'false',
+            trim: true
+        )
     }
     stages {
         stage('verify-parameters') {
@@ -169,7 +175,8 @@ pipeline {
                                 platform: 'linux',
                                 architecture: 'x64',
                                 distribution: 'tar',
-                                continueOnError: params.CONTINUE_ON_ERROR
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -190,7 +197,8 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
                                             ]
                                     }
                                 },
@@ -255,6 +263,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        incremental: params.INCREMENTAL,
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -265,7 +274,7 @@ pipeline {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
-                                        postCleanup()                                      
+                                        postCleanup()
                                     }
                                 }
                             }
@@ -352,6 +361,7 @@ pipeline {
                                         architecture: 'x64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        incremental: params.INCREMENTAL,
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -362,7 +372,7 @@ pipeline {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
-                                        postCleanup()                                      
+                                        postCleanup()
                                     }
                                 }
                             }
@@ -436,7 +446,8 @@ pipeline {
                                 platform: 'linux',
                                 architecture: 'arm64',
                                 distribution: 'tar',
-                                continueOnError: params.CONTINUE_ON_ERROR
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
@@ -456,7 +467,8 @@ pipeline {
                                             wait: false,
                                             parameters: [
                                                 string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
-                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl)
+                                                string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                                                booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
                                             ]
                                     }
                                 }
@@ -506,6 +518,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'rpm',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        incremental: params.INCREMENTAL,
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -603,6 +616,7 @@ pipeline {
                                         architecture: 'arm64',
                                         distribution: 'deb',
                                         continueOnError: params.CONTINUE_ON_ERROR,
+                                        incremental: params.INCREMENTAL,
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                 }
@@ -687,7 +701,8 @@ pipeline {
                                 platform: 'windows',
                                 architecture: 'x64',
                                 distribution: 'zip',
-                                continueOnError: params.CONTINUE_ON_ERROR
+                                continueOnError: params.CONTINUE_ON_ERROR,
+                                incremental: params.INCREMENTAL
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)

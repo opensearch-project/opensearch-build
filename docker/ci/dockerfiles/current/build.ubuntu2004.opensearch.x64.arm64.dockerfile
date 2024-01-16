@@ -33,7 +33,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl
 
 # Install pip packages
 RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
-    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12 docker-compose==1.29.2
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17 docker-compose==1.29.2
 
 # Install aptly and required changes to debmake
 # Remove lintian for now due to it takes nearly 20 minutes for OpenSearch as well as nearly an hour for OpenSearch-Dashboards during debmake

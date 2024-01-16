@@ -43,7 +43,7 @@
 
 ### Releasing OpenSearch
 
-Please refer to the [release process document](./RELEASE_PROCESS_OPENSEARCH.md) for detailed information on how to release the OpenSearch and OpenSearch Dashboards software.
+Please refer to the [release process document](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution) for detailed information on how to release the OpenSearch and OpenSearch Dashboards software.
 
 
 #### Releases and Versions
@@ -281,7 +281,7 @@ See [src/manifests_workflow](./src/manifests_workflow) for more information.
 
 ### Deploying Infrastructure
 
-Storage and access roles for the OpenSearch release process are codified in a [CDK project](./deployment/README.md).
+This project uses jenkins as the build infrastructure for building, testing and releasing the artifacts. The infrastructure is deployed using CDK and code can be found in [opensearch-ci](https://github.com/opensearch-project/opensearch-ci/tree/main) repository.
 
 ## Contributing
 

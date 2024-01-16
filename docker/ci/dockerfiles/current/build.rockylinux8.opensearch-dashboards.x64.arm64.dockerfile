@@ -69,7 +69,7 @@ ENV PATH=$RUBY_HOME:$RVM_HOME:$PATH
 # Install Python binary
 RUN update-alternatives --set python /usr/bin/python3.9 && \
     update-alternatives --set python3 /usr/bin/python3.9 && \
-    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.22.12
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Preparation for awscliv2
 #RUN pip3 install git+https://github.com/aws/aws-cli.git@2.11.17
