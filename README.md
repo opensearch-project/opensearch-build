@@ -43,7 +43,7 @@
 
 ### Releasing OpenSearch
 
-Please refer to the [release process document](./RELEASE_PROCESS_OPENSEARCH.md) for detailed information on how to release the OpenSearch and OpenSearch Dashboards software.
+Please refer to the [release process document](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution) for detailed information on how to release the OpenSearch and OpenSearch Dashboards software.
 
 
 #### Releases and Versions
