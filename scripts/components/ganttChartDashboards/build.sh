@@ -9,6 +9,10 @@
 
 set -ex
 
+# vars / libs
+. ../../../lib/shell/file_management.sh
+PLUGIN_PATH=$PWD
+
 function usage() {
     echo "Usage: $0 [args]"
     echo ""
@@ -21,6 +25,12 @@ function usage() {
     echo -e "-o OUTPUT\t[Optional] Output path, default is 'artifacts'."
     echo -e "-h help"
 }
+
+function cleanup_all() {
+    File_Delete $PLUGIN_PATH
+}
+
+trap cleanup_all TERM INT EXIT
 
 while getopts ":h:v:q:s:o:p:a:" arg; do
     case $arg in
@@ -87,4 +97,3 @@ cd plugins/$PLUGIN_FOLDER; yarn plugin-helpers build --opensearch-dashboards-ver
 cd $CURR_DIR
 echo "COPY $PLUGIN_NAME.zip"
 cp -r ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER/build/$PLUGIN_NAME-$VERSION$QUALIFIER_IDENTIFIER.zip $OUTPUT/plugins/
-rm -rf ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER
