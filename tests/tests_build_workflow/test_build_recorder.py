@@ -10,7 +10,6 @@ import unittest
 from unittest.mock import MagicMock, Mock, patch
 
 import yaml
-
 from build_workflow.build_recorder import BuildRecorder
 from build_workflow.build_target import BuildTarget
 from build_workflow.opensearch.build_artifact_check_maven import BuildArtifactOpenSearchCheckMaven
