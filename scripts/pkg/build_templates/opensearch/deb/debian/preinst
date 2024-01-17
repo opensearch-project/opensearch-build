@@ -31,15 +31,11 @@ fi
 # 2. Currently, the demo config setup is defined to run, in postinst, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
 
 # Check if this is an upgrade by checking whether opensearch already exists
-set +e
-dpkg-query -l opensearch 2>&1 | grep ^ii >/dev/null
-EX_CODE=$?
-if [ $EX_CODE -eq 0 ]; then
-  OPENSEARCH_ALREADY_INSTALLED=yes
+if [ -f /lib/systemd/system/opensearch.service ] || [ -f /etc/systemd/system/opensearch.service ]; then
+    OPENSEARCH_ALREADY_INSTALLED=yes
 else
-  OPENSEARCH_ALREADY_INSTALLED=no
+    OPENSEARCH_ALREADY_INSTALLED=no
 fi
-set -e
 
 OPENSEARCH_REQUIRED_VERSION="2.12.0"
 MINIMUM_OF_TWO_VERSIONS=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`

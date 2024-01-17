@@ -96,15 +96,11 @@ fi
 # 2. Currently, the demo config setup is defined to run, in postinst, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
 
 # Check if this is an upgrade by checking whether opensearch already exists
-set +e
-rpm -q opensearch > /dev/null 2>&1 || yum list installed opensearch > /dev/null 2>&1
-EX_CODE=$?
-if [ $EX_CODE -eq 0 ]; then
-  OPENSEARCH_ALREADY_INSTALLED=yes
+if rpm -q opensearch >/dev/null 2>&1 || yum list installed opensearch >/dev/null 2>&1; then
+    OPENSEARCH_ALREADY_INSTALLED=yes
 else
-  OPENSEARCH_ALREADY_INSTALLED=no
+    OPENSEARCH_ALREADY_INSTALLED=no
 fi
-set -e
 
 OPENSEARCH_REQUIRED_VERSION="2.12.0"
 OPENSEARCH_VERSION=%{_version}
