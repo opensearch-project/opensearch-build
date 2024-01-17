@@ -10,8 +10,10 @@
 set -ex
 
 # vars / libs
-. ../../../lib/shell/file_management.sh
-PLUGIN_PATH=$PWD
+SCRIPT_DIR=`dirname $(realpath $0)`
+. $SCRIPT_DIR/../../../lib/shell/file_management.sh
+PLUGIN_NAME=$(basename "$PWD")
+PLUGIN_PATH="../OpenSearch-Dashboards/plugins/$PLUGIN_NAME"
 
 function usage() {
     echo "Usage: $0 [args]"
@@ -91,7 +93,6 @@ else
 fi
 
 mkdir -p $OUTPUT/plugins
-PLUGIN_NAME=$(basename "$PWD")
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
