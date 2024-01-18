@@ -40,10 +40,18 @@ class TestTestReportManifest(unittest.TestCase):
         self.assertEqual(component.configs.configs[0]["status"], "FAIL")
         self.assertEqual(component.configs.configs[0]["yml"],
                          "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/alerting.yml")
+        self.assertEqual(component.configs.configs[0]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/local-cluster-logs/id-0/stdout.txt")
+        self.assertEqual(component.configs.configs[0]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/local-cluster-logs/id-0/stderr.txt")
         self.assertEqual(component.configs.configs[1]["name"], "without-security")
         self.assertEqual(component.configs.configs[1]["status"], "PASS")
         self.assertEqual(component.configs.configs[1]["yml"],
                          "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/alerting.yml")
+        self.assertEqual(component.configs.configs[1]["cluster_stdout"][0],
+                         "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/local-cluster-logs/id-0/stdout.txt")
+        self.assertEqual(component.configs.configs[1]["cluster_stderr"][0],
+                         "https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/local-cluster-logs/id-0/stderr.txt")
 
     def test_to_dict(self) -> None:
         data = self.manifest.to_dict()

@@ -17,9 +17,17 @@ components:
       - name: with-security
         status: FAIL
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/alerting.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/alerting.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/alerting/without-security/local-cluster-logs/id-0/stderr.txt
   - name: anomaly-detection
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -28,9 +36,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/with-security/anomaly-detection.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/without-security/anomaly-detection.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/anomaly-detection/without-security/local-cluster-logs/id-0/stderr.txt
   - name: asynchronous-search
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -39,9 +55,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/with-security/asynchronous-search.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/without-security/asynchronous-search.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/asynchronous-search/without-security/local-cluster-logs/id-0/stderr.txt
   - name: cross-cluster-replication
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -50,9 +74,17 @@ components:
       - name: with-security
         status: Not Available
         yml: URL not available
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/cross-cluster-replication/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: Not Available
         yml: URL not available
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/cross-cluster-replication/without-security/local-cluster-logs/id-0/stderr.txt
   - name: geospatial
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -61,9 +93,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/geospatial.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/without-security/geospatial.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/geospatial/without-security/local-cluster-logs/id-0/stderr.txt
   - name: index-management
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -72,9 +112,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/with-security/index-management.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/without-security/index-management.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/index-management/without-security/local-cluster-logs/id-0/stderr.txt
   - name: k-NN
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -83,9 +131,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/with-security/k-NN.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/without-security/k-NN.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/k-NN/without-security/local-cluster-logs/id-0/stderr.txt
   - name: ml-commons
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -94,9 +150,17 @@ components:
       - name: with-security
         status: FAIL
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/with-security/ml-commons.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/without-security/ml-commons.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/ml-commons/without-security/local-cluster-logs/id-0/stderr.txt
   - name: neural-search
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -105,9 +169,17 @@ components:
       - name: with-security
         status: FAIL
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/with-security/neural-search.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/without-security/neural-search.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/neural-search/without-security/local-cluster-logs/id-0/stderr.txt
   - name: notifications
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -116,9 +188,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/with-security/notifications.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/without-security/notifications.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/notifications/without-security/local-cluster-logs/id-0/stderr.txt
   - name: opensearch-observability
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -127,9 +207,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/with-security/opensearch-observability.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/without-security/opensearch-observability.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-observability/without-security/local-cluster-logs/id-0/stderr.txt
   - name: opensearch-reports
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -138,9 +226,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/with-security/opensearch-reports.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/without-security/opensearch-reports.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/opensearch-reports/without-security/local-cluster-logs/id-0/stderr.txt
   - name: security
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -149,6 +245,10 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security/with-security/security.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security/with-security/local-cluster-logs/id-0/stderr.txt
   - name: security-analytics
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -157,9 +257,17 @@ components:
       - name: with-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/with-security/security-analytics.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/without-security/security-analytics.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/security-analytics/without-security/local-cluster-logs/id-0/stderr.txt
   - name: sql
     command: ./test.sh integ-test manifests/2.8.0/opensearch-2.8.0-test.yml --paths
       opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/2.8.0/7935/linux/x64/tar
@@ -168,6 +276,14 @@ components:
       - name: with-security
         status: FAIL
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/with-security/sql.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/with-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/with-security/local-cluster-logs/id-0/stderr.txt
       - name: without-security
         status: PASS
         yml: https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/without-security/sql.yml
+        cluster_stdout:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/without-security/local-cluster-logs/id-0/stdout.txt
+        cluster_stderr:
+          - https://ci.opensearch.org/ci/dbc/integ-test/2.8.0/7935/linux/x64/tar/test-results/5109/integ-test/sql/without-security/local-cluster-logs/id-0/stderr.txt
