@@ -17,6 +17,14 @@ pipeline {
         timeout(time: 2, unit: 'HOURS')
     }
     agent none
+    triggers {
+        parameterizedCron '''
+            H 19 15 * * %PRODUCT=opensearch;TAG=1
+            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=1
+            H 19 15 * * %PRODUCT=opensearch;TAG=2
+            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=2
+        '''
+    }
     parameters {
         choice(
             name: 'PRODUCT',
