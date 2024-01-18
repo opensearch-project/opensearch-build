@@ -13,7 +13,7 @@ set -ex
 SCRIPT_DIR=`dirname $(realpath $0)`
 . $SCRIPT_DIR/../../../lib/shell/file_management.sh
 PLUGIN_NAME=$(basename "$PWD")
-PLUGIN_PATH="../OpenSearch-Dashboards/plugins/$PLUGIN_NAME"
+PLUGIN_PATH=`realpath ../OpenSearch-Dashboards/plugins/$PLUGIN_NAME`
 
 function usage() {
     echo "Usage: $0 [args]"
