@@ -3,9 +3,9 @@ name: manifests
 
 on:
   pull_request:
-      - 'manifests/**/*.yml'
-      - '!manifests/templates/**/'
-      - 'legacy-manifests/**/*.yml'
+    - 'manifests/**/*.yml'
+    - '!manifests/templates/**/'
+    - 'legacy-manifests/**/*.yml'
 
 jobs:
   list-changed-manifests:
