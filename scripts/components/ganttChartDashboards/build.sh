@@ -15,7 +15,7 @@ SCRIPT_DIR=`dirname $(realpath $0)`
 # For hybrid plugin it actually resides in 'dashboards-visualizations/gantt-chart'
 PLUGIN_FOLDER=$(basename "$PWD")
 PLUGIN_NAME=$(basename $(dirname "$PWD"))
-PLUGIN_PATH="../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER"
+PLUGIN_PATH=`realpath ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER`
 
 function usage() {
     echo "Usage: $0 [args]"
