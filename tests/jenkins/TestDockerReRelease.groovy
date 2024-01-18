@@ -32,6 +32,7 @@ class TestDockerReRelease extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         super.setUp()
 
         // Variables
