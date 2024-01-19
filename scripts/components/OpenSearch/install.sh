@@ -84,6 +84,9 @@ if [ "$DISTRIBUTION" = "tar" ]; then
 elif [ "$DISTRIBUTION" = "deb" -o "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+    if [ "$DISTRIBUTION" = "deb" ]; then
+      sed -i "s/CHANGE_VERSION/${VERSION}/g" "$OUTPUT/../debian/preinst"
+    fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
 fi
