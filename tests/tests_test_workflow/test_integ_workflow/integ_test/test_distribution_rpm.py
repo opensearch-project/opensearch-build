@@ -13,16 +13,14 @@ from test_workflow.integ_test.distribution_rpm import DistributionRpm
 
 
 class TestDistributionRpm(unittest.TestCase):
-
     def setUp(self) -> None:
-
         self.work_dir = os.path.join(os.path.dirname(__file__), "data")
         self.distribution_rpm = DistributionRpm("opensearch", "1.3.0", self.work_dir)
         self.distribution_rpm_dashboards = DistributionRpm("opensearch-dashboards", "1.3.0", self.work_dir)
 
     def test_distribution_rpm_vars(self) -> None:
-        self.assertEqual(self.distribution_rpm.filename, 'opensearch')
-        self.assertEqual(self.distribution_rpm.version, '1.3.0')
+        self.assertEqual(self.distribution_rpm.filename, "opensearch")
+        self.assertEqual(self.distribution_rpm.version, "1.3.0")
         self.assertEqual(self.distribution_rpm.work_dir, self.work_dir)
         self.assertEqual(self.distribution_rpm.require_sudo, True)
 
@@ -40,7 +38,15 @@ class TestDistributionRpm(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"sudo yum remove -y opensearch && sudo yum install -y opensearch.rpm && sudo chmod 0666 {self.distribution_rpm.config_path}", args_list[0][0][0])
+        self.assertEqual(
+            (
+                "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && "
+                "sudo yum remove -y opensearch && "
+                "sudo yum install -y opensearch.rpm && "
+                f"sudo chmod 0666 {self.distribution_rpm.config_path}"
+            ),
+            args_list[0][0][0],
+        )
 
     def test_start_cmd(self) -> None:
         self.assertEqual(self.distribution_rpm.start_cmd, "sudo systemctl start opensearch")

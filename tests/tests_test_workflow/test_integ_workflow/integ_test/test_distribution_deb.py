@@ -13,16 +13,14 @@ from test_workflow.integ_test.distribution_deb import DistributionDeb
 
 
 class TestDistributionDeb(unittest.TestCase):
-
     def setUp(self) -> None:
-
         self.work_dir = os.path.join(os.path.dirname(__file__), "data")
         self.distribution_deb = DistributionDeb("opensearch", "1.3.0", self.work_dir)
         self.distribution_deb_dashboards = DistributionDeb("opensearch-dashboards", "1.3.0", self.work_dir)
 
     def test_distribution_deb_vars(self) -> None:
-        self.assertEqual(self.distribution_deb.filename, 'opensearch')
-        self.assertEqual(self.distribution_deb.version, '1.3.0')
+        self.assertEqual(self.distribution_deb.filename, "opensearch")
+        self.assertEqual(self.distribution_deb.version, "1.3.0")
         self.assertEqual(self.distribution_deb.work_dir, self.work_dir)
         self.assertEqual(self.distribution_deb.require_sudo, True)
 
@@ -40,7 +38,15 @@ class TestDistributionDeb(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"sudo dpkg --purge opensearch && sudo dpkg --install opensearch.deb && sudo chmod 0666 {self.distribution_deb.config_path}", args_list[0][0][0])
+        self.assertEqual(
+            (
+                "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && "
+                "sudo dpkg --purge opensearch && "
+                "sudo dpkg --install opensearch.deb && "
+                f"sudo chmod 0666 {self.distribution_deb.config_path}"
+            ),
+            args_list[0][0][0],
+        )
 
     def test_start_cmd(self) -> None:
         self.assertEqual(self.distribution_deb.start_cmd, "sudo systemctl start opensearch")

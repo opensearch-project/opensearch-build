@@ -31,6 +31,10 @@ class DistributionDeb(Distribution):
         deb_install_cmd = " ".join(
             [
                 'sudo',
+                'env',
+                'OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123!',
+                '&&',
+                'sudo',
                 'dpkg',
                 '--purge',
                 self.filename,

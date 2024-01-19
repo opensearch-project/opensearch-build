@@ -31,6 +31,10 @@ class DistributionRpm(Distribution):
         rpm_install_cmd = " ".join(
             [
                 'sudo',
+                'env',
+                'OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123!',
+                '&&',
+                'sudo',
                 'yum',
                 'remove',
                 '-y',
