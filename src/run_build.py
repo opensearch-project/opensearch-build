@@ -9,6 +9,7 @@
 import logging
 import os
 import sys
+import uuid
 
 from build_workflow.build_args import BuildArgs
 from build_workflow.build_incremental import BuildIncremental
@@ -49,19 +50,22 @@ def main() -> int:
         buildIncremental = BuildIncremental(manifest, args.distribution)
         list_of_updated_plugins = buildIncremental.commits_diff(manifest)
         components = buildIncremental.rebuild_plugins(list_of_updated_plugins, manifest)
-        if not components:
-            logging.info("No commit difference found between any components. Skipping the build")
-            return 0
-
-        logging.info(f"Plugins for incremental build: {components}")
 
         build_manifest_path = os.path.join(args.distribution, "builds", manifest.build.filename, "manifest.yml")
         if not os.path.exists(build_manifest_path):
             logging.error(f"Previous build manifest missing at path: {build_manifest_path}")
+        build_manifest = BuildManifest.from_path(build_manifest_path)
+
+        if not components:
+            logging.info("No commit difference found between any components. Skipping the build.")
+            build_manifest.build.id = os.getenv("BUILD_NUMBER") or uuid.uuid4().hex
+            build_manifest.to_file(build_manifest_path)
+            logging.info(f"Updating the build ID of build manifest to {build_manifest.build.id}.")
+            return 0
+
+        logging.info(f"Plugins for incremental build: {components}")
 
         logging.info(f"Build {components} incrementally.")
-
-        build_manifest = BuildManifest.from_path(build_manifest_path)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
