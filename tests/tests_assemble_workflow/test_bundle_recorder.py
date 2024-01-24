@@ -9,7 +9,6 @@ import os
 import unittest
 
 import yaml
-
 from assemble_workflow.bundle_file_location import BundleFileLocation
 from assemble_workflow.bundle_recorder import BundleRecorder
 from assemble_workflow.bundle_url_location import BundleUrlLocation

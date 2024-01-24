@@ -12,7 +12,6 @@ from io import TextIOWrapper
 from typing import Type, Union
 
 import yaml
-
 from ci_workflow.ci_args import CiArgs
 from ci_workflow.ci_input_manifest import CiInputManifest
 from ci_workflow.ci_test_manifest import CiTestManifest
