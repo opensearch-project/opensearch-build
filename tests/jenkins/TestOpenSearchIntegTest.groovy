@@ -23,7 +23,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.11.1')
+                .defaultVersion('6.1.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -35,9 +35,8 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         def jobName = "dummy_job"
         def testManifest = "tests/jenkins/data/opensearch-3.0.0-test.yml"
-        def buildId = 8184
         def buildManifest = "tests/jenkins/data/opensearch-3.0.0-build.yml"
-        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/${buildId}/linux/x64/tar/dist/opensearch/opensearch-3.0.0-linux-x64.tar.gz"
+        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar/dist/opensearch/opensearch-3.0.0-linux-x64.tar.gz"
         def agentLabel = "Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host"
         def bucketName = 'job-s3-bucket-name'
 
@@ -69,12 +68,15 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
             return helper.callClosure(closure)
         })
         helper.registerAllowedMethod("withCredentials", [Map])
-        helper.registerAllowedMethod('readYaml', [Map.class], { args ->
-            return new Yaml().load((this.testManifest ?: binding.getVariable('TEST_MANIFEST') as File).text)
-        })
         helper.registerAllowedMethod('parameterizedCron', [String], null)
-        helper.registerAllowedMethod('readYaml', [Map.class], { args ->
-            return new Yaml().load((buildManifest as File).text)
+        helper.registerAllowedMethod("readYaml", [Map.class], { args ->
+            if (args.file == 'manifests/tests/jenkins/data/opensearch-3.0.0-test.yml') {
+                return new Yaml().load((testManifest as File).text)
+            } else if (args.file == 'tests/jenkins/data/opensearch-3.0.0-build.yml') {
+                return new Yaml().load((buildManifest as File).text)
+            } else {
+                println("Manifest not found ${args.file}")
+            }
         })
         helper.addFileExistsMock("manifests/${testManifest}", true)
         helper.registerAllowedMethod("s3Upload", [Map])
@@ -86,14 +88,15 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     void integTests_runs_consistently() {
         super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
-        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/8184/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
+        assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
+        assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
     }
 
     @Test
     void checkUploadResults() {
         runScript('jenkins/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/8184/linux/x64/tar/test-results}'))
+        assertThat(getCommandExecutions('s3Upload', ''), hasItem('{file=test-results, bucket=ARTIFACT_BUCKET_NAME, path=dummy_job/3.0.0/9010/linux/x64/tar/test-results}'))
     }
 
     @Test
@@ -105,23 +108,30 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     }
 
     @Test
+    void checkErrorForMissingComponentFromTestManifest() {
+        addParam('COMPONENT_NAME', 'sql')
+        runScript('jenkins/opensearch/integ-test.jenkinsfile')
+        assertThat(getCommandExecutions('echo', 'sql'), hasItem('Skipping tests for sql as is not present in the provided build manifest.'))
+    }
+
+    @Test
     void checkGHissueCreation() {
-        super.setUp()
         helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S "[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""env PATH=\$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar """) { script ->
+            return [stdout: "Error running integtest for component k-NN, creating Github issue", exitValue: 1]}
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S "[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 tar distribution in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
-        assertThat(getCommandExecutions('sh', 'script'), hasItem('{script=gh issue create --title \"[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution\" --body \"The integration test failed at distribution level for component OpenSearch<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/8184/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\" --label autocut,v3.0.0,integ-test-failure --label \"untriaged\" --repo https://github.com/opensearch-project/OpenSearch.git, returnStdout=true}'))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem('{script=gh issue create --title \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 tar distribution\" --body \"The integration test failed at distribution level for component k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\" --label autocut,v3.0.0,integ-test-failure --label \"untriaged\" --repo https://github.com/opensearch-project/k-NN.git, returnStdout=true}'))
     }
 
     @Test
@@ -129,26 +139,27 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         helper.addShMock("date -d \"5 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar', '', 1)
+        helper.addShMock("""env PATH=\$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar""") { script -> 
+        return [stdout: "Completed running integtest for component k-NN", exitValue: 0]
+        }
         runScript('jenkins/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S \"[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue close bbb\nccc -R opensearch-project/OpenSearch --comment \"Closing the issue as the Integration Test passed for OpenSearch<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/k-NN.git -S \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue close bbb\nccc -R opensearch-project/k-NN --comment \"Closing the issue as the Integration Test passed for k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}"))
     }
 
     @Test
     void checkGHexistingIssue() {
-        super.setUp()
         helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
-        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component OpenSearch --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/8184/linux/x64/tar ', '', 1)
+        helper.addShMock('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar ', '', 1)
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
         assertThat(getCommandExecutions('println', 'Issue'), hasItem('Issue already exists, adding a comment'))
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/OpenSearch.git -S \"[AUTOCUT] Integration Test failed for OpenSearch: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue comment bbb\nccc --repo https://github.com/opensearch-project/OpenSearch.git --body \"The integration test failed at distribution level for component OpenSearch<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/8184/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\", returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/k-NN.git -S \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue comment bbb\nccc --repo https://github.com/opensearch-project/k-NN.git --body \"The integration test failed at distribution level for component k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\", returnStdout=true}"))
     }
 
     def getCommandExecutions(methodName, command) {

@@ -32,6 +32,7 @@ class TestDockerReRelease extends BuildPipelineTest {
                 .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                 .build()
             )
+        helper.registerAllowedMethod('parameterizedCron', [String], null)
         super.setUp()
 
         // Variables
@@ -69,6 +70,7 @@ class TestDockerReRelease extends BuildPipelineTest {
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-build, propagate=true, wait=true, parameters=[null, null, null]}'))
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-scan, propagate=true, wait=true, parameters=[null]}'))
         assertThat(getCommandExecutions('build', ''), hasItem('{job=docker-promotion, propagate=true, wait=true, parameters=[null, null, null]}'))
+        assertThat(getCommandExecutions('parameterizedCron', ''), hasItem('\n            H 19 15 * * %PRODUCT=opensearch;TAG=1\n            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=1\n            H 19 15 * * %PRODUCT=opensearch;TAG=2\n            H 19 15 * * %PRODUCT=opensearch-dashboards;TAG=2\n        '))
 
     }
 

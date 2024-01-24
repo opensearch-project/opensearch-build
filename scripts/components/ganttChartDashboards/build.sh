@@ -10,8 +10,12 @@
 set -ex
 
 # vars / libs
-. ../../../lib/shell/file_management.sh
-PLUGIN_PATH=$PWD
+SCRIPT_DIR=`dirname $(realpath $0)`
+. $SCRIPT_DIR/../../../lib/shell/file_management.sh
+# For hybrid plugin it actually resides in 'dashboards-visualizations/gantt-chart'
+PLUGIN_FOLDER=$(basename "$PWD")
+PLUGIN_NAME=$(basename $(dirname "$PWD"))
+PLUGIN_PATH=`realpath ../../OpenSearch-Dashboards/plugins/$PLUGIN_FOLDER`
 
 function usage() {
     echo "Usage: $0 [args]"
@@ -83,9 +87,6 @@ if [ "$PLATFORM" = "windows" ]; then
 fi
 
 mkdir -p $OUTPUT/plugins
-# For hybrid plugin it actually resides in 'ganttChartDashboards/gantt-chart'
-PLUGIN_FOLDER=$(basename "$PWD")
-PLUGIN_NAME=$(basename $(dirname "$PWD"))
 # TODO: [CLEANUP] Needed OpenSearch Dashboards git repo to build the required modules for plugins
 # This makes it so there is a dependency on having Dashboards pulled already.
 cp -r ../$PLUGIN_FOLDER/ ../../OpenSearch-Dashboards/plugins

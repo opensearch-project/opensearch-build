@@ -21,9 +21,8 @@ pid_dir=/var/run/opensearch
 
 # Apply Security Settings
 if [ -d ${product_dir}/plugins/opensearch-security ]; then
-    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1
+    bash ${product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > ${log_dir}/install_demo_configuration.log 2>&1 || (echo "ERROR: Something went wrong during demo configuration installation. Please see the logs in ${log_dir}/install_demo_configuration.log" && exit 1)
 fi
-
 # Apply PerformanceAnalyzer Settings
 chmod a+rw /tmp
 if ! grep -q '## OpenSearch Performance Analyzer' ${config_dir}/jvm.options; then
