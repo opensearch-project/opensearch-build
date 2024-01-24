@@ -259,16 +259,23 @@ class TestRunBuild(unittest.TestCase):
         mock_build_incremental.return_value.commits_diff.assert_called()
         mock_build_incremental.return_value.rebuild_plugins.assert_called()
 
+    @patch.dict(os.environ, {"BUILD_NUMBER": "1234"})
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental", "-p", "linux"])
     @patch("run_build.BuildIncremental.commits_diff", return_value=MagicMock())
+    @patch("manifests.build_manifest.BuildManifest.from_path")
     @patch("run_build.BuildIncremental.rebuild_plugins", return_value=MagicMock())
     @patch("run_build.logging.info")
     def test_build_incremental_no_change(self, mock_logging_info: MagicMock,
-                                         mock_build_incremental: MagicMock, *mocks: Any) -> None:
+                                         mock_build_incremental: MagicMock, mock_build_manifest: MagicMock,
+                                         *mocks: Any) -> None:
         mock_build_incremental.return_value = []
+        mock_build_manifest.return_value = self.BUILD_MANIFEST
         main()
         mock_logging_info.assert_has_calls([
-            call("No commit difference found between any components. Skipping the build")
+            call("No commit difference found between any components. Skipping the build.")
+        ], any_order=True)
+        mock_logging_info.assert_has_calls([
+            call("Updating the build ID in the build manifest to 1234.")
         ], any_order=True)
 
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental"])
