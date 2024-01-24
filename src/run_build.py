@@ -60,7 +60,7 @@ def main() -> int:
             logging.info("No commit difference found between any components. Skipping the build.")
             build_manifest.build.id = os.getenv("BUILD_NUMBER") or uuid.uuid4().hex
             build_manifest.to_file(build_manifest_path)
-            logging.info(f"Updating the build ID of build manifest to {build_manifest.build.id}.")
+            logging.info(f"Updating the build ID in the build manifest to {build_manifest.build.id}.")
             return 0
 
         logging.info(f"Plugins for incremental build: {components}")

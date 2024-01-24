@@ -275,7 +275,7 @@ class TestRunBuild(unittest.TestCase):
             call("No commit difference found between any components. Skipping the build.")
         ], any_order=True)
         mock_logging_info.assert_has_calls([
-            call("Updating the build ID of build manifest to 1234.")
+            call("Updating the build ID in the build manifest to 1234.")
         ], any_order=True)
 
     @patch("argparse._sys.argv", ["run_build.py", INPUT_MANIFEST_PATH, "--incremental"])
