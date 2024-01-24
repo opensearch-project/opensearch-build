@@ -65,8 +65,6 @@ def main() -> int:
 
         logging.info(f"Plugins for incremental build: {components}")
 
-        logging.info(f"Build {components} incrementally.")
-
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         logging.info(f"Building in {work_dir.name}")
 
