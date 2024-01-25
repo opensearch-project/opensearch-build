@@ -30,6 +30,10 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
               - name: with-security
                 status: the status of the test run with this config. e.g. pass/fail
                 yml: URL or local path to the component yml file
+                cluster_stdout:
+                  - URL or local path to the OpenSearch cluster logs
+                cluster_stderr:
+                  - URL or local path to the OpenSearch cluster error logs
     """
 
     SCHEMA = {
@@ -61,6 +65,8 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                                 "name": {"type": "string"},
                                 "status": {"type": "string"},
                                 "yml": {"type": "string"},
+                                "cluster_stdout": {"type": "list"},
+                                "cluster_stderr": {"type": "list"}
                             }
                         },
                     },
@@ -140,12 +146,16 @@ class TestComponent(Component):
                 self.name = data["name"]
                 self.status = data["status"]
                 self.yml = data["yml"]
+                self.cluster_stdout = data["cluster_stdout"]
+                self.cluster_stderr = data["cluster_stderr"]
 
             def __to_dict__(self) -> dict:
                 return {
                     "name": self.name,
                     "status": self.status,
-                    "yml": self.yml
+                    "yml": self.yml,
+                    "cluster_stdout": self.cluster_stdout,
+                    "cluster_stderr": self.cluster_stderr
                 }
 
 
