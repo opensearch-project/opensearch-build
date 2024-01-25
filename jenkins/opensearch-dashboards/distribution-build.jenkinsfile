@@ -42,18 +42,6 @@ pipeline {
             description: 'Test manifest under the manifests folder, e.g. 2.0.0/opensearch-dashboards-2.0.0-test.yml.',
             trim: true
         )
-        string(
-            name: 'INTEG_TEST_JOB_NAME',
-            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.",
-            defaultValue: "integ-test-opensearch-dashboards",
-            trim: true
-        )
-        string(
-            name: 'BWC_TEST_JOB_NAME',
-            description: "Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test-opensearch-dashboards.  A non-null empty value here will skip BWC tests.",
-            defaultValue: "bwc-test-opensearch-dashboards",
-            trim: true
-        )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
             description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
@@ -324,16 +312,7 @@ pipeline {
                                     echo "artifactUrl (linux, x64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
-                                    echo "Trigger rpm validation for linux x64 rpm ${bundleManifestUrl}"
-                                    def rpmValidationResults =
-                                        build job: 'rpm-validation',
-                                        propagate: false,
-                                        wait: false,
-                                        parameters: [
-                                            string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
-                                        ]
+                                    triggerRpmValidation(bundleManifestUrl)
                                 }
                             }
                             post {
@@ -445,8 +424,6 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
-
-                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                 }
                             }
@@ -693,16 +670,7 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
-                                    echo "Trigger rpm validation for linux arm64 rpm ${bundleManifestUrl}"
-                                    def rpmValidationResults =
-                                        build job: 'rpm-validation',
-                                        propagate: false,
-                                        wait: false,
-                                        parameters: [
-                                            string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_ARM64)
-                                        ]
+                                    triggerRpmValidation(bundleManifestUrl)
                                 }
                             }
                             post {
@@ -814,9 +782,6 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
-
-                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
                                 }
                             }
                             post {
@@ -891,7 +856,6 @@ pipeline {
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
-
                         }
                     }
                     post {
@@ -1056,11 +1020,11 @@ def markStageUnstableIfPluginsFailedToBuild() {
 }
 
 def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch) {
-    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
-    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
+    Boolean skipIntegTests = (TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
+    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
     if (!skipIntegTests) {
         def integTestResults =
-                build job: INTEG_TEST_JOB_NAME,
+                build job: 'integ-test-opensearch-dashboards',
                 propagate: false,
                 wait: false,
                 parameters: [
@@ -1073,11 +1037,11 @@ def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpen
 }
 
 def triggerBWCTests(String buildManifestUrl) {
-    Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
-    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
+    Boolean skipBwcTests = (TEST_MANIFEST == '' || buildManifestUrl == '')
+    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
     if (!skipBwcTests) {
         def bwcTestResults =
-                build job: BWC_TEST_JOB_NAME,
+                build job: 'bwc-test-opensearch-dashboards',
                 propagate: false,
                 wait: false,
                 parameters: [
@@ -1086,4 +1050,16 @@ def triggerBWCTests(String buildManifestUrl) {
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
+}
+
+def triggerRpmValidation(String bundleManifestUrl) {
+    echo "Triggering RPM validation for ${bundleManifestUrl}"
+    def rpmValidationResults =
+            build job: 'rpm-validation',
+            propagate: false,
+            wait: false,
+            parameters: [
+                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
+            ]
 }
