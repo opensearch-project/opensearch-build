@@ -44,25 +44,25 @@ pipeline {
         )
         string(
             name: 'INTEG_TEST_JOB_NAME',
-            description: "Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.",
-            defaultValue: "integ-test-opensearch-dashboards",
+            description: 'Name of integration test job that will be triggered, e.g. Playground/integ-test-opensearch-dashboards.  A non-null empty value here will skip integration tests.',
+            defaultValue: 'integ-test-opensearch-dashboards',
             trim: true
         )
         string(
             name: 'BWC_TEST_JOB_NAME',
-            description: "Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test-opensearch-dashboards.  A non-null empty value here will skip BWC tests.",
-            defaultValue: "bwc-test-opensearch-dashboards",
+            description: 'Name of backwards compatibility test job that will be triggered, e.g. Playground/bwc-test-opensearch-dashboards.  A non-null empty value here will skip BWC tests.',
+            defaultValue: 'bwc-test-opensearch-dashboards',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new platform(s)
             name: 'BUILD_PLATFORM',
-            description: "Build selected platform related artifacts, choices include 'linux windows'. Can combine multiple platforms with space in between (docker is only available on linux)",
+            description: 'Build selected platform related artifacts, choices include linux windows. Can combine multiple platforms with space in between (docker is only available on linux)',
             defaultValue: 'linux windows',
             trim: true
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
-            description: "Build selected distribution related artifacts, choices include 'tar', 'rpm', 'deb', 'zip'. Can combine multiple distributions with space in between (docker is only available on tar)",
+            description: 'Build selected distribution related artifacts, choices include tar, rpm, deb, zip. Can combine multiple distributions with space in between (docker is only available on tar)',
             defaultValue: 'tar rpm deb zip',
             trim: true
         )
@@ -324,16 +324,7 @@ pipeline {
                                     echo "artifactUrl (linux, x64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
-                                    echo "Trigger rpm validation for linux x64 rpm ${bundleManifestUrl}"
-                                    def rpmValidationResults =
-                                        build job: 'rpm-validation',
-                                        propagate: false,
-                                        wait: false,
-                                        parameters: [
-                                            string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
-                                        ]
+                                    triggerRpmValidation(bundleManifestUrl)
                                 }
                             }
                             post {
@@ -445,8 +436,6 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
-
-                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
 
                                 }
                             }
@@ -693,16 +682,7 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
-                                    echo "Trigger rpm validation for linux arm64 rpm ${bundleManifestUrl}"
-                                    def rpmValidationResults =
-                                        build job: 'rpm-validation',
-                                        propagate: false,
-                                        wait: false,
-                                        parameters: [
-                                            string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
-                                            string(name: 'AGENT_LABEL', value: AGENT_LINUX_ARM64)
-                                        ]
+                                    triggerRpmValidation(bundleManifestUrl)
                                 }
                             }
                             post {
@@ -814,9 +794,6 @@ pipeline {
 
                                     echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
-
-                                    String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-
                                 }
                             }
                             post {
@@ -891,7 +868,6 @@ pipeline {
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
-
                         }
                     }
                     post {
@@ -1086,4 +1062,16 @@ def triggerBWCTests(String buildManifestUrl) {
                     string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
                 ]
     }
+}
+
+def triggerRpmValidation(String bundleManifestUrl) {
+    echo "Triggering RPM validation for ${bundleManifestUrl}"
+    def rpmValidationResults =
+            build job: 'rpm-validation',
+            propagate: false,
+            wait: false,
+            parameters: [
+                string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
+                string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
+            ]
 }
