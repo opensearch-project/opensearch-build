@@ -130,7 +130,7 @@ RUN apt-get install -y sudo && \
     usermod -a -G opensearch $CONTAINER_USER && \
     usermod -a -G opensearch-dashboards $CONTAINER_USER && \
     id && \
-    echo "$CONTAINER_USER ALL=(root) NOPASSWD:`which systemctl`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/$CONTAINER_USER
+    echo "$CONTAINER_USER ALL=(root) NOPASSWD:`which systemctl`, `which env`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/$CONTAINER_USER
 
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=$CONTAINER_USER:$CONTAINER_USER $CONTAINER_USER_HOME $CONTAINER_USER_HOME
