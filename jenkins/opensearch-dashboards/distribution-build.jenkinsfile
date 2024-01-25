@@ -1033,7 +1033,7 @@ def markStageUnstableIfPluginsFailedToBuild() {
 
 def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch) {
     Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
-    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
+    echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
     if (!skipIntegTests) {
         def integTestResults =
                 build job: INTEG_TEST_JOB_NAME,
@@ -1050,7 +1050,7 @@ def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpen
 
 def triggerBWCTests(String buildManifestUrl) {
     Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
-    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
+    echo "${skipBwcTests ? 'Skipping BWC tests as one of the values has empty string: BWC_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running BWC tests'}"
     if (!skipBwcTests) {
         def bwcTestResults =
                 build job: BWC_TEST_JOB_NAME,
