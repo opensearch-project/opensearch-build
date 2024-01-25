@@ -1056,7 +1056,7 @@ def markStageUnstableIfPluginsFailedToBuild() {
 }
 
 def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch) {
-    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
+    Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '' || buildManifestUrlOpenSearch == '')
     echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl, buildManifestUrlOpenSearch' : 'Running integration tests'}"
     if (!skipIntegTests) {
         def integTestResults =
