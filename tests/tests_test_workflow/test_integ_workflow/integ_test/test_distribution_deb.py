@@ -40,9 +40,9 @@ class TestDistributionDeb(unittest.TestCase):
         self.assertEqual(check_call_mock.call_count, 1)
         self.assertEqual(
             (
-                "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && "
                 "sudo dpkg --purge opensearch && "
-                "sudo dpkg --install opensearch.deb && "
+                "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
+                "dpkg --install opensearch.deb && "
                 f"sudo chmod 0666 {self.distribution_deb.config_path}"
             ),
             args_list[0][0][0],
