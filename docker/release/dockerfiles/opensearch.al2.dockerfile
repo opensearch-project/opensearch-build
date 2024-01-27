@@ -55,11 +55,17 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:2
 ARG UID=1000
 ARG GID=1000
 ARG OPENSEARCH_HOME=/usr/share/opensearch
+ARG TARGETARCH
+ENV TINI_VERSION=v0.19.0
 
 # Update packages
 # Install the tools we need: tar and gzip to unpack the OpenSearch tarball, and shadow-utils to give us `groupadd` and `useradd`.
 # Install which to allow running of securityadmin.sh
 RUN yum update -y && yum install -y tar gzip shadow-utils which && yum clean all
+
+# Add Tini to use as init (PID1) process.
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-${TARGETARCH} /bin/tini
+RUN chmod 755 /bin/tini
 
 # Create an opensearch user, group
 RUN groupadd -g $GID opensearch && \
@@ -109,5 +115,5 @@ LABEL org.label-schema.schema-version="1.0" \
   "DOCKERFILE"="https://github.com/opensearch-project/opensearch-build/blob/main/docker/release/dockerfiles/opensearch.al2.dockerfile"
 
 # CMD to run
-ENTRYPOINT ["./opensearch-docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/tini", "--", "./opensearch-docker-entrypoint.sh"]
 CMD ["opensearch"]
