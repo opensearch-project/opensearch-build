@@ -21,7 +21,7 @@ class ApiTestCases:
         pass
 
     @staticmethod
-    def test_apis(version: str, projects: list, allow_with_security: bool = True) -> Any:
+    def test_apis(version: str, projects: list, security_plugin_exists: bool = True) -> Any:
         pass_counter, fail_counter = 0, 0
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
@@ -30,7 +30,8 @@ class ApiTestCases:
             ['https://localhost:9200/_cat/plugins?v', 200, ''],
             ['https://localhost:9200/_cat/health?v', 200, 'green'],
         ]
-        if not allow_with_security:
+        # Use http in the request url if the security plugin is absent
+        if not security_plugin_exists:
             for api in test_apis:
                 api[0] = "http" + api[0][5:]  # type: ignore
 

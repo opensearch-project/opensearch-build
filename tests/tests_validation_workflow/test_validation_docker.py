@@ -70,7 +70,7 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
         mock_test.assert_called_once()
-        mock_test.assert_has_calls([call(), call().test_apis("1.0.0", ['opensearch'], True)])
+        mock_test.assert_has_calls([call(), call().test_apis("1.0.0.1000", ['opensearch'], True)])
 
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_http_request')
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')

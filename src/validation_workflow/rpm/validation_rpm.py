@@ -73,7 +73,7 @@ class ValidateRpm(Validation, DownloadUtils):
 
     def validation(self) -> bool:
         test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.args.allow_without_security)
-        if(test_result):
+        if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True
         else:
