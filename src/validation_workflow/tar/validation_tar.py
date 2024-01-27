@@ -12,6 +12,7 @@ import time
 from system.execute import execute
 from system.process import Process
 from system.temporary_directory import TemporaryDirectory
+from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation import Validation
@@ -49,13 +50,15 @@ class ValidateTar(Validation, DownloadUtils):
             for project in self.args.projects:
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
+            if self.args.allow_without_security:
+                self.args.allow_without_security = self.test_security_plugin(str(self.tmp_dir.path))
         except:
             raise Exception('Failed to install Opensearch')
         return True
 
     def start_cluster(self) -> bool:
         try:
-            self.os_process.start(os.path.join(self.tmp_dir.path, "opensearch", "opensearch-tar-install.sh"), ".")
+            self.os_process.start(f'export OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} && ./opensearch-tar-install.sh', os.path.join(self.tmp_dir.path, "opensearch"))
             time.sleep(85)
             if ("opensearch-dashboards" in self.args.projects):
                 self.osd_process.start(os.path.join(str(self.tmp_dir.path), "opensearch-dashboards", "bin", "opensearch-dashboards"), ".")
@@ -66,7 +69,8 @@ class ValidateTar(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_apis(self.args.projects)
+
+        test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.args.allow_without_security)
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
         else:

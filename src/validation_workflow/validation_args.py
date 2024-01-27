@@ -109,7 +109,14 @@ class ValidationArgs:
             help="Enter type of artifacts that needs to be validated",
             choices=["staging", "production"],
             default="production",
-            dest="artifact_type",
+            dest="artifact_type"
+        )
+        parser.add_argument(
+            "-s",
+            "--allow-without-security",
+            action="store_true",
+            default=False,
+            help="Allow Validation without security"
         )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
@@ -136,6 +143,7 @@ class ValidationArgs:
         self.version = args.version
         self.file_path = args.file_path
         self.artifact_type = args.artifact_type
+        self.allow_without_security = args.allow_without_security
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform

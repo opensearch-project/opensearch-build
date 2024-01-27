@@ -85,17 +85,35 @@ class TestValidationYum(unittest.TestCase):
             validate_yum.cleanup()
         self.assertIn("Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards.", str(e3.exception))  # noqa: E501
 
-    @patch("validation_workflow.yum.validation_yum.execute", return_value=True)
+    @patch("validation_workflow.yum.validation_yum.execute")
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
     def test_installation(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
-        mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
+        mock_validation_args.return_value.allow_without_security = False
 
+        mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
+        mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         validate_yum = ValidateYum(mock_validation_args.return_value)
 
         result = validate_yum.installation()
         self.assertTrue(result)
+
+    @patch('validation_workflow.yum.validation_yum.ValidationArgs')
+    @patch('os.path.basename')
+    @patch('validation_workflow.yum.validation_yum.execute')
+    @patch('validation_workflow.validation.Validation.test_security_plugin')
+    def test_installation_with_security_parameter(self, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_validation_args: Mock) -> None:
+        mock_validation_args.return_value.version = '2.3.0'
+        mock_validation_args.return_value.allow_without_security = True
+        validate_yum = ValidateYum(mock_validation_args.return_value)
+        mock_basename.side_effect = lambda path: "mocked_filename"
+        mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
+        mock_security.return_value = True
+
+        result = validate_yum.installation()
+        self.assertTrue(result)
+        mock_security.assert_called_once()
 
     @patch("validation_workflow.yum.validation_yum.execute", return_value=True)
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
@@ -111,37 +129,29 @@ class TestValidationYum(unittest.TestCase):
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
     @patch('validation_workflow.yum.validation_yum.ApiTestCases')
     def test_validation(self, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
-        # Set up mock objects
         mock_validation_args.return_value.version = '2.3.0'
         mock_test_apis_instance = mock_test_apis.return_value
         mock_test_apis_instance.test_apis.return_value = (True, 4)
 
-        # Create instance of ValidateYum class
         validate_yum = ValidateYum(mock_validation_args.return_value)
 
-        # Call validation method and assert the result
         result = validate_yum.validation()
         self.assertTrue(result)
 
-        # Assert that the mock methods are called as expected
         mock_test_apis.assert_called_once()
 
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
     @patch('validation_workflow.yum.validation_yum.ApiTestCases')
     def test_failed_testcases(self, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
-        # Set up mock objects
         mock_validation_args.return_value.version = '2.3.0'
         mock_test_apis_instance = mock_test_apis.return_value
-        mock_test_apis_instance.test_apis.return_value = (True, 1)
+        mock_test_apis_instance.test_apis.return_value = (False, 1)
 
-        # Create instance of ValidateRpm class
         validate_yum = ValidateYum(mock_validation_args.return_value)
 
-        # Call validation method and assert the result
-        validate_yum.validation()
-        self.assertRaises(Exception, "Not all tests Pass : 1")
-
-        # Assert that the mock methods are called as expected
+        with self.assertRaises(Exception) as context:
+            validate_yum.validation()
+        self.assertEqual(str(context.exception), 'Not all tests Pass : 1')
         mock_test_apis.assert_called_once()
 
     @patch("validation_workflow.yum.validation_yum.execute", return_value=True)

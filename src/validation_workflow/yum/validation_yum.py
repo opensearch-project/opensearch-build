@@ -12,6 +12,7 @@ import time
 
 from system.execute import execute
 from system.temporary_directory import TemporaryDirectory
+from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation import Validation
@@ -53,7 +54,9 @@ class ValidateYum(Validation, DownloadUtils):
                 logging.info('Removed previous versions of Opensearch')
                 urllink = f"{self.args.file_path.get(project)} -o /etc/yum.repos.d/{os.path.basename(self.args.file_path.get(project))}"
                 execute(f'sudo curl -SL {urllink}', ".")
-                execute(f"sudo yum install '{project}-{self.args.version}' -y", ".")
+                execute(f"sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} yum install '{project}-{self.args.version}' -y", ".")
+            if self.args.allow_without_security:
+                self.args.allow_without_security = self.test_security_plugin("/usr/")
         except:
             raise Exception('Failed to install Opensearch')
         return True
@@ -69,12 +72,12 @@ class ValidateYum(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_apis(self.args.projects)
+        test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.args.allow_without_security)
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True
         else:
-            raise Exception(f'Some test cases failed : {counter}')
+            raise Exception(f'Not all tests Pass : {counter}')
 
     def cleanup(self) -> bool:
         try:
