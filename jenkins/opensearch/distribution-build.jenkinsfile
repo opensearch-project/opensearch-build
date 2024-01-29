@@ -194,7 +194,7 @@ pipeline {
 
                             parallel([
                                 'integ-test': {
-                                    triggerIntegrationTests(buildManifestUrl)
+                                    triggerIntegrationTests(buildManifestUrl, true)
                                 },
                                 'bwc-test': {
                                     Boolean skipBwcTests = (BWC_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
@@ -959,7 +959,7 @@ def markStageUnstableIfPluginsFailedToBuild() {
 }
     }
 
-def triggerIntegrationTests(String buildManifestUrl) {
+def triggerIntegrationTests(String buildManifestUrl, Boolean createIssues = false) {
     Boolean skipIntegTests = (INTEG_TEST_JOB_NAME == '' || TEST_MANIFEST == '' || buildManifestUrl == '')
     echo "${skipIntegTests ? 'Skipping integration tests as one of the values has empty string: INTEG_TEST_JOB_NAME, TEST_MANIFEST, buildManifestUrl' : 'Running integration tests'}"
     if (!skipIntegTests) {
@@ -970,7 +970,7 @@ def triggerIntegrationTests(String buildManifestUrl) {
                 parameters: [
                     string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
-                    booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
+                    booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: createIssues)
                 ]
     }
 }
