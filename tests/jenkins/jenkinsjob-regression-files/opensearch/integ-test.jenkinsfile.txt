@@ -27,6 +27,7 @@
                BuildManifest.getArtifactBuildId()
                BuildManifest.getDistribution()
                BuildManifest.getArtifactRoot(distribution-build-opensearch, 9010)
+               integ-test.echo(GitHub issue update is set to : true)
          integ-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          integ-test.stage(integ-test, groovy.lang.Closure)

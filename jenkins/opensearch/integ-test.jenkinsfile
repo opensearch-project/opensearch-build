@@ -99,7 +99,8 @@ pipeline {
                     env.platform = buildManifestObj.build.platform
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
-                    env.updateGithubIssues = UPDATE_GITHUB_ISSUES && env.distribution == 'tar'
+                    env.updateGithubIssues = (params.UPDATE_GITHUB_ISSUES && (env.distribution == 'tar'))
+                    echo "GitHub issue update is set to : ${env.updateGithubIssues}"
                 }
             }
             post {
