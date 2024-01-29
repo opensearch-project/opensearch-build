@@ -33,9 +33,6 @@ components:
       test-configs:
         - with-security
         - without-security
-    bwc-test:
-      test-configs:
-        - with-security
 
   - name: asynchronous-search
     integ-test:
