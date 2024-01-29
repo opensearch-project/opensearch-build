@@ -508,7 +508,7 @@ pipeline {
 
                             echo "buildManifestUrl (linux, arm64, tar): ${buildManifestUrl}"
                             echo "artifactUrl (linux, arm64, tar): ${artifactUrl}"
-                            triggerIntegrationTests(buildManifestUrl)
+                            triggerIntegrationTests(buildManifestUrl, true)
                         }
                     }
                     post {
