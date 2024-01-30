@@ -182,6 +182,7 @@ components:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
     depends_on:
+      - job-scheduler
       - anomaly-detection
       - sql
       - ml-commons
