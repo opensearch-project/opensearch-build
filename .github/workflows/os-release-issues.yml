@@ -57,6 +57,7 @@ jobs:
           - {repo: security}
           - {repo: security-analytics}
           - {repo: sql}
+          - {repo: skills}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - name: GitHub App token

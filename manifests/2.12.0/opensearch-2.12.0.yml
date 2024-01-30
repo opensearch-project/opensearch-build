@@ -172,3 +172,16 @@ components:
       - windows
     depends_on:
       - common-utils
+  - name: skills
+    repository: https://github.com/opensearch-project/skills.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    depends_on:
+      - anomaly-detection
+      - sql
+      - ml-commons
