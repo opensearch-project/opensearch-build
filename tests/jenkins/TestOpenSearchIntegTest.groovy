@@ -169,9 +169,6 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
     @Test
     void checkGHIssueDisable() {
         addParam('COMPONENT_NAME', 'k-NN')
-        helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
-            return [stdout: "2023-10-24", exitValue: 0]
-        }
         helper.addShMock("""env PATH=\$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar """) { script ->
             return [stdout: "Error running integtest for component k-NN, creating Github issue", exitValue: 1]}
         assertThrows(Exception) {
