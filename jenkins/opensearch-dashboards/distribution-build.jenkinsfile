@@ -1019,7 +1019,7 @@ def markStageUnstableIfPluginsFailedToBuild() {
     def stageLogs = getLogsForStage(stageName: "${STAGE_NAME}")
     if (stageLogs.any { e -> e.contains('Failed plugins are') }) {
         unstable('Some plugins failed to build. See the ./build.sh step for logs and more details')
-}
+    }
 }
 
 def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpenSearch) {
