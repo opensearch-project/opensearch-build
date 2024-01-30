@@ -116,7 +116,8 @@ pipeline {
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
-                    env.updateGithubIssues = UPDATE_GITHUB_ISSUES && env.distribution == 'tar'
+                    env.updateGithubIssues = (params.UPDATE_GITHUB_ISSUES && (env.distribution == 'tar'))
+                    echo "GitHub issue update is set to : ${env.updateGithubIssues.toBoolean()}"
 
                     echo "Version: ${version}, VersionOpenSearch: ${versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
                     currentBuild.description = "$architecture, $platform, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
@@ -256,7 +257,7 @@ pipeline {
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
                                                     String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
-                                                    if (env.updateGithubIssues) {
+                                                    if (env.updateGithubIssues.toBoolean()) {
                                                         closeGithubIssue(
                                                             repoUrl: buildManifestObj.getRepo("${local_component}"),
                                                             issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
@@ -268,7 +269,7 @@ pipeline {
                                             } catch (e) {
                                                 echo "Error running integtest for component ${local_component}, creating Github issue"
                                                 String issueBodyMessage = "The integration test failed at distribution level for component ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/${JOB_NAME}/${version}/${buildId}/${platform}/${architecture}/${distribution}/test-results/${BUILD_NUMBER}/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._"
-                                                if (env.updateGithubIssues) {
+                                                if (env.updateGithubIssues.toBoolean()) {
                                                     createGithubIssue(
                                                         repoUrl: buildManifestObj.getRepo("${local_component}"),
                                                         issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",

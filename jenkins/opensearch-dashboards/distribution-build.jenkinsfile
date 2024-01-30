@@ -115,14 +115,14 @@ pipeline {
             }
             steps {
                 script {
-                    echo("Detect Docker Images and Related Parameters")
+                    echo('Detect Docker Images and Related Parameters')
                     dockerAgent = detectDockerAgent()
                     currentBuild.description = INPUT_MANIFEST
 
-                    echo("Verify Build Platforms")
+                    echo('Verify Build Platforms')
                     def build_platform_array = params.BUILD_PLATFORM.tokenize(' ')
                     echo("User Entry Platforms: '${params.BUILD_PLATFORM}', ${build_platform_array}")
-                    def all_platforms = "linux windows"
+                    def all_platforms = 'linux windows'
                     echo("All Supported Platforms: '${all_platforms}'")
 
                     if (params.BUILD_PLATFORM == null || params.BUILD_PLATFORM == '') {
@@ -137,10 +137,10 @@ pipeline {
                         }
                     }
 
-                    echo("Verify Build Distributions")
+                    echo('Verify Build Distributions')
                     def build_distribution_array = params.BUILD_DISTRIBUTION.tokenize(' ')
                     echo("User Entry Distributions: '${params.BUILD_DISTRIBUTION}', ${build_distribution_array}")
-                    def all_distributions = "tar rpm deb zip"
+                    def all_distributions = 'tar rpm deb zip'
                     echo("All Supported Platforms: '${all_distributions}'")
 
                     if (params.BUILD_DISTRIBUTION == null || params.BUILD_DISTRIBUTION == '') {
@@ -154,7 +154,6 @@ pipeline {
                             error("Missing parameter: BUILD_DISTRIBUTION (possible entries: ${all_distributions}).")
                         }
                     }
-
                 }
             }
         }
@@ -163,11 +162,11 @@ pipeline {
                 stage('build-and-test-linux-x64-tar') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('tar')
                             }
                         }
@@ -194,7 +193,7 @@ pipeline {
                                 previousBuildId: params.PREVIOUS_BUILD_ID
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                            String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
+                            String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_LINUX_X64_TAR = artifactUrl
                             env.INDEX_FILE_PATH_X64_TAR = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -233,10 +232,7 @@ pipeline {
                         }
                         always {
                             script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                )
+                                addMessageToNotificationQueue()
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -248,11 +244,11 @@ pipeline {
                 stage('build-and-test-linux-x64-rpm') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('rpm')
                             }
                         }
@@ -286,7 +282,7 @@ pipeline {
                             }
                             post {
                                 always {
-                                    script{
+                                    script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -316,6 +312,7 @@ pipeline {
                                         stashName: "build-archive-linux-x64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_X64_RPM = artifactUrl
                                     env.INDEX_FILE_PATH_X64_RPM = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -324,7 +321,14 @@ pipeline {
                                     echo "artifactUrl (linux, x64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    triggerRpmValidation(bundleManifestUrl)
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                        },
+                                        'rpm-validation': {
+                                            triggerRpmValidation(bundleManifestUrl)
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -348,10 +352,7 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
+                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -362,11 +363,11 @@ pipeline {
                 stage('build-and-test-linux-x64-deb') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('deb')
                             }
                         }
@@ -400,7 +401,7 @@ pipeline {
                             }
                             post {
                                 always {
-                                    script{
+                                    script {
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -430,13 +431,14 @@ pipeline {
                                         stashName: "build-archive-linux-x64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_X64_DEB = artifactUrl
                                     env.INDEX_FILE_PATH_X64_DEB = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
                                     echo "buildManifestUrl (linux, x64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, x64, deb): ${artifactUrl}"
-
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
                                 }
                             }
                             post {
@@ -460,11 +462,7 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
-
+                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -475,11 +473,11 @@ pipeline {
                 stage('build-and-test-linux-arm64-tar') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('tar')
                             }
                         }
@@ -514,10 +512,7 @@ pipeline {
                             post {
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
+                                        addMessageToNotificationQueue()
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -549,7 +544,7 @@ pipeline {
                                     )
 
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
-                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, "latest"), "builds", "opensearch", "manifest.yml"].join("/")
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_TAR = artifactUrl
                                     env.INDEX_FILE_PATH_ARM64_TAR = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -588,10 +583,7 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
+                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -602,11 +594,11 @@ pipeline {
                 stage('build-and-test-linux-arm64-rpm') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('rpm')
                             }
                         }
@@ -641,10 +633,7 @@ pipeline {
                             post {
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
+                                        addMessageToNotificationQueue()
                                         if (params.CONTINUE_ON_ERROR) {
                                             markStageUnstableIfPluginsFailedToBuild()
                                         }
@@ -674,6 +663,7 @@ pipeline {
                                         stashName: "build-archive-linux-arm64-rpm-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_RPM = artifactUrl
                                     env.INDEX_FILE_PATH_ARM64_RPM = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
@@ -682,7 +672,14 @@ pipeline {
                                     echo "artifactUrl (linux, arm64, rpm): ${artifactUrl}"
 
                                     String bundleManifestUrl = buildManifestObj.getBundleManifestUrl(JOB_NAME, BUILD_NUMBER)
-                                    triggerRpmValidation(bundleManifestUrl)
+                                    parallel([
+                                        'integ-test': {
+                                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
+                                        },
+                                        'rpm-validation': {
+                                            triggerRpmValidation(bundleManifestUrl)
+                                        }
+                                    ])
                                 }
                             }
                             post {
@@ -706,10 +703,7 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
+                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -720,11 +714,11 @@ pipeline {
                 stage('build-and-test-linux-arm64-deb') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('linux')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('deb')
                             }
                         }
@@ -788,12 +782,14 @@ pipeline {
                                         stashName: "build-archive-linux-arm64-deb-${JOB_NAME}-${BUILD_NUMBER}"
                                     )
                                     String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                                    String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                                     String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                                     env.ARTIFACT_URL_LINUX_ARM64_DEB = artifactUrl
                                     env.INDEX_FILE_PATH_ARM64_DEB = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
                                     echo "buildManifestUrl (linux, arm64, deb): ${buildManifestUrl}"
                                     echo "artifactUrl (linux, arm64, deb): ${artifactUrl}"
+                                    triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
                                 }
                             }
                             post {
@@ -817,11 +813,7 @@ pipeline {
                                 }
                                 always {
                                     script {
-                                        lib.jenkins.Messages.new(this).add(
-                                            "${STAGE_NAME}",
-                                            lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                        )
-
+                                        addMessageToNotificationQueue()
                                         postCleanup()
                                     }
                                 }
@@ -832,11 +824,11 @@ pipeline {
                 stage('build-and-test-windows-x64-zip') {
                     when {
                         beforeAgent true
-                        allOf{
+                        allOf {
                             expression {
                                 params.BUILD_PLATFORM.contains('windows')
                             }
-                            expression{
+                            expression {
                                 params.BUILD_DISTRIBUTION.contains('zip')
                             }
                         }
@@ -856,18 +848,20 @@ pipeline {
                                 inputManifest: "manifests/${INPUT_MANIFEST}",
                                 platform: 'windows',
                                 architecture: 'x64',
-                                distribution: "zip",
+                                distribution: 'zip',
                                 continueOnError: params.CONTINUE_ON_ERROR,
                                 incremental: params.INCREMENTAL,
                                 previousBuildId: params.PREVIOUS_BUILD_ID
                             )
                             String buildManifestUrl = buildManifestObj.getUrl(JOB_NAME, BUILD_NUMBER)
+                            String buildManifestUrlOpenSearch = [buildManifestObj.getArtifactRootUrl(JOB_NAME_OPENSEARCH, 'latest'), 'builds', 'opensearch', 'manifest.yml'].join('/')
                             String artifactUrl = buildManifestObj.getArtifactUrl(JOB_NAME, BUILD_NUMBER)
                             env.ARTIFACT_URL_LINUX_WINDOWS_X64_ZIP = artifactUrl
                             env.INDEX_FILE_PATH_X64_ZIP = buildManifestObj.getIndexFileRoot("${JOB_NAME}")
 
                             echo "buildManifestUrl (windows, x64, zip): ${buildManifestUrl}"
                             echo "artifactUrl (windows, x64, zip): ${artifactUrl}"
+                            triggerIntegrationTests(buildManifestUrl, buildManifestUrlOpenSearch)
                         }
                     }
                     post {
@@ -891,10 +885,7 @@ pipeline {
                         }
                         always {
                             script {
-                                lib.jenkins.Messages.new(this).add(
-                                    "${STAGE_NAME}",
-                                    lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"])
-                                )
+                                addMessageToNotificationQueue()
                                 if (params.CONTINUE_ON_ERROR) {
                                     markStageUnstableIfPluginsFailedToBuild()
                                 }
@@ -908,14 +899,14 @@ pipeline {
         stage('docker build') {
             when {
                 beforeAgent true
-                allOf{
+                allOf {
                     expression {
                         params.BUILD_DOCKER != 'do_not_build_docker'
                     }
-                    expression{
+                    expression {
                         params.BUILD_PLATFORM.contains('linux')
                     }
-                    expression{
+                    expression {
                         params.BUILD_DISTRIBUTION.contains('tar')
                     }
                 }
@@ -985,7 +976,7 @@ pipeline {
                             stages.add('assemble-archive-and-test-linux-arm64-deb')
                         }
                     }
-                    if (params.BUILD_PLATFORM.contains('windows')){
+                    if (params.BUILD_PLATFORM.contains('windows')) {
                         if (params.BUILD_DISTRIBUTION.contains('zip')) {
                             stages.add('build-and-test-windows-x64-zip')
                         }
@@ -1026,7 +1017,7 @@ pipeline {
 
 def markStageUnstableIfPluginsFailedToBuild() {
     def stageLogs = getLogsForStage(stageName: "${STAGE_NAME}")
-    if (stageLogs.any{e -> e.contains('Failed plugins are')}) {
+    if (stageLogs.any { e -> e.contains('Failed plugins are') }) {
         unstable('Some plugins failed to build. See the ./build.sh step for logs and more details')
     }
 }
@@ -1074,4 +1065,8 @@ def triggerRpmValidation(String bundleManifestUrl) {
                 string(name: 'BUNDLE_MANIFEST_URL', value: bundleManifestUrl),
                 string(name: 'AGENT_LABEL', value: AGENT_LINUX_X64)
             ]
+}
+
+def addMessageToNotificationQueue() {
+    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", lib.jenkins.Messages.new(this).get(["${STAGE_NAME}"]))
 }
