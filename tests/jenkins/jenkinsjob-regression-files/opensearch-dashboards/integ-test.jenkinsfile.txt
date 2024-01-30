@@ -34,6 +34,7 @@
                BuildManifest.getDistribution()
                BuildManifest.getArtifactRoot(distribution-build-opensearch-dashboards, 215)
                BuildManifest.getArtifactRoot(distribution-build-opensearch, 215)
+               integ-test.echo(GitHub issue update is set to : true)
                integ-test.echo(Version: 3.0.0, VersionOpenSearch: 3.0.0, Agent: Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host, OSD_BuildId: 215, OS_BuildId: 215, Distribution: tar)
          integ-test.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})

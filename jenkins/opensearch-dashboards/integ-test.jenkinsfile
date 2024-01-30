@@ -116,7 +116,8 @@ pipeline {
                     env.artifactPath = buildManifestObj.getArtifactRoot(BUILD_JOB_NAME, buildId)
                     env.artifactPathOpenSearch = buildManifestObjOpenSearch.getArtifactRoot(BUILD_JOB_NAME_OPENSEARCH, buildIdOpenSearch)
                     env.AGENT_LABEL = agent_nodes["${env.platform}_${architecture}"]
-                    env.updateGithubIssues = UPDATE_GITHUB_ISSUES && env.distribution == 'tar'
+                    env.updateGithubIssues = (params.UPDATE_GITHUB_ISSUES && (env.distribution == 'tar'))
+                    echo "GitHub issue update is set to : ${env.updateGithubIssues}"
 
                     echo "Version: ${version}, VersionOpenSearch: ${versionOpenSearch}, Agent: ${AGENT_LABEL}, OSD_BuildId: ${buildId}, OS_BuildId: ${buildIdOpenSearch}, Distribution: ${distribution}"
                     currentBuild.description = "$architecture, $platform, osd-$version-$buildId, os-$versionOpenSearch-$buildIdOpenSearch, $distribution"
