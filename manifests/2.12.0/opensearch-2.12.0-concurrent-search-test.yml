@@ -198,3 +198,13 @@ components:
         opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
+
+  - name: skills
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        opensearch.experimental.feature.concurrent_segment_search.enabled: true
+        search.concurrent_segment_search.enabled: true
+        search.concurrent.max_slice_count: 2
