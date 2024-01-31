@@ -46,6 +46,7 @@ jobs:
           - {repo: security-analytics}
           - {repo: sql}
           - {repo: custom-codecs}
+          - {repo: flow-framework}
           - {repo: skills}
         branch:
           - '1.3'

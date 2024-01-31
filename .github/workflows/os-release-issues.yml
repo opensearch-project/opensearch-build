@@ -57,6 +57,7 @@ jobs:
           - {repo: security}
           - {repo: security-analytics}
           - {repo: sql}
+          - {repo: custom-codecs}
           - {repo: flow-framework}
           - {repo: skills}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
