@@ -25,7 +25,7 @@ class TestDockerReRelease extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.11.1')
+                .defaultVersion('6.2.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
