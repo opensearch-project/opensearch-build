@@ -94,7 +94,7 @@ pipeline {
         booleanParam(
             name: 'INCREMENTAL',
             description: 'Whether to trigger incremental build. Defaults to false.',
-            defaultValue: false
+            defaultValue: true
         )
         string(
             name: 'PREVIOUS_BUILD_ID',
