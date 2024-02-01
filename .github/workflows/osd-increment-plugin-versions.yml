@@ -27,7 +27,7 @@ jobs:
           - {repo: OpenSearch-Dashboards}
           - {repo: dashboards-observability}
           - {repo: dashboards-reporting}
-          - {repo: dashboards-visualizations, path: gantt-chart}
+          - {repo: dashboards-visualizations}
           - {repo: dashboards-query-workbench}
           - {repo: dashboards-assistant}
           - {repo: dashboards-maps}
