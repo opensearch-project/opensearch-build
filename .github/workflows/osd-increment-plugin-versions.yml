@@ -41,6 +41,7 @@ jobs:
           - {repo: dashboards-search-relevance}
           - {repo: opensearch-dashboards-functional-test}
         branch:
+          - 1.x
           - '1.3'
           - 2.x
           - '2.8'
