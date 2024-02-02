@@ -133,9 +133,17 @@ Here are some example scenarios of using above variables:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
      ```
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
+     ```
 
 #### Scenario 2: Disable Performance Analyzer Agent Cli
   * OpenSearch:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
+     ```
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
      ```
