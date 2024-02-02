@@ -43,6 +43,7 @@ MINIMUM_OF_TWO_VERSIONS=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION |
 if [ $OPENSEARCH_ALREADY_INSTALLED = no ]; then
   if [ $MINIMUM_OF_TWO_VERSIONS = $OPENSEARCH_REQUIRED_VERSION ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
     echo "ERROR: Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
+    echo "For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/debian/"
     exit 1
   fi
 fi
