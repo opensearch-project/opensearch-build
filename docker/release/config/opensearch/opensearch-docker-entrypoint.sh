@@ -34,7 +34,7 @@ function setupSecurityPlugin {
         if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
             echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
         else
-            echo -e "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin \nOpenSearch 2.12.0 onwards, the OpenSearch Security Plugin a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit."
+            echo -e "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin \nOpenSearch 2.12.0 onwards, the OpenSearch Security Plugin a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit. \n For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/"
             bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s || exit 1
         fi
 
