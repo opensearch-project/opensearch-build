@@ -147,7 +147,6 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         return [stdout: "Completed running integtest for component k-NN", exitValue: 0]
         }
         runScript('jenkins/opensearch/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'script'), not(hasItem("{script=gh issue list --repo https://github.com/opensearch-project/k-NN.git -S \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title\" --label autocut,v3.0.0 --json number --jq '.[0].number', returnStdout=true}")))
         assertThat(getCommandExecutions('sh', 'script'), not(hasItem("{script=gh issue close bbb\nccc -R opensearch-project/k-NN --comment \"Closing the issue as the Integration Test passed for k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}")))
     }
 
@@ -163,7 +162,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         }
         assertJobStatusFailure()
         assertThat(getCommandExecutions('println', 'Issue'), hasItem('Issue already exists, adding a comment'))
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/k-NN.git -S \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title\" --label autocut,v3.0.0 --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/k-NN.git -S \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title\" --json number --jq '.[0].number', returnStdout=true}"))
         assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue comment bbb\nccc --repo https://github.com/opensearch-project/k-NN.git --body \"The integration test failed at distribution level for component k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\", returnStdout=true}"))
     }
 
