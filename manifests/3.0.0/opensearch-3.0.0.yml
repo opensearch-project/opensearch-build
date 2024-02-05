@@ -1,5 +1,5 @@
 ---
-schema-version: '1.0'
+schema-version: '1.1'
 build:
   name: OpenSearch
   version: 3.0.0
@@ -32,6 +32,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+    depends_on:
+      - common-utils
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
     ref: main
@@ -50,6 +52,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+      - job-scheduler
   - name: security
     repository: https://github.com/opensearch-project/security.git
     ref: main
@@ -73,6 +78,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
     ref: main
@@ -91,6 +98,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - ml-commons
+      - k-NN
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
     ref: main
@@ -100,6 +110,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - job-scheduler
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: main
@@ -109,6 +121,9 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
+      - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
     ref: main
@@ -118,6 +133,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
     ref: main
@@ -128,6 +145,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-notifications-core
+    depends_on:
+      - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
     ref: main
@@ -138,6 +157,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: notifications
+    depends_on:
+      - common-utils
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
     ref: main
@@ -147,6 +168,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
+    depends_on:
+      - common-utils
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
     ref: main
@@ -156,6 +179,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-sql-plugin
+    depends_on:
+      - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: main
@@ -165,6 +190,8 @@ components:
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
+    depends_on:
+      - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
     ref: main
@@ -173,6 +200,8 @@ components:
       - windows
     checks:
       - gradle:properties:version
+    depends_on:
+      - common-utils
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
     ref: main
@@ -181,3 +210,6 @@ components:
       - windows
     checks:
       - gradle:properties:version
+    depends_on:
+      - common-utils
+      - job-scheduler
