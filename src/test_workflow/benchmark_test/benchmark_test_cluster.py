@@ -155,7 +155,7 @@ class BenchmarkTestCluster:
             "region": config["Constants"]["Region"],
             "suffix": suffix,
             "securityDisabled": str(self.args.insecure).lower(),
-            "adminPassword": 'myStrongPassword123!' if password else None,
+            "adminPassword": password,
             "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
             "singleNodeCluster": str(self.args.single_node).lower(),
             "distVersion": self.manifest.build.version if self.manifest else self.args.distribution_version,
