@@ -21,7 +21,6 @@ components:
     ref: 2.x
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    working_directory: gantt-chart
     ref: 2.x
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git

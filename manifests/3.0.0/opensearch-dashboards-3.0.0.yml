@@ -30,7 +30,6 @@ components:
     ref: main
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    working_directory: gantt-chart
     ref: main
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
