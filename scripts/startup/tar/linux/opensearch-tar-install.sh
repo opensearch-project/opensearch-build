@@ -7,7 +7,7 @@ export OPENSEARCH_HOME=`dirname $(realpath $0)`
 export OPENSEARCH_PATH_CONF=$OPENSEARCH_HOME/config
 cd $OPENSEARCH_HOME
 
-KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
+
 ##Security Plugin
 if [ -d "$OPENSEARCH_HOME/plugins/opensearch-security" ]; then
         echo -e "OpenSearch 2.12.0 onwards, the OpenSearch Security Plugin introduces a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit. \nFor more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/tar/"
@@ -33,6 +33,17 @@ if ! grep -q '## OpenSearch Performance Analyzer' $OPENSEARCH_PATH_CONF/jvm.opti
    echo "--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED" >> $OPENSEARCH_PATH_CONF/jvm.options
 fi
 echo "done plugins"
+
+##Setup k-NN Plugin Lib Loading Path
+##This is required for OpenSearch 2.12 and above
+##As SIMD is added to the k-NN Plugin Faiss Lib: https://github.com/opensearch-project/k-NN/issues/1138
+if [ "$KNN_SIMD_ENABLED" = "true" ];
+    KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib_simd
+    echo "Enable SIMD Feature for k-NN Plugin"
+else
+    KNN_LIB_DIR=$OPENSEARCH_HOME/plugins/opensearch-knn/lib
+    echo "Disable SIMD Feature for k-NN Plugin"
+fi
 
 ##Set KNN Dylib Path for macOS and *nix systems
 if echo "$OSTYPE" | grep -qi "darwin"; then
