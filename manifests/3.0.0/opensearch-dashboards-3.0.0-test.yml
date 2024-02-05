@@ -87,4 +87,3 @@ components:
         - without-security
       additional-cluster-configs:
         assistant.chat.enabled: true
-        assistant.chat.rootAgentName: 'Cypress test agent'
