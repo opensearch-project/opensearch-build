@@ -7,6 +7,8 @@
 
 
 import logging
+import os
+import re
 import shutil
 from abc import ABC, abstractmethod
 from typing import Any
@@ -46,6 +48,9 @@ class Validation(ABC):
             return "opensearch-security" in list_plugins
         else:
             raise Exception("Couldn't fetch the path to plugin folder")
+
+    def get_version(self, project: str) -> str:
+        return re.search(r'(\d+\.\d+\.\d+)', os.path.basename(project)).group(1)
 
     def run(self) -> Any:
         try:

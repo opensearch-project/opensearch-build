@@ -36,6 +36,7 @@ class ValidateTar(Validation, DownloadUtils):
                 if ("https:" not in self.args.file_path.get(project)):
                     self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
                 else:
+                    self.args.version = self.get_version(self.args.file_path.get(project))
                     self.check_url(self.args.file_path.get(project))
             else:
                 if (self.args.artifact_type == "staging"):

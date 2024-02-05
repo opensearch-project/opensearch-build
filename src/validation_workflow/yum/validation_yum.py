@@ -7,7 +7,6 @@
 
 import logging
 import os
-import re
 import time
 
 from system.execute import execute
@@ -34,7 +33,7 @@ class ValidateYum(Validation, DownloadUtils):
                 if ("https:" not in self.args.file_path.get(project)):
                     self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
                 else:
-                    self.args.version = re.search(r'(\d+\.\d+\.\d+)', os.path.basename(self.args.file_path.get(project))).group(1)
+                    self.args.version = self.get_version(self.args.file_path.get(project))
                     self.check_url(self.args.file_path.get(project))
 
             else:
