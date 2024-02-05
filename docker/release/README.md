@@ -147,3 +147,26 @@ Here are some example scenarios of using above variables:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
      ```
+
+### Enable SIMD in k-NN Plugin Faiss Lib
+(This change is added since OpenSearch 2.12.0)
+
+  * 1 for OpenSearch:
+    * __KNN_SIMD_ENABLED__: Default to `null`, set to `true` enables [SIMD in k-NN Faiss Lib](https://github.com/opensearch-project/k-NN/issues/1138).
+
+Here are some example scenarios of using above variables:
+
+
+#### Scenario 1: Original behavior, disable SIMD
+  * OpenSearch:
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
+     ```
+
+#### Scenario 2: Enable SIMD
+  * OpenSearch:
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     ```
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" -e "KNN_SIMD_ENABLED=true" opensearchproject/opensearch:<TAG>
+     ```

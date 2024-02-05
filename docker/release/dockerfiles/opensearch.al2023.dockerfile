@@ -39,10 +39,14 @@ RUN groupadd -g $GID opensearch && \
 COPY * $TEMP_DIR/
 RUN ls -l $TEMP_DIR && \
     tar -xzpf /tmp/opensearch/opensearch-`uname -p`.tgz -C $OPENSEARCH_HOME --strip-components=1 && \
+    MAJOR_VERSION_ENTRYPOINT=`echo $VERSION | cut -d. -f1` && \
+    echo $MAJOR_VERSION_ENTRYPOINT && \
+    if ! (ls $TEMP_DIR | grep -E "opensearch-docker-entrypoint-.*.x.sh" | grep $MAJOR_VERSION_ENTRYPOINT); then MAJOR_VERSION_ENTRYPOINT="default"; fi && \
     mkdir -p $OPENSEARCH_HOME/data && chown -Rv $UID:$GID $OPENSEARCH_HOME/data && \
     if [[ -d $SECURITY_PLUGIN_DIR ]] ; then chmod -v 750 $SECURITY_PLUGIN_DIR/tools/* ; fi && \
     if [[ -d $PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR ]] ; then cp -v $TEMP_DIR/performance-analyzer.properties $PERFORMANCE_ANALYZER_PLUGIN_CONFIG_DIR; fi && \
-    cp -v $TEMP_DIR/opensearch-docker-entrypoint.sh $TEMP_DIR/opensearch-onetime-setup.sh $OPENSEARCH_HOME/ && \
+    cp -v $TEMP_DIR/opensearch-docker-entrypoint-$MAJOR_VERSION_ENTRYPOINT.x.sh $OPENSEARCH_HOME/opensearch-docker-entrypoint.sh && \
+    cp -v $TEMP_DIR/opensearch-onetime-setup.sh $OPENSEARCH_HOME/ && \
     cp -v $TEMP_DIR/log4j2.properties $TEMP_DIR/opensearch.yml $OPENSEARCH_PATH_CONF/ && \
     ls -l $OPENSEARCH_HOME && \
     rm -rf $TEMP_DIR
@@ -76,9 +80,6 @@ RUN echo "export JAVA_HOME=$OPENSEARCH_HOME/jdk" >> /etc/profile.d/java_home.sh 
 
 ENV JAVA_HOME=$OPENSEARCH_HOME/jdk
 ENV PATH=$PATH:$JAVA_HOME/bin:$OPENSEARCH_HOME/bin
-
-# Add k-NN lib directory to library loading path variable
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$OPENSEARCH_HOME/plugins/opensearch-knn/lib"
 
 # Change user
 USER $UID

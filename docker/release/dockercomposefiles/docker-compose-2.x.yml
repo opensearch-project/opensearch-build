@@ -12,6 +12,7 @@ services:
       - bootstrap.memory_lock=true  # along with the memlock settings below, disables swapping
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m    # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}    # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and higher
+      # - KNN_SIMD_ENABLED=true # Sets true to enable SIMD in k-NN Plugin Faiss Lib
     ulimits:
       memlock:
         soft: -1
@@ -37,6 +38,7 @@ services:
       - bootstrap.memory_lock=true
       - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      # - KNN_SIMD_ENABLED=true
     ulimits:
       memlock:
         soft: -1
