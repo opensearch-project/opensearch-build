@@ -167,7 +167,6 @@ opensearch_dashboards_vars=(
     data_source.audit.appender.layout.pattern
     ml_commons_dashboards.enabled
     assistant.chat.enabled
-    assistant.chat.rootAgentName
 )
 
 function setupSecurityDashboardsPlugin {

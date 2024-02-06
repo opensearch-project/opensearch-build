@@ -199,8 +199,6 @@
 # 2.12 New experimental Assistant Dashboards Feature
 # Set the value of this setting to true to enable the assistant dashboards
 # assistant.chat.enabled: false
-# Set the value to the root agent name you setup up manually or through flow framework
-# assistant.chat.rootAgentName: "Root agent"
 
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
