@@ -31,13 +31,13 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 2.x
+    ref: 2.12
     platforms:
       - linux
       - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 2.x
+    ref: 2.12
     platforms:
       - linux
       - windows
@@ -61,7 +61,7 @@ components:
       - common-utils
   - name: neural-search
     repository: https://github.com/opensearch-project/neural-search.git
-    ref: 2.x
+    ref: 2.12
     platforms:
       - linux
       - windows
