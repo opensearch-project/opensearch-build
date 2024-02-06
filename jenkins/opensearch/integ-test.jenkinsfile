@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.1.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.3.0', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -210,14 +210,13 @@ pipeline {
                                                         localPath: "${WORKSPACE}/${distribution}",
                                                         switchUserNonRoot: "${switch_user_non_root}"
                                                     )
-                                                    String closeCommentMessage = "Closing the issue as the Integration Test passed for ${local_component}<br>Version: ${version}<br>Distribution: ${distribution}<br>Architecture: ${architecture}<br>Platform: ${platform}<br><br>Please check the logs: ${RUN_DISPLAY_URL}<br><br> *"
                                                     if (env.updateGithubIssues.toBoolean()) {
-                                                        closeGithubIssue(
+                                                        updateGitHubIssueLabels(
                                                             repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                            issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
-                                                            closeComment: closeCommentMessage,
-                                                            label: "autocut,v${version},integ-test-failure"
-                                                        )
+                                                            issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
+                                                            label: "${platform}:${distribution}:${architecture}",
+                                                            action: "remove"
+                                                            )
                                                     }
                                                 }
                                             } catch (e) {
@@ -226,10 +225,16 @@ pipeline {
                                                 if (env.updateGithubIssues.toBoolean()) {
                                                     createGithubIssue(
                                                         repoUrl: buildManifestObj.getRepo("${local_component}"),
-                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version} ${distribution} distribution",
+                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
                                                         issueBody: issueBodyMessage,
-                                                        label: "autocut,v${version},integ-test-failure"
+                                                        label: "autocut,v${version}"
                                                     )
+                                                    updateGitHubIssueLabels(
+                                                        repoUrl: buildManifestObj.getRepo("${local_component}"),
+                                                        issueTitle: "[AUTOCUT] Integration Test failed for ${local_component}: ${version}",
+                                                        label: "integ-test-failure,${platform}:${distribution}:${architecture}",
+                                                        action: "add"
+                                                        )
                                                 }
                                                 throw new Exception("Error running integtest for component ${local_component}", e)
                                             } finally {
