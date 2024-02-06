@@ -233,7 +233,7 @@ pip --version
 pip install pipenv==2023.6.12
 pipenv --version
 # Install awscli
-pip install awscli==1.22.12
+pip install awscli==1.32.17
 aws --version
 # Cleanup
 pip cache remove * 
