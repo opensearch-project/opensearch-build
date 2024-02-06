@@ -10,7 +10,6 @@ import unittest
 from unittest.mock import MagicMock, Mock, patch
 
 import yaml
-
 from manifests.build_manifest import BuildComponent, BuildManifest
 
 

@@ -10,9 +10,9 @@ import os
 import subprocess
 
 import requests
-import yaml
 from requests.models import Response
 
+import yaml
 from system.os import current_platform
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution

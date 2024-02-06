@@ -9,12 +9,11 @@ import logging
 import os
 import unittest
 from pathlib import Path
-from typing import Any
 from unittest.mock import MagicMock, Mock, call, patch
 
-from paths.script_finder import ScriptFinder
 from manifests.build_manifest import BuildManifest
-from manifests.bundle_manifest import BundleComponent, BundleManifest
+from manifests.bundle_manifest import BundleManifest
+from paths.script_finder import ScriptFinder
 from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError
 from test_workflow.integ_test.integ_test_suite_opensearch_dashboards import IntegTestSuiteOpenSearchDashboards
 from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards

@@ -8,9 +8,9 @@
 import logging
 import os
 
-import yaml
 from retry.api import retry_call  # type: ignore
 
+import yaml
 from git.git_repository import GitRepository
 from manifests.bundle_manifest import BundleManifest
 from system.temporary_directory import TemporaryDirectory

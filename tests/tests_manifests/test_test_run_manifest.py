@@ -9,7 +9,6 @@ import os
 import unittest
 
 import yaml
-
 from manifests.test_report_manifest import TestReportManifest
 
 
