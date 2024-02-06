@@ -160,7 +160,7 @@ Here are some example scenarios of using above variables:
 #### Scenario 1: Original behavior, disable SIMD
   * OpenSearch:
 
-     **Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     **Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.**
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
      ```
