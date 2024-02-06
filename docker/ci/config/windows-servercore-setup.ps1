@@ -188,7 +188,7 @@ $chromiumFound
 # Add BROWSER_PATH path to User Env Var for cypress test to retrieve chromium.exe path
 [System.Environment]::SetEnvironmentVariable("BROWSER_PATH", "$chromiumFound", [System.EnvironmentVariableTarget]::User)
 
-# Install fonts for the chromium-based browsers: https://github.com/opensearch-project/opensearch-dashboards-functional-test/issues/1072
+# Install fonts for the chromium-based browsers: https://github.com/opensearch-project/opensearch-build/issues/4416
 # Based on this repo: https://github.com/gantrior/docker-chrome-windows
 # From this issue: https://github.com/docker/for-win/issues/3438
 curl.exe -SLO https://ci.opensearch.org/ci/dbc/tools/FontsToAdd.tar
@@ -196,7 +196,7 @@ tar -xvf FontsToAdd.tar
 .\\Add-Font.ps1 Fonts
 rm -v FontsToAdd.tar
 rm -v Add-Font.ps1
-rm -vrf Fonts
+rm -v -r -force Fonts
 
 # Install ruby24
 scoop install ruby24
