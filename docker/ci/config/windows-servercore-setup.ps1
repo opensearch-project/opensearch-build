@@ -179,13 +179,24 @@ $nodePathFixed = "C:\\Users\\ContainerAdministrator\\scoop\\persist\\volta\\appd
 [System.Environment]::SetEnvironmentVariable("PATH", $userenv2 + ";$nodePathFixed", [System.EnvironmentVariableTarget]::User)
 
 # Install chromium (internally it is chrome.exe in app directory)
-scoop install chromium
+# Lock chromium to v114.0.5735.134-r1135570 due to https://github.com/opensearch-project/opensearch-build/issues/4241
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/6befedcb5296cacbb0428e76baab7368609b6006/bucket/chromium.json
 $chromiumName = 'chrome.exe'
 $chromiumDir = 'C:\\Users\\ContainerAdministrator\\scoop\\apps\\chromium'
 $chromiumFound = (Get-ChildItem -Path $chromiumDir -Filter $chromiumName -Recurse | %{$_.FullName} | select -first 1)
 $chromiumFound
 # Add BROWSER_PATH path to User Env Var for cypress test to retrieve chromium.exe path
 [System.Environment]::SetEnvironmentVariable("BROWSER_PATH", "$chromiumFound", [System.EnvironmentVariableTarget]::User)
+
+# Install fonts for the chromium-based browsers: https://github.com/opensearch-project/opensearch-build/issues/4416
+# Based on this repo: https://github.com/gantrior/docker-chrome-windows
+# From this issue: https://github.com/docker/for-win/issues/3438
+curl.exe -SLO https://ci.opensearch.org/ci/dbc/tools/FontsToAdd.tar
+tar -xvf FontsToAdd.tar
+.\\Add-Font.ps1 Fonts
+rm -v FontsToAdd.tar
+rm -v Add-Font.ps1
+rm -v -r -force Fonts
 
 # Install ruby24
 scoop install ruby24
@@ -205,8 +216,11 @@ scoop install zip
 scoop install unzip
 
 # Install docker
-scoop install docker
-scoop install docker-compose
+# Lock Docker 24.0.7
+# Lock Docker-Compose 2.23.0
+# https://github.com/opensearch-project/opensearch-build/issues/4126
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/f7cf8513558307e90b483ddff2394a023e894ccf/bucket/docker.json
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/a6a7d8e2a7eecb13fb7200952c9bcea4eaeeb994/bucket/docker-compose.json
 
 # Scoop cleanup
 scoop cache rm *
@@ -219,7 +233,7 @@ pip --version
 pip install pipenv==2023.6.12
 pipenv --version
 # Install awscli
-pip install awscli==1.22.12
+pip install awscli==1.32.17
 aws --version
 # Cleanup
 pip cache remove * 
