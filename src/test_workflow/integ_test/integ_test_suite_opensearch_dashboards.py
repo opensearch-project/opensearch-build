@@ -60,7 +60,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
 
         self.repo = GitRepository(
             build_manifest_opensearch_dashboards.components['functionalTestDashboards'].repository,
-            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].commit_id,
+            build_manifest_opensearch_dashboards.components['functionalTestDashboards'].ref,
             os.path.join(self.work_dir, self.component.name),
             test_config.working_directory
         )
