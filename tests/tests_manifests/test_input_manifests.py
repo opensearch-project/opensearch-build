@@ -20,7 +20,7 @@ class TestInputManifests(unittest.TestCase):
     def test_3_0_0(self) -> None:
         manifest = self.manifests["3.0.0"]
         self.assertIsNotNone(manifest)
-        self.assertEqual(manifest.version, "1.0")
+        self.assertEqual(manifest.version, "1.1")
         self.assertEqual(manifest.build.version, "3.0.0")
         self.assertEqual(manifest.build.name, "OpenSearch")
         self.assertEqual(manifest.build.filename, "opensearch")
