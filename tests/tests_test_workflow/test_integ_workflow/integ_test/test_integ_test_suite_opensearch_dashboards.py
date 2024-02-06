@@ -13,14 +13,21 @@ from typing import Any
 from unittest.mock import MagicMock, Mock, call, patch
 
 from paths.script_finder import ScriptFinder
+from manifests.build_manifest import BuildManifest
+from manifests.bundle_manifest import BundleComponent, BundleManifest
 from test_workflow.integ_test.integ_test_suite import InvalidTestConfigError
 from test_workflow.integ_test.integ_test_suite_opensearch_dashboards import IntegTestSuiteOpenSearchDashboards
 from test_workflow.integ_test.local_test_cluster_opensearch_dashboards import LocalTestClusterOpenSearchDashboards
 
 
 class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
+    DATA = os.path.join(os.path.dirname(__file__), "data")
+    BUNDLE_MANIFEST_OSD = os.path.join(DATA, "bundle_manifest_osd.yml")
+    BUILD_MANIFEST = os.path.join(DATA, "build_manifest.yml")
+    BUILD_MANIFEST_OSD = os.path.join(DATA, "build_manifest_osd.yml")
 
     def setUp(self) -> None:
+        os.chdir(os.path.dirname(__file__))
         self.dependency_installer_opensearch = MagicMock()
         self.dependency_installer_opensearch_dashboards = MagicMock()
 
@@ -38,9 +45,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         self.bundle_manifest_opensearch = MagicMock()
         self.bundle_manifest_opensearch.build.version = "1.2.0"
 
-        self.bundle_manifest_opensearch_dashboards = MagicMock()
-        self.build_manifest_opensearch = MagicMock()
-        self.build_manifest_opensearch_dashboards = MagicMock()
+        self.bundle_manifest_opensearch_dashboards = BundleManifest.from_path(self.BUNDLE_MANIFEST_OSD)
+        self.build_manifest_opensearch = BuildManifest.from_path(self.BUILD_MANIFEST)
+        self.build_manifest_opensearch_dashboards = BuildManifest.from_path(self.BUILD_MANIFEST_OSD)
         self.work_dir = Path("test_dir")
 
         self.test_recorder = MagicMock()
@@ -49,18 +56,15 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
     @patch("os.chdir")
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_execute_tests(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_localTestClusterOSD: Mock, mock_path_exists: Mock, *mock: Any) -> None:
+    def test_execute_tests(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock, mock_chdir: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "https://test.github.com"
-        mock_git.return_value = mock_git_object
 
         mock_execute.return_value = ("test_status", "test_stdout", "")
 
@@ -86,6 +90,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.test_recorder
         )
 
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
+
         mock_execute_integtest_sh = MagicMock()
         suite.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
 
@@ -101,18 +108,15 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
     @patch("os.chdir")
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_execute_tests_additional_config(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_localTestClusterOSD: Mock, mock_path_exists: Mock, *mock: Any) -> None:
+    def test_execute_tests_additional_config(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock, mock_chdir: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "https://test.github.com"
-        mock_git.return_value = mock_git_object
 
         mock_execute.return_value = ("test_status", "test_stdout", "")
 
@@ -138,6 +142,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.test_recorder
         )
 
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
+
         mock_execute_integtest_sh = MagicMock()
         suite.execute_integtest_sh = mock_execute_integtest_sh  # type: ignore
 
@@ -154,20 +161,17 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
     # test base class
 
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_execute_integtest_sh(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
+    def test_execute_integtest_sh(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock) -> None:
         logging.info(locals())
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "dir"
-        mock_git.return_value = mock_git_object
 
         mock_execute.return_value = ("test_status", "test_stdout", "")
 
@@ -188,6 +192,10 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.work_dir,
             self.test_recorder
         )
+
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
+        suite.repo.dir = "dir"
 
         # call the test target
         status = suite.execute_integtest_sh("test_endpoint", 1234, True, "with-security")
@@ -211,18 +219,15 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
+    def test_execute_integtest_sh_script_do_not_exist(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "https://test.github.com"
-        mock_git.return_value = mock_git_object
 
         mock_path_exists.return_value = False
 
@@ -238,6 +243,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.work_dir,
             self.test_recorder
         )
+
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
 
         # call the test target
         status = suite.execute_integtest_sh("test_endpoint", 1234, True, "without-security")
@@ -250,18 +258,15 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         self.assertEqual(suite.additional_cluster_config, None)
 
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_is_security_enabled(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock) -> None:
+    def test_is_security_enabled(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock) -> None:
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "https://test.github.com"
-        mock_git.return_value = mock_git_object
 
         mock_path_exists.return_value = False
 
@@ -277,6 +282,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.work_dir,
             self.test_recorder
         )
+
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
 
         self.assertTrue(suite.is_security_enabled("with-security"))
         self.assertFalse(suite.is_security_enabled("without-security"))
@@ -290,19 +298,16 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
 
     @patch("test_workflow.integ_test.integ_test_suite.logging")
     @patch("os.path.exists")
+    @patch("os.makedirs")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.TestResultData")
-    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository")
+    @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.GitRepository.__checkout__")
     @patch("test_workflow.integ_test.integ_test_suite_opensearch_dashboards.execute", return_value=True)
-    def test_pretty_print_message(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_path_exists: Mock, mock_logging: Mock) -> None:
+    def test_pretty_print_message(self, mock_execute: Mock, mock_git: Mock, mock_test_result_data: Mock, mock_makedirs: Mock, mock_path_exists: Mock, mock_logging: Mock) -> None:
 
         mock_find = MagicMock()
         mock_find.return_value = "./integtest.sh"
 
         ScriptFinder.find_integ_test_script = mock_find  # type: ignore
-
-        mock_git_object = MagicMock()
-        mock_git_object.dir = "https://test.github.com"
-        mock_git.return_value = mock_git_object
 
         mock_path_exists.return_value = False
 
@@ -318,6 +323,9 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
             self.work_dir,
             self.test_recorder
         )
+
+        self.assertEqual(suite.repo.url, "https://github.com/opensearch-project/opensearch-dashboards-functional-test.git")
+        self.assertEqual(suite.repo.ref, "2.x")
 
         suite.pretty_print_message("test_message")
 
