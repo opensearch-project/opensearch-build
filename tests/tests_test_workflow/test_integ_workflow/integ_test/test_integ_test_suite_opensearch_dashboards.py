@@ -193,7 +193,7 @@ class TestIntegSuiteOpenSearchDashboards(unittest.TestCase):
         status = suite.execute_integtest_sh("test_endpoint", 1234, True, "with-security")
 
         self.assertEqual(status, "test_status")
-        mock_execute.assert_called_once_with('bash ./integtest.sh -b test_endpoint -p 1234 -s true -t sql -v 1.2.0 -o default', os.path.join("dir", "test_working_directory"), True, False)
+        mock_execute.assert_called_once_with('bash ./integtest.sh -b test_endpoint -p 1234 -s true -t sql -v 1.2.0 -o default -r false', os.path.join("dir", "test_working_directory"), True, False)
 
         mock_test_result_data.assert_called_once_with(
             "sql",
