@@ -82,8 +82,8 @@ pipeline {
             defaultValue: true
         )
         booleanParam(
-            name: 'CREATE_GITHUB_ISSUE',
-            description: 'To create a github issue for failing component or not.',
+            name: 'UPDATE_GITHUB_ISSUE',
+            description: 'To create/close/update a github issue for all component or not.',
             defaultValue: true
         )
         booleanParam(
@@ -941,14 +941,10 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    closeBuildSuccessGithubIssue(
-                        message: buildMessage(search: 'Successfully built'),
-                        search: 'Successfully built',
-                        inputManifestPath: "manifests/$INPUT_MANIFEST"
-                    )
-                    if (params.CREATE_GITHUB_ISSUE) {
-                        createBuildFailureGithubIssue(
-                            message: buildMessage(search: 'Error building'),
+                    if (params.UPDATE_GITHUB_ISSUE) {
+                        UpdateBuildFailureIssues(
+                            failureMessages: buildMessage(search: 'Error building'),
+                            passMessages: buildMessage(search: 'Successfully built'),
                             inputManifestPath: "manifests/$INPUT_MANIFEST"
                         )
                     }
