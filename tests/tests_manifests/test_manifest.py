@@ -11,6 +11,7 @@ from typing import Any, Dict
 from unittest.mock import MagicMock, Mock, patch
 
 import yaml
+
 from manifests.manifest import Manifest
 from system.temporary_directory import TemporaryDirectory
 

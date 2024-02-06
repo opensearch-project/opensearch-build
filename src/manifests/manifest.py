@@ -12,10 +12,9 @@ from abc import ABC, abstractmethod
 from typing import IO, Any, Dict, Generic, Optional, Type, TypeVar
 
 import validators
+import yaml
 import yamlfix
 from cerberus import Validator
-
-import yaml
 
 T = TypeVar('T', bound='Manifest')
 

@@ -9,9 +9,9 @@ import logging
 import os
 from typing import Union
 
+import yaml
 from retry.api import retry_call  # type: ignore
 
-import yaml
 from git.git_repository import GitRepository
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
