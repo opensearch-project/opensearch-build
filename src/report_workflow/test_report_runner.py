@@ -12,8 +12,8 @@ from typing import Any
 from urllib.error import HTTPError
 
 import validators
-
 import yaml
+
 from manifests.test_manifest import TestManifest
 from manifests.test_report_manifest import TestReportManifest
 from report_workflow.report_args import ReportArgs

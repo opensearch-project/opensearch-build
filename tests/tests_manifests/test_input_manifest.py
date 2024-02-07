@@ -11,6 +11,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 import yaml
+
 from manifests.input.input_manifest_1_0 import Check_1_0, InputComponentFromDist_1_0, InputComponentFromSource_1_0
 from manifests.input_manifest import Check, InputComponent, InputComponentFromDist, InputComponentFromSource, InputManifest
 from system.temporary_directory import TemporaryDirectory

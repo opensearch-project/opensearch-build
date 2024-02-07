@@ -9,9 +9,9 @@ import logging
 import os
 
 import requests
+import yaml
 from requests.models import Response
 
-import yaml
 from test_workflow.dependency_installer import DependencyInstaller
 from test_workflow.integ_test.distribution import Distribution
 from test_workflow.integ_test.distributions import Distributions
