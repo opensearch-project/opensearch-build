@@ -1,0 +1,90 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 2.12.0
+  platform: windows
+  architecture: x64
+  distribution: zip
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/dist/opensearch-dashboards/opensearch-dashboards-2.12.0-windows-x64.zip
+  id: '7236'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: 2.x
+    commit_id: 0926ae6319a455d711a61ca5ace2e61a511b9878
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/dist\opensearch-dashboards-min-2.12.0-windows-x64.zip
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: 2.x
+    commit_id: f871b2011095122faaa4558556d831a290a4ef15
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: 2.x
+    commit_id: 7442e6f60d1c6790c82fde3c5d141a7a04c7f9c2
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\observabilityDashboards-2.12.0.zip
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    ref: 2.x
+    commit_id: b31a1475eedb736dfd0ae8b430c1af73adc4fd81
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\reportsDashboards-2.12.0.zip
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: 2.x
+    commit_id: 07dbfc7a6147369084df11e99ab3680596a33ab3
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\ganttChartDashboards-2.12.0.zip
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
+    ref: 2.x
+    commit_id: 36e879a406359f7e98b7226840fae0f956b602a3
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\queryWorkbenchDashboards-2.12.0.zip
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: 2.x
+    commit_id: 1f019eb5e99f4b53ce8dea28751bfc4e3af6004f
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\anomalyDetectionDashboards-2.12.0.zip
+  - name: mlCommonsDashboards
+    repository: https://github.com/opensearch-project/ml-commons-dashboards.git
+    ref: 2.x
+    commit_id: d28607d0dc67c961774ec6742ac12de167da1679
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\mlCommonsDashboards-2.12.0.zip
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
+    ref: 2.x
+    commit_id: 461de48fdbcdaaac5cfd48b05f42f8c35e60f3c1
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\indexManagementDashboards-2.12.0.zip
+  - name: notificationsDashboards
+    repository: https://github.com/opensearch-project/dashboards-notifications.git
+    ref: 2.x
+    commit_id: 9559b3a93531831045d99a1eb33a60b8b253f16e
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\notificationsDashboards-2.12.0.zip
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: 2.x
+    commit_id: 607b2d7f83a2fcb82ae03641dc74e018aad53ead
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\alertingDashboards-2.12.0.zip
+  - name: securityAnalyticsDashboards
+    repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
+    ref: 2.x
+    commit_id: 388eb6f1f4f3a6e7bd4e457bdd277e4cdb846727
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\securityAnalyticsDashboards-2.12.0.zip
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: 2.x
+    commit_id: bd8da9fe07ba61cfb7c9171f846face2cad514df
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\securityDashboards-2.12.0.zip
+  - name: searchRelevanceDashboards
+    repository: https://github.com/opensearch-project/dashboards-search-relevance.git
+    ref: 2.x
+    commit_id: 25a93d1f70c841402cf71ae9f4fa3660621f3b80
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\searchRelevanceDashboards-2.12.0.zip
+  - name: customImportMapDashboards
+    repository: https://github.com/opensearch-project/dashboards-maps.git
+    ref: 2.x
+    commit_id: 823816e001336e75b59b0f2c72e563060f07a7e6
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\customImportMapDashboards-2.12.0.zip
+  - name: assistantDashboards
+    repository: https://github.com/opensearch-project/dashboards-assistant.git
+    ref: 2.x
+    commit_id: 6be636550e1d0462f1e34727a7f00f67667fda7a
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/2.12.0/7236/windows/x64/zip/builds/opensearch-dashboards/plugins\assistantDashboards-2.12.0.zip
