@@ -113,10 +113,10 @@ class ValidationArgs:
         )
         parser.add_argument(
             "-f",
-            "--force-https-check",
+            "--force-https",
             action="store_true",
             default=True,
-            help="If False then check for the existence of security plugin and use http/https as required, else force to check to https"
+            help="If False, use http/https to connect based on the existence of security plugin, else always use https, default to True"
         )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
@@ -143,7 +143,7 @@ class ValidationArgs:
         self.version = args.version
         self.file_path = args.file_path
         self.artifact_type = args.artifact_type
-        self.force_https_check = args.force_https_check
+        self.force_https = args.force_https
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform

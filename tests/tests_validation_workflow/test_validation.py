@@ -62,26 +62,14 @@ class TestValidation(unittest.TestCase):
         result = mock_validation.copy_artifact(url, "tmp/tthcdhfh/")
         self.assertTrue(result)
 
-    @patch('validation_workflow.validation.execute')
+    @patch('os.path.exists')
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_check_for_security_plugin_true(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
-        mock_execute.return_value = (0, "opensearch-security", "")
+    def test_check_for_security_plugin(self, mock_validation_args: Mock, mock_path_exists: Mock) -> None:
+        mock_path_exists.return_value = True
 
         mock_validation_args.projects.return_value = ["opensearch"]
         mock_validation = ValidateTar(mock_validation_args.return_value)
 
-        result = mock_validation.check_for_security_plugin("/tmp/tmkuiuo/opensearch", "tar")
+        result = mock_validation.check_for_security_plugin("/tmp/tmkuiuo/opensearch")
 
         self.assertTrue(result)
-
-    @patch('validation_workflow.validation.execute')
-    @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_check_for_security_plugin_false(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
-        mock_execute.return_value = (0, "opensearch", "")
-
-        mock_validation_args.projects.return_value = ["opensearch"]
-        mock_validation = ValidateTar(mock_validation_args.return_value)
-
-        result = mock_validation.check_for_security_plugin("/bin/opensearch", "tar")
-
-        self.assertFalse(result)

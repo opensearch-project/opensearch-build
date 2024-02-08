@@ -71,7 +71,7 @@ class TestValidateTar(unittest.TestCase):
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
-        mock_validation_args.return_value.force_https_check = True
+        mock_validation_args.return_value.force_https = True
         mock_validation_args.return_value.projects = ["opensearch"]
 
         validate_tar = ValidateTar(mock_validation_args.return_value)
@@ -132,7 +132,7 @@ class TestValidateTar(unittest.TestCase):
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     def test_validation_without_force_https_check(self, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https_check = False
+        mock_validation_args.return_value.force_https = False
         validate_tar = ValidateTar(mock_validation_args.return_value)
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")

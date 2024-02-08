@@ -13,7 +13,6 @@ import shutil
 from abc import ABC, abstractmethod
 from typing import Any
 
-from system.execute import execute
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation_args import ValidationArgs
 
@@ -41,10 +40,9 @@ class Validation(ABC):
         else:
             raise Exception("Provided path for local artifacts does not exist")
 
-    def check_for_security_plugin(self, work_dir: str, distribution: str) -> bool:
-        list_cmd = "dir" if distribution == "zip" else "ls"
-        (_, plugins_list, _) = execute(f"{list_cmd} plugins", work_dir, True, False)
-        return "opensearch-security" in plugins_list
+    def check_for_security_plugin(self, work_dir: str) -> bool:
+        path = os.path.exists(os.path.join(work_dir, "plugins", "opensearch-security"))
+        return path
 
     def get_version(self, project: str) -> str:
         return re.search(r'(\d+\.\d+\.\d+)', os.path.basename(project)).group(1)

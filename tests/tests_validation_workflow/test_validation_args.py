@@ -67,9 +67,9 @@ class TestValidationArgs(unittest.TestCase):
     def test_artifact_type(self) -> None:
         self.assertNotEqual(ValidationArgs().artifact_type, "production")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--force-https-check"])  # noqa: E501
-    def test_force_https_check(self) -> None:
-        self.assertEqual(ValidationArgs().force_https_check, True)
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--force-https"])  # noqa: E501
+    def test_force_https(self) -> None:
+        self.assertEqual(ValidationArgs().force_https, True)
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
     def test_set_projects(self) -> None:
