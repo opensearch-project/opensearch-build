@@ -1,12 +1,12 @@
 ---
-schema-version: '1.0'
+schema-version: '1.1'
 build:
   name: OpenSearch
   version: 'replace'
 ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
-    args: -e JAVA_HOME=/opt/java/openjdk-17
+    args: -e JAVA_HOME=/opt/java/openjdk-21
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
