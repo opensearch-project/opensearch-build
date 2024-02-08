@@ -64,37 +64,24 @@ class TestValidation(unittest.TestCase):
 
     @patch('validation_workflow.validation.execute')
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_is_allow_with_security_true(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
+    def test_check_for_security_plugin_true(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
         mock_execute.return_value = (0, "opensearch-security", "")
 
         mock_validation_args.projects.return_value = ["opensearch"]
         mock_validation = ValidateTar(mock_validation_args.return_value)
 
-        result = mock_validation.test_security_plugin("/bin/opensearch")
+        result = mock_validation.check_for_security_plugin("/tmp/tmkuiuo/opensearch", "tar")
 
         self.assertTrue(result)
 
     @patch('validation_workflow.validation.execute')
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_is_allow_with_security_false(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
+    def test_check_for_security_plugin_false(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
         mock_execute.return_value = (0, "opensearch", "")
 
         mock_validation_args.projects.return_value = ["opensearch"]
         mock_validation = ValidateTar(mock_validation_args.return_value)
 
-        result = mock_validation.test_security_plugin("/bin/opensearch")
+        result = mock_validation.check_for_security_plugin("/bin/opensearch", "tar")
 
         self.assertFalse(result)
-
-    @patch('validation_workflow.validation.execute')
-    @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_is_allow_with_security_exception(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
-        mock_execute.return_value = (0, "", "error")
-
-        mock_validation_args.projects.return_value = ["opensearch"]
-        mock_validation = ValidateTar(mock_validation_args.return_value)
-
-        with self.assertRaises(Exception) as context:
-            mock_validation.test_security_plugin("/bin/opensearch")
-
-        self.assertEqual(str(context.exception), "Couldn't fetch the path to plugin folder")

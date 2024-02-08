@@ -67,9 +67,9 @@ class TestValidationArgs(unittest.TestCase):
     def test_artifact_type(self) -> None:
         self.assertNotEqual(ValidationArgs().artifact_type, "production")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--allow-without-security"])  # noqa: E501
-    def test_allow_without_security(self) -> None:
-        self.assertEqual(ValidationArgs().allow_without_security, True)
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--force-https-check"])  # noqa: E501
+    def test_force_https_check(self) -> None:
+        self.assertEqual(ValidationArgs().force_https_check, True)
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
     def test_set_projects(self) -> None:
@@ -82,7 +82,7 @@ class TestValidationArgs(unittest.TestCase):
             self.assertEqual(ValidationArgs().projects, ["opensearch-dashboards"])
         self.assertEqual(str(ctx.exception), "Missing OpenSearch OpenSearch artifact details! Please provide the same along with OpenSearch-Dashboards to validate")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.zip"])
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.xyz"])
     def test_file_path_distribution_type(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().projects, ["opensearch"])

@@ -51,8 +51,6 @@ class ValidateTar(Validation, DownloadUtils):
             for project in self.args.projects:
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 execute('mkdir ' + os.path.join(self.tmp_dir.path, project) + ' | tar -xzf ' + os.path.join(str(self.tmp_dir.path), self.filename) + ' -C ' + os.path.join(self.tmp_dir.path, project) + ' --strip-components=1', ".", True, False)  # noqa: E501
-            if self.args.allow_without_security:
-                self.args.allow_without_security = self.test_security_plugin(str(self.tmp_dir.path))
         except:
             raise Exception('Failed to install Opensearch')
         return True
@@ -70,8 +68,7 @@ class ValidateTar(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-
-        test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.args.allow_without_security)
+        test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.check_for_security_plugin(os.path.join(self.tmp_dir.path, "opensearch"), "tar") if not self.args.force_https_check else True)  # noqa: E501
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
         else:

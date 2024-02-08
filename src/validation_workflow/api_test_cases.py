@@ -23,17 +23,14 @@ class ApiTestCases:
     @staticmethod
     def test_apis(version: str, projects: list, security_plugin_exists: bool = True) -> Any:
         pass_counter, fail_counter = 0, 0
+        protocol_prefix = "https" if security_plugin_exists else "http"
 
         # the test case parameters are formated as ['<request_url>',<success_status_code>,'<validate_string(optional)>']
         test_apis = [
-            ['https://localhost:9200/', 200, ''],
-            ['https://localhost:9200/_cat/plugins?v', 200, ''],
-            ['https://localhost:9200/_cat/health?v', 200, 'green'],
+            [f'{protocol_prefix}://localhost:9200/', 200, ''],
+            [f'{protocol_prefix}://localhost:9200/_cat/plugins?v', 200, ''],
+            [f'{protocol_prefix}://localhost:9200/_cat/health?v', 200, 'green'],
         ]
-        # Use http in the request url if the security plugin is absent
-        if not security_plugin_exists:
-            for api in test_apis:
-                api[0] = "http" + api[0][5:]  # type: ignore
 
         if ("opensearch-dashboards" in projects):
             test_apis.append(['http://localhost:5601/api/status', 200, ''])
