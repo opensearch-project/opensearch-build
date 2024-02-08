@@ -50,6 +50,7 @@ jobs:
           - '2.10'
           - '2.11'
           - '2.12'
+          - '2.13'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3
@@ -167,8 +168,8 @@ jobs:
             - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
           path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
           add-paths: |
-              opensearch_dashboards.json
-              package.json
+            opensearch_dashboards.json
+            package.json
       - name: Check outputs
         run: |-
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
