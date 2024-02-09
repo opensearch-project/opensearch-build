@@ -10,9 +10,8 @@ import os
 import subprocess
 from typing import Any
 
-import semver
-
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from utils.version_utils import get_password
 
 
 class BenchmarkTestSuite:
@@ -70,11 +69,8 @@ class BenchmarkTestSuite:
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
     def execute(self) -> None:
-        password: str = 'admin'
         if self.security:
-            if semver.compare(self.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'{password}\'"'
+            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'{get_password(self.distribution_version)}\'"'
         else:
             self.command += ' --client-options="timeout:300"'
         logging.info(f"Executing {self.command}")

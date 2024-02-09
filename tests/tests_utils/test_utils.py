@@ -7,7 +7,7 @@
 
 import unittest
 
-from test_workflow.integ_test.utils import get_password
+from utils.version_utils import get_password
 
 
 class TestUtils(unittest.TestCase):

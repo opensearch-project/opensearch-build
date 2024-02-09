@@ -14,13 +14,13 @@ from contextlib import contextmanager
 from typing import Any, Generator, Union
 
 import requests
-import semver
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
 
 from manifests.build_manifest import BuildManifest
 from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from utils.version_utils import get_password
 
 
 class BenchmarkTestCluster:
@@ -115,11 +115,9 @@ class BenchmarkTestCluster:
         # To-do: Make this better
         password = 'admin'
         if self.manifest:
-            if semver.compare(self.manifest.build.version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
+            password = get_password(self.manifest.build.version)
         else:
-            if semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
+            password = get_password(self.args.distribution_version)
 
         logging.info(f"Waiting for domain at {self.endpoint} to be up")
         protocol = "http://" if self.args.insecure else "https://"
@@ -131,7 +129,7 @@ class BenchmarkTestCluster:
 
     def setup_cdk_params(self, config: dict) -> dict:
         suffix = ''
-        need_strong_password = False
+        password = None
         if self.args.stack_suffix and self.manifest:
             suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
         elif self.manifest:
@@ -143,12 +141,12 @@ class BenchmarkTestCluster:
             artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
                 f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
                 f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
-            if not self.args.insecure and semver.compare(self.manifest.build.version, '2.12.0') != -1:
-                need_strong_password = True
+            if not self.args.insecure:
+                password = 'myStrongPassword123!' if get_password(self.manifest.build.version) == 'myStrongPassword123!' else None
         else:
             artifact_url = self.args.distribution_url.strip()
-            if not self.args.insecure and semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                need_strong_password = True
+            if not self.args.insecure:
+                password = 'myStrongPassword123!' if get_password(self.args.distribution_version) == 'myStrongPassword123!' else None
 
         return {
             "distributionUrl": artifact_url,
@@ -157,7 +155,7 @@ class BenchmarkTestCluster:
             "region": config["Constants"]["Region"],
             "suffix": suffix,
             "securityDisabled": str(self.args.insecure).lower(),
-            "adminPassword": 'myStrongPassword123!' if need_strong_password else None,
+            "adminPassword": password,
             "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
             "singleNodeCluster": str(self.args.single_node).lower(),
             "distVersion": self.manifest.build.version if self.manifest else self.args.distribution_version,
