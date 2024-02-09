@@ -123,6 +123,7 @@ class IntegTestSuiteOpenSearchDashboards(IntegTestSuite):
                 self.test_artifact_files
             )
             self.save_logs.save_test_result_data(test_result_data)
+            self.test_result_data.append(test_result_data)
             if stderr:
                 logging.info("Stderr reported for component: " + self.component.name)
                 logging.info(stderr)
