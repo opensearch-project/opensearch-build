@@ -7,6 +7,8 @@
 
 
 import logging
+import os
+import re
 import shutil
 from abc import ABC, abstractmethod
 from typing import Any
@@ -37,6 +39,13 @@ class Validation(ABC):
             return True
         else:
             raise Exception("Provided path for local artifacts does not exist")
+
+    def check_for_security_plugin(self, work_dir: str) -> bool:
+        path = os.path.exists(os.path.join(work_dir, "plugins", "opensearch-security"))
+        return path
+
+    def get_version(self, project: str) -> str:
+        return re.search(r'(\d+\.\d+\.\d+)', os.path.basename(project)).group(1)
 
     def run(self) -> Any:
         try:

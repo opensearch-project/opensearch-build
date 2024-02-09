@@ -11,6 +11,7 @@ import time
 
 from system.execute import execute
 from system.temporary_directory import TemporaryDirectory
+from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation import Validation
@@ -32,6 +33,7 @@ class ValidateRpm(Validation, DownloadUtils):
                 if ("https:" not in self.args.file_path.get(project)):
                     self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
                 else:
+                    self.args.version = self.get_version(self.args.file_path.get(project))
                     self.check_url(self.args.file_path.get(project))
             else:
                 if (self.args.artifact_type == "staging"):
@@ -47,7 +49,7 @@ class ValidateRpm(Validation, DownloadUtils):
             for project in self.args.projects:
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 execute(f'sudo yum remove {project} -y', ".")
-                execute(f'sudo rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)
+                execute(f'sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)  # noqa: 501
         except:
             raise Exception('Failed to install Opensearch')
         return True
@@ -68,7 +70,7 @@ class ValidateRpm(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_apis(self.args.projects)
+        test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.check_for_security_plugin(os.path.join(os.sep, "usr", "share", "opensearch")) if not self.args.force_https else True)  # noqa: E501
         if (test_result):
             logging.info(f'All tests Pass : {counter}')
             return True

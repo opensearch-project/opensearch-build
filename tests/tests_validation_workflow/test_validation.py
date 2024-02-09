@@ -61,3 +61,15 @@ class TestValidation(unittest.TestCase):
 
         result = mock_validation.copy_artifact(url, "tmp/tthcdhfh/")
         self.assertTrue(result)
+
+    @patch('os.path.exists')
+    @patch('validation_workflow.tar.validation_tar.ValidationArgs')
+    def test_check_for_security_plugin(self, mock_validation_args: Mock, mock_path_exists: Mock) -> None:
+        mock_path_exists.return_value = True
+
+        mock_validation_args.projects.return_value = ["opensearch"]
+        mock_validation = ValidateTar(mock_validation_args.return_value)
+
+        result = mock_validation.check_for_security_plugin("/tmp/tmkuiuo/opensearch")
+
+        self.assertTrue(result)

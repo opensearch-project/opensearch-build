@@ -83,7 +83,7 @@ class ValidateDocker(Validation):
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_apis(self.args.projects)
+                    _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')
@@ -137,7 +137,7 @@ class ValidateDocker(Validation):
 
         for url, name in self.test_readiness_urls.items():
             try:
-                status_code, response_text = ApiTest(url).api_get()
+                status_code, response_text = ApiTest(url, self.args.version).api_get()
                 if status_code != 200:
                     logging.error(f'Error connecting to {name} ({url}): status code {status_code}')
                     return False

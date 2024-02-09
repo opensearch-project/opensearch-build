@@ -109,7 +109,14 @@ class ValidationArgs:
             help="Enter type of artifacts that needs to be validated",
             choices=["staging", "production"],
             default="production",
-            dest="artifact_type",
+            dest="artifact_type"
+        )
+        parser.add_argument(
+            "-f",
+            "--force-https",
+            action="store_true",
+            default=True,
+            help="If False, use http/https to connect based on the existence of security plugin, else always use https, default to True"
         )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
@@ -136,6 +143,7 @@ class ValidationArgs:
         self.version = args.version
         self.file_path = args.file_path
         self.artifact_type = args.artifact_type
+        self.force_https = args.force_https
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform
