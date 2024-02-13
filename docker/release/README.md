@@ -91,7 +91,7 @@ Here are three example scenarios of using above variables:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.1.0
      ```
-     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set up and utilize demo configuration.
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" opensearchproject/opensearch:2.12.0
      ```
@@ -103,7 +103,7 @@ Here are three example scenarios of using above variables:
 #### Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
   * OpenSearch:
      ```
-     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
      ```
   * OpenSearch-Dashboards:
      ```
@@ -133,7 +133,7 @@ Here are some example scenarios of using above variables:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
      ```
-     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set up and utilize demo configuration.
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" opensearchproject/opensearch:<TAG>
      ```
@@ -143,7 +143,7 @@ Here are some example scenarios of using above variables:
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
      ```
-     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set-up and utilize demo configuration.
+     Note: For OpenSearch 2.12 and later, a custom password for the admin user is required to be passed to set up and utilize demo configuration.
      ```
      $ docker run -it -p 9200:9200 -p 9600:9600 -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=<strong-password> -e "discovery.type=single-node" -e "DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true" opensearchproject/opensearch:<TAG>
      ```
