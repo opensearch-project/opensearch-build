@@ -23,13 +23,14 @@ class TestInspectDockerImage(unittest.TestCase):
         self.prod_image_tag = "1.2.3"
         self.os_build_number = "1000"
         self.osd_build_number = "2000"
+        self.projects = ["opensearch", "opensearch-dashboards"]
         self.version = "2.4.0"
         with patch("validation_workflow.docker.inspect_docker_image.ValidationArgs", MagicMock()) as mock_args:
             mock_args.stg_tag.return_value = "stg_tag"
             self.inspector = InspectDockerImage(self.image_id, self.image_name, self.prod_image_tag)
 
     def test_validation_args_stg_arg(self) -> None:
-        result = ValidationArgs.stg_tag(self, 'opensearch_dashboards').replace(" ", "")  # type: ignore
+        result = ValidationArgs.stg_tag(self, 'opensearch-dashboards').replace(" ", "")  # type: ignore
         self.assertEqual(result, "2.4.0.2000")
         result = ValidationArgs.stg_tag(self, 'opensearch').replace(" ", "")  # type: ignore
         self.assertEqual(result, "2.4.0.1000")

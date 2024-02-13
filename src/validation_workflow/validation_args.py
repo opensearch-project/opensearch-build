@@ -13,7 +13,7 @@ from test_workflow.test_kwargs import TestKwargs
 
 
 class ValidationArgs:
-    SUPPORTED_PLATFORMS = ["linux"]
+    SUPPORTED_PLATFORMS = ["linux", "windows"]
     DOCKER_SOURCE = ["dockerhub", "ecr"]
 
     def __init__(self) -> None:
@@ -114,7 +114,7 @@ class ValidationArgs:
         parser.add_argument(
             "-f",
             "--force-https",
-            action="store_true",
+            action="store_false",
             default=True,
             help="If False, use http/https to connect based on the existence of security plugin, else always use https, default to True"
         )
@@ -123,22 +123,30 @@ class ValidationArgs:
             "--validate-digest-only",
             action="store_true",
             default=False,
-            help="(optional) Validate digest only; will not run docker to test API")
+            help="(optional) Validate digest only; will not run docker to test API",
+            dest="validate_digest_only")
         group.add_argument(
             "--using-staging-artifact-only",
             action="store_true",
             default=False,
-            help="(optional) Use only staging artifact to run docker and API test, will not validate digest")
+            help="(optional) Use only staging artifact to run docker and API test, will not validate digest",
+            dest="using_staging_artifact_only")
 
         args = parser.parse_args()
 
         if (not (args.version or args.file_path)):
             raise Exception("Provide either version number or File Path")
-        if(args.file_path):
+        if (args.file_path):
+            if 'opensearch' not in args.file_path.keys() or not set(args.file_path.keys()) <= {'opensearch', 'opensearch-dashboards'}:
+                raise Exception("Missing OpenSearch artifact details! Please provide the valid product names among opensearch and opensearch-dashboards")
             args.distribution = self.get_distribution_type(args.file_path)
             args.projects = args.file_path.keys()
-        if (('opensearch' not in args.projects)):
-            raise Exception("Missing OpenSearch OpenSearch artifact details! Please provide the same along with OpenSearch-Dashboards to validate")
+
+        if args.distribution == "docker":
+            if args.osd_build_number != "latest" and "opensearch-dashboards" not in args.projects:
+                raise Exception("Provide opensearch-dashboards in projects argument to validate OpenSearch-Dashboards")
+            if not(args.validate_digest_only or args.using_staging_artifact_only):
+                raise Exception("Provide either of --validate-digest-only and --using-staging-artifact-only for Docker Validation")
 
         self.version = args.version
         self.file_path = args.file_path
@@ -149,8 +157,6 @@ class ValidationArgs:
         self.platform = args.platform
         self.projects = args.projects
         self.arch = args.arch
-        self.OS_image = 'opensearchproject/opensearch'
-        self.OSD_image = 'opensearchproject/opensearch-dashboards'
         self.build_number = {"opensearch": args.os_build_number, "opensearch-dashboards": args.osd_build_number}
         self.os_build_number = args.os_build_number
         self.osd_build_number = args.osd_build_number
@@ -165,6 +171,10 @@ class ValidationArgs:
             return 'yum'
         elif (any("rpm" in value for value in file_path.values())):
             return 'rpm'
+        elif (any("zip" in value for value in file_path.values())):
+            return 'zip'
+        elif (any("deb" in value for value in file_path.values())):
+            return 'deb'
         else:
             raise Exception("Provided distribution is not supported")
 
@@ -174,8 +184,8 @@ class ValidationArgs:
                 None,
                 [
                     self.version,
-                    "." + self.os_build_number if (self.os_build_number != "") and (image_type == "opensearch") else None,
-                    "." + self.osd_build_number if (self.osd_build_number != "") and (image_type == "opensearch_dashboards") else None,
+                    "." + self.os_build_number if (self.os_build_number != "latest") and (image_type == "opensearch") else None,
+                    "." + self.osd_build_number if (self.osd_build_number != "latest") and (image_type == "opensearch-dashboards") else None,
                 ],
             )
         )

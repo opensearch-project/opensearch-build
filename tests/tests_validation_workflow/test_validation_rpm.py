@@ -19,6 +19,7 @@ class TestValidationRpm(unittest.TestCase):
     def test_empty_file_path_and_production_artifact_type(self) -> None:
         self.args.projects = ["opensearch"]
         self.args.version = "2.4.0"
+        self.args.distribution = "rpm"
         self.args.file_path = {}
         self.args.artifact_type = "production"
 
@@ -41,6 +42,7 @@ class TestValidationRpm(unittest.TestCase):
     def test_empty_file_path_and_staging_artifact_type(self, mock_validation_args: Mock) -> None:
         self.args.projects = ["opensearch"]
         self.args.version = "2.4.0"
+        self.args.distribution = "rpm"
         self.args.artifact_type = "staging"
         self.args.file_path = {}
         self.args.build_number = {"opensearch": "1.2.3", "opensearch-dashboards": "1.2.3"}
@@ -100,8 +102,7 @@ class TestValidationRpm(unittest.TestCase):
 
     @patch("validation_workflow.rpm.validation_rpm.execute", return_value=True)
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
-    @patch('time.sleep')
-    def test_start_cluster(self, mock_validation_args: Mock, mock_system: Mock, mock_sleep: Mock) -> None:
+    def test_start_cluster(self, mock_validation_args: Mock, mock_system: Mock) -> None:
         mock_validation_args.return_value.projects.return_value = ["opensearch", "opensearch-dashboards"]
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
@@ -111,26 +112,33 @@ class TestValidationRpm(unittest.TestCase):
 
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('validation_workflow.rpm.validation_rpm.ApiTestCases')
-    def test_validation(self, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
-        # Set up mock objects
+    @patch('validation_workflow.validation.Validation.check_cluster_readiness')
+    def test_validation(self, mock_check_cluster: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_test_apis_instance = mock_test_apis.return_value
-        mock_test_apis_instance.test_apis.return_value = (True, 4)
+        mock_check_cluster.return_value = True
+        mock_test_apis_instance.test_apis.return_value = (True, 3)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
-        validate_rpm.validation()
 
-        self.assertEqual(mock_test_apis.call_count, 1)
+        result = validate_rpm.validation()
+        self.assertTrue(result)
+        mock_check_cluster.assert_called_once()
+        mock_test_apis.assert_called_once()
 
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('validation_workflow.rpm.validation_rpm.ApiTestCases')
     @patch('os.path.basename')
     @patch('validation_workflow.rpm.validation_rpm.execute')
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
-    def test_validation_with_security_parameter(self, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
+    @patch('validation_workflow.validation.Validation.check_cluster_readiness')
+    def test_validation_without_force_https_check(self, mock_check_cluster: Mock, mock_security: Mock,
+                                                  mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock,
+                                                  mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.force_https = False
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
+        mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         mock_security.return_value = True
@@ -139,17 +147,32 @@ class TestValidationRpm(unittest.TestCase):
 
         result = validate_rpm.validation()
         self.assertTrue(result)
+        mock_check_cluster.assert_called_once()
         mock_security.assert_called_once()
 
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
+    @patch('validation_workflow.validation.Validation.check_cluster_readiness')
+    def test_cluster_not_ready(self, mock_check_cluster: Mock, mock_validation_args: Mock) -> None:
+        mock_validation_args.return_value.version = '2.3.0'
+        validate_rpm = ValidateRpm(mock_validation_args.return_value)
+        mock_check_cluster.return_value = False
+
+        with self.assertRaises(Exception) as context:
+            validate_rpm.validation()
+        self.assertEqual(str(context.exception), 'Cluster is not ready for API test')
+        mock_check_cluster.assert_called_once()
+
+    @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch('validation_workflow.rpm.validation_rpm.ApiTestCases')
-    def test_failed_testcases(self, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
-        # Set up mock objects
+    @patch('validation_workflow.validation.Validation.check_cluster_readiness')
+    def test_failed_testcases(self, mock_check_cluster: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_test_apis_instance = mock_test_apis.return_value
+        mock_check_cluster.return_value = True
         mock_test_apis_instance.test_apis.return_value = (False, 1)
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
+
         with self.assertRaises(Exception) as context:
             validate_rpm.validation()
 

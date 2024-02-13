@@ -16,32 +16,26 @@ from validation_workflow.validation import Validation
 from validation_workflow.validation_args import ValidationArgs
 
 
-class ValidateRpm(Validation, DownloadUtils):
-
+class ValidateDeb(Validation, DownloadUtils):
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__(args)
 
     def installation(self) -> bool:
         try:
-            execute('sudo rpm --import https://artifacts.opensearch.org/publickeys/opensearch.pgp', str(self.tmp_dir.path), True, False)
             for project in self.args.projects:
-                self.filename = os.path.basename(self.args.file_path.get(project))
-                execute(f'sudo yum remove {project} -y', ".")
-                execute(f'sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)  # noqa: 501
+                set_password = f' env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))}' if project == "opensearch" else ""
+                execute(f'sudo dpkg --purge {project}', ".")
+                execute(f'sudo {set_password} dpkg -i {os.path.basename(self.args.file_path.get(project))}', str(self.tmp_dir.path))
         except:
-            raise Exception('Failed to install Opensearch')
+            raise Exception("Failed to install OpenSearch/OpenSearch-Dashboards")
         return True
 
     def start_cluster(self) -> bool:
         try:
             for project in self.args.projects:
+                execute(f'sudo systemctl enable {project}', ".")
                 execute(f'sudo systemctl start {project}', ".")
-                (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
-                if(status == 0):
-                    logging.info(stdout)
-                else:
-                    logging.info(stderr)
-
+                execute(f'sudo systemctl status {project}', ".")
         except:
             raise Exception('Failed to Start Cluster')
         return True
@@ -60,8 +54,7 @@ class ValidateRpm(Validation, DownloadUtils):
     def cleanup(self) -> bool:
         try:
             for project in self.args.projects:
-                execute(f'sudo systemctl stop {project}', ".")
-                execute(f'sudo yum remove {project} -y', ".")
+                execute(f'sudo dpkg --purge {project}', ".")
         except Exception as e:
             raise Exception(f'Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards. {str(e)}')
         return True
