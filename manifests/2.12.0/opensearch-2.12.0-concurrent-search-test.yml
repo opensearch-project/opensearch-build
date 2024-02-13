@@ -15,7 +15,6 @@ components:
         - without-security
       additional-cluster-configs:
         path.repo: [/tmp]
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -30,7 +29,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -43,7 +41,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -54,7 +51,6 @@ components:
         - without-security
       additional-cluster-configs:
         plugins.destination.host.deny_list: [10.0.0.0/8, 127.0.0.1]
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -68,7 +64,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -83,7 +78,6 @@ components:
       additional-cluster-configs:
         script.context.field.max_compilations_rate: 1000/1m
         plugins.query.datasources.encryption.masterkey: 4fc8fee6a3fd7d6ca01772e5
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -96,7 +90,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -106,7 +99,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -116,7 +108,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -126,7 +117,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
     bwc-test:
@@ -139,7 +129,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -156,7 +145,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -165,7 +153,6 @@ components:
       test-configs:
         - with-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -175,7 +162,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -185,7 +171,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -195,7 +180,6 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
 
@@ -205,6 +189,5 @@ components:
         - with-security
         - without-security
       additional-cluster-configs:
-        opensearch.experimental.feature.concurrent_segment_search.enabled: true
         search.concurrent_segment_search.enabled: true
         search.concurrent.max_slice_count: 2
