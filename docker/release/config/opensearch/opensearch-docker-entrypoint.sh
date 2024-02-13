@@ -31,19 +31,18 @@ function setupSecurityPlugin {
     SECURITY_PLUGIN="opensearch-security"
 
     if [ -d "$OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN" ]; then
-        if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
-            echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
-        else
-            echo -e "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin \nOpenSearch 2.12.0 onwards, the OpenSearch Security Plugin a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit. \n For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/"
-            bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s || exit 1
-        fi
-
         if [ "$DISABLE_SECURITY_PLUGIN" = "true" ]; then
             echo "Disabling OpenSearch Security Plugin"
             opensearch_opt="-Eplugins.security.disabled=true"
             opensearch_opts+=("${opensearch_opt}")
         else
             echo "Enabling OpenSearch Security Plugin"
+            if [ "$DISABLE_INSTALL_DEMO_CONFIG" = "true" ]; then
+                echo "Disabling execution of install_demo_configuration.sh for OpenSearch Security Plugin"
+            else
+                echo -e "Enabling execution of install_demo_configuration.sh for OpenSearch Security Plugin \nOpenSearch 2.12.0 onwards, the OpenSearch Security Plugin a change that requires an initial password for 'admin' user. \nPlease define an environment variable 'OPENSEARCH_INITIAL_ADMIN_PASSWORD' with a strong password string. \nIf a password is not provided, the setup will quit. \n For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/"
+                bash $OPENSEARCH_HOME/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s || exit 1
+            fi
         fi
     else
         echo "OpenSearch Security Plugin does not exist, disable by default"
