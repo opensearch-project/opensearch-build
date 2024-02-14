@@ -36,6 +36,7 @@ COPY * $TEMP_DIR/
 RUN tar -xzpf $TEMP_DIR/opensearch-dashboards-`uname -p`.tgz -C $OPENSEARCH_DASHBOARDS_HOME --strip-components=1 && \
     MAJOR_VERSION_ENTRYPOINT=`echo $VERSION | cut -d. -f1` && \
     MAJOR_VERSION_YML=`echo $VERSION | cut -d. -f1` && \
+    echo $MAJOR_VERSION_ENTRYPOINT && echo $MAJOR_VERSION_YML && \
     if ! (ls $TEMP_DIR | grep -E "opensearch-dashboards-docker-entrypoint-.*.x.sh" | grep $MAJOR_VERSION_ENTRYPOINT); then MAJOR_VERSION_ENTRYPOINT="default"; fi && \
     if ! (ls $TEMP_DIR | grep -E "opensearch_dashboards-.*.x.yml" | grep $MAJOR_VERSION_YML); then MAJOR_VERSION_YML="default"; fi && \
     cp -v $TEMP_DIR/opensearch-dashboards-docker-entrypoint-$MAJOR_VERSION_ENTRYPOINT.x.sh $OPENSEARCH_DASHBOARDS_HOME/opensearch-dashboards-docker-entrypoint.sh && \
