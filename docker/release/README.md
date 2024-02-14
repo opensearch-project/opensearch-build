@@ -103,11 +103,11 @@ Here are three example scenarios of using above variables:
 #### Scenario 2: No demo certs/configs + disable security on both OpenSearch and OpenSearch-Dashboards:
   * OpenSearch:
      ```
-     docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_INSTALL_DEMO_CONFIG=true" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:1.1.0
      ```
-    Note: For OpenSearch > 2.11.1 and > 1.3.14, `DISABLE_SECURITY_PLUGIN` when set to true will automatically disable the security demo configuration setup and will no longer require `DISABLE_INSTALL_DEMO_CONFIG` to be explicitly set.
+    Note: For OpenSearch 2.12 and later, `DISABLE_SECURITY_PLUGIN` when set to true will automatically disable the security demo configuration setup and will no longer require `DISABLE_INSTALL_DEMO_CONFIG` to be explicitly set.
      ```
-     docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:2.12.0
+     $ docker run -it -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:2.12.0
      ```
   * OpenSearch-Dashboards:
      ```
