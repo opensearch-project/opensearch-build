@@ -11,13 +11,15 @@
 
 # This image can only by built on a Windows2019 server or higher version
 
-ARG ServerCoreRepo=mcr.microsoft.com/windows/servercore
+ARG ServerCoreRepo=mcr.microsoft.com/windows
 
 FROM ${ServerCoreRepo}:ltsc2019
 
 USER ContainerAdministrator
 
 COPY config/windows-servercore-setup.ps1 ./
+
+RUN powershell Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 
 RUN powershell ./windows-servercore-setup.ps1 
 
