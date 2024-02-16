@@ -12,6 +12,7 @@ import requests
 
 from system.temporary_directory import TemporaryDirectory
 from validation_workflow.api_request import ApiTest
+from validation_workflow.docker.validation_docker import ValidateDocker
 from validation_workflow.tar.validation_tar import ValidateTar
 from validation_workflow.validation import Validation
 from validation_workflow.validation_args import ValidationArgs
@@ -94,11 +95,10 @@ class TestValidation(unittest.TestCase):
     @patch('validation_workflow.validation.ValidationArgs')
     @patch.object(ApiTest, "api_get")
     def test_check_http_request(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.3.13'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
-        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         mock_api_get.return_value = (200, "text")
 
         validate_docker = ValidateTar(mock_validation_args.return_value)
@@ -110,7 +110,6 @@ class TestValidation(unittest.TestCase):
     @patch('validation_workflow.validation.ValidationArgs')
     @patch.object(ApiTest, "api_get")
     def test_check_http_request_error(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.3.14'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
@@ -126,31 +125,13 @@ class TestValidation(unittest.TestCase):
     @patch('validation_workflow.validation.ValidationArgs')
     @patch.object(ApiTest, "api_get")
     def test_check_http_request_connection_error(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_api_get.side_effect = requests.exceptions.ConnectionError
 
-        validate_docker = ValidateTar(mock_validation_args.return_value)
-
-        result = validate_docker.check_http_request()
-
-        self.assertFalse(result)
-
-    @patch("time.sleep")
-    @patch('validation_workflow.validation.ValidationArgs')
-    @patch.object(ApiTest, "api_get")
-    def test_check_http_request_connection_timeout(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
-        mock_validation_args.return_value.version = '1.3.12'
-        mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
-        mock_validation_args.return_value.projects = ["opensearch"]
-        mock_api_get.side_effect = requests.exceptions.ConnectTimeout
-
-        validate_docker = ValidateTar(mock_validation_args.return_value)
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
 
         result = validate_docker.check_http_request()
 

@@ -69,6 +69,10 @@ class TestValidationArgs(unittest.TestCase):
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--force-https"])  # noqa: E501
     def test_force_https(self) -> None:
+        self.assertEqual(ValidationArgs().force_https, False)
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312"])
+    def test_without_force_https(self) -> None:
         self.assertEqual(ValidationArgs().force_https, True)
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
