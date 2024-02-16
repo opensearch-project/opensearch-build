@@ -79,7 +79,6 @@ class TestValidation(unittest.TestCase):
     @patch('validation_workflow.validation.Validation.check_http_request')
     @patch('validation_workflow.validation.ValidationArgs')
     def test_check_cluster_readiness_error(self, mock_validation_args: Mock, mock_check_http: Mock, mock_sleep: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False

@@ -47,7 +47,6 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
     def test_staging(self, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
@@ -78,7 +77,6 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     def test_staging_cluster_not_ready(self, mock_container: Mock, mock_validation_args: Mock,
                                        mock_cluster_readiness: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
@@ -98,7 +96,6 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     def test_container_startup_exception(self, mock_container: Mock, mock_validation_args: Mock) -> None:
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
         mock_validation_args.return_value.force_https = False
@@ -123,7 +120,6 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
     def test_digests(self, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.using_staging_artifact_only = False
         mock_validation_args.return_value.validate_digest_only = True
