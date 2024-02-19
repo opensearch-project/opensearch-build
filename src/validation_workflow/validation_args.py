@@ -124,13 +124,15 @@ class ValidationArgs:
             action="store_true",
             default=False,
             help="(optional) Validate digest only; will not run docker to test API",
-            dest="validate_digest_only")
+            dest="validate_digest_only"
+        )
         group.add_argument(
             "--using-staging-artifact-only",
             action="store_true",
             default=False,
             help="(optional) Use only staging artifact to run docker and API test, will not validate digest",
-            dest="using_staging_artifact_only")
+            dest="using_staging_artifact_only"
+        )
 
         args = parser.parse_args()
 

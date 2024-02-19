@@ -78,8 +78,15 @@ class Validation(ABC):
         file_name_suffix = "tar.gz" if self.args.distribution == "tar" else self.args.distribution
         if self.args.artifact_type == "staging":
             if self.args.distribution == "yum":
-                return f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/{self.args.platform}/{self.args.arch}/rpm/dist/{project}/{project}-{self.args.version}.staging.repo"  # noqa: E501
-            return f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/{self.args.platform}/{self.args.arch}/{self.args.distribution}/dist/{project}/{project}-{self.args.version}-{self.args.platform}-{self.args.arch}.{file_name_suffix}"  # noqa: E501
+                return (
+                    f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/{self.args.platform}/"
+                    f"{self.args.arch}/rpm/dist/{project}/{project}-{self.args.version}.staging.repo"
+                )
+            return (
+                f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/{self.args.platform}/"
+                f"{self.args.arch}/{self.args.distribution}/dist/{project}/{project}-{self.args.version}-{self.args.platform}-"
+                f"{self.args.arch}.{file_name_suffix}"
+            )
         if self.args.distribution == "yum":
             return f"{self.base_url_production}{project}/{self.args.version[0:1]}.x/{project}-{self.args.version[0:1]}.x.repo"
         return f"{self.base_url_production}{project}/{self.args.version}/{project}-{self.args.version}-{self.args.platform}-{self.args.arch}.{file_name_suffix}"
