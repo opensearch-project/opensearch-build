@@ -49,7 +49,7 @@ class TestValidateDocker(unittest.TestCase):
         # Set up mock objects
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_docker_image.return_value = MagicMock()
         mock_container.return_value = (True, 'test_file.yml')
@@ -79,7 +79,7 @@ class TestValidateDocker(unittest.TestCase):
                                        mock_cluster_readiness: Mock) -> None:
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_cluster_readiness.return_value = False
         mock_container.return_value = (True, 'test_file.yml')
@@ -98,7 +98,7 @@ class TestValidateDocker(unittest.TestCase):
     def test_container_startup_exception(self, mock_container: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_container.return_value = (False, 'test_file.yml')
 

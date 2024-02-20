@@ -19,8 +19,6 @@ class TestValidateDeb(unittest.TestCase):
         self.mock_args.projects = ["opensearch"]
         self.mock_args.file_path = {"opensearch": "/src/opensearch/opensearch-1.3.12.staging.deb"}
         self.mock_args.platform = "linux"
-        self.mock_args.force_https_check = True
-        self.mock_args.force_https = True
         self.call_methods = ValidateDeb(self.mock_args)
 
     @patch("validation_workflow.deb.validation_deb.execute")
@@ -94,10 +92,9 @@ class TestValidateDeb(unittest.TestCase):
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_validation_without_force_https_check(self, mock_validation_args: Mock, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock,
-                                                  mock_basename: Mock, mock_test_apis: Mock) -> None:
+    def test_validation_with_allow_http(self, mock_validation_args: Mock, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = True
         validate_deb = ValidateDeb(mock_validation_args.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"

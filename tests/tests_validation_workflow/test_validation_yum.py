@@ -85,14 +85,15 @@ class TestValidationYum(unittest.TestCase):
             mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
             validate_yum = ValidateYum(mock_validation_args.return_value)
             validate_yum.cleanup()
-        self.assertIn("Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards.", str(e3.exception))  # noqa: E501
+        self.assertIn("Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards.",
+                      str(e3.exception))
 
     @patch("validation_workflow.yum.validation_yum.execute")
     @patch('validation_workflow.yum.validation_yum.ValidationArgs')
     def test_installation(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
 
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         mock_execute.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
@@ -133,12 +134,9 @@ class TestValidationYum(unittest.TestCase):
     @patch('validation_workflow.yum.validation_yum.execute')
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_validation_without_force_https_check(self, mock_check_cluster: Mock, mock_security: Mock,
-                                                  mock_system: Mock,
-                                                  mock_basename: Mock, mock_test_apis: Mock,
-                                                  mock_validation_args: Mock) -> None:
+    def test_validation_with_allow_http(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = True
         validate_yum = ValidateYum(mock_validation_args.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"

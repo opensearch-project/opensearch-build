@@ -81,7 +81,7 @@ class TestValidation(unittest.TestCase):
     def test_check_cluster_readiness_error(self, mock_validation_args: Mock, mock_check_http: Mock, mock_sleep: Mock) -> None:
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_check_http.return_value = False
 
@@ -96,7 +96,7 @@ class TestValidation(unittest.TestCase):
     def test_check_http_request(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
         mock_validation_args.return_value.version = '1.3.13'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         mock_api_get.return_value = (200, "text")
 
@@ -111,7 +111,7 @@ class TestValidation(unittest.TestCase):
     def test_check_http_request_error(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
         mock_validation_args.return_value.version = '1.3.14'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_api_get.return_value = (400, "text")
 
@@ -126,7 +126,7 @@ class TestValidation(unittest.TestCase):
     def test_check_http_request_connection_error(self, mock_api_get: Mock, mock_validation_args: Mock, mock_sleep: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.validate_digest_only = False
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_api_get.side_effect = requests.exceptions.ConnectionError
 

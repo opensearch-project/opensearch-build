@@ -95,10 +95,10 @@ class Validation(ABC):
         max_retry = 20
         retry_count = 0
         while retry_count < max_retry:
-            logging.info(f'sleeping 5sec for retry {retry_count + 1}/{max_retry}')
+            logging.info(f'Sleeping 5sec for retry {retry_count + 1}/{max_retry}')
             time.sleep(5)
             if self.check_http_request():
-                logging.info('\n\ncluster is now ready for API test\n\n')
+                logging.info('\n\nCluster is now ready for API test\n\n')
                 return True
             retry_count += 1
         logging.error(f"Maximum number of retries ({max_retry}) reached. Cluster is not ready for API test.")

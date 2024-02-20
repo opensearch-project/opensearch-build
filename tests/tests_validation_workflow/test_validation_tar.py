@@ -73,7 +73,7 @@ class TestValidateTar(unittest.TestCase):
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
-        mock_validation_args.return_value.force_https = True
+        mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
 
         validate_tar = ValidateTar(mock_validation_args.return_value)
@@ -89,7 +89,7 @@ class TestValidateTar(unittest.TestCase):
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platforms = 'linux'
-        mock_validation_args.return_value.force_https = True
+        mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
         mock_password.return_value = "admin"
 
@@ -103,7 +103,7 @@ class TestValidateTar(unittest.TestCase):
     @patch('src.test_workflow.integ_test.utils.get_password')
     def test_start_cluster_exception_os(self, mock_password: Mock, mock_sleep: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.projects = ["opensearch"]
-        mock_validation_args.return_value.force_https = True
+        mock_validation_args.return_value.allow_http = True
 
         validate_tar = ValidateTar(mock_validation_args.return_value)
         validate_tar.os_process.start = MagicMock(side_effect=Exception('Failed to Start Cluster'))  # type: ignore
@@ -134,10 +134,9 @@ class TestValidateTar(unittest.TestCase):
     @patch('validation_workflow.tar.validation_tar.execute')
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_validation_without_force_https_check(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock,
-                                                  mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
+    def test_validation_with_allow_http(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = True
         validate_tar = ValidateTar(mock_validation_args.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"

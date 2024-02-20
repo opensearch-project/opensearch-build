@@ -34,7 +34,8 @@ class ValidateZip(Validation, DownloadUtils):
 
     def start_cluster(self) -> bool:
         try:
-            self.os_process.start(f"env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} .\\opensearch-windows-install.bat", os.path.join(self.tmp_dir.path, f"opensearch-{self.args.version}"), False)  # noqa: E501
+            self.os_process.start(f"env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} .\\opensearch-windows-install.bat",
+                                  os.path.join(self.tmp_dir.path, f"opensearch-{self.args.version}"), False)
             if "opensearch-dashboards" in self.args.projects:
                 self.osd_process.start(".\\bin\\opensearch-dashboards.bat", os.path.join(self.tmp_dir.path, f"opensearch-dashboards-{self.args.version}"), False)
             logging.info("Starting cluster")
@@ -44,7 +45,8 @@ class ValidateZip(Validation, DownloadUtils):
 
     def validation(self) -> bool:
         if self.check_cluster_readiness():
-            test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects, self.check_for_security_plugin(os.path.join(self.tmp_dir.path, "opensearch")) if not self.args.force_https else True)  # noqa: E501
+            test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects,
+                                                            self.check_for_security_plugin(os.path.join(self.tmp_dir.path, "opensearch")) if self.args.allow_http else True)
             if (test_result):
                 logging.info(f'All tests Pass : {counter}')
                 return True

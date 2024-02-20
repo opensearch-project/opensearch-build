@@ -67,30 +67,33 @@ class TestValidationArgs(unittest.TestCase):
     def test_artifact_type(self) -> None:
         self.assertNotEqual(ValidationArgs().artifact_type, "production")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312", "--force-https"])  # noqa: E501
-    def test_force_https(self) -> None:
-        self.assertEqual(ValidationArgs().force_https, False)
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging",
+                                  "--os-build-number", "1234", "--osd-build-number", "2312", "--allow-http"])
+    def test_allow_http(self) -> None:
+        self.assertEqual(ValidationArgs().allow_http, True)
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312"])
-    def test_without_force_https(self) -> None:
-        self.assertEqual(ValidationArgs().force_https, True)
+    def test_do_not_allow_http(self) -> None:
+        self.assertEqual(ValidationArgs().allow_http, False)
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
     def test_set_projects(self) -> None:
         self.assertEqual(ValidationArgs().projects, ["opensearch"])
 
-    @patch('sys.argv', [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.rpm", "opensearch-dashboard=https://opensearch.org/releases/opensearch/2.8.0/opensearch-dashboards-2.8.0-linux-x64.rpm"])  # noqa: E501
+    @patch('sys.argv', [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.rpm",
+                        "opensearch-dashboard=https://opensearch.org/releases/opensearch/2.8.0/opensearch-dashboards-2.8.0-linux-x64.rpm"])
     def test_dashboards_exception(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().distribution, "rpm")
         self.assertEqual(str(ctx.exception), "Missing OpenSearch artifact details! Please provide the valid product names among opensearch and opensearch-dashboards")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234", "--osd-build-number", "8393", "--projects", "opensearch", "--using-staging-artifact-only"])  # noqa: E501
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234",
+                                  "--osd-build-number", "8393", "--projects", "opensearch", "--using-staging-artifact-only"])
     def test_docker_exception(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().projects, ["opensearch"])
             self.assertEqual(ValidationArgs().osd_build_number, "1234")
-        self.assertEqual(str(ctx.exception), "Provide opensearch-dashboards in projects argument to validate OpenSearch-Dashboards")
+        self.assertEqual(str(ctx.exception), "osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234", "--projects", "opensearch"])
     def test_docker_arguments_exception(self) -> None:

@@ -113,10 +113,10 @@ class ValidationArgs:
         )
         parser.add_argument(
             "-f",
-            "--force-https",
-            action="store_false",
-            default=True,
-            help="If False, use http/https to connect based on the existence of security plugin, else always use https, default to True"
+            "--allow-http",
+            action="store_true",
+            default=False,
+            help="If True, use http/https to connect based on the existence of security plugin, else always use https, default to False"
         )
         group = parser.add_mutually_exclusive_group()
         group.add_argument(
@@ -146,14 +146,14 @@ class ValidationArgs:
 
         if args.distribution == "docker":
             if args.osd_build_number != "latest" and "opensearch-dashboards" not in args.projects:
-                raise Exception("Provide opensearch-dashboards in projects argument to validate OpenSearch-Dashboards")
-            if not(args.validate_digest_only or args.using_staging_artifact_only):
+                raise Exception("osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
+            if not(args.validate_digest_only) and not(args.using_staging_artifact_only):
                 raise Exception("Provide either of --validate-digest-only and --using-staging-artifact-only for Docker Validation")
 
         self.version = args.version
         self.file_path = args.file_path
         self.artifact_type = args.artifact_type
-        self.force_https = args.force_https
+        self.allow_http = args.allow_http
         self.logging_level = args.logging_level
         self.distribution = args.distribution
         self.platform = args.platform

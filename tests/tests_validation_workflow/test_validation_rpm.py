@@ -84,7 +84,8 @@ class TestValidationRpm(unittest.TestCase):
             mock_validation_args.return_value.projects = ["opensearch", "opensearch-dashboards"]
             validate_rpm = ValidateRpm(mock_validation_args.return_value)
             validate_rpm.cleanup()
-        self.assertIn("Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards.", str(e3.exception))  # noqa: E501
+        self.assertIn("Exception occurred either while attempting to stop cluster or removing OpenSearch/OpenSearch-Dashboards.",
+                      str(e3.exception))
 
     @patch('validation_workflow.rpm.validation_rpm.ValidationArgs')
     @patch("validation_workflow.rpm.validation_rpm.execute")
@@ -92,7 +93,7 @@ class TestValidationRpm(unittest.TestCase):
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.arch = 'x64'
         mock_validation_args.return_value.platform = 'linux'
-        mock_validation_args.return_value.force_https = True
+        mock_validation_args.return_value.allow_http = True
         mock_validation_args.return_value.projects = ["opensearch"]
 
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
@@ -132,11 +133,9 @@ class TestValidationRpm(unittest.TestCase):
     @patch('validation_workflow.rpm.validation_rpm.execute')
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_validation_without_force_https_check(self, mock_check_cluster: Mock, mock_security: Mock,
-                                                  mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock,
-                                                  mock_validation_args: Mock) -> None:
+    def test_validation_with_allow_http_check(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = True
         validate_rpm = ValidateRpm(mock_validation_args.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"

@@ -20,7 +20,7 @@ class TestValidateZip(unittest.TestCase):
         self.mock_args.arch = "x64"
         self.mock_args.platform = "windows"
         self.mock_args.force_https_check = True
-        self.mock_args.force_https = True
+        self.mock_args.allow_http = True
         self.call_methods = ValidateZip(self.mock_args)
 
     @patch("validation_workflow.zip.validation_zip.ZipFile")
@@ -85,10 +85,9 @@ class TestValidateZip(unittest.TestCase):
     @patch('system.execute.execute')
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_validation_without_force_https_check(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock,
-                                                  mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
+    def test_validation_with_allow_http(self, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        mock_validation_args.return_value.force_https = False
+        mock_validation_args.return_value.allow_http = True
         validate_zip = ValidateZip(mock_validation_args.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"
