@@ -93,7 +93,7 @@ class TestValidationArgs(unittest.TestCase):
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().projects, ["opensearch"])
             self.assertEqual(ValidationArgs().osd_build_number, "1234")
-        self.assertEqual(str(ctx.exception), "osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
+        self.assertEqual(str(ctx.exception), "--osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234", "--projects", "opensearch"])
     def test_docker_arguments_exception(self) -> None:
