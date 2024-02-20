@@ -20,12 +20,12 @@ log_dir=/var/log/opensearch-dashboards
 pid_dir=/var/run/opensearch-dashboards
 
 # Reload systemctl daemon
-if command -v systemctl > /dev/null; then
+if [ -d /run/systemd/system ]; then
     systemctl daemon-reload
 fi
 
 # Reload other configs
-if command -v systemd-tmpfiles > /dev/null; then
+if [ -d /run/systemd/system ]; then
     systemd-tmpfiles --create opensearch-dashboards.conf
 fi
 
