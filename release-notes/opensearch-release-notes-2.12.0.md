@@ -8,7 +8,6 @@ OpenSearch 2.12.0 includes a number of features designed to increase performance
 <ul>
 <li>Integration with Apache Spark lets you analyze all of your operational data in a single place using OpenSearch in combination with Apache Spark. </li>
 <li>Conversational search is generally available, providing comprehensive functionality to build conversational experiences using OpenSearch’s lexical, vector, and hybrid search features.</li>
-<li>A new workflow engine lets you automate configurations for ML Commons resources, allowing you to set up machine learning resources to support AI use cases without the need to manually create resources or write custom scripts.</li>
 <li>New default processors for Amazon Bedrock text embedding connectors can reduce the effort required to build AI connectors.</li>
 <li>You can now represent long documents as multiple vectors in a nested field with built-in chunking, eliminating the need to build custom processing logic in order to query documents represented as vector chunks.</li>
 <li>Concurrent segment search is now generally available, giving you the option to query index segments in parallel at the shard level. This can deliver improved latency for many types of search queries.</li>
@@ -26,6 +25,7 @@ OpenSearch 2.12.0 includes a number of features designed to increase performance
 <li>The OpenSearch Assistant Toolkit helps developers build generative AI experiences inside of OpenSearch Dashboards. With integrated natural language processing and context-aware features, developers can use this toolkit to apply generative AI to create interactive user experiences and extract insights from OpenSearch data.</li>
 <li>A new agent framework added to ML Commons uses remote large language learning models (LLMs) for step-by-step problem-solving and can coordinate machine learning tools using LLMs. The framework includes a flow agent and a conversational agent in this release.</li>
 <li>Users can now query multiple clusters with cross-cluster monitors through the Alerting plugin.</li>
+<li>A new workflow engine lets you automate configurations for ML Commons resources, allowing you to set up machine learning resources to support AI use cases without the need to manually create resources or write custom scripts.</li>
 </ul>
 
 <h2>DEPRECATION NOTICE</h2>
