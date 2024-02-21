@@ -76,7 +76,7 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
         self.assertEqual(results["sql"], mock_test_results)
 
         mock_suite_object.result_data.__iter__.assert_called()
-        mock_test_recorder_object.test_results_logs.save_test_result_data.assert_called()
+        mock_test_recorder_object.test_results_logs.generate_component_yml.assert_called()
 
         mock_suite.assert_called_once_with(
             mock_properties_dependency_object.dependency_installer,

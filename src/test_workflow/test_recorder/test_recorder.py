@@ -144,6 +144,9 @@ class TestResultsLogs(LogRecorder):
         logging.info(f"Recording component test results for {test_result_data.component_name} at " f"{os.path.realpath(dest_directory)}")
         self.parent_class._generate_std_files(test_result_data.stdout, test_result_data.stderr, dest_directory)
         self.parent_class._copy_log_files(test_result_data.log_files, dest_directory)
+
+    def generate_component_yml(self, test_result_data: TestResultData) -> None:
+        dest_directory = self.parent_class._create_base_folder_structure(test_result_data.component_name, test_result_data.component_test_config)
         self.parent_class._generate_yml(test_result_data, dest_directory)
 
 
