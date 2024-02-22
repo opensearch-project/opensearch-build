@@ -107,6 +107,13 @@ case $PLATFORM-$DISTRIBUTION-$ARCHITECTURE in
         TARGET="$PLATFORM-arm64-$PACKAGE"
         SUFFIX="$PLATFORM-arm64"
         ;;
+    linux-tar-ppc64le)
+        PACKAGE="tar"
+        EXT="tar.gz"
+        TYPE="archives"
+        TARGET="$PLATFORM-ppc64le-$PACKAGE"
+        SUFFIX="$PLATFORM-ppc64le"
+        ;;
     linux-deb-x64)
         PACKAGE="deb"
         EXT="deb"

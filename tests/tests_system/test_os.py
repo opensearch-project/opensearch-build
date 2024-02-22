@@ -14,7 +14,7 @@ from system.os import current_architecture, current_platform, deb_architecture, 
 class TestOs(unittest.TestCase):
     # current_architecture
     def test_current_architecture(self) -> None:
-        self.assertTrue(current_architecture() in ["x64", "arm64"])
+        self.assertTrue(current_architecture() in ["x64", "arm64", "ppc64le"])
 
     @patch("subprocess.check_output", return_value="x86_64".encode())
     def test_x86_64_return_x64_architecture(self, mock_subprocess: MagicMock) -> None:
@@ -31,6 +31,10 @@ class TestOs(unittest.TestCase):
     @patch("subprocess.check_output", return_value="arm64".encode())
     def test_arm64_return_arm64_architecture(self, mock_subprocess: MagicMock) -> None:
         self.assertTrue(current_architecture() == "arm64")
+
+    @patch("subprocess.check_output", return_value="ppc64le".encode())
+    def test_ppc64le_return_ppc64le_architecture(self, mock_subprocess: MagicMock) -> None:
+        self.assertTrue(current_architecture() == "ppc64le")
 
     @patch("subprocess.check_output", return_value="invalid".encode())
     def test_invalid_architecture(self, mock_subprocess: MagicMock) -> None:
