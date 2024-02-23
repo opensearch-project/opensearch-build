@@ -27,29 +27,26 @@ perform_curl_and_process_with_jq() {
     local count=0
     local success=false
 
-    while [ $count -lt $max_retries ]; do
+    while [ "$count" -lt "$max_retries" ]; do
         response=$(curl -s -XGET "${url}api/json")
-        curl_exit_code=$?
+        processed_response=$(echo "$response" | jq --raw-output "$jq_filter")
+        jq_exit_code=$?
 
-        if [ $curl_exit_code -eq 0 ]; then
-            processed_response=$(echo "$response" | jq --raw-output "$jq_filter")
-            jq_exit_code=$?
-
-            if [ $jq_exit_code -eq 0 ]; then
-                success=true
-                echo "$processed_response"
-                break
-            fi
+        if [ "$jq_exit_code" -eq "0" ]; then
+            success=true
+            echo "$processed_response"
+            break
+        else
+            echo "Attempt $((count+1))/$max_retries failed. The jq processing failed with exit code: $jq_exit_code. Retrying..."
         fi
 
-        echo "Attempt $((count+1))/$max_retries failed. Curl exit code: $curl_exit_code, jq exit code: $jq_exit_code. Retrying..."
         count=$((count+1))
         sleep 5
     done
 
-    if [ "$success" != true ]; then
+    if [ "$success" != "true" ]; then
         echo "Failed to retrieve and process data after $max_retries attempts."
-        return 1
+        exit 1
     fi
 }
 
@@ -85,10 +82,6 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
             sleep 30
             RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 5)
             echo "Workflow running status :$RUNNING"
-            if [ $? -ne 0 ]; then
-                echo "Error: Failed to get or process response from Jenkins. Exiting."
-                exit 1
-            fi
         done
 
         if [ "$RUNNING" = "true" ]; then
