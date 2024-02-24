@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@4.2.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.3.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -138,7 +138,21 @@ pipeline {
 
                     if(OPENSEARCH_ARTIFACT_URL) {
                         ARCHITECTURE = url_paths.values().find { it.contains("x64") } ? "x64" : "arm64"
-                        DISTRIBUTION = url_paths.values().find { it.contains("tar.gz") } ? "tar" : url_paths.values().find { it.contains("zip") } ? "zip" : url_paths.values().find { it.contains("rpm") } ? "rpm" : "deb"
+                        def distKeyWords = [
+                            "tar.gz": "tar",
+                            "zip": "zip",
+                            "rpm": "rpm",
+                            "repo": "yum",
+                            "deb": "deb"
+                        ]
+                        DISTRIBUTION = distKeyWords.find { item ->
+                            url_paths.values().any { value ->
+                                value.contains(item.key)
+                            }
+                        }?.value
+                        if (DISTRIBUTION == null) {
+                            error("The provided distribution type is not supported")
+                        }
                         env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
                         if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL) {
                            FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
@@ -164,6 +178,9 @@ pipeline {
 
                     def distributionList = DISTRIBUTION ? DISTRIBUTION.trim().split(" ") as List : ""
                     def architectureList = ARCHITECTURE ? ARCHITECTURE.trim().split(" ") as List : ""
+                    def mapDistributionToPlatform = [
+                        "zip": "windows"
+                    ]
 
                     stash includes: "**", name: "validate-artifacts-$BUILD_NUMBER"
 
@@ -172,7 +189,7 @@ pipeline {
                         for (distribution in distributionList) {
                             def local_architecture = architecture.trim()
                             def local_distribution = distribution.trim()
-                            def local_platform = local_distribution == "zip" ? "windows" : "linux"
+                            def local_platform = mapDistributionToPlatform.getOrDefault(local_distribution, "linux")
                             def local_distribution_index = distributionList.indexOf(local_distribution)
                             def wait_seconds = local_distribution_index * 10
 
