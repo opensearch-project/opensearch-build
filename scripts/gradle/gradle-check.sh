@@ -20,6 +20,36 @@ TRIGGER_TOKEN=$1
 PR_TITLE_NEW=`echo $pr_title | tr -dc '[:alnum:] ' | tr '[:upper:]' '[:lower:]'`
 PAYLOAD_JSON="{\"pr_from_sha\": \"$pr_from_sha\", \"pr_from_clone_url\": \"$pr_from_clone_url\", \"pr_to_clone_url\": \"$pr_to_clone_url\", \"pr_title\": \"$PR_TITLE_NEW\", \"pr_number\": \"$pr_number\"}"
 
+perform_curl_and_process_with_jq() {
+    local url=$1
+    local jq_filter=$2
+    local max_retries=$3
+    local count=0
+    local success=false
+
+    while [ "$count" -lt "$max_retries" ]; do
+        response=$(curl -s -XGET "${url}api/json")
+        processed_response=$(echo "$response" | jq --raw-output "$jq_filter")
+        jq_exit_code=$?
+
+        if [ "$jq_exit_code" -eq "0" ]; then
+            success=true
+            echo "$processed_response"
+            break
+        else
+            echo "Attempt $((count+1))/$max_retries failed. The jq processing failed with exit code: $jq_exit_code. Retrying..."
+        fi
+
+        count=$((count+1))
+        sleep 5
+    done
+
+    if [ "$success" != "true" ]; then
+        echo "Failed to retrieve and process data after $max_retries attempts."
+        exit 1
+    fi
+}
+
 echo "Trigger Jenkins workflows"
 JENKINS_REQ=`curl -s -XPOST \
      -H "Authorization: Bearer $TRIGGER_TOKEN" \
@@ -50,7 +80,8 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
             echo "Jenkins Workflow Url: $WORKFLOW_URL"
             TIMEPASS=$(( TIMEPASS + 30 )) && echo time pass: $TIMEPASS
             sleep 30
-            RUNNING=$(curl -s -XGET ${WORKFLOW_URL}api/json | jq --raw-output .building)
+            RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 5)
+            echo "Workflow running status :$RUNNING"
         done
 
         if [ "$RUNNING" = "true" ]; then
