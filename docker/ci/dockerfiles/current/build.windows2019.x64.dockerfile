@@ -17,13 +17,13 @@ FROM ${ServerCoreRepo}:ltsc2019
 
 USER ContainerAdministrator
 
-COPY config/windows-servercore-setup.ps1 ./
+COPY config/windows-setup.ps1 ./
 
 RUN powershell Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass -Force
 
-RUN powershell ./windows-servercore-setup.ps1 
+RUN powershell ./windows-setup.ps1 
 
-RUN powershell -Command Remove-Item './windows-servercore-setup.ps1' -Force
+RUN powershell -Command Remove-Item './windows-setup.ps1' -Force
 
 RUN bash.exe -c "curl https://ci.opensearch.org > /dev/null 2>&1 || echo add certificates"
 

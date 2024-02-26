@@ -5,7 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# This script is specifically used on Windows Server Core based docker images
+# This script is specifically used on Windows based docker images
 
 # Set TLS to 1.2 so SSL/TLS can be enabled for downloading artifacts
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
