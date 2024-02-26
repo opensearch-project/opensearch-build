@@ -121,8 +121,8 @@ components:
     platforms:
       - linux
       - windows
-  - name: anomaly-detection
-    repository: https://github.com/opensearch-project/anomaly-detection.git
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
     ref: '1.3'
     checks:
       - gradle:properties:version
@@ -130,8 +130,8 @@ components:
     platforms:
       - linux
       - windows
-  - name: asynchronous-search
-    repository: https://github.com/opensearch-project/asynchronous-search.git
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
     ref: '1.3'
     checks:
       - gradle:properties:version
