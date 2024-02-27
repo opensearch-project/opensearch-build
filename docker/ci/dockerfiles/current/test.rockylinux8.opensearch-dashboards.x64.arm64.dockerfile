@@ -129,7 +129,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Add other dependencies
-RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
+RUN yum install -y epel-release && yum clean all && yum install -y jq && yum clean all && rm -rf /var/cache/yum/* && \
     pip3 install cmake==3.23.3
 
 # Change User
