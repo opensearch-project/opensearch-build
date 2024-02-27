@@ -85,7 +85,7 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           if [ ${{ matrix.entry.path }} ]; then
-              yarn osd bootstrap
+              yarn osd bootstrap --single-version=loose
               cp -R ${{ matrix.entry.path }} ../
               cd ../${{ matrix.entry.path }}
               node ../../scripts/plugin_helpers version --sync legacy
