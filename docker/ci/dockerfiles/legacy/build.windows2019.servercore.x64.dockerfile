@@ -17,7 +17,7 @@ FROM ${ServerCoreRepo}:ltsc2019
 
 USER ContainerAdministrator
 
-COPY config/windows-servercore-setup.ps1 ./
+COPY config/legacy/windows-servercore-setup.ps1 ./
 
 RUN powershell ./windows-servercore-setup.ps1 
 
