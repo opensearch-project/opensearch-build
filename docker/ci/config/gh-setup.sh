@@ -21,6 +21,25 @@ done
 ARCH=`uname -m`
 VERSION="2.42.0"
 
+# ppc64le specific
+function gh_install_ppc64le {
+    set -e    
+    GO_VERSION=`go version | cut -d ' ' -f3 | tr -d 'go'`
+    GO_REQUIRED_VERSION="1.21.0"
+    COMPARE_VERSION=`echo $GO_REQUIRED_VERSION $GO_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
+    if [ "$COMPARE_VERSION" != "$GCC_REQUIRED_VERSION" ]; then
+        VERSION=2.32.1
+        echo "go version on this env is older than $GO_REQUIRED_VERSION, use gh $VERSION"
+    fi
+
+    git clone --single-branch --branch v$VERSION https://github.com/cli/cli.git gh-cli
+    cd gh-cli
+    make install
+    cd ../
+    rm -rf gh-cli
+    gh --version
+}
+
 echo "$PLATFORM-$ARCH"
 
 case $PLATFORM-$ARCH in
@@ -31,7 +50,7 @@ case $PLATFORM-$ARCH in
         GH_TYPE="gh_${VERSION}_linux_arm64.tar.gz"
         ;;
     linux-ppc64le)
-        echo "ppc64le not supported by gh cli, skipping now so docker image creation can proceed"
+        gh_install_ppc64le
         exit 0
         ;;
     *)
