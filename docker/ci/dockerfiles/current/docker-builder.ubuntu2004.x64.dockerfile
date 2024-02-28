@@ -21,7 +21,7 @@ ARG CONTAINER_USER=ci-runner
 ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Import necessary repository for installing qemu 5.0
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y && add-apt-repository ppa:longsleep/golang-backports -y
 
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && \
@@ -83,5 +83,5 @@ RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/s
 
 # Tools setup
 COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN apt-get install -y golang-go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 

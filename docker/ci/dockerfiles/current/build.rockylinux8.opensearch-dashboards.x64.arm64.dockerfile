@@ -26,7 +26,7 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
 
 # Tools setup
 COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \

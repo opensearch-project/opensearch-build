@@ -15,7 +15,7 @@ ARG CONTAINER_USER=ci-runner
 ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Install python dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:longsleep/golang-backports -y
 
 # Install python binaries
 RUN apt-get update -y && apt-get install python3 && \
@@ -44,7 +44,7 @@ RUN curl -o- https://www.aptly.info/pubkey.txt | apt-key add - && \
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
+RUN apt-get install -y golang-go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \

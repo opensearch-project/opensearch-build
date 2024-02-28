@@ -44,7 +44,7 @@ RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cach
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN dnf install -y go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Install higher version of maven 3.8.x
 RUN export MAVEN_URL=`curl -s https://maven.apache.org/download.cgi | grep -Eo '["\047].*.bin.tar.gz["\047]' | tr -d '"' | uniq | head -n 1`  && \

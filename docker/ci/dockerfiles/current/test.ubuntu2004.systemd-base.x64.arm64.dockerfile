@@ -96,8 +96,8 @@ USER 0
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install python dependencies and chromium dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:saiarcot895/chromium-beta -y
+# Install python dependencies
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:longsleep/golang-backports -y
 
 # Install python binaries
 RUN apt-get update -y && apt-get install python3 && \
@@ -145,7 +145,7 @@ RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION 
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN apt-get install -y golang-go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
