@@ -48,121 +48,121 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
         // OpenSearch Debian Apt promotion
         assertCallStack().contains('stage(OpenSearch Debian Apt promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_REPO_TYPE, value=apt})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_REPO_TYPE, value=apt})")
 
         // OpenSearch Yum promotion
         assertCallStack().contains('stage(OpenSearch Yum promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_REPO_TYPE, value=yum})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_REPO_TYPE, value=yum})")
 
         // OpenSearch Dashboards Debian Apt promotion
         assertCallStack().contains('stage(OpenSearch Dashboards Debian Apt promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_REPO_TYPE, value=apt})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_REPO_TYPE, value=apt})")
 
         // OpenSearch Dashboards Yum promotion
         assertCallStack().contains('stage(OpenSearch Dashboards Yum promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_REPO_TYPE, value=yum})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_REPO_TYPE, value=yum})")
 
         // OpenSearch Windows promotion
         assertCallStack().contains('stage(OpenSearch Windows promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=windows})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=zip})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=windows})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=zip})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Dashboards Windows promotion
         assertCallStack().contains('stage(OpenSearch Dashboards Windows promotion, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=windows})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=zip})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=windows})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=zip})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Linux deb arm64
         assertCallStack().contains('stage(OpenSearch Linux deb arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=deb})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=deb})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Linux deb x64
         assertCallStack().contains('stage(OpenSearch Linux deb x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=deb})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=deb})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Dashboards Linux deb arm64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux deb arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=deb})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=deb})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Dashboards Linux deb x64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux deb x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=deb})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=deb})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
         assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_BUILD_NUMBER, value=3050})")
 
         // OpenSearch Linux rpm arm64
         assertCallStack().contains('stage(OpenSearch Linux rpm arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=rpm})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=rpm})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Linux rpm x64
         assertCallStack().contains('stage(OpenSearch Linux rpm x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=rpm})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=rpm})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Dashboards Linux rpm arm64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux rpm arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=rpm})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=rpm})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Dashboards Linux rpm x64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux rpm x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=rpm})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=rpm})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Linux tar arm64
         assertCallStack().contains('stage(OpenSearch Linux tar arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=tar})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=tar})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Linux tar x64
         assertCallStack().contains('stage(OpenSearch Linux tar x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=tar})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=tar})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
 
         // OpenSearch Dashboards Linux tar arm64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux tar arm64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=tar})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=tar})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
         // OpenSearch Dashboards Linux tar x64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux tar x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_NAME, value=tar})")
-        assertCallStack().contains("release-promotion.choice({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_NAME, value=tar})")
+        assertCallStack().contains("release-promotion.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
     }
 }

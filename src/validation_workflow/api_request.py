@@ -10,6 +10,8 @@ from typing import Any
 
 import requests
 
+from test_workflow.integ_test.utils import get_password, str_to_base64
+
 """
 This class is to run API test againt on local OpenSearch API URL with default port 9200.
 It returns response status code and the response content.
@@ -18,9 +20,9 @@ It returns response status code and the response content.
 
 class ApiTest:
 
-    def __init__(self, request_url: str) -> None:
+    def __init__(self, request_url: str, version: str) -> None:
         self.request_url = request_url
-        self.apiHeaders_auth = {"Authorization": "Basic YWRtaW46YWRtaW4="}  # default user/pass "admin/admin" in Base64 format
+        self.apiHeaders_auth = {"Authorization": f'Basic {str_to_base64("admin:" + get_password(version))}'}  # user/pass "admin/pass" in Base64 format fetched from get_password() method
         self.apiHeaders_accept = {"Accept": "*/*"}
         self.apiHeaders_content_type = {"Content-Type": "application/json"}
         self.apiHeaders = {}

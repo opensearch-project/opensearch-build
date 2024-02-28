@@ -12,6 +12,8 @@ import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.CoreMatchers.hasItems
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.jupiter.api.Assertions.assertThrows
@@ -24,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.11.1')
+                .defaultVersion('6.3.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -68,7 +70,6 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('distribution', 'tar' )
         binding.setVariable('COMPONENT_NAME', '' )
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
-        binding.setVariable('UPDATE_GITHUB_ISSUES', true)
         def env = binding.getVariable('env')
         env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         env['PUBLIC_ARTIFACT_URL'] = 'DUMMY_PUBLIC_ARTIFACT_URL'
@@ -135,13 +136,14 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
     @Test
     void checkGHissueCreation() {
+        addParam('UPDATE_GITHUB_ISSUES', true)
         helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 in:title" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
         helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component ganttChartDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
@@ -149,34 +151,35 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
             runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S \"[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S \"[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 in:title\" --json number --jq '.[0].number', returnStdout=true}"))
     }
 
     @Test
-    void CheckCloseGHissue() {
+    void CheckNotClosingGHissue() {
+        addParam('UPDATE_GITHUB_ISSUES', true)
         helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
         helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
-        helper.addShMock('gh issue list --repo https://github.com/opensearch-project/dashboards-visualization.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure', '', 0)
+        helper.addShMock('gh issue list --repo https://github.com/opensearch-project/dashboards-visualization.git -S "[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 in:title" --label autocut,v3.0.0', '', 0)
         assertThrows(Exception) {
             runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
         runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue list --repo https://github.com/opensearch-project/dashboards-visualizations.git -S \"[AUTOCUT] Integration Test failed for ganttChartDashboards: 3.0.0 tar distribution in:title\" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number', returnStdout=true}"))
-        assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue close bbb\nccc -R opensearch-project/dashboards-visualizations --comment \"Closing the issue as the Integration Test passed for ganttChartDashboards<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}"))
+        assertThat(getCommandExecutions('sh', 'script'), not(hasItem("{script=gh issue close bbb\nccc -R opensearch-project/dashboards-visualizations --comment \"Closing the issue as the Integration Test passed for ganttChartDashboards<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> *\", returnStdout=true}")))
     }
 
     @Test
     void checkGHexistingIssue() {
+        addParam('UPDATE_GITHUB_ISSUES', true)
         helper.addShMock("date -d \"3 days ago\" +'%Y-%m-%d'") { script ->
             return [stdout: "2023-10-24", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 tar distribution in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/sql.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 tar distribution in:title" --label autocut,v3.0.0,integ-test-failure --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/sql.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 in:title" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
             return [stdout: "22", exitValue: 0]
         }
         helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
@@ -186,6 +189,51 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         assertJobStatusFailure()
         assertThat(getCommandExecutions('println', 'Issue'), hasItem('Issue already exists, adding a comment'))
         assertThat(getCommandExecutions('sh', 'script'), hasItem("{script=gh issue comment bbb\nccc --repo https://github.com/opensearch-project/dashboards-observability.git --body \"The integration test failed at distribution level for component observabilityDashboards<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/215/linux/x64/tar/test-results/215/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\", returnStdout=true}"))
+    }
+
+    @Test
+    void checkGHIssueDisable() {
+        addParam('COMPONENT_NAME', 'ganttChartDashboards')
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component ganttChartDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ', '', 1)
+        assertThrows(Exception) {
+            runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+        }
+        assertJobStatusFailure()
+        assertThat(getCommandExecutions('sh', 'gh issue').size(), equalTo(0))
+    }
+
+    @Test
+    void verifyLabelRemoval() {
+        addParam('UPDATE_GITHUB_ISSUES', true)
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 in:title" --json number --jq '.[0].number'""") { script ->
+            return [stdout: '65', exitValue: 0]
+        }
+        helper.addShMock("""gh label list --repo https://github.com/opensearch-project/dashboards-observability.git -S linux:tar:x64 --json name --jq '.[0].name'""") { script ->
+            return [stdout: 'linux:tar:x64', exitValue: 0]
+        }
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ') { script -> 
+            return [stdout: 'Completed running integtest for component observabilityDashboards', exitValue: 0]
+        }
+        runScript('jenkins/opensearch-dashboards/integ-test.jenkinsfile')
+        assertThat(getCommandExecutions('sh', 'gh issue'), hasItem('{script=gh issue edit 65 -R https://github.com/opensearch-project/dashboards-observability.git --remove-label \"linux:tar:x64\", returnStdout=true}'))
+    }
+
+    @Test
+    void verifyLabelAddition() {
+        addParam('UPDATE_GITHUB_ISSUES', true)
+        helper.addShMock('env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component observabilityDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar ') { script ->
+            return [stdout: 'Error running integtest for component observabilityDashboards, creating Github issue', exitValue: 127]}
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/dashboards-observability.git -S "[AUTOCUT] Integration Test failed for observabilityDashboards: 3.0.0 in:title" --json number --jq '.[0].number'""") { script ->
+            return [stdout: '99', exitValue: 0]
+        }
+        helper.addShMock("""gh label list --repo https://github.com/opensearch-project/dashboards-observability.git -S linux:tar:x64 --json name --jq '.[0].name'""") { script ->
+            return [stdout: 'no labels in opensearch-project/dashboards-observability matched your search', exitValue: 0]
+        }
+        assertThrows(Exception) {
+            runScript('jenkins/opensearch/integ-test.jenkinsfile')
+        }
+        assertThat(getCommandExecutions('sh', 'label'), hasItem('{script=gh label create linux:tar:x64 --repo https://github.com/opensearch-project/dashboards-observability.git, returnStdout=true}'))
+        assertThat(getCommandExecutions('sh', 'gh issue'), hasItem('{script=gh issue edit 99 -R https://github.com/opensearch-project/dashboards-observability.git --add-label \"linux:tar:x64\", returnStdout=true}'))
     }
 
     def getCommandExecutions(methodName, command) {

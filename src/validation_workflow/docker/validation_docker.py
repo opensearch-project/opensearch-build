@@ -9,14 +9,10 @@ import logging
 import os
 import shutil
 import subprocess
-import time
 from subprocess import PIPE
 from typing import Any
 
-import requests
-
-from system.temporary_directory import TemporaryDirectory
-from validation_workflow.api_request import ApiTest
+from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.docker.inspect_docker_image import InspectDockerImage
 from validation_workflow.validation import Validation
@@ -61,8 +57,7 @@ class ValidateDocker(Validation):
     def validation(self) -> bool:
         # STEP 2 . inspect image digest between opensearchproject(downloaded/local) and opensearchstaging(dockerHub)
         if not self.args.using_staging_artifact_only:
-            self.image_names_list = [self.args.OS_image, self.args.OSD_image]
-            self.image_names_list = [x for x in self.image_names_list if (os.path.basename(x) in self.args.projects)]
+            self.image_names_list = ['opensearchproject/' + project for project in self.args.projects]
             self.image_digests = list(map(lambda x: self.inspect_docker_image(x[0], x[1]), zip(self.image_ids.values(), self.image_names_list)))  # type: ignore
             if all(self.image_digests):
                 logging.info('Image digest is validated.\n\n')
@@ -79,11 +74,11 @@ class ValidateDocker(Validation):
                 self.args.version
             )
             if return_code:
-                logging.info('Checking if cluster is ready for API test in every 10 seconds\n\n')
+                logging.info('Checking if cluster is ready for API test in every 5 seconds\n\n')
 
                 if self.check_cluster_readiness():
                     # STEP 4 . OS, OSD API validation
-                    _test_result, _counter = ApiTestCases().test_apis(self.args.projects)
+                    _test_result, _counter = ApiTestCases().test_apis(self.args.version, self.args.projects, True)
 
                     if _test_result:
                         logging.info(f'All tests Pass : {_counter}')
@@ -94,8 +89,8 @@ class ValidateDocker(Validation):
                         raise Exception(f'Not all tests Pass : {_counter}')
                 else:
                     raise Exception("Cluster is not ready for API test.")
-        else:
-            raise Exception('The container failed to start. Exiting the validation.')
+            else:
+                raise Exception('The container failed to start. Exiting the validation.')
 
         return True
 
@@ -128,36 +123,6 @@ class ValidateDocker(Validation):
             logging.error("Error: %s - %s." % (e.filename, e.strerror))
 
         return('returncode=0' in (str(result)))
-
-    def check_http_request(self) -> bool:
-        self.test_readiness_urls = {
-            'https://localhost:9200/': 'opensearch cluster API',
-            'http://localhost:5601/api/status': 'opensearch-dashboards API',
-        }
-
-        for url, name in self.test_readiness_urls.items():
-            try:
-                status_code, response_text = ApiTest(url).api_get()
-                if status_code != 200:
-                    logging.error(f'Error connecting to {name} ({url}): status code {status_code}')
-                    return False
-            except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout) as e:
-                logging.error(f'Error connecting to {name} ({url}): {e}')
-                return False
-        return True
-
-    def check_cluster_readiness(self) -> bool:
-        max_retry = 20
-        retry_count = 0
-        while retry_count < max_retry:
-            logging.info(f'sleeping 10sec for retry {retry_count + 1}/{max_retry}')
-            time.sleep(10)
-            if self.check_http_request():
-                logging.info('\n\ncluster is now ready for API test\n\n')
-                return True
-            retry_count += 1
-        logging.error(f"Maximum number of retries ({max_retry}) reached. Cluster is not ready for API test.")
-        return False
 
     def get_artifact_image_name(self, artifact: str, using_staging_artifact_only: str) -> Any:
         self.image_names = {
@@ -241,7 +206,6 @@ class ValidateDocker(Validation):
             '2': 'docker-compose-2.x.yml'
         }
 
-        self.tmp_dir = TemporaryDirectory()
         self.target_yml_file = os.path.join(self.tmp_dir.name, 'docker-compose.yml')
 
         self.major_version_number = version[0]
@@ -252,8 +216,9 @@ class ValidateDocker(Validation):
         self.replacements = [(f'opensearchproject/{key}:{self.major_version_number}', value) for key, value in image_ids.items()]
 
         list(map(lambda r: self.inplace_change(self.target_yml_file, r[0], r[1]), self.replacements))
-
+        os.environ["OPENSEARCH_INITIAL_ADMIN_PASSWORD"] = get_password(str(version))
         # spin up containers
-        self.docker_compose_up = f'docker-compose -f {self.target_yml_file} up -d'
+        services = "opensearch-node1 opensearch-node2" if "opensearch-dashboards" not in self.args.projects else ""
+        self.docker_compose_up = f'docker-compose -f {self.target_yml_file} up -d {services}'
         result = subprocess.run(self.docker_compose_up, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         return ('returncode=0' in (str(result)), self.target_yml_file)

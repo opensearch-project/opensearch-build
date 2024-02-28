@@ -196,6 +196,10 @@
 # Set the value of this setting to true to enable the ml commons dashboards
 # ml_commons_dashboards.enabled: false
 
+# 2.12 New experimental Assistant Dashboards Feature
+# Set the value of this setting to true to enable the assistant dashboards
+# assistant.chat.enabled: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver

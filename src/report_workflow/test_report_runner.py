@@ -7,6 +7,7 @@
 
 import logging
 import os
+import typing
 import urllib.request
 from typing import Any
 from urllib.error import HTTPError
@@ -100,6 +101,8 @@ class TestReportRunner:
                 component_yml_ref = "URL not available"
             config_dict["yml"] = component_yml_ref
             config_dict["status"] = test_result
+            config_dict["cluster_stdout"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, component_name, config, self.name)[0]
+            config_dict["cluster_stderr"] = get_os_cluster_logs(self.base_path, str(self.test_run_id), self.test_type, component_name, config, self.name)[1]
             component["configs"].append(config_dict)
         return component
 
@@ -120,11 +123,14 @@ class TestReportRunner:
         return templates[template_type]
 
 
-def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str, config: str) -> str:
+def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str,
+                               config: str) -> str:
     if base_path.startswith("https://"):
-        return "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"{component_name}.yml"])
+        return "/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config,
+                         f"{component_name}.yml"])
     else:
-        return os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"{component_name}.yml")
+        return os.path.join(base_path, "test-results", test_number, test_type, component_name, config,
+                            f"{component_name}.yml")
 
 
 def generate_test_command(test_type: str, test_manifest_path: str, artifacts_path: str, component: str = "") -> str:
@@ -133,6 +139,28 @@ def generate_test_command(test_type: str, test_manifest_path: str, artifacts_pat
         command = " ".join([command, "--component", component])
     logging.info(command)
     return command
+
+
+def get_os_cluster_logs(base_path: str, test_number: str, test_type: str, component_name: str, config: str,
+                        product_name: str) -> typing.List[list]:
+    os_stdout: list = []
+    os_stderr: list = []
+    cluster_ids: list
+
+    if product_name == 'opensearch':
+        cluster_ids = ['id-0'] if config == 'with-security' else ['id-1']
+    else:
+        cluster_ids = ['id-0', 'id-1'] if config == 'with-security' else ['id-2', 'id-3']
+
+    for ids in cluster_ids:
+        if base_path.startswith("https://"):
+            os_stdout.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stdout.txt"]))
+            os_stderr.append("/".join([base_path.strip("/"), "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stderr.txt"]))
+        else:
+            os_stdout.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stdout.txt"))
+            os_stderr.append(os.path.join(base_path, "test-results", test_number, test_type, component_name, config, f"local-cluster-logs/{ids}/stderr.txt"))
+
+    return [os_stdout, os_stderr]
 
 
 TestReportRunner.__test__ = False  # type:ignore

@@ -87,9 +87,16 @@ then
   SNAPSHOT="false"
 fi
 
+OPENSEARCH_REQUIRED_VERSION="2.12.0"
 if [ -z "$CREDENTIAL" ]
 then
-  CREDENTIAL="admin:admin"
+  # Starting in 2.12.0, security demo configuration script requires an initial admin password
+  COMPARE_VERSION=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
+  if [ "$COMPARE_VERSION" != "$OPENSEARCH_REQUIRED_VERSION" ]; then
+    CREDENTIAL="admin:admin"
+  else
+    CREDENTIAL="admin:myStrongPassword123!"
+  fi
 fi
 
 USERNAME=`echo $CREDENTIAL | awk -F ':' '{print $1}'`

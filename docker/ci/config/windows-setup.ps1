@@ -5,7 +5,7 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-# This script is specifically used on Windows Server Core based docker images
+# This script is specifically used on Windows based docker images
 
 # Set TLS to 1.2 so SSL/TLS can be enabled for downloading artifacts
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -46,7 +46,8 @@ git config --system --list
 bash.exe -c "mv -v 'C:\\Windows\\System32\\find.exe' 'C:\\Windows\\System32\\find_windows.exe'"
 
 # Add some sleep due to a potential race condition
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 10
+Set-MpPreference -DisableRealtimeMonitoring $true
 
 # Setup Repos (This has to happen after git is installed or will error out)
 scoop bucket add java
@@ -150,7 +151,7 @@ yq --version
 # https://github.com/opensearch-project/opensearch-ci/issues/281#issuecomment-1654424423
 scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/49d6f71e5bd7096d49b3286ad02d5d482726b467/bucket/volta.json
 volta --version
-$nodeVersionList = "10.24.1","14.19.1","14.20.0", "14.20.1", "14.21.3", "16.20.0", "18.16.0"
+$nodeVersionList = "10.24.1","14.19.1","14.20.0", "14.20.1", "14.21.3", "16.20.0", "18.16.0", "18.19.0"
 Foreach ($nodeVersion in $nodeVersionList)
 {
     $nodeVersion
@@ -179,7 +180,8 @@ $nodePathFixed = "C:\\Users\\ContainerAdministrator\\scoop\\persist\\volta\\appd
 [System.Environment]::SetEnvironmentVariable("PATH", $userenv2 + ";$nodePathFixed", [System.EnvironmentVariableTarget]::User)
 
 # Install chromium (internally it is chrome.exe in app directory)
-scoop install chromium
+# Lock chromium to v114.0.5735.134-r1135570 due to https://github.com/opensearch-project/opensearch-build/issues/4241
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/6befedcb5296cacbb0428e76baab7368609b6006/bucket/chromium.json
 $chromiumName = 'chrome.exe'
 $chromiumDir = 'C:\\Users\\ContainerAdministrator\\scoop\\apps\\chromium'
 $chromiumFound = (Get-ChildItem -Path $chromiumDir -Filter $chromiumName -Recurse | %{$_.FullName} | select -first 1)
@@ -205,8 +207,11 @@ scoop install zip
 scoop install unzip
 
 # Install docker
-scoop install docker
-scoop install docker-compose
+# Lock Docker 24.0.7
+# Lock Docker-Compose 2.23.0
+# https://github.com/opensearch-project/opensearch-build/issues/4126
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/f7cf8513558307e90b483ddff2394a023e894ccf/bucket/docker.json
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Main/a6a7d8e2a7eecb13fb7200952c9bcea4eaeeb994/bucket/docker-compose.json
 
 # Scoop cleanup
 scoop cache rm *
@@ -219,7 +224,7 @@ pip --version
 pip install pipenv==2023.6.12
 pipenv --version
 # Install awscli
-pip install awscli==1.22.12
+pip install awscli==1.32.17
 aws --version
 # Cleanup
 pip cache remove * 

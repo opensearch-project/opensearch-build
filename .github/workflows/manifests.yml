@@ -3,6 +3,10 @@ name: manifests
 
 on:
   pull_request:
+  paths:
+    - 'manifests/**/*.yml'
+    - '!manifests/templates/**/'
+    - 'legacy-manifests/**/*.yml'
 
 jobs:
   list-changed-manifests:
@@ -13,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get changed manifest files
-        uses: tj-actions/changed-files@v39
+        uses: tj-actions/changed-files@v41
         id: list-changed-manifests
         with:
           files: manifests/**/opensearch*.yml

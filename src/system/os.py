@@ -15,6 +15,8 @@ def current_architecture() -> str:
         return "x64"
     elif architecture == "aarch64" or architecture == "arm64":
         return "arm64"
+    elif architecture == "ppc64le":
+        return "ppc64le"
     else:
         raise ValueError(f"Unsupported architecture: {architecture}")
 

@@ -45,7 +45,7 @@ WORKDIR $CONTAINER_USER_HOME
 # Hard code node version and yarn version for now
 # nvm environment variables
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 18.16.0
+ENV NODE_VERSION 18.19.0
 ENV CYPRESS_VERSION 12.13.0
 ARG CYPRESS_VERSION_LIST="5.6.0 9.5.4 12.13.0"
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
@@ -99,7 +99,7 @@ RUN groupadd -g 1000 $CONTAINER_USER && \
 # Copy from Stage0
 COPY --from=linux_stage_0 --chown=$CONTAINER_USER:$CONTAINER_USER $CONTAINER_USER_HOME $CONTAINER_USER_HOME
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
-ENV NODE_VERSION 18.16.0
+ENV NODE_VERSION 18.19.0
 ENV CYPRESS_VERSION 12.13.0
 ENV CYPRESS_LOCATION $CONTAINER_USER_HOME/.cache/Cypress/$CYPRESS_VERSION
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
@@ -129,7 +129,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Add other dependencies
-RUN yum install -y epel-release && yum clean all && yum install -y chromium jq && yum clean all && rm -rf /var/cache/yum/* && \
+RUN yum install -y epel-release && yum clean all && yum install -y jq && yum clean all && rm -rf /var/cache/yum/* && \
     pip3 install cmake==3.23.3
 
 # Tools setup

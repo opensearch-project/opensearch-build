@@ -7,10 +7,9 @@
 
 import logging
 import os
-import time
 
 from system.execute import execute
-from system.temporary_directory import TemporaryDirectory
+from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.download_utils import DownloadUtils
 from validation_workflow.validation import Validation
@@ -21,25 +20,6 @@ class ValidateRpm(Validation, DownloadUtils):
 
     def __init__(self, args: ValidationArgs) -> None:
         super().__init__(args)
-        self.base_url_production = "https://artifacts.opensearch.org/releases/bundle/"
-        self.base_url_staging = "https://ci.opensearch.org/ci/dbc/distribution-build-"
-        self.tmp_dir = TemporaryDirectory()
-
-    def download_artifacts(self) -> bool:
-        isFilePathEmpty = bool(self.args.file_path)
-        for project in self.args.projects:
-            if (isFilePathEmpty):
-                if ("https:" not in self.args.file_path.get(project)):
-                    self.copy_artifact(self.args.file_path.get(project), str(self.tmp_dir.path))
-                else:
-                    self.check_url(self.args.file_path.get(project))
-            else:
-                if (self.args.artifact_type == "staging"):
-                    self.args.file_path[project] = f"{self.base_url_staging}{project}/{self.args.version}/{self.args.build_number[project]}/linux/{self.args.arch}/{self.args.distribution}/dist/{project}/{project}-{self.args.version}-linux-{self.args.arch}.rpm"  # noqa: E501
-                else:
-                    self.args.file_path[project] = f"{self.base_url_production}{project}/{self.args.version}/{project}-{self.args.version}-linux-{self.args.arch}.rpm"
-                self.check_url(self.args.file_path.get(project))
-        return True
 
     def installation(self) -> bool:
         try:
@@ -47,7 +27,7 @@ class ValidateRpm(Validation, DownloadUtils):
             for project in self.args.projects:
                 self.filename = os.path.basename(self.args.file_path.get(project))
                 execute(f'sudo yum remove {project} -y', ".")
-                execute(f'sudo rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)
+                execute(f'sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD={get_password(str(self.args.version))} rpm -ivh {os.path.join(self.tmp_dir.path, self.filename)}', str(self.tmp_dir.path), True, False)  # noqa: 501
         except:
             raise Exception('Failed to install Opensearch')
         return True
@@ -56,7 +36,6 @@ class ValidateRpm(Validation, DownloadUtils):
         try:
             for project in self.args.projects:
                 execute(f'sudo systemctl start {project}', ".")
-                time.sleep(20)
                 (stdout, stderr, status) = execute(f'sudo systemctl status {project}', ".")
                 if(status == 0):
                     logging.info(stdout)
@@ -68,12 +47,16 @@ class ValidateRpm(Validation, DownloadUtils):
         return True
 
     def validation(self) -> bool:
-        test_result, counter = ApiTestCases().test_apis(self.args.projects)
-        if (test_result):
-            logging.info(f'All tests Pass : {counter}')
-            return True
+        if self.check_cluster_readiness():
+            test_result, counter = ApiTestCases().test_apis(self.args.version, self.args.projects,
+                                                            self.check_for_security_plugin(os.path.join(os.sep, "usr", "share", "opensearch")) if self.args.allow_http else True)
+            if (test_result):
+                logging.info(f'All tests Pass : {counter}')
+                return True
+            else:
+                raise Exception(f'Not all tests Pass : {counter}')
         else:
-            raise Exception(f'Not all tests Pass : {counter}')
+            raise Exception("Cluster is not ready for API test")
 
     def cleanup(self) -> bool:
         try:

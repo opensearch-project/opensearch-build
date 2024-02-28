@@ -34,7 +34,7 @@ class TestValidationArgs(unittest.TestCase):
     def test_rpm_distribution(self) -> None:
         self.assertEqual(ValidationArgs().distribution, "rpm")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker"])
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--projects", "opensearch", "--using-staging-artifact-only"])
     def test_docker_distribution(self) -> None:
         self.assertEqual(ValidationArgs().distribution, "docker")
         self.assertNotEqual(ValidationArgs().distribution, "yum")
@@ -67,18 +67,49 @@ class TestValidationArgs(unittest.TestCase):
     def test_artifact_type(self) -> None:
         self.assertNotEqual(ValidationArgs().artifact_type, "production")
 
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging",
+                                  "--os-build-number", "1234", "--osd-build-number", "2312", "--allow-http"])
+    def test_allow_http(self) -> None:
+        self.assertEqual(ValidationArgs().allow_http, True)
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--distribution", "rpm", "--artifact-type", "staging", "--os-build-number", "1234", "--osd-build-number", "2312"])
+    def test_do_not_allow_http(self) -> None:
+        self.assertEqual(ValidationArgs().allow_http, False)
+
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.0", "--projects", "opensearch"])
     def test_set_projects(self) -> None:
         self.assertEqual(ValidationArgs().projects, ["opensearch"])
+
+    @patch('sys.argv', [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.rpm",
+                        "opensearch-dashboard=https://opensearch.org/releases/opensearch/2.8.0/opensearch-dashboards-2.8.0-linux-x64.rpm"])
+    def test_dashboards_exception(self) -> None:
+        with self.assertRaises(Exception) as ctx:
+            self.assertEqual(ValidationArgs().distribution, "rpm")
+        self.assertEqual(str(ctx.exception), "Missing OpenSearch artifact details! Please provide the valid product names among opensearch and opensearch-dashboards")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234",
+                                  "--osd-build-number", "8393", "--projects", "opensearch", "--using-staging-artifact-only"])
+    def test_docker_exception(self) -> None:
+        with self.assertRaises(Exception) as ctx:
+            self.assertEqual(ValidationArgs().projects, ["opensearch"])
+            self.assertEqual(ValidationArgs().osd_build_number, "1234")
+        self.assertEqual(str(ctx.exception), "--osd_build_number argument cannot be provided without specifying opensearch-dashboards in --projects")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--os-build-number", "1234", "--projects", "opensearch"])
+    def test_docker_arguments_exception(self) -> None:
+        with self.assertRaises(Exception) as ctx:
+            self.assertEqual(ValidationArgs().projects, ["opensearch"])
+            self.assertEqual(ValidationArgs().osd_build_number, "1234")
+        self.assertEqual(str(ctx.exception), "Provide either of --validate-digest-only and --using-staging-artifact-only for Docker Validation")
 
     @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch-dashboards=https://opensearch.org/releases/opensearch/2.8.0/opensearch-dashboards-2.8.0-linux-x64.rpm"])
     def test_projects_exception(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().distribution, "rpm")
             self.assertEqual(ValidationArgs().projects, ["opensearch-dashboards"])
-        self.assertEqual(str(ctx.exception), "Missing OpenSearch OpenSearch artifact details! Please provide the same along with OpenSearch-Dashboards to validate")
+        self.assertEqual(str(ctx.exception), "Missing OpenSearch artifact details! Please provide the valid product names among opensearch and opensearch-dashboards")
 
-    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.zip"])
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-x64.xyz"])
     def test_file_path_distribution_type(self) -> None:
         with self.assertRaises(Exception) as ctx:
             self.assertEqual(ValidationArgs().projects, ["opensearch"])
@@ -93,3 +124,13 @@ class TestValidationArgs(unittest.TestCase):
     def test_get_distribution_type_yum(self) -> None:
         result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
         self.assertEqual(result, "yum")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch--2.8.0-windows-x64.zip"])
+    def test_get_distribution_type_zip(self) -> None:
+        result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
+        self.assertEqual(result, "zip")
+
+    @patch("argparse._sys.argv", [VALIDATION_PY, "--file-path", "opensearch=https://opensearch.org/releases/opensearch/2.8.0/opensearch-2.8.0-linux-arm64.deb"])
+    def test_get_distribution_type_deb(self) -> None:
+        result = ValidationArgs().get_distribution_type(ValidationArgs().file_path)
+        self.assertEqual(result, "deb")

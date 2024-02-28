@@ -16,7 +16,7 @@ class TestTestCases(unittest.TestCase):
     def test_opensearch(self, mock_api_get: Mock) -> None:
         mock_api_get.return_value = (200, 'green')
         testcases = ApiTestCases()
-        result = testcases.test_apis(['opensearch'])
+        result = testcases.test_apis("1.3.0", ['opensearch'], True)
 
         self.assertEqual(result[1], 'There are 3/3 test cases Pass')
         self.assertEqual(mock_api_get.call_count, 3)
@@ -25,10 +25,19 @@ class TestTestCases(unittest.TestCase):
     def test_both(self, mock_api_get: Mock) -> None:
         mock_api_get.return_value = (200, 'green')
         testcases = ApiTestCases()
-        result = testcases.test_apis(['opensearch', 'opensearch-dashboards'])
+        result = testcases.test_apis("2.1.1", ['opensearch', 'opensearch-dashboards'], True)
 
         self.assertEqual(result[1], 'There are 4/4 test cases Pass')
         self.assertEqual(mock_api_get.call_count, 4)
+
+    @patch('validation_workflow.api_test_cases.ApiTest.api_get')
+    def test_without_security(self, mock_api_get: Mock) -> None:
+        mock_api_get.return_value = (200, 'green')
+        testcases = ApiTestCases()
+        result = testcases.test_apis("1.3.0", ['opensearch'], False)
+
+        self.assertEqual(result[1], 'There are 3/3 test cases Pass')
+        self.assertEqual(mock_api_get.call_count, 3)
 
 
 if __name__ == '__main__':

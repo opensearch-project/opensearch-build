@@ -261,6 +261,8 @@ class TestBuildRecorder(unittest.TestCase):
                          "e3c8902dea26fd20f56a6f144042b2623f652e3e")
         self.assertEqual(mock.build_manifest.components_hash.get("security").get("version"), "2.12.0.0")
 
+        self.assertEqual(mock.build_manifest.data.get("build").get("id"), "1")
+
         mock.record_component(
             "job-scheduler",
             MagicMock(

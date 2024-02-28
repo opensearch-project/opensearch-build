@@ -5,6 +5,8 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
+import os
+import shutil
 import subprocess
 import unittest
 import urllib.request
@@ -43,12 +45,11 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ApiTestCases')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
-    @patch('time.sleep', return_value=None)
-    def test_staging(self, mock_time_sleep: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
+    def test_staging(self, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.validate_digest_only = False
+        mock_validation_args.return_value.allow_http = False
         mock_validation_args.return_value.projects = ["opensearch"]
         mock_docker_image.return_value = MagicMock()
         mock_container.return_value = (True, 'test_file.yml')
@@ -69,7 +70,47 @@ class TestValidateDocker(unittest.TestCase):
         # Assert that the mock methods are called as expected
         mock_container.assert_called_once()
         mock_test.assert_called_once()
-        mock_test.assert_has_calls([call(), call().test_apis(['opensearch'])])
+        mock_test.assert_has_calls([call(), call().test_apis("1.0.0.1000", ['opensearch'], True)])
+
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_cluster_readiness')
+    @patch('validation_workflow.docker.validation_docker.ValidationArgs')
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
+    def test_staging_cluster_not_ready(self, mock_container: Mock, mock_validation_args: Mock,
+                                       mock_cluster_readiness: Mock) -> None:
+        mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.validate_digest_only = False
+        mock_validation_args.return_value.allow_http = False
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_cluster_readiness.return_value = False
+        mock_container.return_value = (True, 'test_file.yml')
+
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+        validate_docker.image_ids = {'opensearch': 'images_id_0'}
+        validate_docker.replacements = [('opensearchproject/opensearch:1', 'images_id_0')]
+
+        with self.assertRaises(Exception) as context:
+            validate_docker.validation()
+        self.assertEqual(str(context.exception), 'Cluster is not ready for API test.')
+        mock_cluster_readiness.assert_called_once()
+
+    @patch('validation_workflow.docker.validation_docker.ValidationArgs')
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
+    def test_container_startup_exception(self, mock_container: Mock, mock_validation_args: Mock) -> None:
+        mock_validation_args.return_value.version = '1.0.0.1000'
+        mock_validation_args.return_value.validate_digest_only = False
+        mock_validation_args.return_value.allow_http = False
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_container.return_value = (False, 'test_file.yml')
+
+        # Create instance of ValidateDocker class
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+        validate_docker.image_ids = {'opensearch': 'images_id_0'}
+        validate_docker.replacements = [('opensearchproject/opensearch:1', 'images_id_0')]
+
+        with self.assertRaises(Exception) as context:
+            validate_docker.validation()
+        self.assertEqual(str(context.exception), 'The container failed to start. Exiting the validation.')
+        mock_container.assert_called_once()
 
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.check_http_request')
     @patch('validation_workflow.docker.validation_docker.ValidationArgs')
@@ -77,10 +118,8 @@ class TestValidateDocker(unittest.TestCase):
     @patch('validation_workflow.docker.validation_docker.ApiTestCases')
     @patch('validation_workflow.docker.validation_docker.ValidateDocker.run_container')
     @patch('validation_workflow.docker.validation_docker.InspectDockerImage.inspect_digest')
-    @patch('time.sleep', return_value=None)
-    def test_digests(self, mock_time_sleep: Mock, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
+    def test_digests(self, mock_digest: Mock, mock_container: Mock, mock_test: Mock, mock_docker_image: Mock, mock_validation_args: Mock, mock_check_http: Mock) -> None:
         # Set up mock objects
-        mock_validation_args.return_value.OS_image = 'opensearchstaging/opensearch-os'
         mock_validation_args.return_value.version = '1.0.0.1000'
         mock_validation_args.return_value.using_staging_artifact_only = False
         mock_validation_args.return_value.validate_digest_only = True
@@ -125,7 +164,7 @@ class TestValidateDocker(unittest.TestCase):
 
         # Set up mock objects
         mock_validation_args.return_value = 'validation_args'
-        mock_subprocess_run.return_value = subprocess.CompletedProcess(['command'], 0)
+        mock_subprocess_run.return_value = subprocess.CompletedProcess(args='docker-compose -f docker-compose.yml down', returncode=0, stdout=b'', stderr=b'')
 
         # Create instance of class
         validate_docker = ValidateDocker(mock_validation_args)
@@ -166,6 +205,26 @@ class TestValidateDocker(unittest.TestCase):
 
         self.assertTrue(urllib.request.urlopen(docker_compose_file_v1_url).getcode() == 200)
         self.assertTrue(urllib.request.urlopen(docker_compose_file_v2_url).getcode() == 200)
+
+    @patch.dict('os.environ', {'OPENSEARCH_INITIAL_ADMIN_PASSWORD': 'admin'})
+    @patch.object(shutil, "copy2")
+    @patch.object(subprocess, "check_output")
+    @patch.object(subprocess, "run")
+    @patch('validation_workflow.docker.validation_docker.get_password')
+    @patch('validation_workflow.docker.validation_docker.ValidateDocker.inplace_change')
+    @patch('validation_workflow.docker.validation_docker.ValidationArgs')
+    def test_run_container(self, mock_validation_args: Mock, mock_inplace: Mock, mock_password: Mock, mock_subprocess_run: MagicMock,
+                           mock_check_output: MagicMock, mock_copy2: MagicMock) -> None:
+        image_ids = {"opensearch": "sha1", "opensearch-dashboards": "sha2"}
+        mock_validation_args.return_value.projects = ["opensearch"]
+        mock_subprocess_run.return_value = subprocess.CompletedProcess(args='docker-compose -f docker-compose.yml down', returncode=0, stdout=b'', stderr=b'')
+        mock_password.return_value = "admin"
+        mock_validation_args.return_value.version = '1.0.0'
+        validate_docker = ValidateDocker(mock_validation_args.return_value)
+        result, self._target_yml_file = validate_docker.run_container(image_ids, "2.11.0")
+        self.assertEqual(result, True)
+        mock_subprocess_run.assert_called_with(os.path.join(f'docker-compose -f {validate_docker.tmp_dir.path}', 'docker-compose.yml up -d opensearch-node1 opensearch-node2'),
+                                               shell=True, stdout=-1, stderr=-1, universal_newlines=True)
 
 
 if __name__ == '__main__':
