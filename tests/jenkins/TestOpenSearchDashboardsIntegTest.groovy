@@ -26,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.3.0')
+                .defaultVersion('6.3.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -104,6 +104,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
     void integTests_runs_for_all_components() {
         super.testPipeline('jenkins/opensearch-dashboards/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch-dashboards/integ-test.jenkinsfile')
+        assert getCommandExecutions('stage', 'validate-artifacts').size() == 1
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItems(
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component ganttChartDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString(),
                 'env PATH=$PATH  ./test.sh integ-test manifests/tests/jenkins/data/opensearch-dashboards-3.0.0-test.yml --component anomalyDetectionDashboards --test-run-id 215 --paths opensearch=/tmp/workspace/tar opensearch-dashboards=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/215/linux/x64/tar '.toString(),
@@ -234,6 +235,14 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         }
         assertThat(getCommandExecutions('sh', 'label'), hasItem('{script=gh label create linux:tar:x64 --repo https://github.com/opensearch-project/dashboards-observability.git, returnStdout=true}'))
         assertThat(getCommandExecutions('sh', 'gh issue'), hasItem('{script=gh issue edit 99 -R https://github.com/opensearch-project/dashboards-observability.git --add-label \"linux:tar:x64\", returnStdout=true}'))
+    }
+
+    @Test
+    void whenValidationIsNotChecked() {
+        addParam('VALIDATE_ARTIFACTS', false)
+        super.testPipeline('jenkins/opensearch-dashboards/integ-test.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/opensearch-dashboards/integ-test-without-validation.jenkinsfile')
+        assert getCommandExecutions('stage', 'validate-artifacts').size() == 0
     }
 
     def getCommandExecutions(methodName, command) {

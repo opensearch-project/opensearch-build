@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.3.0')
+                .defaultVersion('6.3.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -90,6 +90,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         addParam('UPDATE_GITHUB_ISSUES', true)
         super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
                 'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test.jenkinsfile')
+        assert getCommandExecutions('stage', 'validate-artifacts').size() == 1
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
         assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
@@ -211,6 +212,14 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         assertJobStatusFailure()
         assertThat(getCommandExecutions('sh', 'label'), hasItem("{script=gh label create linux:tar:x64 --repo https://github.com/opensearch-project/k-NN.git, returnStdout=true}"))
         assertThat(getCommandExecutions('sh', 'gh issue'), hasItem('{script=gh issue edit 99 -R https://github.com/opensearch-project/k-NN.git --add-label \"linux:tar:x64\", returnStdout=true}'))
+    }
+
+    @Test
+    void whenValidationIsNotChecked() {
+        addParam('VALIDATE_ARTIFACTS', false)
+        super.testPipeline('jenkins/opensearch/integ-test.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/opensearch/integ-test-without-validation.jenkinsfile')
+        assert getCommandExecutions('stage', 'validate-artifacts').size() == 0
     }
 
     def getCommandExecutions(methodName, command) {
