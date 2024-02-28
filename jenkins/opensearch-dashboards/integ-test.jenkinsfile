@@ -72,6 +72,11 @@ pipeline {
             description: 'If true results will create / update / close github issues',
             defaultValue: false
         )
+        booleanParam(
+            name: 'VALIDATE_ARTIFACTS',
+            description: 'If true the provided artifacts are validated before triggering integ-tests else skip the validation stage',
+            defaultValue: true
+        )
     }
     stages {
         stage('verify-parameters') {
@@ -133,6 +138,11 @@ pipeline {
             }
         }
         stage('validate-artifacts') {
+            when {
+                expression {
+                    params.VALIDATE_ARTIFACTS == true
+                }
+            }
             agent { label agent_nodes['linux_x64'] }
             steps {
                 script {
