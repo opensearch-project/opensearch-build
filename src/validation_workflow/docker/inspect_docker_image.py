@@ -27,7 +27,7 @@ class InspectDockerImage:
         self.image_id = image_id
         self.image_name = image_name
         self.prod_image_tag = prod_image_tag
-        self.image_tag = ValidationArgs().stg_tag('opensearch_dashboards').replace(" ", "") if ("dashboards" in self.image_name) else ValidationArgs().stg_tag('opensearch').replace(" ", "")
+        self.image_tag = ValidationArgs().stg_tag('opensearch-dashboards').replace(" ", "") if ("dashboards" in self.image_name) else ValidationArgs().stg_tag('opensearch').replace(" ", "")
         self.auth_token_url = "https://auth.docker.io/token?"
         self.auth_service_scope = "service=registry.docker.io&scope=repository:"
         self.registry_url = "https://index.docker.io/v2/"

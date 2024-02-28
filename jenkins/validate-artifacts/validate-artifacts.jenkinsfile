@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@4.2.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.3.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -16,12 +16,16 @@ def docker_images = [
     "tar": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4",
     "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
     "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
+    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1",
+    "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3"
 ]
 
 def docker_args = [
     "tar": "-u 1000",
     "rpm": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
     "yum": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
+    "zip": "-u ContainerAdministrator",
+    "deb": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host"
 ]
 
 def agent_nodes_docker = [
@@ -30,8 +34,9 @@ def agent_nodes_docker = [
 ]
 
 def agent_nodes = [
-    "x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
-    "arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
+    "windows_x64": "Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host",
+    "linux_x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
+    "linux_arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
 ]
 
 pipeline {
@@ -58,9 +63,9 @@ pipeline {
         )
         string(
             name: 'DISTRIBUTION',
-            description: 'Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum docker"',
+            description: 'Enter the distribution type among tar, rpm, yum, docker separated by space. Defaults to "tar rpm yum deb zip docker"',
             trim: true,
-            defaultValue: "tar rpm yum docker"
+            defaultValue: "tar rpm yum deb zip docker"
 
         )
         string(
@@ -68,6 +73,12 @@ pipeline {
             description: 'Enter the architecture type among x64 and arm64 separated by space. Defaults to "x64 arm64"',
             trim: true,
             defaultValue: "x64 arm64"
+        )
+        string(
+            name: 'PLATFORM',
+            description: 'Enter the type type among linux and windows separated by space. Defaults to "linux windows"',
+            trim: true,
+            defaultValue: "linux windows"
         )
         string(
             name: 'OS_BUILD_NUMBER',
@@ -85,6 +96,11 @@ pipeline {
             choices: ['using-staging-artifact-only', 'validate-digest-only'],
         )
         choice(
+            name: 'DOCKER_SOURCE',
+            description: 'Enter the docker-source to pull the docker image, either DockerHub or ECR.',
+            choices: ["dockerhub", "ecr"]
+        )
+        choice(
             name: 'PROJECTS',
             description: 'Enter the project to validate. Either OpenSearch or Both (validates both OpenSearch and OpenSearch-Dashboards).',
             choices: ['opensearch', 'Both']
@@ -94,12 +110,16 @@ pipeline {
             description: 'Determine the artifact type among staging or production.',
             choices: ['production', 'staging'],
         )
-
+        booleanParam(
+            name: 'ALLOW_HTTP',
+            description: 'Allow validation even when the security plugin is absent.',
+            defaultValue: false
+        )
     }
 
     stages {
         stage('verify-parameters') {
-            agent { label agent_nodes["x64"] }
+            agent { label agent_nodes["linux_x64"] }
             steps {
                 script {
                     def url_paths = [:]
@@ -118,7 +138,21 @@ pipeline {
 
                     if(OPENSEARCH_ARTIFACT_URL) {
                         ARCHITECTURE = url_paths.values().find { it.contains("x64") } ? "x64" : "arm64"
-                        DISTRIBUTION = url_paths.values().find { it.contains("tar.gz") } ? "tar" : (url_paths.values().find { it.contains("repo") } ? "yum" : "rpm")
+                        def distKeyWords = [
+                            "tar.gz": "tar",
+                            "zip": "zip",
+                            "rpm": "rpm",
+                            "repo": "yum",
+                            "deb": "deb"
+                        ]
+                        DISTRIBUTION = distKeyWords.find { item ->
+                            url_paths.values().any { value ->
+                                value.contains(item.key)
+                            }
+                        }?.value
+                        if (DISTRIBUTION == null) {
+                            error("The provided distribution type is not supported")
+                        }
                         env.FILEPATH = "opensearch=${OPENSEARCH_ARTIFACT_URL?.trim()}"
                         if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL) {
                            FILEPATH = env.FILEPATH + " opensearch-dashboards=${OPENSEARCH_DASHBOARDS_ARTIFACT_URL?.trim()}"
@@ -129,11 +163,6 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Both VERSION and OPENSEARCH_ARTIFACT_URL cannot be empty. Please provide either value")
                     }
-
-                    if (DISTRIBUTION.contains('docker') && (OS_BUILD_NUMBER == '' || OSD_BUILD_NUMBER == '')) {
-                        currentBuild.result = 'ABORTED'
-                        error("Provide OS_BUILD_NUMBER and OSD_BUILD_NUMBER args for Docker Validation")
-                    }
                 }
             }
             post {
@@ -143,12 +172,15 @@ pipeline {
             }
         }
         stage('Validate') {
-            agent {label agent_nodes["x64"] }
+            agent {label agent_nodes["linux_x64"] }
             steps {
                 script {
 
                     def distributionList = DISTRIBUTION ? DISTRIBUTION.trim().split(" ") as List : ""
                     def architectureList = ARCHITECTURE ? ARCHITECTURE.trim().split(" ") as List : ""
+                    def mapDistributionToPlatform = [
+                        "zip": "windows"
+                    ]
 
                     stash includes: "**", name: "validate-artifacts-$BUILD_NUMBER"
 
@@ -157,10 +189,16 @@ pipeline {
                         for (distribution in distributionList) {
                             def local_architecture = architecture.trim()
                             def local_distribution = distribution.trim()
+                            def local_platform = mapDistributionToPlatform.getOrDefault(local_distribution, "linux")
                             def local_distribution_index = distributionList.indexOf(local_distribution)
                             def wait_seconds = local_distribution_index * 10
 
-                            echo "Validating Distribution: ${local_distribution}"
+                            echo "Validating Distribution: ${local_distribution}-${local_architecture}"
+
+                            if (local_distribution == 'zip' && local_architecture == 'arm64') {
+                                echo "Skipping the stage for zip distribution and arm64 architecture"
+                                    continue
+                            }
                             validateDistributions["${local_distribution}-${local_architecture}"] = {
                                 // Using scripted pipelines to trigger dynamic parallel stages
                                 timeout(time: 30) {
@@ -174,10 +212,11 @@ pipeline {
                                                         version: "$VERSION",
                                                         distribution: "${local_distribution}",
                                                         arch: "${local_architecture}",
-                                                        "os-build-number": "$OS_BUILD_NUMBER",
-                                                        "osd-build-number": "$OSD_BUILD_NUMBER",
+                                                        os_build_number: "$OS_BUILD_NUMBER",
+                                                        osd_build_number: "$OSD_BUILD_NUMBER",
                                                         projects: "$PROJECTS",
-                                                        "$OPTIONAL_ARGS" : ""
+                                                        docker_args : "$OPTIONAL_ARGS",
+                                                        docker_source : "$DOCKER_SOURCE"
                                                     )
                                                 }
                                             } catch (e) {
@@ -189,15 +228,13 @@ pipeline {
                                             }
                                         }
                                     } else {
-                                        node(agent_nodes["$local_architecture"]) {
+                                        node(agent_nodes["${local_platform}_${local_architecture}"]) {
                                             docker.withRegistry('https://public.ecr.aws/') {
                                                 docker.image(docker_images["$local_distribution"]).inside(docker_args["$local_distribution"]) {
                                                     try {
                                                         stage("${local_distribution}") {
-                                                            unstash "validate-artifacts-$BUILD_NUMBER"
 
-                                                            OS_BUILD_NUMBER = OS_BUILD_NUMBER ?: "latest"
-                                                            OSD_BUILD_NUMBER = OSD_BUILD_NUMBER ?: "latest"
+                                                            unstash "validate-artifacts-$BUILD_NUMBER"
 
                                                             if (VERSION) {
 
@@ -205,16 +242,20 @@ pipeline {
                                                                     version: "$VERSION",
                                                                     distribution: "${local_distribution}",
                                                                     arch: "${local_architecture}",
-                                                                    "os-build-number": "$OS_BUILD_NUMBER",
-                                                                    "osd-build-number": "$OSD_BUILD_NUMBER",
+                                                                    platform: "${local_platform}",
+                                                                    os_build_number: "$OS_BUILD_NUMBER",
+                                                                    osd_build_number: "$OSD_BUILD_NUMBER",
                                                                     projects: "$PROJECTS",
-                                                                    "artifact-type": "$ARTIFACT_TYPE"
+                                                                    artifact_type: "$ARTIFACT_TYPE",
+                                                                    allow_http: params.ALLOW_HTTP
                                                                 )
                                                             }
                                                             else {
 
-                                                                validateArtifacts("file-path": "$FILEPATH")
-
+                                                                validateArtifacts(
+                                                                    file_path: "$FILEPATH",
+                                                                    allow_http: params.ALLOW_HTTP
+                                                                )
                                                             }
                                                         }
                                                     } catch (e) {

@@ -150,7 +150,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Add other dependencies
-RUN dnf install -y epel-release && dnf clean all && dnf install -y chromium jq && dnf clean all && \
+RUN dnf install -y epel-release && dnf clean all && dnf install -y jq && dnf clean all && \
     pip3 install cmake==3.23.3
 
 # We use the version test to check if packages installed correctly

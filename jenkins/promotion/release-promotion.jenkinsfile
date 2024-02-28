@@ -60,8 +60,8 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-repos for OpenSearch Debian Apt'
-                build job: 'distribution-promote-repos', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
+                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -79,8 +79,8 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-repos for OpenSearch Yum'
-                build job: 'distribution-promote-repos', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
+                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -98,8 +98,8 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-repos for OpenSearch Dashboards apt'
-                build job: 'distribution-promote-repos', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
+                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -117,8 +117,8 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-repos for OpenSearch Dashboards yum'
-                build job: 'distribution-promote-repos', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
+                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -136,10 +136,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch windows'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'zip'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'zip'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -157,10 +157,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for opensearch windows'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'zip'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'zip'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -178,10 +178,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -199,10 +199,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -220,10 +220,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -241,10 +241,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -262,10 +262,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -283,10 +283,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -304,10 +304,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -325,10 +325,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -346,10 +346,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux tar arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -367,10 +367,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Linux tar x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -388,10 +388,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]
@@ -409,10 +409,10 @@ pipeline {
             }
             steps {
                 echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [choice(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    choice(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    choice(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    choice(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
                                                                                     string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
                                                                                     string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
                                                                                 ]

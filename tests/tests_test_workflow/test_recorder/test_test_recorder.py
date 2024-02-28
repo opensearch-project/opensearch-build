@@ -191,4 +191,7 @@ class TestTestResultsLogs(unittest.TestCase):
         logs.save_test_result_data(mock_test_result_data)
 
         mock_parent_class._copy_log_files.assert_called_once_with(mock_test_result_data.log_files, dest_directory)
+
+        logs.generate_component_yml(mock_test_result_data)
+
         mock_parent_class._generate_yml.assert_called_once_with(mock_test_result_data, dest_directory)
