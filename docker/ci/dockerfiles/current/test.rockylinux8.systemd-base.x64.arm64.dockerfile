@@ -94,9 +94,9 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq gh
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq
 
 # Create user group
 RUN dnf install -y sudo && \
@@ -138,8 +138,8 @@ RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils
 RUN dnf groupinstall -y "Development Tools" && dnf clean all
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && dnf remove -y "java-1.8.0*" && /tmp/yq-setup.sh
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN /tmp/jdk-setup.sh && dnf remove -y "java-1.8.0*" && dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm

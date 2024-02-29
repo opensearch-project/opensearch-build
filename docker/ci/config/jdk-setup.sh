@@ -38,6 +38,16 @@ case "${ARCH}" in
        JDKS+="43ad054f135a7894dc87ad5d10ad45d8e82846186515892acdbc17c2c5cd27e4@https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.1%2B9/OpenJDK20U-jdk_x64_linux_hotspot_20.0.1_9.tar.gz "
        JDKS+="1a6fa8abda4c5caed915cfbeeb176e7fbd12eb6b222f26e290ee45808b529aa1@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz "
        ;;
+   ppc64le)
+       # Use "<checksum>@<URL>" format to collect all JDK platform specific distributions
+       JDKS+="9d9813d2840360ffdbc449c45e71124e8170c31a3b6cce9151fbb31352064406@https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u392b08.tar.gz "
+       JDKS+="262ff98d6d88a7c7cc522cb4ec4129491a0eb04f5b17dcca0da57cfcdcf3830d@https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.21%2B9/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.21_9.tar.gz "
+       JDKS+="465a3b8e931896b8d95e452d479615c4bf543535c05b6ea246323ae114e67d7d@https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.2%2B12/OpenJDK14U-jdk_ppc64le_linux_hotspot_14.0.2_12.tar.gz "
+       JDKS+="3ae4b254d5b720f94f986481e787fbd67f0667571140ba2e2ae5020ceddbc826@https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9/OpenJDK17U-jdk_ppc64le_linux_hotspot_17.0.9_9.tar.gz "
+       JDKS+="173d1256dfb9d13d309b5390e6bdf72d143b512201b0868f9d349d5ed3d64072@https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.2%2B7/OpenJDK19U-jdk_ppc64le_linux_hotspot_19.0.2_7.tar.gz "
+       JDKS+="45dde71faf8cbb78fab3c976894259655c8d3de827347f23e0ebe5710921dded@https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jdk_ppc64le_linux_hotspot_20_36.tar.gz "
+       JDKS+="9574828ef3d735a25404ced82e09bf20e1614f7d6403956002de9cfbfcb8638f@https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_ppc64le_linux_hotspot_21.0.1_12.tar.gz "
+       ;;
    *)
        echo "Unsupported arch: ${ARCH}"
        exit 1

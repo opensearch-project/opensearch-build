@@ -22,9 +22,9 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN yum clean all && yum-config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+RUN yum clean all && \
     yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq gh epel-release
+    yum install -y which curl git gnupg2 tar net-tools procps-ng python3 python3-devel python3-pip zip unzip jq epel-release
 
 # Add Python dependencies
 RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
@@ -54,8 +54,8 @@ RUN if [[ `uname -m` = 'aarch64' ]]; then mkdir -p aarch64-builds && cd aarch64-
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib
 
 # Tools setup
-COPY --chown=0:0 config/yq-setup.sh /tmp/
-RUN /tmp/yq-setup.sh
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN yum install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Install JDK
 RUN curl -SL https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.15%2B10/OpenJDK11U-jdk_x64_linux_hotspot_11.0.15_10.tar.gz -o /opt/jdk11.tar.gz && \

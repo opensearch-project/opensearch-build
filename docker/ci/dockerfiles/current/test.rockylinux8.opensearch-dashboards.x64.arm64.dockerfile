@@ -18,15 +18,15 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN yum clean all && \
-    yum update -y && \
-    yum install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip
+RUN dnf clean all && \
+    dnf update -y && \
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip
 
 # Add Dashboards dependencies (mainly for cypress)
-RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Yarn dependencies
-RUN yum groupinstall -y "Development Tools" && yum install -y cmake && yum clean all && rm -rf /var/cache/yum/*
+RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake && dnf clean all && rm -rf /var/cache/dnf/*
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -86,9 +86,9 @@ ARG CONTAINER_USER_HOME=/home/ci-runner
 USER 0
 
 # Add normal dependencies
-RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
-    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip gh
+    dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
@@ -109,16 +109,16 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION $NVM_DIR && nvm use $NODE_VERSION
 
 # Add Python dependencies
-RUN yum install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
+RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel libffi-devel findutils
 
 # Add Dashboards dependencies (mainly for cypress)
-RUN yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Reports dependencies
-RUN yum install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
 
 # Add Yarn dependencies
-RUN yum groupinstall -y "Development Tools" && yum clean all && rm -rf /var/cache/yum/*
+RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
@@ -129,8 +129,12 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Add other dependencies
-RUN yum install -y epel-release && yum clean all && yum install -y jq && yum clean all && rm -rf /var/cache/yum/* && \
+RUN dnf install -y epel-release && dnf clean all && dnf install -y jq && dnf clean all && rm -rf /var/cache/dnf/* && \
     pip3 install cmake==3.23.3
+
+# Tools setup
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Change User
 USER $CONTAINER_USER

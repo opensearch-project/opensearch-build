@@ -15,7 +15,7 @@ ARG CONTAINER_USER=ci-runner
 ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Install python dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:longsleep/golang-backports -y
 
 # Install python binaries
 RUN apt-get update -y && apt-get install python3 && \
@@ -43,20 +43,14 @@ RUN curl -o- https://www.aptly.info/pubkey.txt | apt-key add - && \
     dpkg -r lintian
 
 # Tools setup
-COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh /tmp/
-RUN /tmp/jdk-setup.sh && /tmp/yq-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
+COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN apt-get install -y golang-go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
     useradd -u 1000 -g 1000 -s /bin/bash -d $CONTAINER_USER_HOME -m $CONTAINER_USER && \
     mkdir -p $CONTAINER_USER_HOME && \
     chown -R 1000:1000 $CONTAINER_USER_HOME
-
-# Install gh cli
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
-    apt-get update && apt-get install -y gh && apt-get clean
 
 # Change User
 USER $CONTAINER_USER

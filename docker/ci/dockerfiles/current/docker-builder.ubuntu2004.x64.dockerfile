@@ -21,18 +21,12 @@ ARG CONTAINER_USER=ci-runner
 ARG CONTAINER_USER_HOME=/home/ci-runner
 
 # Import necessary repository for installing qemu 5.0
-RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y
+RUN apt-get update -y && apt-get install -y software-properties-common && add-apt-repository ppa:jacob/virtualisation -y && add-apt-repository ppa:longsleep/golang-backports -y
 
 # Install necessary packages
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y binfmt-support qemu qemu-user qemu-user-static docker.io curl python3-pip && \
     apt-get install -y debmake debhelper-compat && \
     apt-get clean -y && pip3 install awscli==1.32.17
-
-# Install gh cli
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=`dpkg --print-architecture` signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
-    apt-get update && apt-get install -y gh && apt-get clean
 
 # Install trivy to scan the docker images
 RUN apt-get install -y apt-transport-https gnupg lsb-release && \
@@ -86,3 +80,8 @@ RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/s
     apt-get install packer=1.8.7* && \
     packer --version && \
     apt-get clean
+
+# Tools setup
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN apt-get install -y golang-go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+
