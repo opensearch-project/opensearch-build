@@ -18,7 +18,6 @@ components:
     ref: '1.3'
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    working_directory: gantt-chart
     ref: '1.3'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
