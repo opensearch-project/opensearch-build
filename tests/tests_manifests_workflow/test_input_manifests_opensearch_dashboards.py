@@ -30,38 +30,33 @@ class TestInputManifestsOpenSearchDashboards(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch("os.chdir")
-    @patch("manifests_workflow.input_manifests.InputComponents")
-    @patch("manifests_workflow.input_manifests.InputManifest.from_file")
-    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
-    @patch("manifests_workflow.input_manifests.InputManifest.from_path")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests.manifest.Manifest.to_file")
     @patch("manifests_workflow.input_manifests_opensearch_dashboards.ComponentOpenSearchDashboardsMin")
-    @patch("manifests_workflow.input_manifests.InputManifest")
-    def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch_min: MagicMock,
-                    mock_input_manifest_from_path: MagicMock, mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
-                    mock_input_manifest_from_file: MagicMock, mock_input_manifest_component: MagicMock,
-                    *mocks: MagicMock) -> None:
-        mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch-Dashboards")
-        mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
-        mock_input_manifest_from_path.return_value = MagicMock(components=[])
+    def test_update(self, mock_component_opensearch_dashboards_min: MagicMock, mock_manifest_to_file: MagicMock,
+                    mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
+                    mock_os_chdir: MagicMock, mock_os_makedirs: MagicMock) -> None:
+        mock_component_opensearch_dashboards_min.return_value = MagicMock(name="OpenSearch-Dashboards")
+        mock_component_opensearch_dashboards_min.branches.return_value = ["2.12"]
+        mock_component_opensearch_dashboards_min.checkout.return_value = MagicMock(version="2.12.1000")
 
         manifests = InputManifestsOpenSearchDashboards()
         manifests.update()
-        self.assertEqual(mock_input_manifest_from_file().to_file.call_count, 1)
+        self.assertEqual(mock_manifest_to_file.call_count, 1)
         calls = [
             call(
                 os.path.join(
                     InputManifestsOpenSearchDashboards.manifests_path(),
-                    "0.9.0",
-                    "opensearch-dashboards-0.9.0.yml",
+                    "2.12.1000",
+                    "opensearch-dashboards-2.12.1000.yml",
                 )
             )
         ]
-        mock_input_manifest_from_file().to_file.assert_has_calls(calls)
+        mock_manifest_to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
-            call('0.9.0')
+            call('2.12.1000')
         ])
         mock_add_to_versionincrement_workflow.assert_has_calls([
-            call('0.9.0')
+            call('2.12.1000')
         ])
