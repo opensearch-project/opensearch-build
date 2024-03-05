@@ -168,7 +168,7 @@ jobs:
             package.json
       - name: Create Pull Request for opensearch-dashboards-functional-test
         if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
-        id: cpr
+        id: cprft
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ steps.github_app_token.outputs.token }}
@@ -190,5 +190,5 @@ jobs:
             package.json
       - name: Check outputs
         run: |-
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Pull Request Number - ${{ steps.cprft.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cprft.outputs.pull-request-url }}"
