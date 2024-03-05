@@ -143,8 +143,8 @@ jobs:
             }
             console.log(labelFound);
             return labelFound
-      - name: Create Pull Request
-        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
+      - name: Create Pull Request for plugins
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo != 'opensearch-dashboards-functional-test' }}
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
@@ -165,6 +165,28 @@ jobs:
           path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
           add-paths: |
             opensearch_dashboards.json
+            package.json
+      - name: Create Pull Request for opensearch-dashboards-functional-test
+        if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
+          author: opensearch-ci-bot <opensearch-infra@amazon.com>
+          commit-message: |
+            Increment version to ${{ env.OSD_PLUGIN_VERSION }}
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
+          delete-branch: true
+          branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
+          title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
+          labels: |
+            v${{ env.DASHBOARD_VERSION }}
+          body: |
+            - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
+          path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
+          add-paths: |
             package.json
       - name: Check outputs
         run: |-
