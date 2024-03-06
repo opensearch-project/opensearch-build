@@ -16,4 +16,8 @@ class BundleUrlLocation(BundleLocation):
 
     def join(self, *args: str) -> str:
         sub_path = "/".join(args)
-        return urljoin(self.path + "/", sub_path)
+
+        # Make sure \ is replaced with / for valid url
+        # We will only make change here as the location can be either local or url
+        # Thus keep \ if it is a local path
+        return urljoin(self.path + "/", sub_path.replace("\\", "/"))
