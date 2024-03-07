@@ -70,8 +70,8 @@ mv -v "$libFound" "$libPathFound\\$libNameRequired"
 # Add MINGW_BIN path to User Env Var for k-NN to retrieve libs
 [System.Environment]::SetEnvironmentVariable("MINGW_BIN", "$libPathFound", [System.EnvironmentVariableTarget]::User)
 
-# Install zlib for k-NN compilation requirements
-scoop install zlib
+# Install zlib for k-NN compilation requirements, lock to 1.2.12
+scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/d4c775a2170c2f17ea83c7ced9cff2aafe3050fe/bucket/zlib.json
 # Reg PEP
 $zlibVersionInfo = (scoop info zlib | out-string -stream | Select-String 'Version.*:')
 $zlibVersionNumber = ($zlibVersionInfo -split ':' | select -last 1)
@@ -178,16 +178,6 @@ yarn --version
 $userenv2 = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
 $nodePathFixed = "C:\\Users\\ContainerAdministrator\\scoop\\persist\\volta\\appdata\\bin"
 [System.Environment]::SetEnvironmentVariable("PATH", $userenv2 + ";$nodePathFixed", [System.EnvironmentVariableTarget]::User)
-
-# Install chromium (internally it is chrome.exe in app directory)
-# Lock chromium to v114.0.5735.134-r1135570 due to https://github.com/opensearch-project/opensearch-build/issues/4241
-scoop install https://raw.githubusercontent.com/ScoopInstaller/Extras/6befedcb5296cacbb0428e76baab7368609b6006/bucket/chromium.json
-$chromiumName = 'chrome.exe'
-$chromiumDir = 'C:\\Users\\ContainerAdministrator\\scoop\\apps\\chromium'
-$chromiumFound = (Get-ChildItem -Path $chromiumDir -Filter $chromiumName -Recurse | %{$_.FullName} | select -first 1)
-$chromiumFound
-# Add BROWSER_PATH path to User Env Var for cypress test to retrieve chromium.exe path
-[System.Environment]::SetEnvironmentVariable("BROWSER_PATH", "$chromiumFound", [System.EnvironmentVariableTarget]::User)
 
 # Install ruby24
 scoop install ruby24
