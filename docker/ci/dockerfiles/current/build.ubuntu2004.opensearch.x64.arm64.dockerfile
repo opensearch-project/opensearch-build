@@ -29,11 +29,12 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y docker.io curl
     apt-get install -y debmake debhelper-compat && \
     apt-get install -y libxrender1 libxtst6 libasound2 libxi6 libgconf-2-4 && \
     apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libatspi2.0-dev libxcomposite-dev libxdamage1 libxfixes3 libxfixes-dev libxrandr2 libgbm-dev libxkbcommon-x11-0 libpangocairo-1.0-0 libcairo2 libcairo2-dev libnss3 libnspr4 libnspr4-dev freeglut3 && \
+    apt-get install -y docker-compose && \
     apt-get clean -y
 
 # Install pip packages
 RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
-    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17 docker-compose==1.29.2
+    pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
 # Install aptly and required changes to debmake
 # Remove lintian for now due to it takes nearly 20 minutes for OpenSearch as well as nearly an hour for OpenSearch-Dashboards during debmake
@@ -44,7 +45,7 @@ RUN curl -o- https://www.aptly.info/pubkey.txt | apt-key add - && \
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
+RUN apt-get install -y golang-go golang-1.21-go && update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1  && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh # Ubuntu has a bug where entrypoint=bash does not actually run .bashrc correctly
 
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
