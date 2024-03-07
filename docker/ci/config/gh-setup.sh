@@ -27,7 +27,7 @@ function gh_install_ppc64le {
     GO_VERSION=`go version | cut -d ' ' -f3 | tr -d 'go'`
     GO_REQUIRED_VERSION="1.21.0"
     COMPARE_VERSION=`echo $GO_REQUIRED_VERSION $GO_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
-    if [ "$COMPARE_VERSION" != "$GCC_REQUIRED_VERSION" ]; then
+    if [ "$COMPARE_VERSION" != "$GO_REQUIRED_VERSION" ]; then
         VERSION=2.32.1
         echo "go version on this env is older than $GO_REQUIRED_VERSION, use gh $VERSION"
     fi
