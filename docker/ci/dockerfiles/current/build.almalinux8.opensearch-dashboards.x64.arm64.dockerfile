@@ -24,10 +24,6 @@ RUN dnf clean all && dnf install -y 'dnf-command(config-manager)' && \
     dnf update -y && \
     dnf install -y which curl git gnupg2 tar net-tools procps-ng python39 python39-devel python39-pip zip unzip jq
 
-# Tools setup
-COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
-
 # Create user group
 RUN groupadd -g 1000 $CONTAINER_USER && \
     useradd -u 1000 -g 1000 -d $CONTAINER_USER_HOME $CONTAINER_USER && \
@@ -41,10 +37,14 @@ RUN dnf install -y @development zlib-devel bzip2 bzip2-devel readline-devel sqli
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 
 # Add Notebook dependencies
-RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && yum clean all
+RUN dnf install -y nss xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype && dnf clean all
 
 # Add Yarn dependencies
 RUN dnf groupinstall -y "Development Tools" && dnf clean all && rm -rf /var/cache/dnf/*
+
+# Tools setup
+COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
+RUN dnf install -y go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
