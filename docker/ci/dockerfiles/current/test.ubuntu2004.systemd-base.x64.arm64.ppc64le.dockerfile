@@ -145,7 +145,7 @@ RUN source $NVM_DIR/nvm.sh && ls -al $CONTAINER_USER_HOME && echo $NODE_VERSION 
 
 # Tools setup
 COPY --chown=0:0 config/jdk-setup.sh config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-go && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN apt-get install -y golang-go golang-1.21-go && update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 && /tmp/jdk-setup.sh && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 
 # Setup Shared Memory
 RUN chmod -R 777 /dev/shm
