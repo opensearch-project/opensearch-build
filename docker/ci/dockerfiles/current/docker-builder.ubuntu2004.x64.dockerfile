@@ -83,5 +83,5 @@ RUN curl -SL -o- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/s
 
 # Tools setup
 COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/
-RUN apt-get install -y golang-go && /tmp/yq-setup.sh && /tmp/gh-setup.sh
+RUN apt-get install -y golang-go golang-1.21-go && update-alternatives --install /usr/bin/go go /usr/lib/go-1.21/bin/go 1 && /tmp/yq-setup.sh && /tmp/gh-setup.sh
 

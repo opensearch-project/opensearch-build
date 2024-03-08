@@ -47,7 +47,6 @@ bash.exe -c "mv -v 'C:\\Windows\\System32\\find.exe' 'C:\\Windows\\System32\\fin
 
 # Add some sleep due to a potential race condition
 Start-Sleep -Seconds 10
-Set-MpPreference -DisableRealtimeMonitoring $true
 
 # Setup Repos (This has to happen after git is installed or will error out)
 scoop bucket add java
