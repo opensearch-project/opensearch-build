@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.3.2', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.3.3', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -26,7 +26,7 @@ pipeline {
     }
     parameters {
         string(
-            name: 'MANIFEST_URL',
+            name: 'MANIFEST_FILE',
             description: "Provide either Build Manifest url's or path to manifest files separated by space for branch creation.",
             trim: true
         )
@@ -50,11 +50,11 @@ pipeline {
         stage('Create Release Branch') {
             steps {
                 script {
-                    if (!(MANIFEST_URL && SOURCE_BRANCH && TARGET_BRANCH)) {
-                        error('Required parameters are missing. Please provide the mandatory arguments MANIFEST_URL, SOURCE_BRANCH and TARGET_BRANCH')
+                    if (!(MANIFEST_FILE && SOURCE_BRANCH && TARGET_BRANCH)) {
+                        error('Required parameters are missing. Please provide the mandatory arguments MANIFEST_FILE, SOURCE_BRANCH and TARGET_BRANCH')
                     }
 
-                    def manifestList = MANIFEST_URL.trim().split(' ') as List
+                    def manifestList = MANIFEST_FILE.trim().split(' ') as List
 
                     withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         for (manifest in manifestList) {
