@@ -68,7 +68,7 @@ class TestDockerBuild extends BuildPipelineTest {
         assertCallStack().contains("docker-build.sh(echo Account: jenkins-staging-dockerhub-credential)")
 
         // Make sure dockerBuildOS is deciding agent_node docker_nodes docker_args correctly
-        assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
+        assertCallStack().contains("docker-build.echo(Executing on agent [docker:[alwaysPull:true, args:-u root -v /var/run/docker.sock:/var/run/docker.sock, containerPerStageRoot:false, label:Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder, image:opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])")
 
         printCallStack()
     }

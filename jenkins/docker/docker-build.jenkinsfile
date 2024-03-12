@@ -8,8 +8,8 @@
  */
 
 def docker_images = [
-    "linux": "opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-awscli1.22-jdk11-v1",
-    "windows": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1"
+    "linux": "opensearchstaging/ci-runner:ubuntu2004-x64-docker-buildx0.9.1-qemu5.0-v1",
+    "windows": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1"
 ]
 
 def docker_args = [

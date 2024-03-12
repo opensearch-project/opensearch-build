@@ -13,10 +13,10 @@ lib = library(identifier: 'jenkins@6.3.2', retriever: modernSCM([
 ]))
 
 def docker_images = [
-    "tar": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4",
-    "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
-    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
-    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1",
+    "tar": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
+    "rpm": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1",
     "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3"
 ]
 

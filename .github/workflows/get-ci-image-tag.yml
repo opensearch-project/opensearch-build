@@ -52,7 +52,7 @@ jobs:
               if [[ "$PRODUCT" = "opensearch" ]]; then
                   PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
               else
-                  PLATFORM="rockylinux8"
+                  PLATFORM="almalinux8"
               fi
           fi
           crane version

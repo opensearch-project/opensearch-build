@@ -71,7 +71,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
         binding.setVariable('COMPONENT_NAME', '' )
         binding.getVariable('currentBuild').upstreamBuilds = [[fullProjectName: jobName]]
         def env = binding.getVariable('env')
-        env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2', args:'-e JAVA_HOME=/opt/java/openjdk-11']
+        env['DOCKER_AGENT'] = [image:'opensearchstaging/opensearchstaging/ci-runner:ci-runner-almallinux8-opensearch-dashboards-integtest-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11']
         env['PUBLIC_ARTIFACT_URL'] = 'DUMMY_PUBLIC_ARTIFACT_URL'
         env['JOB_NAME'] = 'dummy_job'
 

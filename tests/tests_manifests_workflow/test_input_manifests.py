@@ -85,7 +85,7 @@ class TestInputManifests(unittest.TestCase):
             {
                 "schema-version": "1.1",
                 "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-build-v1", }},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-build-v1", }},
             },
         )
 
