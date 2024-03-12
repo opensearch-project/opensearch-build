@@ -9,7 +9,6 @@ import os
 import unittest
 from unittest.mock import MagicMock, call, patch
 
-from manifests.component_manifest import Component, ComponentFromSource
 from manifests_workflow.input_manifests_opensearch import InputManifestsOpenSearch
 
 
@@ -31,74 +30,32 @@ class TestInputManifestsOpenSearch(unittest.TestCase):
 
     @patch("os.makedirs")
     @patch("os.chdir")
-    @patch("manifests_workflow.input_manifests.InputComponents")
-    @patch("manifests_workflow.input_manifests.InputManifest.from_file")
-    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
     @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
-    @patch("manifests_workflow.input_manifests.InputManifest.from_path")
+    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
+    @patch("manifests.manifest.Manifest.to_file")
     @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
-    @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
-    @patch("manifests_workflow.input_manifests.InputManifest")
-    def test_update(self, mock_input_manifest: MagicMock, mock_component_opensearch: MagicMock,
-                    mock_component_opensearch_min: MagicMock, mock_input_manifest_from_path: MagicMock,
-                    mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock, mock_input_manifest_from_file: MagicMock,
-                    mock_input_manifest_component: MagicMock, *mocks: MagicMock) -> None:
+    def test_update(self, mock_component_opensearch_min: MagicMock, mock_manifest_to_file: MagicMock,
+                    mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
+                    *mocks: MagicMock) -> None:
         mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
-        mock_component_opensearch_min.branches.return_value = ["main", "0.9.0"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
-        mock_component_opensearch.return_value = MagicMock(name="common-utils")
-        mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
-        mock_input_manifest_from_path.return_value.components = {
-            "common-utils": ComponentFromSource({"name": "common-utils", "repository": "git", "ref": "ref"}),
-            "job-scheduler": Component({"name": "job-scheduler", "dist": "zip"})
-        }
+        mock_component_opensearch_min.branches.return_value = ["2.12"]
+        mock_component_opensearch_min.checkout.return_value = MagicMock(version="2.12.1000")
         manifests = InputManifestsOpenSearch()
         manifests.update()
-        self.assertEqual(mock_input_manifest_from_file().to_file.call_count, 2)
+        self.assertEqual(mock_manifest_to_file.call_count, 1)
         calls = [
             call(
                 os.path.join(
                     InputManifestsOpenSearch.manifests_path(),
-                    "0.10.0",
-                    "opensearch-0.10.0.yml",
+                    "2.12.1000",
+                    "opensearch-2.12.1000.yml",
                 )
-            ),
-            call(
-                os.path.join(
-                    InputManifestsOpenSearch.manifests_path(),
-                    "0.9.0",
-                    "opensearch-0.9.0.yml",
-                )
-            ),
+            )
         ]
-        mock_input_manifest_from_file().to_file.assert_has_calls(calls)
+        mock_manifest_to_file.assert_has_calls(calls)
         mock_add_to_cron.assert_has_calls([
-            call('0.10.0'),
-            call('0.9.0')
+            call('2.12.1000'),
         ])
         mock_add_to_versionincrement_workflow.assert_has_calls([
-            call('0.10.0'),
-            call('0.9.0')
+            call('2.12.1000'),
         ])
-
-    @patch("os.makedirs")
-    @patch("os.chdir")
-    @patch("manifests_workflow.input_manifests.InputManifests.add_to_cron")
-    @patch("manifests_workflow.input_manifests.InputManifests.add_to_versionincrement_workflow")
-    @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearchMin")
-    @patch("manifests_workflow.input_manifests_opensearch.ComponentOpenSearch")
-    @patch("manifests_workflow.input_manifests_opensearch.InputManifestsOpenSearch.write_manifest")
-    def test_update_with_latest_manifest(self, mock_write_manifest: MagicMock, mock_component_opensearch: MagicMock,
-                                         mock_component_opensearch_min: MagicMock, mock_add_to_cron: MagicMock, mock_add_to_versionincrement_workflow: MagicMock,
-                                         *mocks: MagicMock) -> None:
-        mock_component_opensearch_min.return_value = MagicMock(name="OpenSearch")
-        mock_component_opensearch_min.branches.return_value = ["main"]
-        mock_component_opensearch_min.checkout.return_value = MagicMock(version="0.9.0")
-        mock_component_opensearch.return_value = MagicMock(name="common-utils")
-        mock_component_opensearch.checkout.return_value = MagicMock(version="0.10.0")
-        manifests = InputManifestsOpenSearch()
-        manifests.update()
-        mock_component_opensearch_min.branches.assert_called()
-        mock_write_manifest.assert_called_with("0.9.0", [mock_component_opensearch_min.checkout.return_value])
-        mock_add_to_cron.assert_called_with("0.9.0")
-        mock_add_to_versionincrement_workflow.assert_called_with("0.9.0")
