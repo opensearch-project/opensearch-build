@@ -13,7 +13,7 @@ lib = library(identifier: 'jenkins@2.0.2', retriever: modernSCM([
 ]))
 
 def docker_images = [
-    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4",
+    "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1",
     "apt": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2",
 ]
 

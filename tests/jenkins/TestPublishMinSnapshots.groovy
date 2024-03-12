@@ -41,7 +41,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('AGENT_LINUX_ARM64', 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host')
         binding.setVariable('AGENT_MACOS_X64', 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host')
         binding.setVariable('AGENT_WINDOWS_X64', 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host')
-        binding.setVariable('IMAGE_WINDOWS_ZIP', 'opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1')
+        binding.setVariable('IMAGE_WINDOWS_ZIP', 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'production-s3-bucket-name')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'production-role-name')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'aws-account-artifact')
