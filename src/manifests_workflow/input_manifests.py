@@ -120,7 +120,7 @@ class InputManifests(Manifests):
         #       (1.0.0-3.0.0 based on template 1.x-3.x, 4.0.0+ from default.x, previous behavior)
         # Else: Create new manifests based on the latest version before the new version
         #       (2.12.1 from 2.12.0, 2.13.0 from 2.12.1, 3.0.0 from 2.13.0, 4.0.0 from 3.0.0, etc.)
-        if not known_versions or Version(version) < Version(min(known_versions)):
+        if not known_versions or Version(version) < Version(min(known_versions, key=version_parse)):
             logging.info("No previous version exist before {version}, create with templates")
             templates_base_path = os.path.join(self.manifests_path(), "templates")
             template_version_folder = version.split(".")[0] + ".x"
