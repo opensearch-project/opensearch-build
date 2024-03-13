@@ -1,0 +1,162 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch
+  version: 1.3.16
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    args: -e JAVA_HOME=/opt/java/openjdk-11
+components:
+  - name: OpenSearch
+    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: '1.3'
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+  - name: common-utils
+    repository: https://github.com/opensearch-project/common-utils.git
+    ref: '1.3'
+    checks:
+      - gradle:publish
+      - gradle:properties:version
+    platforms:
+      - linux
+      - windows
+  - name: job-scheduler
+    repository: https://github.com/opensearch-project/job-scheduler.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: security
+    repository: https://github.com/opensearch-project/security.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: ml-commons
+    repository: https://github.com/opensearch-project/ml-commons.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: opensearch-ml-plugin
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: performance-analyzer
+    repository: https://github.com/opensearch-project/performance-analyzer.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+  - name: alerting
+    repository: https://github.com/opensearch-project/alerting.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: alerting
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: opensearch-reports
+    repository: https://github.com/opensearch-project/reporting.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: cross-cluster-replication
+    repository: https://github.com/opensearch-project/cross-cluster-replication.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: opensearch-observability
+    repository: https://github.com/opensearch-project/observability.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: anomaly-detection
+    repository: https://github.com/opensearch-project/anomaly-detection.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
+  - name: asynchronous-search
+    repository: https://github.com/opensearch-project/asynchronous-search.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+  - name: k-NN
+    repository: https://github.com/opensearch-project/k-NN.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+  - name: sql
+    repository: https://github.com/opensearch-project/sql.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version: plugin
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - ml-commons
+  - name: index-management
+    repository: https://github.com/opensearch-project/index-management.git
+    ref: '1.3'
+    checks:
+      - gradle:properties:version
+      - gradle:dependencies:opensearch.version
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils
+      - job-scheduler
