@@ -44,7 +44,7 @@ class TestDistributionDeb(unittest.TestCase):
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "dpkg --install opensearch.deb && "
                 f"sudo chmod 0666 {self.distribution_deb.config_path} && "
-                "sudo chmod 0755 /etc/opensearch /var/log/opensearch"
+                f"sudo chmod 0755 {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.log_dir}"
             ),
             args_list[0][0][0],
         )
