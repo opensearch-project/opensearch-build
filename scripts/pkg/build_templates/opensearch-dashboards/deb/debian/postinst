@@ -30,7 +30,7 @@ if command -v systemd-tmpfiles > /dev/null; then
 fi
 
 # Restart the service after an upgrade
-if [ "$1" == "configure" ] && [ "$2" != "" ]; then
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
     if command -v systemctl >/dev/null && systemctl is-enabled opensearch-dashboards.service >/dev/null; then
         echo "Restarting opensearch-dashboards.service after upgrade"
         systemctl start opensearch-dashboards.service

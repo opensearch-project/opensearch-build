@@ -58,7 +58,7 @@ if command -v systemd-tmpfiles > /dev/null; then
 fi
 
 # Restart the services after an upgrade
-if [ "$1" == "configure" ] && [ "$2" != "" ]; then
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
     if command -v systemctl >/dev/null && systemctl is-enabled opensearch.service >/dev/null; then
         echo "Restarting opensearch.service after upgrade"
         systemctl start opensearch.service
