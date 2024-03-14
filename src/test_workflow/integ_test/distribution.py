@@ -41,6 +41,13 @@ class Distribution(ABC):
         """
         pass
 
+    @property
+    def log_dir(self) -> str:
+        """
+        Return the log directory for the distribution
+        """
+        pass
+
     @abstractmethod
     def install(self, bundle_name: str) -> None:
         """
