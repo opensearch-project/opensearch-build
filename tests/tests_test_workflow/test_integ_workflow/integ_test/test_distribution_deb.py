@@ -32,6 +32,10 @@ class TestDistributionDeb(unittest.TestCase):
         self.assertEqual(self.distribution_deb.config_path, os.path.join(os.sep, "etc", "opensearch", "opensearch.yml"))
         self.assertEqual(self.distribution_deb_dashboards.config_path, os.path.join(os.sep, "etc", "opensearch-dashboards", "opensearch_dashboards.yml"))
 
+    def test_log_dir(self) -> None:
+        self.assertEqual(self.distribution_deb.log_dir, os.path.join(os.sep, "var", "log", "opensearch"))
+        self.assertEqual(self.distribution_deb_dashboards.log_dir, os.path.join(os.sep, "var", "log", "opensearch-dashboards"))
+
     @patch("subprocess.check_call")
     def test_install(self, check_call_mock: Mock) -> None:
         self.distribution_deb.install("opensearch.deb")
@@ -43,7 +47,8 @@ class TestDistributionDeb(unittest.TestCase):
                 "sudo dpkg --purge opensearch && "
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "dpkg --install opensearch.deb && "
-                f"sudo chmod 0666 {self.distribution_deb.config_path}"
+                f"sudo chmod 0666 {self.distribution_deb.config_path} && "
+                f"sudo chmod 0755 {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.log_dir}"
             ),
             args_list[0][0][0],
         )
