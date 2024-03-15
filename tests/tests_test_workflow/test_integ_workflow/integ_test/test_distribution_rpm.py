@@ -32,6 +32,10 @@ class TestDistributionRpm(unittest.TestCase):
         self.assertEqual(self.distribution_rpm.config_path, os.path.join(os.sep, "etc", "opensearch", "opensearch.yml"))
         self.assertEqual(self.distribution_rpm_dashboards.config_path, os.path.join(os.sep, "etc", "opensearch-dashboards", "opensearch_dashboards.yml"))
 
+    def test_log_dir(self) -> None:
+        self.assertEqual(self.distribution_rpm.log_dir, os.path.join(os.sep, "var", "log", "opensearch"))
+        self.assertEqual(self.distribution_rpm_dashboards.log_dir, os.path.join(os.sep, "var", "log", "opensearch-dashboards"))
+
     @patch("subprocess.check_call")
     def test_install(self, check_call_mock: Mock) -> None:
         self.distribution_rpm.install("opensearch.rpm")
