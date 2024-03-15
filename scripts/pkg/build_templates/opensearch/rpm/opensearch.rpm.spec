@@ -75,7 +75,8 @@ if [ ! -f %{buildroot}%{data_dir}/performance_analyzer_enabled.conf ]; then
     echo 'true' > %{buildroot}%{data_dir}/performance_analyzer_enabled.conf
 fi
 # Change Permissions
-chmod -Rf a+rX,u+w,g-w,o-w %{buildroot}/*
+chmod -Rf g-s %{buildroot}/*
+chmod -Rf u=rwX,g=rX,o= %{buildroot}/etc
 exit 0
 
 %pre
@@ -186,13 +187,6 @@ exit 0
 # Permissions
 %defattr(-, %{name}, %{name})
 
-# Root dirs/docs/licenses
-%dir %{product_dir}
-%doc %{product_dir}/NOTICE.txt
-%doc %{product_dir}/README.md
-%license %{product_dir}/LICENSE.txt
-%{product_dir}/manifest.yml
-
 # Config dirs/files
 %dir %{config_dir}
 %{config_dir}/jvm.options.d
@@ -211,6 +205,20 @@ exit 0
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/sysctl.d/%{name}.conf
 %attr(0644, root, root) %config(noreplace) %{_prefix}/lib/tmpfiles.d/%{name}.conf
 
+%dir %attr(750, %{name}, %{name}) %{data_dir}
+%attr(750, %{name}, %{name}) %{log_dir}
+%attr(750, %{name}, %{name}) %{pid_dir}
+
+# Permissions
+%defattr(-, root, root)
+
+# Root dirs/docs/licenses
+%dir %{product_dir}
+%doc %{product_dir}/NOTICE.txt
+%doc %{product_dir}/README.md
+%license %{product_dir}/LICENSE.txt
+%{product_dir}/manifest.yml
+
 # Main dirs
 %{product_dir}/bin
 %{product_dir}/jdk
@@ -218,9 +226,6 @@ exit 0
 %{product_dir}/modules
 %{product_dir}/performance-analyzer-rca
 %{product_dir}/plugins
-%{log_dir}
-%{pid_dir}
-%dir %{data_dir}
 
 # Symlinks
 %{product_dir}/data

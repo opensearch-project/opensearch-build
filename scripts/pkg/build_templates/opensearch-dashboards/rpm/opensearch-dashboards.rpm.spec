@@ -63,7 +63,8 @@ chmod 0755 %{buildroot}%{product_dir}/bin/*
 ln -s %{data_dir} %{buildroot}%{product_dir}/data
 ln -s %{log_dir}  %{buildroot}%{product_dir}/logs
 # Change Permissions
-chmod -Rf a+rX,u+w,g-w,o-w %{buildroot}/*
+chmod -Rf g-s %{buildroot}/*
+chmod -Rf u=rwX,g=rX,o= %{buildroot}/etc
 exit 0
 
 %pre
@@ -82,6 +83,7 @@ exit 0
 
 %post
 set -e
+chown -R root.%{name} %{config_dir}
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
     systemctl daemon-reload
@@ -112,7 +114,7 @@ exit 0
 
 %files
 # Permissions
-%defattr(-, %{name}, %{name})
+%defattr(-, root, root)
 
 # Root dirs/docs/licenses
 %dir %{product_dir}
@@ -141,9 +143,9 @@ exit 0
 %{product_dir}/node_modules
 %{product_dir}/plugins
 %{product_dir}/src
-%{log_dir}
-%{pid_dir}
-%dir %{data_dir}
+%attr(750, %{name}, %{name}) %{log_dir}
+%attr(750, %{name}, %{name}) %{pid_dir}
+%dir %attr(750, %{name}, %{name}) %{data_dir}
 
 # Symlinks
 %{product_dir}/data
