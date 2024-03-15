@@ -79,11 +79,16 @@ echo $DIR
 cd $DIR
 
 ## Copy the tar installation script into the bundle
+MAJOR_VERSION=`echo $VERSION | cut -d. -f1`
 if [ "$DISTRIBUTION" = "tar" ]; then
     cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
 elif [ "$DISTRIBUTION" = "deb" -o "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
-    cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
+    if [ "$MAJOR_VERSION" = "1" ]; then
+        cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/legacy/* "$OUTPUT/../"
+    else
+        cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/current/* "$OUTPUT/../"
+    fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
 fi

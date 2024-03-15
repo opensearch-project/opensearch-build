@@ -25,6 +25,10 @@ class DistributionDeb(Distribution):
     def config_path(self) -> str:
         return os.path.join(os.sep, "etc", self.filename, self.config_filename)
 
+    @property
+    def log_dir(self) -> str:
+        return os.path.join(os.sep, "var", "log", self.filename)
+
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
         logging.info("deb installation requires sudo, script will exit if current user does not have sudo access")
@@ -42,7 +46,9 @@ class DistributionDeb(Distribution):
                 '--install',
                 bundle_name,
                 '&&',
-                f'sudo chmod 0666 {self.config_path}'
+                f'sudo chmod 0666 {self.config_path}',
+                '&&',
+                f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}'
             ]
         )
         subprocess.check_call(deb_install_cmd, cwd=self.work_dir, shell=True)
