@@ -84,7 +84,7 @@ if [ "$DISTRIBUTION" = "tar" ]; then
     cp -v ../../../scripts/startup/tar/linux/opensearch-tar-install.sh "$OUTPUT/"
 elif [ "$DISTRIBUTION" = "deb" -o "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
-    if [ "$VERSION" = "1" ]; then
+    if [ "$MAJOR_VERSION" = "1" ]; then
         cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/legacy/* "$OUTPUT/../"
     else
         cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/current/* "$OUTPUT/../"
