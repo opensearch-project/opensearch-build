@@ -90,31 +90,6 @@ if command -v systemctl >/dev/null && systemctl is-active opensearch-performance
     echo "Stop existing opensearch-performance-analyzer.service"
     systemctl --no-reload stop opensearch-performance-analyzer.service
 fi
-
-# Check if OPENSEARCH_INITIAL_ADMIN_PASSWORD is defined
-# TODO:
-# 1. This check will need to be modified if there will be a min dist for deb in future (currently there is none)
-# 2. Currently, the demo config setup is defined to run, in postinst, if `opensearch-security` is present. Cannot apply the same check here since the plugins folder is not available yet.
-
-# Check if this is an upgrade by checking whether opensearch already exists
-if rpm -q opensearch >/dev/null 2>&1 || yum list installed opensearch >/dev/null 2>&1; then
-    OPENSEARCH_ALREADY_INSTALLED="yes"
-else
-    OPENSEARCH_ALREADY_INSTALLED="no"
-fi
-
-OPENSEARCH_REQUIRED_VERSION="2.12.0"
-OPENSEARCH_VERSION=%{_version}
-MINIMUM_OF_TWO_VERSIONS=`echo $OPENSEARCH_REQUIRED_VERSION $OPENSEARCH_VERSION | tr ' ' '\n' | sort -V | uniq | head -n 1`
-
-if [ "$OPENSEARCH_ALREADY_INSTALLED" = "no" ]; then
-  if [ "$MINIMUM_OF_TWO_VERSIONS" = "$OPENSEARCH_REQUIRED_VERSION" ] && [ -z "$OPENSEARCH_INITIAL_ADMIN_PASSWORD" ]; then
-    echo "ERROR: Opensearch 2.12 and later requires the env variable OPENSEARCH_INITIAL_ADMIN_PASSWORD to be defined to setup the opensearch-security demo configuration"
-    echo "For more details, please visit: https://opensearch.org/docs/latest/install-and-configure/install-opensearch/rpm/"
-    exit 1
-  fi
-fi
-
 # Create user and group if they do not already exist.
 getent group %{name} > /dev/null 2>&1 || groupadd -r %{name}
 getent passwd %{name} > /dev/null 2>&1 || \
