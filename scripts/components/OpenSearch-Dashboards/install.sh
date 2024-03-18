@@ -89,9 +89,9 @@ if [ "$DISTRIBUTION" = "rpm" -o "$DISTRIBUTION" = "deb" ]; then
     cp -a ../../../scripts/pkg/service_templates/opensearch-dashboards/* "$OUTPUT/../"
 
     if [ "$MAJOR_VERSION" = "1" ]; then
-        cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/$DISTRIBUTION/legacy/* "$OUTPUT/../"
+        cp -a ../../../scripts/pkg/build_templates/legacy/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
     else
-        cp -a ../../../scripts/pkg/build_templates/opensearch-dashboards/$DISTRIBUTION/current/* "$OUTPUT/../"
+        cp -a ../../../scripts/pkg/build_templates/current/opensearch-dashboards/$DISTRIBUTION/* "$OUTPUT/../"
     fi
 else
     cp -v ../../../config/opensearch_dashboards-$MAJOR_VERSION.x.yml "$OUTPUT/config/opensearch_dashboards.yml"

@@ -85,9 +85,9 @@ if [ "$DISTRIBUTION" = "tar" ]; then
 elif [ "$DISTRIBUTION" = "deb" -o "$DISTRIBUTION" = "rpm" ]; then
     cp -va ../../../scripts/pkg/service_templates/opensearch/* "$OUTPUT/../"
     if [ "$MAJOR_VERSION" = "1" ]; then
-        cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/legacy/* "$OUTPUT/../"
+        cp -va ../../../scripts/pkg/build_templates/legacy/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     else
-        cp -va ../../../scripts/pkg/build_templates/opensearch/$DISTRIBUTION/current/* "$OUTPUT/../"
+        cp -va ../../../scripts/pkg/build_templates/current/opensearch/$DISTRIBUTION/* "$OUTPUT/../"
     fi
 elif [ "$DISTRIBUTION" = "zip" ] && [ "$PLATFORM" = "windows" ]; then
     cp -v ../../../scripts/startup/zip/windows/opensearch-windows-install.bat "$OUTPUT/"
