@@ -41,7 +41,7 @@ perform_curl_and_process_with_jq() {
         fi
 
         count=$((count+1))
-        sleep 5
+        sleep 10
     done
 
     if [ "$success" != "true" ]; then
@@ -80,7 +80,7 @@ if [ -z "$QUEUE_URL" ] || [ "$QUEUE_URL" != "null" ]; then
             echo "Jenkins Workflow Url: $WORKFLOW_URL"
             TIMEPASS=$(( TIMEPASS + 30 )) && echo time pass: $TIMEPASS
             sleep 30
-            RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 5)
+            RUNNING=$(perform_curl_and_process_with_jq "$WORKFLOW_URL" ".building" 10)
             echo "Workflow running status :$RUNNING"
         done
 
