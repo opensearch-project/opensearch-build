@@ -50,7 +50,9 @@ class DistributionRpm(Distribution):
                 '&&',
                 f'sudo chmod 0666 {self.config_path}',
                 '&&',
-                f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}'
+                f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}',
+                '&&',
+                f'sudo usermod -a -G {self.filename} `whoami`'
             ]
         )
         subprocess.check_call(rpm_install_cmd, cwd=self.work_dir, shell=True)
@@ -61,4 +63,4 @@ class DistributionRpm(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"sudo yum remove -y {self.filename} && rm -rf {os.path.dirname(self.config_path)} {self.log_dir}", shell=True)
+        subprocess.check_call(f"sudo yum remove -y {self.filename}", shell=True)

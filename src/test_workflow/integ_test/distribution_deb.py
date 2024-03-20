@@ -61,4 +61,4 @@ class DistributionDeb(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"sudo dpkg --purge {self.filename} && rm -rf {os.path.dirname(self.config_path)} {self.log_dir}", shell=True)
+        subprocess.check_call(f"sudo dpkg --purge {self.filename}", shell=True)
