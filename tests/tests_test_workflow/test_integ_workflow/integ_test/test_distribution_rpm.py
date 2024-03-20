@@ -48,7 +48,8 @@ class TestDistributionRpm(unittest.TestCase):
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "yum install -y opensearch.rpm && "
                 f"sudo chmod 0666 {self.distribution_rpm.config_path} && "
-                f"sudo chmod 0755 {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.log_dir}"
+                f"sudo chmod 0755 {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.log_dir} && "
+                f"sudo usermod -a -G opensearch `whoami`"
             ),
             args_list[0][0][0],
         )
