@@ -54,7 +54,7 @@ class DistributionRpm(Distribution):
                 '&&',
                 f'sudo usermod -a -G {self.filename} `whoami`',
                 '&&',
-                f'sudo usermod -a -G adm `whoami`'
+                'sudo usermod -a -G adm `whoami`'
             ]
         )
         subprocess.check_call(rpm_install_cmd, cwd=self.work_dir, shell=True)
