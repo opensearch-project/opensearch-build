@@ -109,7 +109,7 @@ RUN dnf install -y sudo && \
     groupadd -g 1002 opensearch-dashboards && \
     useradd -u 1002 -g 1002 opensearch-dashboards && \
     usermod -a -G opensearch $CONTAINER_USER && \
-    usermod -a -G opensearch-dashboards $CONTAINER_USER && \
+    usermod -a -G adm $CONTAINER_USER && \
     id && \
     echo "$CONTAINER_USER ALL=(root) NOPASSWD:`which systemctl`, `which env`, `which usermod`, `which dnf`, `which yum`, `which rpm`, `which chmod`, `which kill`, `which curl`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/$CONTAINER_USER
 

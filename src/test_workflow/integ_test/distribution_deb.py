@@ -50,7 +50,9 @@ class DistributionDeb(Distribution):
                 '&&',
                 f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}',
                 '&&',
-                f'sudo usermod -a -G {self.filename} `whoami`'
+                f'sudo usermod -a -G {self.filename} `whoami`',
+                '&&',
+                'sudo usermod -a -G adm `whoami`'
             ]
         )
         subprocess.check_call(deb_install_cmd, cwd=self.work_dir, shell=True)
