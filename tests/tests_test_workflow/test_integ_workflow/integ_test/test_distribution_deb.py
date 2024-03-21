@@ -49,7 +49,8 @@ class TestDistributionDeb(unittest.TestCase):
                 "dpkg --install opensearch.deb && "
                 f"sudo chmod 0666 {self.distribution_deb.config_path} && "
                 f"sudo chmod 0755 {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.log_dir} && "
-                f"sudo usermod -a -G opensearch `whoami`"
+                f"sudo usermod -a -G opensearch `whoami` && "
+                f"sudo usermod -a -G adm `whoami`"
             ),
             args_list[0][0][0],
         )

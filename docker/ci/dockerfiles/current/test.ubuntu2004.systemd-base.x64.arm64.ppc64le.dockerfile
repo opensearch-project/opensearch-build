@@ -128,6 +128,7 @@ RUN apt-get install -y sudo && \
     useradd -u 1002 -g 1002 -s /bin/bash -d /home/opensearch-dashboards -m opensearch-dashboards && \
     usermod -a -G opensearch $CONTAINER_USER && \
     usermod -a -G opensearch-dashboards $CONTAINER_USER && \
+    usermod -a -G adm $CONTAINER_USER && \
     id && \
     echo "$CONTAINER_USER ALL=(root) NOPASSWD:`which systemctl`, `which env`, `which usermod`, `which apt`, `which apt-get`, `which apt-key`, `which dpkg`, `which chmod`, `which kill`, `which curl`, `which tee`, /usr/share/opensearch-dashboards/bin/opensearch-dashboards-plugin" >> /etc/sudoers.d/$CONTAINER_USER
 
