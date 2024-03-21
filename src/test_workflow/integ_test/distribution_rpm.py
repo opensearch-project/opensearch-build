@@ -65,4 +65,4 @@ class DistributionRpm(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"sudo yum remove -y {self.filename}", shell=True)
+        subprocess.check_call(f"sudo yum remove -y {self.filename} && sudo rm -rf {os.path.dirname(self.config_path)} {self.log_dir}", shell=True)
