@@ -47,6 +47,7 @@ jobs:
           - main
           - '2.12'
           - '2.13'
+          - '2.14'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3
@@ -144,7 +145,8 @@ jobs:
             console.log(labelFound);
             return labelFound
       - name: Create Pull Request for plugins
-        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo != 'opensearch-dashboards-functional-test' }}
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
+          != 'opensearch-dashboards-functional-test' }}
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
