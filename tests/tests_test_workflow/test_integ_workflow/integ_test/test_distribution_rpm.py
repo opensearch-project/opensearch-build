@@ -65,4 +65,4 @@ class TestDistributionRpm(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual("sudo yum remove -y opensearch", args_list[0][0][0])
+        self.assertEqual(f"sudo yum remove -y opensearch && sudo rm -rf {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.log_dir}", args_list[0][0][0])

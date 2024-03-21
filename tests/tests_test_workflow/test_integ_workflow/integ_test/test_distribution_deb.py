@@ -65,4 +65,4 @@ class TestDistributionDeb(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual("sudo dpkg --purge opensearch", args_list[0][0][0])
+        self.assertEqual(f"sudo dpkg --purge opensearch && sudo rm -rf {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.log_dir}", args_list[0][0][0])
