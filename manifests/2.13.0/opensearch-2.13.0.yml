@@ -146,7 +146,7 @@ components:
       - common-utils
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: fa8d1b3cf484a08e7526ceb2b53a97d9c49b82c4
+    ref: '2.13'
     platforms:
       - linux
       - windows
