@@ -9,13 +9,13 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: e53aa5b26c8df8d5c336848902f38c6d84029bbc
+    ref: 2a9d6dd852c2931f94d292c09ed7a7ba82a43c82
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
     ref: '2.13'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 443794d6a5788fc81260b2e5ff42bab9d99d7a4e
+    ref: cb8b5f22228dafe2d1ecb5d8d24ad6008ae4afae
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
     ref: 15862cf590638fe2a2a74e7602b3162c3eb86f4d
@@ -24,7 +24,7 @@ components:
     ref: 4f49ec5edc9de52f80bef7fdb0cc7e08aa6ef895
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: e409f074a4e72463748911fa4498c8d926ee42a7
+    ref: d5878f9144cb4f8c051ca163333d29303c11713a
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: 61e26c91a010ee78a10eb4d7c5cec9adf131e129
