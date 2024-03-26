@@ -102,7 +102,7 @@ class TestTestRecorder(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
-    def test_update_absolute_file_paths(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
+    def test_update_absolute_file_paths_escaping(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
         test_recorder = TestRecorder(
             "1234",
             "integ-test",
