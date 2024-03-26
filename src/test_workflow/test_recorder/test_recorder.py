@@ -8,6 +8,7 @@
 import logging
 import os
 import shutil
+import urllib.parse
 from typing import Any
 
 import yaml
@@ -73,7 +74,10 @@ class TestRecorder:
         return os.path.realpath("%s.yml" % test_result_data.component_name)
 
     def _update_absolute_file_paths(self, files: list, base_path: str, relative_path: str) -> list:
-        return [os.path.join(base_path, relative_path, file) for file in files]
+        return [
+            os.path.join(base_path, relative_path, urllib.parse.quote_plus(file))
+            for file in files
+        ]
 
     # get a list of files within directory with relative paths.
     def _get_list_files(self, dir: str) -> list:
