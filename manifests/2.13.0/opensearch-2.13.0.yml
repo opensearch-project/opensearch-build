@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: d82094d9eb17ddcace7a56a56d62e5c467e36632
+    ref: d3af2426bc2b3697c3a854fb3b24a76ba333640a
     platforms:
       - linux
       - windows
