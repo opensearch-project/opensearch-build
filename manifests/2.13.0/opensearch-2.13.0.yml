@@ -88,7 +88,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: 36e4e5295b86fb0ed40ac9bede6a46918d4e008e
+    ref: a488b1fee983d416a858a9dbbe10c6773413ee07
     platforms:
       - linux
       - windows
@@ -96,7 +96,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: 67db59ff782a698fece4c7212140031203fea08e
+    ref: 6383f7a1460925f5aaf5763487f04943c30ce543
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 2c69d7cb466b619760e8acb4095a533bb2b590f3
+    ref: 89647c14f624320a26e30e04af865c9471189008
     platforms:
       - linux
       - windows
@@ -113,7 +113,7 @@ components:
       - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 563087a6d0fe2a6d58d8b2598070b5b4ae46198b
+    ref: edb7cf2ff74fa4f04ae08a4969a657134fd2c891
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: d82094d9eb17ddcace7a56a56d62e5c467e36632
+    ref: d3af2426bc2b3697c3a854fb3b24a76ba333640a
     platforms:
       - linux
       - windows
@@ -166,7 +166,7 @@ components:
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 7e363e5173ebc91f0204c1461ed55e0e5abc10e4
+    ref: 9782e5ffc4d10a4fbd75279b5ce5393795f82578
     platforms:
       - linux
       - windows
@@ -174,7 +174,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: a7c8b442a886fa49c67710d55ee7aa01aafef93a
+    ref: b61f8ee1233762c5bbc27207a8c66fc8ae622d75
     platforms:
       - linux
       - windows
