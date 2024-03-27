@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 1841810cf2b2d845ebcaba6933660a04fede5088
+    ref: 2365afc7945ce2c214ba1f5aec5ac06c17b9610a
     platforms:
       - linux
       - windows
