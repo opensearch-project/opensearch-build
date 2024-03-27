@@ -157,7 +157,7 @@ ES
 * Bump to 2.1.0 compatibility ([#282](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/282))
 
 ### Opensearch Alerting
-* Bumped version to 2.1.0, and gradle to 7.4.2. ([#475](https://github.com/opensearch-project/alerting/pull/475]))
+* Bumped version to 2.1.0, and gradle to 7.4.2. ([#475](https://github.com/opensearch-project/alerting/pull/475))
 
 
 ### Opensearch Alerting Dashboards Plugin
