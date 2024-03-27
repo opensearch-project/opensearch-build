@@ -41,13 +41,13 @@ pipeline {
             trim: true
         )
         choice(
-                choices: ['Match Build Manifest', 'Update to Recent Commits'],
+                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS'],
                 name: 'MANIFEST_LOCK_ACTION',
-                description: 'The manifest lock action to choose.<br>Match Build Manifest: Will update the manifest with commit ID from release candidate build manifest.<br>Update to Recent Commits: Will update the manifst with component repo release branch head commit',
+                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.',
         )
         string(
             name: 'COMPONENTS',
-            description: 'The selected components from the manifesr to updatet the commit ID',
+            description: 'The selected components from the manifest to update the commit ID',
             trim: true
         )
     }
@@ -63,15 +63,15 @@ pipeline {
                 }
             }
         }
-        stage('Match Build Manifest') {
+        stage('MATCH_BUILD_MANIFEST') {
             when {
-                expression { params.MANIFEST_LOCK_ACTION == 'Match Build Manifest' }
+                expression { params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' }
             }
             steps {
                 script {
                     def updateManifest = { String productName, String releaseCandidate ->
                         def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-${productName}/${params.RELEASE_VERSION}/${releaseCandidate}/linux/x64/tar/dist/${productName}/manifest.yml"
-                        def buildManifestContent = sh(script: "curl -s ${buildManifestUrl}", returnStdout: true).trim()
+                        def buildManifestContent = sh(script: "curl -sSL ${buildManifestUrl}", returnStdout: true).trim()
                         def buildManifest = readYaml text: buildManifestContent
                         def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
                         def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
@@ -90,16 +90,16 @@ pipeline {
                         sh """
                                     yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
                                     sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
-                    """
+                        """
                     }
                     updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
                     updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
                 }
             }
         }
-        stage('Update to Recent Commits') {
+        stage('UPDATE_TO_RECENT_COMMITS') {
             when {
-                expression { params.MANIFEST_LOCK_ACTION == 'Update to Recent Commits' }
+                expression { params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_RECENT_COMMITS' }
             }
             steps {
                 script {
@@ -135,17 +135,18 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                         try {
                             sh """
-                                git remote set-url origin https://prudhvigodithi:${GITHUB_TOKEN}@github.com/prudhvigodithi/opensearch-build
-                                git config user.email "pgodithi@amazon.com"
-                                git config user.name "prudhvigodithi"
+                                git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
+                                git config user.email "opensearch-infra@amazon.com"
+                                git config user.name "opensearch-ci"
                                 git checkout -b manifest-lock
-                        """
+                            """
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
-                                    git add . && git commit -sm "Manifest Commit Lock"
+                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git commit -sm "Manifest Commit Lock for Release ${params.RELEASE_VERSION}"
                                     git push origin manifest-lock --force
-                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
+                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock with action ${params.MANIFEST_LOCK_ACTION}' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
                                 """
                             } else {
                                 println 'Nothing to commit!'
