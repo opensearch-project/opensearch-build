@@ -113,7 +113,7 @@ components:
       - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 563087a6d0fe2a6d58d8b2598070b5b4ae46198b
+    ref: edb7cf2ff74fa4f04ae08a4969a657134fd2c891
     platforms:
       - linux
       - windows
