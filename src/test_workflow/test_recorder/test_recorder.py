@@ -75,7 +75,11 @@ class TestRecorder:
 
     def _update_absolute_file_paths(self, files: list, base_path: str, relative_path: str) -> list:
         return [
-            os.path.join(base_path, relative_path, urllib.parse.quote_plus(file))
+            os.path.join(
+                base_path,
+                relative_path,
+                urllib.parse.quote_plus(file) if base_path.startswith("https://") else file
+            )
             for file in files
         ]
 
