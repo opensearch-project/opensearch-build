@@ -20,6 +20,7 @@ from test_workflow.integ_test.utils import get_password
 
 class BenchmarkTestCluster:
     args: BenchmarkArgs
+    cluster_endpoint: str
     cluster_endpoint_with_port: str
     password: str
 
@@ -29,25 +30,28 @@ class BenchmarkTestCluster:
 
     ) -> None:
         self.args = args
+        self.cluster_endpoint = self.args.cluster_endpoint
         self.cluster_endpoint_with_port = None
         self.password = None
 
     def start(self) -> None:
-        command = f"curl -X GET http://{self.args.cluster_endpoint}" if self.args.insecure else f"curl -X GET https://{self.args.cluster_endpoint} -u 'admin:{get_password('2.12.0')}' --insecure"
+
+        command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku 'admin:{get_password('2.12.0')}'"
         try:
             result = subprocess.run(command, shell=True, capture_output=True, timeout=5)
         except subprocess.TimeoutExpired:
-            raise TimeoutError(f"Time out! Couldn't connect to the cluster {self.args.cluster_endpoint}")
+            raise TimeoutError(f"Time out! Couldn't connect to the cluster {self.cluster_endpoint}")
 
         if result.stdout:
             res_dict = json.loads(result.stdout)
             self.args.distribution_version = res_dict['version']['number']
         self.wait_for_processing()
-        self.cluster_endpoint_with_port = "".join([self.args.cluster_endpoint, ":", str(self.port)])
+
+        self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
 
     @property
     def endpoint(self) -> str:
-        return self.args.cluster_endpoint
+        return self.cluster_endpoint
 
     @property
     def endpoint_with_port(self) -> str:

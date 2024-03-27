@@ -84,7 +84,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
         load_balancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
         if load_balancer_url is None:
             raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
-        self.args.cluster_endpoint = load_balancer_url
+        self.cluster_endpoint = load_balancer_url
         self.cluster_endpoint_with_port = "".join([load_balancer_url, ":", str(self.port)])
 
     def terminate(self) -> None:
