@@ -6,3 +6,4 @@ https://www.dummy.com/*
 # https://github.com/lycheeverse/lychee/issues/715
 https://playground.opensearch.org/*
 file://*
+https://build.ci.opensearch.org/generic-webhook-trigger/invoke*
