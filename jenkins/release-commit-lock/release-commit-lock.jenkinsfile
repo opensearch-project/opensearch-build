@@ -43,7 +43,7 @@ pipeline {
         choice(
                 choices: ['Match Build Manifest', 'Update to Recent Commits'],
                 name: 'MANIFEST_LOCK_ACTION',
-                description: 'The manifest lock action to choose.<br>Match Build Manifest: Will update the manifest with commit ID from release candidate build manifest.<br>Update to Recent Commits: Will update the manifst with component repo release branch head commit',
+                description: 'The manifest lock action to choose.<br>Match Build Manifest: Will update the manifest with commit ID from release candidate build manifest.<br>Update to Recent Commits: Will update the manifest with component repo release branch head commit.',
         )
         string(
             name: 'COMPONENTS',
@@ -90,7 +90,7 @@ pipeline {
                         sh """
                                     yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
                                     sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
-                    """
+                        """
                     }
                     updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
                     updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
@@ -139,13 +139,13 @@ pipeline {
                                 git config user.email "pgodithi@amazon.com"
                                 git config user.name "prudhvigodithi"
                                 git checkout -b manifest-lock
-                        """
+                            """
                             def status = sh(returnStdout: true, script: 'git status --porcelain')
                             if (status) {
                                 sh """
                                     git add . && git commit -sm "Manifest Commit Lock"
                                     git push origin manifest-lock --force
-                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
+                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock, ${params.MANIFEST_LOCK_ACTION}' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
                                 """
                             } else {
                                 println 'Nothing to commit!'

@@ -2,7 +2,7 @@
 
 ## Release Highlights
 
-This patch releases updates the version of Log4j used in OpenSearch to Log4j 2.17.0 as recommended by the advisory in [CVE-2021-45105](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-45105).
+This patch releases updates the version of Log4j used in OpenSearch to Log4j 2.17.0 as recommended by the advisory in [CVE-2021-45105](https://www.cve.org/CVERecord?id=CVE-2021-45105).
 
 ### OpenSearch
 

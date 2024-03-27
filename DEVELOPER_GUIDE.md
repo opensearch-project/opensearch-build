@@ -99,7 +99,7 @@ Alternatively, run a command inside the virtualenv with pipenv run.
 
 ### Run Tests
 
-This project uses [pytest](https://docs.pytest.org/en/6.x/) to ensure Python code quality. See [tests](tests).
+This project uses [pytest](https://docs.pytest.org/en/) to ensure Python code quality. See [tests](tests).
 
 ```
 $ pipenv run pytest
