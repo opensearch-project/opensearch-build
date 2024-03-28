@@ -25,7 +25,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 1c839ad804fe891f9e0ead899f5405ab149e0bc2
+    ref: 8f029ebc9753888d9009547e26cada1a71a81585
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 2365afc7945ce2c214ba1f5aec5ac06c17b9610a
+    ref: 493e394628e0c7598f32fc103e8470636115c06e
     platforms:
       - linux
       - windows
