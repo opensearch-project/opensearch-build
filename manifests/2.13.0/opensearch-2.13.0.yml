@@ -37,7 +37,7 @@ components:
       - windows
   - name: geospatial
     repository: https://github.com/opensearch-project/geospatial.git
-    ref: 106d1d673a4da996f257c50f98c3e0dc0861458d
+    ref: ae663a1f5dc0bec3cd1e1e43907336c5522100ae
     platforms:
       - linux
       - windows
@@ -70,7 +70,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 63d6865fc747555966aa79ee801e7631c756004c
+    ref: d7f36a416b5c16000f6e367c6c4a78e2c92e1093
     platforms:
       - linux
       - windows
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: 63d6865fc747555966aa79ee801e7631c756004c
+    ref: d7f36a416b5c16000f6e367c6c4a78e2c92e1093
     platforms:
       - linux
       - windows
@@ -166,7 +166,7 @@ components:
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: be5410ba7e0dccb864fe21ca38c5d4cfdcb07a01
+    ref: 478bb7eae139064b41f5af15712022a2f5415dc7
     platforms:
       - linux
       - windows
