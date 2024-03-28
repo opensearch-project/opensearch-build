@@ -10,18 +10,15 @@ import os
 import subprocess
 from typing import Any
 
-import semver
-
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 
 
 class BenchmarkTestSuite:
     endpoint: str
     security: bool
-    current_workspace: str
     args: BenchmarkArgs
     command: str
-    distribution_version: str
+    password: str
 
     """
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
@@ -31,13 +28,14 @@ class BenchmarkTestSuite:
             self,
             endpoint: Any,
             security: bool,
-            distribution_version: str,
             args: BenchmarkArgs,
+            password: str
     ) -> None:
         self.endpoint = endpoint
         self.security = security
         self.args = args
-        self.distribution_version = distribution_version
+        self.password = password
+
         # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
         self.command = 'docker run --rm'
         if self.args.benchmark_config:
@@ -70,11 +68,8 @@ class BenchmarkTestSuite:
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
     def execute(self) -> None:
-        password: str = 'admin'
         if self.security:
-            if semver.compare(self.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'{password}\'"'
+            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'{self.password}\'"'
         else:
             self.command += ' --client-options="timeout:300"'
         logging.info(f"Executing {self.command}")

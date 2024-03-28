@@ -27,7 +27,7 @@ class BenchmarkTestRunner(abc.ABC):
         if self.test_manifest:
             self.security = "security" in self.test_manifest.components and not self.args.insecure
         else:
-            self.security = False
+            self.security = not self.args.insecure
 
         self.tests_dir = os.path.join(os.getcwd(), "test-results", "benchmark-test",
                                       f"{'with' if self.security else 'without'}-security")
@@ -53,10 +53,3 @@ class BenchmarkTestRunner(abc.ABC):
                 return 'main'
             else:
                 return '1.x'
-
-    def get_distribution_version(self) -> str:
-        os_version_float: float
-        if self.test_manifest:
-            return self.test_manifest.build.version
-        else:
-            return self.args.distribution_version
