@@ -166,7 +166,7 @@ components:
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 9782e5ffc4d10a4fbd75279b5ce5393795f82578
+    ref: be5410ba7e0dccb864fe21ca38c5d4cfdcb07a01
     platforms:
       - linux
       - windows
