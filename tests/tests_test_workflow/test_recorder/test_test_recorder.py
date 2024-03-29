@@ -96,8 +96,15 @@ class TestTestRecorder(unittest.TestCase):
             "working-directory",
             "https://ci.opensearch.org/ci/dbc/integ-test/"
         )
-        file_path = test_recorder._update_absolute_file_paths(["file1", "file2"], "working-directory", "sub-directory")
-        self.assertEqual(file_path, [os.path.join("working-directory", "sub-directory", "file1"), os.path.join("working-directory", "sub-directory", "file2")])
+        file_path = test_recorder._update_absolute_file_paths(
+            ["file1", "file2 with spaces"],
+            "working-directory",
+            "sub-directory"
+        )
+        self.assertEqual(file_path, [
+            os.path.join("working-directory", "sub-directory", "file1"),
+            os.path.join("working-directory", "sub-directory", "file2 with spaces")
+        ])
 
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
@@ -123,9 +130,9 @@ class TestTestRecorder(unittest.TestCase):
             "working-directory",
             "https://ci.opensearch.org/ci/dbc/integ-test/"
         )
-        mock_os_walk.return_value = [("mock_dir", (), ("file1", "file2 with spaces"))]
+        mock_os_walk.return_value = [("mock_dir", (), ("file1", "file2"))]
         list_files = test_recorder._get_list_files("mock_dir")
-        self.assertEqual(list_files, ["file1", "file2 with spaces"])
+        self.assertEqual(list_files, ["file1", "file2"])
 
     @patch("builtins.open", new_callable=mock_open)
     def test_generate_std_files(self, mock_open: Mock, *mock: Any) -> None:
