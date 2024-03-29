@@ -1,0 +1,169 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@6.4.0', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+            timeout(time: 2, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'RELEASE_VERSION',
+            description: 'The Release Version.',
+            trim: true
+        )
+        string(
+            name: 'OPENSEARCH_RELEASE_CANDIDATE',
+            description: 'The OpenSearch Release Candidate build number.',
+            trim: true
+        )
+        string(
+            name: 'OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE',
+            description: 'The OpenSearch Dashboards Release Candidate build number.',
+            trim: true
+        )
+        choice(
+                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS'],
+                name: 'MANIFEST_LOCK_ACTION',
+                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.',
+        )
+        string(
+            name: 'COMPONENTS',
+            description: 'The selected components from the manifest to update the commit ID',
+            trim: true
+        )
+    }
+    stages {
+        stage('Parameters Check') {
+            steps {
+                script {
+                    currentBuild.description = """Action: ${MANIFEST_LOCK_ACTION}<br>Release: ${RELEASE_VERSION} OS=${OPENSEARCH_RELEASE_CANDIDATE} OSD=${OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE}"""
+                    if (MANIFEST_LOCK_ACTION.isEmpty() || RELEASE_VERSION.isEmpty() || OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty()) {
+                                currentBuild.result = 'ABORTED'
+                                error('Make sure all the parameters are passed in.')
+                    }
+                }
+            }
+        }
+        stage('MATCH_BUILD_MANIFEST') {
+            when {
+                expression { params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' }
+            }
+            steps {
+                script {
+                    def updateManifest = { String productName, String releaseCandidate ->
+                        def buildManifestUrl = "https://ci.opensearch.org/ci/dbc/distribution-build-${productName}/${params.RELEASE_VERSION}/${releaseCandidate}/linux/x64/tar/dist/${productName}/manifest.yml"
+                        def buildManifestContent = sh(script: "curl -sSL ${buildManifestUrl}", returnStdout: true).trim()
+                        def buildManifest = readYaml text: buildManifestContent
+                        def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
+                        def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
+                            params.COMPONENTS.split(',').any { it.trim() == component.name }
+                        }
+                        selectedComponents.each { componentName ->
+                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                            if (existingComponent) {
+                                def newComponentRef = buildManifest.components.find { it.name == componentName.name }?.ref
+                                if (newComponentRef) {
+                                    existingComponent.ref = newComponentRef
+                                }
+                            }
+                        }
+                        writeYaml file:  "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml", data: existingManifest, overwrite: true
+                        sh """
+                                    yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                                    sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                        """
+                    }
+                    updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
+                    updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
+                }
+            }
+        }
+        stage('UPDATE_TO_RECENT_COMMITS') {
+            when {
+                expression { params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_RECENT_COMMITS' }
+            }
+            steps {
+                script {
+                    def updateManifest = { String productName, String releaseCandidate ->
+                        def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
+                        def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
+                            params.COMPONENTS.split(',').any { it.trim() == component.name }
+                        }
+                        selectedComponents.each { componentName ->
+                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                            if (existingComponent) {
+                                def releaseBranch = params.RELEASE_VERSION.split('\\.')[0..1].join('.')
+                                def repoHeadCommit = sh(script: "git ls-remote ${componentName.repository} ${releaseBranch} | cut -f 1", returnStdout: true).trim()
+                                if (repoHeadCommit) {
+                                    existingComponent.ref = repoHeadCommit
+                                }
+                            }
+                        }
+                        writeYaml file:  "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml", data: existingManifest, overwrite: true
+                        sh """
+                                yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                                sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                        """
+                    }
+                    updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
+                    updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
+                }
+            }
+        }
+        stage('Create Pull Request') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                        try {
+                            sh """
+                                git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
+                                git config user.email "opensearch-infra@amazon.com"
+                                git config user.name "opensearch-ci"
+                                git checkout -b manifest-lock
+                            """
+                            def status = sh(returnStdout: true, script: 'git status --porcelain')
+                            if (status) {
+                                sh """
+                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git commit -sm "Manifest Commit Lock for Release ${params.RELEASE_VERSION}"
+                                    git push origin manifest-lock --force
+                                    gh pr create --title '[${params.RELEASE_VERSION}] Manifest Commit Lock with action ${params.MANIFEST_LOCK_ACTION}' --body 'Manifest Commit Lock for Release ${params.RELEASE_VERSION} ' -H manifest-lock -B main
+                                """
+                            } else {
+                                println 'Nothing to commit!'
+                            }
+                        } catch (e) {
+                            error 'An error occured while creating manifest commit lock' + e.toString()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}
