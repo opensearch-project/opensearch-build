@@ -3,7 +3,7 @@ name: manifests-ci-check
 
 on:
   pull_request:
-    types: [labeled]
+    types: [labeled, synchronize]
     paths:
       - 'manifests/**/*.yml'
       - '!manifests/templates/**/'
