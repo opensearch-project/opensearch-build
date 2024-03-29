@@ -21,9 +21,9 @@ def docker_images = [
 ]
 
 def docker_args = [
-    "tar": "-u 1000",
-    "rpm": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
-    "deb": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host",
+    "tar": "-u 1000 --cpus 4 -m 16g",
+    "rpm": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g",
+    "deb": "--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host --cpus 4 -m 16g",
     "zip": "-u ContainerAdministrator",
 ]
 
