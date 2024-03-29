@@ -110,7 +110,7 @@ class TestTestRecorder(unittest.TestCase):
             "https://ci.opensearch.org/ci/dbc/integ-test/"
         )
         file_path = test_recorder._update_absolute_file_paths(["A long test case name"], "https://working-directory", "sub-directory")
-        self.assertEqual(file_path, [os.path.join("https://working-directory", "sub-directory", "A+long+test+case+name")])
+        self.assertEqual(file_path, ["https://working-directory/sub-directory/A+long+test+case+name"])
 
     @patch("os.walk")
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
