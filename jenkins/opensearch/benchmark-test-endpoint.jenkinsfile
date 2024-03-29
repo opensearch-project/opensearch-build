@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@5.11.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.4.1', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -30,7 +30,7 @@ parameters {
             trim: true
         )
         booleanParam(
-            name: 'CLUSTER_WITH_SECURITY',
+            name: 'SECURITY_ENABLED',
             description: 'Mention if the cluster is secured or insecured.',
             defaultValue: false,
         )
@@ -39,11 +39,6 @@ parameters {
             name: 'TEST_WORKLOAD',
             description: 'The workload name from OpenSearch Benchmark Workloads.',
             defaultValue: 'nyc_taxis',
-            trim: true
-        )
-        string(
-            name: 'ADDITIONAL_CONFIG',
-            description: 'Additional opensearch.yml config parameters passed as JSON. e.g., `opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT`',
             trim: true
         )
         string(
@@ -110,18 +105,17 @@ parameters {
             steps {
                 script {
                     echo "CLUSTER_ENDPOINT: ${CLUSTER_ENDPOINT}"
-                    echo "security-enabled: ${CLUSTER_WITH_SECURITY}"
+                    echo "security-enabled: ${SECURITY_ENABLED}"
 
                     runBenchmarkTestScript(
                         endpoint: CLUSTER_ENDPOINT,
-                        insecure: !CLUSTER_WITH_SECURITY,
+                        insecure: !SECURITY_ENABLED,
                         workload: TEST_WORKLOAD,
-                        userTag: USER_TAGS.isEmpty() ? "security-enabled:${CLUSTER_WITH_SECURITY}" : "${USER_TAGS},security-enabled:${CLUSTER_WITH_SECURITY}",
+                        userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         workloadParams: WORKLOAD_PARAMS,
                         testProcedure: TEST_PROCEDURE,
                         excludeTasks: EXCLUDE_TASKS,
                         includeTasks: INCLUDE_TASKS,
-                        additionalConfig: ADDITIONAL_CONFIG,
                         captureNodeStat: CAPTURE_NODE_STAT,
                         captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
                         telemetryParams: TELEMETRY_PARAMS

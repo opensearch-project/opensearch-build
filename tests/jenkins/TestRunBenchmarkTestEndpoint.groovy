@@ -26,7 +26,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('5.11.0')
+                        .defaultVersion('6.4.1')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -51,7 +51,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('CLUSTER_ENDPOINT', 'opensearch-ABCxdfdfhyfk.com')
-        binding.setVariable('CLUSTER_WITH_SECURITY', true)
+        binding.setVariable('SECURITY_ENABLED', true)
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
         binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
@@ -73,7 +73,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     @Test
     public void testRunSecureBenchmarkTestScript_verifyPipeline() {
         super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint.jenkinsfile")
+                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-secure.jenkinsfile")
     }
 
     @Test
@@ -106,6 +106,27 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
                 "./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true                --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+        ))
+    }
+    @Test
+    public void testRunSecureBenchmarkTestWithoutSecurity_verifyPipeline() {
+        binding.setVariable('SECURITY_ENABLED', false)
+        super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-insecure.jenkinsfile")
+    }
+
+    @Test
+    void testRunSecureBenchmarkTestScript_verifyWithoutSecurity() {
+        binding.setVariable('SECURITY_ENABLED', false)
+        runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
+
+        def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
+            shCommand -> shCommand.contains('./test.sh')
+        }
+
+        assertThat(testScriptCommands.size(), equalTo(1))
+        assertThat(testScriptCommands, hasItems(
+                "./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security               --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
 
