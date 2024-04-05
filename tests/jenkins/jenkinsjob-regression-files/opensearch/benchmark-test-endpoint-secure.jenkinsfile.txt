@@ -14,7 +14,6 @@
          benchmark-test-endpoint.stage(benchmark-test-with-cluster, groovy.lang.Closure)
             benchmark-test-endpoint.echo(Executing on agent [label:Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host])
             benchmark-test-endpoint.script(groovy.lang.Closure)
-               benchmark-test-endpoint.echo(CLUSTER_ENDPOINT: opensearch-ABCxdfdfhyfk.com)
                benchmark-test-endpoint.echo(security-enabled: true)
                benchmark-test-endpoint.runBenchmarkTestScript({endpoint=opensearch-ABCxdfdfhyfk.com, insecure=false, workload=nyc-taxis, userTag=run-type:test,security-enabled:true, workloadParams=, testProcedure=append-no-conflicts, excludeTasks=, includeTasks=, captureNodeStat=false, captureSegmentReplicationStat=false, telemetryParams={"telemetry_setting":"value"}})
                   runBenchmarkTestScript.legacySCM(groovy.lang.Closure)

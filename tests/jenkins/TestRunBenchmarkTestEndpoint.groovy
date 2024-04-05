@@ -51,7 +51,6 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('ARTIFACT_DOWNLOAD_ROLE_NAME', 'Dummy_Download_Role')
         binding.setVariable('AWS_ACCOUNT_PUBLIC', 'dummy_account')
         binding.setVariable('CLUSTER_ENDPOINT', 'opensearch-ABCxdfdfhyfk.com')
-        binding.setVariable('SECURITY_ENABLED', true)
         binding.setVariable('GITHUB_BOT_TOKEN_NAME', 'bot_token_name')
         binding.setVariable('GITHUB_USER', 'test_user')
         binding.setVariable('GITHUB_TOKEN', 'test_token')
@@ -72,6 +71,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
     @Test
     public void testRunSecureBenchmarkTestScript_verifyPipeline() {
+        addParam('SECURITY_ENABLED', true)
         super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-secure.jenkinsfile")
     }
@@ -97,6 +97,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
     @Test
     void testRunSecureBenchmarkTestScript_verifyScriptExecutions() {
+        addParam('SECURITY_ENABLED', true)
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
@@ -110,14 +111,14 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     }
     @Test
     public void testRunSecureBenchmarkTestWithoutSecurity_verifyPipeline() {
-        binding.setVariable('SECURITY_ENABLED', false)
+        addParam('SECURITY_ENABLED', true)
         super.testPipeline("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/opensearch/benchmark-test-endpoint-insecure.jenkinsfile")
     }
 
     @Test
     void testRunSecureBenchmarkTestScript_verifyWithoutSecurity() {
-        binding.setVariable('SECURITY_ENABLED', false)
+        addParam('SECURITY_ENABLED', false)
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {

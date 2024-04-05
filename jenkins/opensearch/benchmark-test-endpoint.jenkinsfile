@@ -104,12 +104,11 @@ parameters {
             agent { label AGENT_LABEL }
             steps {
                 script {
-                    echo "CLUSTER_ENDPOINT: ${CLUSTER_ENDPOINT}"
                     echo "security-enabled: ${SECURITY_ENABLED}"
 
                     runBenchmarkTestScript(
                         endpoint: CLUSTER_ENDPOINT,
-                        insecure: !SECURITY_ENABLED,
+                        insecure: !(params.SECURITY_ENABLED),
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         workloadParams: WORKLOAD_PARAMS,
