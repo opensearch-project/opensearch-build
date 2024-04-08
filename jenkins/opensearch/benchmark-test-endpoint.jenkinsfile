@@ -119,10 +119,10 @@ parameters {
                         telemetryParams: TELEMETRY_PARAMS
                     )
                 }
-                post {
-                    always {
-                        postCleanup()
-                    }
+            }
+            post {
+                always {
+                    postCleanup()
                 }
             }
         }
