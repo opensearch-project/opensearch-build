@@ -1,7 +1,7 @@
 # Testing a Distribution
 
 The OpenSearch and OpenSearch-Dashboards run Integration, Backward Compatibility tests at the distribution level. Along with this, OpenSearch also runs Performance tests at the distribution level.
-Just like build, the distribution testing framework also depends on manifest. In this case, a test manifest. See sample test manifests for [OpenSearch](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.11.1/opensearch-2.11.1-test.yml) and [OpenSearch-Dashboards](https://github.com/opensearch-project/opensearch-build/blob/main/manifests/2.11.1/opensearch-dashboards-2.11.1-test.yml).
+Just like build, the distribution testing framework also depends on manifest. In this case, a test manifest. See sample test manifests for [OpenSearch](https://github.com/opensearch-project/opensearch-build/blob/main/legacy-manifests/2.11.1/opensearch-2.11.1-test.yml) and [OpenSearch-Dashboards](https://github.com/opensearch-project/opensearch-build/blob/main/legacy-manifests/2.11.1/opensearch-dashboards-2.11.1-test.yml).
 
 ## Test Manifest
 
