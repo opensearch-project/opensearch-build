@@ -21,7 +21,6 @@ pipeline {
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
-        JOB_NAME = 'benchmark-test'
     }
 parameters {
         string(

@@ -60,7 +60,6 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('EXCLUDE_TASKS', '')
         binding.setVariable('INCLUDE_TASKS', '')
         binding.setVariable('ADDITIONAL_CONFIG', '')
-        binding.setVariable('JOB_NAME', 'benchmark-test')
         binding.setVariable('BENCHMARK_TEST_CONFIG_LOCATION', 'test_config')
         binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_WORKLOAD', 'nyc-taxis')
