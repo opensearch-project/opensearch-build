@@ -126,7 +126,7 @@
          publish-min-snapshots.postCleanup()
             postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
          publish-min-snapshots.stage(windows-x64-zip, groovy.lang.Closure)
-            publish-min-snapshots.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+            publish-min-snapshots.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             publish-min-snapshots.script(groovy.lang.Closure)
                publish-min-snapshots.echo(Switching to Java 17 on Windows Docker Container)
                publish-min-snapshots.sh(scoop reset `scoop list jdk | cut -d ' ' -f1 | grep 17 | head -1`)
