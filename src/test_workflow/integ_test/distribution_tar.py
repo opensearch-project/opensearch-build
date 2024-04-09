@@ -25,6 +25,10 @@ class DistributionTar(Distribution):
     def config_path(self) -> str:
         return os.path.join(self.install_dir, "config", self.config_filename)
 
+    @property
+    def log_dir(self) -> str:
+        return os.path.join(self.install_dir, "logs")
+
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
         with tarfile.open(bundle_name, 'r:gz') as bundle_tar:

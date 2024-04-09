@@ -8,90 +8,46 @@
 
 import json
 import logging
-import os
 import subprocess
-from contextlib import contextmanager
-from typing import Any, Generator, Union
 
 import requests
-import semver
 from requests.auth import HTTPBasicAuth
 from retry.api import retry_call  # type: ignore
 
-from manifests.build_manifest import BuildManifest
-from manifests.bundle_manifest import BundleManifest
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from test_workflow.integ_test.utils import get_password
 
 
 class BenchmarkTestCluster:
-    manifest: Union[BundleManifest, BuildManifest]
-    work_dir: str
-    current_workspace: str
     args: BenchmarkArgs
-    output_file: str
-    params: str
-    is_endpoint_public: bool
     cluster_endpoint: str
     cluster_endpoint_with_port: str
-
-    """
-    Represents a performance test cluster. This class deploys the opensearch bundle with CDK. Supports both single
-    and multi-node clusters
-    """
+    password: str
 
     def __init__(
             self,
-            bundle_manifest: Union[BundleManifest, BuildManifest],
-            config: dict,
-            args: BenchmarkArgs,
-            current_workspace: str
+            args: BenchmarkArgs
+
     ) -> None:
-        self.manifest = bundle_manifest
-        self.current_workspace = current_workspace
         self.args = args
-        self.output_file = "output.json"
-        role = config["Constants"]["Role"]
-        params_dict = self.setup_cdk_params(config)
-        params_list = []
-        for key, value in params_dict.items():
-            if value:
-                '''
-                TODO: To send json input to typescript code from command line it needs to be enclosed in
-                single-quotes, this is a temp fix to achieve that since the quoted string passed from command line in
-                tesh.sh wrapper script gets un-quoted and we need to handle it here.
-                '''
-                if key == 'additionalConfig':
-                    params_list.append(f" -c {key}=\'{value}\'")
-                else:
-                    params_list.append(f" -c {key}={value}")
-        role_params = (
-            f" --require-approval=never --plugin cdk-assume-role-credential-plugin"
-            f" -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} "
-        )
-        self.params = "".join(params_list) + role_params
-        self.is_endpoint_public = False
-        self.cluster_endpoint = None
+        self.cluster_endpoint = self.args.cluster_endpoint
         self.cluster_endpoint_with_port = None
-        self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}"
-        if self.manifest:
-            self.stack_name += f"-{self.manifest.build.id}-{self.manifest.build.architecture}"
+        self.password = None
 
     def start(self) -> None:
-        command = f"npm install && cdk deploy \"*\" {self.params} --outputs-file {self.output_file}"
 
-        logging.info(f'Executing "{command}" in {os.getcwd()}')
-        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
-        with open(self.output_file, "r") as read_file:
-            load_output = json.load(read_file)
-            self.create_endpoint(load_output)
+        command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku 'admin:{get_password('2.12.0')}'"
+        try:
+            result = subprocess.run(command, shell=True, capture_output=True, timeout=5)
+        except subprocess.TimeoutExpired:
+            raise TimeoutError(f"Time out! Couldn't connect to the cluster {self.cluster_endpoint}")
+
+        if result.stdout:
+            res_dict = json.loads(result.stdout)
+            self.args.distribution_version = res_dict['version']['number']
         self.wait_for_processing()
 
-    def create_endpoint(self, cdk_output: dict) -> None:
-        loadbalancer_url = cdk_output[self.stack_name].get('loadbalancerurl', None)
-        if loadbalancer_url is None:
-            raise RuntimeError("Unable to fetch the cluster endpoint from cdk output")
-        self.cluster_endpoint = loadbalancer_url
-        self.cluster_endpoint_with_port = "".join([loadbalancer_url, ":", str(self.port)])
+        self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
 
     @property
     def endpoint(self) -> str:
@@ -105,92 +61,14 @@ class BenchmarkTestCluster:
     def port(self) -> int:
         return 80 if self.args.insecure else 443
 
-    def terminate(self) -> None:
-        command = f"cdk destroy {self.stack_name} {self.params} --force"
-        logging.info(f'Executing "{command}" in {os.getcwd()}')
-
-        subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+    def fetch_password(self) -> str:
+        return self.password
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
-        # To-do: Make this better
-        password = 'admin'
-        if self.manifest:
-            if semver.compare(self.manifest.build.version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
-        else:
-            if semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                password = 'myStrongPassword123!'
-
         logging.info(f"Waiting for domain at {self.endpoint} to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
-        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth("admin", password),  # type: ignore
+        self.password = None if self.args.insecure else get_password(self.args.distribution_version)
+        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth("admin", self.password),  # type: ignore
                                                                 "verify": False}  # type: ignore
-        retry_call(requests.get, fkwargs=request_args,
-                   tries=tries, delay=delay, backoff=backoff)
-
-    def setup_cdk_params(self, config: dict) -> dict:
-        suffix = ''
-        need_strong_password = False
-        if self.args.stack_suffix and self.manifest:
-            suffix = self.args.stack_suffix + '-' + self.manifest.build.id + '-' + self.manifest.build.architecture
-        elif self.manifest:
-            suffix = self.manifest.build.id + '-' + self.manifest.build.architecture
-        elif self.args.stack_suffix:
-            suffix = self.args.stack_suffix
-
-        if self.manifest:
-            artifact_url = self.manifest.build.location if isinstance(self.manifest, BundleManifest) else \
-                f"https://artifacts.opensearch.org/snapshots/core/opensearch/{self.manifest.build.version}/opensearch-min-" \
-                f"{self.manifest.build.version}-linux-{self.manifest.build.architecture}-latest.tar.gz"
-            if not self.args.insecure and semver.compare(self.manifest.build.version, '2.12.0') != -1:
-                need_strong_password = True
-        else:
-            artifact_url = self.args.distribution_url.strip()
-            if not self.args.insecure and semver.compare(self.args.distribution_version, '2.12.0') != -1:
-                need_strong_password = True
-
-        return {
-            "distributionUrl": artifact_url,
-            "vpcId": config["Constants"]["VpcId"],
-            "account": config["Constants"]["AccountId"],
-            "region": config["Constants"]["Region"],
-            "suffix": suffix,
-            "securityDisabled": str(self.args.insecure).lower(),
-            "adminPassword": 'myStrongPassword123!' if need_strong_password else None,
-            "cpuArch": self.manifest.build.architecture if self.manifest else 'x64',
-            "singleNodeCluster": str(self.args.single_node).lower(),
-            "distVersion": self.manifest.build.version if self.manifest else self.args.distribution_version,
-            "minDistribution": str(self.args.min_distribution).lower(),
-            "serverAccessType": config["Constants"]["serverAccessType"],
-            "restrictServerAccessTo": config["Constants"]["restrictServerAccessTo"],
-            "additionalConfig": self.args.additional_config,
-            "dataInstanceType": self.args.data_instance_type,
-            "managerNodeCount": self.args.manager_node_count,
-            "dataNodeCount": self.args.data_node_count,
-            "clientNodeCount": self.args.client_node_count,
-            "ingestNodeCount": self.args.ingest_node_count,
-            "mlNodeCount": self.args.ml_node_count,
-            "dataNodeStorage": self.args.data_node_storage,
-            "mlNodeStorage": self.args.ml_node_storage,
-            "jvmSysProps": self.args.jvm_sys_props,
-            "use50PercentHeap": str(self.args.use_50_percent_heap).lower(),
-            "isInternal": config["Constants"]["isInternal"],
-            "enableRemoteStore": str(self.args.enable_remote_store).lower(),
-            "customRoleArn": config["Constants"]["IamRoleArn"]
-        }
-
-    @classmethod
-    @contextmanager
-    def create(cls, *args: Any) -> Generator[Any, None, None]:
-        """
-        Set up the cluster. When this method returns, the cluster must be available to take requests.
-        Throws ClusterCreationException if the cluster could not start for some reason. If this exception is thrown, the caller does not need to call "destroy".
-        """
-        cluster = cls(*args)
-
-        try:
-            cluster.start()
-            yield cluster
-        finally:
-            cluster.terminate()
+        retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)

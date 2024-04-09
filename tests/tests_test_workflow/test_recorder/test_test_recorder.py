@@ -96,8 +96,28 @@ class TestTestRecorder(unittest.TestCase):
             "working-directory",
             "https://ci.opensearch.org/ci/dbc/integ-test/"
         )
-        file_path = test_recorder._update_absolute_file_paths(["file1", "file2"], "working-directory", "sub-directory")
-        self.assertEqual(file_path, [os.path.join("working-directory", "sub-directory", "file1"), os.path.join("working-directory", "sub-directory", "file2")])
+        file_path = test_recorder._update_absolute_file_paths(
+            ["file1", "file2 with spaces"],
+            "working-directory",
+            "sub-directory"
+        )
+        self.assertEqual(file_path, [
+            os.path.join("working-directory", "sub-directory", "file1"),
+            os.path.join("working-directory", "sub-directory", "file2 with spaces")
+        ])
+
+    @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
+    @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
+    @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
+    def test_update_absolute_file_paths_escaping(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
+        test_recorder = TestRecorder(
+            "1234",
+            "integ-test",
+            "working-directory",
+            "https://ci.opensearch.org/ci/dbc/integ-test/"
+        )
+        file_path = test_recorder._update_absolute_file_paths(["A long test case name"], "https://working-directory", "sub-directory")
+        self.assertEqual(file_path, ["https://working-directory/sub-directory/A+long+test+case+name"])
 
     @patch("os.walk")
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")

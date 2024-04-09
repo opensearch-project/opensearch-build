@@ -16,5 +16,5 @@ def str_to_base64(value: str) -> str:
 
 def get_password(version: str, convert_to_base64: bool = False) -> str:
     # Starting in 2.12.0, demo configuration setup script requires a strong password
-    password = "myStrongPassword123!" if semver.compare(version, '2.12.0') != -1 else "admin"
+    password = "myStrongPassword123!" if semver.Version.parse(version).compare(semver.Version.parse('2.12.0')) != -1 else "admin"
     return str_to_base64(password) if convert_to_base64 else password

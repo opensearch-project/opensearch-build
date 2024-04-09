@@ -25,6 +25,10 @@ class DistributionDeb(Distribution):
     def config_path(self) -> str:
         return os.path.join(os.sep, "etc", self.filename, self.config_filename)
 
+    @property
+    def log_dir(self) -> str:
+        return os.path.join(os.sep, "var", "log", self.filename)
+
     def install(self, bundle_name: str) -> None:
         logging.info(f"Installing {bundle_name} in {self.install_dir}")
         logging.info("deb installation requires sudo, script will exit if current user does not have sudo access")
@@ -42,7 +46,13 @@ class DistributionDeb(Distribution):
                 '--install',
                 bundle_name,
                 '&&',
-                f'sudo chmod 0666 {self.config_path}'
+                f'sudo chmod 0666 {self.config_path}',
+                '&&',
+                f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}',
+                '&&',
+                f'sudo usermod -a -G {self.filename} `whoami`',
+                '&&',
+                'sudo usermod -a -G adm `whoami`'
             ]
         )
         subprocess.check_call(deb_install_cmd, cwd=self.work_dir, shell=True)
@@ -53,4 +63,4 @@ class DistributionDeb(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"sudo dpkg --purge {self.filename}", shell=True)
+        subprocess.check_call(f"sudo dpkg --purge {self.filename} && sudo rm -rf {os.path.dirname(self.config_path)} {self.log_dir}", shell=True)

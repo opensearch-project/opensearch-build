@@ -8,6 +8,7 @@
 import logging
 import os
 import shutil
+import urllib.parse
 from typing import Any
 
 import yaml
@@ -49,9 +50,9 @@ class TestRecorder:
         return os.path.realpath(dest_directory)
 
     def _generate_std_files(self, stdout: str, stderr: str, output_path: str) -> None:
-        with open(os.path.join(output_path, "stdout.txt"), "w", encoding='utf-8') as stdout_file:
+        with open(os.path.join(output_path, "stdout.txt"), "w", encoding="utf-8") as stdout_file:
             stdout_file.write(stdout)
-        with open(os.path.join(output_path, "stderr.txt"), "w", encoding='utf-8') as stderr_file:
+        with open(os.path.join(output_path, "stderr.txt"), "w", encoding="utf-8") as stderr_file:
             stderr_file.write(stderr)
 
     def _generate_yml(self, test_result_data: TestResultData, output_path: str) -> str:
@@ -66,14 +67,17 @@ class TestRecorder:
             "component_name": test_result_data.component_name,
             "test_config": test_result_data.component_test_config,
             "test_result": "PASS" if (test_result_data.exit_code == 0) else "FAIL",
-            "test_result_files": test_result_file
+            "test_result_files": test_result_file,
         }
-        with open(os.path.join(output_path, "%s.yml" % test_result_data.component_name), "w", encoding='utf-8') as file:
+        with open(os.path.join(output_path, "%s.yml" % test_result_data.component_name), "w", encoding="utf-8") as file:
             yaml.dump(outcome, file)
         return os.path.realpath("%s.yml" % test_result_data.component_name)
 
     def _update_absolute_file_paths(self, files: list, base_path: str, relative_path: str) -> list:
-        return [os.path.join(base_path, relative_path, file) for file in files]
+        if base_path.startswith("https://"):
+            return [f"{base_path}/{relative_path}/{urllib.parse.quote_plus(file)}" for file in files]
+        else:
+            return [os.path.join(base_path, relative_path, file) for file in files]
 
     # get a list of files within directory with relative paths.
     def _get_list_files(self, dir: str) -> list:
@@ -133,7 +137,7 @@ class RemoteClusterLogs(LogRecorder):
 
 
 class TestResultsLogs(LogRecorder):
-    __test__ = False    # type:ignore
+    __test__ = False  # type:ignore
     parent_class: TestRecorder
 
     def __init__(self, parent_class: TestRecorder) -> None:

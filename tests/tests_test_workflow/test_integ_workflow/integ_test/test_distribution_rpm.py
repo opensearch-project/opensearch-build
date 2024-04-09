@@ -32,6 +32,10 @@ class TestDistributionRpm(unittest.TestCase):
         self.assertEqual(self.distribution_rpm.config_path, os.path.join(os.sep, "etc", "opensearch", "opensearch.yml"))
         self.assertEqual(self.distribution_rpm_dashboards.config_path, os.path.join(os.sep, "etc", "opensearch-dashboards", "opensearch_dashboards.yml"))
 
+    def test_log_dir(self) -> None:
+        self.assertEqual(self.distribution_rpm.log_dir, os.path.join(os.sep, "var", "log", "opensearch"))
+        self.assertEqual(self.distribution_rpm_dashboards.log_dir, os.path.join(os.sep, "var", "log", "opensearch-dashboards"))
+
     @patch("subprocess.check_call")
     def test_install(self, check_call_mock: Mock) -> None:
         self.distribution_rpm.install("opensearch.rpm")
@@ -43,7 +47,10 @@ class TestDistributionRpm(unittest.TestCase):
                 "sudo yum remove -y opensearch && "
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "yum install -y opensearch.rpm && "
-                f"sudo chmod 0666 {self.distribution_rpm.config_path}"
+                f"sudo chmod 0666 {self.distribution_rpm.config_path} && "
+                f"sudo chmod 0755 {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.log_dir} && "
+                f"sudo usermod -a -G opensearch `whoami` && "
+                f"sudo usermod -a -G adm `whoami`"
             ),
             args_list[0][0][0],
         )
@@ -58,4 +65,4 @@ class TestDistributionRpm(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual("sudo yum remove -y opensearch", args_list[0][0][0])
+        self.assertEqual(f"sudo yum remove -y opensearch && sudo rm -rf {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.log_dir}", args_list[0][0][0])

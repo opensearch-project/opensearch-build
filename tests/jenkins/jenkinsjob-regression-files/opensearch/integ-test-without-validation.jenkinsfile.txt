@@ -8,7 +8,7 @@
          integ-test.buildDiscarder(null)
          integ-test.echo(Executing on agent [label:none])
          integ-test.stage(verify-parameters, groovy.lang.Closure)
-            integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host])
+            integ-test.echo(Executing on agent [label:Jenkins-Agent-AL2023-X64-M54xlarge-Docker-Host])
             integ-test.script(groovy.lang.Closure)
                integ-test.fileExists(manifests/tests/jenkins/data/opensearch-3.0.0-test.yml)
                integ-test.downloadBuildManifest({url=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar/dist/opensearch/opensearch-3.0.0-linux-x64.tar.gz, path=tests/jenkins/data/opensearch-3.0.0-build.yml})

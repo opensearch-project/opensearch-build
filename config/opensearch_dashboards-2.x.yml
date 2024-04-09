@@ -200,6 +200,10 @@
 # Set the value of this setting to true to enable the assistant dashboards
 # assistant.chat.enabled: false
 
+# 2.13 New Query Assistant Feature
+# Set the value of this setting to false to disable the query assistant
+# observability.query_assist.enabled: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
