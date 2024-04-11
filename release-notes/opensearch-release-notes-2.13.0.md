@@ -19,7 +19,7 @@ OpenSearch 2.13 includes several new features designed to help you build AI-powe
 
 <li>You can now post-filter hybrid search results, allowing you to apply aggregations to the results to support use cases such as faceting.</li>
 
-<li>This release includes updates to tools that enable you to query external data sources, including a new Bloom filter, a type of skipping index that can increase performance for data types like IP addresses and hostnames where there are many different values that can be stored. In addition, you can now manage tables and accelerations visually in Query Workbench, instead of using SQL statements.</li> 
+<li>By default, OpenSearch executes upsert and get operations by executing a term query on document id to determine if the document is present in the index. With this release, users can now control whether fuzzy_set should be enabled to optimize document ID lookups in index or search calls using the Bloom filter data structure, with potential for throughput improvements of up to 30%.</li> 
 
 <li>This release adds I/O-based admission control, a proactive mechanism designed to support cluster resiliency by protecting against spikes or increases in capacity if a cluster’s I/O usage breaches a defined threshold.</li>
 
