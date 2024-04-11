@@ -8,19 +8,19 @@
 import argparse
 import datetime
 import logging
-from typing import IO
+from typing import IO, List
 
 
 class ReleaseNotesCheckArgs:
     action: str
-    manifest: IO
+    manifest: List[IO]
     date: str
     output: str
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(description="Checkout an OpenSearch Bundle and check for CommitID and Release Notes")
         parser.add_argument("action", choices=["check", "compile"], help="Operation to perform.")
-        parser.add_argument("manifest", type=argparse.FileType("r"), help="Manifest file.")
+        parser.add_argument("manifest", type=argparse.FileType("r"), nargs='+', help="Manifest file.")
         parser.add_argument(
             "-v",
             "--verbose",

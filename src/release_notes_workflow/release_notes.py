@@ -19,18 +19,19 @@ from system.temporary_directory import TemporaryDirectory
 
 class ReleaseNotes:
 
-    def __init__(self, manifest: InputManifest, date: str, action_type: str) -> None:
-        self.manifest = manifest
+    def __init__(self, input_manifests: List[InputManifest], date: str, action_type: str) -> None:
+        self.manifests = input_manifests  # type: ignore[assignment]
         self.date = date
         self.action_type = action_type
 
     def table(self) -> MarkdownTableWriter:
         table_result = []
-        for component in self.manifest.components.select():
-            if component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards' or component.name == 'notifications-core':
-                continue
-            if hasattr(component, "repository"):
-                table_result.append(self.check(component))  # type: ignore[arg-type]
+        for manifest in self.manifests:
+            for component in manifest.components.select():
+                if (component.name == 'OpenSearch' or component.name == 'OpenSearch-Dashboards' or component.name == 'notifications-core') and self.action_type == 'compile':
+                    continue
+                if hasattr(component, "repository"):
+                    table_result.append(self.check(component, manifest.build.version))  # type: ignore[arg-type]
 
         # Sort table_result based on Repo column
         table_result.sort(key=lambda x: (x[0], x[1]) if len(x) > 1 else x[0])
@@ -43,13 +44,13 @@ class ReleaseNotes:
             raise ValueError("Invalid action_type. Use 'check' or 'compile'.")
 
         writer = MarkdownTableWriter(
-            table_name=f" {self.manifest.build.name} CommitID(after {self.date}) & Release Notes info",
+            table_name=f"Core Components CommitID(after {self.date}) & Release Notes info",
             headers=headers,
             value_matrix=table_result
         )
         return writer
 
-    def check(self, component: InputComponentFromSource) -> List:
+    def check(self, component: InputComponentFromSource, build_version: str) -> List:
         results = []
         with TemporaryDirectory(chdir=True) as work_dir:
             results.append(component.name)
@@ -61,7 +62,7 @@ class ReleaseNotes:
                     component.working_directory,
             ) as repo:
                 logging.debug(f"Checked out {component.name} into {repo.dir}")
-                release_notes = ReleaseNotesComponents.from_component(component, self.manifest.build.version, repo.dir)
+                release_notes = ReleaseNotesComponents.from_component(component, build_version, repo.dir)
                 commits = repo.log(self.date)
                 if len(commits) > 0:
                     last_commit = commits[-1]
