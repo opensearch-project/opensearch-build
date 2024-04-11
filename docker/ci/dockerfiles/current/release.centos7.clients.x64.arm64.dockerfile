@@ -135,10 +135,10 @@ RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 # Installing ruby related dependencies
 # Need to run either `. $CONTAINER_USER_HOME/.rvm/scripts/rvm` or `source $CONTAINER_USER_HOME/.rvm/scripts/rvm` 
 # and force bash if needed before using the rvm command for any activities, or rvm will not correctly use version
-RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
+RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && rvm install 3.1.2 && rvm --default use 3.1.2 && \
     rvm install jruby-9.3.0.0
 
-ENV RUBY_HOME=$CONTAINER_USER_HOME/.rvm/rubies/ruby-2.6.0/bin
+ENV RUBY_HOME=$CONTAINER_USER_HOME/.rvm/rubies/ruby-3.1.2/bin
 ENV RVM_HOME=$CONTAINER_USER_HOME/.rvm/bin
 ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
 ENV GEM_PATH=$GEM_HOME
