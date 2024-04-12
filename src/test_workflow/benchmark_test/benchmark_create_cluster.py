@@ -64,6 +64,7 @@ class BenchmarkCreateCluster(BenchmarkTestCluster):
             f" -c assume-role-credentials:writeIamRoleName={role} -c assume-role-credentials:readIamRoleName={role} "
         )
         self.params = "".join(params_list) + role_params
+        self.password = None if self.args.insecure else get_password(self.args.distribution_version)
         self.is_endpoint_public = False
         self.stack_name = f"opensearch-infra-stack-{self.args.stack_suffix}"
         if self.manifest:
