@@ -135,17 +135,17 @@ RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 # Installing ruby related dependencies
 # Need to run either `. $CONTAINER_USER_HOME/.rvm/scripts/rvm` or `source $CONTAINER_USER_HOME/.rvm/scripts/rvm` 
 # and force bash if needed before using the rvm command for any activities, or rvm will not correctly use version
-RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && rvm install 2.6.0 && rvm --default use 2.6.0 && \
+RUN . $CONTAINER_USER_HOME/.rvm/scripts/rvm && rvm install 2.6.0 && rvm install 3.1.2 && rvm --default use 2.6.0 && \
     rvm install jruby-9.3.0.0
 
-ENV RUBY_HOME=$CONTAINER_USER_HOME/.rvm/rubies/ruby-2.6.0/bin
 ENV RVM_HOME=$CONTAINER_USER_HOME/.rvm/bin
 ENV GEM_HOME=$CONTAINER_USER_HOME/.gem
 ENV GEM_PATH=$GEM_HOME
 ENV CARGO_PATH=$CONTAINER_USER_HOME/.cargo/bin
-ENV PATH=$RUBY_HOME:$RVM_HOME:$CARGO_PATH:$PATH
+ENV PATH=$RVM_HOME:$CARGO_PATH:$PATH
 
 # nvm environment variables
+# DO NOT add node version above 16 as CentOS7 does not support new versions
 ENV NVM_DIR $CONTAINER_USER_HOME/.nvm
 ENV NODE_VERSION 16.20.0
 ARG NODE_VERSION_LIST="10.24.1 14.19.1 14.20.0 14.20.1 14.21.3 16.20.0"
