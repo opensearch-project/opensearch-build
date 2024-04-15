@@ -76,9 +76,19 @@ class TestBenchmarkTestCluster(unittest.TestCase):
     def test_endpoint_with_timeout_error(self) -> None:
 
         with patch('subprocess.run') as mock_run:
-            mock_run.side_effect = subprocess.TimeoutExpired("Command", 5)
+            mock_run.side_effect = subprocess.TimeoutExpired("Command", 30)
 
             with self.assertRaises(TimeoutError) as context:
                 self.benchmark_test_cluster.start()
 
             self.assertIn("Time out! Couldn't connect to the cluster", str(context.exception))
+
+    @patch("subprocess.run")
+    def test_endpoint_exception(self, mock_subprocess_run: Mock) -> None:
+        mock_result = MagicMock()
+        mock_result.stdout = ""
+        mock_subprocess_run.return_value = mock_result
+        with self.assertRaises(Exception) as context:
+            self.benchmark_test_cluster.start()
+
+        self.assertIn("Empty response retrieved from the curl command", str(context.exception))

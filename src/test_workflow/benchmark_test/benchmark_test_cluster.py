@@ -38,7 +38,7 @@ class BenchmarkTestCluster:
 
         command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
         try:
-            result = subprocess.run(command, shell=True, capture_output=True, timeout=5)
+            result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
         except subprocess.TimeoutExpired:
             raise TimeoutError("Time out! Couldn't connect to the cluster")
 
