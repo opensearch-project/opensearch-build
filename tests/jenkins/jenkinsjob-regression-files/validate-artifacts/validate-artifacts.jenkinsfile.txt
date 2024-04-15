@@ -66,7 +66,7 @@
                         validate-artifacts.postCleanup()
                            postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
                   validate-artifacts.timeout({time=30}, groovy.lang.Closure)
-                     validate-artifacts.node(Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
+                     validate-artifacts.node(Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host, groovy.lang.Closure)
                         validate-artifacts.unstash(validate-artifacts-123)
                         validate-artifacts.validateArtifacts({version=2.3.0, distribution=zip, arch=x64, platform=windows, os_build_number=6039, osd_build_number=4104, projects=opensearch opensearch-dashboards, artifact_type=production, allow_http=false})
                            validateArtifacts.fileExists(/tmp/workspace/validation.sh)
