@@ -103,8 +103,8 @@ set -e
 if [ -d %{product_dir}/plugins/opensearch-security ]; then
     sh %{product_dir}/plugins/opensearch-security/tools/install_demo_configuration.sh -y -i -s > %{log_dir}/install_demo_configuration.log 2>&1 || (echo "ERROR: Something went wrong during demo configuration installation. Please see the logs in %{log_dir}/install_demo_configuration.log" && exit 1)
 fi
-chown -R %{name}.%{name} %{config_dir}
-chown -R %{name}.%{name} %{log_dir}
+chown -R %{name}:%{name} %{config_dir}
+chown -R %{name}:%{name} %{log_dir}
 # Apply PerformanceAnalyzer Settings
 chmod a+rw /tmp
 if ! grep -q '## OpenSearch Performance Analyzer' %{config_dir}/jvm.options; then

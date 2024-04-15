@@ -50,16 +50,16 @@ echo " If you are configuring tools that require read access to the OpenSearch D
 echo " For more information, see https://github.com/opensearch-project/opensearch-build/pull/4043"
 
 # Set ownership and permissions
-chown -R root.opensearch-dashboards ${config_dir}
+chown -R root:opensearch-dashboards ${config_dir}
 chmod -R u=rwX,g=rX,o= ${config_dir}
 
-chown -R opensearch-dashboards.adm ${log_dir}
+chown -R opensearch-dashboards:adm ${log_dir}
 chmod 750 ${log_dir}
 
-chown -R opensearch-dashboards.opensearch-dashboards ${data_dir}
+chown -R opensearch-dashboards:opensearch-dashboards ${data_dir}
 chmod 750 ${data_dir}
 
-chown -R opensearch-dashboards.opensearch-dashboards ${pid_dir}
+chown -R opensearch-dashboards:opensearch-dashboards ${pid_dir}
 
 exit 0
 
