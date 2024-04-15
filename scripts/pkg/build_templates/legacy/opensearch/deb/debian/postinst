@@ -38,11 +38,11 @@ if ! grep -q '## OpenSearch Performance Analyzer' ${config_dir}/jvm.options; the
 fi
 
 # Set owner
-chown -R opensearch.opensearch ${product_dir}
-chown -R opensearch.opensearch ${config_dir}
-chown -R opensearch.opensearch ${log_dir}
-chown -R opensearch.opensearch ${data_dir}
-chown -R opensearch.opensearch ${pid_dir}
+chown -R opensearch:opensearch ${product_dir}
+chown -R opensearch:opensearch ${config_dir}
+chown -R opensearch:opensearch ${log_dir}
+chown -R opensearch:opensearch ${data_dir}
+chown -R opensearch:opensearch ${pid_dir}
 
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then

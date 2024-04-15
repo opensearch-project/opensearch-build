@@ -38,16 +38,16 @@ fi
 
 # Set ownership and permissions
 # FIXME: the opensearch service should not have w permission in the config directory
-chown -R opensearch.opensearch ${config_dir}
+chown -R opensearch:opensearch ${config_dir}
 chmod -R u=rwX,g=rX,o= ${config_dir}
 
-chown -R opensearch.adm ${log_dir}
+chown -R opensearch:adm ${log_dir}
 chmod 750 ${log_dir}
 
-chown -R opensearch.opensearch ${data_dir}
+chown -R opensearch:opensearch ${data_dir}
 chmod 750 ${data_dir}
 
-chown -R opensearch.opensearch ${pid_dir}
+chown -R opensearch:opensearch ${pid_dir}
 
 # Reload systemctl daemon
 if command -v systemctl > /dev/null; then
