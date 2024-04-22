@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.4.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.4.3', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
@@ -21,20 +21,29 @@ pipeline {
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
+        JOB_NAME = 'benchmark-test'
     }
 parameters {
-        string(
+        password(
             name: 'CLUSTER_ENDPOINT',
             description: 'Provide an endpoint to a cluster for running benchmark tests against it.',
-            trim: true
         )
         booleanParam(
             name: 'SECURITY_ENABLED',
             description: 'Mention if the cluster is secured or insecured.',
             defaultValue: false,
         )
+        password(
+            name: 'USERNAME',
+            description: 'Enter username for the cluster endpoint',
+            defaultValue: ''
+        )
+        password(
+            name: 'PASSWORD',
+            description: 'Enter password for the cluster endpoint',
+            defaultValue: ''
+        )
         string(
-
             name: 'TEST_WORKLOAD',
             description: 'The workload name from OpenSearch Benchmark Workloads.',
             defaultValue: 'nyc_taxis',
@@ -108,6 +117,8 @@ parameters {
                     runBenchmarkTestScript(
                         endpoint: CLUSTER_ENDPOINT,
                         insecure: !(params.SECURITY_ENABLED),
+                        username: USERNAME,
+                        password: PASSWORD,
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
                         workloadParams: WORKLOAD_PARAMS,

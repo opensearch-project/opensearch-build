@@ -32,22 +32,23 @@ class BenchmarkTestCluster:
         self.args = args
         self.cluster_endpoint = self.args.cluster_endpoint
         self.cluster_endpoint_with_port = None
-        self.password = None
+        self.password = self.args.password if self.args.password else get_password('2.12.0')
 
     def start(self) -> None:
 
-        command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku 'admin:{get_password('2.12.0')}'"
+        command = f"curl http://{self.cluster_endpoint}" if self.args.insecure else f"curl https://{self.cluster_endpoint} -ku '{self.args.username}:{self.password}'"
         try:
-            result = subprocess.run(command, shell=True, capture_output=True, timeout=5)
+            result = subprocess.run(command, shell=True, capture_output=True, timeout=30)
         except subprocess.TimeoutExpired:
-            raise TimeoutError(f"Time out! Couldn't connect to the cluster {self.cluster_endpoint}")
+            raise TimeoutError("Time out! Couldn't connect to the cluster")
 
         if result.stdout:
             res_dict = json.loads(result.stdout)
             self.args.distribution_version = res_dict['version']['number']
-        self.wait_for_processing()
-
-        self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+            self.wait_for_processing()
+            self.cluster_endpoint_with_port = "".join([self.cluster_endpoint, ":", str(self.port)])
+        else:
+            raise Exception("Empty response retrieved from the curl command")
 
     @property
     def endpoint(self) -> str:
@@ -65,10 +66,9 @@ class BenchmarkTestCluster:
         return self.password
 
     def wait_for_processing(self, tries: int = 3, delay: int = 15, backoff: int = 2) -> None:
-        logging.info(f"Waiting for domain at {self.endpoint} to be up")
+        logging.info("Waiting for domain ******* to be up")
         protocol = "http://" if self.args.insecure else "https://"
         url = "".join([protocol, self.endpoint, "/_cluster/health"])
-        self.password = None if self.args.insecure else get_password(self.args.distribution_version)
-        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth("admin", self.password),  # type: ignore
+        request_args = {"url": url} if self.args.insecure else {"url": url, "auth": HTTPBasicAuth(self.args.username, self.password),  # type: ignore
                                                                 "verify": False}  # type: ignore
         retry_call(requests.get, fkwargs=request_args, tries=tries, delay=delay, backoff=backoff)

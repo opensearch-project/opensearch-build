@@ -14,14 +14,14 @@ from test_workflow.benchmark_test.benchmark_test_cluster import BenchmarkTestClu
 
 class TestBenchmarkTestCluster(unittest.TestCase):
     def setUp(self) -> None:
-        self.args = Mock()
-        self.args.insecure = False
-        self.args.cluster_endpoint = "opensearch-cluster.amazon.com"
-        self.password = None
-        self.cluster_endpoint = self.args.cluster_endpoint
-        self.cluster_endpoint_with_port = None
+        with patch('test_workflow.integ_test.utils.get_password') as mock_get_password:
+            mock_get_password.return_value = "myStrongPassword123!"
 
-        self.benchmark_test_cluster = BenchmarkTestCluster(self.args)
+            self.args = Mock()
+            self.args.insecure = False
+            self.args.cluster_endpoint = "opensearch-cluster.amazon.com"
+            self.args.password = None
+            self.benchmark_test_cluster = BenchmarkTestCluster(self.args)
 
     @patch("subprocess.run")
     @patch("requests.get")
@@ -48,20 +48,17 @@ class TestBenchmarkTestCluster(unittest.TestCase):
         self.assertEqual(self.benchmark_test_cluster.endpoint_with_port, 'opensearch-cluster.amazon.com:80')
         self.assertEqual(self.benchmark_test_cluster.port, 80)
 
-    @patch('test_workflow.benchmark_test.benchmark_test_cluster.get_password')
     @patch("subprocess.run")
     @patch("requests.get")
     @patch('test_workflow.benchmark_test.benchmark_test_cluster.HTTPBasicAuth')
-    def test_endpoint_with_security(self, mock_http_auth: Mock, mock_requests_get: Mock, mock_subprocess_run: Mock,
-                                    mock_password: Mock) -> None:
-        mock_password.return_value = "admin"
+    def test_endpoint_with_security(self, mock_http_auth: Mock, mock_requests_get: Mock, mock_subprocess_run: Mock) -> None:
         mock_result = MagicMock()
         mock_result.stdout = '''
                 {
                     "cluster_name" : "opensearch-cluster.amazon.com",
                     "version": {
                     "distribution": "opensearch",
-                    "number": "2.9.0",
+                    "number": "2.12.0",
                     "build_type": "tar",
                     "minimum_index_compatibility_version": "2.0.0"
                     }
@@ -72,15 +69,26 @@ class TestBenchmarkTestCluster(unittest.TestCase):
             self.benchmark_test_cluster.start()
             mock_requests_get.assert_called_with(url=f"https://{self.benchmark_test_cluster.endpoint}/_cluster/health", auth=mock_http_auth.return_value, verify=False)
         self.assertEqual(self.benchmark_test_cluster.endpoint, 'opensearch-cluster.amazon.com')
+        self.assertEqual(self.benchmark_test_cluster.password, 'myStrongPassword123!')
         self.assertEqual(self.benchmark_test_cluster.endpoint_with_port, 'opensearch-cluster.amazon.com:443')
         self.assertEqual(self.benchmark_test_cluster.port, 443)
 
     def test_endpoint_with_timeout_error(self) -> None:
 
         with patch('subprocess.run') as mock_run:
-            mock_run.side_effect = subprocess.TimeoutExpired("Command", 5)
+            mock_run.side_effect = subprocess.TimeoutExpired("Command", 30)
 
             with self.assertRaises(TimeoutError) as context:
                 self.benchmark_test_cluster.start()
 
             self.assertIn("Time out! Couldn't connect to the cluster", str(context.exception))
+
+    @patch("subprocess.run")
+    def test_endpoint_exception(self, mock_subprocess_run: Mock) -> None:
+        mock_result = MagicMock()
+        mock_result.stdout = ""
+        mock_subprocess_run.return_value = mock_result
+        with self.assertRaises(Exception) as context:
+            self.benchmark_test_cluster.start()
+
+        self.assertIn("Empty response retrieved from the curl command", str(context.exception))

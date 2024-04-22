@@ -69,8 +69,9 @@ class BenchmarkTestSuite:
 
     def execute(self) -> None:
         if self.security:
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'{self.password}\'"'
+            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\',basic_auth_password:\'{self.password}\'"'
         else:
             self.command += ' --client-options="timeout:300"'
-        logging.info(f"Executing {self.command}")
+        log_info = f"Executing {self.command.replace(self.endpoint, len(self.endpoint) * '*').replace(self.args.username, len(self.args.username) * '*')}"
+        logging.info(log_info.replace(self.password, len(self.password) * '*') if self.password else log_info)
         subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)

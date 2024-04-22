@@ -26,7 +26,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     void setUp() {
         helper.registerSharedLibrary(
                 library().name('jenkins')
-                        .defaultVersion('6.4.1')
+                        .defaultVersion('6.4.3')
                         .allowOverride(true)
                         .implicit(true)
                         .targetPath('vars')
@@ -60,6 +60,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('EXCLUDE_TASKS', '')
         binding.setVariable('INCLUDE_TASKS', '')
         binding.setVariable('ADDITIONAL_CONFIG', '')
+        binding.setVariable('JOB_NAME', 'benchmark-test')
         binding.setVariable('BENCHMARK_TEST_CONFIG_LOCATION', 'test_config')
         binding.setVariable('STAGE_NAME', 'test_stage')
         binding.setVariable('TEST_WORKLOAD', 'nyc-taxis')
@@ -105,7 +106,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true                --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true                  --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
     @Test
@@ -126,7 +127,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security               --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security                 --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
         ))
     }
 

@@ -59,6 +59,8 @@ class BenchmarkArgs:
                             help="Load balancer url for benchmark testing")
         parser.add_argument("--distribution-version", dest="distribution_version",
                             help="provide OpenSearch version if using distribution-url param.")
+        parser.add_argument("--username", dest="username", help="Username for the cluster")
+        parser.add_argument("--password", dest="password", help="Password for the cluster")
         parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance test")
         parser.add_argument("--component", dest="component", default="OpenSearch",
                             help="Component name that needs to be performance tested")
@@ -133,6 +135,8 @@ class BenchmarkArgs:
         self.min_distribution = args.min_distribution
         self.component = args.component
         self.insecure = args.insecure
+        self.username = args.username if args.username else "admin"
+        self.password = args.password if args.password else None
         self.manager_node_count = args.manager_node_count if args.manager_node_count else None
         self.data_node_count = args.data_node_count if args.data_node_count else None
         self.client_node_count = args.client_node_count if args.client_node_count else None
