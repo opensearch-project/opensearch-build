@@ -213,3 +213,11 @@ components:
     depends_on:
       - common-utils
       - job-scheduler
+  - name: flow-framework
+    repository: https://github.com/opensearch-project/flow-framework.git
+    ref: main
+    platforms:
+      - linux
+      - windows
+    depends_on:
+      - common-utils

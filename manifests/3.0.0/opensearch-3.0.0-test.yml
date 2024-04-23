@@ -137,3 +137,9 @@ components:
       test-configs:
         - with-security
         - without-security
+
+  - name: flow-framework
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
