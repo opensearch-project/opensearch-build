@@ -80,7 +80,7 @@ pipeline {
                         selectedComponents.each { componentName ->
                             def existingComponent = existingManifest.components.find { it.name == componentName.name }
                             if (existingComponent) {
-                                def newComponentRef = buildManifest.components.find { it.name == componentName.name }?.ref
+                                def newComponentRef = buildManifest.components.find { it.name == componentName.name }?.commit_id
                                 if (newComponentRef) {
                                     existingComponent.ref = newComponentRef
                                 }
