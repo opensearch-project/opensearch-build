@@ -57,7 +57,7 @@ done
 
 # Validate the required parameters to present
 if [ -z "$PLATFORM" ]; then
-    PLATFORM="rockylinux8"
+    PLATFORM="almalinux8"
 fi
 
 if [ -z "$USAGE" ]; then
