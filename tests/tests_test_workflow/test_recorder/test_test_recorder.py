@@ -119,6 +119,36 @@ class TestTestRecorder(unittest.TestCase):
         file_path = test_recorder._update_absolute_file_paths(["A long test case name"], "https://working-directory", "sub-directory")
         self.assertEqual(file_path, ["https://working-directory/sub-directory/A+long+test+case+name"])
 
+    @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
+    @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
+    @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
+    def test_update_absolute_file_paths_escaping_no_subdir(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
+        """
+        https://github.com/opensearch-project/opensearch-build/issues/4656: URL escaping should be
+        robust against an empty subdirectory, and not escape slashes in trailing strings.
+        """
+        test_recorder = TestRecorder(
+            "1234",
+            "integ-test",
+            "working-directory",
+            "https://ci.opensearch.org/ci/dbc/integ-test/"
+        )
+        file_paths = test_recorder._update_absolute_file_paths(
+            [
+                "/cypress-screenshots/plugins/observability-dashboards/6_notebooks.spec.js/Test reporting integration if plugin installed -- View reports homepage from context menu -- after each hook (failed).png",
+                "/cypress-videos/plugins/observability-dashboards/8_after.spec.js.mp4",
+            ],
+            "https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/2.14.0/7603/linux/x64/rpm/test-results/5851/integ-test/observabilityDashboards/with-security",
+            ""
+        )
+        self.assertEqual(
+            file_paths,
+            [
+                r"https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/2.14.0/7603/linux/x64/rpm/test-results/5851/integ-test/observabilityDashboards/with-security/cypress-screenshots/plugins/observability-dashboards/6_notebooks.spec.js/Test+reporting+integration+if+plugin+installed+--+View+reports+homepage+from+context+menu+--+after+each+hook+%28failed%29.png",
+                r"https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/2.14.0/7603/linux/x64/rpm/test-results/5851/integ-test/observabilityDashboards/with-security/cypress-videos/plugins/observability-dashboards/8_after.spec.js.mp4",
+            ]
+        )
+
     @patch("os.walk")
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
