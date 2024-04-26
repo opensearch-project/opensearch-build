@@ -48,7 +48,7 @@ class DistributionRpm(Distribution):
                 '-y',
                 bundle_name,
                 '&&',
-                f'sudo chmod 0666 {self.config_path}',
+                f'sudo chmod 0666 {self.config_path} {os.path.dirname(self.config_path)}/jvm.options',
                 '&&',
                 f'sudo chmod 0755 {os.path.dirname(self.config_path)} {self.log_dir}',
                 '&&',

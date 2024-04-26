@@ -4,7 +4,8 @@
 # The OpenSearch Contributors require contributions made to
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
-
+import logging
+import os.path
 from abc import ABC, abstractmethod
 
 
@@ -69,3 +70,22 @@ class Distribution(ABC):
         Allow distribution to do proper cleanup
         """
         pass
+
+    def configure_jvm_options(self, options: list) -> None:
+        jvm_config_path = os.path.join(os.path.dirname(self.config_path), 'jvm.options')
+        try:
+            with open(jvm_config_path, 'r') as file:
+                file_content = file.read()
+
+            modified_content = file_content
+
+            for jvm_old, jvm_new in options:
+                modified_content = modified_content.replace(jvm_old, jvm_new)
+
+            with open(jvm_config_path, 'w') as file:
+                file.write(modified_content)
+            logging.info("Configured JVM options")
+        except FileNotFoundError:
+            logging.error("File not found.")
+        except Exception as e:
+            logging.error(f"An error occurred:{e}")
