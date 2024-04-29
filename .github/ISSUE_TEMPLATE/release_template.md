@@ -51,6 +51,7 @@ Release blog is ready | :red_circle: |   |
 ### [Preparation](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#preparation)
 
 - [ ] [Release manager](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-manager) assigned.
+- [ ] Update [release page](https://opensearch.org/releases.html) on the website with release manager and release issue details. [Sample PR](https://github.com/opensearch-project/project-website/pull/2642)
 - [ ] Existence of label in each component repo. For more information check the [release-label](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-label) section.
 - [ ] [Increase the build frequency](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#increase-the-build-frequency).
 - [ ] [Release Issue](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-issue).
