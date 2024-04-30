@@ -60,8 +60,6 @@ if [ -d %{buildroot}%{product_dir}/plugins/opensearch-security ]; then
     chmod 0755 %{buildroot}%{product_dir}/plugins/opensearch-security/tools/*
 fi
 # Pre-populate the folders to ensure rpm build success even without all plugins
-mkdir -p %{buildroot}%{config_dir}/opensearch-observability
-mkdir -p %{buildroot}%{config_dir}/opensearch-reports-scheduler
 mkdir -p %{buildroot}%{product_dir}/performance-analyzer-rca
 #rm -rf %{buildroot}%{product_dir}/jdk
 # Symlinks (do not symlink config dir as security demo installer has dependency, if no presense it will switch to rpm/deb mode)
@@ -164,11 +162,7 @@ exit 0
 
 # Config dirs/files
 %dir %{config_dir}
-%{config_dir}/jvm.options.d
-%{config_dir}/opensearch-*
-%config(noreplace) %{config_dir}/%{name}.yml
-%config(noreplace) %{config_dir}/jvm.options
-%config(noreplace) %{config_dir}/log4j2.properties
+%config(noreplace) %{config_dir}/*
 %config(noreplace) %{data_dir}/rca_enabled.conf
 %config(noreplace) %{data_dir}/performance_analyzer_enabled.conf
 
