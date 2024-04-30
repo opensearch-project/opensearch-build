@@ -27,11 +27,11 @@ class Validation(ABC):
         Abstract class for all types of artifact validation
     """
 
-    def __init__(self, args: ValidationArgs) -> None:
+    def __init__(self, args: ValidationArgs, tmp_dir: TemporaryDirectory) -> None:
         self.args = args
         self.base_url_production = "https://artifacts.opensearch.org/releases/bundle/"
         self.base_url_staging = "https://ci.opensearch.org/ci/dbc/distribution-build-"
-        self.tmp_dir = TemporaryDirectory()
+        self.tmp_dir = tmp_dir
 
     def check_url(self, url: str) -> bool:
         if DownloadUtils().download(url, self.tmp_dir) and DownloadUtils().is_url_valid(url):  # type: ignore
@@ -40,9 +40,9 @@ class Validation(ABC):
         else:
             raise Exception(f"Invalid url - {url}")
 
-    def copy_artifact(self, filepath: str, tempdir_path: str) -> bool:
+    def copy_artifact(self, filepath: str, tmp_dir_path: str) -> bool:
         if filepath:
-            shutil.copy2(filepath, tempdir_path)
+            shutil.copy2(filepath, tmp_dir_path)
             return True
         else:
             raise Exception("Provided path for local artifacts does not exist")
@@ -105,6 +105,7 @@ class Validation(ABC):
         return False
 
     def check_http_request(self) -> bool:
+        self.succesful_checks = 0
         self.test_readiness_urls = {
             'https://localhost:9200': 'opensearch cluster API'
         }
@@ -113,7 +114,9 @@ class Validation(ABC):
         for url, name in self.test_readiness_urls.items():
             try:
                 status_code, response_text = ApiTest(url, self.args.version).api_get()
-                if status_code != 200:
+                if status_code == 200:
+                    self.succesful_checks += 1
+                else:
                     logging.error(f'Error connecting to {name} ({url}): status code {status_code}')
                     return False
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout) as e:

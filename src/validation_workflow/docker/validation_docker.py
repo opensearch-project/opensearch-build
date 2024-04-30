@@ -12,6 +12,7 @@ import subprocess
 from subprocess import PIPE
 from typing import Any
 
+from system.temporary_directory import TemporaryDirectory
 from test_workflow.integ_test.utils import get_password
 from validation_workflow.api_test_cases import ApiTestCases
 from validation_workflow.docker.inspect_docker_image import InspectDockerImage
@@ -21,8 +22,8 @@ from validation_workflow.validation_args import ValidationArgs
 
 class ValidateDocker(Validation):
 
-    def __init__(self, args: ValidationArgs) -> None:
-        super().__init__(args)
+    def __init__(self, args: ValidationArgs, tmp_dir: TemporaryDirectory) -> None:
+        super().__init__(args, tmp_dir)
 
     def download_artifacts(self) -> bool:
         try:

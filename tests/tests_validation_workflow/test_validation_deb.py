@@ -14,18 +14,19 @@ from validation_workflow.deb.validation_deb import ValidateDeb
 class TestValidateDeb(unittest.TestCase):
     def setUp(self) -> None:
         self.mock_args = MagicMock()
+        self.tmp_dir = MagicMock()
         self.mock_args.version = "2.3.0"
         self.mock_args.arch = "x64"
         self.mock_args.projects = ["opensearch"]
         self.mock_args.file_path = {"opensearch": "/src/opensearch/opensearch-1.3.12.staging.deb"}
         self.mock_args.platform = "linux"
-        self.call_methods = ValidateDeb(self.mock_args)
+        self.call_methods = ValidateDeb(self.mock_args, self.tmp_dir)
 
     @patch("validation_workflow.deb.validation_deb.execute")
     @patch('os.path.basename')
     @patch("validation_workflow.deb.validation_deb.get_password")
     def test_installation(self, mock_get_pwd: Mock, mock_basename: Mock, mock_system: Mock) -> None:
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
         result = validate_deb.installation()
@@ -35,7 +36,7 @@ class TestValidateDeb(unittest.TestCase):
     @patch("validation_workflow.deb.validation_deb.execute")
     @patch("validation_workflow.deb.validation_deb.get_password")
     def test_installation_exception_os(self, mock_get_pwd: Mock, mock_execute: Mock) -> None:
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         mock_execute.side_effect = Exception("any exception occurred")
         with self.assertRaises(Exception) as context:
             validate_deb.installation()
@@ -48,7 +49,7 @@ class TestValidateDeb(unittest.TestCase):
     def test_start_cluster(self, mock_validation_args: Mock, mock_execute: Mock) -> None:
         self.mock_args.projects = ["opensearch", "opensearch-dashboards"]
 
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         result = validate_deb.start_cluster()
         self.assertTrue(result)
         mock_execute.assert_has_calls(
@@ -64,7 +65,7 @@ class TestValidateDeb(unittest.TestCase):
 
     @patch("validation_workflow.deb.validation_deb.execute")
     def test_start_cluster_exception_os(self, mock_execute: MagicMock) -> None:
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         mock_execute.side_effect = Exception("any exception occurred")
         with self.assertRaises(Exception) as context:
             validate_deb.start_cluster()
@@ -78,7 +79,7 @@ class TestValidateDeb(unittest.TestCase):
         mock_check_cluster.return_value = True
         mock_test_apis_instance.test_apis.return_value = (True, 3)
 
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
 
         result = validate_deb.validation()
         self.assertTrue(result)
@@ -92,10 +93,13 @@ class TestValidateDeb(unittest.TestCase):
     @patch('validation_workflow.validation.Validation.check_for_security_plugin')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
     @patch('validation_workflow.tar.validation_tar.ValidationArgs')
-    def test_validation_with_allow_http(self, mock_validation_args: Mock, mock_check_cluster: Mock, mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock) -> None:
+    @patch('system.temporary_directory.TemporaryDirectory')
+    def test_validation_with_allow_http(self, mock_temporary_directory: Mock, mock_validation_args: Mock, mock_check_cluster: Mock,
+                                        mock_security: Mock, mock_system: Mock, mock_basename: Mock, mock_test_apis: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
         mock_validation_args.return_value.allow_http = True
-        validate_deb = ValidateDeb(mock_validation_args.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_deb = ValidateDeb(mock_validation_args.return_value, mock_temporary_directory.return_value)
         mock_check_cluster.return_value = True
         mock_basename.side_effect = lambda path: "mocked_filename"
         mock_system.side_effect = lambda *args, **kwargs: (0, "stdout_output", "stderr_output")
@@ -109,10 +113,12 @@ class TestValidateDeb(unittest.TestCase):
         mock_security.assert_called_once()
 
     @patch('validation_workflow.deb.validation_deb.ValidationArgs')
+    @patch('system.temporary_directory.TemporaryDirectory')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_cluster_not_ready(self, mock_check_cluster: Mock, mock_validation_args: Mock) -> None:
+    def test_cluster_not_ready(self, mock_check_cluster: Mock, mock_temporary_directory: Mock, mock_validation_args: Mock) -> None:
         mock_validation_args.return_value.version = '2.3.0'
-        validate_deb = ValidateDeb(mock_validation_args.return_value)
+        mock_temporary_directory.return_value.path = "/tmp/trytytyuit/"
+        validate_deb = ValidateDeb(mock_validation_args.return_value, mock_temporary_directory.return_value)
         mock_check_cluster.return_value = False
 
         with self.assertRaises(Exception) as context:
@@ -121,12 +127,15 @@ class TestValidateDeb(unittest.TestCase):
         mock_check_cluster.assert_called_once()
 
     @patch("validation_workflow.deb.validation_deb.ApiTestCases")
+    @patch('validation_workflow.deb.validation_deb.ValidateDeb.cleanup')
     @patch('validation_workflow.validation.Validation.check_cluster_readiness')
-    def test_failed_testcases(self, mock_check_cluster: Mock, mock_test_apis: Mock) -> None:
+    def test_failed_testcases(self, mock_check_cluster: Mock, mock_cleanup: Mock, mock_test_apis: Mock) -> None:
         mock_test_apis_instance = mock_test_apis.return_value
         mock_check_cluster.return_value = True
+        mock_cleanup.return_value = True
         mock_test_apis_instance.test_apis.return_value = (False, 2)
-        validate_deb = ValidateDeb(self.mock_args)
+
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
 
         with self.assertRaises(Exception) as context:
             validate_deb.validation()
@@ -139,7 +148,7 @@ class TestValidateDeb(unittest.TestCase):
     def test_cleanup(self, mock_execute: Mock) -> None:
         self.mock_args.projects = ["opensearch", "opensearch-dashboards"]
 
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         result = validate_deb.cleanup()
         self.assertTrue(result)
         mock_execute.assert_has_calls(
@@ -150,7 +159,7 @@ class TestValidateDeb(unittest.TestCase):
     def test_cleanup_exception(self, mock_execute: Mock) -> None:
         self.mock_args.projects = ["opensearch", "opensearch-dashboards"]
         mock_execute.side_effect = Exception("an exception occurred")
-        validate_deb = ValidateDeb(self.mock_args)
+        validate_deb = ValidateDeb(self.mock_args, self.tmp_dir)
         with self.assertRaises(Exception) as context:
             validate_deb.cleanup()
 
