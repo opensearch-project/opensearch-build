@@ -90,9 +90,9 @@ RUN pip3 install cmake==3.23.3
 # Upgrade gcc
 # The setup part is partially based on Austin Dewey's article:
 # https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/
-RUN dnf -y install gcc-toolset-12-gcc gcc-toolset-12-gcc-c++ && dnf clean all && \
-    echo "source /opt/rh/gcc-toolset-12/enable" > /etc/profile.d/gcc-toolset-12.sh
-COPY --chown=0:0 config/gcc-toolset-12-setup /usr/local/bin/gcc_setup
+RUN dnf -y install gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ && dnf clean all && \
+    echo "source /opt/rh/gcc-toolset-11/enable" > /etc/profile.d/gcc-toolset-11.sh
+COPY --chown=0:0 config/gcc-toolset-11-setup /usr/local/bin/gcc_setup
 ENV BASH_ENV="/usr/local/bin/gcc_setup"
 ENV ENV="/usr/local/bin/gcc_setup"
 ENV PROMPT_COMMAND=". /usr/local/bin/gcc_setup"
