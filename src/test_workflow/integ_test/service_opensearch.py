@@ -44,6 +44,7 @@ class ServiceOpenSearch(Service):
 
     def start(self) -> None:
         self.dist.install(self.download())
+        self.dist.configure_jvm_options([("-Xms1g", "-Xms2g"), ("-Xmx1g", "-Xmx2g")])
 
         self.opensearch_yml_path = self.dist.config_path
         self.security_plugin_dir = os.path.join(self.install_dir, "plugins", "opensearch-security")
