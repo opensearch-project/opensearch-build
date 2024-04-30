@@ -27,12 +27,7 @@ class TestTestRecorder(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
     def test_get_file_path_url(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
-        test_recorder_with_url = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory",
-            "https://ci.opensearch.org/ci/dbc/integ-test/"
-        )
+        test_recorder_with_url = TestRecorder("1234", "integ-test", "working-directory", "https://ci.opensearch.org/ci/dbc/integ-test/")
         file_path_with_url = test_recorder_with_url._get_file_path("https://ci.opensearch.org/ci/dbc/integ-test/", "sql", "with-security")
         self.assertEqual(file_path_with_url, "https://ci.opensearch.org/ci/dbc/integ-test/test-results/1234/integ-test/sql/with-security")
 
@@ -40,11 +35,7 @@ class TestTestRecorder(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
     def test_get_file_path_local(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
-        test_recorder_no_url = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory"
-        )
+        test_recorder_no_url = TestRecorder("1234", "integ-test", "working-directory")
         file_path_no_url = test_recorder_no_url._get_file_path("", "sql", "with-security")
         self.assertEqual(file_path_no_url, os.path.realpath(os.path.join("working-directory", "1234", "integ-test", "sql", "with-security")))
 
@@ -53,12 +44,10 @@ class TestTestRecorder(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
-    def test_generate_yml(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, mock_test_recorder: Mock, mock_open: Mock, *mock: Any) -> None:
-        test_recorder = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory"
-        )
+    def test_generate_yml(
+        self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, mock_test_recorder: Mock, mock_open: Mock, *mock: Any
+    ) -> None:
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory")
 
         mock_test_result_data = MagicMock()
 
@@ -68,7 +57,7 @@ class TestTestRecorder(unittest.TestCase):
 
         mock_file_path = MagicMock()
         mock_file_path.return_value = "working-directory"
-        test_recorder._get_file_path = mock_file_path   # type: ignore
+        test_recorder._get_file_path = mock_file_path  # type: ignore
 
         mock_list_files = MagicMock()
         mock_list_files.return_value = ["file1", "file2"]
@@ -76,11 +65,11 @@ class TestTestRecorder(unittest.TestCase):
 
         mock_update_path = MagicMock()
         mock_update_path.return_value = ["working-directory/file1", "working-directory/file2"]
-        test_recorder._update_absolute_file_paths = mock_update_path    # type: ignore
+        test_recorder._update_absolute_file_paths = mock_update_path  # type: ignore
 
         component_yml = test_recorder._generate_yml(mock_test_result_data, "working-directory")
 
-        mock_open.assert_has_calls([call(os.path.join("working-directory", "sql.yml"), 'w', encoding='utf-8')])
+        mock_open.assert_has_calls([call(os.path.join("working-directory", "sql.yml"), "w", encoding="utf-8")])
         mock_file_path.assert_called_once_with(None, "sql", "with-security")
         mock_list_files.assert_called()
         mock_update_path.assert_called()
@@ -90,64 +79,82 @@ class TestTestRecorder(unittest.TestCase):
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
     def test_update_absolute_file_paths(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
-        test_recorder = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory",
-            "https://ci.opensearch.org/ci/dbc/integ-test/"
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory", "https://ci.opensearch.org/ci/dbc/integ-test/")
+        file_path = test_recorder._update_absolute_file_paths(["file1", "file2 with spaces"], "working-directory", "sub-directory")
+        self.assertEqual(
+            file_path, [os.path.join("working-directory", "sub-directory", "file1"), os.path.join("working-directory", "sub-directory", "file2 with spaces")]
         )
-        file_path = test_recorder._update_absolute_file_paths(
-            ["file1", "file2 with spaces"],
-            "working-directory",
-            "sub-directory"
-        )
-        self.assertEqual(file_path, [
-            os.path.join("working-directory", "sub-directory", "file1"),
-            os.path.join("working-directory", "sub-directory", "file2 with spaces")
-        ])
 
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
-    def test_update_absolute_file_paths_escaping(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any) -> None:
-        test_recorder = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory",
-            "https://ci.opensearch.org/ci/dbc/integ-test/"
-        )
+    def test_update_absolute_file_paths_escaping(
+        self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any
+    ) -> None:
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory", "https://ci.opensearch.org/ci/dbc/integ-test/")
         file_path = test_recorder._update_absolute_file_paths(["A long test case name"], "https://working-directory", "sub-directory")
         self.assertEqual(file_path, ["https://working-directory/sub-directory/A+long+test+case+name"])
+
+    @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
+    @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
+    @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
+    def test_update_absolute_file_paths_escaping_no_relpath(
+        self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, *mock: Any
+    ) -> None:
+        """
+        https://github.com/opensearch-project/opensearch-build/issues/4656 - URL escaping should be
+        robust against an empty relative path, and not escape slashes in filenames.
+        """
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory", "https://ci.opensearch.org/ci/dbc/integ-test/")
+
+        test_link = (
+            "https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/2.14.0/7603/"
+            + "linux/x64/rpm/test-results/5851/integ-test/observabilityDashboards/with-security"
+        )
+
+        file_paths = test_recorder._update_absolute_file_paths(
+            [
+                "/cypress-screenshots/plugins/observability-dashboards/6_notebooks.spec.js/Test "
+                + "reporting integration if plugin installed -- View reports homepage from context "
+                + "menu -- after each hook (failed).png",
+                "/cypress-videos/plugins/observability-dashboards/8_after.spec.js.mp4",
+            ],
+            test_link,
+            "",
+        )
+        self.assertEqual(
+            file_paths,
+            [
+                test_link
+                + "/cypress-screenshots/plugins/observability-dashboards/6_notebooks.spec.js/Test+"
+                + "reporting+integration+if+plugin+installed+--+View+reports+homepage+from+context+"
+                + "menu+--+after+each+hook+%28failed%29.png",
+                test_link + "/cypress-videos/plugins/observability-dashboards/8_after.spec.js.mp4",
+            ],
+        )
 
     @patch("os.walk")
     @patch("test_workflow.test_recorder.test_recorder.TestResultsLogs")
     @patch("test_workflow.test_recorder.test_recorder.RemoteClusterLogs")
     @patch("test_workflow.test_recorder.test_recorder.LocalClusterLogs")
-    def test_get_list_files(self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, mock_os_walk: Mock, *mock: Any) -> None:
-        test_recorder = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory",
-            "https://ci.opensearch.org/ci/dbc/integ-test/"
-        )
+    def test_get_list_files(
+        self, mock_local_cluster_logs: Mock, mock_remote_cluster_logs: Mock, mock_test_results_logs: Mock, mock_os_walk: Mock, *mock: Any
+    ) -> None:
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory", "https://ci.opensearch.org/ci/dbc/integ-test/")
         mock_os_walk.return_value = [("mock_dir", (), ("file1", "file2"))]
         list_files = test_recorder._get_list_files("mock_dir")
         self.assertEqual(list_files, ["file1", "file2"])
 
     @patch("builtins.open", new_callable=mock_open)
     def test_generate_std_files(self, mock_open: Mock, *mock: Any) -> None:
-        test_recorder = TestRecorder(
-            "1234",
-            "integ-test",
-            "working-directory"
-        )
+        test_recorder = TestRecorder("1234", "integ-test", "working-directory")
         test_recorder._generate_std_files("mock_stdout", "mock_stderr", "mock_path")
 
         mock_file = MagicMock()
         mock_open.return_value = mock_file
 
-        mock_open.assert_has_calls([call(os.path.join("mock_path", "stdout.txt"), 'w', encoding='utf-8')])
-        mock_open.assert_has_calls([call(os.path.join("mock_path", "stderr.txt"), 'w', encoding='utf-8')])
+        mock_open.assert_has_calls([call(os.path.join("mock_path", "stdout.txt"), "w", encoding="utf-8")])
+        mock_open.assert_has_calls([call(os.path.join("mock_path", "stderr.txt"), "w", encoding="utf-8")])
 
         mock_open.assert_has_calls([call().write("mock_stdout")])
         mock_open.assert_has_calls([call().write("mock_stderr")])
@@ -201,10 +208,7 @@ class TestTestResultsLogs(unittest.TestCase):
         source_file_1 = "stdout.txt"
         source_file_2 = "stderr.txt"
 
-        mock_test_result_data.log_files = {
-            source_file_1,
-            source_file_2
-        }
+        mock_test_result_data.log_files = {source_file_1, source_file_2}
         mock_test_result_data.component_name = "sql"
         mock_test_result_data.component_test_config = "with-security"
 

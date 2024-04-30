@@ -75,7 +75,12 @@ class TestRecorder:
 
     def _update_absolute_file_paths(self, files: list, base_path: str, relative_path: str) -> list:
         if base_path.startswith("https://"):
-            return [f"{base_path}/{relative_path}/{urllib.parse.quote_plus(file)}" for file in files]
+            # To avoid double slashes, defensively cut surrounding slashes before concatenating
+            base_path = f"{base_path.strip('/')}/{relative_path.strip('/')}"
+            return [
+                f"{base_path.strip('/')}/{urllib.parse.quote_plus(file, safe='/').strip('/')}"
+                for file in files
+            ]
         else:
             return [os.path.join(base_path, relative_path, file) for file in files]
 
