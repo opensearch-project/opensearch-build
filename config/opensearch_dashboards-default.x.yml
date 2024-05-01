@@ -204,6 +204,10 @@
 # Set the value of this setting to false to disable the query assistant
 # observability.query_assist.enabled: false
 
+# 2.14 Enable Ui Metric Collectors in Usage Collector
+# Set the value of this setting to true to enable UI Metric collections
+# usageCollection.uiMetric.enabled: false
+
 opensearch.hosts: [https://localhost:9200]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
