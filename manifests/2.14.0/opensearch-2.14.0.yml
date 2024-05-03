@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: d160ecb4be797dfd960880916b72b1c66be729f8
+    ref: 15df1e8bebe65c037a88a80aa3b3ad262e141a84
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 7531f1e853db28ca9deead97be053d58da7a7a9c
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 619f10d837bbf1e74afca926779a9dabd50b51bb
+    ref: 487ff81f29f3738b8ccaec92bc88fe8303a43576
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 32c9ef8fc109482221f6e9df7ecbb16a64e3f588
+    ref: 29f443fc81613d148292e1e6ca2dbde39537d454
     platforms:
       - linux
       - windows
@@ -105,7 +105,7 @@ components:
       - job-scheduler
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: 9fdebfc442479d6d9064701aa10d6b5f9ed819ca
+    ref: 7c7465c4318b06a00b56b11c026feab8a0496027
     platforms:
       - linux
       - windows
@@ -146,7 +146,7 @@ components:
       - common-utils
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 2b2d99cd88d16e6ed1bae762d5d9c47d54d28ff9
+    ref: fa05d71719e01ae5376d570f6db7f08d3886497d
     platforms:
       - linux
       - windows
@@ -160,13 +160,13 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 5f1e3927560af8b608241c7df852ccc4d1bf5b36
+    ref: c4b1dce7bb2addd6982e2c440af13cd829691274
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 8361900765f93f2672f3547edb73f2e281c7dab2
+    ref: d94bc9461414d19a05a00c5eb85e2200f916faf1
     platforms:
       - linux
       - windows
