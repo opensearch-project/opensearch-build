@@ -47,7 +47,7 @@ pipeline {
         )
         string(
             name: 'COMPONENTS',
-            description: 'The selected components from the manifest to update the commit ID. Use comma seperate values, example OpenSearch,ml-commons,cross-cluster-replication',
+            description: 'Commit ID update for the selected components from the manifest. Use comma-separated values, for example: OpenSearch,ml-commons,cross-cluster-replication.',
             trim: true
         )
     }
