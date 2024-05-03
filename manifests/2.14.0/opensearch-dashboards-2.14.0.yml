@@ -9,10 +9,10 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 5ea9eac7b8a098b8196618bf3f124217b0ec6967
+    ref: 21f2d9f76436a52408a633c811f8ad56e10a193b
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 972c2206c5143b37c21c4cae45a72e95b879f91f
+    ref: 1f691b226329b6b6a7c5a04a9abec0704b06e8c9
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 441168efbf84de020a9bead333bff2e39c2e9d5c
@@ -36,7 +36,7 @@ components:
     ref: f53875b3fc4feac8a01686b41a4c6a749007d68a
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: a3c5d2b6347919ff82fcc164bb02abad5462f10d
+    ref: d78e146e1463dd5397202521a22e87163f32b3d3
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
     ref: 0ca301f8630f42f4eec53b15e0a8eda9fae91203
