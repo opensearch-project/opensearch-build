@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.3.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.4.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -20,10 +20,10 @@ pipeline {
     environment {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
-        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host'
-        IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-build-v4' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8 already
+        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
+        IMAGE_LINUX_RPM = 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1' // required for rpm to create digest sha256 correctly with rpm 4.12+, still define here for 1.x version as 2.x+ moved to rockylinux8, later almalinux8, already
         IMAGE_LINUX_DEB = 'opensearchstaging/ci-runner:ci-runner-ubuntu2004-opensearch-build-v2' // required for deb to create pkg using debmake/debuild/debhelper
-        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1' // required for windows to build zip distribution
+        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
     parameters {
         string(

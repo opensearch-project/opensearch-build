@@ -10,14 +10,14 @@ body:
         Thanks for taking the time to submit on-boarding request!
   - type: textarea
     attributes:
-      description: 'Provide the name link of your plugin'
+      description: 'Provide the name of your plugin.'
       label: 'What is the name of your plugin?'
     id: plugin-name
     validations:
       required: true
   - type: textarea
     attributes:
-      description: 'Provide the GitHub link for your repository'
+      description: 'Provide the GitHub link for your repository.'
       label: 'What is the link to your GitHub repo?'
     id: Github-link
     validations:
@@ -31,6 +31,13 @@ body:
       required: true
   - type: textarea
     attributes:
+      description: 'If so, provide the link to the associated documentation PR. For information on contributing documentation, see [Contributing.md](https://github.com/opensearch-project/documentation-website/blob/main/CONTRIBUTING.md).'
+      label: 'Does the plugin require documentation?'
+    id: documentation
+    validations:
+      required: true
+  - type: textarea
+    attributes:
       description: 'Is this OpenSearch, OpenSearch-dashboards plugin?'
       label: 'What type of the plugin are we on-boarding?'
     id: Type
@@ -38,8 +45,8 @@ body:
       required: true
   - type: textarea
     attributes:
-      description: 'Did you go through the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#plugin-onboarding)'
-      label: 'Did you read the on-boarding document'
+      description: 'See the [on-boarding document](https://github.com/opensearch-project/opensearch-build/blob/main/ONBOARDING.md#plugin-onboarding).'
+      label: 'Did you read the on-boarding document?'
     id: document
     validations:
       required: true

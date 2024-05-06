@@ -36,7 +36,7 @@ pipeline {
             agent {
                 docker {
                     label AGENT_LABEL
-                    image 'opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3'
+                    image 'opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1'
                     args '--entrypoint=/usr/lib/systemd/systemd -u root --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host'
                     registryUrl 'https://public.ecr.aws/'
                     alwaysPull true

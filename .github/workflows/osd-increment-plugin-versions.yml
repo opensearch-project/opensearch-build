@@ -45,8 +45,9 @@ jobs:
           - '1.3'
           - 2.x
           - main
-          - '2.12'
           - '2.13'
+          - '2.14'
+          - '2.15'
     steps:
       - name: Check out OpenSearch Dashboards repo
         uses: actions/checkout@v3
@@ -92,7 +93,7 @@ jobs:
               cd ${{ matrix.entry.repo }}/
           # tmp `elif` solution for opensearch-dashboards-functional-test (ref: https://github.com/opensearch-project/OpenSearch-Dashboards/issues/1801#issuecomment-1545947935)
           elif [ ${{ matrix.entry.repo }} == "opensearch-dashboards-functional-test" ]; then
-                jq --arg DASHBOARD_VERSION "${{ env.DASHBOARD_VERSION }}" '.version = ${{ env.DASHBOARD_VERSION }}' package.json > package-tmp.json
+                jq --arg DASHBOARD_VERSION "${{ env.DASHBOARD_VERSION }}" '.version = $DASHBOARD_VERSION' package.json > package-tmp.json
                 mv package-tmp.json package.json
                 OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
                 echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
@@ -143,8 +144,9 @@ jobs:
             }
             console.log(labelFound);
             return labelFound
-      - name: Create Pull Request
-        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' }}
+      - name: Create Pull Request for plugins
+        if: ${{ matrix.entry.repo != 'OpenSearch-Dashboards' && matrix.entry.repo
+          != 'opensearch-dashboards-functional-test' }}
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
@@ -166,7 +168,29 @@ jobs:
           add-paths: |
             opensearch_dashboards.json
             package.json
+      - name: Create Pull Request for opensearch-dashboards-functional-test
+        if: ${{ matrix.entry.repo == 'opensearch-dashboards-functional-test' }}
+        id: cprft
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.github_app_token.outputs.token }}
+          committer: opensearch-ci-bot <opensearch-infra@amazon.com>
+          author: opensearch-ci-bot <opensearch-infra@amazon.com>
+          commit-message: |
+            Increment version to ${{ env.OSD_PLUGIN_VERSION }}
+
+            Signed-off-by: opensearch-ci-bot <opensearch-infra@amazon.com>
+          delete-branch: true
+          branch: create-pull-request/${{ env.OSD_PLUGIN_VERSION }}
+          title: '[AUTO] Increment version to ${{ env.OSD_PLUGIN_VERSION }}'
+          labels: |
+            v${{ env.DASHBOARD_VERSION }}
+          body: |
+            - Incremented version to **${{ env.OSD_PLUGIN_VERSION }}**.
+          path: 'OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}'
+          add-paths: |
+            package.json
       - name: Check outputs
         run: |-
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Pull Request Number - ${{ steps.cprft.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cprft.outputs.pull-request-url }}"

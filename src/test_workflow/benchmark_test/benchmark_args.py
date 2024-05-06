@@ -18,6 +18,7 @@ from test_workflow.json_args import JsonArgs
 # Contains the arguments required to run a perf test.
 class BenchmarkArgs:
     bundle_manifest: IO
+    cluster_endpoint: str
     distribution_url: str
     distribution_version: str
     stack_suffix: str
@@ -54,12 +55,16 @@ class BenchmarkArgs:
         parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
         parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
         parser.add_argument("--distribution-url", dest="distribution_url", help="Link to a downloadable OpenSearch tarball.")
+        parser.add_argument("--cluster-endpoint", dest="cluster_endpoint",
+                            help="Load balancer url for benchmark testing")
         parser.add_argument("--distribution-version", dest="distribution_version",
                             help="provide OpenSearch version if using distribution-url param.")
+        parser.add_argument("--username", dest="username", help="Username for the cluster")
+        parser.add_argument("--password", dest="password", help="Password for the cluster")
         parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance test")
         parser.add_argument("--component", dest="component", default="OpenSearch",
                             help="Component name that needs to be performance tested")
-        parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
+        parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
         parser.add_argument("--without-security", dest="insecure", action="store_true",
                             help="Force the security of the cluster to be disabled.", default=False)
         parser.add_argument("--keep", dest="keep", action="store_true",
@@ -121,6 +126,7 @@ class BenchmarkArgs:
         args = parser.parse_args()
         self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
         self.distribution_url = args.distribution_url if args.distribution_url else None
+        self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
         self.distribution_version = args.distribution_version if args.distribution_version else None
         self.stack_suffix = args.suffix if args.suffix else None
         self.config = args.config
@@ -129,6 +135,8 @@ class BenchmarkArgs:
         self.min_distribution = args.min_distribution
         self.component = args.component
         self.insecure = args.insecure
+        self.username = args.username if args.username else "admin"
+        self.password = args.password if args.password else None
         self.manager_node_count = args.manager_node_count if args.manager_node_count else None
         self.data_node_count = args.data_node_count if args.data_node_count else None
         self.client_node_count = args.client_node_count if args.client_node_count else None
@@ -152,7 +160,7 @@ class BenchmarkArgs:
         self.telemetry_params = args.telemetry_params if args.telemetry_params else None
         self.logging_level = args.logging_level
 
-        if self.bundle_manifest is None and self.distribution_url is None:
-            raise Exception('Please provide either --bundle-manifest or --distribution-url to run the performance test.')
+        if self.bundle_manifest is None and self.distribution_url is None and self.cluster_endpoint is None:
+            raise Exception('Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.')
         elif self.distribution_url and self.distribution_version is None:
             raise Exception("--distribution-version is required parameter while using --distribution-url param.")

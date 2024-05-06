@@ -55,8 +55,8 @@ The test-report manifest includes the following attributes:
   - Find the bundle manifest under the DistributionManifest key. It contains information about the bundle artifacts used for testing. 
 ### _**How Do I See the CI Logs of This Test Run?**_
   - Access our Jenkins job: 
-    - For `OpenSearch`: `https://build.ci.opensearch.org/job/<__TestType__>/<__TestID__>/`. e.g. https://build.ci.opensearch.org/job/integ-test/1234/
-    - For `OpenSearch Dashboards`: `https://build.ci.opensearch.org/job/<__TestType__>-opensearch-dashboards/<__TestID__>/`. e.g. https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/1234/
+    - For `OpenSearch`: `https://build.ci.opensearch.org/job/<__TestType__>/<__TestID__>/`. e.g. `https://build.ci.opensearch.org/job/integ-test/<__TestID__>/`
+    - For `OpenSearch Dashboards`: `https://build.ci.opensearch.org/job/<__TestType__>-opensearch-dashboards/<__TestID__>/`. e.g. `https://build.ci.opensearch.org/job/integ-test-opensearch-dashboards/<__TestID__>/`
 ### _**Where Can I See Detailed Testing Logs or Service Logs (e.g., Local Cluster Logs, Testing Videos)?**_
   - You can find details in the component YAML file under `components/configs/yml` in this test-report manifest. The component YAML file includes local cluster logs, stdout & stderr files, specific testing logs, and Cypress videos.  
 ### _**Why Are Some Component Testing Results Missing or Unavailable?**_

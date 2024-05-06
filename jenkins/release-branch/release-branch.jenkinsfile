@@ -1,0 +1,106 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@6.3.3', retriever: modernSCM([
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    options {
+            timeout(time: 1, unit: 'HOURS')
+    }
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
+    parameters {
+        string(
+            name: 'MANIFEST_FILE',
+            description: "Provide either Build Manifest url's or path to manifest files separated by space for branch creation.",
+            trim: true
+        )
+        string(
+            name: 'SOURCE_BRANCH',
+            description: 'Target branch is created from this source branch.',
+            trim: true
+        )
+        string(
+            name: 'TARGET_BRANCH',
+            description: 'Provide name of the target branch that needs to be created.',
+            trim: true
+        )
+    }
+    environment {
+        MANIFEST_OBJ = null
+        BUILD_MANIFEST = 'build-manifest.yml'
+    }
+
+    stages {
+        stage('Create Release Branch') {
+            steps {
+                script {
+                    if (!(MANIFEST_FILE && SOURCE_BRANCH && TARGET_BRANCH)) {
+                        error('Required parameters are missing. Please provide the mandatory arguments MANIFEST_FILE, SOURCE_BRANCH and TARGET_BRANCH')
+                    }
+
+                    def manifestList = MANIFEST_FILE.trim().split(' ') as List
+
+                    withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        for (manifest in manifestList) {
+                            if (manifest.contains("builds")) {
+
+                                downloadBuildManifest(
+                                    url: manifest,
+                                    path: BUILD_MANIFEST
+                                )
+                                MANIFEST_OBJ = lib.jenkins.BuildManifest.new(readYaml(file: BUILD_MANIFEST))
+                            }
+                            else {
+                                MANIFEST_OBJ = lib.jenkins.InputManifest.new(readYaml(file: "manifests/${manifest}"))
+                            }
+                            componentNames = MANIFEST_OBJ.getNames()
+
+                            for (component in componentNames) {
+                                repoUrl = MANIFEST_OBJ.getRepo(component)
+                                def branchExists = sh(
+                                        script: "git ls-remote ${repoUrl} ${TARGET_BRANCH}",
+                                        returnStdout: true
+                                )
+                                if (branchExists == "") {
+                                    def push_url = "https://$GITHUB_TOKEN@" + repoUrl.minus('https://')
+                                    dir(component) {
+                                        checkout([$class: 'GitSCM', branches: [[name: SOURCE_BRANCH]], userRemoteConfigs: [[url: repoUrl]]])
+
+                                        sh "git checkout -b $TARGET_BRANCH"
+                                        sh "git push $push_url $TARGET_BRANCH"
+                                    }
+                                }
+                                else {
+                                    echo "Branch already exists, skipping branch creation for the repo $repoUrl"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post() {
+        always {
+            script {
+                postCleanup()
+            }
+        }
+    }
+}

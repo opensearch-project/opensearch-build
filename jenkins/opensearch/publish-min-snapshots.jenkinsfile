@@ -21,8 +21,8 @@ pipeline {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
         AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
-        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host'
-        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1' // required for windows to build zip distribution
+        AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
+        IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
     parameters {
         string(

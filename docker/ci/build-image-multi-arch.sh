@@ -22,14 +22,15 @@ DIR=""
 
 function usage() {
     echo ""
-    echo "This script is used to build the Docker image with multi architecture (x64 + arm64). It prepares the files required by the Dockerfile in a temporary directory, then builds and tags the Docker image."
+    echo "This script is used to build the Docker image with multi architecture. It prepares the files required by the Dockerfile in a temporary directory, then builds and tags the Docker image."
     echo "--------------------------------------------------------------------------"
     echo "Usage: $0 [args]"
     echo ""
     echo "Required arguments:"
     echo -e "-r REPO_NAME\tSpecify the image repo name such as 'ci-runner'"
     echo -e "-v TAG_NAME\tSpecify the image tag name such as 'centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211019'"
-    echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. dockerfile/opensearch.al2.dockerfile."
+    echo -e "-f DOCKERFILE\tSpecify the dockerfile full path, e.g. 'dockerfile/opensearch.al2.dockerfile'"
+    echo -e "-a ARCHITECTURE\tSpecify the architecture of the image, default to 'linux/amd64,linux/arm64', all options: 'linux/amd64,linux/arm64,linux/ppc64le'"
     echo ""
     echo "Optional arguments:"
     echo -e "-h\t\tPrint this message."
@@ -47,7 +48,7 @@ function cleanup_all() {
     cleanup_docker_buildx
     File_Delete $DIR
 }
-while getopts ":hr:v:f:" arg; do
+while getopts ":hr:v:f:a:" arg; do
     case $arg in
         h)
             usage
@@ -61,6 +62,9 @@ while getopts ":hr:v:f:" arg; do
             ;;
         f)
             DOCKERFILE=$OPTARG
+            ;;
+        a)
+            ARCHITECTURE=$OPTARG
             ;;
         :)
             echo "-${OPTARG} requires an argument"
@@ -90,6 +94,11 @@ then
     exit 1
 fi
 
+# Architecture switch
+if [ -z "$ARCHITECTURE" ]; then
+    ARCHITECTURE="linux/amd64,linux/arm64"
+fi
+
 # Prepare docker buildx
 trap cleanup_all TERM INT EXIT
 DIR=`Temp_Folder_Create`
@@ -107,5 +116,5 @@ docker buildx ls | grep $BUILDER_NAME
 docker ps | grep $BUILDER_NAME
 
 # Build multi-arch images
-docker buildx build --platform linux/amd64,linux/arm64,linux/ppc64le --build-arg VERSION=${TAG_NAME} --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=${NOTES} -t "opensearchstaging/${REPO_NAME}:${TAG_NAME}" -f "${DOCKERFILE}" --push .
+docker buildx build --platform "$ARCHITECTURE" --build-arg VERSION=${TAG_NAME} --build-arg BUILD_DATE=`date -u +%Y-%m-%dT%H:%M:%SZ` --build-arg NOTES=${NOTES} -t "opensearchstaging/${REPO_NAME}:${TAG_NAME}" -f "${DOCKERFILE}" --push .
 

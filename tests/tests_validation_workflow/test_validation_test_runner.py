@@ -14,6 +14,7 @@ from validation_workflow.validation_test_runner import ValidationTestRunner  # t
 class TestValidationTestRunner(unittest.TestCase):
     def test_docker(self) -> None:
         mock_args = MagicMock()
+        mock_tmp_dir = MagicMock()
         mock_dist = "docker"
         mock_docker_runner_object = MagicMock()
         mock_docker_runner = MagicMock()
@@ -21,18 +22,23 @@ class TestValidationTestRunner(unittest.TestCase):
         mock_tar_runner = MagicMock()
         mock_rpm_runner = MagicMock()
         mock_yum_runner = MagicMock()
+        mock_deb_runner = MagicMock()
+        mock_zip_runner = MagicMock()
         with patch.dict("validation_workflow.validation_test_runner.ValidationTestRunner.RUNNERS", {
             "docker": mock_docker_runner,
             "tar": mock_tar_runner,
             "rpm": mock_rpm_runner,
             "yum": mock_yum_runner,
+            "deb": mock_deb_runner,
+            "zip": mock_zip_runner,
         }):
-            runner = ValidationTestRunner.dispatch(mock_args, mock_dist)
+            runner = ValidationTestRunner.dispatch(mock_args, mock_dist, mock_tmp_dir)
             self.assertEqual(runner, mock_docker_runner_object)
-            mock_docker_runner.assert_called_once_with(mock_args)
+            mock_docker_runner.assert_called_once_with(mock_args, mock_tmp_dir)
 
     def test_tar(self) -> None:
         mock_args = MagicMock()
+        mock_tmp_dir = MagicMock()
         mock_dist = "tar"
         mock_tar_runner_object = MagicMock()
         mock_docker_runner = MagicMock()
@@ -40,18 +46,23 @@ class TestValidationTestRunner(unittest.TestCase):
         mock_tar_runner.return_value = mock_tar_runner_object
         mock_rpm_runner = MagicMock()
         mock_yum_runner = MagicMock()
+        mock_deb_runner = MagicMock()
+        mock_zip_runner = MagicMock()
         with patch.dict("validation_workflow.validation_test_runner.ValidationTestRunner.RUNNERS", {
             "docker": mock_docker_runner,
             "tar": mock_tar_runner,
             "rpm": mock_rpm_runner,
             "yum": mock_yum_runner,
+            "deb": mock_deb_runner,
+            "zip": mock_zip_runner,
         }):
-            runner = ValidationTestRunner.dispatch(mock_args, mock_dist)
+            runner = ValidationTestRunner.dispatch(mock_args, mock_dist, mock_tmp_dir)
             self.assertEqual(runner, mock_tar_runner_object)
-            mock_tar_runner.assert_called_once_with(mock_args)
+            mock_tar_runner.assert_called_once_with(mock_args, mock_tmp_dir)
 
     def test_rpm(self) -> None:
         mock_args = MagicMock()
+        mock_tmp_dir = MagicMock()
         mock_dist = "rpm"
         mock_rpm_runner_object = MagicMock()
         mock_docker_runner = MagicMock()
@@ -59,34 +70,43 @@ class TestValidationTestRunner(unittest.TestCase):
         mock_rpm_runner = MagicMock()
         mock_rpm_runner.return_value = mock_rpm_runner_object
         mock_yum_runner = MagicMock()
+        mock_deb_runner = MagicMock()
+        mock_zip_runner = MagicMock()
         with patch.dict("validation_workflow.validation_test_runner.ValidationTestRunner.RUNNERS", {
             "docker": mock_docker_runner,
             "tar": mock_tar_runner,
             "rpm": mock_rpm_runner,
             "yum": mock_yum_runner,
+            "deb": mock_deb_runner,
+            "zip": mock_zip_runner,
         }):
-            runner = ValidationTestRunner.dispatch(mock_args, mock_dist)
+            runner = ValidationTestRunner.dispatch(mock_args, mock_dist, mock_tmp_dir)
             self.assertEqual(runner, mock_rpm_runner_object)
-            mock_rpm_runner.assert_called_once_with(mock_args)
+            mock_rpm_runner.assert_called_once_with(mock_args, mock_tmp_dir)
 
     def test_yum(self) -> None:
         mock_args = MagicMock()
+        mock_tmp_dir = MagicMock()
         mock_dist = "yum"
         mock_yum_runner_object = MagicMock()
         mock_docker_runner = MagicMock()
         mock_tar_runner = MagicMock()
         mock_rpm_runner = MagicMock()
         mock_yum_runner = MagicMock()
+        mock_deb_runner = MagicMock()
+        mock_zip_runner = MagicMock()
         mock_yum_runner.return_value = mock_yum_runner_object
         with patch.dict("validation_workflow.validation_test_runner.ValidationTestRunner.RUNNERS", {
             "docker": mock_docker_runner,
             "tar": mock_tar_runner,
             "rpm": mock_rpm_runner,
             "yum": mock_yum_runner,
+            "deb": mock_deb_runner,
+            "zip": mock_zip_runner,
         }):
-            runner = ValidationTestRunner.dispatch(mock_args, mock_dist)
+            runner = ValidationTestRunner.dispatch(mock_args, mock_dist, mock_tmp_dir)
             self.assertEqual(runner, mock_yum_runner_object)
-            mock_yum_runner.assert_called_once_with(mock_args)
+            mock_yum_runner.assert_called_once_with(mock_args, mock_tmp_dir)
 
 
 if __name__ == '__main__':

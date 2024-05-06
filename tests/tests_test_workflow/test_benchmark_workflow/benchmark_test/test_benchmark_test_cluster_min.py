@@ -11,10 +11,10 @@ from typing import Optional
 from unittest.mock import MagicMock, Mock, patch
 
 from manifests.build_manifest import BuildManifest
-from test_workflow.benchmark_test.benchmark_test_cluster import BenchmarkTestCluster
+from test_workflow.benchmark_test.benchmark_create_cluster import BenchmarkCreateCluster
 
 
-class TestBenchmarkTestClusterMin(unittest.TestCase):
+class TestBenchmarkCreateClusterMin(unittest.TestCase):
     DATA = os.path.join(os.path.dirname(__file__), "data")
     MIN_MANIFEST = os.path.join(DATA, "min_distribution_manifest.yml")
 
@@ -32,19 +32,19 @@ class TestBenchmarkTestClusterMin(unittest.TestCase):
         self.config = {"Constants": {"SecurityGroupId": "sg-00000000", "VpcId": "vpc-12345", "AccountId": "12345678",
                                      "Region": "us-west-2", "Role": "role-arn", "serverAccessType": "prefixList", "restrictServerAccessTo": "pl-1234",
                                      "isInternal": "true", "IamRoleArn": ""}}
-        self.benchmark_test_cluster = BenchmarkTestCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
+        self.benchmark_create_cluster = BenchmarkCreateCluster(bundle_manifest=self.manifest, config=self.config, args=self.args, current_workspace="current_workspace")
 
-    @patch("test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing")
+    @patch("test_workflow.benchmark_test.benchmark_create_cluster.BenchmarkCreateCluster.wait_for_processing")
     def test_create_min_cluster(self, mock_wait_for_processing: Optional[Mock]) -> None:
         mock_file = MagicMock(side_effect=[{"opensearch-infra-stack-test-suffix-8042-arm64": {"loadbalancerurl": "www.example.com"}}])
         with patch("subprocess.check_call") as mock_check_call:
             with patch("builtins.open", MagicMock()):
                 with patch("json.load", mock_file):
-                    self.benchmark_test_cluster.start()
+                    self.benchmark_create_cluster.start()
                     self.assertEqual(mock_check_call.call_count, 1)
         self.assertTrue(isinstance(self.manifest, BuildManifest))
-        self.assertTrue("securityDisabled=true" in self.benchmark_test_cluster.params)
-        self.assertTrue("minDistribution=true" in self.benchmark_test_cluster.params)
+        self.assertTrue("securityDisabled=true" in self.benchmark_create_cluster.params)
+        self.assertTrue("minDistribution=true" in self.benchmark_create_cluster.params)
         self.assertTrue("distributionUrl=https://artifacts.opensearch.org/snapshots/core/opensearch/2.9.0-SNAPSHOT/"
-                        "opensearch-min-2.9.0-SNAPSHOT-linux-arm64-latest.tar.gz" in self.benchmark_test_cluster.params)
-        self.assertTrue("customRoleArn" not in self.benchmark_test_cluster.params)
+                        "opensearch-min-2.9.0-SNAPSHOT-linux-arm64-latest.tar.gz" in self.benchmark_create_cluster.params)
+        self.assertTrue("customRoleArn" not in self.benchmark_create_cluster.params)

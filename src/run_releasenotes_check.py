@@ -10,7 +10,9 @@ import os
 import re
 import shutil
 from collections import defaultdict
+from typing import List
 
+import markdownify
 import mistune
 import requests
 
@@ -23,18 +25,41 @@ from system import console
 def main() -> int:
     args = ReleaseNotesCheckArgs()
     console.configure(level=args.logging_level)
-    manifest_file = InputManifest.from_file(args.manifest)
-    BUILD_VERSION = manifest_file.build.version
-
+    manifests: List[InputManifest] = []
     # storing temporary release notes for testing purposes
     BASE_FILE_PATH = "release_notes_workflow/results"
+
+    for input_manifests in args.manifest:
+        manifests.append(InputManifest.from_file(input_manifests))
+
+    if len(args.manifest) == 2:
+        if manifests[0].build.version != manifests[1].build.version:
+            raise ValueError("OS and OSD manifests must be provided for the same release version")
+        elif manifests[0].build.name == manifests[1].build.name:
+            raise ValueError("Both manifests are for the same product, OS and OSD manifests must be provided")
+    if len(args.manifest) > 2:
+        raise ValueError("Only two manifests, OS and OSD, can be provided")
+
+    #  Assuming that the OS and OSD manifests will be provided for the same release version
+    BUILD_VERSION = manifests[0].build.version
+
     table_filename = f"{BASE_FILE_PATH}/release_notes_table-{BUILD_VERSION}.md"
     urls_filename = f"{BASE_FILE_PATH}/release_notes_urls-{BUILD_VERSION}.txt"
 
+    def check_if_exists_then_delete(file_path: List[str]) -> None:
+        for file in file_path:
+            if os.path.exists(os.path.join(os.path.dirname(__file__), file)):
+                print(f"file {file} exists. Deleting")
+                os.remove(os.path.join(os.path.dirname(__file__), file))
+            else:
+                logging.info(f"The file {file} does not exist, creating new.")
+
     def capitalize_acronyms(formatted_name: str) -> str:
-        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons", "ml commons": "ML Commons"}
+        acronyms = {"sql": "SQL", "ml": "ML", "knn": "k-NN", "k-nn": "k-NN", "ml-commons": "ML Commons",
+                    "ml commons": "ML Commons"}
         for acronym, replacement in acronyms.items():
-            formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name, flags=re.IGNORECASE)
+            formatted_name = re.sub(r'\b' + re.escape(acronym) + r'\b', replacement, formatted_name,
+                                    flags=re.IGNORECASE)
         return formatted_name
 
     def format_component_name_from_url(url: str) -> str:
@@ -50,14 +75,14 @@ def main() -> int:
         formatted_name = " ".join(word.capitalize() for word in re.split(r"[-.]", component_name))
         return capitalize_acronyms(formatted_name)
 
-    def create_urls_file_if_not_exists() -> None:
+    def create_urls_file_if_not_exists(manifest_files: List[InputManifest]) -> None:
 
-        release_notes = ReleaseNotes(manifest_file, args.date, args.action)
+        release_notes = ReleaseNotes(manifest_files, args.date, args.action)
         table = release_notes.table()
 
         table_filepath = os.path.join(os.path.dirname(__file__), table_filename)
         os.makedirs(os.path.dirname(table_filepath), exist_ok=True)
-        with open(table_filepath, "w") as table_file:
+        with open(table_filepath, "a") as table_file:
             table.dump(table_file)
 
         if args.output is not None:
@@ -71,15 +96,17 @@ def main() -> int:
 
         urls_filepath = os.path.join(os.path.dirname(__file__), urls_filename)
         os.makedirs(os.path.dirname(urls_filepath), exist_ok=True)
-        with open(urls_filepath, "w") as urls_file:
+        with open(urls_filepath, "a") as urls_file:
             urls_file.writelines("\n".join(urls))
 
     if args.action == "check":
-        create_urls_file_if_not_exists()
+        check_if_exists_then_delete([table_filename, urls_filename])
+        create_urls_file_if_not_exists(manifests)
         return 0
 
     elif args.action == "compile":
-        create_urls_file_if_not_exists()
+        check_if_exists_then_delete([table_filename, urls_filename])
+        create_urls_file_if_not_exists(manifests)
 
         RELEASENOTES_CATEGORIES = "BREAKING,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING,EXPERIMENTAL"
         RELEASE_NOTE_MD = f"{BASE_FILE_PATH}/release_notes-{BUILD_VERSION}.md"
@@ -148,11 +175,11 @@ def main() -> int:
     # Markdown renderer
     markdown = mistune.create_markdown()
 
-    RELEASE_NOTE_MD_path = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
-    os.makedirs(os.path.dirname(RELEASE_NOTE_MD_path), exist_ok=True)
+    RELEASE_NOTE_MD_PATH = os.path.join(os.path.dirname(__file__), RELEASE_NOTE_MD)
+    os.makedirs(os.path.dirname(RELEASE_NOTE_MD_PATH), exist_ok=True)
 
     # Filter content for each category
-    with open(RELEASE_NOTE_MD_path, "w") as outfile:
+    with open(RELEASE_NOTE_MD_PATH, "w") as outfile:
         outfile.write(markdown(f"# OpenSearch and OpenSearch Dashboards {BUILD_VERSION} Release Notes\n\n"))
 
         for category in RELEASENOTES_CATEGORIES.split(","):
@@ -188,11 +215,19 @@ def main() -> int:
             for item in temp_content:
                 outfile.write(markdown(item))
 
+    with open(RELEASE_NOTE_MD_PATH, 'r') as f:
+        html_content = f.read()
+
+    markdown_content = markdownify.markdownify(html_content, heading_style="ATX")
+
+    with open(RELEASE_NOTE_MD_PATH, 'w') as f:
+        f.write(markdown_content)
+
     if args.output is not None:
         logging.info(f"Moving {RELEASE_NOTE_MD} to {args.output}")
-        shutil.move(RELEASE_NOTE_MD_path, args.output)
+        shutil.move(RELEASE_NOTE_MD_PATH, args.output)
     else:
-        logging.info(f"Release notes compiled to {RELEASE_NOTE_MD_path}")
+        logging.info(f"Release notes compiled to {RELEASE_NOTE_MD_PATH}")
     return 0
 
 

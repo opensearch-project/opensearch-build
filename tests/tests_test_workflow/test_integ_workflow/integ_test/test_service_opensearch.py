@@ -37,8 +37,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock, mock_process: Mock) -> None:
-
+    def test_start(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Mock, mock_pid: Mock,
+                   mock_process: Mock) -> None:
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
@@ -62,12 +62,18 @@ class ServiceOpenSearchTests(unittest.TestCase):
         # call test target function
         service.start()
 
-        mock_process.assert_called_once_with("export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && ./opensearch-tar-install.sh", os.path.join(self.work_dir, "opensearch-1.1.0"), False)
+        mock_process.assert_called_once_with(
+            "export OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! && ./opensearch-tar-install.sh",
+            os.path.join(self.work_dir, "opensearch-1.1.0"), False)
 
         mock_dump.assert_called_once_with(self.additional_config)
 
-        mock_file.assert_called_once_with(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")
-        mock_file.return_value.write.assert_called_once_with(mock_dump_result)
+        assert mock_file.call_count == 3
+        mock_file.assert_any_call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "r")
+        mock_file.assert_any_call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "w")
+        mock_file.assert_any_call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")
+
+        mock_file.return_value.write.assert_has_calls([call(''), call(mock_dump_result)])
 
         dependency_installer.download_dist.assert_called_once_with(self.work_dir)
         mock_tarfile_open.assert_called_once_with(bundle_full_name, "r:gz")
@@ -81,8 +87,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
-
+    def test_start_security_disabled(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock,
+                                     mock_process: Mock, mock_os_isdir: Mock) -> None:
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
@@ -107,9 +113,12 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_file_handler_for_security = mock_open().return_value
         mock_file_handler_for_additional_config = mock_open().return_value
+        mock_file_handler_for_jvm_read = mock_open().return_value
+        mock_file_handler_for_jvm_write = mock_open().return_value
 
         # open() will be called twice, one for disabling security, second for additional_config
-        mock_file.side_effect = [mock_file_handler_for_security, mock_file_handler_for_additional_config]
+        mock_file.side_effect = [mock_file_handler_for_jvm_read, mock_file_handler_for_jvm_write,
+                                 mock_file_handler_for_security, mock_file_handler_for_additional_config]
 
         mock_os_isdir.return_value = True
 
@@ -118,10 +127,14 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_dump.assert_has_calls([call({"plugins.security.disabled": "true"}), call(self.additional_config)])
 
+        assert mock_file.call_count == 4
         mock_file.assert_has_calls(
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "r"),
+             call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "w"),
+             call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a"),
+             call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a"), ]
         )
+
         mock_file_handler_for_security.write.assert_called_once_with(mock_dump_result_for_security)
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
@@ -131,8 +144,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open)
     @patch("yaml.dump")
     @patch("tarfile.open")
-    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any, mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
-
+    def test_start_security_disabled_and_not_installed(self, mock_tarfile_open: Mock, mock_dump: Mock, mock_file: Any,
+                                                       mock_pid: Mock, mock_process: Mock, mock_os_isdir: Mock) -> None:
         dependency_installer = MagicMock()
 
         service = ServiceOpenSearch(
@@ -156,9 +169,12 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_file_handler_for_security = mock_open().return_value
         mock_file_handler_for_additional_config = mock_open().return_value
+        mock_file_handler_for_jvm_read = mock_open().return_value
+        mock_file_handler_for_jvm_write = mock_open().return_value
 
         # open() will be called twice, one for disabling security, second for additional_config
-        mock_file.side_effect = [mock_file_handler_for_additional_config]
+        mock_file.side_effect = [mock_file_handler_for_jvm_read, mock_file_handler_for_jvm_write,
+                                 mock_file_handler_for_additional_config]
 
         mock_os_isdir.return_value = False
 
@@ -167,23 +183,29 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
         mock_dump.assert_has_calls([call(self.additional_config)])
 
+        assert mock_file.call_count == 3
+
         mock_file.assert_has_calls(
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
-            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")],
+            [call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "r"),
+             call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "jvm.options"), "w"),
+             call(os.path.join(self.work_dir, "opensearch-1.1.0", "config", "opensearch.yml"), "a")
+             ]
         )
         mock_file_handler_for_security.write.assert_not_called()
         mock_file_handler_for_additional_config.write.assert_called_once_with(mock_dump_result_for_additional_config)
 
     @patch("test_workflow.integ_test.service.Process.terminate", return_value=123)
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=True)
-    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock,
+           return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock,
+           return_value="test stderr_data")
     def test_terminate(
-        self,
-        mock_process_stderr_data: Mock,
-        mock_process_stdout_data: Mock,
-        mock_process_started: Mock,
-        mock_process_terminate: Mock
+            self,
+            mock_process_stderr_data: Mock,
+            mock_process_stdout_data: Mock,
+            mock_process_started: Mock,
+            mock_process_terminate: Mock
     ) -> None:
         service = ServiceOpenSearch(
             self.version,
@@ -201,7 +223,8 @@ class ServiceOpenSearchTests(unittest.TestCase):
         self.assertEqual(termination_result.return_code, 123)
         self.assertEqual(termination_result.stdout_data, "test stdout_data")
         self.assertEqual(termination_result.stderr_data, "test stderr_data")
-        self.assertEqual(termination_result.log_files, {"opensearch-service-logs": os.path.join("test_work_dir", "opensearch-1.1.0", "logs")})
+        self.assertEqual(termination_result.log_files,
+                         {"opensearch-service-logs": os.path.join("test_work_dir", "opensearch-1.1.0", "logs")})
 
     @patch("test_workflow.integ_test.service.Process.terminate")
     @patch('test_workflow.integ_test.service.Process.started', new_callable=PropertyMock, return_value=False)
@@ -281,9 +304,13 @@ class ServiceOpenSearchTests(unittest.TestCase):
 
     @patch("time.sleep")
     @patch.object(ServiceOpenSearch, "service_alive", return_value=True)
-    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
-    def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data: Mock, mock_process_stdout_data: Mock, mock_service_alive: Mock, mock_time_sleep: Mock) -> None:
+    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock,
+           return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock,
+           return_value="test stderr_data")
+    def test_wait_for_service_succeed_on_first_attemp(self, mock_process_stderr_data: Mock,
+                                                      mock_process_stdout_data: Mock, mock_service_alive: Mock,
+                                                      mock_time_sleep: Mock) -> None:
         service = ServiceOpenSearch(
             self.version,
             self.distribution,
@@ -303,15 +330,17 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.logging.error')
     @patch("time.sleep")
     @patch.object(ServiceOpenSearch, "service_alive", return_value=False)
-    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock,
+           return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock,
+           return_value="test stderr_data")
     def test_wait_for_service_always_fail_without_exception(
-        self,
-        mock_process_stderr_data: Mock,
-        mock_process_stdout_data: Mock,
-        mock_service_alive: Mock,
-        mock_time_sleep: Mock,
-        mock_logging_error: Mock
+            self,
+            mock_process_stderr_data: Mock,
+            mock_process_stdout_data: Mock,
+            mock_service_alive: Mock,
+            mock_time_sleep: Mock,
+            mock_logging_error: Mock
     ) -> None:
         service = ServiceOpenSearch(
             self.version,
@@ -333,17 +362,18 @@ class ServiceOpenSearchTests(unittest.TestCase):
     @patch('test_workflow.integ_test.service.logging.error')
     @patch("time.sleep")
     @patch.object(ServiceOpenSearch, "service_alive", side_effect=requests.exceptions.ConnectionError())
-    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock,
+           return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock,
+           return_value="test stderr_data")
     def test_wait_for_service_always_fail_with_exception(
-        self,
-        mock_process_stderr_data: Mock,
-        mock_process_stdout_data: Mock,
-        mock_service_alive: Mock,
-        mock_time_sleep: Mock,
-        mock_logging_error: Mock
+            self,
+            mock_process_stderr_data: Mock,
+            mock_process_stdout_data: Mock,
+            mock_service_alive: Mock,
+            mock_time_sleep: Mock,
+            mock_logging_error: Mock
     ) -> None:
-
         service = ServiceOpenSearch(
             self.version,
             self.distribution,
@@ -366,14 +396,16 @@ class ServiceOpenSearchTests(unittest.TestCase):
         ServiceOpenSearch,
         "service_alive",
         side_effect=[requests.exceptions.ConnectionError(), requests.exceptions.ConnectionError(), True])
-    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock, return_value="test stdout_data")
-    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock, return_value="test stderr_data")
+    @patch('test_workflow.integ_test.service.Process.stdout_data', new_callable=PropertyMock,
+           return_value="test stdout_data")
+    @patch('test_workflow.integ_test.service.Process.stderr_data', new_callable=PropertyMock,
+           return_value="test stderr_data")
     def test_wait_for_service_suceed_on_third_attempt(
-        self,
-        mock_process_stderr_data: Mock,
-        mock_process_stdout_data: Mock,
-        mock_service_alive: Mock,
-        mock_time_sleep: Mock
+            self,
+            mock_process_stderr_data: Mock,
+            mock_process_stdout_data: Mock,
+            mock_service_alive: Mock,
+            mock_time_sleep: Mock
     ) -> None:
         service = ServiceOpenSearch(
             self.version,

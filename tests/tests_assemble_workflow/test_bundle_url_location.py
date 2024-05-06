@@ -49,3 +49,16 @@ class TestBundleUrlLocation(unittest.TestCase):
             location.get_build_location("sql"),
             "https://ci.opensearch.org/ci/dbc/bundle-build/1.3.0/1318/linux/x64/tar/builds/opensearch-dashboards/sql"
         )
+
+    def test_opensearch_windows(self) -> None:
+        location = BundleUrlLocation("https://ci.opensearch.org/ci/dbc/bundle-build/1.3.0/1318/windows/x64", "opensearch", "plugins\\zip")
+
+        self.assertEqual(
+            location.get_bundle_location("sql"),
+            "https://ci.opensearch.org/ci/dbc/bundle-build/1.3.0/1318/windows/x64/plugins/zip/dist/opensearch/sql"
+        )
+
+        self.assertEqual(
+            location.get_build_location("sql"),
+            "https://ci.opensearch.org/ci/dbc/bundle-build/1.3.0/1318/windows/x64/plugins/zip/builds/opensearch/sql"
+        )

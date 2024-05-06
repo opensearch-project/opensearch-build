@@ -93,7 +93,8 @@ def main() -> int:
                 builder.build(build_recorder)
                 builder.export_artifacts(build_recorder)
                 logging.info(f"Successfully built {component.name}")
-            except:
+            except Exception as e:
+                logging.error(f"ERROR: {e}")
                 logging.error(f"Error building {component.name}, retry with: {args.component_command(component.name)}")
                 if args.continue_on_error and component.name not in ['OpenSearch', 'job-scheduler', 'common-utils', 'OpenSearch-Dashboards']:
                     failed_plugins.append(component.name)

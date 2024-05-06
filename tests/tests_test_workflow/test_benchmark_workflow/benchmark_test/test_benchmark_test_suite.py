@@ -10,22 +10,28 @@ from typing import Any
 from unittest.mock import Mock, patch
 
 from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
+from test_workflow.integ_test.utils import get_password
 
 
 class TestBenchmarkTestSuite(unittest.TestCase):
     def setUp(self, **kwargs: Any) -> None:
-        self.args = Mock()
-        self.args.workload = "nyc_taxis"
-        self.args.benchmark_config = kwargs['config'] if 'config' in kwargs else None
-        self.args.user_tag = kwargs['tags'] if 'tags' in kwargs else None
-        self.args.workload_params = kwargs['workload_params'] if 'workload_params' in kwargs else None
-        self.args.telemetry = kwargs['telemetry'] if 'telemetry' in kwargs else None
-        self.args.telemetry_params = kwargs['telemetry_params'] if 'telemetry_params' in kwargs else None
-        self.args.test_procedure = kwargs['test_procedure'] if 'test_procedure' in kwargs else None
-        self.args.exclude_tasks = kwargs['exclude_tasks'] if 'exclude_tasks' in kwargs else None
-        self.args.include_tasks = kwargs['include_tasks'] if 'include_tasks' in kwargs else None
-        self.endpoint = "abc.com"
-        self.benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=False, distribution_version='2.3.0', args=self.args)
+        with patch('test_workflow.integ_test.utils.get_password') as mock_get_password:
+            self.args = Mock()
+            self.args.workload = "nyc_taxis"
+            self.args.version = '2.9.0'
+            self.args.benchmark_config = kwargs['config'] if 'config' in kwargs else None
+            mock_get_password.return_value = get_password('2.11.0')
+            self.args.username = "admin"
+            self.password = "myStrongPassword123!"
+            self.args.user_tag = kwargs['tags'] if 'tags' in kwargs else None
+            self.args.workload_params = kwargs['workload_params'] if 'workload_params' in kwargs else None
+            self.args.telemetry = kwargs['telemetry'] if 'telemetry' in kwargs else None
+            self.args.telemetry_params = kwargs['telemetry_params'] if 'telemetry_params' in kwargs else None
+            self.args.test_procedure = kwargs['test_procedure'] if 'test_procedure' in kwargs else None
+            self.args.exclude_tasks = kwargs['exclude_tasks'] if 'exclude_tasks' in kwargs else None
+            self.args.include_tasks = kwargs['include_tasks'] if 'include_tasks' in kwargs else None
+            self.endpoint = "abc.com"
+            self.benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=False, args=self.args, password=self.password)
 
     def test_execute_default(self) -> None:
         with patch("subprocess.check_call") as mock_check_call:
@@ -36,7 +42,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                              '--pipeline=benchmark-only --target-hosts=abc.com --client-options="timeout:300"')
 
     def test_execute_security_enabled_version_212_or_greater(self) -> None:
-        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, distribution_version='2.12.0', args=self.args)
+        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, args=self.args, password=self.password)
         with patch("subprocess.check_call") as mock_check_call:
             benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)
@@ -47,7 +53,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                              'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'"')
 
     def test_execute_security_enabled(self) -> None:
-        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, distribution_version='2.3.0', args=self.args)
+        benchmark_test_suite = BenchmarkTestSuite(endpoint=self.endpoint, security=True, args=self.args, password="admin")
         with patch("subprocess.check_call") as mock_check_call:
             benchmark_test_suite.execute()
             self.assertEqual(mock_check_call.call_count, 1)

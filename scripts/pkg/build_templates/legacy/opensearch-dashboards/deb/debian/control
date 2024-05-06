@@ -1,0 +1,20 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+Source: opensearch-dashboards
+Section: web
+Priority: optional
+Maintainer: OpenSearch Team <opensearch@amazon.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.5.0
+Homepage: https://opensearch.org/
+
+Package: opensearch-dashboards
+Architecture: any
+Description: Open source visualization dashboards for OpenSearch
+    OpenSearch Dashboards is the visualization tool for data in OpenSearch
+    For more information, see: https://opensearch.org/

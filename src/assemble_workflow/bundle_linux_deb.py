@@ -126,6 +126,8 @@ class BundleLinuxDeb:
         subprocess.check_call(bundle_cmd, cwd=ext_dest, shell=True)
 
         # Move artifact to repo root before being published to {dest}
-        # for dirpath, dirnames, filenames in os.walk(os.path.join('/tmp/opensearch*')):
+        # In debuild, the final package is created in the parent directory of the sources
+        # https://github.com/opensearch-project/opensearch-build/issues/4532#issuecomment-2091726868
+        bundle_artifact_path = f"/tmp/{self.filename}_{deb_version}_{deb_architecture(build_cls.architecture)}.deb"
         logging.info(f"Found deb file: {bundle_artifact_path}")
-        shutil.move(f"/tmp/{self.filename}_{deb_version}_{deb_architecture(build_cls.architecture)}.deb", name)
+        shutil.move(bundle_artifact_path, name)

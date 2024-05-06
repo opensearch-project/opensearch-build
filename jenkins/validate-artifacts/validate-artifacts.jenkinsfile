@@ -13,10 +13,10 @@ lib = library(identifier: 'jenkins@6.3.2', retriever: modernSCM([
 ]))
 
 def docker_images = [
-    "tar": "opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4",
-    "rpm": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
-    "yum": "opensearchstaging/ci-runner:ci-runner-rockylinux8-systemd-base-integtest-v3",
-    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-servercore-opensearch-build-v1",
+    "tar": "opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-dashboards-integtest-v1",
+    "rpm": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "yum": "opensearchstaging/ci-runner:ci-runner-almalinux8-systemd-base-integtest-v1",
+    "zip": "opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1",
     "deb": "opensearchstaging/ci-runner:ci-runner-ubuntu2004-systemd-base-integtest-v3"
 ]
 
@@ -34,7 +34,7 @@ def agent_nodes_docker = [
 ]
 
 def agent_nodes = [
-    "windows_x64": "Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host",
+    "windows_x64": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host",
     "linux_x64": "Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host",
     "linux_arm64": "Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host",
 ]

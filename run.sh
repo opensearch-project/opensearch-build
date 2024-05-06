@@ -20,5 +20,5 @@ echo "Installing dependencies in $DIR ..."
 export PIPENV_PIPFILE="$DIR/Pipfile"
 python3 -m pipenv install
 
-echo "Running "$1" ${@:2} ..."
+if [[ ! "$1" == *benchmark* ]]; then (echo "Running "$1" ${@:2} ..."; ); fi
 python3 -m pipenv run python "$1" ${@:2}

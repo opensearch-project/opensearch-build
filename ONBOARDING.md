@@ -10,7 +10,7 @@
   
 ## Plugin Onboarding
 
-This document describes steps to onboard a new plugin to release workflow for continuous integration and testing.
+This document describes the steps required to onboard a new plugin to the release workflow for continuous integration and testing. Make sure that you also consider whether the plugin requires documentation to implement or use it. If so, see [Contributing.md](https://github.com/opensearch-project/documentation-website/blob/main/CONTRIBUTING.md) in the documentation-website GitHub repository.
 
 ### Onboard to OpenSearch Meta
 
