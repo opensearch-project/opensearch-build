@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 15df1e8bebe65c037a88a80aa3b3ad262e141a84
+    ref: 2325b02b644bffc7c58c17ff3bfd2b87e2acd8b8
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 7531f1e853db28ca9deead97be053d58da7a7a9c
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 574591bf627bd6a0276deb2932564f3a0d550b2c
+    ref: ddbe6eddf83e0a6fa8b0e896e3173ac08262da14
     platforms:
       - linux
       - windows
@@ -160,7 +160,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: c4b1dce7bb2addd6982e2c440af13cd829691274
+    ref: df79b5d36f79e27a5a321bedc318f510a0f698b1
     platforms:
       - linux
       - windows
