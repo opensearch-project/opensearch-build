@@ -41,6 +41,7 @@ ruamel-yaml = "~=0.17.21"
 markdownify = "~=0.12.1"
 mistune = "~=3.0.1"
 semver = ">=3,<4"
+pandas = "~=2.2.2"
 
 [dev-packages]
 
