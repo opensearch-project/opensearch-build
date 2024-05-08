@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 0f1da07407612163de07e668c782179b82a034ea
+    ref: aaa555453f4713d652b52436874e11ba258d8f03
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 7531f1e853db28ca9deead97be053d58da7a7a9c
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: fba960603bb10634ccba616fe061599014fa978c
+    ref: 679db77261d1120cda68818b0edf464ba230359b
     platforms:
       - linux
       - windows
