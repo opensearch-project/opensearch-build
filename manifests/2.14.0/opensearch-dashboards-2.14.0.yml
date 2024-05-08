@@ -12,7 +12,7 @@ components:
     ref: 1d8d36376822aee4b4d6e24bf5e9250aadc58f15
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: d94417d7f0c93918bd372e92f6086c6c889eeba3
+    ref: d106cbbd97857e8c29896f46bec9763d694b8061
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 441168efbf84de020a9bead333bff2e39c2e9d5c
@@ -45,7 +45,7 @@ components:
     ref: 150280dd766c0f45ad3e489aecfcab295f82ad60
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: cb5ccdd0538d22f4bd81ef24432c141b090aa754
+    ref: e7f946de234cd304d871525eb0ecb14a5513547b
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
     ref: 5f1c9f485c2ef53e65ec0af04f217a4d4c5bce17
