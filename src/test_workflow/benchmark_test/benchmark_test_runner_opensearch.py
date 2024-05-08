@@ -57,6 +57,6 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
                         with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace) as test_cluster:
                             benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.args, test_cluster.fetch_password())
                             try:
-                                benchmark_test_suite.execute()
+                                retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
                             finally:
                                 subprocess.check_call(f"docker rm docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

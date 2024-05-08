@@ -91,8 +91,8 @@ class BenchmarkTestSuite:
         with open(results) as file:
             data = json.load(file)
         formatted_data = pd.json_normalize(data["results"]["op_metrics"])
-        formatted_data.to_csv(os.path.join(os.getcwd(), "test_execution.csv"), index=False)
-        df = pd.read_csv(os.path.join(os.getcwd(), "test_execution.csv"))
+        formatted_data.to_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"), index=False)
+        df = pd.read_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"))
         pd.set_option('display.width', int(2 * shutil.get_terminal_size().columns))
         pd.set_option('display.max_rows', None)
         pd.set_option('display.max_columns', None)
