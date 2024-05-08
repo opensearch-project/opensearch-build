@@ -29,10 +29,8 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkCreateCluster.create")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
-    @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
-    def test_run(self, mock_check_call: Mock, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock,
+    def test_run(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock, mock_temp_directory: Mock,
                  *mocks: Any) -> None:
-        mock_check_call.return_value = 0
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_cluster.return_value.__enter__.return_value = mock_cluster
 
@@ -61,11 +59,9 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.GitRepository")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkCreateCluster.create")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
-    @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
-    def test_run_with_dist_url_and_version(self, mock_check_call: Mock, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock,
+    def test_run_with_dist_url_and_version(self, mock_suite: Mock, mock_cluster: Mock, mock_git: Mock,
                                            mock_temp_directory: Mock,
                                            *mocks: Any) -> None:
-        mock_check_call.return_value = 0
         mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
         mock_cluster.return_value.__enter__.return_value = mock_cluster
 
@@ -82,9 +78,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestCluster.start")
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
-    def test_run_with_cluster_endpoint(self, mock_check_call: Mock, mock_retry_call: Mock, mock_suite: Mock, mock_benchmark_test_cluster: Mock) -> None:
-        mock_check_call.return_value = 0
+    def test_run_with_cluster_endpoint(self, mock_retry_call: Mock, mock_suite: Mock, mock_benchmark_test_cluster: Mock) -> None:
         args = MagicMock(cluster_endpoint=True)
         mock_cluster = MagicMock()
 
@@ -98,12 +92,10 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
     @patch('test_workflow.benchmark_test.benchmark_test_cluster.BenchmarkTestCluster.wait_for_processing')
     @patch("test_workflow.benchmark_test.benchmark_test_runner_opensearch.BenchmarkTestSuite")
     @patch('test_workflow.benchmark_test.benchmark_test_runner_opensearch.retry_call')
-    @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch("subprocess.run")
     @patch("requests.get")
-    def test_run_with_cluster_endpoint_with_arguments(self, mock_requests_get: Mock, mock_subprocess_run: Mock, mock_check_call: Mock,
+    def test_run_with_cluster_endpoint_with_arguments(self, mock_requests_get: Mock, mock_subprocess_run: Mock,
                                                       mock_retry_call: Mock, mock_suite: Mock, mock_wait_for_processing: Optional[Mock]) -> None:
-        mock_check_call.return_value = 0
         args = MagicMock(cluster_endpoint=True)
         mock_wait_for_processing.return_value = None
         mock_result = MagicMock()

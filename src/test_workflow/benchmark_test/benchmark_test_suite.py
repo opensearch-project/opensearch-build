@@ -81,19 +81,26 @@ class BenchmarkTestSuite:
     def execute(self) -> None:
         log_info = f"Executing {self.command.replace(self.endpoint, len(self.endpoint) * '*').replace(self.args.username, len(self.args.username) * '*')}"
         logging.info(log_info.replace(self.password, len(self.password) * '*') if self.password else log_info)
-        subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
+        try:
+            subprocess.check_call(f"{self.command}", cwd=os.getcwd(), shell=True)
+            if self.args.cluster_endpoint:
+                self.convert()
+        finally:
+            self.cleanup()
+
+    def convert(self) -> None:
         with TemporaryDirectory() as work_dir:
             subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
             file_path = glob.glob(os.path.join(str(work_dir.path), "test_executions", "*", "test_execution.json"))
-            self.convert(file_path[0])
+            with open(file_path[0]) as file:
+                data = json.load(file)
+                formatted_data = pd.json_normalize(data["results"]["op_metrics"])
+                formatted_data.to_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"), index=False)
+                df = pd.read_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"))
+                pd.set_option('display.width', int(2 * shutil.get_terminal_size().columns))
+                pd.set_option('display.max_rows', None)
+                pd.set_option('display.max_columns', None)
+                logging.info(f"\n{df}")
 
-    def convert(self, results: str) -> None:
-        with open(results) as file:
-            data = json.load(file)
-        formatted_data = pd.json_normalize(data["results"]["op_metrics"])
-        formatted_data.to_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"), index=False)
-        df = pd.read_csv(os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.csv"))
-        pd.set_option('display.width', int(2 * shutil.get_terminal_size().columns))
-        pd.set_option('display.max_rows', None)
-        pd.set_option('display.max_columns', None)
-        logging.info(f"\n{df}")
+    def cleanup(self) -> None:
+        subprocess.check_call(f"docker rm docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True)

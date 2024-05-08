@@ -7,7 +7,6 @@
 
 import logging
 import os
-import subprocess
 from typing import Union
 
 import yaml
@@ -43,10 +42,8 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
             cluster = BenchmarkTestCluster(self.args)
             cluster.start()
             benchmark_test_suite = BenchmarkTestSuite(cluster.endpoint_with_port, self.security, self.args, cluster.fetch_password())
-            try:
-                retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
-            finally:
-                subprocess.check_call(f"docker rm docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
+
         else:
             config = yaml.safe_load(self.args.config)
 
@@ -56,7 +53,4 @@ class BenchmarkTestRunnerOpenSearch(BenchmarkTestRunner):
                     with WorkingDirectory(current_workspace):
                         with BenchmarkCreateCluster.create(self.args, self.test_manifest, config, current_workspace) as test_cluster:
                             benchmark_test_suite = BenchmarkTestSuite(test_cluster.endpoint_with_port, self.security, self.args, test_cluster.fetch_password())
-                            try:
-                                retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
-                            finally:
-                                subprocess.check_call(f"docker rm docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            retry_call(benchmark_test_suite.execute, tries=3, delay=60, backoff=2)
