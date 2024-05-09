@@ -105,6 +105,19 @@ class TestReleaseManifestCommitLock extends BuildPipelineTest {
 
     }
 
+    @Test
+    public void test_excludeFTRepo() {
+        addParam('MANIFEST_LOCK_ACTION', 'UPDATE_TO_RECENT_COMMITS')
+        def buildManifest = "tests/jenkins/data/opensearch-dashboards-3.0.0.yml"
+        helper.registerAllowedMethod('readYaml', [Map.class], { args ->
+            return new Yaml().load((buildManifest as File).text)
+        }) 
+        super.testPipeline('jenkins/release-manifest-commit-lock/release-manifest-commit-lock.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-manifest-commit-lock/testUpdateToRecentCommit_excludeFTRepo')
+        // The test asserts that FT repo uses the release branch
+        assertCallStack().contains("release-manifest-commit-lock.writeYaml({file=manifests/2.0.0/opensearch-dashboards-2.0.0.yml, data={ci={image={name=opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028}}, build={name=OpenSearch Dashboards, version=3.0.0}, components=[{name=OpenSearch-Dashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/OpenSearch-Dashboards.git}, {name=functionalTestDashboards, repository=https://github.com/opensearch-project/opensearch-dashboards-functional-test.git, ref=3.0}, {name=observabilityDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-observability.git}, {name=indexManagementDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/index-management-dashboards-plugin}, {name=ganttChartDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-visualizations.git}, {name=reportsDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/dashboards-reports.git}, {name=queryWorkbenchDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/sql.git}, {name=anomalyDetectionDashboards, ref=tags/3.0.0, repository=https://github.com/opensearch-project/anomaly-detection-dashboards-plugin}], schema-version=1.0}, overwrite=true})")
+    }
+
     def getShellCommands(searchtext) {
         def shCommands = helper.callStack.findAll { call ->
             call.methodName == 'sh'
