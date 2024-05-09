@@ -13,6 +13,11 @@ components:
       additional-cluster-configs:
         vis_builder.enabled: true
         data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
   - name: alertingDashboards
     integ-test:
       test-configs:
