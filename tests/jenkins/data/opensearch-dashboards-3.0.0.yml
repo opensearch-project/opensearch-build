@@ -9,6 +9,9 @@ components:
   - name: OpenSearch-Dashboards
     ref: tags/3.0.0
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '3.0'
   - name: observabilityDashboards
     ref: tags/3.0.0
     repository: https://github.com/opensearch-project/dashboards-observability.git

@@ -78,11 +78,16 @@ pipeline {
                             params.COMPONENTS.split(',').any { it.trim() == component.name }
                         }
                         selectedComponents.each { componentName ->
-                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
-                            if (existingComponent) {
-                                def newComponentRef = buildManifest.components.find { it.name == componentName.name }?.commit_id
-                                if (newComponentRef) {
-                                    existingComponent.ref = newComponentRef
+                        // Excluding FT repo from locking the commit and continue to use the release branch.
+                            if (componentName.name != "functionalTestDashboards") {
+                                def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                                if (existingComponent) {
+                                    if (existingComponent != 'functionalTestDashboards') {
+                                        def newComponentRef = buildManifest.components.find { it.name == componentName.name }?.commit_id
+                                        if (newComponentRef) {
+                                            existingComponent.ref = newComponentRef
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -109,12 +114,15 @@ pipeline {
                             params.COMPONENTS.split(',').any { it.trim() == component.name }
                         }
                         selectedComponents.each { componentName ->
-                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
-                            if (existingComponent) {
-                                def releaseBranch = params.RELEASE_VERSION.split('\\.')[0..1].join('.')
-                                def repoHeadCommit = sh(script: "git ls-remote ${componentName.repository} ${releaseBranch} | cut -f 1", returnStdout: true).trim()
-                                if (repoHeadCommit) {
-                                    existingComponent.ref = repoHeadCommit
+                        // Excluding FT repo from locking the commit and continue to use the release branch.
+                            if (componentName.name != "functionalTestDashboards") {
+                                def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                                if (existingComponent) {
+                                    def releaseBranch = params.RELEASE_VERSION.split('\\.')[0..1].join('.')
+                                    def repoHeadCommit = sh(script: "git ls-remote ${componentName.repository} ${releaseBranch} | cut -f 1", returnStdout: true).trim()
+                                    if (repoHeadCommit) {
+                                        existingComponent.ref = repoHeadCommit
+                                    }
                                 }
                             }
                         }
