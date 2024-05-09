@@ -121,6 +121,7 @@ parameters {
                         password: PASSWORD,
                         workload: TEST_WORKLOAD,
                         userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
+                        suffix: "${BUILD_NUMBER}",
                         workloadParams: WORKLOAD_PARAMS,
                         testProcedure: TEST_PROCEDURE,
                         excludeTasks: EXCLUDE_TASKS,
@@ -129,10 +130,14 @@ parameters {
                         captureSegmentReplicationStat: CAPTURE_SEGMENT_REPLICATION_STAT,
                         telemetryParams: TELEMETRY_PARAMS
                     )
+                    stash includes: 'test_execution*.csv', name: "benchmark"
+
                 }
             }
             post {
                 always {
+                    unstash "benchmark"
+                    archiveArtifacts artifacts: 'test_execution*.csv'
                     postCleanup()
                 }
             }

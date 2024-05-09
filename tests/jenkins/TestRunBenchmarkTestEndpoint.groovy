@@ -36,6 +36,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod("uploadTestResults", [Map])
         helper.registerAllowedMethod("s3Upload", [Map])
+        helper.registerAllowedMethod('unstash', [String.class], null)
         helper.registerAllowedMethod("withAWS", [Map, Closure], {
             args,
             closure ->
@@ -56,6 +57,9 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
         binding.setVariable('GITHUB_TOKEN', 'test_token')
         binding.setVariable('USER_TAGS', 'run-type:test')
         binding.setVariable('WORKLOAD_PARAMS', '')
+        binding.setVariable('env', ['BUILD_NUMBER': '307'])
+        binding.setVariable('BUILD_NUMBER', '307')
+        binding.setVariable('SUFFIX', '1234')
         binding.setVariable('TEST_PROCEDURE', 'append-no-conflicts')
         binding.setVariable('EXCLUDE_TASKS', '')
         binding.setVariable('INCLUDE_TASKS', '')
@@ -98,6 +102,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
     @Test
     void testRunSecureBenchmarkTestScript_verifyScriptExecutions() {
         addParam('SECURITY_ENABLED', true)
+
         runScript("jenkins/opensearch/benchmark-test-endpoint.jenkinsfile")
 
         def testScriptCommands = getCommandExecutions('sh', './test.sh').findAll {
@@ -106,7 +111,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true                  --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:true          --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
         ))
     }
     @Test
@@ -127,7 +132,7 @@ class TestRunBenchmarkTestEndpoint extends BuildPipelineTest{
 
         assertThat(testScriptCommands.size(), equalTo(1))
         assertThat(testScriptCommands, hasItems(
-                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security                 --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'".toString()
+                "set +x && ./test.sh benchmark-test    --cluster-endpoint opensearch-ABCxdfdfhyfk.com  --workload nyc-taxis --benchmark-config /tmp/workspace/benchmark.ini --user-tag run-type:test,security-enabled:false --without-security         --suffix 307        --test-procedure append-no-conflicts       --telemetry-params '{\"telemetry_setting\":\"value\"}'"
         ))
     }
 
