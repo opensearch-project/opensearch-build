@@ -171,7 +171,7 @@ pipeline {
                                 pullRequest = "${pr_number}"
                                 pullRequestTitle = "${pr_title}"
                         }
-                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prDescription: "${pr_title}", invokeType: "${invokedBy}")
+                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prDescription: "${pullRequestTitle}", invokeType: "${invokedBy}")
                         sh("rm -rf *")
                         postCleanup()
                     }
