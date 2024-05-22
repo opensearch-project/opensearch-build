@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.4.6', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.4.7', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -60,7 +60,9 @@ pipeline {
                 [key: 'pr_from_clone_url', value: '$.pr_from_clone_url'],
                 [key: 'pr_to_clone_url', value: '$.pr_to_clone_url'],
                 [key: 'pr_title', value: '$.pr_title'],
-                [key: 'pr_number', value: '$.pr_number']
+                [key: 'pr_number', value: '$.pr_number'],
+                [key: 'post_merge_action', value: '$.post_merge_action'],
+                [key: 'pr_owner', value: '$.pr_owner']
             ],
             tokenCredentialId: 'jenkins-gradle-check-generic-webhook-token',
             causeString: 'Triggered by PR on OpenSearch core repository',
@@ -111,7 +113,7 @@ pipeline {
                         if (!env.BUILD_CAUSE.contains('Started by user') && !env.BUILD_CAUSE.contains('Started by timer')) {
                             def pr_url = "${pr_to_clone_url}".replace(".git", "/pull/${pr_number}")
                             println("Triggered by GitHub: ${pr_to_clone_url}")
-                            if ("$pr_number" == "Null") {
+                            if ("$post_merge_action" == "true") {
                                 currentBuild.description = """runner: ${agent_name}<br><a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
                             }
                             else {
@@ -150,28 +152,38 @@ pipeline {
                         def invokedBy
                         def pullRequest
                         def pullRequestTitle
+                        def gitReference
+                        def pullRequestOwner
                         switch (true) {
                             case env.BUILD_CAUSE.contains('Started by user'):
                                 invokedBy = 'User'
-                                pullRequest = "${GIT_REFERENCE}"
-                                pullRequestTitle = "Null"
+                                pullRequest = "null"
+                                pullRequestTitle = "null"
+                                gitReference = "${GIT_REFERENCE}"
+                                pullRequestOwner = "null"
                                 break
                             case env.BUILD_CAUSE.contains('Started by timer'):
                                 invokedBy = 'Timer'
-                                pullRequest = "${GIT_REFERENCE}"
-                                pullRequestTitle = "Null"
+                                pullRequest = "null"
+                                pullRequestTitle = "null"
+                                gitReference = "${GIT_REFERENCE}"
+                                pullRequestOwner = "null"
                                 break
-                            case "${pr_number}" == "Null":
+                            case "${post_merge_action}" == "true":
                                 invokedBy = 'Post Merge Action'
-                                pullRequest = "${GIT_REFERENCE}"
+                                pullRequest = "${pr_number}"
                                 pullRequestTitle = "${pr_title}"
+                                gitReference = "${pr_from_sha}"
+                                pullRequestOwner = "${pr_owner}"
                                 break
                             default:
                                 invokedBy = 'Pull Request'
                                 pullRequest = "${pr_number}"
                                 pullRequestTitle = "${pr_title}"
+                                gitReference = "${pr_from_sha}"
+                                pullRequestOwner = "${pr_owner}"
                         }
-                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prDescription: "${pullRequestTitle}", invokeType: "${invokedBy}")
+                        publishGradleCheckTestResults(prNumber: "${pullRequest}" , prTitle: "${pullRequestTitle}", prOwner: "${pullRequestOwner}", invokeType: "${invokedBy}", gitReference: "${gitReference}")
                         sh("rm -rf *")
                         postCleanup()
                     }
