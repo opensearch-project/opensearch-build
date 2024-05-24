@@ -105,6 +105,7 @@ RUN yum install -y gcc10* && \
     update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
     update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1
 ENV FC=gcc10-gfortran
+ENV CXX=g++
 
 # Change User
 USER $CONTAINER_USER
