@@ -35,6 +35,7 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Cameron Skinner   | [camerski](https://github.com/camerski)                 | Amazon      |
 | Marc Handalian    | [mch2](https://github.com/mch2)                         | Amazon      |
 | Peter Nied        | [peternied](https://github.com/peternied)               | Amazon      |
+| Jeff Lu  | [jordarlu](https://github.com/jordarlu)  | Amazon      |
 | Barani Bikshandi | [bbarani](https://github.com/bbarani)    | Amazon      |
 
 ## Release Owner
