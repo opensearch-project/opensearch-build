@@ -89,23 +89,25 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
     ln -sfn /usr/local/bin/pip3.9 /usr/bin/pip3 && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17
 
-# Add k-NN Library dependencies
-RUN yum repolist && yum install lapack gcc-gfortran -y && \
-        git clone -b v0.3.3 --single-branch https://github.com/xianyi/OpenBLAS.git && \
-        cd OpenBLAS && \
-        make USE_OPENMP=1 FC=gfortran && \
-        make PREFIX=/usr/local install
-ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
-
-RUN pip3 install cmake==3.23.3
 # Upgrade gcc
 RUN yum install -y gcc10* && \
     mv -v /usr/bin/gcc /usr/bin/gcc7-gcc && \
     mv -v /usr/bin/g++ /usr/bin/gcc7-g++ && \
+    mv -v /usr/bin/gfortran /usr/bin/gcc7-gfortran && \
     update-alternatives --install /usr/bin/gcc gcc $(which gcc10-gcc) 1 && \
-    update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1
-ENV FC=gcc10-gfortran
+    update-alternatives --install /usr/bin/g++ g++ $(which gcc10-g++) 1 && \
+    update-alternatives --install /usr/bin/gfortran gfortran $(which gcc10-gfortran) 1
+ENV FC=gfortran
 ENV CXX=g++
+
+# Add k-NN Library dependencies
+RUN yum repolist && yum install lapack -y
+RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git && \
+    cd OpenBLAS && \
+    make USE_OPENMP=1 FC=gfortran && \
+    make PREFIX=/usr/local install
+ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+RUN pip3 install cmake==3.23.3
 
 # Change User
 USER $CONTAINER_USER
