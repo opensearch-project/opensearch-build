@@ -10,13 +10,13 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: '1.3'
+    ref: d62cb3b730478748b6fbb6bdd5d308eb4956f007
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: '1.3'
+    ref: bec3f3fae31c8d23126b2cdd079e33420f1d8afa
     checks:
       - gradle:publish
       - gradle:properties:version
@@ -25,7 +25,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: '1.3'
+    ref: d00a0ffe26302980ad26098b53eb250b8026a5e0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -34,7 +34,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: '1.3'
+    ref: 188480d918e80e7f650eefbc99e705a0469b67c3
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -43,7 +43,7 @@ components:
       - windows
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: '1.3'
+    ref: 12b26e1a2e7597d71e1a166636b60dd6200007f7
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: opensearch-ml-plugin
@@ -54,7 +54,7 @@ components:
       - common-utils
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: '1.3'
+    ref: 8226d7f6c6ba36dd36eee7274d4328daea912b50
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -62,7 +62,7 @@ components:
       - linux
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: '1.3'
+    ref: 39725bded9cbf44267989461818edf0a0bb3a4f1
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: alerting
@@ -73,7 +73,7 @@ components:
       - common-utils
   - name: opensearch-reports
     repository: https://github.com/opensearch-project/reporting.git
-    ref: '1.3'
+    ref: 34acccbe202c596791caa12a744c6bf2b84f4403
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -85,7 +85,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: '1.3'
+    ref: 96cab9a2e3fd9387d37b1361c5a4d60d726e7709
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -96,7 +96,7 @@ components:
       - common-utils
   - name: opensearch-observability
     repository: https://github.com/opensearch-project/observability.git
-    ref: '1.3'
+    ref: d5128e4a611561c9ce273406efd53cf196266801
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -107,7 +107,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: '1.3'
+    ref: e1555d6caa26719d2dfd0cbb817ee47c77315d10
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -119,7 +119,7 @@ components:
       - job-scheduler
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: '1.3'
+    ref: bf586df200a5d71b5c81b792ec758a1097d32481
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -130,7 +130,7 @@ components:
       - common-utils
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: '1.3'
+    ref: 3df85e5cb476182129ecbb949ca0e3e0a0adb178
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
@@ -139,7 +139,7 @@ components:
       - windows
   - name: sql
     repository: https://github.com/opensearch-project/sql.git
-    ref: '1.3'
+    ref: 41f41c4cd570d021316f813d0896093f7d7d1b1e
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version: plugin
@@ -150,7 +150,7 @@ components:
       - ml-commons
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: '1.3'
+    ref: ddbc8124a739a3aa739d3f5f831fa684a378453f
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
