@@ -50,7 +50,7 @@ jobs:
           TYPE=${{ inputs.type }}
           if [[ -z "$PLATFORM" ]]; then
               if [[ "$PRODUCT" = "opensearch" ]]; then
-                  PLATFORM="centos7" # Temp measure before centos7 deprecation on opensearch for k-NN
+                  PLATFORM="al2" # Temp measure before al2 deprecation on opensearch for k-NN
               else
                   PLATFORM="almalinux8"
               fi
