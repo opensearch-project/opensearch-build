@@ -103,6 +103,11 @@
 # Enables you to specify a file where OpenSearch Dashboards stores log output.
 # logging.dest: stdout
 
+# 2.15 Ignore 'ENOSPC' error for logging stream.
+# When set to true, the 'ENOSPC' error message will not cause the OpenSearch Dashboards process to crash. Otherwise,
+# the original behavior will be maintained. It is disabled by default.
+# logging.ignoreEnospcError: false
+
 # Set the value of this setting to true to suppress all logging output.
 # logging.silent: false
 
