@@ -144,13 +144,6 @@ class TestOpenSearchReleasePromotionTestParallel extends BuildPipelineTest {
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_NAME, value=tar})")
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_ARCHITECTURE, value=arm64})")
 
-        // OpenSearch Linux tar x64
-        assertCallStack().contains('stage(OpenSearch Linux tar x64, groovy.lang.Closure)')
-        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
-        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_PLATFORM, value=linux})")
-        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_NAME, value=tar})")
-        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
-
         // OpenSearch Dashboards Linux tar arm64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux tar arm64, groovy.lang.Closure)')
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
@@ -161,6 +154,13 @@ class TestOpenSearchReleasePromotionTestParallel extends BuildPipelineTest {
         // OpenSearch Dashboards Linux tar x64
         assertCallStack().contains('stage(OpenSearch Dashboards Linux tar x64, groovy.lang.Closure)')
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch-dashboards})")
+        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_PLATFORM, value=linux})")
+        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_NAME, value=tar})")
+        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")
+
+        // OpenSearch Linux tar x64
+        assertCallStack().contains('stage(Publish OpenSearch Linux tar x64, groovy.lang.Closure)')
+        assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})")
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_PLATFORM, value=linux})")
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_NAME, value=tar})")
         assertCallStack().contains("release-promotion-parallel.string({name=DISTRIBUTION_ARCHITECTURE, value=x64})")

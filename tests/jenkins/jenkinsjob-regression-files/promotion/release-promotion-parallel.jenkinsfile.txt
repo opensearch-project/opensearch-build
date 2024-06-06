@@ -185,7 +185,7 @@
             release-promotion-parallel.string({name=INPUT_MANIFEST, value=1.0.0/opensearch-dashboards-1.0.0.yml})
             release-promotion-parallel.build({job=distribution-promote-artifacts, wait=true, parameters=[null, null, null, null, null, null]})
             release-promotion-parallel.echo(Promotion successful for OpenSearch Dashboards Linux tar x64!)
-         release-promotion-parallel.stage(OpenSearch Linux tar x64, groovy.lang.Closure)
+         release-promotion-parallel.stage(Publish OpenSearch Linux tar x64, groovy.lang.Closure)
             release-promotion-parallel.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:docker/library/alpine:3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
             release-promotion-parallel.echo(Triggering distribution-promote-artifacts for OpenSearch Linux tar x64)
             release-promotion-parallel.string({name=DISTRIBUTION_JOB_NAME, value=distribution-build-opensearch})
