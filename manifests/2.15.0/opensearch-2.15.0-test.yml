@@ -3,7 +3,7 @@ schema-version: '1.0'
 name: OpenSearch
 ci:
   image:
-    name: opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3
+    name: opensearchstaging/ci-runner:ci-runner-al2-opensearch-build-v1
     args: -e JAVA_HOME=/opt/java/openjdk-21
 components:
   - name: alerting
@@ -27,6 +27,12 @@ components:
     bwc-test:
       test-configs:
         - with-security
+
+  - name: flow-framework
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
 
   - name: asynchronous-search
     integ-test:
@@ -141,7 +147,7 @@ components:
         - with-security
         - without-security
 
-  - name: flow-framework
+  - name: skills
     integ-test:
       test-configs:
         - with-security
