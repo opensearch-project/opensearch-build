@@ -61,6 +61,7 @@ opensearch_dashboards_vars=(
     opensearchDashboards.defaultAppId
     opensearchDashboards.index
     logging.dest
+    logging.ignoreEnospcError
     logging.json
     logging.quiet
     logging.rotate.enabled

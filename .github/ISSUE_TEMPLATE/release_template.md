@@ -58,7 +58,7 @@ Release blog is ready | :red_circle: |   |
 
 ### [Campaigns](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#campaigns)
 
-- [ ] [Component Release Issue](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#component-release-issue).
+- [ ] [Component Release Issue](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#component-release-issues).
 - [ ] [Release Campaigns](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-campaigns).
 
 ### [Release Branch and Version Increment](https://github.com/opensearch-project/opensearch-build/wiki/Releasing-the-Distribution#release-branch-readiness) - _Ends __REPLACE_RELEASE-minus-4-days__

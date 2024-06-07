@@ -1,6 +1,6 @@
 - [Overview](#overview)
 - [Current Maintainers](#current-maintainers)
-- [Emeritus Maintainers](#Emeritus-maintainers)
+- [Emeritus Maintainers](#emeritus-maintainers)
 - [Release Owner](#release-owner)
   - [Release Activities](#release-activities)
   - [Dealing with Ambiguity](#dealing-with-ambiguity)
@@ -18,11 +18,9 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Maintainer       | GitHub ID                                | Affiliation |
 | ---------------- |------------------------------------------| ----------- |
 | Peter Zhu        | [peterzhuamazon](https://github.com/peterzhuamazon) | Amazon      |
-| Barani Bikshandi | [bbarani](https://github.com/bbarani)    | Amazon      |
 | Sayali Gaikawad  | [gaiksaya](https://github.com/gaiksaya)  | Amazon      |
 | Rishab Singh     | [rishabh6788](https://github.com/rishabh6788) | Amazon      |
 | Zelin Hao        | [zelinh](https://github.com/zelinh)      | Amazon      |
-| Jeff Lu | [jordarlu](https://github.com/jordarlu)  | Amazon      |
 | Prudhvi Godithi | [prudhvigodithi](https://github.com/prudhvigodithi) | Amazon      |
 | Divya Madala  | [Divyaasm](https://github.com/Divyaasm)  | Amazon      |
 | Daniel (dB.) Doubrovkine  | [dblock](https://github.com/dblock)      | Amazon      |
@@ -36,6 +34,8 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Cameron Skinner   | [camerski](https://github.com/camerski)                 | Amazon      |
 | Marc Handalian    | [mch2](https://github.com/mch2)                         | Amazon      |
 | Peter Nied        | [peternied](https://github.com/peternied)               | Amazon      |
+| Jeff Lu           | [jordarlu](https://github.com/jordarlu)                 | Amazon      |
+| Barani Bikshandi  | [bbarani](https://github.com/bbarani)                   | Amazon      |
 
 ## Release Owner
 
