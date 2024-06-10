@@ -443,9 +443,11 @@ pipeline {
                     script {
                         echo 'Invalidating cloudfront'
                         def majorVersion=params.RELEASE_VERSION.find(/\d/)
-                        withCredentials([string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC')]) {
+                        withCredentials([
+                            string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC'),
+                            string(credentialsId: 'cloudfront-distribution-id', variable: 'CLOUDFRONT_DISTRIBUTION_ID')]) {
                             withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-                                cfInvalidate(distribution: "${env.CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
+                                cfInvalidate(distribution: "${CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
                             }
                         }
                     }

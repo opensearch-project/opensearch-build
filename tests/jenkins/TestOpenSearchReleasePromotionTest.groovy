@@ -204,7 +204,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         runScript('jenkins/promotion/release-promotion.jenkinsfile')
         def callStack = helper.getCallStack()
          assertCallStack().contains(
-            'release-promotion.cfInvalidate({distribution=null, paths=[/releases/bundle/opensearch/1.x/*, /releases/bundle/opensearch-dashboards/1.x/*], waitForCompletion=true})'
+            'release-promotion.cfInvalidate({distribution=CLOUDFRONT_DISTRIBUTION_ID, paths=[/releases/bundle/opensearch/1.x/*, /releases/bundle/opensearch-dashboards/1.x/*], waitForCompletion=true})'
         )
     }
 }
