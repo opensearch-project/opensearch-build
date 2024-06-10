@@ -509,7 +509,7 @@ pipeline {
         }
         steps {
             echo 'Triggering publish to maven workflow'
-            build job: 'publish-to-maven', wait: true, parameters: [
+            build job: 'publish-to-maven', wait: false, parameters: [
                 string(name: 'BUILD_ID', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
                 string(name: 'VERSION', value: "${params.RELEASE_VERSION}")
                 ]

@@ -196,7 +196,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('release-promotion.echo(Triggering publish to maven workflow)')
         assertCallStack().contains('release-promotion.string({name=BUILD_ID, value=2050})')
         assertCallStack().contains('release-promotion.string({name=VERSION, value=1.0.0})')
-        assertCallStack().contains('release-promotion.build({job=publish-to-maven, wait=true, parameters=[null, null]})')
+        assertCallStack().contains('release-promotion.build({job=publish-to-maven, wait=false, parameters=[null, null]})')
     }
 
     @Test

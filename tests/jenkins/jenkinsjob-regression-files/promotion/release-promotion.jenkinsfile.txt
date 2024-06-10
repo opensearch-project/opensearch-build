@@ -232,7 +232,7 @@
             release-promotion.echo(Triggering publish to maven workflow)
             release-promotion.string({name=BUILD_ID, value=2050})
             release-promotion.string({name=VERSION, value=1.0.0})
-            release-promotion.build({job=publish-to-maven, wait=true, parameters=[null, null]})
+            release-promotion.build({job=publish-to-maven, wait=false, parameters=[null, null]})
             release-promotion.echo(Promoted to maven successfully!)
          release-promotion.node(Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, groovy.lang.Closure)
             release-promotion.checkout(groovy.lang.Closure)
