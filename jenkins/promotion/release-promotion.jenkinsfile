@@ -36,6 +36,11 @@ pipeline {
             description: 'OpenSearch Dashboards Release Candidate Build Number',
             trim: true
         )
+        booleanParam(
+            name: 'TAG_DOCKER_LATEST',
+            defaultValue: true,
+            description: 'Tag the images as latest'
+        )
     }    
     stages {
         stage('Parameters Check') {
@@ -49,314 +54,360 @@ pipeline {
                 }
             }
         }
-        stage('OpenSearch Debian Apt promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
+        stage('Publish'){
+            parallel {
+                stage('OpenSearch Debian Apt promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-repos for OpenSearch Debian Apt'
+                        build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for Debian Apt OpenSearch!'
+                    }
+                }
+                stage('OpenSearch Yum promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-repos for OpenSearch Yum'
+                        build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch yum!'
+                    }
+                }
+                stage('OpenSearch Dashboards Debian Apt promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-repos for OpenSearch Dashboards apt'
+                        build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for Debian Apt OpenSearch Dashboards!'
+                    }
+                }
+                stage('OpenSearch Dashboards Yum promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-repos for OpenSearch Dashboards yum'
+                        build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards yum!'
+                    }
+                }
+                stage('OpenSearch Windows promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch windows'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'zip'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch windows!'
+                    }
+                }
+                stage('OpenSearch Dashboards Windows promotion') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for opensearch windows'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'zip'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards windows!'
+                    }
+                }
+                stage('OpenSearch Linux deb arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Linux deb arm64!'
+                    }
+                }
+                stage('OpenSearch Linux deb x64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb x64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Linux deb x64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux deb arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux deb arm64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux deb x64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb x64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'deb'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux deb x64!'
+                    }
+                }
+                stage('OpenSearch Linux rpm arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Linux rpm arm64!'
+                    }
+                }
+                stage('OpenSearch Linux rpm x64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm x64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Linux rpm x64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux rpm arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux rpm arm64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux rpm x64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm x64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux rpm x64!'
+                    }
+                }
+                stage('OpenSearch Linux tar arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Linux tar arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Linux tar arm64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux tar arm64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar arm64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux tar arm64!'
+                    }
+                }
+                stage('OpenSearch Dashboards Linux tar x64') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar x64'
+                        build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
+                                                                                            string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
+                                                                                            string(name: 'DISTRIBUTION_NAME', value: 'tar'),
+                                                                                            string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
+                                                                                            string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
+                                                                                            string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
+                                                                                        ]
+                        echo 'Promotion successful for OpenSearch Dashboards Linux tar x64!'
+                    }
                 }
             }
-            steps {
-                echo 'Triggering distribution-promote-repos for OpenSearch Debian Apt'
-                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for Debian Apt OpenSearch!'
-            }
         }
-        stage('OpenSearch Yum promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-repos for OpenSearch Yum'
-                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch yum!'
-            }
-        }
-        stage('OpenSearch Dashboards Debian Apt promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-repos for OpenSearch Dashboards apt'
-                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'apt'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for Debian Apt OpenSearch Dashboards!'
-            }
-        }
-        stage('OpenSearch Dashboards Yum promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-repos for OpenSearch Dashboards yum'
-                build job: 'distribution-promote-repos', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_REPO_TYPE', value: 'yum'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards yum!'
-            }
-        }
-        stage('OpenSearch Windows promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch windows'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'zip'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch windows!'
-            }
-        }
-        stage('OpenSearch Dashboards Windows promotion') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for opensearch windows'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'windows'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'zip'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards windows!'
-            }
-        }
-        stage('OpenSearch Linux deb arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Linux deb arm64!'
-            }
-        }
-        stage('OpenSearch Linux deb x64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Linux deb x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Linux deb x64!'
-            }
-        }
-        stage('OpenSearch Dashboards Linux deb arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux deb arm64!'
-            }
-        }
-        stage('OpenSearch Dashboards Linux deb x64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux deb x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'deb'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux deb x64!'
-            }
-        }
-        stage('OpenSearch Linux rpm arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Linux rpm arm64!'
-            }
-        }
-        stage('OpenSearch Linux rpm x64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Linux rpm x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Linux rpm x64!'
-            }
-        }
-        stage('OpenSearch Dashboards Linux rpm arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux rpm arm64!'
-            }
-        }
-        stage('OpenSearch Dashboards Linux rpm x64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux rpm x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'rpm'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux rpm x64!'
-            }
-        }
-        stage('OpenSearch Linux tar arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
-            }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Linux tar arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Linux tar arm64!'
-            }
-        }
-        stage('OpenSearch Linux tar x64') {
+        stage('Publish OpenSearch Linux tar x64') {
             agent {
                 docker {
                     label AGENT_LINUX_X64
@@ -377,46 +428,94 @@ pipeline {
                 echo 'Promotion successful for OpenSearch Linux rpm x64!'
             }
         }
-        stage('OpenSearch Dashboards Linux tar arm64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
+        stage('Invalidate cloudfront and promote docker'){
+            parallel {
+                stage('Invalidate Cloudfront') {
+                agent {
+                    docker {
+                        label AGENT_LINUX_X64
+                        image 'docker/library/alpine:3'
+                        registryUrl 'https://public.ecr.aws/'
+                        alwaysPull true
+                    }
+                }
+                steps {
+                    script {
+                        echo 'Invalidating cloudfront'
+                        def majorVersion=params.RELEASE_VERSION.find(/\d/)
+                        withCredentials([
+                            string(credentialsId: 'jenkins-aws-account-public', variable: 'AWS_ACCOUNT_PUBLIC'),
+                            string(credentialsId: 'cloudfront-distribution-id', variable: 'CLOUDFRONT_DISTRIBUTION_ID')]) {
+                            withAWS(role: 'opensearch-bundle', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+                                cfInvalidate(distribution: "${CLOUDFRONT_DISTRIBUTION_ID}", paths: ["/releases/bundle/opensearch/${majorVersion}.x/*", "/releases/bundle/opensearch-dashboards/${majorVersion}.x/*"], waitForCompletion: true)
+                            }
+                        }
+                    }
                 }
             }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar arm64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'arm64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux tar arm64!'
+                stage('Promote Docker') {
+                    agent {
+                        docker {
+                            label AGENT_LINUX_X64
+                            image 'docker/library/alpine:3'
+                            registryUrl 'https://public.ecr.aws/'
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        echo 'Triggering docker promotion'
+                        build job: 'docker-promotion', wait: true, parameters: [
+                            string(name: 'SOURCE_IMAGES', value: "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"), 
+                            string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
+                            string(name: 'DOCKER_HUB_PROMOTE', value: true),
+                            string(name: 'ECR_PROMOTE', value: true),
+                            string(name: 'TAG_LATEST', value: "${params.TAG_DOCKER_LATEST}"),
+                            string(name: 'TAG_MAJOR_VERSION', value: true)
+                            ]
+                        echo 'Promoted Docker successfully!'
+                    }
+                }
             }
         }
-        stage('OpenSearch Dashboards Linux tar x64') {
-            agent {
-                docker {
-                    label AGENT_LINUX_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
+    stage('Validate the artifacts') {
+        agent {
+            docker {
+                label AGENT_LINUX_X64
+                image 'docker/library/alpine:3'
+                registryUrl 'https://public.ecr.aws/'
+                alwaysPull true
             }
-            steps {
-                echo 'Triggering distribution-promote-artifacts for OpenSearch Dashboards Linux tar x64'
-                build job: 'distribution-promote-artifacts', wait: true, parameters: [string(name: 'DISTRIBUTION_JOB_NAME', value: 'distribution-build-opensearch-dashboards'), 
-                                                                                    string(name: 'DISTRIBUTION_PLATFORM', value: 'linux'),
-                                                                                    string(name: 'DISTRIBUTION_NAME', value: 'tar'),
-                                                                                    string(name: 'DISTRIBUTION_ARCHITECTURE', value: 'x64'),
-                                                                                    string(name: 'DISTRIBUTION_BUILD_NUMBER', value: params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER),
-                                                                                    string(name: 'INPUT_MANIFEST', value: "${params.RELEASE_VERSION}/opensearch-dashboards-${params.RELEASE_VERSION}.yml"),
-                                                                                ]
-                echo 'Promotion successful for OpenSearch Dashboards Linux tar x64!'
+        }
+        steps {
+            echo 'Triggering validation workflow'
+            build job: 'distribution-validation', wait: true, parameters: [
+                string(name: 'VERSION', value: "${params.RELEASE_VERSION}"),
+                string(name: 'DISTRIBUTION', value: 'tar rpm yum deb zip docker'),
+                string(name: 'ARCHITECTURE', value: 'x64 arm64'),
+                string(name: 'PLATFORM', value: 'linux windows'),
+                string(name: 'PROJECTS', value: 'Both'),
+                string(name: 'ARTIFACT_TYPE', value: 'production'),
+                string(name: 'OPTIONAL_ARGS', value: 'validate-digests-only')
+                ]
+            echo 'Artifacts are successfully validated!'
+            }
+        }
+    stage('Publish to Maven'){
+        agent {
+            docker {
+                label AGENT_LINUX_X64
+                image 'docker/library/alpine:3'
+                registryUrl 'https://public.ecr.aws/'
+                alwaysPull true
+            }
+        }
+        steps {
+            echo 'Triggering publish to maven workflow'
+            build job: 'publish-to-maven', wait: false, parameters: [
+                string(name: 'BUILD_ID', value: "${params.OPENSEARCH_RC_BUILD_NUMBER}"),
+                string(name: 'VERSION', value: "${params.RELEASE_VERSION}")
+                ]
+            echo 'Promoted to maven successfully!'
             }
         }
     }
