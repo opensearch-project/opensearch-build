@@ -9,49 +9,49 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 1dbbc2a2e911d58f935d289a28cac0488dd77fd7
+    ref: tags/2.14.0
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: '2.14'
+    ref: tags/2.14.0
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: 441168efbf84de020a9bead333bff2e39c2e9d5c
+    ref: tags/2.14.0.0
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 789cf188b37af4940b2e42be7c99ab48caf550bc
+    ref: tags/2.14.0.0
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    ref: 95ae6165d4f376d24e075afb11c043350fadceed
+    ref: tags/2.14.0.0
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 76e18c3b529d210705fadccec9eed6b873ed4bd9
+    ref: tags/2.14.0.0
   - name: customImportMapDashboards
     repository: https://github.com/opensearch-project/dashboards-maps.git
-    ref: 2793c3dc806681dad822fa80c60102b670c013d2
+    ref: tags/2.14.0.0
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: 3bbf18cf02dbc7af11c48c27acee2df3b829e028
+    ref: tags/2.14.0.0
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
-    ref: f53875b3fc4feac8a01686b41a4c6a749007d68a
+    ref: tags/2.14.0.0
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin.git
-    ref: d78e146e1463dd5397202521a22e87163f32b3d3
+    ref: tags/2.14.0.0
   - name: notificationsDashboards
     repository: https://github.com/opensearch-project/dashboards-notifications.git
-    ref: 0ca301f8630f42f4eec53b15e0a8eda9fae91203
+    ref: tags/2.14.0.0
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 150280dd766c0f45ad3e489aecfcab295f82ad60
+    ref: tags/2.14.0.0
   - name: securityAnalyticsDashboards
     repository: https://github.com/opensearch-project/security-analytics-dashboards-plugin.git
-    ref: e7f946de234cd304d871525eb0ecb14a5513547b
+    ref: tags/2.14.0.0
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 5f1c9f485c2ef53e65ec0af04f217a4d4c5bce17
+    ref: tags/2.14.0.0
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
-    ref: a93f20b1a336f15034412777e69409504caecb94
+    ref: tags/2.14.0.0
   - name: assistantDashboards
     repository: https://github.com/opensearch-project/dashboards-assistant.git
-    ref: 1a02edfa6187bd981dce93d3f1f7211c46a029a4
+    ref: tags/2.14.0.0
