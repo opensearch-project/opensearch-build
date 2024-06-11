@@ -97,8 +97,8 @@ pipeline {
         )
         choice(
             name: 'DOCKER_SOURCE',
-            description: 'Enter the docker-source to pull the docker image, either DockerHub or ECR.',
-            choices: ["dockerhub", "ecr"]
+            description: 'Enter the docker-source to pull the docker image, either DockerHub or ECR or Both.',
+            choices: ["dockerhub", "ecr", "Both"]
         )
         choice(
             name: 'PROJECTS',
@@ -129,6 +129,10 @@ pipeline {
 
                     if (PROJECTS == 'Both') {
                         PROJECTS = "opensearch opensearch-dashboards"
+                    }
+
+                    if (DOCKER_SOURCE == 'Both') {
+                        DOCKER_SOURCE = "dockerhub ecr"
                     }
 
                     if (OPENSEARCH_DASHBOARDS_ARTIFACT_URL && OPENSEARCH_ARTIFACT_URL == "") {

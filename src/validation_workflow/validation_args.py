@@ -14,7 +14,6 @@ from test_workflow.test_kwargs import TestKwargs
 
 class ValidationArgs:
     SUPPORTED_PLATFORMS = ["linux", "windows"]
-    DOCKER_SOURCE = ["dockerhub", "ecr"]
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(
@@ -74,11 +73,11 @@ class ValidationArgs:
         )
         parser.add_argument(
             "--docker-source",
-            type=str,
+            nargs='+',
             required=False,
-            choices=self.DOCKER_SOURCE,
-            help="(optional) Where to pull the docker image from, either DockerHub or ECR\n",
-            default="dockerhub",
+            help="(optional) Where to pull the docker image from, either DockerHub or ECR or Both \n",
+            choices=["dockerhub", "ecr"],
+            default=["dockerhub"],
         )
         parser.add_argument(
             "-v",
