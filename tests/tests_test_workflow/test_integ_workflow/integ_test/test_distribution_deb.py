@@ -55,6 +55,25 @@ class TestDistributionDeb(unittest.TestCase):
             args_list[0][0][0],
         )
 
+    @patch("subprocess.check_call")
+    def test_install_opensearch_dashboards(self, check_call_mock: Mock) -> None:
+        self.distribution_deb_dashboards.install("opensearch-dashboards.deb")
+        args_list = check_call_mock.call_args_list
+
+        self.assertEqual(check_call_mock.call_count, 1)
+        self.assertEqual(
+            (
+                "sudo dpkg --purge opensearch-dashboards && "
+                "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
+                "dpkg --install opensearch-dashboards.deb && "
+                f"sudo chmod 0666 {self.distribution_deb_dashboards.config_path} && "
+                f"sudo chmod 0755 {os.path.dirname(self.distribution_deb_dashboards.config_path)} {self.distribution_deb_dashboards.log_dir} && "
+                f"sudo usermod -a -G opensearch-dashboards `whoami` && "
+                f"sudo usermod -a -G adm `whoami`"
+            ),
+            args_list[0][0][0],
+        )
+
     def test_start_cmd(self) -> None:
         self.assertEqual(self.distribution_deb.start_cmd, "sudo systemctl start opensearch")
         self.assertEqual(self.distribution_deb_dashboards.start_cmd, "sudo systemctl start opensearch-dashboards")
