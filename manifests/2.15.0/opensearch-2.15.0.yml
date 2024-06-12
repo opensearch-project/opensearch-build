@@ -160,7 +160,7 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 5b45335608750b33d2eacf0e60b8bc6336659fa2
+    ref: 0d32cb08e8e326a6968b87961f7284311ad301ba
     platforms:
       - linux
       - windows
