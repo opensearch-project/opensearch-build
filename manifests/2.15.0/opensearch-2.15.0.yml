@@ -19,7 +19,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 761afd0fd44ed6bb96fa74d0114ad9dff27165f9
+    ref: 1963c998b0face391dfff8e16d19f5abeea96797
     platforms:
       - linux
       - windows
@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 159c142b95d084ea098acfbf717387dca99ba39d
+    ref: 648ea3ecf9dcd3b03dc3d0c91dbe9115d5401396
     platforms:
       - linux
       - windows
