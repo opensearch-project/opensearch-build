@@ -12,7 +12,7 @@ components:
     ref: ce2789050e08f36d593acd0a90dffdd880cf83b6
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 2.x
+    ref: '2.15'
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
     ref: 547b07f1aa3eb0dc4946776b2e713807d54a6bc9
