@@ -48,7 +48,7 @@ components:
     ref: 9ca8d9b95b7737a189e5d32318f6daf8f8e2aa16
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 763b9633c9ce0f27fb0d734044157882e3c23c18
+    ref: 2a11d1d9250be6dbc9627374ba3fd86d096d6d17
   - name: searchRelevanceDashboards
     repository: https://github.com/opensearch-project/dashboards-search-relevance.git
     ref: a1a1ed98b71e3721a0a44315f4b46f8733b7787b
