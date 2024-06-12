@@ -36,3 +36,22 @@ class TestRunValidation(unittest.TestCase):
 
         result = main()
         self.assertEqual(result, 0)
+
+    @patch("argparse._sys.argv",
+           ["run_validation.py", "--version", "2.1.0", "--distribution", "docker", "--docker_source",
+            "dockerhub,ecr"])
+    @patch('run_validation.ValidationTestRunner')
+    def test_main_docker(self, mock_docker: Mock, *mocks: Any) -> None:
+        mock_docker_instance = mock_docker.dispatch.return_value
+        mock_docker_instance.run.return_value = True
+
+        with patch('run_validation.ValidationArgs') as MockValidationArgs:
+            mock_args = Mock()
+            mock_args.docker_source = ["dockerhub", "ecr"]
+            mock_args.distribution = "docker"
+            MockValidationArgs.return_value = mock_args
+
+            result = main()
+            self.assertEqual(result, 0)
+            self.assertEqual(mock_docker.dispatch.call_count, 2)
+            self.assertTrue(mock_docker_instance.run.call_count, 2)

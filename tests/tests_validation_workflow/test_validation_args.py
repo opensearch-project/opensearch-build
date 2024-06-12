@@ -39,6 +39,13 @@ class TestValidationArgs(unittest.TestCase):
         self.assertEqual(ValidationArgs().distribution, "docker")
         self.assertNotEqual(ValidationArgs().distribution, "yum")
 
+    @patch("argparse._sys.argv",
+           [VALIDATION_PY, "--version", "2.4.0", "--distribution", "docker", "--projects", "opensearch", "--docker-source", "dockerhub", "ecr",
+            "--using-staging-artifact-only"])
+    def test_docker_source(self) -> None:
+        self.assertEqual(ValidationArgs().distribution, "docker")
+        self.assertEqual(ValidationArgs().docker_source, ["dockerhub", "ecr"])
+
     @patch("argparse._sys.argv", [VALIDATION_PY, "--version", "1.3.6", "--platform", "linux"])
     def test_platform_default(self) -> None:
         self.assertEqual(ValidationArgs().platform, "linux")
