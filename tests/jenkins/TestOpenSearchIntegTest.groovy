@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.3.2')
+                .defaultVersion('6.5.0')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -125,17 +125,17 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         }
         helper.addShMock("""env PATH=\$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar """) { script ->
             return [stdout: "Error running integtest for component k-NN, creating Github issue", exitValue: 1]}
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title" --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
-        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title is:closed closed:>=2023-10-24" --label autocut,v3.0.0 --json number --jq '.[0].number'""") { script ->
+        helper.addShMock("""gh issue list --repo https://github.com/opensearch-project/k-NN.git -S "[AUTOCUT] Integration Test failed for k-NN: 3.0.0 in:title is:closed closed:>=2023-10-24" --json number --jq '.[0].number'""") { script ->
             return [stdout: "", exitValue: 0]
         }
         assertThrows(Exception) {
             runScript('jenkins/opensearch/integ-test.jenkinsfile')
         }
         assertJobStatusFailure()
-        assertThat(getCommandExecutions('sh', 'script'), hasItem('{script=gh issue create --title \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0\" --body \"The integration test failed at distribution level for component k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\" --label autocut,v3.0.0 --label \"untriaged\" --repo https://github.com/opensearch-project/k-NN.git, returnStdout=true}'))
+        assertThat(getCommandExecutions('sh', 'script'), hasItem("""{script=gh issue create --title \"[AUTOCUT] Integration Test failed for k-NN: 3.0.0\" --body \"The integration test failed at distribution level for component k-NN<br>Version: 3.0.0<br>Distribution: tar<br>Architecture: x64<br>Platform: linux<br><br>Please check the logs: https://some/url/redirect<br><br> * Test-report manifest:*<br> - https://ci.opensearch.org/ci/dbc/dummy_job/3.0.0/9010/linux/x64/tar/test-results/234/integ-test/test-report.yml <br><br> _Note: Steps to reproduce, additional logs and other files can be found within the above test-report manifest. <br>Instructions of this test-report manifest can be found [here](https://github.com/opensearch-project/opensearch-build/tree/main/src/report_workflow#guide-on-test-report-manifest-from-ci)._\" --label \"autocut,v3.0.0\" --label \"untriaged\" --repo https://github.com/opensearch-project/k-NN.git, returnStdout=true}"""))
     }
 
     @Test
