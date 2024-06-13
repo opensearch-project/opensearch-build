@@ -29,7 +29,7 @@ components:
     repository: https://github.com/opensearch-project/dashboards-maps.git
     ref: 7d0affc5498651b1a8f07387d96cac748c37a0f9
   - name: anomalyDetectionDashboards
-    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin.git
     ref: 49b35f0849f80f860022d663b5e6746f0e3540ff
   - name: mlCommonsDashboards
     repository: https://github.com/opensearch-project/ml-commons-dashboards.git
