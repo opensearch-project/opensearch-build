@@ -13,7 +13,7 @@ components:
     ref: b79fedce2663c8b47bde0284015ea1ced676bf08
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: dd9fdf1f245da03f257c096a49c17494e18c6025
+    ref: 4e407bd981929cb332f708bcf0acc87f9a3beb99
     platforms:
       - linux
       - windows
@@ -70,7 +70,7 @@ components:
       - k-NN
   - name: notifications-core
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d5527b32c2b9fe1058e09d7d5ce1eab26ffac427
+    ref: aa9b6c464754f95fdb791ba9d7e29fa9c04293ac
     working_directory: notifications
     platforms:
       - linux
@@ -79,7 +79,7 @@ components:
       - common-utils
   - name: notifications
     repository: https://github.com/opensearch-project/notifications.git
-    ref: d5527b32c2b9fe1058e09d7d5ce1eab26ffac427
+    ref: aa9b6c464754f95fdb791ba9d7e29fa9c04293ac
     working_directory: notifications
     platforms:
       - linux
@@ -113,7 +113,7 @@ components:
       - ml-commons
   - name: asynchronous-search
     repository: https://github.com/opensearch-project/asynchronous-search.git
-    ref: 528a92d0c551db5e259a2bc9dca718e64252408c
+    ref: 295bd1c831f64906709d6e25b6ad0d9bab2f45fb
     platforms:
       - linux
       - windows
@@ -121,7 +121,7 @@ components:
       - common-utils
   - name: anomaly-detection
     repository: https://github.com/opensearch-project/anomaly-detection.git
-    ref: e1bb2f511ef90c2a46ce0c5174ebb31a9acd3c8c
+    ref: f6d262e2d3a20309adc8ab2bbcb1248defc3a190
     platforms:
       - linux
       - windows
@@ -174,7 +174,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: d194d55a4eed44720c8fdd661dc35fce0a7e8b9c
+    ref: 602197690ff52d49fe14d140dac51bbf94e9c3d2
     platforms:
       - linux
       - windows
