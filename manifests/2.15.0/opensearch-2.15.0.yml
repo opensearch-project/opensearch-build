@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 5ad0f5dc1303bf63c973cd93987077d9748ab167
+    ref: b79fedce2663c8b47bde0284015ea1ced676bf08
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: dd9fdf1f245da03f257c096a49c17494e18c6025
@@ -19,7 +19,7 @@ components:
       - windows
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 761afd0fd44ed6bb96fa74d0114ad9dff27165f9
+    ref: 1963c998b0face391dfff8e16d19f5abeea96797
     platforms:
       - linux
       - windows
@@ -31,7 +31,7 @@ components:
       - windows
   - name: k-NN
     repository: https://github.com/opensearch-project/k-NN.git
-    ref: 0738439e15d41c28eaaeef9a0d8b35727c1b30e5
+    ref: 150c589849a8ec3bc442d830b43a3eaf4e25fa0c
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: ac04f0773ad7c4cf689d72022e67c7c2922c1a03
+    ref: 6852e0d1c01c1cba8ad46f9cf35dd097c73b4c94
     platforms:
       - linux
       - windows
@@ -130,7 +130,7 @@ components:
       - job-scheduler
   - name: alerting
     repository: https://github.com/opensearch-project/alerting.git
-    ref: 159c142b95d084ea098acfbf717387dca99ba39d
+    ref: 648ea3ecf9dcd3b03dc3d0c91dbe9115d5401396
     platforms:
       - linux
       - windows
@@ -138,7 +138,7 @@ components:
       - common-utils
   - name: security-analytics
     repository: https://github.com/opensearch-project/security-analytics.git
-    ref: 7f64ff2673a77b0761b762ec4fb85a0794553f6a
+    ref: 41bd0c07b52041105c9cfd91b9355a42ba3c4fde
     platforms:
       - linux
       - windows
@@ -160,13 +160,13 @@ components:
       - linux
   - name: custom-codecs
     repository: https://github.com/opensearch-project/custom-codecs.git
-    ref: 5b45335608750b33d2eacf0e60b8bc6336659fa2
+    ref: 0d32cb08e8e326a6968b87961f7284311ad301ba
     platforms:
       - linux
       - windows
   - name: flow-framework
     repository: https://github.com/opensearch-project/flow-framework.git
-    ref: 30fd6fdfc5dca6174c60d72911ad848ec306eb3e
+    ref: 1d01add552ad457074e5bf76a11112b5678c7ba3
     platforms:
       - linux
       - windows
@@ -174,7 +174,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: a544e37098529a7b55edb650a59bea466a4ea642
+    ref: d194d55a4eed44720c8fdd661dc35fce0a7e8b9c
     platforms:
       - linux
       - windows
