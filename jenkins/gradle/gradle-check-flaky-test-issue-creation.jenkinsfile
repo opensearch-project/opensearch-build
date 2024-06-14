@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.5.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -20,15 +20,17 @@ pipeline {
         buildDiscarder(logRotator(daysToKeepStr: '180'))
     }
     triggers {
-        parameterizedCron '''
-            H */8 * * *
-        '''
+        parameterizedCron('''
+            H */6 * * *
+        ''')
     }
     stages {
         stage('Detect Gradle Check Flaky Tests') {
             steps {
                 script {
-                    gradleCheckFlakyTestChecker()
+                    gradleCheckFlakyTestDetector(
+                        issueLabels: 'autocut,>test-failure,flaky-test'
+                    )
                 }
             }
         }
