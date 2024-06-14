@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 3f63896f36f2a3c437a81413a5df84af603edb3a
+    ref: d1546042b320323c96854c66e2bb48efaca9bf17
     platforms:
       - linux
       - windows
@@ -146,7 +146,7 @@ components:
       - common-utils
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 960c51eb8cd94365227be6b2664913c99397651e
+    ref: ce7ee04856aeb18a5fa232a802f85b5d97fecc00
     platforms:
       - linux
       - windows
