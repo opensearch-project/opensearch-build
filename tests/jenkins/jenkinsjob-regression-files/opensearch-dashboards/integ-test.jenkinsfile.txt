@@ -3,7 +3,7 @@
       integ-test.library({identifier=jenkins@6.5.0, retriever=null})
       integ-test.pipeline(groovy.lang.Closure)
          integ-test.credentials(jenkins-artifact-bucket-name)
-         integ-test.timeout({time=5, unit=HOURS})
+         integ-test.timeout({time=6, unit=HOURS})
          integ-test.logRotator({daysToKeepStr=30})
          integ-test.buildDiscarder(null)
          integ-test.echo(Executing on agent [label:none])

@@ -35,7 +35,7 @@ def agent_nodes = [
 
 pipeline {
     options {
-        timeout(time: 5, unit: 'HOURS')
+        timeout(time: 6, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     agent none
