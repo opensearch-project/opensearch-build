@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: b79fedce2663c8b47bde0284015ea1ced676bf08
+    ref: 9154c7dda5a479e90b13584a42a9524e595e2fbe
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 4e407bd981929cb332f708bcf0acc87f9a3beb99
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: 3f63896f36f2a3c437a81413a5df84af603edb3a
+    ref: d1546042b320323c96854c66e2bb48efaca9bf17
     platforms:
       - linux
       - windows
@@ -53,7 +53,7 @@ components:
       - common-utils
   - name: ml-commons
     repository: https://github.com/opensearch-project/ml-commons.git
-    ref: 6852e0d1c01c1cba8ad46f9cf35dd097c73b4c94
+    ref: 487f33a2e35e642429e9a3ea1eb0d715d542ea9f
     platforms:
       - linux
       - windows
@@ -146,7 +146,7 @@ components:
       - common-utils
   - name: index-management
     repository: https://github.com/opensearch-project/index-management.git
-    ref: 960c51eb8cd94365227be6b2664913c99397651e
+    ref: ce7ee04856aeb18a5fa232a802f85b5d97fecc00
     platforms:
       - linux
       - windows
@@ -174,7 +174,7 @@ components:
       - common-utils
   - name: skills
     repository: https://github.com/opensearch-project/skills.git
-    ref: 602197690ff52d49fe14d140dac51bbf94e9c3d2
+    ref: 27962077bc0afbb50cf4443c55b8cb81b76ecd85
     platforms:
       - linux
       - windows
