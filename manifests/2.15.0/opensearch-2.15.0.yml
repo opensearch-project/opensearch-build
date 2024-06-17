@@ -155,7 +155,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 6716719547fec1810263927991e06936007c5eb8
+    ref: 837bfe8a6ed11eb8a8a8b6ffc0049b8f4984a1b6
     platforms:
       - linux
   - name: custom-codecs
