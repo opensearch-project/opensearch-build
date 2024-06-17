@@ -5,7 +5,111 @@ ci:
   image:
     name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4
 components:
-  - name: OpenSearch-Dashboards
+  - name: OpenSearch-Dashboards-ci-group-1
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-2
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-3
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-4
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-5
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-6
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-7
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-8
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+  - name: OpenSearch-Dashboards-ci-group-9
     integ-test:
       test-configs:
         - with-security
