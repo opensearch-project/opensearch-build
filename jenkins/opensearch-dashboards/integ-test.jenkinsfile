@@ -186,7 +186,7 @@ pipeline {
                     echo "componentList: ${componentList}"
 
                     for (component_check in componentList) {
-                        if (!componentDefaultList.contains(component_check)) {
+                        if (!componentDefaultList.contains(component_check) && !component_check.startsWith("OpenSearch-Dashboards-ci-group-")) {
                            error("${component_check} is not in build manifest: ${componentDefaultList}, exit 1")
                         }
                     }
