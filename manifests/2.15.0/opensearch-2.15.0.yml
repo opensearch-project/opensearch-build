@@ -10,7 +10,7 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 9154c7dda5a479e90b13584a42a9524e595e2fbe
+    ref: 61dbcd0795c9bfe9b81e5762175414bc38bbcadf
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
     ref: 4e407bd981929cb332f708bcf0acc87f9a3beb99
@@ -45,7 +45,7 @@ components:
       - job-scheduler
   - name: cross-cluster-replication
     repository: https://github.com/opensearch-project/cross-cluster-replication.git
-    ref: d1546042b320323c96854c66e2bb48efaca9bf17
+    ref: f4af360f50d8335dcbf974001ea577f3b7428e25
     platforms:
       - linux
       - windows
@@ -155,7 +155,7 @@ components:
       - job-scheduler
   - name: performance-analyzer
     repository: https://github.com/opensearch-project/performance-analyzer.git
-    ref: 97b17f8380fd2f39b362ef8224933206dcfb4b96
+    ref: 837bfe8a6ed11eb8a8a8b6ffc0049b8f4984a1b6
     platforms:
       - linux
   - name: custom-codecs

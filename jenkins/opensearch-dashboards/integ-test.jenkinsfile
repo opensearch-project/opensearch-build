@@ -238,7 +238,7 @@ pipeline {
                         echo "Adding Component: ${local_component}"
                         componentTests["Run Integtest ${local_component}"] = {
                             // Using scripted pipelines to trigger dynamic parallel stages
-                            timeout(time: 4, unit: 'HOURS') {
+                            timeout(time: 5, unit: 'HOURS') {
                                 node(AGENT_LABEL) {
                                     docker.withRegistry('https://public.ecr.aws/') {
                                         docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
