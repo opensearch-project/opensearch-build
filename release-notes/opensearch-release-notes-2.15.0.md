@@ -14,8 +14,8 @@
 ### Opensearch Anomaly Detection Dashboards
 
 
-* support MDS in feature anywhere ([#767](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/767))
-* update create detector page and detector detail page to add custom result index lifecycle management settings ([#770](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/770))
+* Support MDS in feature anywhere ([#767](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/767))
+* Update create detector page and detector detail page to add custom result index lifecycle management settings ([#770](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/770))
 
 
 ### Opensearch Common Utils
@@ -34,7 +34,7 @@
 
 
 * Add connector tool ([#2516](https://github.com/opensearch-project/ml-commons/pull/2516))
-* guardrails model support ([#2491](https://github.com/opensearch-project/ml-commons/pull/2491))
+* Guardrails model support ([#2491](https://github.com/opensearch-project/ml-commons/pull/2491))
 
 
 ### Opensearch Neural Search
@@ -58,11 +58,11 @@
 * Improve query assist user experiences ([#1817](https://github.com/opensearch-project/dashboards-observability/pull/1817))
 * Add JSON5 parsing capabilities for integration configs ([#1815](https://github.com/opensearch-project/dashboards-observability/pull/1815))
 * Refactor all the integrations with Amazon branding instead of AWS ([#1787](https://github.com/opensearch-project/dashboards-observability/pull/1787))
-* add otel services support integration ([#1769](https://github.com/opensearch-project/dashboards-observability/pull/1769))
+* Add otel services support integration ([#1769](https://github.com/opensearch-project/dashboards-observability/pull/1769))
 * MDS Support for trace analytics ([#1752](https://github.com/opensearch-project/dashboards-observability/pull/1752))
 * Add skipping indices for all integrations that have sample queries ([#1747](https://github.com/opensearch-project/dashboards-observability/pull/1747))
-* add saved queries to vpc flow ([#1744](https://github.com/opensearch-project/dashboards-observability/pull/1744))
-* added fix for jobs and cache Support for workbench ,MDS support ([#1739](https://github.com/opensearch-project/dashboards-observability/pull/1739))
+* Add saved queries to vpc flow ([#1744](https://github.com/opensearch-project/dashboards-observability/pull/1744))
+* Added fix for jobs and cache Support for workbench ,MDS support ([#1739](https://github.com/opensearch-project/dashboards-observability/pull/1739))
 * Cloud trails saved queries integration ([#1737](https://github.com/opensearch-project/dashboards-observability/pull/1737))
 
 
@@ -115,10 +115,10 @@
 
 
 * Refinement of Forecasting and AD Precision/Recall Improvements ([#1210](https://github.com/opensearch-project/anomaly-detection/pull/1210))
-* make jvm heap usage a dynamic setting ([#1212](https://github.com/opensearch-project/anomaly-detection/pull/1212))
+* Make jvm heap usage a dynamic setting ([#1212](https://github.com/opensearch-project/anomaly-detection/pull/1212))
 * Add custom result index lifecycle management condition fields to config ([#1215](https://github.com/opensearch-project/anomaly-detection/pull/1215))
 * Make Custom Result Index Name an Alias ([#1225](https://github.com/opensearch-project/anomaly-detection/pull/1225))
-* add custom result index lifecycle management ([#1232](https://github.com/opensearch-project/anomaly-detection/pull/1232))
+* Add custom result index lifecycle management ([#1232](https://github.com/opensearch-project/anomaly-detection/pull/1232))
 * Merge Single-Stream and HC Detector Profiling Workflows ([#1237](https://github.com/opensearch-project/anomaly-detection/pull/1237))
 
 
@@ -155,10 +155,11 @@
 ### Opensearch ML Common
 
 
-* hanlde the throttling error in the response header ([#2442](https://github.com/opensearch-project/ml-commons/pull/2442))
+* Hanlde the throttling error in the response header ([#2442](https://github.com/opensearch-project/ml-commons/pull/2442))
 * Implementing retry for remote connector to mitigate throttling issue ([#2462](https://github.com/opensearch-project/ml-commons/pull/2462))
-* ml inference ingest processor support for local models ([#2508](https://github.com/opensearch-project/ml-commons/pull/2508))
-* add setting to allow private IP ([#2534](https://github.com/opensearch-project/ml-commons/pull/2534))
+* ML inference ingest processor support for local models ([#2508](https://github.com/opensearch-project/ml-commons/pull/2508))
+* Add setting to allow private IP ([#2534](https://github.com/opensearch-project/ml-commons/pull/2534))
+* Add IMMEDIATE refresh policy ([#2541](https://github.com/opensearch-project/ml-commons/pull/2541))
 
 
 ### Opensearch Neural Search
@@ -217,19 +218,19 @@
 
 * (query assist) revert removing backticks ([#1898](https://github.com/opensearch-project/dashboards-observability/pull/1898))
 * Minor bug fixes for trace analytics v2 (#1894) ([#1893](https://github.com/opensearch-project/dashboards-observability/pull/1893))
-* manual backport of otel-metrics pr ([#1892](https://github.com/opensearch-project/dashboards-observability/pull/1892))
+* Manual backport of otel-metrics pr ([#1892](https://github.com/opensearch-project/dashboards-observability/pull/1892))
 * Fix traces index schema bug ([#1865](https://github.com/opensearch-project/dashboards-observability/pull/1865))
 * Traces-analytics bug fix for missing MDS id in flyout ([#1857](https://github.com/opensearch-project/dashboards-observability/pull/1857))
 * Raw Vpc schema integration (1.0.0 parquet ) ([#1853](https://github.com/opensearch-project/dashboards-observability/pull/1853))
 * Fix flint skipping index syntax issues ([#1846](https://github.com/opensearch-project/dashboards-observability/pull/1846))
 * Fix window start backtick during MV creation ([#1823](https://github.com/opensearch-project/dashboards-observability/pull/1823))
 * Fix data connection api 404 error ([#1810](https://github.com/opensearch-project/dashboards-observability/pull/1810))
-* remove defaulting to query assist time range ([#1805](https://github.com/opensearch-project/dashboards-observability/pull/1805))
+* Remove defaulting to query assist time range ([#1805](https://github.com/opensearch-project/dashboards-observability/pull/1805))
 * Backport prometheus fix to 2.x ([#1782](https://github.com/opensearch-project/dashboards-observability/pull/1782))
 * [Bug fix] Add conditional rendering for data connection page's tabs ([#1756](https://github.com/opensearch-project/dashboards-observability/pull/1756))
-* removed update button from explorer ([#1755](https://github.com/opensearch-project/dashboards-observability/pull/1755))
+* Removed update button from explorer ([#1755](https://github.com/opensearch-project/dashboards-observability/pull/1755))
 * (query assist) remove caching agent id ([#1734](https://github.com/opensearch-project/dashboards-observability/pull/1734))
-* added placeholder change for metrics picker ([#1906](https://github.com/opensearch-project/dashboards-observability/pull/1906))
+* Added placeholder change for metrics picker ([#1906](https://github.com/opensearch-project/dashboards-observability/pull/1906))
 
 
 ### Opensearch Alerting
@@ -299,12 +300,13 @@
 ### Opensearch ML Common
 
 
-* fix memory CB bugs and upgrade UTs to compatible with core changes ([#2469](https://github.com/opensearch-project/ml-commons/pull/2469))
-* fix error of ML inference processor in foreach processor ([#2474](https://github.com/opensearch-project/ml-commons/pull/2474))
-* fix error message with unwrapping the root cause ([#2458](https://github.com/opensearch-project/ml-commons/pull/2458))
-* adding immediate refresh to delete model group request ([#2514](https://github.com/opensearch-project/ml-commons/pull/2514))
+* Fix memory CB bugs and upgrade UTs to compatible with core changes ([#2469](https://github.com/opensearch-project/ml-commons/pull/2469))
+* Fix error of ML inference processor in foreach processor ([#2474](https://github.com/opensearch-project/ml-commons/pull/2474))
+* Fix error message with unwrapping the root cause ([#2458](https://github.com/opensearch-project/ml-commons/pull/2458))
+* Adding immediate refresh to delete model group request ([#2514](https://github.com/opensearch-project/ml-commons/pull/2514))
 * Fix model still deployed after calling undeploy API ([#2510](https://github.com/opensearch-project/ml-commons/pull/2510))
 * Fix bedrock embedding generation issue ([#2495](https://github.com/opensearch-project/ml-commons/pull/2495))
+* Fix init encryption master key ([#2554](https://github.com/opensearch-project/ml-commons/pull/2554))
 
 
 ### Opensearch Neural Search
@@ -323,7 +325,7 @@
 ### Opensearch Query Workbench
 
 
-* added fix for runAsync query without mds id ([#323](https://github.com/opensearch-project/dashboards-query-workbench/pull/323))
+* Added fix for runAsync query without mds id ([#323](https://github.com/opensearch-project/dashboards-query-workbench/pull/323))
 
 
 * Flakey unit tests fix ([#339](https://github.com/opensearch-project/dashboards-query-workbench/pull/339))
@@ -390,10 +392,12 @@
 ### Opensearch ML Common
 
 
-* add IT for flow agent with CatIndexTool ([#2425](https://github.com/opensearch-project/ml-commons/pull/2425))
+* Add IT for flow agent with CatIndexTool ([#2425](https://github.com/opensearch-project/ml-commons/pull/2425))
 * Remove strict version dependency to compile minimum compatible version ([#2486](https://github.com/opensearch-project/ml-commons/pull/2486))
-* add IT flow agent with search index tool ([#2460](https://github.com/opensearch-project/ml-commons/pull/2460))
-* fix flaky IT ([#2530](https://github.com/opensearch-project/ml-commons/pull/2530))
+* Add IT flow agent with search index tool ([#2460](https://github.com/opensearch-project/ml-commons/pull/2460))
+* Fix flaky IT ([#2530](https://github.com/opensearch-project/ml-commons/pull/2530))
+* Disable jvm memory circuit breaker for IT ([#2540](https://github.com/opensearch-project/ml-commons/pull/2540))
+* Fix flaky test of PredictionITTests and RestConnectorToolIT ([#2437](https://github.com/opensearch-project/ml-commons/pull/2437))
 
 
 ### Opensearch Neural Search
@@ -444,9 +448,9 @@
 ### Opensearch ML Common
 
 
-* add a connector blueprint for Amazon Comprehend APIs ([#2470](https://github.com/opensearch-project/ml-commons/pull/2470))
-* add titan embeeding v2 to blueprint ([#2480](https://github.com/opensearch-project/ml-commons/pull/2480))
-* tutorial: generate embedding for arrays of object ([#2477](https://github.com/opensearch-project/ml-commons/pull/2477))
+* Add a connector blueprint for Amazon Comprehend APIs ([#2470](https://github.com/opensearch-project/ml-commons/pull/2470))
+* Add titan embeeding v2 to blueprint ([#2480](https://github.com/opensearch-project/ml-commons/pull/2480))
+* Tutorial: generate embedding for arrays of object ([#2477](https://github.com/opensearch-project/ml-commons/pull/2477))
 * Small fix in blueprint docs ([#2501](https://github.com/opensearch-project/ml-commons/pull/2501))
 * Titan Embedding Connector Blueprint content referenced by users of OpenSearch 2.11 version ([#2519](https://github.com/opensearch-project/ml-commons/pull/2519))
 
@@ -615,7 +619,7 @@
 * REST API tests refactoring (#4252 and #4255) ([#4328](https://github.com/opensearch-project/security/pull/4328))
 * Fix flaky tests ([#4331](https://github.com/opensearch-project/security/pull/4331))
 * Move REST API tests into integration tests (Part 1) ([#4153](https://github.com/opensearch-project/security/pull/4153))
-* fix build errors caused by filterIndices method being moved from SnapshotUtils to IndexUtils ([#4319](https://github.com/opensearch-project/security/pull/4319))
+* Fix build errors caused by filterIndices method being moved from SnapshotUtils to IndexUtils ([#4319](https://github.com/opensearch-project/security/pull/4319))
 * Extract route paths prefixes into constants ([#4358](https://github.com/opensearch-project/security/pull/4358))
 
 
