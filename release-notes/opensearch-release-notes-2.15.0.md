@@ -1,5 +1,19 @@
 # OpenSearch and OpenSearch Dashboards 2.15.0 Release Notes
 
+## Release Highlights
+
+Pending
+
+
+
+## Release Details
+[OpenSearch and OpenSearch Dashboards 2.15.0](https://opensearch.org/versions/opensearch-2-15-0.html) includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance and refactoring updates.
+
+OpenSearch [Release Notes](https://github.com/opensearch-project/OpenSearch/blob/2.15/release-notes/opensearch.release-notes-2.15.0.md).
+
+OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/OpenSearch-Dashboards/blob/2.15/release-notes/opensearch-dashboards.release-notes-2.15.0.md).
+
+
 
 ## FEATURES
 
