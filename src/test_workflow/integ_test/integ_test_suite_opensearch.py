@@ -114,7 +114,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
                 endpoints_list = []
                 for cluster_details in cluster_endpoints:
                     endpoints_list.append(cluster_details.__dict__)
-                endpoints_string = json.dumps(endpoints_list, indent=0, default=custom_node_endpoint_encoder)
+                endpoints_string = json.dumps(endpoints_list, indent=0, default=custom_node_endpoint_encoder).replace("\n", "")
                 cmd = f"bash {script} -e '"
                 cmd = cmd + endpoints_string + "'"
                 cmd = cmd + f" -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
