@@ -6,7 +6,7 @@
 # compatible open source license.
 
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from test_workflow.integ_test.integ_test_runner_opensearch_dashboards import IntegTestRunnerOpenSearchDashboards
 
@@ -90,3 +90,81 @@ class TestIntegTestRunnerOpenSearchDashboards(unittest.TestCase):
             mock_path,
             mock_test_recorder_object
         )
+
+    @patch("test_workflow.integ_test.integ_test_runner_opensearch_dashboards.IntegTestStartPropertiesOpenSearch")
+    @patch("test_workflow.integ_test.integ_test_runner_opensearch_dashboards.IntegTestStartPropertiesOpenSearchDashboards")
+    @patch("test_workflow.integ_test.integ_test_runner_opensearch_dashboards.IntegTestSuiteOpenSearchDashboards")
+    @patch("test_workflow.integ_test.integ_test_runner.TestRecorder")
+    @patch("test_workflow.integ_test.integ_test_runner.TemporaryDirectory")
+    def test_with_integ_test_ci_groups(self, mock_temp: Mock, mock_test_recorder: Mock, mock_suite: Mock, mock_properties: Mock, mock_properties_dependency: Mock) -> None:
+        self.args.paths = {"opensearch-dashboards": "test-path"}
+        self.args.component = "sql"
+        self.args.test_run_id = "12345"
+
+        mock_test_config = MagicMock()
+        mock_test_config.integ_test = {'test-configs': ['with-security'], 'ci-groups': 3}
+        self.test_manifest.components = {"sql": mock_test_config}
+
+        mock_build_manifest = MagicMock()
+        mock_components = MagicMock()
+        mock_component = MagicMock()
+        mock_component.name = "sql"
+        mock_components.select.return_value = [mock_component]
+        mock_build_manifest.components = mock_components
+
+        mock_bundle_manifest = MagicMock()
+        mock_dependency_installer = MagicMock()
+
+        mock_properties_object = MagicMock()
+        mock_properties_object.bundle_manifest = mock_bundle_manifest
+        mock_properties_object.build_manifest = mock_build_manifest
+        mock_properties_object.dependency_installer = mock_dependency_installer
+
+        mock_properties.return_value = mock_properties_object
+
+        mock_properties_dependency_object = MagicMock()
+        mock_properties_dependency_object.bundle_manifest = MagicMock()
+        mock_properties_dependency_object.build_manifest = MagicMock()
+        mock_properties_dependency_object.dependency_installer = MagicMock()
+        mock_properties_dependency.return_value = mock_properties_dependency_object
+
+        mock_suite_object = MagicMock()
+        mock_test_results = MagicMock()
+
+        mock_suite_object.execute_tests.return_value = mock_test_results
+
+        mock_suite.return_value = mock_suite_object
+
+        mock_path = MagicMock()
+        mock_temp.return_value.__enter__.return_value.path = mock_path
+
+        mock_test_recorder_object = MagicMock()
+        mock_test_recorder.return_value = mock_test_recorder_object
+
+        mock_suite_object.result_data.__iter__.return_value = [MagicMock(), MagicMock()]
+
+        runner = IntegTestRunnerOpenSearchDashboards(self.args, self.test_manifest)
+
+        # call the test target
+        results = runner.run()
+
+        self.assertEqual(results["sql-ci-group-1"], mock_test_results)
+        self.assertEqual(results["sql-ci-group-2"], mock_test_results)
+        self.assertEqual(results["sql-ci-group-3"], mock_test_results)
+
+        mock_suite_object.result_data.__iter__.assert_called()
+        mock_test_recorder_object.test_results_logs.generate_component_yml.assert_called()
+
+        expected_call = call(
+            mock_properties_dependency_object.dependency_installer,
+            mock_properties_object.dependency_installer,
+            mock_component,
+            mock_test_config,
+            mock_properties_dependency_object.bundle_manifest,
+            mock_properties_object.bundle_manifest,
+            mock_properties_dependency_object.build_manifest,
+            mock_properties_object.build_manifest,
+            mock_path,
+            mock_test_recorder_object
+        )
+        mock_suite.assert_has_calls([expected_call, expected_call, expected_call], any_order=True)

@@ -18,6 +18,7 @@ components:
         logging.json: false
         data.search.aggs.shardDelay.enabled: true
         csp.warnLegacyBrowsers: false
+      ci-groups: 9
   - name: alertingDashboards
     integ-test:
       test-configs:
