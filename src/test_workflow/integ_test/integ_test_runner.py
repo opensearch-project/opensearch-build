@@ -43,10 +43,19 @@ class IntegTestRunner(abc.ABC):
                 if component.name in self.test_manifest.components:
                     test_config = self.test_manifest.components[component.name]
                     if test_config.integ_test:
-                        test_suite = self.__create_test_suite__(component, test_config, work_dir.path)
-                        test_results = test_suite.execute_tests()
-                        [self.test_recorder.test_results_logs.generate_component_yml(result_data) for result_data in test_suite.result_data]
-                        all_results.append(component.name, test_results)
+                        if 'ci-groups' in test_config.integ_test.keys():
+                            orig_component_name = component.name
+                            for i in range(1, test_config.integ_test['ci-groups'] + 1):
+                                component.name = f"{orig_component_name}-ci-group-{i}"
+                                test_suite = self.__create_test_suite__(component, test_config, work_dir.path)
+                                test_results = test_suite.execute_tests()
+                                [self.test_recorder.test_results_logs.generate_component_yml(result_data) for result_data in test_suite.result_data]
+                                all_results.append(component.name, test_results)
+                        else:
+                            test_suite = self.__create_test_suite__(component, test_config, work_dir.path)
+                            test_results = test_suite.execute_tests()
+                            [self.test_recorder.test_results_logs.generate_component_yml(result_data) for result_data in test_suite.result_data]
+                            all_results.append(component.name, test_results)
                     else:
                         logging.info(f"Skipping integ-tests for {component.name}, as it is currently not supported")
                 else:
