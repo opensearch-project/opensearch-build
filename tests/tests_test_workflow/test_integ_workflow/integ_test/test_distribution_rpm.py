@@ -32,7 +32,6 @@ class TestDistributionRpm(unittest.TestCase):
         self.assertEqual(self.distribution_rpm.config_path, os.path.join(os.sep, "etc", "opensearch", "opensearch.yml"))
         self.assertEqual(self.distribution_rpm_dashboards.config_path, os.path.join(os.sep, "etc", "opensearch-dashboards", "opensearch_dashboards.yml"))
 
-
     def test_data_dir(self) -> None:
         self.assertEqual(self.distribution_rpm.data_dir, os.path.join(os.sep, "var", "lib", "opensearch"))
         self.assertEqual(self.distribution_rpm_dashboards.data_dir, os.path.join(os.sep, "var", "lib", "opensearch-dashboards"))
@@ -91,4 +90,10 @@ class TestDistributionRpm(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"sudo yum remove -y opensearch && sudo rm -rf {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.data_dir} {self.distribution_rpm.log_dir}", args_list[0][0][0])
+        self.assertEqual(
+            (
+                "sudo yum remove -y opensearch && "
+                f"sudo rm -rf {os.path.dirname(self.distribution_rpm.config_path)} {self.distribution_rpm.data_dir} {self.distribution_rpm.log_dir}"
+            ),
+            args_list[0][0][0],
+        )
