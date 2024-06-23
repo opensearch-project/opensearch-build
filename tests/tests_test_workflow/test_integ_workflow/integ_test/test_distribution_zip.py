@@ -37,6 +37,10 @@ class TestDistributionZipOpenSearch(unittest.TestCase):
         self.assertEqual(self.distribution_zip.config_path, os.path.join(self.work_dir, f"{self.product}-{self.version}", "config", "opensearch.yml"))
         self.assertEqual(self.distribution_zip_dashboards.config_path, os.path.join(self.work_dir, f"{self.product_dashboards}-{self.version}", "config", "opensearch_dashboards.yml"))
 
+    def test_data_dir(self) -> None:
+        self.assertEqual(self.distribution_zip.data_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}", "data"))
+        self.assertEqual(self.distribution_zip_dashboards.data_dir, os.path.join(self.work_dir, f"{self.product_dashboards}-{self.version}", "data"))
+
     def test_log_dir(self) -> None:
         self.assertEqual(self.distribution_zip.log_dir, os.path.join(self.work_dir, f"{self.product}-{self.version}", "logs"))
         self.assertEqual(self.distribution_zip_dashboards.log_dir, os.path.join(self.work_dir, f"{self.product_dashboards}-{self.version}", "logs"))

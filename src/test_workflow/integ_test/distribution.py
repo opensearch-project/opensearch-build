@@ -43,6 +43,15 @@ class Distribution(ABC):
         pass
 
     @property
+    @abstractmethod
+    def data_dir(self) -> str:
+        """
+        Return the data directory for the distribution
+        """
+        pass
+
+    @property
+    @abstractmethod
     def log_dir(self) -> str:
         """
         Return the log directory for the distribution

@@ -26,6 +26,10 @@ class DistributionDeb(Distribution):
         return os.path.join(os.sep, "etc", self.filename, self.config_filename)
 
     @property
+    def data_dir(self) -> str:
+        return os.path.join(os.sep, "var", "lib", self.filename)
+
+    @property
     def log_dir(self) -> str:
         return os.path.join(os.sep, "var", "log", self.filename)
 
@@ -38,6 +42,8 @@ class DistributionDeb(Distribution):
                 'dpkg',
                 '--purge',
                 self.filename,
+                '&&',
+                f'sudo rm -rf {os.path.dirname(self.config_path)} {self.data_dir} {self.log_dir}',
                 '&&',
                 'sudo',
                 'env',
@@ -64,4 +70,4 @@ class DistributionDeb(Distribution):
 
     def uninstall(self) -> None:
         logging.info(f"Uninstall {self.filename} package after the test")
-        subprocess.check_call(f"sudo dpkg --purge {self.filename} && sudo rm -rf {os.path.dirname(self.config_path)} {self.log_dir}", shell=True)
+        subprocess.check_call(f"sudo dpkg --purge {self.filename} && sudo rm -rf {os.path.dirname(self.config_path)} {self.data_dir} {self.log_dir}", shell=True)

@@ -26,6 +26,10 @@ class DistributionZip(Distribution):
         return os.path.join(self.install_dir, "config", self.config_filename)
 
     @property
+    def data_dir(self) -> str:
+        return os.path.join(self.install_dir, "data")
+
+    @property
     def log_dir(self) -> str:
         return os.path.join(self.install_dir, "logs")
 
