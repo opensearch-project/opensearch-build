@@ -55,7 +55,7 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Add hardware-accelerated codecs for DEFLATE and LZ4
 
 
-### Opensearch ML Common
+### Opensearch ML Commons
 
 
 * Add connector tool ([#2516](https://github.com/opensearch-project/ml-commons/pull/2516))
