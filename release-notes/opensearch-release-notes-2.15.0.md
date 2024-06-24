@@ -173,8 +173,6 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * Add Workflow Step for Reindex from source index to destination ([#718](https://github.com/opensearch-project/flow-framework/pull/718))
-
-
 * Add param to delete workflow API to clear status even if resources exist ([#719](https://github.com/opensearch-project/flow-framework/pull/719))
 * Add additional default use cases ([#731](https://github.com/opensearch-project/flow-framework/pull/731))
 * Add conversation search default use case with RAG tool ([#732](https://github.com/opensearch-project/flow-framework/pull/732))
