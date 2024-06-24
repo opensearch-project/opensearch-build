@@ -153,6 +153,15 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 * Update Frontend for Custom Result Index Query and Fix Issues ([#772](https://github.com/opensearch-project/anomaly-detection-dashboards-plugin/pull/772))
 
 
+### OpenSearch Build
+
+
+* Enhance the stability of integration test runs, achieving passing test results on plugins of the distribution builds without requiring manual sign-offs.
+  * Add condition for OSD integ tests on deb and rpm ([#4770](https://github.com/opensearch-project/opensearch-build/pull/4770))
+  * Make endpoint_string one line for ccr test ([#4794](https://github.com/opensearch-project/opensearch-build/pull/4794))
+  * Add ci-groups changes for OSD tests ([#4796](https://github.com/opensearch-project/opensearch-build/pull/4796))
+  * Add cleanup for the data dir after integtests ([#4798](https://github.com/opensearch-project/opensearch-build/pull/4798))
+
 ### Opensearch Common Utils
 
 
@@ -405,6 +414,14 @@ OpenSearch Dashboards [Release Notes](https://github.com/opensearch-project/Open
 
 
 * dependabot: bump com.diffplug.spotless from 6.24.0 to 6.25.0 ([#1184](https://github.com/opensearch-project/anomaly-detection/pull/1184))
+
+
+### OpenSearch Build
+
+
+* Add additional workflows to central promotion workflows ([#4753](https://github.com/opensearch-project/opensearch-build/pull/4753))
+* Add support to validate both docker and ECR as image source ([#4762](https://github.com/opensearch-project/opensearch-build/pull/4762)) 
+* Update the lib to 6.5.0 and add gradle-check-flaky-test-issue-creation.jenkinsfile ([#4777](https://github.com/opensearch-project/opensearch-build/pull/4777))
 
 
 ### Opensearch Job Scheduler
