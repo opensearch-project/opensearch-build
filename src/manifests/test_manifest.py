@@ -77,6 +77,7 @@ class TestManifest(ComponentManifest['TestManifest', 'TestComponents']):
                             },
                             "test-configs": {"type": "list", "allowed": ["with-security", "without-security"]},
                             "additional-cluster-configs": {"type": "dict"},
+                            "ci-groups": {"type": "integer"}
                         },
                     },
                     "bwc-test": {

@@ -34,6 +34,10 @@ class TestDistributionTar(unittest.TestCase):
         self.assertEqual(self.distribution_tar.config_path, os.path.join(self.work_dir, "opensearch-1.3.0", "config", "opensearch.yml"))
         self.assertEqual(self.distribution_tar_dashboards.config_path, os.path.join(self.work_dir, "opensearch-dashboards-1.3.0", "config", "opensearch_dashboards.yml"))
 
+    def test_data_dir(self) -> None:
+        self.assertEqual(self.distribution_tar.data_dir, os.path.join(self.work_dir, "opensearch-1.3.0", "data"))
+        self.assertEqual(self.distribution_tar_dashboards.data_dir, os.path.join(self.work_dir, "opensearch-dashboards-1.3.0", "data"))
+
     def test_log_dir(self) -> None:
         self.assertEqual(self.distribution_tar.log_dir, os.path.join(self.work_dir, "opensearch-1.3.0", "logs"))
         self.assertEqual(self.distribution_tar_dashboards.log_dir, os.path.join(self.work_dir, "opensearch-dashboards-1.3.0", "logs"))

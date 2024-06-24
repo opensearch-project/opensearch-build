@@ -32,6 +32,10 @@ class TestDistributionDeb(unittest.TestCase):
         self.assertEqual(self.distribution_deb.config_path, os.path.join(os.sep, "etc", "opensearch", "opensearch.yml"))
         self.assertEqual(self.distribution_deb_dashboards.config_path, os.path.join(os.sep, "etc", "opensearch-dashboards", "opensearch_dashboards.yml"))
 
+    def test_data_dir(self) -> None:
+        self.assertEqual(self.distribution_deb.data_dir, os.path.join(os.sep, "var", "lib", "opensearch"))
+        self.assertEqual(self.distribution_deb_dashboards.data_dir, os.path.join(os.sep, "var", "lib", "opensearch-dashboards"))
+
     def test_log_dir(self) -> None:
         self.assertEqual(self.distribution_deb.log_dir, os.path.join(os.sep, "var", "log", "opensearch"))
         self.assertEqual(self.distribution_deb_dashboards.log_dir, os.path.join(os.sep, "var", "log", "opensearch-dashboards"))
@@ -45,6 +49,7 @@ class TestDistributionDeb(unittest.TestCase):
         self.assertEqual(
             (
                 "sudo dpkg --purge opensearch && "
+                f"sudo rm -rf {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.data_dir} {self.distribution_deb.log_dir} && "
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "dpkg --install opensearch.deb && "
                 f"sudo chmod 0666 {self.distribution_deb.config_path} {os.path.dirname(self.distribution_deb.config_path)}/jvm.options && "
@@ -64,6 +69,7 @@ class TestDistributionDeb(unittest.TestCase):
         self.assertEqual(
             (
                 "sudo dpkg --purge opensearch-dashboards && "
+                f"sudo rm -rf {os.path.dirname(self.distribution_deb_dashboards.config_path)} {self.distribution_deb_dashboards.data_dir} {self.distribution_deb_dashboards.log_dir} && "
                 "sudo env OPENSEARCH_INITIAL_ADMIN_PASSWORD=myStrongPassword123! "
                 "dpkg --install opensearch-dashboards.deb && "
                 f"sudo chmod 0666 {self.distribution_deb_dashboards.config_path} && "
@@ -84,4 +90,10 @@ class TestDistributionDeb(unittest.TestCase):
         args_list = check_call_mock.call_args_list
 
         self.assertEqual(check_call_mock.call_count, 1)
-        self.assertEqual(f"sudo dpkg --purge opensearch && sudo rm -rf {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.log_dir}", args_list[0][0][0])
+        self.assertEqual(
+            (
+                "sudo dpkg --purge opensearch && "
+                f"sudo rm -rf {os.path.dirname(self.distribution_deb.config_path)} {self.distribution_deb.data_dir} {self.distribution_deb.log_dir}"
+            ),
+            args_list[0][0][0],
+        )
