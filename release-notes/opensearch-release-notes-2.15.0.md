@@ -2,8 +2,30 @@
 
 ## Release Highlights
 
-Pending
+OpenSearch 2.15 introduces new and expanded functionality to help you scale up performance and efficiency; advance stability, availability, and resiliency; and enhance your search applications, along with new machine learning (ML) capabilities and ease-of-use improvements.
 
+
+### NEW AND UPDATED FEATURES
+
+* Hybrid search, which combines neural search with lexical search to provide higher-quality results than when using either technique alone, can now apply parallel processing to subsearches at various stages of the process, resulting in significant reductions in query latency.
+* New parallel and batch ingestion allow you to accelerate ingestion data processing for applications like neural search and reduce API calls to remote services.
+* The new wildcard field type gives you the option to build an index using wildcard fields rather than tokens, offering more efficient search for fields that don’t have a natural token structure or when the number of distinct tokens is extremely large.
+* New derived fields let you create new fields dynamically by executing scripts on existing fields, so you can manipulate document fields in real time and reduce storage requirements by avoiding direct indexing.
+* A new performance optimization, dynamic pruning, offers improved performance for single-cardinality aggregations, with significant improvements in latency, particularly for fields with low cardinality.
+* This release introduces support for Single Instruction, Multiple Data (SIMD) instruction sets for exact search queries. No additional configuration steps are required, and users can expect a significant reduction in query latencies compared to non-SIMD implementations.
+* OpenSearch 2.15 introduces the ability to disable document values for the k-nn field when using the Lucene engine for vector search, offering reduced shard size for more efficient use of storage without impacting k-NN search functionality.
+* You can now reduce downtime for migrations and rolling upgrades by using remote-backed storage for these operations. 
+* This release adds the ability to identify the user, application, class of users, or workloads that generate a particular query, offering administrators new tools for measuring and controlling resource consumption.
+* A new reindex workflow offers an easy way to enable vector and hybrid search on existing lexical indexes without spending time and resources reindexing source indexes.
+* You can now configure remote ML models to serve as guardrails to detect toxic input and output from OpenSearch models. Previous versions only supported regex-based guardrails.
+* The ML inference processor adds support for local models, which are models hosted on the search cluster's infrastructure. Previously, the processor only supported remote models, which connect to model provider APIs.
+* An update to the ML Commons plugin allows you to use connectors to invoke any REST API function, enhancing the agent and tool functionality that was introduced in OpenSearch 2.13 with additional automation capabilities for ML workloads.
+* Support for multiple data sources is extended to four external Dashboards plugins—Metrics Analytics, Security Analytics, Dashboards Assistant, and Alerting—as well as one core plugin, Timeline.
+
+
+### EXPERIMENTAL FEATURES
+
+* A new experimental feature allows users to enable cluster state publication through remote-backed storage. When enabled, this allows the follower nodes to fetch the state from the remote store directly, reducing memory and communication overhead on the cluster manager node.
 
 
 ## Release Details
