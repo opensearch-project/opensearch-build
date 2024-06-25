@@ -20,7 +20,7 @@ OpenSearch 2.15 introduces new and expanded functionality to help you scale up p
 * You can now configure remote ML models to serve as guardrails to detect toxic input and output from OpenSearch models. Previous versions only supported regex-based guardrails.
 * The ML inference processor adds support for local models, which are models hosted on the search cluster's infrastructure. Previously, the processor only supported remote models, which connect to model provider APIs.
 * An update to the ML Commons plugin allows you to use connectors to invoke any REST API function, enhancing the agent and tool functionality that was introduced in OpenSearch 2.13 with additional automation capabilities for ML workloads.
-* Support for multiple data sources is extended to four external Dashboards plugins—Metrics Analytics, Security Analytics, Dashboards Assistant, and Alerting—as well as one core plugin, Timeline.
+* Support for multiple data sources is extended to four external Dashboards plugins — Metrics Analytics, Security Analytics, Dashboards Assistant, and Alerting — as well as one core plugin, Timeline.
 
 
 ### EXPERIMENTAL FEATURES
