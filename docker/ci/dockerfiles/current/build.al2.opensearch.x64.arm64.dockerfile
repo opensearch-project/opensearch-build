@@ -104,7 +104,12 @@ ENV CXX=g++
 RUN yum repolist && yum install lapack -y
 RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git && \
     cd OpenBLAS && \
-    make USE_OPENMP=1 FC=gfortran && \
+    if [ "$(uname -m)" = "x86_64" ]; then \
+        echo "Machine is x86_64. Adding DYNAMIC_ARCH=1 to openblas make command."; \
+        make USE_OPENMP=1 FC=gfortran DYNAMIC_ARCH=1; \
+    else \
+        make USE_OPENMP=1 FC=gfortran; \
+    fi && \
     make PREFIX=/usr/local install
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 RUN pip3 install cmake==3.23.3
