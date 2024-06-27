@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.5.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.5.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -29,7 +29,8 @@ pipeline {
             steps {
                 script {
                     gradleCheckFlakyTestDetector(
-                        issueLabels: 'autocut,>test-failure,flaky-test'
+                        issueLabels: 'autocut,>test-failure,flaky-test',
+                        timeFrame: '30d'
                     )
                 }
             }
