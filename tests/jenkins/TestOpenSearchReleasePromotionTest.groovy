@@ -174,10 +174,10 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('stage(Promote Docker, groovy.lang.Closure)')
         assertCallStack().contains('release-promotion.string({name=SOURCE_IMAGES, value=opensearch:1.0.0.2050, opensearch-dashboards:1.0.0.3050})')
         assertCallStack().contains('release-promotion.string({name=RELEASE_VERSION, value=1.0.0})')
-        assertCallStack().contains('release-promotion.string({name=DOCKER_HUB_PROMOTE, value=true})')
-        assertCallStack().contains('release-promotion.string({name=ECR_PROMOTE, value=true})')
-        assertCallStack().contains('release-promotion.string({name=TAG_LATEST, value=true})')
-        assertCallStack().contains('release-promotion.string({name=TAG_MAJOR_VERSION, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=DOCKER_HUB_PROMOTE, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=ECR_PROMOTE, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=TAG_LATEST, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=TAG_MAJOR_VERSION, value=true})')
         assertCallStack().contains('release-promotion.build({job=docker-promotion, wait=true, parameters=[null, null, null, null, null, null]})')
 
         // Validation Workflow

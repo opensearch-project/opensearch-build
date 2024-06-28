@@ -468,10 +468,10 @@ pipeline {
                         build job: 'docker-promotion', wait: true, parameters: [
                             string(name: 'SOURCE_IMAGES', value: "opensearch:${params.RELEASE_VERSION}.${params.OPENSEARCH_RC_BUILD_NUMBER}, opensearch-dashboards:${params.RELEASE_VERSION}.${params.OPENSEARCH_DASHBOARDS_RC_BUILD_NUMBER}"), 
                             string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
-                            string(name: 'DOCKER_HUB_PROMOTE', value: true),
-                            string(name: 'ECR_PROMOTE', value: true),
-                            string(name: 'TAG_LATEST', value: "${params.TAG_DOCKER_LATEST}"),
-                            string(name: 'TAG_MAJOR_VERSION', value: true)
+                            booleanParam(name: 'DOCKER_HUB_PROMOTE', value: true),
+                            booleanParam(name: 'ECR_PROMOTE', value: true),
+                            booleanParam(name: 'TAG_LATEST', value: "${params.TAG_DOCKER_LATEST}"),
+                            booleanParam(name: 'TAG_MAJOR_VERSION', value: true)
                             ]
                         echo 'Promoted Docker successfully!'
                     }
