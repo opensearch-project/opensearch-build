@@ -223,8 +223,9 @@ class TestBenchmarkTestSuite(unittest.TestCase):
     @patch('builtins.open')
     @patch('logging.info')
     @patch('shutil.get_terminal_size')
+    @patch('shutil.copy')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
-    def test_convert(self, mock_check_call: Mock, mock_get_terminal_size: Mock, mock_logging_info: Mock, mock_open: Mock, mock_json_load: Mock, mock_read_csv: Mock,
+    def test_convert(self, mock_check_call: Mock, mock_copy: Mock, mock_get_terminal_size: Mock, mock_logging_info: Mock, mock_open: Mock, mock_json_load: Mock, mock_read_csv: Mock,
                      mock_json_normalize: Mock) -> None:
         self.args.cluster_endpoint = "abc.com"
         mock_get_terminal_size.return_value = MagicMock(columns=80)
@@ -241,6 +242,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                 mock_glob.return_value = ['/mock/test_execution.json']
                 test_suite.convert()
                 mock_temp_directory.assert_called_once()
+            mock_copy.assert_called_once()
             mock_check_call.assert_called_with(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/. /mock/temp/dir", cwd=os.getcwd(), shell=True)
             mock_open.assert_called_once_with("/mock/test_execution.json")
             mock_json_load.assert_called_once()
