@@ -98,7 +98,7 @@ mkdir -p $OUTPUT/plugins
 cp -r ../$PLUGIN_NAME/ ../OpenSearch-Dashboards/plugins
 echo "BUILD MODULES FOR $PLUGIN_NAME"
 CURR_DIR=`pwd`
-cd ../OpenSearch-Dashboards; eval $NVM_CMD; yarn osd bootstrap
+cd ../OpenSearch-Dashboards; eval $NVM_CMD; yarn osd bootstrap --single-version=loose
 echo "BUILD RELEASE ZIP FOR $PLUGIN_NAME"
 cd plugins/$PLUGIN_NAME; yarn $HELPER_STRING build --opensearch-dashboards-version=$VERSION$QUALIFIER_IDENTIFIER
 cd $CURR_DIR
