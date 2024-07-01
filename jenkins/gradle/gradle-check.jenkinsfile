@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.6.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -107,6 +107,7 @@ pipeline {
 
                     echo("Build Cause: ${BUILD_CAUSE}")
                     withCredentials([usernamePassword(credentialsId: CREDENTIAL_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        def bwc_checkout_align = "false"
 
                         def dockerLogin = sh(returnStdout: true, script: "set +x && (echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin) || echo docker error").trim()
 
@@ -117,12 +118,14 @@ pipeline {
                                 currentBuild.description = """runner: ${agent_name}<br><a href="${pr_to_clone_url}">Others</a>: ${pr_title}"""
                             }
                             else {
-                                currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title}"""
+                                currentBuild.description = """runner: ${agent_name}<br><a href="${pr_url}">PR #${pr_number}</a>: ${pr_title} with bwc.checkout.align=true"""
+                                bwc_checkout_align = "true"
                             }
 
                             runGradleCheck(
                                 gitRepoUrl: "${pr_from_clone_url}",
-                                gitReference: "${pr_from_sha}"
+                                gitReference: "${pr_from_sha}",
+                                bwcCheckoutAlign: "${bwc_checkout_align}"
                             )
                         }
                         else {
@@ -132,7 +135,8 @@ pipeline {
 
                             runGradleCheck(
                                 gitRepoUrl: "${GIT_REPO_URL}",
-                                gitReference: "${GIT_REFERENCE}"
+                                gitReference: "${GIT_REFERENCE}",
+                                bwcCheckoutAlign: "${bwc_checkout_align}"
                             )
                         }
 
