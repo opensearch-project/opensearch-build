@@ -70,7 +70,7 @@ pipeline {
             printPostContent: false
         )
         parameterizedCron '''
-            H * * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host
+            H */2 * * * %GIT_REFERENCE=main;AGENT_LABEL=Jenkins-Agent-Ubuntu2004-X64-M58xlarge-Single-Host
         '''
     }
     environment {
