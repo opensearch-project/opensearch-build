@@ -90,8 +90,8 @@ class BenchmarkTestSuite:
 
     def convert(self) -> None:
         with TemporaryDirectory() as work_dir:
-            subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
-            file_path = glob.glob(os.path.join(str(work_dir.path), "test_executions", "*", "test_execution.json"))
+            subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark/test_executions/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
+            file_path = glob.glob(os.path.join(str(work_dir.path), "*", "test_execution.json"))
             shutil.copy(file_path[0], os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.json"))
             with open(file_path[0]) as file:
                 data = json.load(file)

@@ -243,7 +243,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                 test_suite.convert()
                 mock_temp_directory.assert_called_once()
             mock_copy.assert_called_once()
-            mock_check_call.assert_called_with(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/. /mock/temp/dir", cwd=os.getcwd(), shell=True)
+            mock_check_call.assert_called_with(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/test_executions/. /mock/temp/dir", cwd=os.getcwd(), shell=True)
             mock_open.assert_called_once_with("/mock/test_execution.json")
             mock_json_load.assert_called_once()
             mock_json_normalize.assert_called_once()
