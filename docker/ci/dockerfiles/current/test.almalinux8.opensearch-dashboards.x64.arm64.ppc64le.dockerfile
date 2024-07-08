@@ -130,7 +130,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
 
 # Add other dependencies
 RUN dnf install -y epel-release && dnf clean all && dnf install -y jq && dnf clean all && rm -rf /var/cache/dnf/* && \
-    pip3 install cmake==3.23.3
+    pip3 install cmake==3.26.4
 
 # Tools setup
 COPY --chown=0:0 config/yq-setup.sh config/gh-setup.sh /tmp/

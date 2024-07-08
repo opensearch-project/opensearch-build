@@ -86,7 +86,7 @@ RUN dnf install -y 'dnf-command(config-manager)' && \
     dnf config-manager --set-enabled powertools && \
     dnf install epel-release -y && dnf repolist && \
     dnf install openblas-static lapack gcc-gfortran -y && dnf clean all
-RUN pip3 install cmake==3.23.3
+RUN pip3 install cmake==3.26.4
 # Upgrade gcc
 # The setup part is partially based on Austin Dewey's article:
 # https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/
