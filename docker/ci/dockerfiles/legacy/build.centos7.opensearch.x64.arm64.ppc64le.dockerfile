@@ -91,7 +91,7 @@ RUN ln -sfn /usr/local/bin/python3.9 /usr/bin/python3 && \
 
 # Add k-NN Library dependencies
 RUN yum install epel-release -y && yum repolist && yum install openblas-static lapack gcc-gfortran -y
-RUN pip3 install cmake==3.23.3
+RUN pip3 install cmake==3.24.0
 # Upgrade gcc
 # The setup part is partially based on Austin Dewey's article:
 # https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/

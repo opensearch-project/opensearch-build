@@ -151,7 +151,7 @@ RUN update-alternatives --set python /usr/bin/python3.9 && \
 
 # Add other dependencies
 RUN dnf install -y epel-release && dnf clean all && dnf install -y jq && dnf clean all && \
-    pip3 install cmake==3.23.3
+    pip3 install cmake==3.24.0
 
 # We use the version test to check if packages installed correctly
 # And get added to the PATH
