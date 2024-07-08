@@ -23,7 +23,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: opensearch-project/opensearch-build
           ref: main
@@ -63,7 +63,7 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
           installation_id: 22958780
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Check if build repo release issue exists
         id: check_if_build_repo_issue_exists
         uses: actions-cool/issues-helper@v3
@@ -74,7 +74,7 @@ jobs:
           issue-state: 'open'
           title-includes: '[RELEASE] Release version ${{ matrix.release_version }}'
       - name: Check out plugin repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: plugin-repo
           repository: opensearch-project/${{ matrix.entry.repo }}

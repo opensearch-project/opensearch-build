@@ -37,7 +37,7 @@ jobs:
         with:
           crane-release: v0.15.2
       - name: Checkout opensearch-build repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'opensearch-project/opensearch-build'
           ref: ${{ inputs.build_ref }}
