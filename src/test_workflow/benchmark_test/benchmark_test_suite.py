@@ -74,7 +74,8 @@ class BenchmarkTestSuite:
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
         if self.security:
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\',basic_auth_password:\'{self.password}\'" --results-file=final_result.md'
+            self.command += (f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
+                             f'basic_auth_password:\'{self.password}\'" --results-file=final_result.md')
         else:
             self.command += ' --client-options="timeout:300" --results-file=final_result.md'
 

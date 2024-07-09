@@ -240,7 +240,7 @@ pipeline {
                         captureNodeStat: CAPTURE_NODE_STAT,
                         telemetryParams: TELEMETRY_PARAMS
                     )
-                    stash includes: 'test_execution*.csv', name: "benchmark"
+                    stash includes: 'test_execution*.csv', name: "benchmark-csv"
                     stash includes: 'test_execution*.json', name: "benchmark-json"
 
                 }
@@ -248,7 +248,7 @@ pipeline {
             post {
                 success {
                     node (AGENT_LABEL) {
-                      unstash "benchmark"
+                      unstash "benchmark-csv"
                       unstash "benchmark-json"
                       archiveArtifacts artifacts: 'test_execution*.csv'
                       sh "sed -i '1i\\#### Benchmark Results for Job: ${BUILD_URL}' final_result_${BUILD_NUMBER}.md"

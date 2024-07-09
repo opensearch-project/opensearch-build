@@ -16,7 +16,6 @@ import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.hasItem
 import static org.hamcrest.CoreMatchers.hasItems
 import static org.hamcrest.MatcherAssert.assertThat
-import hudson.model.Cause.UserIdCause
 
 import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
@@ -36,8 +35,6 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
                         .retriever(gitSource('https://github.com/opensearch-project/opensearch-build-libraries.git'))
                         .build()
         )
-        //binding.getVariable('currentBuild').rawBuild = [:]
-        //binding.getVariable('currentBuild').rawBuild.getCauses = { return "jenkins.branch.GenericCause@123abc" }
 
         helper.registerAllowedMethod("s3Download", [Map])
         helper.registerAllowedMethod('unstash', [String.class], null)
