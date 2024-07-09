@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to submit on-boarding request!
+        Thanks for taking the time to submit on-boarding request! Please note that the estimate time for on-barding a plugin to the distribution is 2 weeks from the time of the request.
   - type: textarea
     attributes:
       description: 'Provide the name of your plugin.'
