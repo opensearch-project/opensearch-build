@@ -7,20 +7,19 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.6.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.4.3', retriever: modernSCM([
 
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
 
 pipeline {
-    agent none
+    agent {label 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'}
     options {
         timeout(time: 24, unit: 'HOURS')
         buildDiscarder(logRotator(daysToKeepStr: '30'))
     }
     environment {
-        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
         JOB_NAME = 'pull-request-benchmark-test'
     }
     parameters {
@@ -184,7 +183,6 @@ pipeline {
 
     stages {
         stage('validate-and-set-parameters') {
-            agent { label AGENT_LABEL }
             steps {
                 script {
                     if (DISTRIBUTION_URL == '' || DISTRIBUTION_VERSION == '') {
@@ -201,14 +199,8 @@ pipeline {
                     }
                 }
             }
-            post {
-                always {
-                    postCleanup()
-                }
-            }
         }
         stage('benchmark-pull-request') {
-            agent { label AGENT_LABEL }
             steps {
                 script {
                     echo "security-enabled: ${SECURITY_ENABLED}"
@@ -240,18 +232,15 @@ pipeline {
                         captureNodeStat: CAPTURE_NODE_STAT,
                         telemetryParams: TELEMETRY_PARAMS
                     )
-                    stash includes: 'test_execution*.csv', name: "benchmark-csv"
-                    stash includes: 'test_execution*.json', name: "benchmark-json"
 
+                    sh "cp /tmp/final_result_${BUILD_NUMBER}.md final_result_${BUILD_NUMBER}.md"
                 }
             }
             post {
                 success {
-                    node (AGENT_LABEL) {
-                      unstash "benchmark-csv"
-                      unstash "benchmark-json"
-                      archiveArtifacts artifacts: 'test_execution*.csv'
+                      sh "ls -l"
                       sh "sed -i '1i\\#### Benchmark Results for Job: ${BUILD_URL}' final_result_${BUILD_NUMBER}.md"
+                      sh "cat final_result_${BUILD_NUMBER}.md"
                       script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
@@ -261,10 +250,9 @@ pipeline {
                         }
                       }
                       postCleanup()
-                    }
+
                 }
                 failure {
-                  node (AGENT_LABEL) {
                     script {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
@@ -273,10 +261,9 @@ pipeline {
                             }
                         }
                     }
-                  }
+
                 }
                 aborted {
-                  node(AGENT_LABEL) {
                     script {
                       def stackNames = [
                              "opensearch-infra-stack-${BUILD_NUMBER}"
@@ -303,7 +290,7 @@ pipeline {
                       }
                     }
                     postCleanup()
-                  }
+
                 }
             }
         }
