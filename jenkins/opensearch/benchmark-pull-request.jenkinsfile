@@ -1,0 +1,311 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+lib = library(identifier: 'jenkins@6.6.0', retriever: modernSCM([
+
+    $class: 'GitSCMSource',
+    remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
+]))
+
+pipeline {
+    agent none
+    options {
+        timeout(time: 24, unit: 'HOURS')
+        buildDiscarder(logRotator(daysToKeepStr: '30'))
+    }
+    environment {
+        AGENT_LABEL = 'Jenkins-Agent-AL2023-X64-M52xlarge-Benchmark-Test'
+        JOB_NAME = 'pull-request-benchmark-test'
+    }
+    parameters {
+        password(
+            name: 'DISTRIBUTION_URL',
+            description: 'Publicly available download url of the OpenSearch artifact tarball. Currently only supports x64 arch.',
+        )
+        string(
+            name: 'DISTRIBUTION_VERSION',
+            description: 'The distribution version of of the OpenSearch artifact, only to be provided in combination with DISTRIBUTION_URL param.',
+            trim: true
+        )
+        booleanParam(
+            name: 'SECURITY_ENABLED',
+            description: 'Mention if the cluster is secured or insecured.',
+            defaultValue: false,
+        )
+        booleanParam(
+            name: 'SINGLE_NODE_CLUSTER',
+            description: 'Benchmark test on a single node cluster',
+            defaultValue: true
+        )
+        booleanParam(
+            name: 'MIN_DISTRIBUTION',
+            description: 'Use OpenSearch min distribution',
+            defaultValue: false
+        )
+        string(
+            name: 'TEST_WORKLOAD',
+            description: 'The workload name from OpenSearch Benchmark Workloads.',
+            defaultValue: 'nyc_taxis',
+            trim: true
+        )
+        string(
+            name: 'MANAGER_NODE_COUNT',
+            description: 'Number of cluster manager nodes, empty value defaults to 3.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_COUNT',
+            description: 'Number of cluster data nodes, empty value defaults to 2.',
+            trim: true
+        )
+        string(
+            name: 'CLIENT_NODE_COUNT',
+            description: 'Number of cluster client nodes, empty value default to 0.',
+            trim: true
+        )
+        string(
+            name: 'INGEST_NODE_COUNT',
+            description: 'Number of cluster INGEST nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'ML_NODE_COUNT',
+            description: 'Number of cluster ml nodes, empty value defaults to 0.',
+            trim: true
+        )
+        string(
+            name: 'DATA_INSTANCE_TYPE',
+            description: 'EC2 instance type for data node, empty defaults to r5.xlarge.',
+            trim: true
+        )
+        string(
+            name: 'DATA_NODE_STORAGE',
+            description: 'Data node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        string(
+            name: 'ML_NODE_STORAGE',
+            description: 'ML node ebs block storage size, empty value defaults to 100Gb',
+            trim: true
+        )
+        string(
+            name: 'JVM_SYS_PROPS',
+            description: 'A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.',
+            trim: true
+        )
+        string(
+            name: 'ADDITIONAL_CONFIG',
+            description: 'Additional opensearch.yml config parameters passed as JSON. e.g., `opensearch.experimental.feature.segment_replication_experimental.enabled:true cluster.indices.replication.strategy:SEGMENT`',
+            trim: true
+        )
+        booleanParam(
+            name: 'USE_50_PERCENT_HEAP',
+            description: 'Use 50 percent of physical memory as heap.',
+            defaultValue: true
+        )
+        string(
+            name: 'USER_TAGS',
+            description: 'Attach arbitrary text to the meta-data of each benchmark metric record, without any spaces. e.g., `run-type:adhoc,segrep:enabled,arch:x64`. ',
+            trim: true
+        )
+        string(
+            name: 'WORKLOAD_PARAMS',
+            description: 'With this parameter you can inject variables into workloads. Use json type. e.g., `{"number_of_replicas":"1","number_of_shards":"5"}`',
+            trim: true
+        )
+        string(
+            name: 'TEST_PROCEDURE',
+            description: 'Defines a test procedure to use. e.g., `append-no-conflicts,significant-text`',
+            trim: true
+        )
+        string(
+            name: 'EXCLUDE_TASKS',
+            description: 'Defines a comma-separated list of test procedure tasks not to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        string(
+            name: 'INCLUDE_TASKS',
+            description: 'Defines a comma-separated list of test procedure tasks to run. Default runs all. e.g., `type:search,delete-index`',
+            trim: true
+        )
+        booleanParam(
+            name: 'CAPTURE_NODE_STAT',
+            description: 'Enable opensearch-benchmark node-stats telemetry to capture system level metrics.',
+            defaultValue: false
+        )
+        string(
+            name: 'TELEMETRY_PARAMS',
+            description: 'Allows to set parameters for telemetry devices. Use json type. e.g.,{"node-stats-include-indices":"true","node-stats-include-indices-metrics":"segments"}',
+            trim: true
+        )
+    }
+    triggers {
+            GenericTrigger(
+                genericVariables: [
+                    [key: 'pull_request_number', value: '$.pull_request_number'],
+                    [key: 'repository', value: '$.repository'],
+                    [key: 'DISTRIBUTION_URL', value: '$.DISTRIBUTION_URL'],
+                    [key: 'DISTRIBUTION_VERSION', value: '$.DISTRIBUTION_VERSION'],
+                    [key: 'TEST_WORKLOAD', value: '$.TEST_WORKLOAD'],
+                    [key: 'SECURITY_ENABLED', value: '$.SECURITY_ENABLED'],
+                    [key: 'SINGLE_NODE_CLUSTER', value: '$.SINGLE_NODE_CLUSTER'],
+                    [key: 'MIN_DISTRIBUTION', value: '$.MIN_DISTRIBUTION'],
+                    [key: 'MANAGER_NODE_COUNT', value: '$.MANAGER_NODE_COUNT'],
+                    [key: 'DATA_NODE_COUNT', value: '$.DATA_NODE_COUNT'],
+                    [key: 'CLIENT_NODE_COUNT', value: '$.CLIENT_NODE_COUNT'],
+                    [key: 'INGEST_NODE_COUNT', value: '$.INGEST_NODE_COUNT'],
+                    [key: 'ML_NODE_COUNT', value: '$.ML_NODE_COUNT'],
+                    [key: 'DATA_INSTANCE_TYPE', value: '$.DATA_INSTANCE_TYPE'],
+                    [key: 'DATA_NODE_STORAGE', value: '$.DATA_NODE_STORAGE'],
+                    [key: 'ML_NODE_STORAGE', value: '$.ML_NODE_STORAGE'],
+                    [key: 'JVM_SYS_PROPS', value: '$.JVM_SYS_PROPS'],
+                    [key: 'ADDITIONAL_CONFIG', value: '$.ADDITIONAL_CONFIG'],
+                    [key: 'USE_50_PERCENT_HEAP', value: '$.USE_50_PERCENT_HEAP'],
+                    [key: 'USER_TAGS', value: '$.USER_TAGS'],
+                    [key: 'WORKLOAD_PARAMS', value: '$.WORKLOAD_PARAMS'],
+                    [key: 'TEST_PROCEDURE', value: '$.TEST_PROCEDURE'],
+                    [key: 'EXCLUDE_TASKS', value: '$.EXCLUDE_TASKS'],
+                    [key: 'INCLUDE_TASKS', value: '$.INCLUDE_TASKS'],
+                    [key: 'CAPTURE_NODE_STAT', value: '$.CAPTURE_NODE_STAT'],
+                    [key: 'TELEMETRY_PARAMS', value: '$.TELEMETRY_PARAMS']
+                ],
+                tokenCredentialId: 'jenkins-pr-benchmark-generic-webhook-token',
+                causeString: 'Triggered by comment on PR on OpenSearch core repository',
+                printContributedVariables: true,
+                printPostContent: true
+            )
+    }
+
+    stages {
+        stage('validate-and-set-parameters') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    if (DISTRIBUTION_URL == '' || DISTRIBUTION_VERSION == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Benchmark Tests failed to start. Provide DISTRIBUTION_URL and DISTRIBUTION_VERSION to run tests")
+                    }
+                    env.ARCHITECTURE = "x64"
+                    lib.jenkins.Messages.new(this).add(JOB_NAME, "Benchmark tests for ${DISTRIBUTION_URL}")
+                    if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
+                        currentBuild.description = "Benchmark initiated by PR:${pull_request} on ${repository}"
+                    }
+                    else {
+                        currentBuild.description = "Running benchmark test for distribution-url: ${DISTRIBUTION_URL} distribution-version: ${DISTRIBUTION_VERSION}"
+                    }
+                }
+            }
+            post {
+                always {
+                    postCleanup()
+                }
+            }
+        }
+        stage('benchmark-pull-request') {
+            agent { label AGENT_LABEL }
+            steps {
+                script {
+                    echo "security-enabled: ${SECURITY_ENABLED}"
+
+                    runBenchmarkTestScript(
+                        distributionUrl: DISTRIBUTION_URL,
+                        distributionVersion: DISTRIBUTION_VERSION,
+                        workload: TEST_WORKLOAD,
+                        insecure: !(params.SECURITY_ENABLED),
+                        singleNode: SINGLE_NODE_CLUSTER,
+                        minDistribution: MIN_DISTRIBUTION,
+                        use50PercentHeap: USE_50_PERCENT_HEAP,
+                        managerNodeCount: MANAGER_NODE_COUNT,
+                        dataNodeCount: DATA_NODE_COUNT,
+                        clientNodeCount: CLIENT_NODE_COUNT,
+                        ingestNodeCount: INGEST_NODE_COUNT,
+                        mlNodeCount: ML_NODE_COUNT,
+                        dataInstanceType: DATA_INSTANCE_TYPE,
+                        additionalConfig: ADDITIONAL_CONFIG,
+                        dataStorageSize: DATA_NODE_STORAGE,
+                        mlStorageSize: ML_NODE_STORAGE,
+                        jvmSysProps: JVM_SYS_PROPS,
+                        userTag: USER_TAGS.isEmpty() ? "security-enabled:${SECURITY_ENABLED}" : "${USER_TAGS},security-enabled:${SECURITY_ENABLED}",
+                        suffix: "${BUILD_NUMBER}",
+                        workloadParams: WORKLOAD_PARAMS,
+                        testProcedure: TEST_PROCEDURE,
+                        excludeTasks: EXCLUDE_TASKS,
+                        includeTasks: INCLUDE_TASKS,
+                        captureNodeStat: CAPTURE_NODE_STAT,
+                        telemetryParams: TELEMETRY_PARAMS
+                    )
+                    stash includes: 'test_execution*.csv', name: "benchmark-csv"
+                    stash includes: 'test_execution*.json', name: "benchmark-json"
+
+                }
+            }
+            post {
+                success {
+                    node (AGENT_LABEL) {
+                      unstash "benchmark-csv"
+                      unstash "benchmark-json"
+                      archiveArtifacts artifacts: 'test_execution*.csv'
+                      sh "sed -i '1i\\#### Benchmark Results for Job: ${BUILD_URL}' final_result_${BUILD_NUMBER}.md"
+                      script {
+                        if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
+                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                def pull_request = Integer.parseInt("${pull_request_number}")
+                                sh ("gh pr comment ${pull_request} --repo ${repository} --body-file final_result_${BUILD_NUMBER}.md")
+                            }
+                        }
+                      }
+                      postCleanup()
+                    }
+                }
+                failure {
+                  node (AGENT_LABEL) {
+                    script {
+                        if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
+                            withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                                def pull_request = Integer.parseInt("${pull_request_number}")
+                                sh ("gh pr comment ${pull_request} --repo ${repository} --body The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.")
+                            }
+                        }
+                    }
+                  }
+                }
+                aborted {
+                  node(AGENT_LABEL) {
+                    script {
+                      def stackNames = [
+                             "opensearch-infra-stack-${BUILD_NUMBER}"
+                        ]
+                      withCredentials([string(credentialsId: 'perf-test-account-id', variable: 'PERF_TEST_ACCOUNT_ID')]) {
+                        withAWS(role: 'cfn-set-up', roleAccount: "${PERF_TEST_ACCOUNT_ID}", duration: 900, roleSessionName: 'jenkins-session', region: 'us-east-1') {
+                            try {
+                                for (String stackName : stackNames) {
+                                    def stack = null
+                                    try {
+                                        stack = cfnDescribe(stack: stackName)
+                                    } catch (Exception) {
+                                        echo "Stack '${stackName}' does not exist, nothing to remove"
+                                    }
+                                    if (stack != null) {
+                                        echo "Deleting stack '${stackName}'"
+                                        cfnDelete(stack: stackName, pollInterval:1000)
+                                    }
+                                }
+                            } catch (Exception e) {
+                                error "Exception occurred while deleting the CloudFormation stack: ${e.toString()}"
+                            }
+                        }
+                      }
+                    }
+                    postCleanup()
+                  }
+                }
+            }
+        }
+    }
+}

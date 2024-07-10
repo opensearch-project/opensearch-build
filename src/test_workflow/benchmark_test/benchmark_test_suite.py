@@ -74,9 +74,10 @@ class BenchmarkTestSuite:
                 self.command += f" --telemetry-params '{self.args.telemetry_params}'"
 
         if self.security:
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\',basic_auth_password:\'{self.password}\'"'
+            self.command += (f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\','
+                             f'basic_auth_password:\'{self.password}\'" --results-file=final_result.md')
         else:
-            self.command += ' --client-options="timeout:300"'
+            self.command += ' --client-options="timeout:300" --results-file=final_result.md'
 
     def execute(self) -> None:
         log_info = f"Executing {self.command.replace(self.endpoint, len(self.endpoint) * '*').replace(self.args.username, len(self.args.username) * '*')}"
@@ -90,9 +91,14 @@ class BenchmarkTestSuite:
 
     def convert(self) -> None:
         with TemporaryDirectory() as work_dir:
-            subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark/test_executions/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
+            subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"
+                                  f"/test_executions/. {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
+            subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"
+                                  f"/final_result.md {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
             file_path = glob.glob(os.path.join(str(work_dir.path), "*", "test_execution.json"))
+            final_results_file = glob.glob(os.path.join(str(work_dir.path), "final_result.md"))
             shutil.copy(file_path[0], os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.json"))
+            shutil.copy(final_results_file[0], os.path.join(os.getcwd(), f"final_result_{self.args.stack_suffix}.md"))
             with open(file_path[0]) as file:
                 data = json.load(file)
                 formatted_data = pd.json_normalize(data["results"]["op_metrics"])

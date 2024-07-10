@@ -48,7 +48,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
         self.assertEqual(mock_check_call.call_count, 2)
         self.assertEqual(test_suite.command,
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.6.0 execute-test '
-                         f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:300"')
+                         f'--workload=nyc_taxis --pipeline=benchmark-only --target-hosts=abc.com:80 --client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -64,7 +64,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.6.0 execute-test'
                          f' --workload=nyc_taxis --pipeline=benchmark-only '
                          f'--target-hosts=abc.com:443 '
-                         f'--client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'"')
+                         f'--client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'myStrongPassword123!\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -80,7 +80,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.6.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
                          '--target-hosts=abc.com:443 --client-options="timeout:300,use_ssl:true,'
-                         'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
+                         'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -104,7 +104,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--user-tag="key1:value1,key2:value2" --telemetry node-stats, --telemetry-params \'{"example_key":"example_value"}\' '
-                         '--client-options="timeout:300"')
+                         '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -125,7 +125,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--pipeline=benchmark-only --target-hosts=abc.com:80 '
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--user-tag="key1:value1,key2:value2" --telemetry node-stats,test, '
-                         '--client-options="timeout:300"')
+                         '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -148,7 +148,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--workload-params \'{"number_of_replicas":"1"}\' '
                          '--test-procedure="test-proc1,test-proc2" '
                          '--user-tag="key1:value1,key2:value2" '
-                         '--client-options="timeout:300"')
+                         '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -173,7 +173,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          '--exclude-tasks="task2,type:search" '
                          '--include-tasks="task1,type:index" '
                          '--user-tag="key1:value1,key2:value2" '
-                         '--client-options="timeout:300"')
+                         '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
     def test_execute_with_all_benchmark_optional_params(self, mock_convert: Mock) -> None:
@@ -197,7 +197,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                                                  '--exclude-tasks="task2,type:search" '
                                                  '--include-tasks="task1,type:index" '
                                                  '--user-tag="key1:value1,key2:value2" '
-                                                 '--client-options="timeout:300"')
+                                                 '--client-options="timeout:300" --results-file=final_result.md')
 
     @patch('test_workflow.benchmark_test.benchmark_test_suite.subprocess.check_call')
     @patch('test_workflow.benchmark_test.benchmark_test_suite.BenchmarkTestSuite.convert')
@@ -215,7 +215,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
                          f'docker run --name docker-container-{test_suite.args.stack_suffix} opensearchproject/opensearch-benchmark:1.6.0 execute-test '
                          '--workload=nyc_taxis --pipeline=benchmark-only '
                          '--target-hosts=abc.com:443 --client-options="timeout:300,use_ssl:true,'
-                         'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'"')
+                         'verify_certs:false,basic_auth_user:\'admin\',basic_auth_password:\'admin\'" --results-file=final_result.md')
 
     @patch('pandas.json_normalize')
     @patch('pandas.read_csv')
@@ -239,11 +239,12 @@ class TestBenchmarkTestSuite(unittest.TestCase):
             mock_temp_directory.return_value.__enter__.return_value.name = tempfile.gettempdir()
             mock_temp_directory.return_value.__enter__.return_value.path = '/mock/temp/dir'
             with patch('test_workflow.benchmark_test.benchmark_test_suite.glob.glob') as mock_glob:
-                mock_glob.return_value = ['/mock/test_execution.json']
+                mock_glob.return_value = ['/mock/test_execution.json', '/mock/final_result.md']
                 test_suite.convert()
                 mock_temp_directory.assert_called_once()
-            mock_copy.assert_called_once()
-            mock_check_call.assert_called_with(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/test_executions/. /mock/temp/dir", cwd=os.getcwd(), shell=True)
+            mock_check_call.assert_any_call(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/test_executions/. /mock/temp/dir", cwd=os.getcwd(), shell=True)
+            mock_check_call.assert_any_call(f"docker cp docker-container-{test_suite.args.stack_suffix}:opensearch-benchmark/final_result.md /mock/temp/dir", cwd=os.getcwd(), shell=True)
+
             mock_open.assert_called_once_with("/mock/test_execution.json")
             mock_json_load.assert_called_once()
             mock_json_normalize.assert_called_once()
