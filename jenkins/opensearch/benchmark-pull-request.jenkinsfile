@@ -24,7 +24,7 @@ pipeline {
         JOB_NAME = 'pull-request-benchmark-test'
     }
     parameters {
-        password(
+        string(
             name: 'DISTRIBUTION_URL',
             description: 'Publicly available download url of the OpenSearch artifact tarball. Currently only supports x64 arch.',
         )
