@@ -97,8 +97,8 @@ class BenchmarkTestSuite:
                                   f"/final_result.md {str(work_dir.path)}", cwd=os.getcwd(), shell=True)
             file_path = glob.glob(os.path.join(str(work_dir.path), "*", "test_execution.json"))
             final_results_file = glob.glob(os.path.join(str(work_dir.path), "final_result.md"))
-            shutil.copy(file_path[0], os.path.join(os.getcwd(), f"test_execution_{self.args.stack_suffix}.json"))
-            shutil.copy(final_results_file[0], os.path.join(os.getcwd(), f"final_result_{self.args.stack_suffix}.md"))
+            shutil.copy(file_path[0], os.path.join('/tmp', f"test_execution_{self.args.stack_suffix}.json"))
+            shutil.copy(final_results_file[0], os.path.join('/tmp', f"final_result_{self.args.stack_suffix}.md"))
             with open(file_path[0]) as file:
                 data = json.load(file)
                 formatted_data = pd.json_normalize(data["results"]["op_metrics"])
