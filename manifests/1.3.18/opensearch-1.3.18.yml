@@ -34,7 +34,7 @@ components:
       - windows
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 08cdd6f24fc3e6a4fa3bf4ee549f7c58512f5cbc
+    ref: c9cf6b89d554889e771fe2ebe007889b7a0f85cf
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
