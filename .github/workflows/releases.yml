@@ -43,4 +43,3 @@ jobs:
           search_existing: all
           update_existing: false
           filename: .github/ISSUE_TEMPLATE/release_retrospective_template.md
-
