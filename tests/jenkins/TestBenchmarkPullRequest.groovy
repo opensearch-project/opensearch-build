@@ -160,7 +160,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
 
         assertJobStatusFailure()
         assertCallStack()
-        assertCallStack().contains("gh pr comment 1234 --repo opensearch-project/OpenSearch --body The benchmark job test://artifact.url failed.")
+        assertCallStack().contains("gh pr comment 1234 --repo opensearch-project/OpenSearch --body \"The benchmark job test://artifact.url failed.\n Please see logs to debug.\"")
     }
 
     @Test
