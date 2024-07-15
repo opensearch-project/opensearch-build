@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.5.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.7.0', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -59,6 +59,11 @@ pipeline {
             description: 'Build selected platform related artifacts, choices include linux windows. Can combine multiple platforms with space in between (docker is only available on linux)',
             defaultValue: 'linux windows',
             trim: true
+        )
+        string(
+            name: 'RC_NUMBER',
+            description: 'The RC build count. Default is 0 which means its not an RC build.',
+            defaultValue: '0'
         )
         string( // Note: need to update 'verify-parameters' entries if you add new distribution(s)
             name: 'BUILD_DISTRIBUTION',
@@ -948,6 +953,15 @@ pipeline {
                             inputManifestPath: "manifests/$INPUT_MANIFEST"
                         )
                     }
+                    def rc = (params.RC_NUMBER.toInteger() > 0)
+                    publishDistributionBuildResults(
+                        failureMessages: buildMessage(search: 'Error building'),
+                        passMessages: buildMessage(search: 'Successfully built'),
+                        inputManifestPath: "manifests/$INPUT_MANIFEST",
+                        rc: rc,
+                        rcNumber: env.RC_NUMBER,
+                        componentCategory: "OpenSearch Dashboards"
+                    )
                     postCleanup()
                 }
             }
