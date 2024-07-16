@@ -48,6 +48,7 @@ jobs:
           - {repo: custom-codecs}
           - {repo: flow-framework}
           - {repo: skills}
+          - {repo: query-insights}
         branch:
           - 1.x
           - '1.3'

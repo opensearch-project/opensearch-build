@@ -183,3 +183,9 @@ components:
       - anomaly-detection
       - sql
       - ml-commons
+  - name: query-insights
+    repository: https://github.com/opensearch-project/query-insights.git
+    ref: 2.x
+    platforms:
+      - linux
+      - windows
