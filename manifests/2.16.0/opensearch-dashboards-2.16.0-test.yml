@@ -1,0 +1,95 @@
+---
+schema-version: '1.0'
+name: OpenSearch Dashboards
+ci:
+  image:
+    name: opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v4
+components:
+  - name: OpenSearch-Dashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        vis_builder.enabled: true
+        data_source.enabled: true
+        savedObjects.maxImportPayloadBytes: 10485760
+        server.maxPayloadBytes: 1759977
+        logging.json: false
+        data.search.aggs.shardDelay.enabled: true
+        csp.warnLegacyBrowsers: false
+      ci-groups: 9
+  - name: alertingDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: anomalyDetectionDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: ganttChartDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: indexManagementDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: observabilityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: queryWorkbenchDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: reportsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: securityDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: notificationsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: customImportMapDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: searchRelevanceDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: securityAnalyticsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+  - name: mlCommonsDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        ml_commons_dashboards.enabled: true
+  - name: assistantDashboards
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
+      additional-cluster-configs:
+        assistant.chat.enabled: true
