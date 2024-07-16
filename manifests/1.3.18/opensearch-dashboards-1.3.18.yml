@@ -9,31 +9,31 @@ ci:
 components:
   - name: OpenSearch-Dashboards
     repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
-    ref: 26d95c2bb5d43e3d540d4612884ff98f66938046
+    ref: tags/1.3.18
   - name: functionalTestDashboards
     repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
-    ref: 8b999677608cbe09f3f412ba1b3b57c9731a7ffc
+    ref: tags/1.3.18
   - name: anomalyDetectionDashboards
     repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
-    ref: 1da96108484cf891f071ca54634b8df815dccec9
+    ref: tags/1.3.18.0
   - name: ganttChartDashboards
     repository: https://github.com/opensearch-project/dashboards-visualizations.git
-    ref: 968bcf9f028e7fdd503eaf25e0c877efff0c9ed8
+    ref: tags/1.3.18.0
   - name: observabilityDashboards
     repository: https://github.com/opensearch-project/dashboards-observability.git
-    ref: a1d4df6bc56b04197f6fc3611c8e7aee6fd51b9f
+    ref: tags/1.3.18.0
   - name: alertingDashboards
     repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
-    ref: 7c133586fec9cc4d0f3e4d98b2182e2e8563f3dc
+    ref: tags/1.3.18.0
   - name: indexManagementDashboards
     repository: https://github.com/opensearch-project/index-management-dashboards-plugin
-    ref: 189fd6b9d81059d4d0485e3a84e2aecebf020b58
+    ref: tags/1.3.18.0
   - name: reportsDashboards
     repository: https://github.com/opensearch-project/dashboards-reporting.git
-    ref: 45fa281c2f2f727b460d2d8cfdbb61d502046d73
+    ref: tags/1.3.18.0
   - name: securityDashboards
     repository: https://github.com/opensearch-project/security-dashboards-plugin.git
-    ref: 7d471b1db91f4452e1fb03ec31cea2862ff69017
+    ref: tags/1.3.18.0
   - name: queryWorkbenchDashboards
     repository: https://github.com/opensearch-project/dashboards-query-workbench.git
-    ref: 38cebc903e5a3a3247b6493002f235d6389e535d
+    ref: tags/1.3.18.0
