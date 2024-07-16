@@ -25,7 +25,9 @@ jobs:
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
-      - uses: dblock/create-a-github-issue@v3.0.0
+      - name: Create release issue
+        uses: dblock/create-a-github-issue@v3.0.0
+        id: release-issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ matrix.release_version }}
@@ -33,3 +35,14 @@ jobs:
           search_existing: all
           update_existing: false
           filename: .github/ISSUE_TEMPLATE/release_template.md
+      - name: Create retrospective issue
+        uses: dblock/create-a-github-issue@v3.0.0
+        if: ${{ steps.release-issue.outputs.status == 'created' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ matrix.release_version }}
+          RELEASE_ISSUE_URL: ${{ steps.release-issue.outputs.url }}
+        with:
+          search_existing: all
+          update_existing: false
+          filename: .github/ISSUE_TEMPLATE/release_retrospective_template.md
