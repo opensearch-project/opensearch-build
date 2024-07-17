@@ -227,7 +227,7 @@
             release-promotion.string({name=PROJECTS, value=Both})
             release-promotion.string({name=DOCKER_SOURCE, value=Both})
             release-promotion.string({name=ARTIFACT_TYPE, value=production})
-            release-promotion.string({name=OPTIONAL_ARGS, value=validate-digests-only})
+            release-promotion.string({name=OPTIONAL_ARGS, value=validate-digest-only})
             release-promotion.build({job=distribution-validation, wait=true, parameters=[null, null, null, null, null, null, null, null]})
             release-promotion.echo(Artifacts are successfully validated!)
          release-promotion.stage(Publish to Maven, groovy.lang.Closure)

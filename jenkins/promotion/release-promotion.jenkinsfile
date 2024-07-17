@@ -497,7 +497,7 @@ pipeline {
                 string(name: 'PROJECTS', value: 'Both'),
                 string(name: 'DOCKER_SOURCE', value: 'Both'),
                 string(name: 'ARTIFACT_TYPE', value: 'production'),
-                string(name: 'OPTIONAL_ARGS', value: 'validate-digests-only')
+                string(name: 'OPTIONAL_ARGS', value: 'validate-digest-only')
                 ]
             echo 'Artifacts are successfully validated!'
             }
