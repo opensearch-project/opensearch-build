@@ -255,7 +255,7 @@ pipeline {
                         if (currentBuild.rawBuild.getCauses().toString().contains("GenericCause")) {
                             withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
                                 def pull_request = Integer.parseInt("${pull_request_number}")
-                                sh ("gh pr comment ${pull_request} --repo ${repository} --body The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.")
+                                sh ("gh pr comment ${pull_request} --repo ${repository} --body \"The benchmark job ${BUILD_URL} failed.\n Please see logs to debug.\"")
                             }
                         }
                     }
