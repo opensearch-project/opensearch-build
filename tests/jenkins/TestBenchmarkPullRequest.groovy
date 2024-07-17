@@ -54,6 +54,7 @@ class TestBenchmarkPullRequest extends BuildPipelineTest {
         helper.registerAllowedMethod('parameterizedCron', [String], null)
         helper.registerAllowedMethod("cfnDescribe", [Map])
         helper.registerAllowedMethod("cfnDelete", [Map])
+        helper.registerAllowedMethod("throttleJobProperty", [Map])
 
         binding.setVariable('AGENT_LABEL', 'Jenkins-Agent-AL2-X64-M52xlarge-Docker-Host-Benchmark-Test')
         binding.setVariable('ARCHITECTURE', 'x64')
