@@ -189,7 +189,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('release-promotion.string({name=PROJECTS, value=Both})')
         assertCallStack().contains('release-promotion.string({name=DOCKER_SOURCE, value=Both})')
         assertCallStack().contains('release-promotion.string({name=ARTIFACT_TYPE, value=production})')
-        assertCallStack().contains('release-promotion.string({name=OPTIONAL_ARGS, value=validate-digests-only})')
+        assertCallStack().contains('release-promotion.string({name=OPTIONAL_ARGS, value=validate-digest-only})')
         assertCallStack().contains('release-promotion.build({job=distribution-validation, wait=true, parameters=[null, null, null, null, null, null, null, null]})')
 
         // Maven Promotion Workflow
