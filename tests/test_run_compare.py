@@ -27,12 +27,14 @@ class TestRunCompareTests(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
     
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "", ""])
+    @patch("argparse._sys.argv", ["run_benchmark_test.py"])
     def test_no_args(self) -> None:
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(SystemExit) as cm:
             main()
 
-        out, _ = self.capfd.readouterr()
+        _, err = self.capfd.readouterr()
+        self.assertIn("error: the following arguments are required", err.lower())
+
     
     @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
     @patch("run_compare_tests.CompareTestRunner.run_comparison")
