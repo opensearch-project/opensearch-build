@@ -44,6 +44,7 @@ jobs:
           - {repo: dashboards-query-workbench}
           - {repo: dashboards-assistant}
           - {repo: dashboards-maps}
+          - {repo: dashboards-flow-framework}
           - {repo: anomaly-detection-dashboards-plugin}
           - {repo: ml-commons-dashboards}
           - {repo: index-management-dashboards-plugin}
