@@ -60,6 +60,7 @@ jobs:
           - {repo: custom-codecs}
           - {repo: flow-framework}
           - {repo: skills}
+          - {repo: query-insights}
         release_version: ${{ fromJson(needs.list-manifest-versions.outputs.matrix) }}
     steps:
       - name: GitHub App token
