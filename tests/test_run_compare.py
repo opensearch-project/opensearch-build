@@ -5,7 +5,6 @@
 # this file be licensed under the Apache-2.0 license or a
 # compatible open source license.
 
-import os
 import unittest
 from typing import Any
 from unittest.mock import Mock, patch
@@ -13,6 +12,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from run_compare_tests import main
+
 
 class TestRunCompareTests(unittest.TestCase):
     @pytest.fixture(autouse=True)
@@ -26,20 +26,18 @@ class TestRunCompareTests(unittest.TestCase):
 
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
-    
+
     @patch("argparse._sys.argv", ["run_benchmark_test.py"])
     def test_no_args(self) -> None:
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit):
             main()
 
         _, err = self.capfd.readouterr()
         self.assertIn("error: the following arguments are required", err.lower())
 
-    
     @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
     @patch("run_compare_tests.CompareTestRunner.run_comparison")
-    
     def test_default_execute_compare(self, mock_runner: Mock, *mocks: Any) -> None:
-        with patch("run_compare_tests.main") as mocked_main:
+        with patch("run_compare_tests.main"):
             main()
             self.assertEqual(1, mock_runner.call_count)

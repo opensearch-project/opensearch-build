@@ -9,6 +9,7 @@ import sys
 from test_workflow.compare_benchmark.compare_args import CompareArgs
 from test_workflow.compare_benchmark.compare_test_runner import CompareTestRunner
 
+
 def main() -> int:
     """
     Entry point for Compare Test with two IDs to compare. Will call out in test.sh with compare as argument
@@ -19,6 +20,7 @@ def main() -> int:
     compare_test_runner.run_comparison(compare_args)
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
