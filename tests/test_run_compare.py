@@ -27,8 +27,15 @@ class TestRunCompareTests(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
     
-    @patch("argparse._sys.argv", ["run_compare_tests.py"])
-    @patch("run_compare_tests.CompareTestRunner.from_args")
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "", ""])
+    def test_no_args(self) -> None:
+        with self.assertRaises(SystemExit):
+            main()
+
+        out, _ = self.capfd.readouterr()
+    
+    @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
+    @patch("run_compare_tests.CompareTestRunner.run_comparison")
     
     def test_default_execute_compare(self, mock_runner: Mock, *mocks: Any) -> None:
         with patch("run_compare_tests.main") as mocked_main:
