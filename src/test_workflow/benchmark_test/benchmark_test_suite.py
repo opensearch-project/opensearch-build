@@ -11,6 +11,7 @@ import logging
 import os
 import shutil
 import subprocess
+import argparse
 from typing import Any
 
 import pandas as pd
@@ -42,41 +43,10 @@ class BenchmarkTestSuite:
         self.args = args
         self.password = password
 
-        # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
-        self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
-        if self.args.benchmark_config:
-            self.command += f" -v {args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
-        self.command += f" opensearchproject/opensearch-benchmark:1.6.0 execute-test --workload={self.args.workload} " \
-                        f"--pipeline=benchmark-only --target-hosts={endpoint}"
-
-        if self.args.workload_params:
-            logging.info(f"Workload Params are {args.workload_params}")
-            self.command += f" --workload-params '{args.workload_params}'"
-
-        if self.args.test_procedure:
-            self.command += f" --test-procedure=\"{self.args.test_procedure}\""
-
-        if self.args.exclude_tasks:
-            self.command += f" --exclude-tasks=\"{self.args.exclude_tasks}\""
-
-        if self.args.include_tasks:
-            self.command += f" --include-tasks=\"{self.args.include_tasks}\""
-
-        if self.args.user_tag:
-            user_tag = f"--user-tag=\"{args.user_tag}\""
-            self.command += f" {user_tag}"
-
-        if self.args.telemetry:
-            self.command += " --telemetry "
-            for value in self.args.telemetry:
-                self.command += f"{value},"
-            if self.args.telemetry_params:
-                self.command += f" --telemetry-params '{self.args.telemetry_params}'"
-
-        if self.security:
-            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\',basic_auth_password:\'{self.password}\'"'
-        else:
-            self.command += ' --client-options="timeout:300"'
+        if self.args.command == 'execute-test':
+            self.form_benchmark_command()
+        elif self.args.command == 'compare':
+            self.form_compare_command()
 
     def execute(self) -> None:
         log_info = f"Executing {self.command.replace(self.endpoint, len(self.endpoint) * '*').replace(self.args.username, len(self.args.username) * '*')}"
@@ -104,3 +74,64 @@ class BenchmarkTestSuite:
 
     def cleanup(self) -> None:
         subprocess.check_call(f"docker rm docker-container-{self.args.stack_suffix}", cwd=os.getcwd(), shell=True)
+
+    def form_benchmark_command(self) -> str:
+        # Pass the cluster endpoints with -t for multi-cluster use cases(e.g. cross-cluster-replication)
+        self.command = f'docker run --name docker-container-{self.args.stack_suffix}'
+        if self.args.benchmark_config:
+            self.command += f" -v {self.args.benchmark_config}:/opensearch-benchmark/.benchmark/benchmark.ini"
+        self.command += f" opensearchproject/opensearch-benchmark:1.6.0 execute-test --workload={self.args.workload} " \
+                        f"--pipeline=benchmark-only --target-hosts={self.endpoint}"
+        
+        if self.args.workload_params:
+            logging.info(f"Workload Params are {self.args.workload_params}")
+            self.command += f" --workload-params '{self.args.workload_params}'"
+
+        if self.args.test_procedure:
+            self.command += f" --test-procedure=\"{self.args.test_procedure}\""
+
+        if self.args.exclude_tasks:
+            self.command += f" --exclude-tasks=\"{self.args.exclude_tasks}\""
+
+        if self.args.include_tasks:
+            self.command += f" --include-tasks=\"{self.args.include_tasks}\""
+
+        if self.args.user_tag:
+            user_tag = f"--user-tag=\"{self.args.user_tag}\""
+            self.command += f" {user_tag}"
+
+        if self.args.telemetry:
+            self.command += " --telemetry "
+            for value in self.args.telemetry:
+                self.command += f"{value},"
+            if self.args.telemetry_params:
+                self.command += f" --telemetry-params '{self.args.telemetry_params}'"
+
+        if self.security:
+            self.command += f' --client-options="timeout:300,use_ssl:true,verify_certs:false,basic_auth_user:\'{self.args.username}\',basic_auth_password:\'{self.password}\'"'
+        else:
+            self.command += ' --client-options="timeout:300"'
+        return self.command
+    
+    def form_compare_command(self) -> str:
+
+        self.command = f'docker run --name docker-container-{self.args.stack_suffix}' \
+            "-v ~/.benchmark/benchmark.ini:/opensearch-benchmark/.benchmark/benchmark.ini " \
+            f"opensearchproject/opensearch-benchmark:1.6.0 " \
+            f"compare --baseline={self.args.baseline} --contender={self.args.contender} "
+
+        if self.args.results_format:
+            self.command += f"--results-format={self.args.results_format} "
+
+        if self.args.results_numbers_align:
+            self.command += f"--results-numbers-align={self.args.results_numbers_align} "
+
+        if self.args.results_file:
+            # create a temporary directory for the compare results file in the container
+            container_results_dir = "/tmp/results"
+            container_results_file = os.path.join(container_results_dir, os.path.basename(self.args.results_file))
+            self.command += f"--results-file={container_results_file} "
+
+        if self.args.show_in_results:
+            self.command += f"--show-in-results={self.args.show_in_results} "
+        return self.command

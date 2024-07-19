@@ -18,6 +18,13 @@ class TestRunCompareTests(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
+    
+    @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
+    @patch("run_compare_tests.CompareTestRunner.run_comparison")
+    def test_default_execute_compare(self, mock_runner: Mock, *mocks: Any) -> None:
+        with patch("run_compare_tests.main"):
+            main()
+            self.assertEqual(1, mock_runner.call_count)
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "--help"])
     def test_usage(self) -> None:
@@ -34,10 +41,11 @@ class TestRunCompareTests(unittest.TestCase):
 
         _, err = self.capfd.readouterr()
         self.assertIn("error: the following arguments are required", err.lower())
-
-    @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
-    @patch("run_compare_tests.CompareTestRunner.run_comparison")
-    def test_default_execute_compare(self, mock_runner: Mock, *mocks: Any) -> None:
-        with patch("run_compare_tests.main"):
+    
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "$&!#%&*", "_______"])
+    def test_invalid_args(self) -> None:
+        with self.assertRaises(SystemExit):
             main()
-            self.assertEqual(1, mock_runner.call_count)
+
+        _, err = self.capfd.readouterr()
+        self.assertRaises(Exception)

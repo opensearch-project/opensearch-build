@@ -50,80 +50,101 @@ class BenchmarkArgs:
     telemetry: list
     telemetry_params: str
     logging_level: int
+    baseline: str
+    contender: str
+    results_format: str
+    results_numbers_align: str
+    results_file: str
+    show_in_results: str
+    command: str
 
     def __init__(self) -> None:
-        parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle")
-        parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
-        parser.add_argument("--distribution-url", dest="distribution_url", help="Link to a downloadable OpenSearch tarball.")
-        parser.add_argument("--cluster-endpoint", dest="cluster_endpoint",
+        parser = argparse.ArgumentParser(description="Test an OpenSearch Bundle or compare two tests")
+        subparsers = parser.add_subparsers(dest="command", required=True)
+
+        # command to run a benchmark test
+        execute_test_parser = subparsers.add_parser("execute-test", help="Execute benchmark test")
+        execute_test_parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.")
+        execute_test_parser.add_argument("--distribution-url", dest="distribution_url", help="Link to a downloadable OpenSearch tarball.")
+        execute_test_parser.add_argument("--cluster-endpoint", dest="cluster_endpoint",
                             help="Load balancer url for benchmark testing")
-        parser.add_argument("--distribution-version", dest="distribution_version",
+        execute_test_parser.add_argument("--distribution-version", dest="distribution_version",
                             help="provide OpenSearch version if using distribution-url param.")
-        parser.add_argument("--username", dest="username", help="Username for the cluster")
-        parser.add_argument("--password", dest="password", help="Password for the cluster")
-        parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance test")
-        parser.add_argument("--component", dest="component", default="OpenSearch",
+        execute_test_parser.add_argument("--username", dest="username", help="Username for the cluster")
+        execute_test_parser.add_argument("--password", dest="password", help="Password for the cluster")
+        execute_test_parser.add_argument("--suffix", dest="suffix", help="Suffix to be added to stack name for performance test")
+        execute_test_parser.add_argument("--component", dest="component", default="OpenSearch",
                             help="Component name that needs to be performance tested")
-        parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
-        parser.add_argument("--without-security", dest="insecure", action="store_true",
+        execute_test_parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.")
+        execute_test_parser.add_argument("--without-security", dest="insecure", action="store_true",
                             help="Force the security of the cluster to be disabled.", default=False)
-        parser.add_argument("--keep", dest="keep", action="store_true",
+        execute_test_parser.add_argument("--keep", dest="keep", action="store_true",
                             help="Do not delete the working temporary directory.")
-        parser.add_argument("--single-node", dest="single_node", action="store_true",
+        execute_test_parser.add_argument("--single-node", dest="single_node", action="store_true",
                             help="Is this a single node cluster")
-        parser.add_argument("--min-distribution", dest="min_distribution", action="store_true",
+        execute_test_parser.add_argument("--min-distribution", dest="min_distribution", action="store_true",
                             help="Is it the minimal OpenSearch distribution with no security and plugins")
-        parser.add_argument("--manager-node-count", dest="manager_node_count",
+        execute_test_parser.add_argument("--manager-node-count", dest="manager_node_count",
                             help="Number of cluster manager nodes, default is 3")
-        parser.add_argument("--data-node-count", dest="data_node_count", help="Number of data nodes, default is 2")
-        parser.add_argument("--client-node-count", dest="client_node_count",
+        execute_test_parser.add_argument("--data-node-count", dest="data_node_count", help="Number of data nodes, default is 2")
+        execute_test_parser.add_argument("--client-node-count", dest="client_node_count",
                             help="Number of dedicated client nodes, default is 0")
-        parser.add_argument("--ingest-node-count", dest="ingest_node_count",
+        execute_test_parser.add_argument("--ingest-node-count", dest="ingest_node_count",
                             help="Number of dedicated ingest nodes, default is 0")
-        parser.add_argument("--ml-node-count", dest="ml_node_count",
+        execute_test_parser.add_argument("--ml-node-count", dest="ml_node_count",
                             help="Number of dedicated machine learning nodes, default is 0")
-        parser.add_argument("--jvm-sys-props", dest="jvm_sys_props",
+        execute_test_parser.add_argument("--jvm-sys-props", dest="jvm_sys_props",
                             help="A comma-separated list of key=value pairs that will be added to jvm.options as JVM system properties.")
-        parser.add_argument("--additional-config", nargs='*', action=JsonArgs, dest="additional_config",
+        execute_test_parser.add_argument("--additional-config", nargs='*', action=JsonArgs, dest="additional_config",
                             help="Additional opensearch.yml config parameters passed as JSON")
-        parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
+        execute_test_parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
                             help="Use 50 percent of physical memory as heap.")
-        parser.add_argument("--ml-node-storage", dest="ml_node_storage",
+        execute_test_parser.add_argument("--ml-node-storage", dest="ml_node_storage",
                             help="User provided ml-node ebs block storage size defaults to 100Gb")
-        parser.add_argument("--data-node-storage", dest="data_node_storage",
+        execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                             help="User provided data-node ebs block storage size, defaults to 100Gb")
-        parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",
+        execute_test_parser.add_argument("--enable-remote-store", dest="enable_remote_store", action="store_true",
                             help="Enable Remote Store feature in OpenSearch")
-        parser.add_argument("--data-instance-type", dest="data_instance_type",
+        execute_test_parser.add_argument("--data-instance-type", dest="data_instance_type",
                             help="EC2 instance type for data node, defaults to r5.xlarge.")
-        parser.add_argument("--workload", dest="workload", required=True,
+        execute_test_parser.add_argument("--workload", dest="workload", required=True,
                             help="Name of the workload that OpenSearch Benchmark should run")
-        parser.add_argument("--benchmark-config", dest="benchmark_config",
+        execute_test_parser.add_argument("--benchmark-config", dest="benchmark_config",
                             help="absolute filepath to custom benchmark.ini config")
-        parser.add_argument("--user-tag", dest="user_tag",
+        execute_test_parser.add_argument("--user-tag", dest="user_tag",
                             help="Attach arbitrary text to the meta-data of each metric record")
-        parser.add_argument("--workload-params", dest="workload_params",
+        execute_test_parser.add_argument("--workload-params", dest="workload_params",
                             help="With this parameter you can inject variables into workloads. Parameters differs "
                                  "for each workload type. e.g., --workload-params \"number_of_replicas:1,number_of_shards:5\"")
-        parser.add_argument("--test-procedure", dest="test_procedure",
+        execute_test_parser.add_argument("--test-procedure", dest="test_procedure",
                             help="Defines a test procedure to use. You can find a list of test procedures by using "
                                  "opensearch-benchmark list test-procedures. E.g. --test-procedure=\"ingest-only\"")
-        parser.add_argument("--exclude-tasks", dest="exclude_tasks",
+        execute_test_parser.add_argument("--exclude-tasks", dest="exclude_tasks",
                             help="Defines a comma-separated list of test procedure tasks not to run. E.g. --exclude-tasks=\"index-append\"")
-        parser.add_argument("--include-tasks", dest="include_tasks",
+        execute_test_parser.add_argument("--include-tasks", dest="include_tasks",
                             help="Defines a comma-separated list of test procedure tasks to run. By default, all tasks listed in a test procedure array are run."
                                  " E.g. --include-tasks=\"scroll\"")
-        parser.add_argument("--capture-node-stat", dest="telemetry", action="append_const", const="node-stats",
+        execute_test_parser.add_argument("--capture-node-stat", dest="telemetry", action="append_const", const="node-stats",
                             help="Enable opensearch-benchmark to capture node stat metrics such as cpu, mem, jvm etc as well.")
-        parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const",
+        execute_test_parser.add_argument("--capture-segment-replication-stat", dest="telemetry", action="append_const",
                             const="segment-replication-stats",
                             help="Enable opensearch-benchmark to segment_replication stat metrics such as replication lag.")
-        parser.add_argument("--telemetry-params", dest="telemetry_params",
+        execute_test_parser.add_argument("--telemetry-params", dest="telemetry_params",
                             help="Allows to set parameters for telemetry devices. Accepts json input.")
-        parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
+        execute_test_parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
+        
+        # command to run comparison
+        compare_parser = subparsers.add_parser('compare', help='Compare two IDs')
+        compare_parser.add_argument("baseline", type=str, help="The baseline ID to compare")
+        compare_parser.add_argument("contender", type=str, help="The contender ID to compare")
+        compare_parser.add_argument("--results-format", default="markdown", type=str, help="Defines the output format for the results, markdown or csv (default: markdown)")
+        compare_parser.add_argument("--results-numbers-align", default="right", type=str, help="Defines the format for the command line results. (Default: right)")
+        compare_parser.add_argument("--results-file", type=str, help="File path to write the results file to")
+        compare_parser.add_argument("--show-in-results", type=str, help="Determines whether to include the comparison in the results file")
 
         args = parser.parse_args()
+        self.command = args.command
         self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
         self.distribution_url = args.distribution_url if args.distribution_url else None
         self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
@@ -159,6 +180,12 @@ class BenchmarkArgs:
         self.telemetry = args.telemetry
         self.telemetry_params = args.telemetry_params if args.telemetry_params else None
         self.logging_level = args.logging_level
+        self.baseline = args.baseline if hasattr(args, 'baseline') else None
+        self.contender = args.contender if hasattr(args, 'contender') else None
+        self.results_format = args.results_format if hasattr(args, 'results_format') else None
+        self.results_numbers_align = args.results_numbers_align if hasattr(args, 'results_numbers_align') else None
+        self.results_file = args.results_file if hasattr(args, 'results_file') else None
+        self.show_in_results = args.show_in_results if hasattr(args, 'show_in_results') else None
 
         if self.bundle_manifest is None and self.distribution_url is None and self.cluster_endpoint is None:
             raise Exception('Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.')

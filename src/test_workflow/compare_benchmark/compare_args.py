@@ -6,6 +6,7 @@
 # compatible open source license.
 
 import argparse
+import logging
 
 
 class CompareArgs:
@@ -20,8 +21,8 @@ class CompareArgs:
         self.parser = argparse.ArgumentParser(description="Compare two IDs")
         self.parser.add_argument("id1", type=str, help="The baseline ID to compare")
         self.parser.add_argument("id2", type=str, help="The contender ID to compare")
-        self.parser.add_argument("--results-format", type=str, help="Defines the output format for the results, markdown or csv (default: markdown)")
-        self.parser.add_argument("--results-numbers-align", type=str, help="Defines the format for the command line results. (Default: right)")
+        self.parser.add_argument("--results-format", default="markdown", type=str, help="Defines the output format for the results, markdown or csv (default: markdown)")
+        self.parser.add_argument("--results-numbers-align", default="right", type=str, help="Defines the format for the command line results. (Default: right)")
         self.parser.add_argument("--results-file", type=str, help="File path to write the results file to")
         self.parser.add_argument("--show-in-results", type=str, help="Determines whether to include the comparison in the results file")
         self.args = self.parser.parse_args()
@@ -38,4 +39,4 @@ if __name__ == "__main__":
     try:
         compare_args = CompareArgs()
     except argparse.ArgumentError as e:
-        print(f"Error: {e}")
+        logging.error(f"Error: {e}")

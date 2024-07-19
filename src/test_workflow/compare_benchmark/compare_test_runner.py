@@ -16,7 +16,7 @@ class CompareTestRunner:
 
     def run_comparison(self, compare_args: CompareArgs) -> None:
         """
-        Perform the comparison between two test results using the OSB tool.
+        Perform the comparison between two test results using the OpenSearch-Benchmark tool.
         """
 
         # construct the command to compare two test executions

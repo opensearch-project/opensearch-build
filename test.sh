@@ -23,11 +23,8 @@ case $1 in
   "benchmark-test")
   "$DIR/run.sh" "$DIR/src/run_benchmark_test.py" "${@:2}"
   ;;
-  "compare")
-  "$DIR/run.sh" "$DIR/src/run_compare_tests.py" "${@:2}"
-  ;;
   *)
-  echo "Invalid test suite, run ./test.sh integ-test|bwc-test|perf-test|compare."
+  echo "Invalid test suite, run ./test.sh integ-test|bwc-test|perf-test|benchmark-test."
   exit 1
   ;;
 esac
