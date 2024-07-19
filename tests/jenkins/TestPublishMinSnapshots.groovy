@@ -25,7 +25,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.12.0')
+                .defaultVersion('6.6.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -46,6 +46,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'production-s3-bucket-name')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'production-role-name')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'aws-account-artifact')
+        binding.setVariable('JOB_NAME', 'distribution-build-opensearch')
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3', args:'-e JAVA_HOME=/opt/java/openjdk-20'])
         helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
             closure.delegate = delegate
