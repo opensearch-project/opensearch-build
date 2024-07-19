@@ -10,25 +10,25 @@ ci:
 components:
   - name: OpenSearch
     repository: https://github.com/opensearch-project/OpenSearch.git
-    ref: 1.x
+    ref: tags/1.4.0
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: common-utils
     repository: https://github.com/opensearch-project/common-utils.git
-    ref: 1.x
+    ref: tags/1.4.0.0
     checks:
       - gradle:publish
       - gradle:properties:version
   - name: job-scheduler
     repository: https://github.com/opensearch-project/job-scheduler.git
-    ref: 1.x
+    ref: tags/1.4.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
   - name: security
     repository: https://github.com/opensearch-project/security.git
-    ref: 1.x
+    ref: tags/1.4.0.0
     checks:
       - gradle:properties:version
       - gradle:dependencies:opensearch.version
