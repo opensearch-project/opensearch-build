@@ -91,10 +91,16 @@ class InputManifests(Manifests):
         with TemporaryDirectory(keep=keep, chdir=True) as work_dir:
             logging.info(f"Checking out components into {work_dir.name}")
 
-            # check out and build #main, 1.x, etc.
-            branches = sorted(min_klass.branches())
+            outdated_branches = ["1.0", "1.1", "1.2"]
 
+            # check out and build #main, 1.x, etc.
+            # ignore branches that are outdated and not maintained anymore
+            # ex: 1.0 failed due to certain dependencies not available anymore: https://github.com/avast/gradle-docker-compose-plugin/issues/446
+            all_branches = sorted(min_klass.branches())
+            branches = [b for b in all_branches if not any(b.startswith(o) for o in outdated_branches)]
             logging.info(f"Checking {self.name} {branches} branches")
+            logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are outdated")
+
             for branch in branches:
                 min_component_klass = min_klass.checkout(
                     path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),
