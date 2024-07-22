@@ -41,9 +41,9 @@ pipeline {
             trim: true
         )
         choice(
-                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS'],
+                choices: ['MATCH_BUILD_MANIFEST', 'UPDATE_TO_RECENT_COMMITS', 'UPDATE_TO_TAGS'],
                 name: 'MANIFEST_LOCK_ACTION',
-                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.',
+                description: 'The manifest lock action to choose.<br>MATCH_BUILD_MANIFEST: Will update the manifest with commit ID from release candidate build manifest.<br>UPDATE_TO_RECENT_COMMITS: Will update the manifest with component repo release branch head commit.<br>UPDATE_TO_TAGS: Will update the manifest with ref tags',
         )
         string(
             name: 'COMPONENTS',
@@ -56,9 +56,13 @@ pipeline {
             steps {
                 script {
                     currentBuild.description = """Action: ${MANIFEST_LOCK_ACTION}<br>Release: ${RELEASE_VERSION} OS=${OPENSEARCH_RELEASE_CANDIDATE} OSD=${OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE}"""
-                    if (MANIFEST_LOCK_ACTION.isEmpty() || RELEASE_VERSION.isEmpty() || OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty()) {
+                    if (MANIFEST_LOCK_ACTION.isEmpty() || RELEASE_VERSION.isEmpty()) {
                                 currentBuild.result = 'ABORTED'
-                                error('Make sure all the parameters are passed in.')
+                                error('MANIFEST_LOCK_ACTION and/or RELEASE_VERSION cannot be empty!')
+                    }
+                    if ((params.MANIFEST_LOCK_ACTION == 'MATCH_BUILD_MANIFEST' || params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_RECENT_COMMITS') && (OPENSEARCH_RELEASE_CANDIDATE.isEmpty() || OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE.isEmpty())) {
+                                currentBuild.result = 'ABORTED'
+                                error('OPENSEARCH_RELEASE_CANDIDATE and/or OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE cannot be empty when MANIFEST_LOCK_ACTION is MATCH_BUILD_MANIFEST or UPDATE_TO_RECENT_COMMITS.')
                     }
                 }
             }
@@ -134,6 +138,41 @@ pipeline {
                     }
                     updateManifest("opensearch", params.OPENSEARCH_RELEASE_CANDIDATE)
                     updateManifest("opensearch-dashboards", params.OPENSEARCH_DASHBOARDS_RELEASE_CANDIDATE)
+                }
+            }
+        }
+        stage('UPDATE_TO_TAGS') {
+            when {
+                expression { params.MANIFEST_LOCK_ACTION == 'UPDATE_TO_TAGS' }
+            }
+            steps {
+                script {
+                    def updateManifest = { String productName ->
+                        def existingManifest = readYaml file: "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml"
+                        def selectedComponents = params.COMPONENTS.isEmpty() ? existingManifest.components : existingManifest.components.findAll { component ->
+                            params.COMPONENTS.split(',').any { it.trim() == component.name }
+                        }
+                        selectedComponents.each { componentName ->
+                            def existingComponent = existingManifest.components.find { it.name == componentName.name }
+                            if (existingComponent) {
+                                def releaseTag = params.RELEASE_VERSION + ".0"
+                                if (componentName.name == 'OpenSearch' || componentName.name == 'OpenSearch-Dashboards' || componentName.name == 'functionalTestDashboards') {
+                                    releaseTag = params.RELEASE_VERSION
+                                }
+                                def newComponentRef = existingManifest.components.find { it.name == componentName.name }?.ref
+                                        if (newComponentRef) {
+                                            existingComponent.ref = "tags/" + releaseTag
+                                        }
+                            }
+                        }
+                        writeYaml file:  "manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml", data: existingManifest, overwrite: true
+                        sh """
+                                yq eval -i '.' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                                sed -i '1s/^/---\\n/' manifests/${params.RELEASE_VERSION}/${productName}-${params.RELEASE_VERSION}.yml
+                        """
+                    }
+                    updateManifest("opensearch")
+                    updateManifest("opensearch-dashboards")
                 }
             }
         }
