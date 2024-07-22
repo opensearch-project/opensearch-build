@@ -54,6 +54,16 @@ pipeline {
                 }
             }
         }
+        stage('Update Manifest') {
+            steps {
+                echo 'Triggering manifest lock workflow'
+                build job: 'release-manifest-commit-lock', wait: true, parameters: [
+                    string(name: 'RELEASE_VERSION', value: "${params.RELEASE_VERSION}"),
+                    string(name: 'MANIFEST_LOCK_ACTION', value: "UPDATE_TO_TAGS")
+                    ]
+                echo 'Pull Request to lock manifest created successfully!'
+            }
+        }
     }
     post() {
         always {
