@@ -152,3 +152,9 @@ components:
       test-configs:
         - with-security
         - without-security
+
+  - name: query-insights
+    integ-test:
+      test-configs:
+        - with-security
+        - without-security
