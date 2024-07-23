@@ -50,8 +50,8 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
         addParam('GIT_ISSUE_NUMBER', gitIssueNumber)
         addParam('COMMENT_UNIQUE_ID', commentUniqueID)
 
-        super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-check.jenkinsfile")
+        super.testPipeline("jenkins/release-workflows/release-notes-check.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/release-workflows/release-notes-check.jenkinsfile")
         assertJobStatusSuccess()
         def callStack = helper.getCallStack()
         assertCallStack().contains('Check release notes, groovy.lang.Closure')
@@ -66,8 +66,8 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
     @Test
     public void releaseNotesCompile() {
         addParam('ACTION', 'compile')
-        super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
-                "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-compile.jenkinsfile")
+        super.testPipeline("jenkins/release-workflows/release-notes-check.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/release-workflows/release-notes-compile.jenkinsfile")
         assertJobStatusSuccess()
         def callStack = helper.getCallStack()
         assertCallStack().contains('Skipping stage Check release notes')

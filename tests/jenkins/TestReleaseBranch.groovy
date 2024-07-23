@@ -61,8 +61,8 @@ class TestReleaseBranch extends BuildPipelineTest {
 
     @Test
     public void testBranchCreation() {
-        super.testPipeline('jenkins/release-branch/release-branch.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/release-branch/release-branch-buildmanifest.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/release-branch.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-workflows/release-branch-buildmanifest.jenkinsfile')
     }
 
     @Test
@@ -70,7 +70,7 @@ class TestReleaseBranch extends BuildPipelineTest {
         helper.addShMock("""git ls-remote https://github.com/opensearch-project/OpenSearch.git 2.11""") { script ->
             return [stdout: "ref/2.11", exitValue: 0]
         }
-        runScript('jenkins/release-branch/release-branch.jenkinsfile')
+        runScript('jenkins/release-workflows/release-branch.jenkinsfile')
         assertThat(getCommandExecutions('echo', ''), hasItem('Branch already exists, skipping branch creation for the repo https://github.com/opensearch-project/OpenSearch.git'))
     }
 
@@ -94,15 +94,15 @@ class TestReleaseBranch extends BuildPipelineTest {
             return [stdout: "", exitValue: 0]
         }
 
-        super.testPipeline('jenkins/release-branch/release-branch.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/release-branch/release-branch-inputmanifest.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/release-branch.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-workflows/release-branch-inputmanifest.jenkinsfile')
     }
 
     @Test
     public void testVerifyParameters() {
         binding.setVariable('MANIFEST_FILE', "")
         binding.setVariable('TARGET_BRANCH', "")
-        runScript('jenkins/release-branch/release-branch.jenkinsfile')
+        runScript('jenkins/release-workflows/release-branch.jenkinsfile')
         assertThat(getCommandExecutions('error', ''), hasItem('Required parameters are missing. Please provide the mandatory arguments MANIFEST_FILE, SOURCE_BRANCH and TARGET_BRANCH'))
     }
 
