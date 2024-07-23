@@ -1043,6 +1043,7 @@ def triggerIntegrationTests(String buildManifestUrl, String buildManifestUrlOpen
                 parameters: [
                     string(name: 'TEST_MANIFEST', value: TEST_MANIFEST),
                     string(name: 'BUILD_MANIFEST_URL', value: buildManifestUrl),
+                    string(name: 'RC_NUMBER', value: RC_NUMBER),
                     string(name: 'BUILD_MANIFEST_URL_OPENSEARCH', value: buildManifestUrlOpenSearch),
                     booleanParam(name: 'UPDATE_GITHUB_ISSUES', value: true)
                 ]
