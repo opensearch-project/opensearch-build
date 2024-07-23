@@ -16,7 +16,7 @@ pipeline {
     agent { label AGENT_LABEL }
     options {
         timeout(time: 2, unit: 'HOURS')
-        buildDiscarder(logRotator(daysToKeepStr: '180'))
+        buildDiscarder(logRotator(daysToKeepStr: '90'))
         throttleJobProperty(
             categories: [],
             limitOneJobWithMatchingParams: false,
