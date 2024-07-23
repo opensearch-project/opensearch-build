@@ -16,12 +16,24 @@ pipeline {
     options {
             timeout(time: 2, unit: 'HOURS')
     }
-    agent none
+    agent {
+        docker {
+            label 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
+            image 'opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1'
+            registryUrl 'https://public.ecr.aws/'
+            alwaysPull true
+        }
+    }
     parameters {
         string(
-            name: 'INPUT_MANIFEST',
-            description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+            name: 'RELEASE_VERSION',
+            description: 'Release version number to fetch input manifest path',
             trim: true
+        )
+        choice(
+                choices: ['check', 'compile'],
+                name: 'ACTION',
+                description: 'check - Checks the release notes for all components. compile - Consolidates all release notes', 
         )
         string(
             name: 'GIT_LOG_DATE',
@@ -44,23 +56,59 @@ pipeline {
             trim: true
         )
     }
-    environment {
-        AGENT_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
-    }
     stages {
-        stage('detect docker image + args') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image 'docker/library/alpine:3'
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
+        stage('Parameters Check') {
+            steps {
+                script {
+                    if (ACTION.isEmpty() || RELEASE_VERSION.isEmpty()) {
+                        currentBuild.result = 'ABORTED'
+                        error('ACTION and RELEASE_VERSION parameters cannot be empty!')
+                    }
+                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "ADD" || GIT_ISSUE_NUMBER.isEmpty())) {
+                        currentBuild.result = 'ABORTED'
+                        error('GIT_LOG_DATE, COMMENT or GIT_ISSUE_NUMBER parameters cannot be empty when ACTION = check!')
+                    }
+                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "UPDATE" || COMMENT_UNIQUE_ID.isEmpty())) {
+                        currentBuild.result = 'ABORTED'
+                        error('GIT_LOG_DATE, COMMENT or COMMENT_UNIQUE_ID parameters cannot be empty when ACTION = check!')
+                    }
                 }
+            }
+        }
+        stage('Check release notes') {
+            when {
+                expression { params.ACTION == 'check' }
             }
             steps {
                 script {
-                    dockerAgent = detectDockerAgent()
-                    currentBuild.description = INPUT_MANIFEST
+                    withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        if (params.COMMENT == "ADD") {
+                            sh """
+                                #!/bin/bash
+                                set +e
+                                ./release_notes.sh check manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --date ${GIT_LOG_DATE} --output table.md
+                                echo "Adding Comment on issue $GIT_ISSUE_NUMBER"
+                                gh repo clone https://github.com/opensearch-project/opensearch-build.git; cd opensearch-build
+                                gh issue comment ${GIT_ISSUE_NUMBER} --body-file ../table.md --repo opensearch-project/opensearch-build
+                            """
+                        }
+                        if (params.COMMENT == "UPDATE") {
+                            sh """
+                                #!/bin/bash
+                                set +e
+                                ./release_notes.sh check manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --date ${GIT_LOG_DATE} --output table.md
+                                echo "Updating Comment on issue $GIT_ISSUE_NUMBER"
+                                gh repo clone https://github.com/opensearch-project/opensearch-build.git; cd opensearch-build
+                                IFS=
+                                gh api --method PATCH -H "Accept: application/vnd.github+json" /repos/opensearch-project/opensearch-build/issues/comments/${COMMENT_UNIQUE_ID} -f body=\$(cat ../table.md)
+                            """
+                        }
+                        if (params.COMMENT == "NO_COMMENT") {
+                            sh """
+                            ./release_notes.sh check manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --date ${GIT_LOG_DATE}
+                            """
+                        }
+                    }
                 }
             }
             post {
@@ -69,62 +117,38 @@ pipeline {
                 }
             }
         }
-        stage('Parameters Check') {
-            steps {
-                script {
-                    currentBuild.description = "Comment:${COMMENT}, Manifest:${INPUT_MANIFEST}"
-                    if (GIT_LOG_DATE.isEmpty() || INPUT_MANIFEST.isEmpty()) {
-                                currentBuild.result = 'ABORTED'
-                                error('Make sure all the parameters are passed in.')
-                    }
-                    if (COMMENT == "ADD" && GIT_ISSUE_NUMBER.isEmpty()) {
-                                currentBuild.result = 'ABORTED'
-                                error('Make sure all the parameters are passed in.')
-                    }
-                    if (COMMENT == "UPDATE" && COMMENT_UNIQUE_ID.isEmpty()) {
-                                currentBuild.result = 'ABORTED'
-                                error('Make sure all the parameters are passed in.')
-                    }
-                }
-            }
-        }
-        stage('Generate MarkDown table') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image dockerAgent.image
-                    registryUrl 'https://public.ecr.aws/'
-                    alwaysPull true
-                }
+        stage('Generate consolidated release notes') {
+            when {
+                expression { params.ACTION == 'compile' }
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "jenkins-github-bot-token", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                        if (params.COMMENT == "ADD") {
-                            sh '''
-                                #!/bin/bash
-                                set +e
-                                ./release_notes.sh check manifests/${INPUT_MANIFEST} --date ${GIT_LOG_DATE} --output table.md
-                                echo "Adding Comment on issue $GIT_ISSUE_NUMBER"
-                                gh repo clone https://github.com/opensearch-project/opensearch-build.git; cd opensearch-build
-                                gh issue comment ${GIT_ISSUE_NUMBER} --body-file ../table.md --repo opensearch-project/opensearch-build
-                            '''
-                        }
-                        if (params.COMMENT == "UPDATE") {
-                            sh '''
-                                #!/bin/bash
-                                set +e
-                                ./release_notes.sh check manifests/${INPUT_MANIFEST} --date ${GIT_LOG_DATE} --output table.md
-                                echo "Updating Comment on issue $GIT_ISSUE_NUMBER"
-                                gh repo clone https://github.com/opensearch-project/opensearch-build.git; cd opensearch-build
-                                IFS=
-                                gh api --method PATCH -H "Accept: application/vnd.github+json" /repos/opensearch-project/opensearch-build/issues/comments/${COMMENT_UNIQUE_ID} -f body=$(cat ../table.md)
-                            '''
-                        }
-                        if (params.COMMENT == "NO_COMMENT") {
-                            sh '''
-                            ./release_notes.sh check manifests/${INPUT_MANIFEST} --date ${GIT_LOG_DATE}
-                            '''
+                    sh """
+                        #!/bin/bash
+                        set +e
+                        ./release_notes.sh compile manifests/${RELEASE_VERSION}/opensearch-${RELEASE_VERSION}.yml manifests/${RELEASE_VERSION}/opensearch-dashboards-${RELEASE_VERSION}.yml --output table.md
+                    """
+                    withCredentials([usernamePassword(credentialsId: 'jenkins-github-bot-token', passwordVariable: 'GITHUB_TOKEN', usernameVariable: 'GITHUB_USER')]) {
+                        try {
+                            sh """
+                                git remote set-url origin "https://opensearch-ci:${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-build"
+                                git config user.email "opensearch-infra@amazon.com"
+                                git config user.name "opensearch-ci"
+                                git checkout -b release-notes
+                            """
+                            def status = sh(returnStdout: true, script: 'git status --porcelain')
+                            if (status) {
+                                sh """
+                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git commit -sm "Add consolidated release notes for ${params.RELEASE_VERSION}"
+                                    git push origin release-notes --force
+                                    gh pr create --title 'Add consolidated release notes for ${params.RELEASE_VERSION}' --body 'Add consolidated release notes for ${params.RELEASE_VERSION}' -H release-notes -B main
+                                """
+                            } else {
+                                println 'Nothing to commit!'
+                            }
+                        } catch (e) {
+                            error 'An error occured while creating pull request for consolidated release notes' + e.toString()
                         }
                     }
                 }
