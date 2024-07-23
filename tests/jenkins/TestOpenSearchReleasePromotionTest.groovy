@@ -44,8 +44,8 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
     @Test
     void shouldExecuteWithoutErrors() {
-        super.testPipeline('jenkins/promotion/release-promotion.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/promotion/release-promotion.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/release-promotion.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-workflows/release-promotion.jenkinsfile')
 
         def callStack = helper.getCallStack()
         // Parameters Check
@@ -202,7 +202,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
     @Test
     void verifyCfnCommands() {
-        runScript('jenkins/promotion/release-promotion.jenkinsfile')
+        runScript('jenkins/release-workflows/release-promotion.jenkinsfile')
         def callStack = helper.getCallStack()
          assertCallStack().contains(
             'release-promotion.cfInvalidate({distribution=CLOUDFRONT_DISTRIBUTION_ID, paths=[/releases/bundle/opensearch/1.x/*, /releases/bundle/opensearch-dashboards/1.x/*], waitForCompletion=true})'
