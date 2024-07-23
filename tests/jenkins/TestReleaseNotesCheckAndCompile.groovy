@@ -64,7 +64,7 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
     }
 
     @Test
-    public void releaseNoteCompile() {
+    public void releaseNotesCompile() {
         addParam('ACTION', 'compile')
         super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-compile.jenkinsfile")
