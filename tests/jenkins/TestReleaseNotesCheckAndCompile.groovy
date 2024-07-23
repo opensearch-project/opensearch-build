@@ -76,18 +76,6 @@ class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
             call.methodName == 'sh'
         }.any { call ->
             callArgsToString(call).contains('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output table.md')
-        }).isTrue()     
-    }
-
-
-    def getShellCommands(String searchtext) {
-        def shCommands = helper.callStack.findAll { call ->
-            call.methodName == 'sh'
-        }.collect { call ->
-            callArgsToString(call)
-        }.findAll { command ->
-            command.contains(searchtext)
-        }
-        return shCommands
+        }).isTrue()
     }
 }
