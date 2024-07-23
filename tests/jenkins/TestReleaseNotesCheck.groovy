@@ -13,6 +13,7 @@ import static com.lesfurets.jenkins.unit.global.lib.LibraryConfiguration.library
 import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.assertj.core.api.Assertions.assertThat
+import static org.hamcrest.CoreMatchers.hasItem
 
 class TestReleaseNotesCheck extends BuildPipelineTest {
 
@@ -20,7 +21,7 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
     String comment = 'NO_COMMENT'
     String gitIssueNumber = '123456'
     String commentUniqueID = '123456'
-    String inputManifest = '3.0.0/opensearch-3.0.0.yml'
+    String releaseVersion = '3.0.0'
 
     @Override
     @Before
@@ -37,32 +38,48 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
             )
         super.setUp()
 
-        binding.setVariable('INPUT_MANIFEST', inputManifest)
-        binding.setVariable('GIT_LOG_DATE', gitLogDate)
-        binding.setVariable('COMMENT', comment)
-        binding.setVariable('GIT_ISSUE_NUMBER', gitIssueNumber)
-        binding.setVariable('COMMENT_UNIQUE_ID', commentUniqueID)
-        binding.setVariable('AGENT_X64','Jenkins-Agent-AL2-X64-C54xlarge-Docker-Host')
-        binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-v1', args:'-e JAVA_HOME=/opt/java/openjdk-11'])
-
+        addParam('RELEASE_VERSION', releaseVersion)
     }
 
     @Test
-    public void testReleaseNoteCheckPipeline() {
+    public void releaseNotesCheck() {
+        addParam('ACTION', 'check')
+        addParam('GIT_LOG_DATE', gitLogDate)
+        addParam('COMMENT', comment)
+        addParam('GIT_ISSUE_NUMBER', gitIssueNumber)
+        addParam('COMMENT_UNIQUE_ID', commentUniqueID)
+
         super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
                 "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-check.jenkinsfile")
+        assertJobStatusSuccess()
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('Check release notes, groovy.lang.Closure')
+        assertCallStack().contains('Skipping stage Generate consolidated release notes')
+        assertThat(getShellCommands('release_notes'), hasItem('./release_notes.sh check manifests/3.0.0/opensearch-3.50.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --date 2022-10-10'))
     }
 
     @Test
-    public void releaseNoteExecuteWithoutErrors() {
-        runScript("jenkins/release-notes-check/release-notes-check.jenkinsfile")
-
+    public void releaseNoteCompile() {
+        addParam('ACTION', 'compile')
+        super.testPipeline("jenkins/release-notes-check/release-notes-check.jenkinsfile",
+                "tests/jenkins/jenkinsjob-regression-files/release-notes-check/release-notes-compile.jenkinsfile")
         assertJobStatusSuccess()
+        def callStack = helper.getCallStack()
+        assertCallStack().contains('Skipping stage Check release notes')
+        assertCallStack().contains('Generate consolidated release notes, groovy.lang.Closure')
+        print(getShellCommands('release_notes'))
+        assertThat(getShellCommands('release_notes'), hasItem('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output table.md'))
+    }
 
-        assertThat(helper.callStack.findAll { call ->
+
+    def getShellCommands(String searchtext) {
+        def shCommands = helper.callStack.findAll { call ->
             call.methodName == 'sh'
-        }.any { call ->
-            callArgsToString(call).contains('release_notes.sh')
-        }).isTrue()
+        }.collect { call ->
+            callArgsToString(call)
+        }.findAll { command ->
+            command.contains(searchtext)
+        }
+        return shCommands
     }
 }
