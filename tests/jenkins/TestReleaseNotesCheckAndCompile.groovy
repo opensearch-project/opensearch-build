@@ -14,8 +14,9 @@ import static com.lesfurets.jenkins.unit.global.lib.GitSource.gitSource
 import static com.lesfurets.jenkins.unit.MethodCall.callArgsToString
 import static org.assertj.core.api.Assertions.assertThat
 import static org.hamcrest.CoreMatchers.hasItem
+import static org.hamcrest.CoreMatchers.hasItems
 
-class TestReleaseNotesCheck extends BuildPipelineTest {
+class TestReleaseNotesCheckAndCompile extends BuildPipelineTest {
 
     String gitLogDate = '2022-10-10'
     String comment = 'NO_COMMENT'
@@ -55,7 +56,11 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
         def callStack = helper.getCallStack()
         assertCallStack().contains('Check release notes, groovy.lang.Closure')
         assertCallStack().contains('Skipping stage Generate consolidated release notes')
-        assertThat(getShellCommands('release_notes'), hasItem('./release_notes.sh check manifests/3.0.0/opensearch-3.50.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --date 2022-10-10'))
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh check manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --date 2022-10-10')
+        }).isTrue()    
     }
 
     @Test
@@ -67,8 +72,11 @@ class TestReleaseNotesCheck extends BuildPipelineTest {
         def callStack = helper.getCallStack()
         assertCallStack().contains('Skipping stage Check release notes')
         assertCallStack().contains('Generate consolidated release notes, groovy.lang.Closure')
-        print(getShellCommands('release_notes'))
-        assertThat(getShellCommands('release_notes'), hasItem('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output table.md'))
+        assertThat(helper.callStack.findAll { call ->
+            call.methodName == 'sh'
+        }.any { call ->
+            callArgsToString(call).contains('./release_notes.sh compile manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --output table.md')
+        }).isTrue()     
     }
 
 

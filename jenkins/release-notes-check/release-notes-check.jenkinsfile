@@ -62,15 +62,15 @@ pipeline {
                 script {
                     if (ACTION.isEmpty() || RELEASE_VERSION.isEmpty()) {
                         currentBuild.result = 'ABORTED'
-                        error('ACTION or RELEASE_VERSION cannot be empty!')
+                        error('ACTION and RELEASE_VERSION parameters cannot be empty!')
                     }
-                    if (ACTION == "check" && (COMMENT == "ADD" || GIT_ISSUE_NUMBER.isEmpty())) {
+                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "ADD" || GIT_ISSUE_NUMBER.isEmpty())) {
                         currentBuild.result = 'ABORTED'
-                        error('ACTION or COMMENT or GIT_ISSUE_NUMBER cannot be empty!')
+                        error('GIT_LOG_DATE, COMMENT or GIT_ISSUE_NUMBER parameters cannot be empty when ACTION = check!')
                     }
-                    if (ACTION == "check" && (COMMENT == "UPDATE" || COMMENT_UNIQUE_ID.isEmpty())) {
+                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "UPDATE" || COMMENT_UNIQUE_ID.isEmpty())) {
                         currentBuild.result = 'ABORTED'
-                        error('ACTION or COMMENT or COMMENT_UNIQUE_ID cannot be empty!')
+                        error('GIT_LOG_DATE, COMMENT or COMMENT_UNIQUE_ID parameters cannot be empty when ACTION = check!')
                     }
                 }
             }
