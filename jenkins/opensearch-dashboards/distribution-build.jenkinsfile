@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.7.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.7.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -946,13 +946,6 @@ pipeline {
             node(AGENT_LINUX_X64) {
                 checkout scm
                 script {
-                    if (params.UPDATE_GITHUB_ISSUE) {
-                        UpdateBuildFailureIssues(
-                            failureMessages: buildMessage(search: 'Error building'),
-                            passMessages: buildMessage(search: 'Successfully built'),
-                            inputManifestPath: "manifests/$INPUT_MANIFEST"
-                        )
-                    }
                     def rc = (params.RC_NUMBER.toInteger() > 0)
                     publishDistributionBuildResults(
                         failureMessages: buildMessage(search: 'Error building'),
@@ -962,6 +955,13 @@ pipeline {
                         rcNumber: env.RC_NUMBER,
                         componentCategory: "OpenSearch Dashboards"
                     )
+                    if (params.UPDATE_GITHUB_ISSUE) {
+                        UpdateBuildFailureIssues(
+                            failureMessages: buildMessage(search: 'Error building'),
+                            passMessages: buildMessage(search: 'Successfully built'),
+                            inputManifestPath: "manifests/$INPUT_MANIFEST"
+                        )
+                    }
                     postCleanup()
                 }
             }
