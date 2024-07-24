@@ -133,7 +133,7 @@ class BenchmarkArgs:
                             help="Allows to set parameters for telemetry devices. Accepts json input.")
         execute_test_parser.add_argument("-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO,
                             const=logging.DEBUG, dest="logging_level")
-        
+
         # command to run comparison
         compare_parser = subparsers.add_parser('compare', help='Compare two IDs')
         compare_parser.add_argument("baseline", type=str, help="The baseline ID to compare")
@@ -145,49 +145,54 @@ class BenchmarkArgs:
 
         args = parser.parse_args()
         self.command = args.command
-        self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
-        self.distribution_url = args.distribution_url if args.distribution_url else None
-        self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
-        self.distribution_version = args.distribution_version if args.distribution_version else None
-        self.stack_suffix = args.suffix if args.suffix else None
-        self.config = args.config
-        self.keep = args.keep
-        self.single_node = args.single_node
-        self.min_distribution = args.min_distribution
-        self.component = args.component
-        self.insecure = args.insecure
-        self.username = args.username if args.username else "admin"
-        self.password = args.password if args.password else None
-        self.manager_node_count = args.manager_node_count if args.manager_node_count else None
-        self.data_node_count = args.data_node_count if args.data_node_count else None
-        self.client_node_count = args.client_node_count if args.client_node_count else None
-        self.ingest_node_count = args.ingest_node_count if args.ingest_node_count else None
-        self.ml_node_count = args.ml_node_count if args.ml_node_count else None
-        self.jvm_sys_props = args.jvm_sys_props if args.jvm_sys_props else None
-        self.data_node_storage = args.data_node_storage if args.data_node_storage else None
-        self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
-        self.enable_remote_store = args.enable_remote_store
-        self.data_instance_type = args.data_instance_type if args.data_instance_type else None
-        self.workload = args.workload
-        self.workload_params = args.workload_params if args.workload_params else None
-        self.test_procedure = args.test_procedure if args.test_procedure else None
-        self.exclude_tasks = args.exclude_tasks if args.exclude_tasks else None
-        self.include_tasks = args.include_tasks if args.include_tasks else None
-        self.benchmark_config = args.benchmark_config if args.benchmark_config else None
-        self.user_tag = args.user_tag if args.user_tag else None
-        self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
-        self.use_50_percent_heap = args.use_50_percent_heap
-        self.telemetry = args.telemetry
-        self.telemetry_params = args.telemetry_params if args.telemetry_params else None
-        self.logging_level = args.logging_level
-        self.baseline = args.baseline if hasattr(args, 'baseline') else None
-        self.contender = args.contender if hasattr(args, 'contender') else None
-        self.results_format = args.results_format if hasattr(args, 'results_format') else None
-        self.results_numbers_align = args.results_numbers_align if hasattr(args, 'results_numbers_align') else None
-        self.results_file = args.results_file if hasattr(args, 'results_file') else None
-        self.show_in_results = args.show_in_results if hasattr(args, 'show_in_results') else None
+        if args.command == "execute-test":
+            self.bundle_manifest = args.bundle_manifest if args.bundle_manifest else None
+            self.distribution_url = args.distribution_url if args.distribution_url else None
+            self.cluster_endpoint = args.cluster_endpoint if args.cluster_endpoint else None
+            self.distribution_version = args.distribution_version if args.distribution_version else None
+            self.stack_suffix = args.suffix if args.suffix else None
+            self.config = args.config
+            self.keep = args.keep
+            self.single_node = args.single_node
+            self.min_distribution = args.min_distribution
+            self.component = args.component
+            self.insecure = args.insecure
+            self.username = args.username if args.username else "admin"
+            self.password = args.password if args.password else None
+            self.manager_node_count = args.manager_node_count if args.manager_node_count else None
+            self.data_node_count = args.data_node_count if args.data_node_count else None
+            self.client_node_count = args.client_node_count if args.client_node_count else None
+            self.ingest_node_count = args.ingest_node_count if args.ingest_node_count else None
+            self.ml_node_count = args.ml_node_count if args.ml_node_count else None
+            self.jvm_sys_props = args.jvm_sys_props if args.jvm_sys_props else None
+            self.data_node_storage = args.data_node_storage if args.data_node_storage else None
+            self.ml_node_storage = args.ml_node_storage if args.ml_node_storage else None
+            self.enable_remote_store = args.enable_remote_store
+            self.data_instance_type = args.data_instance_type if args.data_instance_type else None
+            self.workload = args.workload
+            self.workload_params = args.workload_params if args.workload_params else None
+            self.test_procedure = args.test_procedure if args.test_procedure else None
+            self.exclude_tasks = args.exclude_tasks if args.exclude_tasks else None
+            self.include_tasks = args.include_tasks if args.include_tasks else None
+            self.benchmark_config = args.benchmark_config if args.benchmark_config else None
+            self.user_tag = args.user_tag if args.user_tag else None
+            self.additional_config = json.dumps(args.additional_config) if args.additional_config is not None else None
+            self.use_50_percent_heap = args.use_50_percent_heap
+            self.telemetry = args.telemetry
+            self.telemetry_params = args.telemetry_params if args.telemetry_params else None
+            self.logging_level = args.logging_level
 
-        if self.bundle_manifest is None and self.distribution_url is None and self.cluster_endpoint is None:
-            raise Exception('Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.')
-        elif self.distribution_url and self.distribution_version is None:
-            raise Exception("--distribution-version is required parameter while using --distribution-url param.")
+            if self.bundle_manifest is None and self.distribution_url is None and self.cluster_endpoint is None:
+                raise Exception('Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.')
+            elif self.distribution_url and self.distribution_version is None:
+                raise Exception("--distribution-version is required parameter while using --distribution-url param.")
+        elif args.command == "compare":
+            self.baseline = args.baseline if hasattr(args, 'baseline') else None
+            self.contender = args.contender if hasattr(args, 'contender') else None
+            self.results_format = args.results_format if hasattr(args, 'results_format') else None
+            self.results_numbers_align = args.results_numbers_align if hasattr(args, 'results_numbers_align') else None
+            self.results_file = args.results_file if hasattr(args, 'results_file') else None
+            self.show_in_results = args.show_in_results if hasattr(args, 'show_in_results') else None
+            self.stack_suffix = 'comparison'
+        else:
+            logging.error("Invalid command: %s" % args.command)

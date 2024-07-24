@@ -11,20 +11,15 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from run_compare_tests import main
+from run_benchmark_test import main
+from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from test_workflow.benchmark_test.benchmark_test_suite import BenchmarkTestSuite
 
 
-class TestRunCompareTests(unittest.TestCase):
+class TestRunBenchmarkTest(unittest.TestCase):
     @pytest.fixture(autouse=True)
     def _capfd(self, capfd: Any) -> None:
         self.capfd = capfd
-    
-    @patch("argparse._sys.argv", ["run_compare_tests.py", "1234", "abcd"])
-    @patch("run_compare_tests.CompareTestRunner.run_comparison")
-    def test_default_execute_compare(self, mock_runner: Mock, *mocks: Any) -> None:
-        with patch("run_compare_tests.main"):
-            main()
-            self.assertEqual(1, mock_runner.call_count)
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py", "--help"])
     def test_usage(self) -> None:
@@ -34,18 +29,45 @@ class TestRunCompareTests(unittest.TestCase):
         out, _ = self.capfd.readouterr()
         self.assertTrue(out.startswith("usage:"))
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py"])
-    def test_no_args(self) -> None:
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321"])
+    @patch.object(BenchmarkTestSuite, "execute")
+    def test_default_execute_compare_test(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
+        # mock the BenchmarkArgs instance and set the command attribute
+        mock_benchmark_args = Mock(spec=BenchmarkArgs)
+        mock_benchmark_args.command = "compare"
+
+        with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
+            main()
+
+        # assert that the execute method of BenchmarkTestSuite was called
+        mock_benchmark_test_suite_execute.assert_called_once()
+
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345", "54321", "--results-format", "markdown", "--results-numbers-align", "right"])
+    @patch.object(BenchmarkTestSuite, "execute")
+    def test_execute_compare_test_with_params(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
+        # mock the BenchmarkArgs instance and set the command attribute
+        mock_benchmark_args = Mock(spec=BenchmarkArgs)
+        mock_benchmark_args.command = "compare"
+
+        with patch("test_workflow.benchmark_test.benchmark_args.BenchmarkArgs", return_value=mock_benchmark_args):
+            main()
+
+        # assert that the execute method of BenchmarkTestSuite was called
+        mock_benchmark_test_suite_execute.assert_called_once()
+
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "compare", "12345"])
+    @patch.object(BenchmarkTestSuite, "execute")
+    def test_compare_without_contender_id(self, mock_benchmark_test_suite_execute: Mock, *mocks: Any) -> None:
+        with self.assertRaises(SystemExit):
+            main()
+
+        # assert that the execute method of BenchmarkTestSuite was not called
+        mock_benchmark_test_suite_execute.assert_not_called()
+
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "copmare"])
+    def test_invalid_command(self, *mocks: Any) -> None:
         with self.assertRaises(SystemExit):
             main()
 
         _, err = self.capfd.readouterr()
-        self.assertIn("error: the following arguments are required", err.lower())
-    
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "$&!#%&*", "_______"])
-    def test_invalid_args(self) -> None:
-        with self.assertRaises(SystemExit):
-            main()
-
-        _, err = self.capfd.readouterr()
-        self.assertRaises(Exception)
+        self.assertIn("argument command: invalid choice", err)

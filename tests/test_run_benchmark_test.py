@@ -42,14 +42,14 @@ class TestRunBenchmarkTest(unittest.TestCase):
     OPENSEARCH_BUNDLE_MANIFEST = os.path.realpath(os.path.join(BUNDLE_MANIFEST_PATH, "opensearch-1.3.0-bundle.yml"))
     BENCHMARK_TEST_CONFIG = os.path.realpath(os.path.join(CONFIG_ROOT_PATH, "test-config.yml"))
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
     def test_default_execute_benchmark_test(self, mock_runner: Mock, *mocks: Any) -> None:
         main()
         self.assertEqual(1, mock_runner.call_count)
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
@@ -58,7 +58,7 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.assertEqual(1, os_mock_runner.call_count)
         self.assertEqual(0, plugin_mock_runner.call_count)
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--bundle-manifest", OPENSEARCH_BUNDLE_MANIFEST, "--config",
                                   BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test", "--component", "abc"])
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearchPlugins.run_tests")
     @patch("test_workflow.benchmark_test.benchmark_test_runners.BenchmarkTestRunnerOpenSearch.run_tests")
@@ -67,7 +67,7 @@ class TestRunBenchmarkTest(unittest.TestCase):
         self.assertEqual(0, os_mock_runner.call_count)
         self.assertEqual(1, plugin_mock_runner.call_count)
 
-    @patch("argparse._sys.argv", ["run_benchmark_test.py", "--distribution-url", "test.url", "--distribution-version", "2.10.0",
+    @patch("argparse._sys.argv", ["run_benchmark_test.py", "execute-test", "--distribution-url", "test.url", "--distribution-version", "2.10.0",
                                   "--config", BENCHMARK_TEST_CONFIG, "--workload", "test", "--suffix", "test"])
     @patch("run_benchmark_test.BenchmarkTestRunners.from_args")
     def test_default_execute_benchmark_test_without_manifest(self, mock_runner: Mock) -> None:

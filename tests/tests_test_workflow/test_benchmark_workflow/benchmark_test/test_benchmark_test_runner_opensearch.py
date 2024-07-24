@@ -19,6 +19,7 @@ from test_workflow.benchmark_test.benchmark_test_runners import BenchmarkTestRun
 class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "execute-test",
                                   "--bundle-manifest",
                                   os.path.join(os.path.dirname(__file__), "data", "bundle_manifest.yml"),
                                   "--config", os.path.join(os.path.dirname(__file__), "data", "test-config.yml"),
@@ -47,6 +48,7 @@ class TestBenchmarkTestRunnerOpenSearch(unittest.TestCase):
         self.assertEqual(mock_temp_directory.call_count, 1)
 
     @patch("argparse._sys.argv", ["run_benchmark_test.py",
+                                  "execute-test",
                                   "--distribution-url",
                                   "https://artifacts.opensearch.org/2.10.0/opensearch.tar.gz",
                                   "--distribution-version",
