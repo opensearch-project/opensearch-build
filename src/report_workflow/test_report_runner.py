@@ -12,10 +12,12 @@ import urllib.request
 from typing import Any
 from urllib.error import HTTPError
 
+import shutil
 import validators
 import yaml
 
 from manifests.test_manifest import TestManifest
+from manifests.bundle_manifest import BundleManifest
 from manifests.test_report_manifest import TestReportManifest
 from report_workflow.report_args import ReportArgs
 
@@ -46,13 +48,17 @@ class TestReportRunner:
 
         self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
-        self.distribution = os.path.basename(self.args.artifact_paths[self.name])
+        self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
         self.test_components = self.test_manifest.components
 
     def update_data(self) -> dict:
         self.test_run_data["name"] = self.product_name
         if float(self.schema_version) > 1.0:
-            self.test_run_data["distribution"] = self.distribution
+            self.test_run_data["version"] = self.bundle_manifest.build.version
+            self.test_run_data["platform"] = self.bundle_manifest.build.platform
+            self.test_run_data["architecture"] = self.bundle_manifest.build.architecture
+            self.test_run_data["distribution"] = self.bundle_manifest.build.distribution
+            self.test_run_data["id"] = self.bundle_manifest.build.id
             self.test_run_data["rc_number"] = self.rc_number
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
@@ -133,7 +139,11 @@ class TestReportRunner:
             "manifest": {
                 "schema-version": "1.1",
                 "name": "",
+                "version": "",
+                "platform": "",
+                "architecture": "",
                 "distribution": "",
+                "id": "",
                 "rc_number": "",
                 "test-run": {},
                 "components": []
