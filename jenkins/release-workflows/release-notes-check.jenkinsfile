@@ -64,11 +64,11 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error('ACTION and RELEASE_VERSION parameters cannot be empty!')
                     }
-                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "ADD" || GIT_ISSUE_NUMBER.isEmpty())) {
+                    if ((ACTION == "check" && COMMENT == "ADD") && (GIT_LOG_DATE.isEmpty() || GIT_ISSUE_NUMBER.isEmpty())) {
                         currentBuild.result = 'ABORTED'
                         error('GIT_LOG_DATE, COMMENT or GIT_ISSUE_NUMBER parameters cannot be empty when ACTION = check!')
                     }
-                    if (ACTION == "check" && (GIT_LOG_DATE.isEmpty() || COMMENT == "UPDATE" || COMMENT_UNIQUE_ID.isEmpty())) {
+                    if ((ACTION == "check" && COMMENT == "UPDATE") && (GIT_LOG_DATE.isEmpty() || COMMENT_UNIQUE_ID.isEmpty())) {
                         currentBuild.result = 'ABORTED'
                         error('GIT_LOG_DATE, COMMENT or COMMENT_UNIQUE_ID parameters cannot be empty when ACTION = check!')
                     }
