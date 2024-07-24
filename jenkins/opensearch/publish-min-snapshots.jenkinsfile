@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@5.12.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.6.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -20,7 +20,8 @@ pipeline {
     environment {
         AGENT_LINUX_X64 = 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host'
         AGENT_LINUX_ARM64 = 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host'
-        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
+        AGENT_MACOS_X64 = 'Jenkins-Agent-MacOS13-X64-Mac1Metal-Multi-Host'
+        AGENT_MACOS_ARM64 = 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host'
         AGENT_WINDOWS_X64 = 'Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Host'
         IMAGE_WINDOWS_ZIP = 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1' // required for windows to build zip distribution
     }
@@ -71,7 +72,7 @@ pipeline {
                                 distribution: 'tar',
                                 snapshot: true
                             )
-                            echo("Uploading min snapshots to S3")
+                            echo("Uploading linux x64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
@@ -104,7 +105,7 @@ pipeline {
                                 distribution: 'tar',
                                 snapshot: true
                             )
-                            echo("Uploading min snapshots to S3")
+                            echo("Uploading linux arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
@@ -125,7 +126,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo("Switching to Java ${env.javaVersionNumber} on MacOS")
+                            echo("Switching to Java ${env.javaVersionNumber} on MacOS X64")
                             sh("/usr/local/bin/update-alternatives --set java `/usr/local/bin/update-alternatives --list java | grep openjdk-${env.javaVersionNumber}`")
                             sh("java -version")
                             buildManifest(
@@ -136,7 +137,39 @@ pipeline {
                                 distribution: 'tar',
                                 snapshot: true
                             )
-                            echo("Uploading darwin min snapshots to S3")
+                            echo("Uploading darwin x64 tar min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('macos-arm64-tar') {
+                    agent {
+                        node {
+                            label AGENT_MACOS_ARM64
+                        }
+                    }
+                    steps {
+                        script {
+                            echo("Switching to Java ${env.javaVersionNumber} on MacOS ARM64")
+                            sh("/opt/homebrew/bin/update-alternatives --set java `/opt/homebrew/bin/update-alternatives --list java | grep openjdk-${env.javaVersionNumber}`")
+                            sh("java -version")
+                            buildManifest(
+                                componentName: "OpenSearch",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                platform: 'darwin',
+                                architecture: 'arm64',
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading darwin arm64 tar min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
@@ -170,7 +203,7 @@ pipeline {
                                 distribution: 'zip',
                                 snapshot: true
                             )
-                            echo("Uploading windows min snapshots to S3")
+                            echo("Uploading windows x64 zip min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'zip'

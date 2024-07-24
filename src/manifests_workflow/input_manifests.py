@@ -91,10 +91,24 @@ class InputManifests(Manifests):
         with TemporaryDirectory(keep=keep, chdir=True) as work_dir:
             logging.info(f"Checking out components into {work_dir.name}")
 
-            # check out and build #main, 1.x, etc.
-            branches = sorted(min_klass.branches())
+            # ignore branches that are legacy/outdated and not maintained anymore
+            # get possible legacy branches based on legacy manifests, then cross check with current branches from current manifests
+            # ex: 1.0 failed due to certain dependencies not available anymore: https://github.com/avast/gradle-docker-compose-plugin/issues/446
+            all_manifests = set(InputManifests.files(self.prefix))
+            legacy_manifests = {m for m in all_manifests if "legacy-manifests" in m}
+            legacy_branches = {".".join(m.split(os.sep)[-2].rsplit(".", 1)[:-1]) for m in legacy_manifests}
+            current_manifests = all_manifests - legacy_manifests
+            current_branches = {".".join(m.split(os.sep)[-2].rsplit(".", 1)[:-1]) for m in current_manifests}
 
-            logging.info(f"Checking {self.name} {branches} branches")
+            # make sure only branches in legacy-manifests but not in manifests get ignored
+            legacy_branches -= current_branches
+
+            # check out and build #main, 1.x, etc.
+            all_branches = sorted(min_klass.branches())
+            branches = [b for b in all_branches if not any(b == o or b.startswith((f"{o}-", f"{o}/")) for o in legacy_branches)]
+            logging.info(f"Checking {self.name} {sorted(branches)} branches")
+            logging.info(f"Ignoring {self.name} {sorted(set(all_branches) - set(branches))} branches as they are legacy")
+
             for branch in branches:
                 min_component_klass = min_klass.checkout(
                     path=os.path.join(work_dir.name, self.name.replace(" ", ""), branch),

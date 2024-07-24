@@ -1,0 +1,18 @@
+   release-notes-check.run()
+      release-notes-check.modernSCM({$class=GitSCMSource, remote=https://github.com/opensearch-project/opensearch-build-libraries.git})
+      release-notes-check.library({identifier=jenkins@1.0.4, retriever=null})
+      release-notes-check.pipeline(groovy.lang.Closure)
+         release-notes-check.timeout({time=2, unit=HOURS})
+         release-notes-check.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-almalinux8-opensearch-build-v1, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
+         release-notes-check.stage(Parameters Check, groovy.lang.Closure)
+            release-notes-check.script(groovy.lang.Closure)
+         release-notes-check.stage(Check release notes, groovy.lang.Closure)
+            release-notes-check.script(groovy.lang.Closure)
+               release-notes-check.usernamePassword({credentialsId=jenkins-github-bot-token, usernameVariable=GITHUB_USER, passwordVariable=GITHUB_TOKEN})
+               release-notes-check.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
+                  release-notes-check.sh(
+                            ./release_notes.sh check manifests/3.0.0/opensearch-3.0.0.yml manifests/3.0.0/opensearch-dashboards-3.0.0.yml --date 2022-10-10
+                            )
+         release-notes-check.postCleanup()
+            postCleanup.cleanWs({disableDeferredWipeout=true, deleteDirs=true})
+         release-notes-check.echo(Skipping stage Generate consolidated release notes)

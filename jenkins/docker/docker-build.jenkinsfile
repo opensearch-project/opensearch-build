@@ -19,7 +19,7 @@ def docker_args = [
 
 def agent_nodes = [
     "linux": "Jenkins-Agent-Ubuntu2004-X64-M52xlarge-Docker-Builder",
-    "windows": "Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Builder",
+    "windows": "Jenkins-Agent-Windows2019-X64-M54xlarge-Docker-Builder",
 ]
 
 pipeline {

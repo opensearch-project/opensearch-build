@@ -31,6 +31,7 @@ jobs:
           - {repo: dashboards-query-workbench}
           - {repo: dashboards-assistant}
           - {repo: dashboards-maps}
+          - {repo: dashboards-flow-framework}
           - {repo: anomaly-detection-dashboards-plugin}
           - {repo: ml-commons-dashboards}
           - {repo: index-management-dashboards-plugin}
@@ -81,7 +82,7 @@ jobs:
         run: |
           cd OpenSearch-Dashboards/plugins/${{ matrix.entry.repo }}
           if [ ${{ matrix.entry.path }} ]; then
-              yarn osd bootstrap
+              yarn osd bootstrap --single-version=loose
               cp -R ${{ matrix.entry.path }} ../
               cd ../${{ matrix.entry.path }}
               node ../../scripts/plugin_helpers version --sync legacy
@@ -97,7 +98,7 @@ jobs:
                 OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
                 echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV
           else
-              yarn osd bootstrap
+              yarn osd bootstrap --single-version=loose
               node ../../scripts/plugin_helpers version --sync legacy
               OSD_PLUGIN_VERSION=$(node -p "require('./package.json').version")
               echo "OSD_PLUGIN_VERSION=$OSD_PLUGIN_VERSION" >> $GITHUB_ENV

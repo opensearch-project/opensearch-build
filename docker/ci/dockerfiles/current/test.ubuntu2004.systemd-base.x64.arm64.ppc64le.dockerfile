@@ -114,7 +114,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl git gnupg
 # Install pip packages
 RUN curl -SL https://bootstrap.pypa.io/get-pip.py | python && \
     pip3 install pip==23.1.2 && pip3 install pipenv==2023.6.12 awscli==1.32.17 && \
-    pip3 install cmake==3.23.3
+    pip3 install cmake==3.26.4
 
 # Create user group
 RUN apt-get install -y sudo && \

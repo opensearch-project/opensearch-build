@@ -6,8 +6,8 @@
          release-manifest-commit-lock.echo(Executing on agent [docker:[alwaysPull:true, args:, containerPerStageRoot:false, label:Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host, image:opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3, reuseNode:false, registryUrl:https://public.ecr.aws/, stages:[:]]])
          release-manifest-commit-lock.stage(Parameters Check, groovy.lang.Closure)
             release-manifest-commit-lock.script(groovy.lang.Closure)
-         release-manifest-commit-lock.echo(Skipping stage Match Build Manifest)
-         release-manifest-commit-lock.stage(Update to Recent Commits, groovy.lang.Closure)
+         release-manifest-commit-lock.echo(Skipping stage MATCH_BUILD_MANIFEST)
+         release-manifest-commit-lock.stage(UPDATE_TO_RECENT_COMMITS, groovy.lang.Closure)
             release-manifest-commit-lock.script(groovy.lang.Closure)
                release-manifest-commit-lock.readYaml({file=manifests/2.0.0/opensearch-2.0.0.yml})
                release-manifest-commit-lock.sh({script=git ls-remote https://github.com/opensearch-project/OpenSearch.git 2.0 | cut -f 1, returnStdout=true})
@@ -25,21 +25,23 @@ ccc, repository=https://github.com/opensearch-project/OpenSearch.git, checks=[gr
                                 yq eval -i '.' manifests/2.0.0/opensearch-dashboards-2.0.0.yml
                                 sed -i '1s/^/---\n/' manifests/2.0.0/opensearch-dashboards-2.0.0.yml
                         )
+         release-manifest-commit-lock.echo(Skipping stage UPDATE_TO_TAGS)
          release-manifest-commit-lock.stage(Create Pull Request, groovy.lang.Closure)
             release-manifest-commit-lock.script(groovy.lang.Closure)
                release-manifest-commit-lock.usernamePassword({credentialsId=jenkins-github-bot-token, passwordVariable=GITHUB_TOKEN, usernameVariable=GITHUB_USER})
                release-manifest-commit-lock.withCredentials([[GITHUB_USER, GITHUB_TOKEN]], groovy.lang.Closure)
                   release-manifest-commit-lock.sh(
-                                git remote set-url origin https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build
+                                git remote set-url origin "https://opensearch-ci:GITHUB_TOKEN@github.com/opensearch-project/opensearch-build"
                                 git config user.email "opensearch-infra@amazon.com"
                                 git config user.name "opensearch-ci"
                                 git checkout -b manifest-lock
                             )
                   release-manifest-commit-lock.sh({returnStdout=true, script=git status --porcelain})
                   release-manifest-commit-lock.sh(
-                                    git add . && git commit -sm "Manifest Commit Lock"
+                                    git status --porcelain | grep '^ M' | cut -d " " -f3 | xargs git add
+                                    git commit -sm "Manifest Commit Lock for Release 2.0.0"
                                     git push origin manifest-lock --force
-                                    gh pr create --title '[2.0.0] Manifest Commit Lock, Update to Recent Commits' --body 'Manifest Commit Lock for Release 2.0.0 ' -H manifest-lock -B main
+                                    gh pr create --title '[2.0.0] Manifest Commit Lock with action UPDATE_TO_RECENT_COMMITS' --body 'Manifest Commit Lock for Release 2.0.0 ' -H manifest-lock -B main
                                 )
          release-manifest-commit-lock.script(groovy.lang.Closure)
             release-manifest-commit-lock.postCleanup()

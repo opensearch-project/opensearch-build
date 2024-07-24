@@ -25,7 +25,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('5.12.0')
+                .defaultVersion('6.6.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -39,12 +39,14 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         binding.setVariable('INPUT_MANIFEST', '3.0.0/opensearch-3.0.0.yml')
         binding.setVariable('AGENT_LINUX_X64', 'Jenkins-Agent-AL2023-X64-C54xlarge-Docker-Host')
         binding.setVariable('AGENT_LINUX_ARM64', 'Jenkins-Agent-AL2023-Arm64-C6g4xlarge-Docker-Host')
-        binding.setVariable('AGENT_MACOS_X64', 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host')
+        binding.setVariable('AGENT_MACOS_X64', 'Jenkins-Agent-MacOS13-X64-Mac1Metal-Multi-Host')
+        binding.setVariable('AGENT_MACOS_ARM64', 'Jenkins-Agent-MacOS13-ARM64-Mac2M2proMetal-Multi-Host')
         binding.setVariable('AGENT_WINDOWS_X64', 'Jenkins-Agent-Windows2019-X64-C54xlarge-Docker-Host')
         binding.setVariable('IMAGE_WINDOWS_ZIP', 'opensearchstaging/ci-runner:ci-runner-windows2019-opensearch-build-v1')
         binding.setVariable('ARTIFACT_PRODUCTION_BUCKET_NAME', 'production-s3-bucket-name')
         binding.setVariable('ARTIFACT_PROMOTION_ROLE_NAME', 'production-role-name')
         binding.setVariable('AWS_ACCOUNT_ARTIFACT', 'aws-account-artifact')
+        binding.setVariable('JOB_NAME', 'distribution-build-opensearch')
         binding.setVariable('dockerAgent', [image:'opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v3', args:'-e JAVA_HOME=/opt/java/openjdk-20'])
         helper.registerAllowedMethod('withCredentials', [Map, Closure], { args, closure ->
             closure.delegate = delegate
@@ -71,7 +73,9 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
                 case 'linux-arm64-tar':
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-linux-arm64-build-manifest.yml' as File).text)
                 case 'macos-x64-tar':
-                    return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-build-manifest.yml' as File).text)
+                    return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-x64-build-manifest.yml' as File).text)
+                case 'macos-arm64-tar':
+                    return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-darwin-arm64-build-manifest.yml' as File).text)
                 case 'windows-x64-zip':
                     return new Yaml().load(('tests/jenkins/data/opensearch-min-3.0.0-snapshot-windows-build-manifest.yml' as File).text)
                 default:
@@ -84,6 +88,7 @@ class TestPublishMinSnapshots extends BuildPipelineTest {
         assertThat(getCommands('sh', 'tar'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p linux -a arm64 --snapshot'))
         assertThat(getCommands('sh', 'windows'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d zip --component OpenSearch -p windows -a x64 --snapshot'))
         assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a x64 --snapshot'))
+        assertThat(getCommands('sh', 'darwin'), hasItem('./build.sh manifests/3.0.0/opensearch-3.0.0.yml -d tar --component OpenSearch -p darwin -a arm64 --snapshot'))
         assertThat(getCommands('s3Upload', 'min-3.0.0-SNAPSHOT'), hasItems(
             //linux-x64-tar
             '{file=/tmp/workspace/tar/builds/opensearch/dist/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz, bucket=ARTIFACT_PRODUCTION_BUCKET_NAME, path=snapshots/core/opensearch/3.0.0-SNAPSHOT/opensearch-min-3.0.0-SNAPSHOT-linux-x64-latest.tar.gz}',

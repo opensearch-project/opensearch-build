@@ -44,8 +44,8 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
     @Test
     void shouldExecuteWithoutErrors() {
-        super.testPipeline('jenkins/promotion/release-promotion.jenkinsfile',
-                'tests/jenkins/jenkinsjob-regression-files/promotion/release-promotion.jenkinsfile')
+        super.testPipeline('jenkins/release-workflows/release-promotion.jenkinsfile',
+                'tests/jenkins/jenkinsjob-regression-files/release-workflows/release-promotion.jenkinsfile')
 
         def callStack = helper.getCallStack()
         // Parameters Check
@@ -174,10 +174,10 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('stage(Promote Docker, groovy.lang.Closure)')
         assertCallStack().contains('release-promotion.string({name=SOURCE_IMAGES, value=opensearch:1.0.0.2050, opensearch-dashboards:1.0.0.3050})')
         assertCallStack().contains('release-promotion.string({name=RELEASE_VERSION, value=1.0.0})')
-        assertCallStack().contains('release-promotion.string({name=DOCKER_HUB_PROMOTE, value=true})')
-        assertCallStack().contains('release-promotion.string({name=ECR_PROMOTE, value=true})')
-        assertCallStack().contains('release-promotion.string({name=TAG_LATEST, value=true})')
-        assertCallStack().contains('release-promotion.string({name=TAG_MAJOR_VERSION, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=DOCKER_HUB_PROMOTE, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=ECR_PROMOTE, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=TAG_LATEST, value=true})')
+        assertCallStack().contains('release-promotion.booleanParam({name=TAG_MAJOR_VERSION, value=true})')
         assertCallStack().contains('release-promotion.build({job=docker-promotion, wait=true, parameters=[null, null, null, null, null, null]})')
 
         // Validation Workflow
@@ -189,7 +189,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
         assertCallStack().contains('release-promotion.string({name=PROJECTS, value=Both})')
         assertCallStack().contains('release-promotion.string({name=DOCKER_SOURCE, value=Both})')
         assertCallStack().contains('release-promotion.string({name=ARTIFACT_TYPE, value=production})')
-        assertCallStack().contains('release-promotion.string({name=OPTIONAL_ARGS, value=validate-digests-only})')
+        assertCallStack().contains('release-promotion.string({name=OPTIONAL_ARGS, value=validate-digest-only})')
         assertCallStack().contains('release-promotion.build({job=distribution-validation, wait=true, parameters=[null, null, null, null, null, null, null, null]})')
 
         // Maven Promotion Workflow
@@ -202,7 +202,7 @@ class TestOpenSearchReleasePromotionTest extends BuildPipelineTest {
 
     @Test
     void verifyCfnCommands() {
-        runScript('jenkins/promotion/release-promotion.jenkinsfile')
+        runScript('jenkins/release-workflows/release-promotion.jenkinsfile')
         def callStack = helper.getCallStack()
          assertCallStack().contains(
             'release-promotion.cfInvalidate({distribution=CLOUDFRONT_DISTRIBUTION_ID, paths=[/releases/bundle/opensearch/1.x/*, /releases/bundle/opensearch-dashboards/1.x/*], waitForCompletion=true})'

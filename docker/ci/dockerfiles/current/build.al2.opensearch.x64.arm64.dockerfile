@@ -112,7 +112,7 @@ RUN git clone -b v0.3.27 --single-branch https://github.com/xianyi/OpenBLAS.git 
     fi && \
     make PREFIX=/usr/local install
 ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
-RUN pip3 install cmake==3.23.3
+RUN pip3 install cmake==3.26.4
 
 # Change User
 USER $CONTAINER_USER
