@@ -8,18 +8,15 @@
 from typing import Optional
 
 from manifests.component_manifest import Component, ComponentManifest, Components
-from manifests.test_report.test_report_manifest_1_0 import TestReportManifest_1_0
 
 
-class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents']):
+class TestReportManifest_1_0(ComponentManifest['TestReportManifest_1_0', 'TestComponents_1_0']):
     """
     TestReportManifest contains the aggregated test results for the components.
 
-    The format for schema version 1.1 is:
-        schema-version: '1.1'
+    The format for schema version 1.0 is:
+        schema-version: '1.0'
         name: name of the product e.g. OpenSearch
-        distribution: tar, zip, deb and rpm
-        rc_number: number of release candidates, -1 means not a release candidate
         test-run:
           Command: command to trigger the integ test
           TestType: type of test this manifest reports. e.g. integ-test
@@ -39,16 +36,9 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                   - URL or local path to the OpenSearch cluster error logs
     """
 
-    VERSIONS = {
-        "1.0": TestReportManifest_1_0,
-        # "1.1": current
-    }
-
     SCHEMA = {
-        "schema-version": {"required": True, "type": "string", "allowed": ["1.1"]},
+        "schema-version": {"required": True, "type": "string", "allowed": ["1.0"]},
         "name": {"required": True, "type": "string", "allowed": ["OpenSearch", "OpenSearch Dashboards"]},
-        "distribution": {"type": "string"},
-        "rc_number": {"required": True, "type": "number"},
         "test-run": {
             "required": False,
             "type": "dict",
@@ -88,17 +78,13 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.name = str(data["name"])
-        self.distribution = str(data["distribution"])
-        self.rc_number = data["rc_number"]
         self.test_run = self.TestRun(data.get("test-run", None))
-        self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
+        self.components = TestComponents_1_0(data.get("components", []))  # type: ignore[assignment]
 
     def __to_dict__(self) -> dict:
         return {
-            "schema-version": "1.1",
+            "schema-version": "1.0",
             "name": self.name,
-            "rc_number": self.rc_number,
-            "distribution": self.distribution,
             "test-run": None if self.test_run is None else self.test_run.__to_dict__(),
             "components": self.components.__to_dict__()
         }
@@ -127,17 +113,17 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
                 }
 
 
-class TestComponents(Components['TestComponent']):
+class TestComponents_1_0(Components['TestComponent_1_0']):
     @classmethod
-    def __create__(self, data: dict) -> 'TestComponent':
-        return TestComponent(data)
+    def __create__(self, data: dict) -> 'TestComponent_1_0':
+        return TestComponent_1_0(data)
 
 
-class TestComponent(Component):
+class TestComponent_1_0(Component):
     def __init__(self, data: dict) -> None:
         super().__init__(data)
         self.command = data["command"]
-        self.configs = self.TestComponentConfigs(data.get("configs", None))
+        self.configs = self.TestComponentConfigs_1_0(data.get("configs", None))
 
     def __to_dict__(self) -> dict:
         return {
@@ -146,16 +132,16 @@ class TestComponent(Component):
             "configs": self.configs.__to_list__()
         }
 
-    class TestComponentConfigs:
+    class TestComponentConfigs_1_0:
         def __init__(self, data: list) -> None:
             self.configs = []
             for config in data:
-                self.configs.append(self.TestComponentConfig(config).__to_dict__())
+                self.configs.append(self.TestComponentConfig_1_0(config).__to_dict__())
 
         def __to_list__(self) -> list:
             return self.configs
 
-        class TestComponentConfig:
+        class TestComponentConfig_1_0:
             def __init__(self, data: dict) -> None:
                 self.name = data["name"]
                 self.status = data["status"]
@@ -173,7 +159,7 @@ class TestComponent(Component):
                 }
 
 
-TestReportManifest.VERSIONS = {"1.0": TestReportManifest_1_0, "1.1": TestReportManifest}
+TestReportManifest_1_0.VERSIONS = {"1.0": TestReportManifest_1_0}
 
-TestComponent.__test__ = False  # type: ignore[attr-defined]
-TestReportManifest.__test__ = False  # type: ignore[attr-defined]
+TestComponent_1_0.__test__ = False  # type: ignore[attr-defined]
+TestReportManifest_1_0.__test__ = False  # type: ignore[attr-defined]

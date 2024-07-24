@@ -31,6 +31,8 @@ class TestReportRunner:
         self.args = args
         self.base_path = args.base_path
         self.test_manifest = test_manifest
+        self.schema_version = self.args.schema_version
+        self.rc_number = self.args.rc_number
         self.test_run_data = self.test_report_manifest_data_template("manifest")
         self.product_name = test_manifest.__to_dict__().get("name")
         self.name = self.product_name.replace(" ", "-").lower()
@@ -44,10 +46,14 @@ class TestReportRunner:
 
         self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
+        self.distribution = os.path.basename(self.args.artifact_paths[self.name])
         self.test_components = self.test_manifest.components
 
     def update_data(self) -> dict:
         self.test_run_data["name"] = self.product_name
+        if float(self.schema_version) > 1.0:
+            self.test_run_data["distribution"] = self.distribution
+            self.test_run_data["rc_number"] = self.rc_number
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
@@ -65,7 +71,8 @@ class TestReportRunner:
         return test_run_data
 
     def generate_report(self, data: dict, output_dir: str) -> Any:
-        test_report_manifest = TestReportManifest(data)
+        logging.info(f"Use schema-version {self.schema_version}")
+        test_report_manifest = TestReportManifest.from_version(self.schema_version)(data)
         test_report_manifest_file = os.path.join(output_dir, "test-report.yml")
         logging.info(f"Generating test-report.yml in {output_dir}")
         return test_report_manifest.to_file(test_report_manifest_file)
@@ -107,7 +114,8 @@ class TestReportRunner:
         return component
 
     def test_report_manifest_data_template(self, template_type: str) -> Any:
-        templates = {
+
+        templates_1_0 = {
             "manifest": {
                 "schema-version": "1.0",
                 "name": "",
@@ -120,7 +128,29 @@ class TestReportRunner:
                 "configs": []
             }
         }
-        return templates[template_type]
+
+        templates_1_1 = {
+            "manifest": {
+                "schema-version": "1.1",
+                "name": "",
+                "distribution": "",
+                "rc_number": "",
+                "test-run": {},
+                "components": []
+            },
+            "component": {
+                "name": "",
+                "command": "",
+                "configs": []
+            }
+        }
+
+        templates_map = {
+            "1.0": templates_1_0,
+            "1.1": templates_1_1,
+        }
+
+        return templates_map[self.schema_version][template_type]
 
 
 def generate_component_yml_ref(base_path: str, test_number: str, test_type: str, component_name: str,

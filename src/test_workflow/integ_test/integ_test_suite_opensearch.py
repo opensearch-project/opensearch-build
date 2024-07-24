@@ -109,7 +109,7 @@ class IntegTestSuiteOpenSearch(IntegTestSuite):
         if os.path.exists(script):
             if len(cluster_endpoints) == 1:
                 single_data_node = cluster_endpoints[0].data_nodes[0]
-                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version}"
+                cmd = f"bash {script} -b {single_data_node.endpoint} -p {single_data_node.port} -s {str(security).lower()} -v {self.bundle_manifest.build.version} | tee /tmp/123 2>&1"
             else:
                 endpoints_list = []
                 for cluster_details in cluster_endpoints:
