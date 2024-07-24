@@ -25,7 +25,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.7.0')
+                .defaultVersion('6.7.1')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
@@ -95,7 +95,7 @@ class TestOpenSearchIntegTest extends BuildPipelineTest {
         assertThat(getCommandExecutions('sh', 'test.sh'), hasItem('env PATH=$PATH JAVA_HOME=/opt/java/openjdk-17 ./test.sh integ-test manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --component k-NN --test-run-id 234 --paths opensearch=/tmp/workspace/tar --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
         assertThat(getCommandExecutions('sh', 'report.sh'), hasItem('./report.sh manifests/tests/jenkins/data/opensearch-3.0.0-test.yml --artifact-paths opensearch=https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/3.0.0/9010/linux/x64/tar --test-run-id 234 --test-type integ-test --base-path DUMMY_PUBLIC_ARTIFACT_URL/dummy_job/3.0.0/9010/linux/x64/tar '))
         assertThat(getCommandExecutions('echo', 'Testing'), hasItem('Testing components: [ml-commons, anomaly-detection, neural-search, security-analytics, security, k-NN, notifications]'))
-        assertCallStack().contains('{version=3.0.0, distributionBuildNumber=9010, distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/9010/pipeline, rc=false, rcNumber=null, platform=linux, architecture=x64, distribution=tar, testReportManifestYml=test-report.yml}')
+        assertCallStack().contains('{version=3.0.0, distributionBuildNumber=9010, distributionBuildUrl=https://build.ci.opensearch.org/blue/organizations/jenkins/distribution-build-opensearch/detail/distribution-build-opensearch/9010/pipeline, rc=false, jobName=dummy_job, rcNumber=null, platform=linux, architecture=x64, distribution=tar, testReportManifestYml=test-report.yml}')
     }
 
     @Test

@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.7.0', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.7.1', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -324,6 +324,7 @@ pipeline {
                                 distributionBuildNumber: env.buildId,
                                 distributionBuildUrl: "https://build.ci.opensearch.org/blue/organizations/jenkins/${env.BUILD_JOB_NAME}/detail/${env.BUILD_JOB_NAME}/${env.buildId}/pipeline",
                                 rc: rc,
+                                jobName: env.JOB_NAME,
                                 rcNumber: env.RC_NUMBER,
                                 platform: env.platform,
                                 architecture: env.architecture,
