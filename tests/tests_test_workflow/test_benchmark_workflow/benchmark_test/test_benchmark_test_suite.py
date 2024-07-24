@@ -19,6 +19,7 @@ class TestBenchmarkTestSuite(unittest.TestCase):
     def setUp(self, **kwargs: Any) -> None:
         with patch('test_workflow.integ_test.utils.get_password') as mock_get_password:
             self.args = Mock()
+            self.args.command = 'execute-test'
             self.args.insecure = True
             self.args.workload = "nyc_taxis"
             self.args.version = '2.9.0'

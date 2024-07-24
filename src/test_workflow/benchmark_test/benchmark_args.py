@@ -140,6 +140,8 @@ class BenchmarkArgs:
                                          help="Allows to set parameters for telemetry devices. Accepts json input.")
         execute_test_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
                                          help="Show more verbose output.")
+        execute_test_parser.add_argument("--ml-node-storage", dest="ml_node_storage",
+                                         help="User provided ml-node ebs block storage size defaults to 100Gb")
 
         # command to run comparison
         compare_parser = subparsers.add_parser("compare", help="Compare two IDs")
