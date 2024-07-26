@@ -366,7 +366,8 @@ pipeline {
                         }
                         node(agent_nodes['linux_x64']) {
                             def rc = (params.RC_NUMBER.toInteger() > 0)
-                            sh "curl -s -o test-report.yml https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml"
+                            sh "mkdir -p test-results-osd-${env.BUILD_NUMBER}"
+                            sh "curl -sSL https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml --output test-results-osd-${env.BUILD_NUMBER}/test-report.yml"
                             publishIntegTestResults(
                                 version: env.version,
                                 distributionBuildNumber: env.buildId,
@@ -377,8 +378,9 @@ pipeline {
                                 platform: env.platform,
                                 architecture: env.architecture,
                                 distribution: env.distribution,
-                                testReportManifestYml: "test-report.yml"
+                                testReportManifestYml: "test-results-osd-${env.BUILD_NUMBER}/test-report.yml"
                             )
+                            postCleanup()
                         }
                     }
                     postCleanup()
