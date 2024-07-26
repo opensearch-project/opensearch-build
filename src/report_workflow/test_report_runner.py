@@ -12,12 +12,11 @@ import urllib.request
 from typing import Any
 from urllib.error import HTTPError
 
-import shutil
 import validators
 import yaml
 
-from manifests.test_manifest import TestManifest
 from manifests.bundle_manifest import BundleManifest
+from manifests.test_manifest import TestManifest
 from manifests.test_report_manifest import TestReportManifest
 from report_workflow.report_args import ReportArgs
 

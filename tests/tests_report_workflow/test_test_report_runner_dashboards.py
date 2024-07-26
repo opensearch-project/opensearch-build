@@ -16,13 +16,8 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestTestReportRunnerDashboards(unittest.TestCase):
-    DATA_DIR = os.path.join(
-            os.path.dirname(__file__), "data"
-                )
-    TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH = os.path.join(
-        DATA_DIR, "test-manifest-opensearch-dashboards.yml"
-    )
-
+    DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+    TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH = os.path.join(DATA_DIR, "test-manifest-opensearch-dashboards.yml")
     TEST_MANIFEST_OPENSEARCH_DASHBOARDS = TestManifest.from_path(TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
 
     @patch("report_workflow.report_args.ReportArgs")
@@ -45,7 +40,7 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
     def test_generate_file_url_1_0(self, report_args_mock: MagicMock, validators_mock: MagicMock, urlopen_mock: MagicMock,
-                           yaml_safe_load_mock: MagicMock) -> None:
+                                   yaml_safe_load_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
         report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
         report_args_mock.test_run_id = 123
