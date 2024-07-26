@@ -360,14 +360,13 @@ pipeline {
                                         componentName: "${COMPONENT_NAME}",
                                     )
                                     echo("Download report manifest from https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml")
-                                    stash includes: 'test-report.yml', name: "test-report-$BUILD_NUMBER"
                                     archiveArtifacts artifacts: 'test-report.yml'
                                 }
                             }
                         }
                         node(agent_nodes['linux_x64']) {
-                            unstash "test-report-$BUILD_NUMBER"
                             def rc = (params.RC_NUMBER.toInteger() > 0)
+                            sh "curl -s -o test-report.yml https://ci.opensearch.org/ci/dbc/integ-test-opensearch-dashboards/${env.version}/${env.buildId}/${env.platform}/${env.architecture}/${env.distribution}/test-results/${env.BUILD_NUMBER}/integ-test/test-report.yml"
                             publishIntegTestResults(
                                 version: env.version,
                                 distributionBuildNumber: env.buildId,
