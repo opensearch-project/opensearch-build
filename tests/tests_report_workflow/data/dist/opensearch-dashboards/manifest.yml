@@ -1,0 +1,60 @@
+---
+schema-version: '1.1'
+build:
+  name: OpenSearch Dashboards
+  version: 1.3.18
+  platform: linux
+  architecture: x64
+  distribution: tar
+  location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/dist/opensearch-dashboards/opensearch-dashboards-1.3.18-linux-x64.tar.gz
+  id: '7791'
+components:
+  - name: OpenSearch-Dashboards
+    repository: https://github.com/opensearch-project/OpenSearch-Dashboards.git
+    ref: '1.3'
+    commit_id: 26d95c2bb5d43e3d540d4612884ff98f66938046
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/dist/opensearch-dashboards-min-1.3.18-linux-x64.tar.gz
+  - name: functionalTestDashboards
+    repository: https://github.com/opensearch-project/opensearch-dashboards-functional-test.git
+    ref: '1.3'
+    commit_id: 8b999677608cbe09f3f412ba1b3b57c9731a7ffc
+  - name: anomalyDetectionDashboards
+    repository: https://github.com/opensearch-project/anomaly-detection-dashboards-plugin
+    ref: '1.3'
+    commit_id: 1da96108484cf891f071ca54634b8df815dccec9
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/anomalyDetectionDashboards-1.3.18.zip
+  - name: ganttChartDashboards
+    repository: https://github.com/opensearch-project/dashboards-visualizations.git
+    ref: '1.3'
+    commit_id: 968bcf9f028e7fdd503eaf25e0c877efff0c9ed8
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/ganttChartDashboards-1.3.18.zip
+  - name: observabilityDashboards
+    repository: https://github.com/opensearch-project/dashboards-observability.git
+    ref: '1.3'
+    commit_id: a1d4df6bc56b04197f6fc3611c8e7aee6fd51b9f
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/observabilityDashboards-1.3.18.zip
+  - name: alertingDashboards
+    repository: https://github.com/opensearch-project/alerting-dashboards-plugin.git
+    ref: '1.3'
+    commit_id: 7c133586fec9cc4d0f3e4d98b2182e2e8563f3dc
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/alertingDashboards-1.3.18.zip
+  - name: indexManagementDashboards
+    repository: https://github.com/opensearch-project/index-management-dashboards-plugin
+    ref: '1.3'
+    commit_id: 189fd6b9d81059d4d0485e3a84e2aecebf020b58
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/indexManagementDashboards-1.3.18.zip
+  - name: reportsDashboards
+    repository: https://github.com/opensearch-project/dashboards-reporting.git
+    ref: '1.3'
+    commit_id: 45fa281c2f2f727b460d2d8cfdbb61d502046d73
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/reportsDashboards-1.3.18.zip
+  - name: securityDashboards
+    repository: https://github.com/opensearch-project/security-dashboards-plugin.git
+    ref: '1.3'
+    commit_id: 7d471b1db91f4452e1fb03ec31cea2862ff69017
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/securityDashboards-1.3.18.zip
+  - name: queryWorkbenchDashboards
+    repository: https://github.com/opensearch-project/dashboards-query-workbench.git
+    ref: '1.3'
+    commit_id: 38cebc903e5a3a3247b6493002f235d6389e535d
+    location: https://ci.opensearch.org/ci/dbc/distribution-build-opensearch-dashboards/1.3.18/7791/linux/x64/tar/builds/opensearch-dashboards/plugins/queryWorkbenchDashboards-1.3.18.zip

@@ -16,8 +16,11 @@ from system.temporary_directory import TemporaryDirectory
 
 
 class TestTestReportRunnerDashboards(unittest.TestCase):
+    DATA_DIR = os.path.join(
+            os.path.dirname(__file__), "data"
+                )
     TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH = os.path.join(
-        os.path.dirname(__file__), "data", "test-manifest-opensearch-dashboards.yml"
+        DATA_DIR, "test-manifest-opensearch-dashboards.yml"
     )
 
     TEST_MANIFEST_OPENSEARCH_DASHBOARDS = TestManifest.from_path(TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH)
@@ -29,6 +32,7 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
         report_args_mock.test_run_id = 123
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
         self.assertEqual(test_run_runner.name, "opensearch-dashboards")
@@ -40,17 +44,36 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
     @patch("urllib.request.urlopen")
     @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_generate_file(self, report_args_mock: MagicMock, validators_mock: MagicMock, urlopen_mock: MagicMock,
+    def test_generate_file_url_1_0(self, report_args_mock: MagicMock, validators_mock: MagicMock, urlopen_mock: MagicMock,
                            yaml_safe_load_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
         report_args_mock.artifact_paths = {"opensearch-dashboards": "foo/bar"}
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.0"
 
         validators_mock.return_value = True
         yaml_safe_load_mock.return_value = {"test_result": "PASS"}
         urlopen_mock.return_value = MagicMock()
+
+        test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
+        test_run_runner_data = test_run_runner.update_data()
+
+        with TemporaryDirectory() as path:
+            output_path = os.path.join(path.name, "test-report.yml")
+            test_run_runner.generate_report(test_run_runner_data, path.name)
+            self.assertTrue(os.path.isfile(output_path))
+
+    @patch("report_workflow.report_args.ReportArgs")
+    def test_generate_file_local_path(self, report_args_mock: MagicMock) -> None:
+        report_args_mock.test_manifest_path = self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS_PATH
+        report_args_mock.artifact_paths = {"opensearch-dashboards": self.DATA_DIR}
+        report_args_mock.test_run_id = 123
+        report_args_mock.base_path = self.DATA_DIR
+        report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
+        report_args_mock.release_candidate = "100"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST_OPENSEARCH_DASHBOARDS)
         test_run_runner_data = test_run_runner.update_data()
@@ -71,6 +94,7 @@ class TestTestReportRunnerDashboards(unittest.TestCase):
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         validators_mock.return_value = True
         yaml_safe_load_mock.return_value = {"test_result": "PASS"}
