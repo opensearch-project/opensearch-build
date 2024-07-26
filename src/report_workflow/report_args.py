@@ -20,7 +20,7 @@ class ReportArgs:
     artifact_paths: dict
     test_type: str
     schema_version: str
-    rc_number: int
+    release_candidate: str
     logging_level: int
 
     def __init__(self) -> None:
@@ -35,8 +35,8 @@ class ReportArgs:
         parser.add_argument("--output-path", type=str, help="Specify the path location for the test-report manifest.")
         parser.add_argument("--test-run-id", type=int, help="The unique execution id for the test")
         parser.add_argument("--component", type=str, dest="components", nargs='*', help="Test a specific component or components instead of the entire distribution.")
-        parser.add_argument("--schema-version", type=str, default="1.1", help="The schema version for the test-report manifest")
-        parser.add_argument("--rc-number", type=int, default=-1, help="The release candidate (rc) number of the artifacts, -1 means not a release candidate")
+        parser.add_argument("--schema-version", type=str, default="1.1", help="The schema version for the test-report manifest.")
+        parser.add_argument("--release-candidate", type=str, default="0", help="The release candidate (rc) information of the artifacts, added in schema-version='1.1'.")
         parser.add_argument(
             "-v", "--verbose", help="Show more verbose output.", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level"
         )
@@ -50,5 +50,5 @@ class ReportArgs:
         self.test_type = args.test_type
         self.components = args.components
         self.schema_version = args.schema_version
-        self.rc_number = args.rc_number
+        self.release_candidate = args.release_candidate
         self.output_path = args.output_path

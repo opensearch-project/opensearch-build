@@ -23,7 +23,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
         architecture: x64 or arm64
         distribution: tar, zip, deb and rpm
         id: build id
-        rc_number: number of release candidates, -1 means not a release candidate
+        rc: release candidate information
         test-run:
           Command: command to trigger the integ test
           TestType: type of test this manifest reports. e.g. integ-test
@@ -56,7 +56,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
         "architecture": {"required": True, "type": "string"},  # added in 1.1
         "distribution": {"required": True, "type": "string"},  # added in 1.1
         "id": {"required": True, "type": "string"},  # added in 1.1
-        "rc_number": {"required": True, "type": "number"},  # added in 1.1
+        "rc": {"required": True, "type": "string"},  # added in 1.1
         "test-run": {
             "required": False,
             "type": "dict",
@@ -101,7 +101,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
         self.architecture = str(data["architecture"])
         self.distribution = str(data["distribution"])
         self.build_id = str(data["id"])
-        self.rc_number = int(data["rc_number"])
+        self.release_candidate = str(data["rc"])
         self.test_run = self.TestRun(data.get("test-run", None))
         self.components = TestComponents(data.get("components", []))  # type: ignore[assignment]
 
@@ -114,7 +114,7 @@ class TestReportManifest(ComponentManifest['TestReportManifest', 'TestComponents
             "architecture": self.architecture,
             "distribution": self.distribution,
             "id": self.build_id,
-            "rc": self.rc_number,
+            "rc": self.release_candidate,
             "test-run": None if self.test_run is None else self.test_run.__to_dict__(),
             "components": self.components.__to_dict__()
         }

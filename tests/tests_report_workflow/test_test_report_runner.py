@@ -19,6 +19,9 @@ class TestTestReportRunner(unittest.TestCase):
     TEST_MANIFEST_PATH = os.path.join(
         os.path.dirname(__file__), "data", "test_manifest.yml"
     )
+    DATA_DIR = os.path.join(
+        os.path.dirname(__file__), "data"
+    )
     TEST_MANIFEST = TestManifest.from_path(TEST_MANIFEST_PATH)
 
     @patch("report_workflow.report_args.ReportArgs")
@@ -28,6 +31,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST)
         self.assertEqual(test_run_runner.name, "opensearch")
@@ -35,21 +39,15 @@ class TestTestReportRunner(unittest.TestCase):
         self.assertEqual(test_run_runner.test_type, "integ-test")
         self.assertEqual(test_run_runner.test_manifest_path, self.TEST_MANIFEST_PATH)
 
-    @patch("yaml.safe_load")
-    @patch("urllib.request.urlopen")
-    @patch("validators.url")
     @patch("report_workflow.report_args.ReportArgs")
-    def test_generate_file(self, report_args_mock: MagicMock, validators_mock: MagicMock, urlopen_mock: MagicMock,
-                           yaml_safe_load_mock: MagicMock) -> None:
+    def test_generate_file(self, report_args_mock: MagicMock) -> None:
         report_args_mock.test_manifest_path = self.TEST_MANIFEST_PATH
-        report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
+        report_args_mock.artifact_paths = {"opensearch": self.DATA_DIR}
         report_args_mock.test_run_id = 123
-        report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
+        report_args_mock.base_path = self.DATA_DIR
         report_args_mock.test_type = "integ-test"
-
-        validators_mock.return_value = True
-        yaml_safe_load_mock.return_value = {"test_result": "PASS"}
-        urlopen_mock.return_value = MagicMock()
+        report_args_mock.schema_version = "1.1"
+        report_args_mock.release_candidate = "100"
 
         test_run_runner = TestReportRunner(report_args_mock, self.TEST_MANIFEST)
         test_run_runner_data = test_run_runner.update_data()
@@ -67,6 +65,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.artifact_paths = {"opensearch": "foo/bar"}
         report_args_mock.test_run_id = 123
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         test_run_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
         self.assertEqual(test_run_dict.get("Command"), " ".join(
@@ -84,6 +83,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.artifact_paths = {"opensearch": "https://foo/bar"}
         report_args_mock.test_run_id = 123
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         test_run_dict = TestReportRunner(report_args_mock, self.TEST_MANIFEST).update_test_run_data()
         self.assertEqual(test_run_dict.get("Command"), " ".join(
@@ -105,6 +105,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         validators_mock.return_value = True
         yaml_safe_load_mock.return_value = {"test_result": "PASS"}
@@ -139,6 +140,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         validators_mock.return_value = False
         yaml_safe_load_mock.return_value = {"test_result": "PASS"}
@@ -165,6 +167,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         validators_mock.return_value = True
 
@@ -188,6 +191,7 @@ class TestTestReportRunner(unittest.TestCase):
         report_args_mock.test_run_id = 123
         report_args_mock.base_path = "https://ci.opensearch.org/ci/dbc/mock"
         report_args_mock.test_type = "integ-test"
+        report_args_mock.schema_version = "1.1"
 
         validators_mock.return_value = False
         yaml_safe_load_mock.return_value = {"test_result": "PASS"}

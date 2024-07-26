@@ -28,13 +28,14 @@ class TestReportRunner:
     tests_dir: str
     test_report_manifest: TestReportManifest
     test_run_data: dict
+    bundle_manifest: BundleManifest
 
     def __init__(self, args: ReportArgs, test_manifest: TestManifest) -> None:
         self.args = args
         self.base_path = args.base_path
         self.test_manifest = test_manifest
         self.schema_version = self.args.schema_version
-        self.rc_number = self.args.rc_number
+        self.release_candidate = self.args.release_candidate
         self.test_run_data = self.test_report_manifest_data_template("manifest")
         self.product_name = test_manifest.__to_dict__().get("name")
         self.name = self.product_name.replace(" ", "-").lower()
@@ -48,18 +49,18 @@ class TestReportRunner:
 
         self.dist_manifest = "/".join([self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml"]) if self.args.artifact_paths[self.name].startswith("https://") \
             else os.path.join(self.args.artifact_paths[self.name], "dist", self.name, "manifest.yml")
-        self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
         self.test_components = self.test_manifest.components
 
     def update_data(self) -> dict:
         self.test_run_data["name"] = self.product_name
         if float(self.schema_version) > 1.0:
+            self.bundle_manifest = BundleManifest.from_urlpath(self.dist_manifest)
             self.test_run_data["version"] = self.bundle_manifest.build.version
             self.test_run_data["platform"] = self.bundle_manifest.build.platform
             self.test_run_data["architecture"] = self.bundle_manifest.build.architecture
             self.test_run_data["distribution"] = self.bundle_manifest.build.distribution
             self.test_run_data["id"] = self.bundle_manifest.build.id
-            self.test_run_data["rc_number"] = self.rc_number
+            self.test_run_data["rc"] = self.release_candidate
         self.test_run_data["test-run"] = self.update_test_run_data()
         for component in self.test_components.select(focus=self.args.components):
             if self.test_manifest.components[component.name].__to_dict__().get(self.test_type) is not None:
@@ -144,7 +145,7 @@ class TestReportRunner:
                 "architecture": "",
                 "distribution": "",
                 "id": "",
-                "rc_number": "",
+                "rc": "",
                 "test-run": {},
                 "components": []
             },
