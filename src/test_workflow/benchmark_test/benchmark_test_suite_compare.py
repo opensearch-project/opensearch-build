@@ -1,3 +1,10 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
 import glob
 import os
 import shutil
@@ -6,6 +13,7 @@ import subprocess
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
+
 
 class CompareTestSuite(BenchmarkTestBase):
     def execute(self) -> None:
@@ -36,7 +44,7 @@ class CompareTestSuite(BenchmarkTestBase):
 
         self.command = command
         return self.command
-    
+
     def copy_comparison_results_to_local(self) -> None:
         with TemporaryDirectory() as work_dir:
             subprocess.check_call(

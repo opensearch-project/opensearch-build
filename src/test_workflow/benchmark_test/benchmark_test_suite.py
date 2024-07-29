@@ -6,11 +6,16 @@
 # compatible open source license.
 
 from typing import Any
+
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
 from test_workflow.benchmark_test.benchmark_test_suite_compare import CompareTestSuite
 from test_workflow.benchmark_test.benchmark_test_suite_execute import ExecuteTestSuite
 
+
 class BenchmarkTestSuite:
+    test_suite: BenchmarkTestBase
+
     def __init__(
             self,
             endpoint: Any,

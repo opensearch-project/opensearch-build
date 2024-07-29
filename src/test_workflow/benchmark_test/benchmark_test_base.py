@@ -1,11 +1,17 @@
-# benchmark_test_base.py
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
+import os
+import subprocess
 from abc import ABC, abstractmethod
 from typing import Any
-import os
-
-import subprocess
 
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
+
 
 class BenchmarkTestBase(ABC):
     endpoint: str
@@ -28,7 +34,7 @@ class BenchmarkTestBase(ABC):
         self.command = None
 
     @abstractmethod
-    def form_command(self) -> str:
+    def form_command(self, args: BenchmarkArgs) -> str:
         pass
 
     @abstractmethod

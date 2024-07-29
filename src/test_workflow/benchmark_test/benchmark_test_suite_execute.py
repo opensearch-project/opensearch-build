@@ -1,3 +1,10 @@
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# The OpenSearch Contributors require contributions made to
+# this file be licensed under the Apache-2.0 license or a
+# compatible open source license.
+
 import glob
 import json
 import logging
@@ -10,6 +17,7 @@ import pandas as pd
 from system.temporary_directory import TemporaryDirectory
 from test_workflow.benchmark_test.benchmark_args import BenchmarkArgs
 from test_workflow.benchmark_test.benchmark_test_base import BenchmarkTestBase
+
 
 class ExecuteTestSuite(BenchmarkTestBase):
     def execute(self) -> None:
@@ -61,7 +69,7 @@ class ExecuteTestSuite(BenchmarkTestBase):
         else:
             self.command += ' --client-options="timeout:300" --results-file=final_result.md'
         return self.command
-    
+
     def convert(self) -> None:
         with TemporaryDirectory() as work_dir:
             subprocess.check_call(f"docker cp docker-container-{self.args.stack_suffix}:opensearch-benchmark"

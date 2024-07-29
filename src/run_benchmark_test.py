@@ -23,9 +23,9 @@ def main() -> int:
     benchmarking test. Will call out in test.sh with 'benchmark execute-test' or 'benchmark compare' as argument
     """
     benchmark_args = BenchmarkArgs()
-    
+
     console.configure(level=benchmark_args.logging_level)
-    
+
     if benchmark_args.command == "execute-test":
         if benchmark_args.bundle_manifest:
             manifest: Union[BundleManifest, BuildManifest] = (
