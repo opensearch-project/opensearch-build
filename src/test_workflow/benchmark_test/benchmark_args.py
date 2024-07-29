@@ -107,7 +107,7 @@ class BenchmarkArgs:
                                          help="Additional opensearch.yml config parameters passed as JSON")
         execute_test_parser.add_argument("--use-50-percent-heap", dest="use_50_percent_heap", action="store_true",
                                          help="Use 50 percent of physical memory as heap.")
-        execute_test_parser.add_argument("--ml-no storage", dest="ml_node_storage",
+        execute_test_parser.add_argument("--ml-node storage", dest="ml_node_storage",
                                          help="User provided ml-node ebs block storage size defaults to 100Gb")
         execute_test_parser.add_argument("--data-node-storage", dest="data_node_storage",
                                          help="User provided data-node ebs block storage size, defaults to 100Gb")
@@ -140,13 +140,11 @@ class BenchmarkArgs:
                                          help="Allows to set parameters for telemetry devices. Accepts json input.")
         execute_test_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
                                          help="Show more verbose output.")
-        execute_test_parser.add_argument("--ml-node-storage", dest="ml_node_storage",
-                                         help="User provided ml-node ebs block storage size defaults to 100Gb")
 
         # command to run comparison
-        compare_parser = subparsers.add_parser("compare", help="Compare two IDs")
-        compare_parser.add_argument("baseline", type=str, help="The baseline ID to compare")
-        compare_parser.add_argument("contender", type=str, help="The contender ID to compare")
+        compare_parser = subparsers.add_parser("compare", help="Compare two tests using their test execution IDs")
+        compare_parser.add_argument("baseline", type=str, help="The baseline ID to compare", nargs='?')
+        compare_parser.add_argument("contender", type=str, help="The contender ID to compare", nargs='?')
         compare_parser.add_argument("--results-format", default="markdown", type=str,
                                     help="Defines the output format for the results, markdown or csv (default: markdown)")
         compare_parser.add_argument("--results-numbers-align", default="right", type=str,
@@ -155,6 +153,10 @@ class BenchmarkArgs:
                                     help="File path to write the results file to")
         compare_parser.add_argument("--show-in-results", type=str,
                                     help="Determines whether to include the comparison in the results file")
+        compare_parser.add_argument("-v", "--verbose", action="store_const", default=logging.INFO, const=logging.DEBUG, dest="logging_level",
+                                    help="Show more verbose output.")
+        compare_parser.add_argument("--benchmark-config", dest="benchmark_config",
+                                    help="absolute filepath to custom benchmark.ini config")
 
         args = parser.parse_args()
         self.command = args.command
@@ -199,13 +201,19 @@ class BenchmarkArgs:
                 raise Exception("Please provide either --bundle-manifest or --distribution-url  or --cluster_endpoint to run the performance test.")
             elif self.distribution_url and self.distribution_version is None:
                 raise Exception("--distribution-version is required parameter while using --distribution-url param.")
+            
         elif args.command == "compare":
-            self.baseline = args.baseline if hasattr(args, "baseline") else None
-            self.contender = args.contender if hasattr(args, "contender") else None
+            if not args.baseline or not args.contender:
+                raise ValueError("Both 'baseline' and 'contender' arguments are required for the 'compare' command.")
+            self.baseline = args.baseline
+            self.contender = args.contender
             self.results_format = args.results_format if hasattr(args, "results_format") else None
             self.results_numbers_align = args.results_numbers_align if hasattr(args, "results_numbers_align") else None
             self.results_file = args.results_file if hasattr(args, "results_file") else None
             self.show_in_results = args.show_in_results if hasattr(args, "show_in_results") else None
             self.stack_suffix = "comparison"
+            self.logging_level = args.logging_level
+            self.benchmark_config = args.benchmark_config if args.benchmark_config else None
+
         else:
             logging.error("Invalid command: %s" % args.command)
