@@ -117,7 +117,6 @@ class TestReportRunner:
         return component
 
     def test_report_manifest_data_template(self, template_type: str) -> Any:
-
         templates = {
             "manifest": {
                 "schema-version": "1.1",
