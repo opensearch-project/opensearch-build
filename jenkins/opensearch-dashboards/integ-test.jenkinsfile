@@ -7,7 +7,7 @@
  * compatible open source license.
  */
 
-lib = library(identifier: 'jenkins@6.7.1', retriever: modernSCM([
+lib = library(identifier: 'jenkins@6.7.2', retriever: modernSCM([
     $class: 'GitSCMSource',
     remote: 'https://github.com/opensearch-project/opensearch-build-libraries.git',
 ]))
@@ -343,6 +343,7 @@ pipeline {
                             docker.withRegistry('https://public.ecr.aws/') {
                                 docker.image(docker_images["$distribution"]).inside(docker_args["$distribution"]) {
                                     checkout scm
+                                    sh 'sleep 10'
                                     downloadBuildManifest(
                                         url: BUILD_MANIFEST_URL,
                                         path: BUILD_MANIFEST

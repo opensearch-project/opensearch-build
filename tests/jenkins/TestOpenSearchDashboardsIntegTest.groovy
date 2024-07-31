@@ -26,7 +26,7 @@ class TestOpenSearchDashboardsIntegTest extends BuildPipelineTest {
 
         helper.registerSharedLibrary(
             library().name('jenkins')
-                .defaultVersion('6.7.1')
+                .defaultVersion('6.7.2')
                 .allowOverride(true)
                 .implicit(true)
                 .targetPath('vars')
